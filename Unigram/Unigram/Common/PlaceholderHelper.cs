@@ -49,9 +49,9 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetChat(Chat chat, int width, int height)
+        public static ImageSource GetChat(Chat chat, int side)
         {
-            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -81,9 +81,9 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetChat(ChatInviteLinkInfo chat, int width, int height)
+        public static ImageSource GetChat(ChatInviteLinkInfo chat, int side)
         {
-            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -98,9 +98,9 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetUser(User user, int width, int height)
+        public static ImageSource GetUser(User user, int side)
         {
-            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -115,9 +115,9 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetNameForUser(string firstName, string lastName, int width, int height)
+        public static ImageSource GetNameForUser(string firstName, string lastName, int side)
         {
-            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -132,9 +132,9 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetNameForChat(string title, int width, int height)
+        public static ImageSource GetNameForChat(string title, int side)
         {
-            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -149,9 +149,9 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetSavedMessages(int id, int width, int height)
+        public static ImageSource GetSavedMessages(int id, int side)
         {
-            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -166,11 +166,11 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetChat(IProtoService protoService, Chat chat, int width, int height)
+        public static ImageSource GetChat(IProtoService protoService, Chat chat, int side)
         {
             if (chat.Type is ChatTypePrivate privata && protoService != null && protoService.IsChatSavedMessages(chat))
             {
-                return GetSavedMessages(privata.UserId, width, height);
+                return GetSavedMessages(privata.UserId, side);
             }
 
             var file = chat.Photo?.Small;
@@ -178,7 +178,7 @@ namespace Unigram.Common
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -187,20 +187,20 @@ namespace Unigram.Common
             }
             else
             {
-                return GetChat(chat, width, height);
+                return GetChat(chat, side);
             }
 
             return null;
         }
 
-        public static ImageSource GetChat(IProtoService protoService, ChatInviteLinkInfo chat, int width, int height)
+        public static ImageSource GetChat(IProtoService protoService, ChatInviteLinkInfo chat, int side)
         {
             var file = chat.Photo?.Small;
             if (file != null)
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -209,20 +209,20 @@ namespace Unigram.Common
             }
             else
             {
-                return GetChat(chat, width, height);
+                return GetChat(chat, side);
             }
 
             return null;
         }
 
-        public static ImageSource GetUser(IProtoService protoService, User user, int width, int height)
+        public static ImageSource GetUser(IProtoService protoService, User user, int side)
         {
             var file = user.ProfilePhoto?.Small;
             if (file != null)
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -231,7 +231,7 @@ namespace Unigram.Common
             }
             else
             {
-                return GetUser(user, width, height);
+                return GetUser(user, side);
             }
 
             return null;
@@ -249,23 +249,6 @@ namespace Unigram.Common
             }
 
             return null;
-        }
-
-        public static ImageSource GetBadge(string text, Color color, int width, int height)
-        {
-            var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                try
-                {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(color, InitialNameStringConverter.Convert(text), stream);
-
-                    bitmap.SetSource(stream);
-                }
-                catch { }
-            }
-
-            return bitmap;
         }
 
         public static ImageSource GetBlurred(string path, float amount = 3)

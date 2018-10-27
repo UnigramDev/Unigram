@@ -200,7 +200,7 @@ namespace Unigram.Controls.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 32, 32);
+                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 32);
             }
 
             if (args.Phase < 2)

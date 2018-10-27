@@ -290,7 +290,7 @@ namespace Unigram.Views.Host
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(session.ProtoService, user, 28, 28);
+                photo.Source = PlaceholderHelper.GetUser(session.ProtoService, user, 28);
             }
 
             if (args.Phase < 2)

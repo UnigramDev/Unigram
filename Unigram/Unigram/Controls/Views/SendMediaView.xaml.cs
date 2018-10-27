@@ -775,7 +775,7 @@ namespace Unigram.Controls.Views
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
         }
     }

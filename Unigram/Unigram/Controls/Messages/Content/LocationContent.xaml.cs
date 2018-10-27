@@ -66,7 +66,7 @@ namespace Unigram.Controls.Messages.Content
                     var user = _message.ProtoService.GetUser(message.SenderUserId);
                     if (user != null)
                     {
-                        PinPhoto.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 32, 32);
+                        PinPhoto.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 32);
                     }
 
                     Title.Text = Strings.Resources.AttachLiveLocation;

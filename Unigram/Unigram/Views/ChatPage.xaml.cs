@@ -183,41 +183,41 @@ namespace Unigram.Views
             {
                 FocusManager.GettingFocus += (s, args) =>
                 {
-#if DEBUG
-                    var element = args.NewFocusedElement as FrameworkElement;
-                    if (element != null)
-                    {
-                        ViewModel.LastSeen = Enum.GetName(typeof(FocusInputDeviceKind), args.InputDevice) + ", " + Enum.GetName(typeof(FocusState), args.FocusState) + ": ";
+//#if DEBUG
+//                    var element = args.NewFocusedElement as FrameworkElement;
+//                    if (element != null)
+//                    {
+//                        ViewModel.LastSeen = Enum.GetName(typeof(FocusInputDeviceKind), args.InputDevice) + ", " + Enum.GetName(typeof(FocusState), args.FocusState) + ": ";
 
 
-                        //var control = element as Control;
-                        //if (control != null)
-                        //{
-                        //    if (control.FocusState == FocusState.Pointer && control is ChatListViewItem && args.OldFocusedElement is ChatTextBox)
-                        //    {
-                        //        args.Cancel = true;
-                        //    }
-                        //}
+//                        //var control = element as Control;
+//                        //if (control != null)
+//                        //{
+//                        //    if (control.FocusState == FocusState.Pointer && control is ChatListViewItem && args.OldFocusedElement is ChatTextBox)
+//                        //    {
+//                        //        args.Cancel = true;
+//                        //    }
+//                        //}
 
-                        if (element.Name != null)
-                        {
-                            if (ViewModel.LastSeen != null)
-                            {
-                                ViewModel.LastSeen += element.Name + ", ";
-                            }
-                            else
-                            {
-                                ViewModel.LastSeen = element.Name + ", ";
-                            }
-                        }
+//                        if (element.Name != null)
+//                        {
+//                            if (ViewModel.LastSeen != null)
+//                            {
+//                                ViewModel.LastSeen += element.Name + ", ";
+//                            }
+//                            else
+//                            {
+//                                ViewModel.LastSeen = element.Name + ", ";
+//                            }
+//                        }
 
-                        ViewModel.LastSeen += element.GetType().FullName;
-                    }
-                    else
-                    {
-                        ViewModel.LastSeen = null;
-                    }
-#endif
+//                        ViewModel.LastSeen += element.GetType().FullName;
+//                    }
+//                    else
+//                    {
+//                        ViewModel.LastSeen = null;
+//                    }
+//#endif
 
                     // We want to apply this behavior when using mouse only
                     if (args.InputDevice != FocusInputDeviceKind.Mouse)
@@ -1222,6 +1222,8 @@ namespace Unigram.Views
             {
                 flyout.ShowAt(element);
             }
+
+            args.Handled = true;
         }
 
         private void CreateFlyoutSeparator(ref MenuFlyout flyout)
@@ -2133,7 +2135,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
             else if (args.Item is User user)
             {
@@ -2146,7 +2148,7 @@ namespace Unigram.Views
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
         }
 
@@ -2248,7 +2250,7 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width, (int)Photo.Height);
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width);
         }
 
         public void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification)
@@ -2683,7 +2685,7 @@ namespace Unigram.Views
                                     var user = message.ProtoService.GetUser(fromUser.SenderUserId);
                                     if (user != null)
                                     {
-                                        photo.Source = PlaceholderHelper.GetUser(null, user, 32, 32);
+                                        photo.Source = PlaceholderHelper.GetUser(null, user, 32);
                                     }
                                 }
                                 else if (message.ForwardInfo is MessageForwardedPost post)
@@ -2691,7 +2693,7 @@ namespace Unigram.Views
                                     var fromChat = message.ProtoService.GetChat(post.ForwardedFromChatId);
                                     if (fromChat != null)
                                     {
-                                        photo.Source = PlaceholderHelper.GetChat(null, fromChat, 32, 32);
+                                        photo.Source = PlaceholderHelper.GetChat(null, fromChat, 32);
                                     }
                                 }
                             }
@@ -2700,7 +2702,7 @@ namespace Unigram.Views
                                 var user = message.GetSenderUser();
                                 if (user != null)
                                 {
-                                    photo.Source = PlaceholderHelper.GetUser(null, user, 32, 32);
+                                    photo.Source = PlaceholderHelper.GetUser(null, user, 32);
                                 }
                             }
                         }
@@ -2713,7 +2715,7 @@ namespace Unigram.Views
             var chat = ViewModel.Chat;
             if (chat != null && chat.UpdateFile(file))
             {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, (int)Photo.Width, (int)Photo.Height);
+                Photo.Source = PlaceholderHelper.GetChat(null, chat, (int)Photo.Width);
             }
 
             InlinePanel.UpdateFile(file);
@@ -2739,7 +2741,7 @@ namespace Unigram.Views
                         }
 
                         var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetUser(null, user, 36, 36);
+                        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
                     }
                 }
                 else if (item is User user)
@@ -2759,7 +2761,7 @@ namespace Unigram.Views
                         }
 
                         var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetUser(null, user, 36, 36);
+                        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
                     }
                 }
             }

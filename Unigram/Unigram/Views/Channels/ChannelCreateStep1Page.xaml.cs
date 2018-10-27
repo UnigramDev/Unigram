@@ -70,7 +70,7 @@ namespace Unigram.Views.Channels
                 return preview;
             }
 
-            return PlaceholderHelper.GetNameForChat(title, 64, 64);
+            return PlaceholderHelper.GetNameForChat(title, 64);
         }
 
         private Visibility ConvertPhotoVisibility(string title, BitmapImage preview)

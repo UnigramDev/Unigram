@@ -116,12 +116,12 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48, 48);
+            Photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 48);
         }
 
         public void UpdateFile(Chat chat, File file)
         {
-            Photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
+            Photo.Source = PlaceholderHelper.GetChat(null, chat, 48);
         }
 
         public void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions)

@@ -90,7 +90,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64, 64);
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
         }
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
@@ -191,7 +191,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)

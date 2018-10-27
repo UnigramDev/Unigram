@@ -48,7 +48,7 @@ namespace Unigram.Views.Users
 
         private ImageSource ConvertPhoto(string firstName, string lastName)
         {
-            return PlaceholderHelper.GetNameForUser(firstName, lastName, 64, 64);
+            return PlaceholderHelper.GetNameForUser(firstName, lastName, 64);
         }
 
         private string ConvertFormat(Country country)

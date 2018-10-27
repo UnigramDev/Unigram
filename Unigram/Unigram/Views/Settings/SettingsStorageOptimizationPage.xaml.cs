@@ -34,7 +34,7 @@ namespace Unigram.Views.Settings
             Title.Text = chat == null ? "Other Chats" : protoService.GetTitle(chat);
             Subtitle.Text = FileSizeConverter.Convert(statistics.Size);
 
-            Photo.Source = chat == null ? null : PlaceholderHelper.GetChat(protoService, chat, (int)Photo.Width, (int)Photo.Height);
+            Photo.Source = chat == null ? null : PlaceholderHelper.GetChat(protoService, chat, (int)Photo.Width);
             Photo.Visibility = chat == null ? Visibility.Collapsed : Visibility.Visible;
 
             List.ItemsSource = statistics.ByFileType.OrderByDescending(x => x.Size).ToList();

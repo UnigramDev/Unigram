@@ -576,7 +576,7 @@ namespace Unigram.Views
                             var user = message.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null)
                             {
-                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30, 30);
+                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
                             }
                         }
                         else if (message.ForwardInfo is MessageForwardedPost post)
@@ -584,7 +584,7 @@ namespace Unigram.Views
                             var chat = message.ProtoService.GetChat(post.ChatId);
                             if (chat != null)
                             {
-                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30, 30);
+                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
                             }
                         }
                     }
@@ -593,7 +593,7 @@ namespace Unigram.Views
                         var user = message.GetSenderUser();
                         if (user != null)
                         {
-                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30, 30);
+                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
                         }
                     }
                 }

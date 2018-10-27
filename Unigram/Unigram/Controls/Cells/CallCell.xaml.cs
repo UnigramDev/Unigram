@@ -37,7 +37,7 @@ namespace Unigram.Controls.Cells
             DateLabel.Text = BindConvert.Current.DateExtended(call.Message.Date);
             TypeLabel.Text = call.DisplayType;
 
-            Photo.Source = PlaceholderHelper.GetUser(protoService, call.Peer, 36, 36);
+            Photo.Source = PlaceholderHelper.GetUser(protoService, call.Peer, 36);
 
             VisualStateManager.GoToState(LayoutRoot, call.IsFailed ? "Missed" : "Default", false);
         }

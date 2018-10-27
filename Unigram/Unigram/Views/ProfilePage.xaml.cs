@@ -119,7 +119,7 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64, 64);
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
         }
 
         public void UpdateUser(Chat chat, User user, bool secret)
@@ -321,7 +321,7 @@ namespace Unigram.Views
             var chat = ViewModel.Chat;
             if (chat != null && chat.UpdateFile(file))
             {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 64, 64);
+                Photo.Source = PlaceholderHelper.GetChat(null, chat, 64);
             }
 
             for (int i = 0; i < ScrollingHost.Items.Count; i++)
@@ -345,7 +345,7 @@ namespace Unigram.Views
                     var content = container.ContentTemplateRoot as Grid;
 
                     var photo = content.Children[0] as ProfilePicture;
-                    photo.Source = PlaceholderHelper.GetUser(null, user, 36, 36);
+                    photo.Source = PlaceholderHelper.GetUser(null, user, 36);
                 }
             }
         }
@@ -704,7 +704,7 @@ namespace Unigram.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)

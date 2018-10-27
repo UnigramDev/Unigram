@@ -38,7 +38,7 @@ namespace Unigram.Views.Settings
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)

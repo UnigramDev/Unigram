@@ -295,7 +295,7 @@ namespace Unigram.Views
                         var content = container.ContentTemplateRoot as Grid;
 
                         var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetUser(null, user, 36, 36);
+                        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
                     }
                 }
 
@@ -1456,11 +1456,11 @@ namespace Unigram.Views
                     var photo = content.Children[0] as ProfilePicture;
                     if (result.Chat != null)
                     {
-                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, result.Chat, 36, 36);
+                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, result.Chat, 36);
                     }
                     else if (result.User != null)
                     {
-                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, result.User, 36, 36);
+                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, result.User, 36);
                     }
                 }
 
@@ -1509,7 +1509,7 @@ namespace Unigram.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -1606,7 +1606,7 @@ namespace Unigram.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -1632,16 +1632,8 @@ namespace Unigram.Views
             var photo = grid.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
-            {
-                photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
-                title.Text = Strings.Resources.SavedMessages;
-            }
-            else
-            {
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48, 48);
-                title.Text = ViewModel.ProtoService.GetTitle(chat, true);
-            }
+            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48);
+            title.Text = ViewModel.ProtoService.GetTitle(chat, true);
 
             var badge = grid.Children[1] as Border;
             var text = badge.Child as TextBlock;

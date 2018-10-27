@@ -73,7 +73,7 @@ namespace Unigram.Views.BasicGroups
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64, 64);
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
         }
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)

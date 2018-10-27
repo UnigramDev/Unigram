@@ -283,7 +283,7 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64, 64);
+            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
             Title.Text = user.GetFullName();
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
@@ -331,7 +331,7 @@ namespace Unigram.Views
 
             if (user.UpdateFile(file))
             {
-                Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64, 64);
+                Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
             }
         }
 
