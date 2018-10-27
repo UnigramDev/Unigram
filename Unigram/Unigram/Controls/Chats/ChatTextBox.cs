@@ -110,18 +110,18 @@ namespace Unigram.Controls.Chats
 
             flyout.Items.Clear();
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
-            {
-                var sub = new MenuFlyoutItem();
-                sub.Text = "Proofing";
-                sub.Click += (s, args) =>
-                {
-                    proofing.ShowAt(this);
-                };
+            //if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
+            //{
+            //    var sub = new MenuFlyoutItem();
+            //    sub.Text = "Proofing";
+            //    sub.Click += (s, args) =>
+            //    {
+            //        proofing.ShowAt(this);
+            //    };
 
-                flyout.Items.Add(sub);
-                flyout.Items.Add(new MenuFlyoutSeparator());
-            }
+            //    flyout.Items.Add(sub);
+            //    flyout.Items.Add(new MenuFlyoutSeparator());
+            //}
 
             var selection = Document.Selection;
             var format = Document.Selection.CharacterFormat;
@@ -348,10 +348,7 @@ namespace Unigram.Controls.Chats
 
             if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
             {
-                var accelerator = new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, ScopeOwner = this };
-                accelerator.Invoked += FlyoutAccelerator_Invoked;
-
-                flyoutItem.KeyboardAccelerators.Add(accelerator);
+                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value });
             }
 
             flyout.Add(flyoutItem);
