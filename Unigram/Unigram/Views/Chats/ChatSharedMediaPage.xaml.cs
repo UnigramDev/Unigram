@@ -269,8 +269,10 @@ namespace Unigram.Views.Chats
                 linkCell.UpdateMessage(message, ViewModel.ProtoService, ViewModel.NavigationService);
             }
 
-            var element = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
-            element.Tag = message;
+            if (args.ItemContainer.ContentTemplateRoot is FrameworkElement element)
+            {
+                element.Tag = message;
+            }
         }
 
         public void UpdateFile(Telegram.Td.Api.File file)

@@ -31,12 +31,12 @@ namespace Unigram.Common
                 return;
             }
 
-            Register("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", new PushNotificationTrigger());
-            Register("NewInteractiveTask", null, new ToastNotificationActionTrigger());
+            Register("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", () => new PushNotificationTrigger());
+            Register("NewInteractiveTask", null, () => new ToastNotificationActionTrigger());
             //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
         }
 
-        private static bool Register(string name, string entryPoint, IBackgroundTrigger trigger, Action onCompleted = null)
+        private static bool Register(string name, string entryPoint, Func<IBackgroundTrigger> trigger, Action onCompleted = null)
         {
             //var access = await BackgroundExecutionManager.RequestAccessAsync();
             //if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
@@ -62,7 +62,7 @@ namespace Unigram.Common
                     builder.TaskEntryPoint = entryPoint;
                 }
 
-                builder.SetTrigger(trigger);
+                builder.SetTrigger(trigger());
 
                 var registration = builder.Register();
                 if (onCompleted != null)

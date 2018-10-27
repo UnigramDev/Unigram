@@ -444,28 +444,6 @@ namespace Unigram.Services
             if (args.NotificationType == PushNotificationType.Raw)
             {
                 args.Cancel = true;
-                return;
-
-                if (JsonValue.TryParse(args.RawNotification.Content, out JsonValue node))
-                {
-                    var notification = node.GetObject();
-                    var data = notification.GetNamedObject("data");
-
-                    if (data.ContainsKey("loc_key"))
-                    {
-                        var muted = data.GetNamedString("mute", "0") == "1";
-                        if (muted)
-                        {
-                            return;
-                        }
-
-                        var custom = data.GetNamedObject("custom", null);
-                        if (custom == null)
-                        {
-                            return;
-                        }
-                    }
-                }
             }
         }
 
