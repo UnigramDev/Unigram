@@ -168,7 +168,7 @@ namespace Unigram.Common
 
         public static ImageSource GetChat(IProtoService protoService, Chat chat, int side)
         {
-            if (chat.Type is ChatTypePrivate privata && protoService != null && protoService.IsChatSavedMessages(chat))
+            if (chat.Type is ChatTypePrivate privata && protoService != null && protoService.IsSavedMessages(chat))
             {
                 return GetSavedMessages(privata.UserId, side);
             }

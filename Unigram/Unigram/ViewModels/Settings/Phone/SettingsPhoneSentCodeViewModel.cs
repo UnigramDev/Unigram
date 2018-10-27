@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.Settings
             var authState = GetAuthorizationState();
             if (authState is AuthenticationCodeInfo codeInfo)
             {
-                _phoneNumber = ProtoService.GetOption<OptionValueString>("x_phonenumber").Value;
+                _phoneNumber = CacheService.Options.GetValue<string>("x_phonenumber");
                 _codeInfo = codeInfo;
 
                 RaisePropertyChanged(() => CodeInfo);

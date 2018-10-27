@@ -107,14 +107,14 @@ namespace Unigram.ViewModels.SignIn
             var firstName = string.Empty;
             var lastName = string.Empty;
 
-            if (ProtoService.TryGetOption("x_firstname", out OptionValueString firstValue))
+            if (CacheService.Options.TryGetValue("x_firstname", out string firstValue))
             {
-                firstName = firstValue.Value;
+                firstName = firstValue;
             }
             
-            if (ProtoService.TryGetOption("x_lastname", out OptionValueString lastValue))
+            if (CacheService.Options.TryGetValue("x_lastname", out string lastValue))
             {
-                lastName = lastValue.Value;
+                lastName = lastValue;
             }
 
             var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode, firstName, lastName));

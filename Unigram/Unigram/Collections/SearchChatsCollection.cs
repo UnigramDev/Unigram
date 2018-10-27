@@ -77,7 +77,7 @@ namespace Unigram.Collections
                 {
                     if (_type != SearchChatsType.BasicAndSupergroups && _query.Length > 0 && Strings.Resources.SavedMessages.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
                     {
-                        var savedMessages = await _protoService.SendAsync(new CreatePrivateChat(_protoService.GetMyId(), false));
+                        var savedMessages = await _protoService.SendAsync(new CreatePrivateChat(_protoService.Options.MyId, false));
                         if (savedMessages is Chat chat)
                         {
                             _chats.Add(chat.Id);

@@ -138,7 +138,7 @@ namespace Unigram.Views
             DescriptionTitle.Visibility = Visibility.Visible;
             DescriptionLabel.Padding = new Thickness(12, 0, 12, 12);
 
-            if (user.Id == ViewModel.ProtoService.GetMyId())
+            if (user.Id == ViewModel.CacheService.Options.MyId)
             {
                 Notifications.Visibility = Visibility.Collapsed;
             }
@@ -153,7 +153,7 @@ namespace Unigram.Views
             }
             else
             {
-                if (user.Type is UserTypeBot || user.Id == ViewModel.ProtoService.GetMyId())
+                if (user.Type is UserTypeBot || user.Id == ViewModel.CacheService.Options.MyId)
                 {
                     UserStartSecret.Visibility = Visibility.Collapsed;
                 }
@@ -375,15 +375,15 @@ namespace Unigram.Views
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
                 var userId = chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0;
-                if (userId != ViewModel.ProtoService.GetMyId())
+                if (userId != ViewModel.CacheService.Options.MyId)
                 {
-                    var user = ViewModel.ProtoService.GetUser(userId);
+                    var user = ViewModel.CacheService.GetUser(userId);
                     if (user == null)
                     {
                         return;
                     }
 
-                    var fullInfo = ViewModel.ProtoService.GetUserFull(userId);
+                    var fullInfo = ViewModel.CacheService.GetUserFull(userId);
                     if (fullInfo == null)
                     {
                         return;
@@ -615,7 +615,7 @@ namespace Unigram.Views
                 return Visibility.Collapsed;
             }
 
-            if (member.UserId == ViewModel.ProtoService.GetMyId())
+            if (member.UserId == ViewModel.CacheService.Options.MyId)
             {
                 return Visibility.Collapsed;
             }
@@ -630,7 +630,7 @@ namespace Unigram.Views
                 return Visibility.Collapsed;
             }
 
-            if (member.UserId == ViewModel.ProtoService.GetMyId())
+            if (member.UserId == ViewModel.CacheService.Options.MyId)
             {
                 return Visibility.Collapsed;
             }
@@ -645,14 +645,14 @@ namespace Unigram.Views
                 return Visibility.Collapsed;
             }
 
-            if (member.UserId == ViewModel.ProtoService.GetMyId())
+            if (member.UserId == ViewModel.CacheService.Options.MyId)
             {
                 return Visibility.Collapsed;
             }
 
             if (chatType is ChatTypeBasicGroup && status is ChatMemberStatusAdministrator)
             {
-                return member.InviterUserId == ViewModel.ProtoService.GetMyId() ? Visibility.Visible : Visibility.Collapsed;
+                return member.InviterUserId == ViewModel.CacheService.Options.MyId ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanRestrictMembers ? Visibility.Visible : Visibility.Collapsed;

@@ -7,7 +7,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
-using Unigram.Strings;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -118,8 +117,6 @@ namespace Unigram.ViewModels.Chats
 
         protected override async void SendExecute(User user)
         {
-            var count = CacheService.Options.ForwardedMessagesCountMax;
-
             var chat = _chat;
             if (chat == null)
             {
@@ -137,7 +134,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            ProtoService.Send(new AddChatMember(chat.Id, user.Id, count));
+            ProtoService.Send(new AddChatMember(chat.Id, user.Id, CacheService.Options.ForwardedMessageCountMax));
 
             NavigationService.GoBack();
         }

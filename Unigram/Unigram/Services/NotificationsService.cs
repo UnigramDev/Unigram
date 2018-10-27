@@ -243,7 +243,7 @@ namespace Unigram.Services
             var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
             var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
 
-            var user = _protoService.GetUser(_protoService.GetMyId());
+            var user = _protoService.GetUser(_protoService.Options.MyId);
 
             Update(chat, () =>
             {
@@ -326,7 +326,7 @@ namespace Unigram.Services
 
                 var hero = GetPhoto(message);
 
-                var user = _protoService.GetUser(_protoService.GetMyId());
+                var user = _protoService.GetUser(_protoService.Options.MyId);
 
                 Update(chat, () =>
                 {
@@ -396,7 +396,7 @@ namespace Unigram.Services
         {
             using (await _registrationLock.WaitAsync())
             {
-                var userId = _protoService.GetMyId();
+                var userId = _protoService.Options.MyId;
                 if (userId == 0)
                 {
                     return;

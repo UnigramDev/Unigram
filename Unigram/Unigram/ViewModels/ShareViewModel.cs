@@ -68,7 +68,7 @@ namespace Unigram.ViewModels
 
                 if (_searchType != SearchChatsType.BasicAndSupergroups)
                 {
-                    var myId = ProtoService.GetMyId();
+                    var myId = CacheService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
                     if (self == null)
                     {

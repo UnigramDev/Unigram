@@ -343,7 +343,7 @@ namespace Unigram.Controls.Messages
                     var supergroup = chat.Type as ChatTypeSupergroup;
                     if (supergroup != null && supergroup.IsChannel)
                     {
-                        if (singleUserId == message.ProtoService.GetMyId())
+                        if (singleUserId == message.ProtoService.Options.MyId)
                         {
                             content = Strings.Resources.ChannelJoined;
                         }
@@ -356,7 +356,7 @@ namespace Unigram.Controls.Messages
                     {
                         if (supergroup != null && !supergroup.IsChannel)
                         {
-                            if (singleUserId == message.ProtoService.GetMyId())
+                            if (singleUserId == message.ProtoService.Options.MyId)
                             {
                                 content = Strings.Resources.ChannelMegaJoined;
                             }
@@ -381,7 +381,7 @@ namespace Unigram.Controls.Messages
                     {
                         content = ReplaceWithLink(Strings.Resources.ActionYouAddUser, "un2", whoUser, ref entities);
                     }
-                    else if (singleUserId == message.ProtoService.GetMyId())
+                    else if (singleUserId == message.ProtoService.Options.MyId)
                     {
                         var chat = message.GetChat();
                         var supergroup = chat.Type as ChatTypeSupergroup;
@@ -506,7 +506,7 @@ namespace Unigram.Controls.Messages
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionYouKickUser, "un2", whoUser, ref entities);
                 }
-                else if (chatDeleteMember.UserId == message.ProtoService.GetMyId())
+                else if (chatDeleteMember.UserId == message.ProtoService.Options.MyId)
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionKickUserYou, "un1", fromUser, ref entities);
                 }
@@ -621,7 +621,7 @@ namespace Unigram.Controls.Messages
             var game = GetGame(message);
             if (game == null)
             {
-                if (message.SenderUserId == message.ProtoService.GetMyId())
+                if (message.SenderUserId == message.ProtoService.Options.MyId)
                 {
                     content = string.Format(Strings.Resources.ActionYouScored, Locale.Declension("Points", gameScore.Score));
                 }
@@ -632,7 +632,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                if (message.SenderUserId == message.ProtoService.GetMyId())
+                if (message.SenderUserId == message.ProtoService.Options.MyId)
                 {
                     content = string.Format(Strings.Resources.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
                 }

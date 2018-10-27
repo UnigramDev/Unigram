@@ -56,7 +56,7 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(ProtoService.GetMyId(), false));
+            var response = await ProtoService.SendAsync(new CreatePrivateChat(CacheService.Options.MyId, false));
             if (response is Chat chat)
             {
                 Chat = chat;

@@ -202,7 +202,7 @@ namespace Unigram.Views.Host
 
         private async void InitializeUser(MainViewModel viewModel)
         {
-            var user = viewModel.ProtoService.GetUser(viewModel.ProtoService.GetMyId());
+            var user = viewModel.CacheService.GetUser(viewModel.CacheService.Options.MyId);
             if (user == null)
             {
                 user = await viewModel.ProtoService.SendAsync(new GetMe()) as User;

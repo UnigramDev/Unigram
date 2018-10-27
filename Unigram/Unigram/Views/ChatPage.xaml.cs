@@ -701,7 +701,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.CacheService.Options.MyId)
             {
                 ViewModel.NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id);
             }
@@ -1052,7 +1052,7 @@ namespace Unigram.Views
             {
                 CreateFlyoutItem(ref flyout, ViewModel.ReportCommand, Strings.Resources.ReportChat);
             }
-            if (user != null && user.Id != ViewModel.ProtoService.GetMyId())
+            if (user != null && user.Id != ViewModel.CacheService.Options.MyId)
             {
                 if (user.OutgoingLink is LinkStateNone)
                 {
@@ -1079,7 +1079,7 @@ namespace Unigram.Views
             {
                 CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Resources.DeleteAndExit);
             }
-            if ((user != null && user.Id != ViewModel.ProtoService.GetMyId()) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
+            if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
                 CreateFlyoutItem(ref flyout, chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.MuteNotifications : Strings.Resources.UnmuteNotifications);
             }
@@ -1337,7 +1337,7 @@ namespace Unigram.Views
                 return Visibility.Collapsed;
             }
 
-            var myId = ViewModel.ProtoService.GetMyId();
+            var myId = ViewModel.CacheService.Options.MyId;
             return message.SenderUserId != myId ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -2412,7 +2412,7 @@ namespace Unigram.Views
 
         public void UpdateUserStatus(Chat chat, User user)
         {
-            if (ViewModel.CacheService.IsUserSavedMessages(user))
+            if (ViewModel.CacheService.IsSavedMessages(user))
             {
                 ViewModel.LastSeen = null;
             }

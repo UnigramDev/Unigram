@@ -287,15 +287,14 @@ namespace Unigram.Services
             var store = await UserDataAccountManager.RequestStoreAsync(UserDataAccountStoreAccessType.AppAccountsReadWrite);
 
             UserDataAccount userDataAccount = null;
-            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_user_data_account");
-            if (id != null)
+            if (_cacheService.Options.TryGetValue("x_user_data_account", out string id))
             {
-                userDataAccount = await store.GetAccountAsync(id.Value);
+                userDataAccount = await store.GetAccountAsync(id);
             }
             
             if (userDataAccount == null)
             {
-                userDataAccount = await store.CreateAccountAsync($"{_cacheService.GetMyId()}");
+                userDataAccount = await store.CreateAccountAsync($"{_cacheService.Options.MyId}");
                 await _protoService.SendAsync(new Telegram.Td.Api.SetOption("x_user_data_account", new Telegram.Td.Api.OptionValueString(userDataAccount.Id)));
             }
 
@@ -304,14 +303,13 @@ namespace Unigram.Services
 
         private async Task<ContactList> GetContactListAsync(UserDataAccount userDataAccount, ContactStore store)
         {
-            var user = _cacheService.GetUser(_cacheService.GetMyId());
+            var user = _cacheService.GetUser(_cacheService.Options.MyId);
             var displayName = user?.GetFullName() ?? "Unigram";
 
             ContactList contactList = null;
-            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_contact_list");
-            if (id != null)
+            if (_cacheService.Options.TryGetValue<string>("x_contact_list", out string id))
             {
-                contactList = await store.GetContactListAsync(id.Value);
+                contactList = await store.GetContactListAsync(id);
             }
             
             if (contactList == null)
@@ -336,10 +334,9 @@ namespace Unigram.Services
             }
 
             ContactAnnotationList contactList = null;
-            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_annotation_list");
-            if (id != null)
+            if (_cacheService.Options.TryGetValue("x_annotation_list", out string id))
             {
-                contactList = await store.GetAnnotationListAsync(id.Value);
+                contactList = await store.GetAnnotationListAsync(id);
             }
             
             if (contactList == null)

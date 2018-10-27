@@ -30,10 +30,6 @@ namespace Unigram.Services
     {
         int UserId { get; }
 
-        int GetMyId();
-        T GetOption<T>(string key) where T : OptionValue;
-        bool TryGetOption<T>(string key, out T value) where T : OptionValue;
-
         IOptionsService Options { get; }
 
         AuthorizationState GetAuthorizationState();
@@ -47,8 +43,8 @@ namespace Unigram.Services
 
         IDictionary<int, ChatAction> GetChatActions(long id);
 
-        bool IsUserSavedMessages(User user);
-        bool IsChatSavedMessages(Chat chat);
+        bool IsSavedMessages(User user);
+        bool IsSavedMessages(Chat chat);
         bool IsChatSponsored(Chat chat);
 
         bool CanPostMessages(Chat chat);
@@ -90,10 +86,8 @@ namespace Unigram.Services
         private readonly int _session;
         private readonly IDeviceInfoService _deviceInfoService;
         private readonly ISettingsService _settings;
-        private readonly IOptionsService _optionsService;
+        private readonly IOptionsService _options;
         private readonly IEventAggregator _aggregator;
-
-        private readonly Dictionary<string, object> _options = new Dictionary<string, object>();
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
         private readonly ConcurrentDictionary<long, Dictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, Dictionary<int, ChatAction>>();
@@ -124,7 +118,7 @@ namespace Unigram.Services
             _session = session;
             _deviceInfoService = deviceInfoService;
             _settings = settings;
-            _optionsService = new OptionsService(this, this, settings, aggregator);
+            _options = new OptionsService(this);
             _aggregator = aggregator;
 
             Initialize(online);
@@ -406,51 +400,7 @@ namespace Unigram.Services
 
         public IOptionsService Options
         {
-            get { return _optionsService; }
-        }
-
-        public int GetMyId()
-        {
-            var option = GetOption<OptionValueInteger>("my_id");
-            if (option != null)
-            {
-                return option.Value;
-            }
-
-            return 0;
-        }
-
-        public T GetOption<T>(string key) where T : OptionValue
-        {
-            if (_options.TryGetValue(key, out object value))
-            {
-                if (value is OptionValueEmpty)
-                {
-                    return default(T);
-                }
-
-                return (T)value;
-            }
-
-            return default(T);
-        }
-
-        public bool TryGetOption<T>(string key, out T result) where T : OptionValue
-        {
-            if (_options.TryGetValue(key, out object value))
-            {
-                if (value is OptionValueEmpty)
-                {
-                    result = default(T);
-                    return false;
-                }
-
-                result = (T)value;
-                return true;
-            }
-
-            result = default(T);
-            return false;
+            get { return _options; }
         }
 
         public string GetTitle(Chat chat, bool tiny = false)
@@ -467,7 +417,7 @@ namespace Unigram.Services
                 {
                     return Strings.Resources.HiddenName;
                 }
-                else if (user.Id == GetMyId())
+                else if (user.Id == _options.MyId)
                 {
                     return Strings.Resources.SavedMessages;
                 }
@@ -500,9 +450,9 @@ namespace Unigram.Services
             return null;
         }
 
-        public bool IsUserSavedMessages(User user)
+        public bool IsSavedMessages(User user)
         {
-            if (user.Id == GetMyId())
+            if (user.Id == _options.MyId)
             {
                 return true;
             }
@@ -510,9 +460,9 @@ namespace Unigram.Services
             return false;
         }
 
-        public bool IsChatSavedMessages(Chat chat)
+        public bool IsSavedMessages(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == GetMyId())
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == _options.MyId)
             {
                 return true;
             }
@@ -1053,8 +1003,7 @@ namespace Unigram.Services
             }
             else if (update is UpdateOption updateOption)
             {
-                _optionsService.Handle(updateOption);
-                _options[updateOption.Name] = updateOption.Value;
+                _options.Handle(updateOption);
 
                 if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
                 {

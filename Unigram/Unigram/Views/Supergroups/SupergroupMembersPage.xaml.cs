@@ -140,7 +140,7 @@ namespace Unigram.Views.Supergroups
                 return Visibility.Collapsed;
             }
 
-            if (member.UserId == ViewModel.ProtoService.GetMyId())
+            if (member.UserId == ViewModel.CacheService.Options.MyId)
             {
                 return Visibility.Collapsed;
             }
@@ -155,7 +155,7 @@ namespace Unigram.Views.Supergroups
                 return Visibility.Collapsed;
             }
 
-            if (member.UserId == ViewModel.ProtoService.GetMyId())
+            if (member.UserId == ViewModel.CacheService.Options.MyId)
             {
                 return Visibility.Collapsed;
             }

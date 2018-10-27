@@ -46,7 +46,7 @@ namespace Unigram.Services
         }
 
         public int Id => _id;
-        public int UserId => ProtoService.GetMyId();
+        public int UserId => ProtoService.Options.MyId;
 
         private int _unreadCount;
         public int UnreadCount

@@ -96,7 +96,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(new SearchPublicChat(text));
             if (response is Chat chat)
             {
-                if (chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.GetMyId())
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
                 {
                     IsLoading = false;
                     IsAvailable = true;

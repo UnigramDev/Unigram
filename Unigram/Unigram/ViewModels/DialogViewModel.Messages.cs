@@ -576,7 +576,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var myId = ProtoService.GetMyId();
+            var myId = CacheService.Options.MyId;
             var messages = SelectedItems.Where(x => x.SenderUserId != myId).OrderBy(x => x.Id).Select(x => x.Id).ToList();
             if (messages.Count < 1)
             {
@@ -648,7 +648,7 @@ namespace Unigram.ViewModels
                 return false;
             }
 
-            var myId = ProtoService.GetMyId();
+            var myId = CacheService.Options.MyId;
             return chat.CanBeReported && SelectedItems.Count > 0 && SelectedItems.All(x => x.SenderUserId != myId);
         }
 

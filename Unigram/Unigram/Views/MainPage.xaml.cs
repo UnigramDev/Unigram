@@ -994,7 +994,7 @@ namespace Unigram.Views
 
         private Visibility DialogMark_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsChatSavedMessages(chat))
+            if (ViewModel.CacheService.IsSavedMessages(chat))
             {
                 return Visibility.Collapsed;
             }
@@ -1022,7 +1022,7 @@ namespace Unigram.Views
 
         private Visibility DialogNotify_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsChatSavedMessages(chat))
+            if (ViewModel.CacheService.IsSavedMessages(chat))
             {
                 return Visibility.Collapsed;
             }
@@ -1698,7 +1698,7 @@ namespace Unigram.Views
             }
             else if (destination == RootDestination.SavedMessages)
             {
-                var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.ProtoService.GetMyId(), false));
+                var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));
                 if (response is Chat chat)
                 {
                     MasterDetail.NavigationService.NavigateToChat(chat);
