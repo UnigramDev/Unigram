@@ -1245,6 +1245,11 @@ namespace Unigram.ViewModels
                 {
                     _hasMore = false;
 
+                    if (_filter2 == null || _filter2 is ChatMembersFilterMembers)
+                    {
+                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
+                    }
+
                     return members.Members;
                 }
             }
@@ -1258,9 +1263,9 @@ namespace Unigram.ViewModels
                         _hasMore = false;
                     }
 
-                    if (_filter == null && members.TotalCount <= 200)
+                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && members.TotalCount <= 200)
                     {
-                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
+                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
                     }
 
                     return members.Members;
