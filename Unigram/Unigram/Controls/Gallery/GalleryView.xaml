@@ -245,18 +245,28 @@
             <Grid>
                 <Border x:Name="Layer" Margin="0,-32,0,0" Background="Black" Grid.RowSpan="3"/>
 
-                <Grid x:Name="LayoutRoot">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>
+                <ScrollViewer x:Name="ScrollingHost"
+                              VerticalScrollMode="Disabled"
+                              VerticalScrollBarVisibility="Disabled"
+                              HorizontalScrollMode="Auto"
+                              HorizontalScrollBarVisibility="Hidden"
+                              HorizontalSnapPointsType="MandatorySingle"
+                              HorizontalSnapPointsAlignment="Near"
+                              HorizontalContentAlignment="Center"
+                              ViewChanged="ScrollingHost_ViewChanged">
+                    <local:GalleryPanel x:Name="LayoutRoot" HorizontalSnapPointsChanged="LayoutRoot_HorizontalSnapPointsChanged">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>
 
-                    <local:GalleryContentView x:Name="Element2" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested"/>
-                    <local:GalleryContentView x:Name="Element0" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
-                    <local:GalleryContentView x:Name="Element1" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
-                </Grid>
+                        <local:GalleryContentView x:Name="Element2" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested"/>
+                        <local:GalleryContentView x:Name="Element0" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
+                        <local:GalleryContentView x:Name="Element1" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
+                    </local:GalleryPanel>
+                </ScrollViewer>
             </Grid>
         </local:GalleryTransportControls.Content>
         <local:GalleryTransportControls.Header>
@@ -340,6 +350,8 @@
                 <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                            Style="{StaticResource BodyTextBlockStyle}"
+                           TextTrimming="CharacterEllipsis"
+                           MaxLines="5"
                            Margin="12,8"
                            Grid.ColumnSpan="3"/>
 

@@ -38,7 +38,7 @@ namespace Unigram.Controls.Gallery
 
         private void Switch_Click(object sender, RoutedEventArgs e)
         {
-            Switch?.Invoke(this, sender == PreviousButtonHorizontal ? -1 : 1);
+            Switch?.Invoke(this, sender == PreviousButtonHorizontal ? 0 : 2);
         }
 
         #region Header

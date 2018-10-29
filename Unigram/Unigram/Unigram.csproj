@@ -190,6 +190,7 @@
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
       <DependentUpon>GalleryContentView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Gallery\GalleryPanel.cs" />
     <Compile Include="Controls\Gallery\GalleryTransportControls.cs" />
     <Compile Include="Controls\Gallery\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
