@@ -348,7 +348,7 @@ namespace Unigram.Controls.Chats
 
             if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value });
+                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
 
             flyout.Add(flyoutItem);
@@ -445,7 +445,7 @@ namespace Unigram.Controls.Chats
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
             // we have to handle the pasting operation manually to allow plaintext only.
             var package = Clipboard.GetContent();
-            if (package.Contains(StandardDataFormats.Bitmap))
+            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
             {
                 if (e != null)
                 {
@@ -478,18 +478,18 @@ namespace Unigram.Controls.Chats
                     media.Add(photo);
                 }
 
-                if (package.Contains(StandardDataFormats.Text))
+                if (package.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
                     media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
                 }
 
                 ViewModel.SendMediaExecute(media, media[0]);
             }
-            else if (package.Contains(StandardDataFormats.WebLink))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
             {
 
             }
-            else if (package.Contains(StandardDataFormats.StorageItems))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
                 if (e != null)
                 {
@@ -527,7 +527,7 @@ namespace Unigram.Controls.Chats
                     ViewModel.SendFileExecute(files);
                 }
             }
-            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
             {
                 if (e != null)
                 {
@@ -572,11 +572,11 @@ namespace Unigram.Controls.Chats
 
                 SetText(text, entities);
             }
-            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-td-field-tags"))
             {
                 // This is Telegram Desktop mentions format
             }
-            else if (package.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
+            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
             {
                 if (e != null)
                 {

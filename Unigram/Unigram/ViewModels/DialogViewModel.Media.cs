@@ -765,7 +765,7 @@ namespace Unigram.ViewModels
         {
             var boh = string.Join(", ", package.AvailableFormats);
 
-            if (package.Contains(StandardDataFormats.Bitmap))
+            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
             {
                 var bitmap = await package.GetBitmapAsync();
                 var media = new ObservableCollection<StorageMedia>();
@@ -782,7 +782,7 @@ namespace Unigram.ViewModels
                     media.Add(await StoragePhoto.CreateAsync(cache, true));
                 }
 
-                if (package.Contains(StandardDataFormats.Text))
+                if (package.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
                     media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0])
                         .Substring(0, CacheService.Options.MessageCaptionLengthMax);
@@ -790,7 +790,7 @@ namespace Unigram.ViewModels
 
                 SendMediaExecute(media, media[0]);
             }
-            else if (package.Contains(StandardDataFormats.StorageItems))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await package.GetStorageItemsAsync();
                 var media = new ObservableCollection<StorageMedia>();
@@ -839,7 +839,7 @@ namespace Unigram.ViewModels
             //    gridLoading.Visibility = Visibility.Collapsed;
             //
             //}
-            else if (package.Contains(StandardDataFormats.Text))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.Text))
             {
                 var field = TextField;
                 if (field == null)
@@ -856,7 +856,7 @@ namespace Unigram.ViewModels
 
                 field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
             }
-            else if (package.Contains(StandardDataFormats.WebLink))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
             {
                 var field = TextField;
                 if (field == null)
