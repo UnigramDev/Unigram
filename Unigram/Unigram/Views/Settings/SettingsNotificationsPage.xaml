@@ -107,11 +107,11 @@
                     <TextBlock Text="{CustomResource NotificationsOther}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IncludeMutedChats, Mode=TwoWay}"
-                        Header="Include muted chats"
+                        Header="{CustomResource BadgeNumberMutedChats}"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.CountUnreadMessages, Mode=TwoWay}"
-                        Header="Count unread messages"
+                        Header="{CustomResource BadgeNumberUnread}"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <TextBlock Text="{x:Bind ConvertCountInfo(ViewModel.CountUnreadMessages),Mode=OneWay}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
