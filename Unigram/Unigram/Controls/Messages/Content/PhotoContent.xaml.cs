@@ -166,6 +166,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 return true;
             }
+            else if (content is MessageGame game)
+            {
+                return game.Game.Photo != null;
+            }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
                 return text.WebPage.IsPhoto();

@@ -427,7 +427,7 @@ namespace Unigram.ViewModels
         {
             var webPage = message.Content is MessageText text ? text.WebPage : null;
 
-            if (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null))
+            if (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null))
             {
                 Delegate?.PlayMessage(message, target);
             }

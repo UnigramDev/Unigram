@@ -150,6 +150,10 @@ namespace Unigram.Controls.Messages.Content
             {
                 return true;
             }
+            else if (content is MessageGame game)
+            {
+                return game.Game.Animation != null;
+            }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
                 return text.WebPage.Animation != null;

@@ -269,7 +269,7 @@ namespace Unigram.Views
                     }
                 }
             }
-            else if (ViewModel.Settings.IsAutoPlayEnabled && (message.Content is MessageAnimation || text?.WebPage != null && text.WebPage.Animation != null))
+            else if (ViewModel.Settings.IsAutoPlayEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
             {
                 if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
                 {
