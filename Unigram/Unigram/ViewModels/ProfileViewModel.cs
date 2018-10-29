@@ -60,7 +60,7 @@ namespace Unigram.ViewModels
             _voipService = voipService;
 
             SendMessageCommand = new RelayCommand(SendMessageExecute);
-            MediaCommand = new RelayCommand(MediaExecute);
+            MediaCommand = new RelayCommand<int>(MediaExecute);
             CommonChatsCommand = new RelayCommand(CommonChatsExecute);
             SystemCallCommand = new RelayCommand(SystemCallExecute);
             BlockCommand = new RelayCommand(BlockExecute);
@@ -98,11 +98,11 @@ namespace Unigram.ViewModels
             set { Set(ref _chat, value); }
         }
 
-        private int _sharedMedia;
-        public int SharedMedia
+        private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0 };
+        public int[] SharedCount
         {
-            get { return _sharedMedia; }
-            set { Set(ref _sharedMedia, value); }
+            get { return _sharedCount; }
+            set { Set(ref _sharedCount, value); }
         }
 
         protected ObservableCollection<ChatMember> _members;
@@ -194,15 +194,34 @@ namespace Unigram.ViewModels
                 }
             }
 
-            ProtoService.Send(new SearchChatMessages(chat.Id, string.Empty, 0, 0, 0, 1, new SearchMessagesFilterPhotoAndVideo()), result =>
-            {
-                if (result is Messages messages)
-                {
-                    BeginOnUIThread(() => SharedMedia = messages.TotalCount);
-                }
-            });
+            UpdateSharedCount(chat);
 
             return Task.CompletedTask;
+        }
+
+        private void UpdateSharedCount(Chat chat)
+        {
+            var filters = new SearchMessagesFilter[]
+            {
+                new SearchMessagesFilterPhotoAndVideo(),
+                new SearchMessagesFilterDocument(),
+                new SearchMessagesFilterUrl(),
+                new SearchMessagesFilterAudio(),
+                new SearchMessagesFilterVoiceNote()
+            };
+
+            for (int i = 0; i < filters.Length; i++)
+            {
+                int index = i + 0;
+                ProtoService.Send(new SearchChatMessages(chat.Id, string.Empty, 0, 0, 0, 1, filters[index]), result =>
+                {
+                    if (result is Messages messages)
+                    {
+                        SharedCount[index] = messages.TotalCount;
+                        BeginOnUIThread(() => RaisePropertyChanged(() => SharedCount));
+                    }
+                });
+            }
         }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
@@ -366,8 +385,8 @@ namespace Unigram.ViewModels
             NavigationService.NavigateToChat(chat);
         }
 
-        public RelayCommand MediaCommand { get; }
-        private void MediaExecute()
+        public RelayCommand<int> MediaCommand { get; }
+        private void MediaExecute(int selectedIndex)
         {
             var chat = _chat;
             if (chat == null)
@@ -375,7 +394,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id);
+            NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id, new Dictionary<string, object> { { "selectedIndex", selectedIndex } });
         }
 
         public RelayCommand CommonChatsCommand { get; }

@@ -52,6 +52,7 @@
 
             <Pivot x:Name="ScrollingHost"
                    SelectionChanged="ScrollingHost_SelectionChanged"
+                   SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                    IsLocked="{x:Bind ConvertSelectionMode(ViewModel.SelectionMode), Mode=OneWay}"
                    Style="{StaticResource HeaderlessPivotStyle}"
                    Grid.Row="1">

@@ -41,6 +41,11 @@ namespace Unigram.ViewModels.Chats
         {
             var chatId = (long)parameter;
 
+            if (state.TryGet("selectedIndex", out int selectedIndex))
+            {
+                SelectedIndex = selectedIndex;
+            }
+
             //Peer = (TLInputPeerBase)parameter;
             //With = Peer is TLInputPeerUser ? (ITLDialogWith)CacheService.GetUser(Peer.ToPeer().Id) : CacheService.GetChat(Peer.ToPeer().Id);
 
@@ -69,14 +74,15 @@ namespace Unigram.ViewModels.Chats
         private Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get { return _chat; }
+            set { Set(ref _chat, value); }
+        }
+
+        private int _selectedIndex;
+        public int SelectedIndex
+        {
+            get { return _selectedIndex; }
+            set { Set(ref _selectedIndex, value); }
         }
 
         public MediaCollection Media { get; private set; }
