@@ -68,6 +68,7 @@ namespace Unigram.ViewModels
             ReportCommand = new RelayCommand(ReportExecute);
             CallCommand = new RelayCommand(CallExecute);
             CopyPhoneCommand = new RelayCommand(CopyPhoneExecute);
+            CopyDescriptionCommand = new RelayCommand(CopyDescriptionExecute);
             CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
             AddCommand = new RelayCommand(AddExecute);
             EditCommand = new RelayCommand(EditExecute);
@@ -562,7 +563,7 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand CopyPhoneCommand { get; }
-        private async void CopyPhoneExecute()
+        private void CopyPhoneExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -579,12 +580,45 @@ namespace Unigram.ViewModels
             var dataPackage = new DataPackage();
             dataPackage.SetText($"+{user.PhoneNumber}");
             ClipboardEx.TrySetContent(dataPackage);
+        }
 
-            await TLMessageDialog.ShowAsync(Strings.Resources.PhoneCopied, Strings.Resources.AppName, Strings.Resources.OK);
+        public RelayCommand CopyDescriptionCommand { get; }
+        private void CopyDescriptionExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup super)
+            {
+                var supergroup = CacheService.GetSupergroupFull(super.SupergroupId);
+                if (supergroup == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText($"@{supergroup.Description}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+            else
+            {
+                var user = CacheService.GetUserFull(chat);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText($"@{user.Bio}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
         }
 
         public RelayCommand CopyUsernameCommand { get; }
-        private async void CopyUsernameExecute()
+        private void CopyUsernameExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -616,8 +650,6 @@ namespace Unigram.ViewModels
                 dataPackage.SetText($"@{user.Username}");
                 ClipboardEx.TrySetContent(dataPackage);
             }
-
-            await TLMessageDialog.ShowAsync(Strings.Resources.TextCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
 
         public RelayCommand SecretChatCommand { get; }

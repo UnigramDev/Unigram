@@ -43,6 +43,12 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(this);
 
+            if (ApiInfo.CanAddContextRequestedEvent)
+            {
+                DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
+                DescriptionPanel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Description_ContextRequested), true);
+            }
+
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
@@ -360,6 +366,29 @@ namespace Unigram.Views
         private void About_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void Description_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = FlyoutBase.GetAttachedFlyout(sender as FrameworkElement) as MenuFlyout;
+            if (flyout == null)
+            {
+                return;
+            }
+
+            if (args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                flyout.ShowAt(sender, point);
+            }
+            else
+            {
+                flyout.ShowAt(sender as FrameworkElement);
+            }
         }
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
