@@ -179,6 +179,8 @@ namespace Unigram.Views
             _textShadowVisual = Shadow.Attach(Separator, 20, 0.25f);
             _textShadowVisual.IsVisible = false;
 
+            return;
+
             if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Input.FocusManager", "GettingFocus"))
             {
                 FocusManager.GettingFocus += (s, args) =>
@@ -2446,10 +2448,19 @@ namespace Unigram.Views
         {
             ViewModel.ShowPinnedMessage(chat, null);
 
-            ShowArea();
+            if (group.Status is ChatMemberStatusLeft)
+            {
+                ShowAction(Strings.Resources.DeleteThisGroup, true);
 
-            TextField.PlaceholderText = Strings.Resources.TypeMessage;
-            ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
+                ViewModel.LastSeen = Strings.Resources.YouLeft;
+            }
+            else
+            {
+                ShowArea();
+
+                TextField.PlaceholderText = Strings.Resources.TypeMessage;
+                ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
+            }
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -2477,7 +2488,7 @@ namespace Unigram.Views
             }
             else
             {
-                ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
+                ViewModel.LastSeen = Locale.Declension("Members", fullInfo.Members.Count);
             }
 
             ViewModel.BotCommands = commands;
@@ -2492,13 +2503,17 @@ namespace Unigram.Views
 
             if (group.IsChannel)
             {
-                if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && group.Username.Length > 0) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
                 }
                 else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages)
                 {
                     ShowArea();
+                }
+                else if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
+                {
+                    ShowAction(Strings.Resources.DeleteChat, true);
                 }
                 else
                 {
@@ -2507,22 +2522,22 @@ namespace Unigram.Views
             }
             else
             {
-                if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && group.Username.Length > 0) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
                 }
-                else if (group.Status is ChatMemberStatusRestricted restricted && !restricted.CanSendMessages)
+                else if (group.Status is ChatMemberStatusRestricted restrictedSend && !restrictedSend.CanSendMessages)
                 {
-                    if (restricted.IsForever())
+                    if (restrictedSend.IsForever())
                     {
                         ShowAction(Strings.Resources.SendMessageRestrictedForever, false);
                     }
                     else
                     {
-                        ShowAction(string.Format(Strings.Resources.SendMessageRestricted, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), false);
+                        ShowAction(string.Format(Strings.Resources.SendMessageRestricted, BindConvert.Current.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
                     }
                 }
-                else if (group.Status is ChatMemberStatusBanned)
+                else if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
                 {
                     ShowAction(Strings.Resources.DeleteChat, true);
                 }
@@ -2571,7 +2586,7 @@ namespace Unigram.Views
 
             if (group.IsChannel || fullInfo.MemberCount > 200)
             {
-                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
             }
             else
             {
@@ -2715,7 +2730,14 @@ namespace Unigram.Views
             var chat = ViewModel.Chat;
             if (chat != null && chat.UpdateFile(file))
             {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, (int)Photo.Width);
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.CacheService.Options.MyId)
+                {
+                    Photo.Source = PlaceholderHelper.GetSavedMessages(privata.UserId, (int)Photo.Width);
+                }
+                else
+                {
+                    Photo.Source = PlaceholderHelper.GetChat(null, chat, (int)Photo.Width);
+                }
             }
 
             InlinePanel.UpdateFile(file);
