@@ -71,8 +71,8 @@ namespace Unigram.Controls.Gallery
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
             {
-                FlyoutCopy.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.C, ScopeOwner = this });
-                FlyoutSaveAs.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.S, ScopeOwner = this });
+                FlyoutCopy.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.C, IsEnabled = false });
+                FlyoutSaveAs.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.S, IsEnabled = false });
             }
 
             //CreateKeyboardAccelerator(Windows.System.VirtualKey.C);
@@ -218,19 +218,6 @@ namespace Unigram.Controls.Gallery
             }
         }
 
-        private void ItemsStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var width = 40 + 4 + 4;
-            var total = (e.NewSize.Width - width) / 2d;
-
-            //List.Padding = new Thickness(total, 0, total, 0);
-        }
-
-        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
         private void OnSourceChanged(MediaPlayer sender, object args)
         {
             OnSourceChanged();
@@ -362,7 +349,7 @@ namespace Unigram.Controls.Gallery
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             var container = GetContainer(0);
-            var root = container.Inner;
+            var root = container.Presenter;
 
             if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem)
             {
@@ -433,7 +420,7 @@ namespace Unigram.Controls.Gallery
 
                 Layer.Visibility = Visibility.Visible;
 
-                if (animation.TryStart(image.Inner))
+                if (animation.TryStart(image.Presenter))
                 {
                     animation.Completed += (s, args) =>
                     {
@@ -441,7 +428,7 @@ namespace Unigram.Controls.Gallery
 
                         if (item.IsVideo)
                         {
-                            Play(image.Inner, item, item.GetFile());
+                            Play(image.Presenter, item, item.GetFile());
                         }
                     };
 
@@ -453,7 +440,7 @@ namespace Unigram.Controls.Gallery
 
             if (item.IsVideo)
             {
-                Play(image.Inner, item, item.GetFile());
+                Play(image.Presenter, item, item.GetFile());
             }
         }
 
@@ -516,7 +503,7 @@ namespace Unigram.Controls.Gallery
                 //    Play(parent, item);
                 //}
 
-                Play(container.Inner, item, file);
+                Play(container.Presenter, item, file);
             }
             catch { }
         }
@@ -704,13 +691,27 @@ namespace Unigram.Controls.Gallery
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (e.IsIntermediate || LayoutRoot.SnapPointWidth == 0)
+            //if ((e.IsIntermediate && ScrollingHost.HorizontalOffset != 0) || LayoutRoot.SnapPointWidth == 0 || !e.IsIntermediate)
+            //{
+            //    return;
+            //}
+
+            if (!(ScrollingHost.HorizontalOffset == 0 || ScrollingHost.HorizontalOffset == ScrollingHost.ScrollableWidth))
             {
                 return;
             }
 
-            var previous = ViewModel.SelectedIndex > 0;
-            var next = ViewModel.SelectedIndex < ViewModel.Items.Count - 1;
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                // Page is most likey being closed, just reset the view
+                LayoutRoot_HorizontalSnapPointsChanged(LayoutRoot, null);
+                return;
+            }
+
+            var selected = viewModel.SelectedIndex;
+            var previous = selected > 0;
+            var next = selected < viewModel.Items.Count - 1;
 
 #if GALLERY_EXPERIMENTAL
             var difference = previous ? 0 : LayoutRoot.SnapPointWidth;
@@ -721,15 +722,16 @@ namespace Unigram.Controls.Gallery
             var index = (difference + ScrollingHost.HorizontalOffset) / LayoutRoot.SnapPointWidth;
             if (index == 0 && previous)
             {
-                ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex - 1];
+                viewModel.SelectedItem = viewModel.Items[selected - 1];
                 PrepareNext(-1);
             }
             else if (index == 2 && next)
             {
-                ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + 1];
+                viewModel.SelectedItem = viewModel.Items[selected + 1];
                 PrepareNext(+1);
             }
 
+            viewModel.LoadMore();
             Dispose();
 
 #if GALLERY_EXPERIMENTAL
@@ -741,7 +743,9 @@ namespace Unigram.Controls.Gallery
             else
 #endif
             {
+                ScrollingHost.HorizontalSnapPointsType = SnapPointsType.None;
                 ScrollingHost.ChangeView(LayoutRoot.SnapPointWidth, null, null, true);
+                ScrollingHost.HorizontalSnapPointsType = SnapPointsType.MandatorySingle;
             }
         }
 

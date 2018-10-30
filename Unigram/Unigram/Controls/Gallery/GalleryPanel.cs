@@ -14,10 +14,16 @@ namespace Unigram.Controls.Gallery
     {
         public GalleryPanel()
         {
+            Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
         }
 
         public float SnapPointWidth { get; set; }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            HorizontalSnapPointsChanged?.Invoke(this, new object());
+        }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {

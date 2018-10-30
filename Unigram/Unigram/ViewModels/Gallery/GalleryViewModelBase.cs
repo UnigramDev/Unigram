@@ -68,20 +68,7 @@ namespace Unigram.ViewModels.Gallery
                     return 0;
                 }
 
-                var index = Items.IndexOf(SelectedItem);
-                if (Items.Count > 1)
-                {
-                    if (index == Items.Count - 1)
-                    {
-                        LoadNext();
-                    }
-                    if (index == 0)
-                    {
-                        LoadPrevious();
-                    }
-                }
-
-                return index;
+                return Items.IndexOf(SelectedItem);
             }
         }
 
@@ -145,8 +132,23 @@ namespace Unigram.ViewModels.Gallery
 
         public virtual MvxObservableCollection<GalleryContent> Group { get; }
 
-        protected virtual void LoadPrevious() { }
+        public void LoadMore()
+        {
+            if (Items.Count > 1)
+            {
+                var index = SelectedIndex;
+                if (index == Items.Count - 1)
+                {
+                    LoadNext();
+                }
+                if (index == 0)
+                {
+                    LoadPrevious();
+                }
+            }
+        }
 
+        protected virtual void LoadPrevious() { }
         protected virtual void LoadNext() { }
 
         protected virtual void OnSelectedItemChanged(GalleryContent item) { }
