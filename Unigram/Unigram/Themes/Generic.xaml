@@ -1983,6 +1983,8 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="chats:ChatRecordButton">
@@ -2113,6 +2115,8 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphToggleButton">
@@ -2231,6 +2235,8 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphHyperlinkButton">
@@ -2454,6 +2460,8 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphButton">
