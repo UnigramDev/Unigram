@@ -708,10 +708,12 @@ namespace Unigram.Controls.Views
 
                 foreach (var item in media)
                 {
+                    SelectedItems.Add(item);
                     Items.Add(item);
                 }
 
                 SelectedItem = media[0];
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
@@ -743,10 +745,12 @@ namespace Unigram.Controls.Views
                 {
                     foreach (var item in media)
                     {
+                        SelectedItems.Add(item);
                         Items.Add(item);
                     }
 
                     SelectedItem = media[0];
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
                 }
                 else if (files.Count > 0)
                 {
