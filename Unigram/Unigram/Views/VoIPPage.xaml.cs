@@ -142,6 +142,11 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (Routing == null)
+            {
+                return;
+            }
+
             if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
             {
                 Routing.Visibility = Visibility.Visible;
