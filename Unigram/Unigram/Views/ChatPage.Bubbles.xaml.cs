@@ -363,13 +363,13 @@ namespace Unigram.Views
                             target = messageText.WebPage.Photo;
                         }
 
-                        media = panel.FindName("Media") as ContentControl;
-                        panel = media.ContentTemplateRoot as Panel;
+                        media = panel?.FindName("Media") as ContentControl;
+                        panel = media?.ContentTemplateRoot as Panel;
                     }
                     else if (target is MessageGame)
                     {
-                        media = panel.FindName("Media") as ContentControl;
-                        panel = media.ContentTemplateRoot as Panel;
+                        media = panel?.FindName("Media") as ContentControl;
+                        panel = media?.ContentTemplateRoot as Panel;
                     }
                     else if (target is MessageVideoNote messageVideoNote)
                     {
@@ -378,7 +378,7 @@ namespace Unigram.Views
 
                     if (target is VideoNote)
                     {
-                        panel = panel.FindName("Presenter") as Panel;
+                        panel = panel?.FindName("Presenter") as Panel;
                     }
 
                     if (panel is Grid final)
