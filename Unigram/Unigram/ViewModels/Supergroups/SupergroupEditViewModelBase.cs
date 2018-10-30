@@ -140,6 +140,12 @@ namespace Unigram.ViewModels.Supergroups
             return Task.CompletedTask;
         }
 
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            Aggregator.Unsubscribe(this);
+            return Task.CompletedTask;
+        }
+
         public void Handle(UpdateSupergroup update)
         {
             var chat = _chat;
