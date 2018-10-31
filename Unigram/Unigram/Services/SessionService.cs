@@ -42,7 +42,8 @@ namespace Unigram.Services
             aggregator.Subscribe(this);
 
             IsActive = selected;
-            UnreadCount = ProtoService.UnreadCount;
+            Handle(cacheService.UnreadChatCount);
+            Handle(cacheService.UnreadMessageCount);
         }
 
         public int Id => _id;

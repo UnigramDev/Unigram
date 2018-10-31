@@ -59,6 +59,7 @@ namespace Unigram.Services
         User GetUser(Chat chat);
         User GetUser(int id);
         UserFullInfo GetUserFull(int id);
+        UserFullInfo GetUserFull(Chat chat);
         IList<User> GetUsers(IList<int> ids);
 
         BasicGroup GetBasicGroup(int id);
@@ -76,8 +77,8 @@ namespace Unigram.Services
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
 
-        int UnreadCount { get; }
-        int UnreadUnmutedCount { get; }
+        UpdateUnreadChatCount UnreadChatCount { get; }
+        UpdateUnreadMessageCount UnreadMessageCount { get; }
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -357,10 +358,10 @@ namespace Unigram.Services
             }
         }
 
-#region Cache
+        #region Cache
 
-        public int UnreadCount { get; private set; }
-        public int UnreadUnmutedCount { get; private set; }
+        public UpdateUnreadChatCount UnreadChatCount { get; private set; } = new UpdateUnreadChatCount();
+        public UpdateUnreadMessageCount UnreadMessageCount { get; private set; } = new UpdateUnreadMessageCount();
 
         private bool TryGetChatForFileId(int fileId, out Chat chat)
         {
@@ -1042,10 +1043,13 @@ namespace Unigram.Services
             {
 
             }
+            else if (update is UpdateUnreadChatCount updateUnreadChatCount)
+            {
+                UnreadChatCount = updateUnreadChatCount;
+            }
             else if (update is UpdateUnreadMessageCount updateUnreadMessageCount)
             {
-                UnreadCount = updateUnreadMessageCount.UnreadCount;
-                UnreadUnmutedCount = updateUnreadMessageCount.UnreadUnmutedCount;
+                UnreadMessageCount = updateUnreadMessageCount;
             }
             else if (update is UpdateUser updateUser)
             {
