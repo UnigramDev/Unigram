@@ -104,8 +104,6 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
         <Setter Property="CornerRadius" Value="24" />
-        <Setter Property="ManipulationMode" Value="TranslateX,TranslateRailsX,System"/>
-        <Setter Property="AllowFocusOnInteraction" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
@@ -177,8 +175,6 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="CornerRadius" Value="24" />
         <Setter Property="RequestedTheme" Value="Dark" />
-        <Setter Property="ManipulationMode" Value="TranslateX,TranslateRailsX,System"/>
-        <Setter Property="AllowFocusOnInteraction" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
