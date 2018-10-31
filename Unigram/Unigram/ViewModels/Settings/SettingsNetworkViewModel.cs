@@ -92,8 +92,8 @@ namespace Unigram.ViewModels.Settings
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                //_statsService.ResetStats(Type);
-                //Refresh();
+                await ProtoService.SendAsync(new ResetNetworkStatistics());
+                await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
             }
         }
     }
