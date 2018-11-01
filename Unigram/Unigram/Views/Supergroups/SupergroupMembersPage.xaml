@@ -47,6 +47,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock
+                        x:Name="Title"
                         Text="{CustomResource ChannelSubscribers}"
                         Style="{StaticResource BaseTextBlockStyle}"
                         VerticalAlignment="Center"
@@ -99,22 +100,18 @@
                       Grid.Row="1">
                 <ListView.Header>
                     <StackPanel Margin="0,0,0,18">
-                        <controls:BadgeButton x:Name="AddNew"
+                        <controls:GlyphButton x:Name="AddNew"
                                               Visibility="Collapsed"
                                               Content="{CustomResource AddSubscriber}"
-                                              Command="{x:Bind ViewModel.AddCommand}"/>
-                        <Button x:Name="Invite"
-                                Command="{x:Bind ViewModel.InviteCommand}"
-                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                Style="{StaticResource HyperButtonStyle}"
-                                Visibility="Collapsed">
-                            <StackPanel Orientation="Horizontal" Margin="0,-8">
-                                <Border Width="36" Height="36" Margin="0,0,12,0">
-                                    <FontIcon Glyph="&#xE71B;" Margin="0,2,0,0"/>
-                                </Border>
-                                <TextBlock Text="{CustomResource ChannelInviteViaLink}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
+                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Style="{StaticResource TextGlyphButtonStyle}"
+                                              Glyph="&#xE8FA;"/>
+                        <controls:GlyphButton x:Name="Invite"
+                                              Visibility="Collapsed"
+                                              Content="{CustomResource ChannelInviteViaLink}"
+                                              Command="{x:Bind ViewModel.InviteCommand}"
+                                              Style="{StaticResource TextGlyphButtonStyle}"
+                                              Glyph="&#xE71B;"/>
                     </StackPanel>
                 </ListView.Header>
                 <ListView.ItemContainerStyle>
@@ -124,6 +121,7 @@
                 </ListView.ItemContainerStyle>
                 <ListView.Footer>
                     <TextBlock
+                        x:Name="Footer"
                         Text="{CustomResource ChannelMembersInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"

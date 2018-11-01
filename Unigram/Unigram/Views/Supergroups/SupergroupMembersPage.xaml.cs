@@ -242,12 +242,19 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        #region Binding
+        #region Delegate
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
+            Title.Text = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
+
+            AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;
+            Invite.Content = group.IsChannel ? Strings.Resources.ChannelInviteViaLink : Strings.Resources.InviteToGroupByLink;
+
             AddNew.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
             Invite.Visibility = string.IsNullOrEmpty(group.Username) && group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+
+            Footer.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }
