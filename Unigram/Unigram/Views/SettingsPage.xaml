@@ -10,75 +10,6 @@
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       mc:Ignorable="d">
 
-    <Page.Resources>
-        <Style x:Key="GlyphButtonStyle" TargetType="controls:GlyphButton">
-            <Setter Property="Background" Value="Transparent"/>
-            <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>-->
-            <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="12,0,0,0"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
-            <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-            <Setter Property="UseSystemFocusVisuals" Value="True"/>
-            <Setter Property="Width" Value="Auto"/>
-            <Setter Property="Height" Value="Auto"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:GlyphButton">
-                        <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="48"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    FontSize="16"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    Text="{TemplateBinding Glyph}"
-                                    FontFamily="{TemplateBinding FontFamily}"/>
-
-                                <ContentPresenter x:Name="ContentPresenter" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
-                            </Grid>
-                            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
-    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:ScrollViewerBackground
             Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
@@ -154,32 +85,32 @@
                     <controls:GlyphButton Content="{CustomResource NotificationsAndSounds}"
                                           Glyph="&#xEC42;"
                                           Click="Notifications_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource PrivacySettings}"
                                           Glyph="&#xE1F6;"
                                           Click="Privacy_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource DataSettings}"
                                           Glyph="&#xEE94;"
                                           Click="Data_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource StickersName}"
                                           Glyph="&#xE606;"
                                           Click="Stickers_Click"
                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="Appearance"
                                           Glyph="&#xE2B1;"
                                           Click="Appearance_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <!--<controls:GlyphButton Content="{CustomResource Language}"
                          Glyph="&#xE164;"
                          Click="Language_Click"
-                         Style="{StaticResource GlyphButtonStyle}"/>-->
+                         Style="{StaticResource TextGlyphButtonStyle}"/>-->
                     <controls:GlyphButton Content="{CustomResource PrivacyAdvanced}"
                                           Glyph="&#xEC7A;"
                                           Click="Advanced_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind ViewModel.HasPassportData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -187,18 +118,18 @@
                     <controls:GlyphButton Content="{CustomResource TelegramPassport}"
                                           Glyph="&#xE8C7;"
                                           Click="Passport_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                 </StackPanel>
                 
                 <StackPanel Margin="0,24,0,0">
                     <controls:GlyphButton Content="{CustomResource AskAQuestion}"
                                           Glyph="&#xED15;"
                                           Command="{x:Bind ViewModel.AskCommand}"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource TelegramFAQ}"
                                           Glyph="&#xE783;"
                                           Click="Questions_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <Grid>
                         <TextBlock
                             x:Name="Diagnostics"
