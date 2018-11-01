@@ -104,7 +104,7 @@
                 </StackPanel>
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource NotificationsOther}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource BadgeNumber}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IncludeMutedChats, Mode=TwoWay}"
                         Header="{CustomResource BadgeNumberMutedChats}"
