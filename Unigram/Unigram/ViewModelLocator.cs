@@ -176,6 +176,7 @@ namespace Unigram
                 builder.RegisterType<UserCreateViewModel>();
                 builder.RegisterType<SupergroupEventLogViewModel>();
                 builder.RegisterType<SupergroupEditViewModel>();// .SingleInstance();
+                builder.RegisterType<SupergroupEditTypeViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupEditStickerSetViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupEditAdministratorViewModel>();
                 builder.RegisterType<SupergroupEditRestrictedViewModel>();

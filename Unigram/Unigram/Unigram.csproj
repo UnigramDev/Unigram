@@ -588,6 +588,7 @@
     <Compile Include="ViewModels\Supergroups\SupergroupEditAdministratorViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditRestrictedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditStickerSetViewModel.cs" />
+    <Compile Include="ViewModels\Supergroups\SupergroupEditTypeViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEventLogViewModel.cs" />
@@ -815,6 +816,9 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditStickerSetPage.xaml.cs">
       <DependentUpon>SupergroupEditStickerSetPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Supergroups\SupergroupEditTypePage.xaml.cs">
+      <DependentUpon>SupergroupEditTypePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEventLogPage.Bubbles.cs">
       <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
@@ -2224,6 +2228,10 @@
     <Page Include="Views\Supergroups\SupergroupEditStickerSetPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Supergroups\SupergroupEditTypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Supergroups\SupergroupEventLogPage.xaml">
       <Generator>MSBuild:Compile</Generator>
