@@ -23,12 +23,19 @@
                   SelectionMode="None"
                   Grid.Row="1">
             <ListView.Header>
-                <StackPanel>
-                    <controls:BadgeButton x:Name="AddNew"
+                <StackPanel Margin="0,0,0,18">
+                    <controls:BadgeButton x:Name="EventLog"
+                                          Content="{CustomResource EventLog}"
+                                          Command="{x:Bind ViewModel.EventLogCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE81C;"/>
+
+                    <controls:GlyphButton x:Name="AddNew"
                                           Visibility="Collapsed"
                                           Content="{CustomResource ChannelAddAdmin}"
                                           Command="{x:Bind ViewModel.AddCommand}"
-                                          Margin="0,0,0,18"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"
+                                          Glyph="&#xE734;"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>

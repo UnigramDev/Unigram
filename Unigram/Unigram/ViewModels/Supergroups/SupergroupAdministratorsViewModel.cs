@@ -18,8 +18,21 @@ namespace Unigram.ViewModels.Supergroups
         public SupergroupAdministratorsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), null)
         {
+            EventLogCommand = new RelayCommand(EventLogExecute);
             AddCommand = new RelayCommand(AddExecute);
             ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
+        }
+
+        public RelayCommand EventLogCommand { get; }
+        private void EventLogExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(SupergroupEventLogPage), chat.Id);
         }
 
         public RelayCommand AddCommand { get; }
