@@ -187,7 +187,7 @@
                       SelectionMode="None"
                       Grid.Row="1">
                 <ListView.Header>
-                    <StackPanel Margin="0,0,0,24">
+                    <StackPanel>
                         <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -270,7 +270,37 @@
                                           Toggled="Notifications_Toggled"/>
                         </StackPanel>
 
-                        <StackPanel Margin="0,24,0,0">
+                        <StackPanel x:Name="ChannelMembersPanel" Visibility="Collapsed" Margin="0,24,0,0">
+                            <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                            <controls:BadgeButton x:Name="Members"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource ChannelSubscribers}"
+                                                  Command="{x:Bind ViewModel.MembersCommand}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  Glyph="&#xE902;"/>
+                            <controls:BadgeButton x:Name="Admins"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource ChannelAdministrators}"
+                                                  Command="{x:Bind ViewModel.AdminsCommand}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  Glyph="&#xE734;"/>
+                            <controls:BadgeButton x:Name="Restricted"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource ChannelRestrictedUsers}"
+                                                  Command="{x:Bind ViewModel.KickedCommand}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  Glyph="&#xE72E;"/>
+                            <controls:BadgeButton x:Name="Banned"
+                                                  Visibility="Collapsed"
+                                                  Content="{CustomResource ChannelBlockedUsers}"
+                                                  Command="{x:Bind ViewModel.BannedCommand}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  Glyph="&#xF140;"/>
+                        </StackPanel>
+
+                        <StackPanel Visibility="{x:Bind ConvertSharedCount(ViewModel.SharedCount[0], ViewModel.SharedCount[1], ViewModel.SharedCount[2], ViewModel.SharedCount[3], ViewModel.SharedCount[4]), Mode=OneWay}" Margin="0,24,0,0">
+                            <TextBlock Text="{CustomResource SharedContent}" Margin="12,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+
                             <controls:BadgeButton
                                 Command="{x:Bind ViewModel.MediaCommand}"
                                 Badge="{x:Bind ViewModel.SharedCount[0], Mode=OneWay}"
@@ -340,7 +370,7 @@
                                 Style="{StaticResource GlyphBadgeButtonStyle}"/>
                         </StackPanel>
 
-                        <StackPanel Margin="0,24,0,0">
+                        <StackPanel x:Name="MiscPanel" Margin="0,24,0,0">
                             <!--<controls:BadgeButton Content="{CustomResource SharedMedia}"
                                                   Command="{x:Bind ViewModel.MediaCommand}"
                                                   Badge="{x:Bind ViewModel.SharedMedia, Mode=OneWay}"/>-->
@@ -359,16 +389,12 @@
                                      </controls:BadgeButton.Badge>-->
                             </controls:BadgeButton>
 
-                            <!--<controls:BadgeButton x:Name="UserCommonChats"
-                                                  Visibility="Collapsed"
-                                                  Content="{CustomResource GroupsInCommon}"
-                                                  Command="{x:Bind ViewModel.CommonChatsCommand}"/>-->
-
-                            <controls:BadgeButton x:Name="UserStartSecret"
-                                                  Visibility="Collapsed"
-                                                  Content="{CustomResource StartEncryptedChat}"
-                                                  Command="{x:Bind ViewModel.SecretChatCommand}"
-                                                  Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
+                            <Button x:Name="UserStartSecret"
+                                    Visibility="Collapsed"
+                                    Content="{CustomResource StartEncryptedChat}"
+                                    Command="{x:Bind ViewModel.SecretChatCommand}"
+                                    Style="{StaticResource HyperButtonStyle}"
+                                    Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
 
                             <Button x:Name="GroupLeave"
                                     Visibility="Collapsed"
@@ -376,37 +402,17 @@
                                     Command="{x:Bind ViewModel.DeleteCommand}"
                                     Style="{StaticResource HyperButtonStyle}"
                                     Foreground="Red"/>
-                            <Button x:Name="GroupInvite"
-                                    Visibility="Collapsed"
-                                    Content="{CustomResource AddMember}"
-                                    Command="{x:Bind ViewModel.InviteCommand}"
-                                    Style="{StaticResource HyperButtonStyle}"
-                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                         </StackPanel>
 
-                        <StackPanel Margin="0,24,0,0">
-                            <Button x:Name="EventLog"
-                                    Visibility="Collapsed"
-                                    Content="{CustomResource EventLog}"
-                                    Command="{x:Bind ViewModel.AdminLogCommand}"
-                                    Style="{StaticResource HyperButtonStyle}"
-                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                            <controls:BadgeButton x:Name="Admins"
+                        <StackPanel x:Name="MembersPanel" Visibility="Collapsed" Margin="0,24,0,8">
+                            <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                            
+                            <controls:BadgeButton x:Name="GroupInvite"
                                                   Visibility="Collapsed"
-                                                  Content="{CustomResource ChannelAdministrators}"
-                                                  Command="{x:Bind ViewModel.AdminsCommand}"/>
-                            <controls:BadgeButton x:Name="Restricted"
-                                                  Visibility="Collapsed"
-                                                  Content="{CustomResource ChannelRestrictedUsers}"
-                                                  Command="{x:Bind ViewModel.KickedCommand}"/>
-                            <controls:BadgeButton x:Name="Banned"
-                                                  Visibility="Collapsed"
-                                                  Content="{CustomResource ChannelBlockedUsers}"
-                                                  Command="{x:Bind ViewModel.BannedCommand}"/>
-                            <controls:BadgeButton x:Name="Members"
-                                                  Visibility="Collapsed"
-                                                  Content="{CustomResource ChannelSubscribers}"
-                                                  Command="{x:Bind ViewModel.ParticipantsCommand}"/>
+                                                  Content="{CustomResource AddMember}"
+                                                  Command="{x:Bind ViewModel.InviteCommand}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  Glyph="&#xE8FA;"/>
                         </StackPanel>
                     </StackPanel>
                 </ListView.Header>

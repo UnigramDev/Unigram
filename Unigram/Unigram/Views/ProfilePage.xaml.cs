@@ -108,6 +108,8 @@ namespace Unigram.Views
             base.OnNavigatedTo(e);
         }
 
+        #region Delegate
+
         public void UpdateChat(Chat chat)
         {
             UpdateChatTitle(chat);
@@ -161,10 +163,12 @@ namespace Unigram.Views
             {
                 if (user.Type is UserTypeBot || user.Id == ViewModel.CacheService.Options.MyId)
                 {
+                    MiscPanel.Visibility = Visibility.Collapsed;
                     UserStartSecret.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
+                    MiscPanel.Visibility = Visibility.Visible;
                     UserStartSecret.Visibility = Visibility.Visible;
                 }
 
@@ -176,7 +180,8 @@ namespace Unigram.Views
             GroupLeave.Visibility = Visibility.Collapsed;
             GroupInvite.Visibility = Visibility.Collapsed;
 
-            EventLog.Visibility = Visibility.Collapsed;
+            ChannelMembersPanel.Visibility = Visibility.Collapsed;
+            MembersPanel.Visibility = Visibility.Collapsed;
             Admins.Visibility = Visibility.Collapsed;
             Banned.Visibility = Visibility.Collapsed;
             Restricted.Visibility = Visibility.Collapsed;
@@ -217,11 +222,13 @@ namespace Unigram.Views
                 SecretLifetime.Badge = Locale.FormatTtl(secretChat.Ttl);
                 //SecretIdenticon.Source = PlaceholderHelper.GetIdenticon(secretChat.KeyHash, 24);
 
+                MiscPanel.Visibility = Visibility.Visible;
                 SecretLifetime.Visibility = Visibility.Visible;
                 SecretHashKey.Visibility = Visibility.Visible;
             }
             else
             {
+                MiscPanel.Visibility = Visibility.Collapsed;
                 SecretLifetime.Visibility = Visibility.Collapsed;
                 SecretHashKey.Visibility = Visibility.Collapsed;
             }
@@ -234,6 +241,7 @@ namespace Unigram.Views
             Subtitle.Text = Locale.Declension("Members", group.MemberCount);
 
             GroupInvite.Visibility = group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || group.EveryoneIsAdministrator ? Visibility.Visible : Visibility.Collapsed;
+            MembersPanel.Margin = GroupInvite.Visibility == Visibility.Visible ? new Thickness(0, 24, 0, 0) : new Thickness(0, 24, 0, 8);
 
             // Unused:
             Verified.Visibility = Visibility.Collapsed;
@@ -245,12 +253,15 @@ namespace Unigram.Views
             UserCommonChats.Visibility = Visibility.Collapsed;
             UserStartSecret.Visibility = Visibility.Collapsed;
 
+            MiscPanel.Visibility = Visibility.Collapsed;
+
             SecretLifetime.Visibility = Visibility.Collapsed;
             SecretHashKey.Visibility = Visibility.Collapsed;
 
             GroupLeave.Visibility = Visibility.Collapsed;
 
-            EventLog.Visibility = Visibility.Collapsed;
+            ChannelMembersPanel.Visibility = Visibility.Collapsed;
+            MembersPanel.Visibility = Visibility.Visible;
             Admins.Visibility = Visibility.Collapsed;
             Banned.Visibility = Visibility.Collapsed;
             Restricted.Visibility = Visibility.Collapsed;
@@ -278,16 +289,24 @@ namespace Unigram.Views
 
             if (group.IsChannel && !(group.Status is ChatMemberStatusCreator) && !(group.Status is ChatMemberStatusLeft) && !(group.Status is ChatMemberStatusBanned))
             {
+                MiscPanel.Visibility = Visibility.Visible;
                 GroupLeave.Visibility = Visibility.Visible;
             }
             else
             {
+                MiscPanel.Visibility = Visibility.Collapsed;
                 GroupLeave.Visibility = Visibility.Collapsed;
             }
 
             GroupInvite.Visibility = !group.IsChannel && group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            MembersPanel.Margin = GroupInvite.Visibility == Visibility.Visible ? new Thickness(0, 24, 0, 0) : new Thickness(0, 24, 0, 8);
 
-            EventLog.Visibility = group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
+            ChannelMembersPanel.Visibility = group.IsChannel && (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator) ? Visibility.Visible : Visibility.Collapsed;
+            MembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+            Admins.Visibility = Visibility.Collapsed;
+            Banned.Visibility = Visibility.Collapsed;
+            Restricted.Visibility = Visibility.Collapsed;
+            Members.Visibility = Visibility.Collapsed;
 
             if (!group.IsChannel)
             {
@@ -355,6 +374,17 @@ namespace Unigram.Views
                 }
             }
         }
+
+        #endregion
+
+        #region Binding
+
+        private Visibility ConvertSharedCount(int a, int b, int c, int d, int e)
+        {
+            return a > 0 || b > 0 || c > 0 || d > 0 || e > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
 
         #region Context menu
 

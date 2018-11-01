@@ -85,11 +85,10 @@ namespace Unigram.ViewModels
             MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
 
+            MembersCommand = new RelayCommand(MembersExecute);
             AdminsCommand = new RelayCommand(AdminsExecute);
             BannedCommand = new RelayCommand(BannedExecute);
             KickedCommand = new RelayCommand(KickedExecute);
-            ParticipantsCommand = new RelayCommand(ParticipantsExecute);
-            AdminLogCommand = new RelayCommand(AdminLogExecute);
         }
 
         protected Chat _chat;
@@ -1063,8 +1062,8 @@ namespace Unigram.ViewModels
             NavigationService.Navigate(typeof(SupergroupRestrictedPage), chat.Id);
         }
 
-        public RelayCommand ParticipantsCommand { get; }
-        private void ParticipantsExecute()
+        public RelayCommand MembersCommand { get; }
+        private void MembersExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -1073,18 +1072,6 @@ namespace Unigram.ViewModels
             }
 
             NavigationService.Navigate(typeof(SupergroupMembersPage), chat.Id);
-        }
-
-        public RelayCommand AdminLogCommand { get; }
-        private void AdminLogExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            NavigationService.Navigate(typeof(SupergroupEventLogPage), chat.Id);
         }
 
         public virtual ChatMemberCollection CreateMembers(int supergroupId)
