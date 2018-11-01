@@ -689,63 +689,65 @@ namespace Unigram.Controls.Gallery
             ScrollingHost.HorizontalSnapPointsType = SnapPointsType.MandatorySingle;
         }
 
+        private bool _needFinal;
+
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            //if ((e.IsIntermediate && ScrollingHost.HorizontalOffset != 0) || LayoutRoot.SnapPointWidth == 0 || !e.IsIntermediate)
-            //{
-            //    return;
-            //}
-
-            if (!(ScrollingHost.HorizontalOffset == 0 || ScrollingHost.HorizontalOffset == ScrollingHost.ScrollableWidth))
+            // We want to update containers when the view has been scrolled to the start/end or when the change has ended
+            if (ScrollingHost.HorizontalOffset == 0 || ScrollingHost.HorizontalOffset == ScrollingHost.ScrollableWidth || (_needFinal && !e.IsIntermediate))
             {
-                return;
-            }
+                _needFinal = false;
 
-            var viewModel = ViewModel;
-            if (viewModel == null)
-            {
-                // Page is most likey being closed, just reset the view
-                LayoutRoot_HorizontalSnapPointsChanged(LayoutRoot, null);
-                return;
-            }
+                var viewModel = ViewModel;
+                if (viewModel == null)
+                {
+                    // Page is most likey being closed, just reset the view
+                    LayoutRoot_HorizontalSnapPointsChanged(LayoutRoot, null);
+                    return;
+                }
 
-            var selected = viewModel.SelectedIndex;
-            var previous = selected > 0;
-            var next = selected < viewModel.Items.Count - 1;
+                var selected = viewModel.SelectedIndex;
+                var previous = selected > 0;
+                var next = selected < viewModel.Items.Count - 1;
 
 #if GALLERY_EXPERIMENTAL
-            var difference = previous ? 0 : LayoutRoot.SnapPointWidth;
+                var difference = previous ? 0 : LayoutRoot.SnapPointWidth;
 #else
-            var difference = 0;
+                var difference = 0;
 #endif
 
-            var index = (difference + ScrollingHost.HorizontalOffset) / LayoutRoot.SnapPointWidth;
-            if (index == 0 && previous)
-            {
-                viewModel.SelectedItem = viewModel.Items[selected - 1];
-                PrepareNext(-1);
-            }
-            else if (index == 2 && next)
-            {
-                viewModel.SelectedItem = viewModel.Items[selected + 1];
-                PrepareNext(+1);
-            }
+                var index = (difference + ScrollingHost.HorizontalOffset) / LayoutRoot.SnapPointWidth;
+                if (index == 0 && previous)
+                {
+                    viewModel.SelectedItem = viewModel.Items[selected - 1];
+                    PrepareNext(-1);
+                }
+                else if (index == 2 && next)
+                {
+                    viewModel.SelectedItem = viewModel.Items[selected + 1];
+                    PrepareNext(+1);
+                }
 
-            viewModel.LoadMore();
-            Dispose();
+                viewModel.LoadMore();
+                Dispose();
 
 #if GALLERY_EXPERIMENTAL
-            if (ViewModel.SelectedIndex == 0 || !previous)
-            {
-                //ScrollingHost.ChangeView(index == 2 ? LayoutRoot.SnapPointWidth : 0, null, null, true);
-                ScrollingHost.ChangeView(0, null, null, true);
+                if (ViewModel.SelectedIndex == 0 || !previous)
+                {
+                    //ScrollingHost.ChangeView(index == 2 ? LayoutRoot.SnapPointWidth : 0, null, null, true);
+                    ScrollingHost.ChangeView(0, null, null, true);
+                }
+                else
+#endif
+                {
+                    ScrollingHost.HorizontalSnapPointsType = SnapPointsType.None;
+                    ScrollingHost.ChangeView(LayoutRoot.SnapPointWidth, null, null, true);
+                    ScrollingHost.HorizontalSnapPointsType = SnapPointsType.MandatorySingle;
+                }
             }
             else
-#endif
             {
-                ScrollingHost.HorizontalSnapPointsType = SnapPointsType.None;
-                ScrollingHost.ChangeView(LayoutRoot.SnapPointWidth, null, null, true);
-                ScrollingHost.HorizontalSnapPointsType = SnapPointsType.MandatorySingle;
+                _needFinal = true;
             }
         }
 
