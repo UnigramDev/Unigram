@@ -52,7 +52,7 @@
                     <TextBox
                         x:Name="Username"
                         Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Header="{CustomResource ChannelLinkType}"
+                        Header="{CustomResource ChannelLinkTitle}"
                         PlaceholderText="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"
                         Margin="12,12,12,8"/>

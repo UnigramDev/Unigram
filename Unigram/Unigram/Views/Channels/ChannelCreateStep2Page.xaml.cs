@@ -46,6 +46,8 @@ namespace Unigram.Views.Channels
             ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
         }
 
+        #region Recycle
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -86,5 +88,7 @@ namespace Unigram.Views.Channels
 
             args.Handled = true;
         }
+
+        #endregion
     }
 }

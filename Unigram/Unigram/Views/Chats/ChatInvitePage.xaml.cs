@@ -30,5 +30,15 @@ namespace Unigram.Views.Chats
         {
             ViewModel.NavigationService.Navigate(typeof(ChatInviteLinkPage), ViewModel.Chat.Id);
         }
+
+        #region Binding
+
+        private string ConvertInviteText(bool group)
+        {
+            return group ? Strings.Resources.InviteToGroupByLink : Strings.Resources.ChannelInviteViaLink;
+        }
+
+        #endregion
+
     }
 }
