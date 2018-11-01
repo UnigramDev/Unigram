@@ -75,7 +75,7 @@ namespace Unigram.Views.Supergroups
             ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
         }
 
-        #region Binding
+        #region Delegate
 
         public void UpdateChat(Chat chat)
         {

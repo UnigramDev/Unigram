@@ -41,7 +41,7 @@ namespace Unigram.Converters
                 case FileTypeUnknown unknown:
                 case FileTypeWallpaper wallpaper:
                 default:
-                    return value.ToString();
+                    return value?.ToString();
             }
         }
 

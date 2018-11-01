@@ -81,6 +81,8 @@ namespace Unigram.Controls.Chats
             ContextFlyout = new MenuFlyout();
             ContextFlyout.Opening += OnContextFlyoutOpening;
 
+            ContextMenuOpening += OnContextMenuOpening;
+
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
             {
                 DisabledFormattingAccelerators = DisabledFormattingAccelerators.All;
@@ -99,6 +101,11 @@ namespace Unigram.Controls.Chats
         }
 
         #region Context menu
+
+        private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            e.Handled = true;
+        }
 
         private void OnContextFlyoutOpening(object sender, object e)
         {
@@ -143,17 +150,17 @@ namespace Unigram.Controls.Chats
             formatting.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, "Plain text", VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
-            CreateFlyoutItem(flyout.Items, Document.CanUndo(), ContextUndo_Click, "Undo", VirtualKey.Z);
-            CreateFlyoutItem(flyout.Items, Document.CanRedo(), ContextRedo_Click, "Redo", VirtualKey.Y);
+            CreateFlyoutItem(flyout.Items, Document.CanUndo(), StandardUICommandKind.Undo, "Undo", VirtualKey.Z);
+            CreateFlyoutItem(flyout.Items, Document.CanRedo(), StandardUICommandKind.Redo, "Redo", VirtualKey.Y);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCut_Click, "Cut", VirtualKey.X);
-            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCopy_Click, "Copy", VirtualKey.C);
-            CreateFlyoutItem(flyout.Items, Document.CanPaste(), ContextPaste_Click, "Paste", VirtualKey.V);
-            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, "Delete");
+            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), StandardUICommandKind.Cut, "Cut", VirtualKey.X);
+            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), StandardUICommandKind.Copy, "Copy", VirtualKey.C);
+            CreateFlyoutItem(flyout.Items, Document.CanPaste(), StandardUICommandKind.Paste, "Paste", VirtualKey.V);
+            CreateFlyoutItem(flyout.Items, length, StandardUICommandKind.Delete, "Delete");
             flyout.Items.Add(new MenuFlyoutSeparator());
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", VirtualKey.A);
+            CreateFlyoutItem(flyout.Items, !IsEmpty, StandardUICommandKind.SelectAll, "Select All", VirtualKey.A);
         }
 
         private void ContextBold_Click()
@@ -348,7 +355,59 @@ namespace Unigram.Controls.Chats
 
             if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value });
+                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
+            }
+
+            flyout.Add(flyoutItem);
+        }
+
+        private void CreateFlyoutItem(IList<MenuFlyoutItemBase> flyout, bool create, StandardUICommandKind kind, string text, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
+            var flyoutItem = new MenuFlyoutItem();
+            flyoutItem.IsEnabled = create;
+
+            RelayCommand command = null;
+            switch (kind)
+            {
+                case StandardUICommandKind.Undo:
+                    command = new RelayCommand(ContextUndo_Click);
+                    break;
+                case StandardUICommandKind.Redo:
+                    command = new RelayCommand(ContextRedo_Click);
+                    break;
+                case StandardUICommandKind.Cut:
+                    command = new RelayCommand(ContextCut_Click);
+                    break;
+                case StandardUICommandKind.Copy:
+                    command = new RelayCommand(ContextCopy_Click);
+                    break;
+                case StandardUICommandKind.Paste:
+                    command = new RelayCommand(ContextPaste_Click);
+                    break;
+                case StandardUICommandKind.Delete:
+                    command = new RelayCommand(ContextDelete_Click);
+                    break;
+                case StandardUICommandKind.SelectAll:
+                    command = new RelayCommand(ContextSelectAll_Click);
+                    break;
+            }
+
+            //if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Input.StandardUICommand"))
+            //{
+            //    var standard = new StandardUICommand(kind) { Command = command, IconSource = null };
+            //    standard.KeyboardAccelerators.Clear();
+
+            //    flyoutItem.Command = standard;
+            //}
+            //else
+            {
+                flyoutItem.Command = command;
+                flyoutItem.Text = text;
+            }
+
+            if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+            {
+                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
 
             flyout.Add(flyoutItem);
@@ -445,7 +504,7 @@ namespace Unigram.Controls.Chats
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
             // we have to handle the pasting operation manually to allow plaintext only.
             var package = Clipboard.GetContent();
-            if (package.Contains(StandardDataFormats.Bitmap))
+            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
             {
                 if (e != null)
                 {
@@ -478,18 +537,18 @@ namespace Unigram.Controls.Chats
                     media.Add(photo);
                 }
 
-                if (package.Contains(StandardDataFormats.Text))
+                if (package.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
                     media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
                 }
 
                 ViewModel.SendMediaExecute(media, media[0]);
             }
-            else if (package.Contains(StandardDataFormats.WebLink))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
             {
 
             }
-            else if (package.Contains(StandardDataFormats.StorageItems))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
                 if (e != null)
                 {
@@ -527,7 +586,7 @@ namespace Unigram.Controls.Chats
                     ViewModel.SendFileExecute(files);
                 }
             }
-            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
             {
                 if (e != null)
                 {
@@ -572,11 +631,11 @@ namespace Unigram.Controls.Chats
 
                 SetText(text, entities);
             }
-            else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-td-field-tags"))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-td-field-tags"))
             {
                 // This is Telegram Desktop mentions format
             }
-            else if (package.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
+            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
             {
                 if (e != null)
                 {

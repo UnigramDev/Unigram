@@ -173,6 +173,11 @@ namespace Unigram.ViewModels
             }
             else
             {
+                if (x.Type is UserTypeDeleted)
+                {
+                    return 1;
+                }
+
                 var nameX = x.FirstName.Length > 0 ? x.FirstName : x.LastName;
                 var nameY = y.FirstName.Length > 0 ? y.FirstName : y.LastName;
 

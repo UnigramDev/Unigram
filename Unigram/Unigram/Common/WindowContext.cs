@@ -249,11 +249,11 @@ namespace Unigram.Common
             {
                 var package = new DataPackage();
                 var operation = share.ShareOperation.Data;
-                if (operation.Contains(StandardDataFormats.ApplicationLink))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
                 {
                     package.SetApplicationLink(await operation.GetApplicationLinkAsync());
                 }
-                if (operation.Contains(StandardDataFormats.Bitmap))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
                     package.SetBitmap(await operation.GetBitmapAsync());
                 }
@@ -265,11 +265,11 @@ namespace Unigram.Common
                 //{
                 //    package.SetRtf(await operation.GetRtfAsync());
                 //}
-                if (operation.Contains(StandardDataFormats.StorageItems))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
                     package.SetStorageItems(await operation.GetStorageItemsAsync());
                 }
-                if (operation.Contains(StandardDataFormats.Text))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
                     package.SetText(await operation.GetTextAsync());
                 }
@@ -277,7 +277,7 @@ namespace Unigram.Common
                 //{
                 //    package.SetUri(await operation.GetUriAsync());
                 //}
-                if (operation.Contains(StandardDataFormats.WebLink))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
                 {
                     package.SetWebLink(await operation.GetWebLinkAsync());
                 }

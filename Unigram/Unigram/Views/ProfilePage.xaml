@@ -235,6 +235,11 @@
                             </Button>
 
                             <StackPanel x:Name="DescriptionPanel" Visibility="Collapsed">
+                                <StackPanel.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}"/>
+                                    </MenuFlyout>
+                                </StackPanel.ContextFlyout>
                                 <TextBlock x:Name="DescriptionTitle" Visibility="Collapsed" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
                                 <RichTextBlock x:Name="DescriptionLabel"
                                                ContextRequested="About_ContextRequested"

@@ -63,7 +63,8 @@ namespace Unigram.Services
 
             _aggregator.Subscribe(this);
 
-            Handle(new UpdateUnreadMessageCount(protoService.UnreadCount, protoService.UnreadUnmutedCount));
+            Handle(cacheService.UnreadChatCount);
+            Handle(cacheService.UnreadMessageCount);
         }
 
         public async void Handle(UpdateTermsOfService update)
@@ -433,8 +434,6 @@ namespace Unigram.Services
                 {
                     _alreadyRegistered = false;
                     _settings.NotificationsToken = null;
-
-                    Debugger.Break();
                 }
             }
         }

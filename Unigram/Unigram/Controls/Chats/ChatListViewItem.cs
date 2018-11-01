@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
+using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -22,12 +24,15 @@ namespace Unigram.Controls.Chats
         private Visual _visual;
         private ContainerVisual _indicator;
 
+        private DependencyObject _originalSource;
+
         public ChatListViewItem(ChatListView parent)
             : base(parent)
         {
             _parent = parent;
 
             ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateRailsX | ManipulationModes.System;
+            AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
         #region ContentMargin
@@ -42,6 +47,11 @@ namespace Unigram.Controls.Chats
             DependencyProperty.Register("ContentMargin", typeof(Thickness), typeof(ChatListViewItem), new PropertyMetadata(default(Thickness)));
 
         #endregion
+
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            _originalSource = e.OriginalSource as DependencyObject;
+        }
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
@@ -151,7 +161,18 @@ namespace Unigram.Controls.Chats
                 _indicator.Opacity = percent;
             }
 
-            e.Container.ReleasePointerCaptures();
+            var originalSource = _originalSource;
+            if (originalSource != null)
+            {
+                _originalSource = null;
+
+                var button = originalSource.AncestorsAndSelf<ButtonBase>().FirstOrDefault() as ButtonBase;
+                if (button != null)
+                {
+                    button.ReleasePointerCaptures();
+                }
+            }
+
             base.OnManipulationDelta(e);
         }
 

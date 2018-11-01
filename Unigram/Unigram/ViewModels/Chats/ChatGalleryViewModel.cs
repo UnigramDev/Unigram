@@ -99,7 +99,7 @@ namespace Unigram.ViewModels.Chats
                 var fromMessageId = item.Id;
 
                 var limit = 20;
-                var offset = -limit / 2;
+                var offset = _isMirrored ? -limit : 0;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
                 if (response is Messages messages)
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Chats
                 var fromMessageId = item.Id;
 
                 var limit = 20;
-                var offset = -limit / 2;
+                var offset = _isMirrored ? 0 : -limit;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, new SearchMessagesFilterPhotoAndVideo()));
                 if (response is Messages messages)

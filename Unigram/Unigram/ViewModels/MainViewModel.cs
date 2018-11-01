@@ -140,7 +140,7 @@ namespace Unigram.ViewModels
             //Dispatch(() => Contacts.getTLContacts());
             //Dispatch(() => Contacts.GetSelfAsync());
 
-            UnreadMutedCount = CacheService.UnreadCount - CacheService.UnreadUnmutedCount;
+            UnreadMutedCount = CacheService.UnreadMessageCount.UnreadCount - CacheService.UnreadMessageCount.UnreadUnmutedCount;
 
             return base.OnNavigatedToAsync(parameter, mode, state);
         }

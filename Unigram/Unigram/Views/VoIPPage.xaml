@@ -284,7 +284,7 @@
                 <controls:GlyphButton Click="Hangup_Click" Glyph="&#xE60F;" FontFamily="{StaticResource TelegramThemeFontFamily}" FontSize="24" Padding="0,0,0,2" CornerRadius="24"/>
             </Border>
             
-            <controls:GlyphToggleButton x:Name="Routing" Click="Routing_Click" CheckedGlyph="&#xE767;" HorizontalAlignment="Left" Margin="12,0,0,0" Grid.Column="4"/>
+            <controls:GlyphToggleButton x:Name="Routing" x:DeferLoadStrategy="Lazy" Click="Routing_Click" CheckedGlyph="&#xE767;" HorizontalAlignment="Left" Margin="12,0,0,0" Grid.Column="4"/>
         </Grid>
     </Grid>
 </Page>

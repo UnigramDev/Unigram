@@ -71,12 +71,16 @@ namespace Unigram.Controls.Gallery
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
             {
-                FlyoutCopy.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.C, ScopeOwner = this });
-                FlyoutSaveAs.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.S, ScopeOwner = this });
+                FlyoutCopy.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.C, IsEnabled = false });
+                FlyoutSaveAs.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.S, IsEnabled = false });
             }
 
             //CreateKeyboardAccelerator(Windows.System.VirtualKey.C);
             //CreateKeyboardAccelerator(Windows.System.VirtualKey.S);
+            //CreateKeyboardAccelerator(Windows.System.VirtualKey.Left, Windows.System.VirtualKeyModifiers.None);
+            //CreateKeyboardAccelerator(Windows.System.VirtualKey.GamepadLeftShoulder, Windows.System.VirtualKeyModifiers.None);
+            //CreateKeyboardAccelerator(Windows.System.VirtualKey.Right, Windows.System.VirtualKeyModifiers.None);
+            //CreateKeyboardAccelerator(Windows.System.VirtualKey.GamepadRightShoulder, Windows.System.VirtualKeyModifiers.None);
 
             Layer.Visibility = Visibility.Collapsed;
 
@@ -118,7 +122,7 @@ namespace Unigram.Controls.Gallery
                 var accelerator = new KeyboardAccelerator { Modifiers = modifiers, Key = key, ScopeOwner = this };
                 accelerator.Invoked += FlyoutAccelerator_Invoked;
 
-                KeyboardAccelerators.Add(accelerator);
+                Transport.KeyboardAccelerators.Add(accelerator);
             }
         }
 
@@ -127,10 +131,22 @@ namespace Unigram.Controls.Gallery
             if (sender.Key == Windows.System.VirtualKey.C && sender.Modifiers == Windows.System.VirtualKeyModifiers.Control)
             {
                 ViewModel.CopyCommand.Execute();
+                args.Handled = true;
             }
             else if (sender.Key == Windows.System.VirtualKey.S && sender.Modifiers == Windows.System.VirtualKeyModifiers.Control)
             {
                 ViewModel.SaveCommand.Execute();
+                args.Handled = true;
+            }
+            else if (sender.Key == Windows.System.VirtualKey.Left || sender.Key == Windows.System.VirtualKey.GamepadLeftShoulder)
+            {
+                ChangeView(0, false);
+                args.Handled = true;
+            }
+            else if (sender.Key == Windows.System.VirtualKey.Right || sender.Key == Windows.System.VirtualKey.GamepadRightShoulder)
+            {
+                ChangeView(2, false);
+                args.Handled = true;
             }
         }
 
@@ -192,11 +208,6 @@ namespace Unigram.Controls.Gallery
 
         public void OpenItem(GalleryContent item)
         {
-            if (_selecting)
-            {
-                return;
-            }
-
             if (Transport.IsVisible)
             {
                 Transport.Hide();
@@ -205,19 +216,6 @@ namespace Unigram.Controls.Gallery
             {
                 Transport.Show();
             }
-        }
-
-        private void ItemsStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var width = 40 + 4 + 4;
-            var total = (e.NewSize.Width - width) / 2d;
-
-            //List.Padding = new Thickness(total, 0, total, 0);
-        }
-
-        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
 
         private void OnSourceChanged(MediaPlayer sender, object args)
@@ -284,28 +282,12 @@ namespace Unigram.Controls.Gallery
             return context;
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing)
-        {
-            _closing = closing;
-
-            //EventHandler handler = null;
-            //handler = new EventHandler((s, args) =>
-            //{
-            //    DataContext = null;
-            //    Bindings.StopTracking();
-
-            //    Closing -= handler;
-            //    closing?.Invoke(this, args);
-            //});
-
-            //Closing += handler;
-            return ShowAsync(parameter);
-        }
-
-        public IAsyncOperation<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter)
+        public IAsyncOperation<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
         {
             return AsyncInfo.Run(async (token) =>
             {
+                _closing = closing;
+
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
 
                 if (_compactLifetime != null)
@@ -367,7 +349,7 @@ namespace Unigram.Controls.Gallery
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             var container = GetContainer(0);
-            var root = container.Inner;
+            var root = container.Presenter;
 
             if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem)
             {
@@ -438,7 +420,7 @@ namespace Unigram.Controls.Gallery
 
                 Layer.Visibility = Visibility.Visible;
 
-                if (animation.TryStart(image.Inner))
+                if (animation.TryStart(image.Presenter))
                 {
                     animation.Completed += (s, args) =>
                     {
@@ -446,7 +428,7 @@ namespace Unigram.Controls.Gallery
 
                         if (item.IsVideo)
                         {
-                            Play(image.Inner, item, item.GetFile());
+                            Play(image.Presenter, item, item.GetFile());
                         }
                     };
 
@@ -458,7 +440,7 @@ namespace Unigram.Controls.Gallery
 
             if (item.IsVideo)
             {
-                Play(image.Inner, item, item.GetFile());
+                Play(image.Presenter, item, item.GetFile());
             }
         }
 
@@ -521,7 +503,7 @@ namespace Unigram.Controls.Gallery
                 //    Play(parent, item);
                 //}
 
-                Play(container.Inner, item, file);
+                Play(container.Presenter, item, file);
             }
             catch { }
         }
@@ -612,11 +594,6 @@ namespace Unigram.Controls.Gallery
 
         private void ImageView_Click(object sender, RoutedEventArgs e)
         {
-            if (_selecting)
-            {
-                return;
-            }
-
             if (Transport.IsVisible)
             {
                 Transport.Hide();
@@ -669,256 +646,114 @@ namespace Unigram.Controls.Gallery
 
             if (args.VirtualKey == Windows.System.VirtualKey.Left || args.VirtualKey == Windows.System.VirtualKey.GamepadLeftShoulder)
             {
-                Scroll(-1);
+                ChangeView(0, false);
                 args.Handled = true;
             }
             else if (args.VirtualKey == Windows.System.VirtualKey.Right || args.VirtualKey == Windows.System.VirtualKey.GamepadRightShoulder)
             {
-                Scroll(1);
+                ChangeView(2, false);
                 args.Handled = true;
             }
         }
 
+        private void Transport_Switch(GalleryTransportControls sender, int args)
+        {
+            ChangeView(args, false);
+        }
+
         #region Flippitiflip
 
-        private bool _selecting;
-        private Visual _layout;
-
-        private void Initialize()
+        protected override Size MeasureOverride(Size availableSize)
         {
-            _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            var size = base.MeasureOverride(availableSize);
 
-            LayoutRoot.ManipulationMode =
-                ManipulationModes.TranslateX |
-                ManipulationModes.TranslateY |
-                ManipulationModes.TranslateRailsX |
-                ManipulationModes.TranslateRailsY |
-                ManipulationModes.TranslateInertia;
-            LayoutRoot.ManipulationStarted += LayoutRoot_ManipulationStarted;
-            LayoutRoot.ManipulationDelta += LayoutRoot_ManipulationDelta;
-            LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
+            LayoutRoot.SnapPointWidth = (float)availableSize.Width;
+            LayoutRoot.Height = availableSize.Height - Padding.Top;
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MediaTransportControls", "ShowAndHideAutomatically"))
+            Element0.Width = availableSize.Width;
+            Element1.Width = availableSize.Width;
+            Element2.Width = availableSize.Width;
+
+            if (_layout != null)
             {
-                Transport.ShowAndHideAutomatically = false;
+                _layout.Offset = new Vector3(0, 0, 0);
             }
+
+            return size;
         }
 
-        protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
+        private void LayoutRoot_HorizontalSnapPointsChanged(object sender, object e)
         {
-            base.OnPointerWheelChanged(e);
-            //Interact(e.Pointer.PointerDeviceType != PointerDeviceType.Touch);
-
-            var point = e.GetCurrentPoint(LayoutRoot);
-            var delta = -point.Properties.MouseWheelDelta;
-
-            Scroll(delta);
+            ScrollingHost.HorizontalSnapPointsType = SnapPointsType.None;
+            ScrollingHost.ChangeView(LayoutRoot.SnapPointWidth, null, null, true);
+            ScrollingHost.HorizontalSnapPointsType = SnapPointsType.MandatorySingle;
         }
 
-        private void LayoutRoot_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        private bool _needFinal;
+
+        private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            _selecting = true;
-        }
-
-        private void LayoutRoot_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            if (e.IsInertial || ViewModel == null)
+            // We want to update containers when the view has been scrolled to the start/end or when the change has ended
+            if (ScrollingHost.HorizontalOffset == 0 || ScrollingHost.HorizontalOffset == ScrollingHost.ScrollableWidth || (_needFinal && !e.IsIntermediate))
             {
-                e.Complete();
-                return;
-            }
+                _needFinal = false;
 
-            var width = (float)ActualWidth;
-            var height = (float)ActualHeight;
-
-            var offset = _layout.Offset;
-
-            if (Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
-            {
-                var delta = (float)e.Delta.Translation.X;
-
-                var current = -width;
-
-                var maximum = current - width;
-                var minimum = current + width;
-
-                var index = ViewModel.SelectedIndex;
-                if (index == 0)
+                var viewModel = ViewModel;
+                if (viewModel == null)
                 {
-                    minimum = current;
-                }
-                if (index == ViewModel.Items.Count - 1)
-                {
-                    maximum = current;
+                    // Page is most likey being closed, just reset the view
+                    LayoutRoot_HorizontalSnapPointsChanged(LayoutRoot, null);
+                    return;
                 }
 
-                offset.Y = 0;
-                offset.X = Math.Max(maximum, Math.Min(minimum, offset.X + delta));
+                var selected = viewModel.SelectedIndex;
+                var previous = selected > 0;
+                var next = selected < viewModel.Items.Count - 1;
 
-                _layer.Opacity = 1;
-            }
-            else
-            {
-                offset.X = -width;
-                offset.Y = Math.Max(-height, Math.Min(height, offset.Y + (float)e.Delta.Translation.Y));
+#if GALLERY_EXPERIMENTAL
+                var difference = previous ? 0 : LayoutRoot.SnapPointWidth;
+#else
+                var difference = 0;
+#endif
 
-                var opacity = Math.Abs((offset.Y - -height) / height);
-                if (opacity > 1)
+                var index = (difference + ScrollingHost.HorizontalOffset) / LayoutRoot.SnapPointWidth;
+                if (index == 0 && previous)
                 {
-                    opacity = 2 - opacity;
+                    viewModel.SelectedItem = viewModel.Items[selected - 1];
+                    PrepareNext(-1);
+                }
+                else if (index == 2 && next)
+                {
+                    viewModel.SelectedItem = viewModel.Items[selected + 1];
+                    PrepareNext(+1);
                 }
 
-                _layer.Opacity = opacity;
-            }
+                viewModel.LoadMore();
+                Dispose();
 
-            _layout.Offset = offset;
-            e.Handled = true;
-        }
-
-        private void LayoutRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            var width = (float)ActualWidth;
-            var height = (float)ActualHeight;
-
-            var offset = _layout.Offset;
-
-            if (Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
-            {
-                var current = -width;
-                var delta = -(offset.X - current) / width;
-
-                Scroll(delta, e.Velocities.Linear.X, true);
-            }
-            else
-            {
-                var current = 0;
-                var delta = -(offset.Y - current) / height;
-
-                var maximum = current - height;
-                var minimum = current + height;
-
-                var direction = 0;
-
-                var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
-                animation.InsertKeyFrame(0, offset.Y);
-
-                if (delta < 0 && e.Velocities.Linear.Y > 1.5)
+#if GALLERY_EXPERIMENTAL
+                if (ViewModel.SelectedIndex == 0 || !previous)
                 {
-                    // previous
-                    direction--;
-                    animation.InsertKeyFrame(1, minimum);
-                }
-                else if (delta > 0 && e.Velocities.Linear.Y < -1.5)
-                {
-                    // next
-                    direction++;
-                    animation.InsertKeyFrame(1, maximum);
+                    //ScrollingHost.ChangeView(index == 2 ? LayoutRoot.SnapPointWidth : 0, null, null, true);
+                    ScrollingHost.ChangeView(0, null, null, true);
                 }
                 else
+#endif
                 {
-                    // back
-                    animation.InsertKeyFrame(1, current);
+                    ScrollingHost.HorizontalSnapPointsType = SnapPointsType.None;
+                    ScrollingHost.ChangeView(LayoutRoot.SnapPointWidth, null, null, true);
+                    ScrollingHost.HorizontalSnapPointsType = SnapPointsType.MandatorySingle;
                 }
-
-                if (direction != 0)
-                {
-                    Layer.Visibility = Visibility.Collapsed;
-
-                    if (Transport.IsVisible)
-                    {
-                        Transport.Hide();
-                    }
-
-                    Unload();
-
-                    Dispose();
-                    Hide();
-                }
-                else
-                {
-                    var opacity = _layout.Compositor.CreateScalarKeyFrameAnimation();
-                    opacity.InsertKeyFrame(0, _layer.Opacity);
-                    opacity.InsertKeyFrame(1, 1);
-
-                    _layer.StartAnimation("Opacity", opacity);
-                }
-
-                _layout.StartAnimation("Offset.Y", animation);
-
-                _selecting = false;
-            }
-
-            e.Handled = true;
-        }
-
-        private void Scroll(double delta, double velocity = double.NaN, bool force = false)
-        {
-            if ((_selecting && !force) || ViewModel == null)
-            {
-                return;
-            }
-
-            _selecting = true;
-
-            var width = (float)ActualWidth;
-            var current = -width;
-
-            var maximum = current - width;
-            var minimum = current + width;
-
-            var index = ViewModel.SelectedIndex;
-            if (index == 0)
-            {
-                minimum = current;
-                delta = delta > 0 ? delta : 0;
-            }
-            if (index == ViewModel.Items.Count - 1)
-            {
-                maximum = current;
-                delta = delta < 0 ? delta : 0;
-            }
-
-            var offset = _layout.Offset;
-            var direction = 0;
-
-            var batch = _layout.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
-            animation.InsertKeyFrame(0, offset.X);
-
-            if (delta < 0 && (velocity > 1.5 || double.IsNaN(velocity)))
-            {
-                // previous
-                direction--;
-                animation.InsertKeyFrame(1, minimum);
-            }
-            else if (delta > 0 && (velocity < -1.5 || double.IsNaN(velocity)))
-            {
-                // next
-                direction++;
-                animation.InsertKeyFrame(1, maximum);
             }
             else
             {
-                // back
-                animation.InsertKeyFrame(1, current);
+                _needFinal = true;
             }
+        }
 
-            _layout.StartAnimation("Offset.X", animation);
-            batch.Completed += (s, args) =>
-            {
-                if (direction != 0 && ViewModel != null)
-                {
-                    ViewModel.SelectedItem = ViewModel.Items[ViewModel.SelectedIndex + direction];
-                    PrepareNext(direction);
-
-                    Dispose();
-                }
-
-                _layout.Offset = new Vector3(-width, 0, 0);
-                _selecting = false;
-            };
-
-            batch.End();
+        private void ChangeView(int index, bool disableAnimation)
+        {
+            ScrollingHost.ChangeView(ActualWidth * index, null, null, disableAnimation);
         }
 
         private void PrepareNext(int direction)
@@ -962,13 +797,13 @@ namespace Unigram.Controls.Gallery
             }
 
             var set = TrySet(target, viewModel.Items[index]);
-            TrySet(previous, viewModel.SelectedIndex > 0 ? viewModel.Items[index - 1] : null);
-            TrySet(next, viewModel.SelectedIndex < viewModel.Items.Count - 1 ? viewModel.Items[index + 1] : null);
+            TrySet(previous, index > 0 ? viewModel.Items[index - 1] : null);
+            TrySet(next, index < viewModel.Items.Count - 1 ? viewModel.Items[index + 1] : null);
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
-                Transport.PreviousVisibility = viewModel.SelectedIndex > 0 ? Visibility.Visible : Visibility.Collapsed;
-                Transport.NextVisibility = viewModel.SelectedIndex < viewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+                Transport.PreviousVisibility = index > 0 ? Visibility.Visible : Visibility.Collapsed;
+                Transport.NextVisibility = index < viewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
@@ -976,13 +811,16 @@ namespace Unigram.Controls.Gallery
                 Transport.NextVisibility = Visibility.Collapsed;
             }
 
+#if GALLERY_EXPERIMENTAL
+            LayoutRoot.ColumnDefinitions[0].Width = new GridLength(0, index > 0 ? GridUnitType.Auto : GridUnitType.Pixel);
+            LayoutRoot.ColumnDefinitions[2].Width = new GridLength(0, index < viewModel.Items.Count - 1 ? GridUnitType.Auto : GridUnitType.Pixel);
+#endif
+
             if (set)
             {
                 Dispose();
                 viewModel.OpenMessage(viewModel.Items[index]);
             }
-
-            //_selecting = false;
         }
 
         private GalleryContentView GetContainer(int direction)
@@ -1014,21 +852,9 @@ namespace Unigram.Controls.Gallery
             return true;
         }
 
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            var size = base.MeasureOverride(availableSize);
+#endregion
 
-            LayoutRoot.Width = availableSize.Width * 3;
-
-            if (_layout != null)
-            {
-                _layout.Offset = new Vector3((float)-availableSize.Width, 0, 0);
-            }
-
-            return size;
-        }
-
-        #endregion
+        #region Context menu
 
         private void ImageView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
@@ -1070,12 +896,16 @@ namespace Unigram.Controls.Gallery
 
                 if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
                 {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = key.Value, ScopeOwner = this });
+                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
                 }
 
                 flyout.Items.Add(flyoutItem);
             }
         }
+
+        #endregion
+
+        #region Compact overlay
 
         private static ViewLifetimeControl _compactLifetime;
         private IViewService _viewService;
@@ -1175,9 +1005,125 @@ namespace Unigram.Controls.Gallery
             OnBackRequestedOverride(this, new HandledEventArgs());
         }
 
-        private void Transport_Switch(GalleryTransportControls sender, int args)
+        #endregion
+
+        #region Swipe to close
+
+        private Visual _layout;
+
+        private void Initialize()
         {
-            Scroll(args);
+            _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+
+            LayoutRoot.ManipulationMode =
+                //ManipulationModes.TranslateX |
+                ManipulationModes.TranslateY |
+                //ManipulationModes.TranslateRailsX |
+                ManipulationModes.TranslateRailsY |
+                ManipulationModes.TranslateInertia |
+                ManipulationModes.System;
+            LayoutRoot.ManipulationDelta += LayoutRoot_ManipulationDelta;
+            LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MediaTransportControls", "ShowAndHideAutomatically"))
+            {
+                Transport.ShowAndHideAutomatically = false;
+            }
         }
+
+        private void LayoutRoot_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (e.IsInertial)
+            {
+                e.Complete();
+                return;
+            }
+
+            var height = (float)ActualHeight;
+            var offset = _layout.Offset;
+
+            if (Math.Abs(e.Cumulative.Translation.Y) > Math.Abs(e.Cumulative.Translation.X))
+            {
+                offset.Y = Math.Max(-height, Math.Min(height, offset.Y + (float)e.Delta.Translation.Y));
+
+                var opacity = Math.Abs((offset.Y - -height) / height);
+                if (opacity > 1)
+                {
+                    opacity = 2 - opacity;
+                }
+
+                _layer.Opacity = opacity;
+            }
+
+            _layout.Offset = offset;
+            e.Handled = true;
+        }
+
+        private void LayoutRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            var height = (float)ActualHeight;
+            var offset = _layout.Offset;
+
+            if (Math.Abs(e.Cumulative.Translation.Y) > Math.Abs(e.Cumulative.Translation.X))
+            {
+                var current = 0;
+                var delta = -(offset.Y - current) / height;
+
+                var maximum = current - height;
+                var minimum = current + height;
+
+                var direction = 0;
+
+                var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(0, offset.Y);
+
+                if (delta < 0 && e.Velocities.Linear.Y > 1.5)
+                {
+                    // previous
+                    direction--;
+                    animation.InsertKeyFrame(1, minimum);
+                }
+                else if (delta > 0 && e.Velocities.Linear.Y < -1.5)
+                {
+                    // next
+                    direction++;
+                    animation.InsertKeyFrame(1, maximum);
+                }
+                else
+                {
+                    // back
+                    animation.InsertKeyFrame(1, current);
+                }
+
+                if (direction != 0)
+                {
+                    Layer.Visibility = Visibility.Collapsed;
+
+                    if (Transport.IsVisible)
+                    {
+                        Transport.Hide();
+                    }
+
+                    Unload();
+
+                    Dispose();
+                    Hide();
+                }
+                else
+                {
+                    var opacity = _layout.Compositor.CreateScalarKeyFrameAnimation();
+                    opacity.InsertKeyFrame(0, _layer.Opacity);
+                    opacity.InsertKeyFrame(1, 1);
+
+                    _layer.StartAnimation("Opacity", opacity);
+                }
+
+                _layout.StartAnimation("Offset.Y", animation);
+            }
+
+            e.Handled = true;
+        }
+
+        #endregion
     }
 }

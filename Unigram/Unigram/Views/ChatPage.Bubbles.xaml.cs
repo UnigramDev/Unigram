@@ -75,7 +75,7 @@ namespace Unigram.Views
             }
 
             ViewVisibleMessages(e.IsIntermediate);
-            //UpdateHeaderDate();
+            //UpdateHeaderDate(e.IsIntermediate);
         }
 
         private void ViewVisibleMessages(bool intermediate)
@@ -145,7 +145,7 @@ namespace Unigram.Views
             _old.Clear();
         }
 
-        private void UpdateHeaderDate()
+        private void UpdateHeaderDate(bool intermediate)
         {
             var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
             if (panel == null || panel.FirstVisibleIndex < 0)
@@ -170,24 +170,27 @@ namespace Unigram.Views
                     continue;
                 }
 
-                //if (i == _panel.FirstVisibleIndex)
-                //{
-                //    DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
-                //}
-
-                var transform = container.TransformToVisual(DateHeaderRelative);
-                var point = transform.TransformPoint(new Point());
-                var height = (float)DateHeader.ActualHeight;
-                var offset = (float)point.Y + height;
-
-                if (point.Y + container.ActualHeight >= 0 && minItem)
+                if (minItem)
                 {
-                    minItem = false;
-                    DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                    var transform = container.TransformToVisual(DateHeaderRelative);
+                    var point = transform.TransformPoint(new Point());
+                    var height = (float)DateHeader.ActualHeight;
+                    var offset = (float)point.Y + height;
+
+                    if (point.Y + container.ActualHeight >= 0)
+                    {
+                        minItem = false;
+                        DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                    }
                 }
 
                 if (message.Content is MessageHeaderDate && minDate)
                 {
+                    var transform = container.TransformToVisual(DateHeaderRelative);
+                    var point = transform.TransformPoint(new Point());
+                    var height = (float)DateHeader.ActualHeight;
+                    var offset = (float)point.Y + height;
+
                     minDate = false;
 
                     if (offset >= 0 && offset < height)
@@ -360,13 +363,13 @@ namespace Unigram.Views
                             target = messageText.WebPage.Photo;
                         }
 
-                        media = panel.FindName("Media") as ContentControl;
-                        panel = media.ContentTemplateRoot as Panel;
+                        media = panel?.FindName("Media") as ContentControl;
+                        panel = media?.ContentTemplateRoot as Panel;
                     }
                     else if (target is MessageGame)
                     {
-                        media = panel.FindName("Media") as ContentControl;
-                        panel = media.ContentTemplateRoot as Panel;
+                        media = panel?.FindName("Media") as ContentControl;
+                        panel = media?.ContentTemplateRoot as Panel;
                     }
                     else if (target is MessageVideoNote messageVideoNote)
                     {
@@ -375,7 +378,7 @@ namespace Unigram.Views
 
                     if (target is VideoNote)
                     {
-                        panel = panel.FindName("Presenter") as Panel;
+                        panel = panel?.FindName("Presenter") as Panel;
                     }
 
                     if (panel is Grid final)

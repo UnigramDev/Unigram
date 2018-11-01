@@ -671,7 +671,7 @@ namespace Unigram.Controls.Views
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             var package = Clipboard.GetContent();
-            if (package.Contains(StandardDataFormats.Bitmap))
+            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
             {
                 e.Handled = true;
 
@@ -701,19 +701,21 @@ namespace Unigram.Controls.Views
                     media.Add(photo);
                 }
 
-                if (package.Contains(StandardDataFormats.Text))
+                if (package.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
                     media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
                 }
 
                 foreach (var item in media)
                 {
+                    SelectedItems.Add(item);
                     Items.Add(item);
                 }
 
                 SelectedItem = media[0];
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
-            else if (package.Contains(StandardDataFormats.StorageItems))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
                 e.Handled = true;
 
@@ -743,10 +745,12 @@ namespace Unigram.Controls.Views
                 {
                     foreach (var item in media)
                     {
+                        SelectedItems.Add(item);
                         Items.Add(item);
                     }
 
                     SelectedItem = media[0];
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
                 }
                 else if (files.Count > 0)
                 {

@@ -26,7 +26,7 @@ namespace Unigram.Controls.Gallery
         private GalleryContent _item;
 
         public GalleryContent Item => _item;
-        public Grid Inner => Panel;
+        public Grid Presenter => Panel;
 
         public GalleryContentView()
         {

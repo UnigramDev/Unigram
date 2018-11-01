@@ -614,7 +614,7 @@ namespace Unigram.Common
             }
             else
             {
-                await new TLMessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
+                await TLMessageDialog.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 

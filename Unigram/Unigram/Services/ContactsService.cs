@@ -307,7 +307,7 @@ namespace Unigram.Services
             var displayName = user?.GetFullName() ?? "Unigram";
 
             ContactList contactList = null;
-            if (_cacheService.Options.TryGetValue<string>("x_contact_list", out string id))
+            if (_cacheService.Options.TryGetValue("x_contact_list", out string id))
             {
                 contactList = await store.GetContactListAsync(id);
             }

@@ -60,7 +60,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateContent(MessageViewModel message, Game game)
         {
-            if (Media.Content is Messages.IContent content && content.IsValid(message.Content, false))
+            if (Media.Content is IContent content && content.IsValid(message.Content, false))
             {
                 content.UpdateMessage(message);
             }

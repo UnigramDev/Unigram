@@ -68,6 +68,7 @@
                                 Padding="0,12,12,12">
                         <RadioButton
                             x:Name="Public"
+                            GroupName="IsPublic"
                             IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"/>
                         <TextBlock
                             x:Name="PublicInfo"
@@ -77,6 +78,7 @@
                         
                         <RadioButton
                             x:Name="Private"
+                            GroupName="IsPublic"
                             IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"/>
                         <TextBlock
                             x:Name="PrivateInfo"
@@ -192,9 +194,11 @@
                             Margin="12,24,0,0">
                     <TextBlock Text="{CustomResource WhoCanAddMembers}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <RadioButton
+                        GroupName="IsDemocracy"
                         IsChecked="{x:Bind ViewModel.IsDemocracy, Mode=TwoWay}"
                         Content="{CustomResource WhoCanAddMembersAllMembers}"/>
                     <RadioButton
+                        GroupName="IsDemocracy"
                         IsChecked="{x:Bind ViewModel.IsDemocracy, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                         Content="{CustomResource WhoCanAddMembersAdmins}"/>
                 </StackPanel>
@@ -207,6 +211,7 @@
                     <TextBlock Text="{CustomResource ChatHistory}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     
                     <RadioButton
+                        GroupName="IsAllHistoryAvailable"
                         IsChecked="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=TwoWay}"
                         Content="{CustomResource ChatHistoryVisible}"/>
                     <TextBlock
@@ -216,6 +221,7 @@
                         Margin="28,-6,0,8"/>
                     
                     <RadioButton
+                        GroupName="IsAllHistoryAvailable"
                         IsChecked="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                         Content="{CustomResource ChatHistoryHidden}"/>
                     <TextBlock

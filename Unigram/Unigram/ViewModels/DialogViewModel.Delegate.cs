@@ -315,6 +315,10 @@ namespace Unigram.ViewModels
                     NavigationService.NavigateToChat(chat);
                 }
             }
+            else
+            {
+                await TLMessageDialog.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+            }
         }
 
         public async void OpenUser(int userId)

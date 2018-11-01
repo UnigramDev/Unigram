@@ -121,7 +121,14 @@ namespace Unigram.Controls.Cells
 
         public void UpdateFile(Chat chat, File file)
         {
-            Photo.Source = PlaceholderHelper.GetChat(null, chat, 48);
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.Options.MyId)
+            {
+                Photo.Source = PlaceholderHelper.GetSavedMessages(privata.UserId, 48);
+            }
+            else
+            {
+                Photo.Source = PlaceholderHelper.GetChat(null, chat, 48);
+            }
         }
 
         public void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions)
