@@ -1,8 +1,3 @@
-# Contributing to Unigram
-Please take a moment to review this document in order to make the contribution process easy and effective for everyone involved.
-
-Following these guidelines helps to communicate that you respect the time of the developers managing and developing this open source project. In return, they should reciprocate that respect in addressing your issue or assessing patches and features.
-
 ## Using the issue tracker
 The [issue tracker](https://github.com/UnigramDev/Unigram/issues) is the preferred channel for [bug reports](#bug-reports), [features requests](#feature-requests) and [submitting pull requests](#pull-requests), but please respect the following restrictions:
 
@@ -15,6 +10,7 @@ A bug is a _demonstrable problem_ that is caused by the code in the repository. 
 
 Guidelines for bug reports:
 
+* Try to reproduce the issue on a Telegram official client to check it's not a Telegram issue/behaviour.
 * Use the GitHub issue search — check if the issue has already been reported.
 * Check if the issue has been fixed — try to reproduce it using the latest available build.
 * Isolate the problem — ideally create a reproducible scenario and a live example.
@@ -39,9 +35,7 @@ Example:
 Feature requests are welcome, anyway you should firstly read [missing features](https://github.com/UnigramDev/Unigram/wiki/Missing-features) and consider that Unigram follows official clients guidelines, so refrain from asking particoular features of non-official clients (Telegram X is considered unofficial at the moment) or features (non OS related) that aren't in official clients.
 
 ## Pull requests
-**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project. For this, you can do so by joining the official [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ) group and talking with the developers.
-
-If you're a junior developer or if you are not familiar with the project, it is recommended to **[read the Developer Manual](https://github.com/UnigramDev/Unigram/wiki/Developer-Manual:-Introduction)** section of the Wiki before starting to work on Unigram.
+**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that developers might not want to merge into the project. To avoid that, you can join the official [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ) group and talk with the developers.
 
 ## License
 By contributing your code, you agree to license your contribution under the [GNU General Public License](https://github.com/UnigramDev/Unigram/blob/develop/LICENSE). 
