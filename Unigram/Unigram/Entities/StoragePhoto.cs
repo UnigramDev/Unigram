@@ -62,6 +62,11 @@ namespace Unigram.Entities
         {
             try
             {
+                if (!file.IsAvailable)
+                {
+                    return null;
+                }
+
                 var basic = await file.GetBasicPropertiesAsync();
                 var image = await file.Properties.GetImagePropertiesAsync();
 

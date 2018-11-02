@@ -779,7 +779,11 @@ namespace Unigram.ViewModels
                     reader.ReadBytes(buffer);
                     await FileIO.WriteBytesAsync(cache, buffer);
 
-                    media.Add(await StoragePhoto.CreateAsync(cache, true));
+                    var photo = await StoragePhoto.CreateAsync(cache, true);
+                    if (photo == null)
+                    {
+                        return;
+                    }
                 }
 
                 if (package.AvailableFormats.Contains(StandardDataFormats.Text))
@@ -803,11 +807,19 @@ namespace Unigram.ViewModels
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                     {
-                        media.Add(await StoragePhoto.CreateAsync(file, true));
+                        var photo = await StoragePhoto.CreateAsync(file, true);
+                        if (photo != null)
+                        {
+                            media.Add(photo);
+                        }
                     }
                     else if (file.ContentType == "video/mp4")
                     {
-                        media.Add(await StorageVideo.CreateAsync(file, true));
+                        var video = await StorageVideo.CreateAsync(file, true);
+                        if (video != null)
+                        {
+                            media.Add(video);
+                        }
                     }
 
                     files.Add(file);
