@@ -27,6 +27,8 @@ namespace Unigram.Views.Payments
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentFormStep3ViewModel>();
 
+            Transitions = ApiInfo.CreateSlideTransition();
+
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 

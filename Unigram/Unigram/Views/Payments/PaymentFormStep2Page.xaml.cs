@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels.Payments;
 using Windows.Foundation;
@@ -26,6 +27,8 @@ namespace Unigram.Views.Payments
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentFormStep2ViewModel>();
+
+            Transitions = ApiInfo.CreateSlideTransition();
         }
     }
 
