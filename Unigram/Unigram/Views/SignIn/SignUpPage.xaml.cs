@@ -28,6 +28,8 @@ namespace Unigram.Views.SignIn
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignUpViewModel>();
 
+            Transitions = ApiInfo.CreateSlideTransition();
+
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 

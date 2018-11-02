@@ -26,6 +26,8 @@ namespace Unigram.Views.SignIn
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignInRecoveryViewModel>();
 
+            Transitions = ApiInfo.CreateSlideTransition();
+
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
