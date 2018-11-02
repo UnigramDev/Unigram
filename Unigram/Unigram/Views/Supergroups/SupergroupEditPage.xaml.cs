@@ -16,6 +16,8 @@ using Unigram.ViewModels.Supergroups;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.Media.Capture;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,6 +39,24 @@ namespace Unigram.Views.Supergroups
             DataContext = TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupDelegate>(this);
         }
 
+        private void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = FlyoutBase.GetAttachedFlyout(sender as FrameworkElement);
+            if (flyout == null)
+            {
+                return;
+            }
+
+            if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+            {
+                flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            }
+            else
+            {
+                flyout.ShowAt(sender as FrameworkElement);
+            }
+        }
+
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
@@ -55,6 +75,29 @@ namespace Unigram.Views.Supergroups
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary)
+                {
+                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                }
+            }
+        }
+
+        private async void EditCamera_Click(object sender, RoutedEventArgs e)
+        {
+            var capture = new CameraCaptureUI();
+            capture.PhotoSettings.AllowCropping = false;
+            capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
+            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
+
+            var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
+            if (file != null)
+            {
+                var dialog = new EditYourPhotoView(file)
+                {
+                    CroppingProportions = ImageCroppingProportions.Square,
+                    IsCropEnabled = false
+                };
+                var dialogResult = await dialog.ShowAsync();
+                if (dialogResult == ContentDialogResult.Primary)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }

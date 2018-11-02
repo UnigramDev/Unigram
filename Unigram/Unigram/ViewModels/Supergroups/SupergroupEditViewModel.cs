@@ -31,11 +31,12 @@ namespace Unigram.ViewModels.Supergroups
         public SupergroupEditViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
             EditTypeCommand = new RelayCommand(EditTypeExecute);
             EditDemocracyCommand = new RelayCommand(EditDemocracyExecute);
             EditHistoryCommand = new RelayCommand(EditHistoryExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
+            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            DeletePhotoCommand = new RelayCommand(DeletePhotoExecute);
 
             RevokeCommand = new RelayCommand(RevokeExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
@@ -62,6 +63,7 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         private StorageFile _photo;
+        private bool _deletePhoto;
 
         private string _title;
         public string Title
@@ -232,6 +234,14 @@ namespace Unigram.ViewModels.Supergroups
                         // TODO:
                     }
                 }
+                else if (_deletePhoto)
+                {
+                    var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputFileId(0)));
+                    if (response is Error)
+                    {
+                        // TODO:
+                    }
+                }
 
                 NavigationService.GoBack();
             }
@@ -241,6 +251,14 @@ namespace Unigram.ViewModels.Supergroups
         private async void EditPhotoExecute(StorageFile file)
         {
             _photo = file;
+            _deletePhoto = false;
+        }
+
+        public RelayCommand DeletePhotoCommand { get; }
+        private void DeletePhotoExecute()
+        {
+            _photo = null;
+            _deletePhoto = true;
         }
 
         public RelayCommand EditTypeCommand { get; }

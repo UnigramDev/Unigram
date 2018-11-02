@@ -232,7 +232,7 @@ namespace Unigram.Views
             var capture = new CameraCaptureUI();
             capture.PhotoSettings.AllowCropping = false;
             capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
-            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.MediumXga;
+            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
 
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (file != null)

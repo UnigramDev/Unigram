@@ -37,8 +37,22 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
-             
+                    <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2">
+                        <FlyoutBase.AttachedFlyout>
+                            <MenuFlyout>
+                                <controls:GlyphMenuFlyoutItem Click="EditCamera_Click"
+                                                              Text="{CustomResource FromCamera}"
+                                                              Glyph="&#xE722;"/>
+                                <controls:GlyphMenuFlyoutItem Click="EditPhoto_Click"
+                                                              Text="{CustomResource FromGalley}"
+                                                              Glyph="&#xEB9F;"/>
+                                <controls:GlyphMenuFlyoutItem Command="{x:Bind ViewModel.DeletePhotoCommand}"
+                                                              Text="{CustomResource Delete}"
+                                                              Glyph="&#xE74D;"/>
+                            </MenuFlyout>
+                        </FlyoutBase.AttachedFlyout>
+                    </controls:ProfilePicture>
+
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
                         <TextBox
                             x:Name="Title"
