@@ -7,6 +7,7 @@ using Unigram.Common;
 using Windows.UI.Xaml;
 using Unigram.Services;
 using Unigram.Services.Settings;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -24,7 +25,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                var size = (int)Theme.Current.GetValueOrDefault("MessageFontSize", 15d);
+                var size = (int)Theme.Current.GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d);
                 if (_sizeToIndex.TryGetValue(size, out int index))
                 {
                     return (double)index;
