@@ -110,8 +110,10 @@
                         <controls:MasterDetailPanel x:Name="AdaptivePanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                             <Grid Background="{TemplateBinding Background}">
                                 <!--<Border x:Name="DropShadow" Loaded="DropShadow_Loaded"/>-->
-                                <chats:ChatBackgroundPresenter Loading="ChatBackgroundPresenter_Loading" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-                                <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}"/>
+                                <chats:ChatBackgroundPresenter Opacity="{TemplateBinding BackgroundOpacity}" Loading="ChatBackgroundPresenter_Loading" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                                <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}">
+                                    <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
+                                </Grid>
                                 <!--<Grid.RowDefinitions>
                                      <RowDefinition Height="Auto"/>
                                      <RowDefinition/>

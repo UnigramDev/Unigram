@@ -18,7 +18,6 @@ namespace Unigram.ViewModels.Supergroups
             : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
         {
             AddCommand = new RelayCommand(AddExecute);
-            InviteCommand = new RelayCommand(InviteExecute);
 
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
@@ -34,18 +33,6 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             NavigationService.Navigate(typeof(ChatInvitePage), chat.Id);
-        }
-
-        public RelayCommand InviteCommand { get; }
-        private void InviteExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            NavigationService.Navigate(typeof(ChatInviteLinkPage), chat.Id);
         }
 
         #region Context menu

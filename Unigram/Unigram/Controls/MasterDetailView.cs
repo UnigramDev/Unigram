@@ -507,6 +507,19 @@ namespace Unigram.Controls
 
 
         #endregion
+
+        #region BackgroundOpacity
+
+        public double BackgroundOpacity
+        {
+            get { return (double)GetValue(BackgroundOpacityProperty); }
+            set { SetValue(BackgroundOpacityProperty, value); }
+        }
+
+        public static readonly DependencyProperty BackgroundOpacityProperty =
+            DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(MasterDetailView), new PropertyMetadata(1d));
+
+        #endregion
     }
 
     public enum MasterDetailState

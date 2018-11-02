@@ -13,7 +13,7 @@
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
-                <SuppressNavigationTransitionInfo/>
+                <EntranceNavigationTransitionInfo/>
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>

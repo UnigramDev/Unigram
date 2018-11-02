@@ -249,10 +249,7 @@ namespace Unigram.Views.Supergroups
             Title.Text = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
 
             AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;
-            Invite.Content = group.IsChannel ? Strings.Resources.ChannelInviteViaLink : Strings.Resources.InviteToGroupByLink;
-
             AddNew.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
-            Invite.Visibility = string.IsNullOrEmpty(group.Username) && group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
 
             Footer.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
         }

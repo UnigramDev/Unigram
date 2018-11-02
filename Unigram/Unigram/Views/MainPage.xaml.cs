@@ -706,6 +706,11 @@ namespace Unigram.Views
             {
                 UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
             }
+
+            MasterDetail.BackgroundOpacity =
+                e.SourcePageType == typeof(ChatPage) ||
+                e.SourcePageType == typeof(ProfilePage) || // Needed for slide transition
+                e.SourcePageType == typeof(BlankPage) ? 1 : 0;
         }
 
         private void OnStateChanged(object sender, EventArgs e)

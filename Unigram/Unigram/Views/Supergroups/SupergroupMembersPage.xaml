@@ -114,12 +114,6 @@
                                               Command="{x:Bind ViewModel.AddCommand}"
                                               Style="{StaticResource TextGlyphButtonStyle}"
                                               Glyph="&#xE8FA;"/>
-                        <controls:GlyphButton x:Name="Invite"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource ChannelInviteViaLink}"
-                                              Command="{x:Bind ViewModel.InviteCommand}"
-                                              Style="{StaticResource TextGlyphButtonStyle}"
-                                              Glyph="&#xE71B;"/>
                     </StackPanel>
                 </ListView.Header>
                 <ListView.ItemContainerStyle>
