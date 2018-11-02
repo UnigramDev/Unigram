@@ -30,7 +30,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel>
+            <controls:TablePanel>
                 <StackPanel x:Name="SwitchGroup1"
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                             BorderBrush="{ThemeResource TelegramSeparatorBrush}"
@@ -89,7 +89,7 @@
                         <TextBlock Text="Hold a chat and drag it to change its position." Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </controls:TablePanel>
         </ScrollViewer>
     </Grid>
 </Page>
