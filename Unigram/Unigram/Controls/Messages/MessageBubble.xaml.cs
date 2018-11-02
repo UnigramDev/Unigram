@@ -510,7 +510,7 @@ namespace Unigram.Controls.Messages
 
             UpdateMessageText(message);
 
-            if (Media.Content is Messages.IContent content && content.IsValid(message.Content, true))
+            if (Media.Content is IContent content && content.IsValid(message.Content, true))
             {
                 content.UpdateMessage(message);
             }

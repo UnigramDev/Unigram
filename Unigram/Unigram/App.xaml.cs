@@ -246,7 +246,7 @@ namespace Unigram
                     return container.Resolve<SettingsPasscodeViewModel>(id);
                 case SettingsSessionsPage settingsSessions:
                     return container.Resolve<SettingsSessionsViewModel>(id);
-                case SettingsStatsPage settingsNetwork:
+                case SettingsNetworkPage settingsNetwork:
                     return container.Resolve<SettingsNetworkViewModel>(id);
                 case SettingsStickersArchivedPage settingsStickersArchived:
                     return container.Resolve<SettingsStickersArchivedViewModel>(id);
@@ -549,8 +549,17 @@ namespace Unigram
 
             await Toast.RegisterBackgroundTasks();
 
-            TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
-            ToastNotificationManager.History.Clear("App");
+            try
+            {
+                TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
+            }
+            catch { }
+
+            try
+            {
+                ToastNotificationManager.History.Clear("App");
+            }
+            catch { }
 
             //if (SettingsHelper.UserId > 0 && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
             //{

@@ -172,7 +172,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-                <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="12,0,0,0" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
+                <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="6,0,0,0" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
             </Grid>
             <controls:ContentPageHeader x:Name="PageHeader" Grid.Row="1">
                 <Grid x:Name="Header">
@@ -181,7 +181,7 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="60,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="54,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
 
                         <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
                             <Button Padding="{StaticResource EllipsisButtonPadding}"
@@ -243,7 +243,7 @@
                     </Grid>
 
                     <controls:SearchTextBox x:Name="SearchField"
-                                            Padding="60,4,6,4"
+                                            Padding="54,4,6,4"
                                             Background="{x:Null}"
                                             BorderBrush="{x:Null}"
                                             Style="{StaticResource SearchTextBoxStyle}"

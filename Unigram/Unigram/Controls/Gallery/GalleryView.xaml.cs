@@ -716,7 +716,7 @@ namespace Unigram.Controls.Gallery
                 var difference = 0;
 #endif
 
-                var index = (difference + ScrollingHost.HorizontalOffset) / LayoutRoot.SnapPointWidth;
+                var index = Math.Round((difference + ScrollingHost.HorizontalOffset) / LayoutRoot.SnapPointWidth);
                 if (index == 0 && previous)
                 {
                     viewModel.SelectedItem = viewModel.Items[selected - 1];

@@ -136,9 +136,13 @@ namespace Unigram.Views
                 var presenter = item.Presenter;
                 if (presenter != null && presenter.MediaPlayer != null)
                 {
-                    presenter.MediaPlayer.Source = null;
-                    presenter.MediaPlayer.Dispose();
-                    presenter.MediaPlayer = null;
+                    try
+                    {
+                        presenter.MediaPlayer.Source = null;
+                        presenter.MediaPlayer.Dispose();
+                        presenter.MediaPlayer = null;
+                    }
+                    catch { }
                 }
             }
 

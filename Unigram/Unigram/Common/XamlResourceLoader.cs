@@ -19,7 +19,17 @@ namespace Unigram.Common
 
         protected override object GetResource(string resourceId, string objectType, string propertyName, string propertyType)
         {
-            return _loader.GetString(resourceId) ?? resourceId;
+#if DEBUG
+            var text = _loader.GetString(resourceId);
+            if (text.Length > 0)
+            {
+                return text;
+            }
+
+            return resourceId;
+#else
+            return _loader.GetString(resourceId);
+#endif
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Unigram.Views.Settings
 
         private void Stats_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsStatsPage));
+            Frame.Navigate(typeof(SettingsNetworkPage));
         }
 
         private void Proxy_Click(object sender, RoutedEventArgs e)
