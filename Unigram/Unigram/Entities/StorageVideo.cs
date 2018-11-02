@@ -53,6 +53,11 @@ namespace Unigram.Entities
         {
             try
             {
+                if (!file.IsAvailable)
+                {
+                    return null;
+                }
+
                 var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
                 if (profile.Video == null)
                 {
