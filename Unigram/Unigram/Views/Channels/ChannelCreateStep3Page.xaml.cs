@@ -1,4 +1,5 @@
-﻿using Unigram.ViewModels.Channels;
+﻿using Unigram.Common;
+using Unigram.ViewModels.Channels;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Channels
@@ -10,6 +11,8 @@ namespace Unigram.Views.Channels
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChannelCreateStep3ViewModel>();
             View.Attach();
+
+            Transitions = ApiInfo.CreateSlideTransition();
         }
     }
 }

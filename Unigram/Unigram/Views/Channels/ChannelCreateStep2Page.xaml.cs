@@ -31,6 +31,8 @@ namespace Unigram.Views.Channels
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChannelCreateStep2ViewModel>();
 
+            Transitions = ApiInfo.CreateSlideTransition();
+
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
