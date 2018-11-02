@@ -146,12 +146,14 @@ namespace Unigram.Controls.Chats
             if (mode == ItemsUpdatingScrollMode.KeepItemsInView && (force || scroll.VerticalOffset < 200))
             {
                 Debug.WriteLine("Changed scrolling mode to KeepItemsInView");
+                Logs.Log.Write("Changed scrolling mode to KeepItemsInView");
 
                 panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
             }
             else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 200))
             {
                 Debug.WriteLine("Changed scrolling mode to KeepLastItemInView");
+                Logs.Log.Write("Changed scrolling mode to KeepLastItemInView");
 
                 panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
             }

@@ -302,6 +302,7 @@
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TLContentDialog.cs" />
     <Compile Include="Controls\GlyphMenuFlyoutItem.cs" />
     <Compile Include="Controls\VideoTimelineControl.xaml.cs">

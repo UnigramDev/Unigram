@@ -60,7 +60,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>
+                        <!--<Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>-->
 
                         <local:GalleryContentView x:Name="Element2" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested"/>
                         <local:GalleryContentView x:Name="Element0" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>

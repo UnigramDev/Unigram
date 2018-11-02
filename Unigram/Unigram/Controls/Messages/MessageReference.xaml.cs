@@ -441,7 +441,12 @@ namespace Unigram.Controls.Messages
             MessageLabel.Text = string.Empty;
 
             ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
-            //ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, true);
+
+            var thumbnail = game.Game.Photo?.GetSmall();
+            if (thumbnail != null)
+            {
+                UpdateThumbnail(message, thumbnail);
+            }
 
             return true;
         }
@@ -787,11 +792,6 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
-        //private string GetFromLabel(TLMessage message, string title)
-        //{
-        //    return GetFromLabelInternal(message, title) + Environment.NewLine;
-        //}
-
         private string GetFromLabel(MessageViewModel message, string title)
         {
             if (!string.IsNullOrWhiteSpace(title))
@@ -825,28 +825,7 @@ namespace Unigram.Controls.Messages
                 return user.GetFullName();
             }
 
-            //if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
-            //{
-            //    return message.Parent?.DisplayName ?? string.Empty;
-            //}
-            //else if (message.IsSaved() && message.FwdFromUser is TLUser user)
-            //{
-            //    return user.FullName;
-            //}
-
-            //var from = message.From?.FullName ?? string.Empty;
-            //if (message.ViaBot != null && message.FwdFrom == null)
-            //{
-            //    from += $" via @{message.ViaBot.Username}";
-            //}
-
-            //return from;
             return title ?? string.Empty;
         }
-
-        //private string GetFromLabel(TLMessageService message, string title)
-        //{
-        //    return GetFromLabelInternal(message, title) + Environment.NewLine;
-        //}
     }
 }

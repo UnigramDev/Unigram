@@ -103,11 +103,6 @@ namespace Unigram.Views
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-        }
-
         public void UpdateChat(Chat chat)
         {
             UpdateChatTitle(chat);

@@ -181,7 +181,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 			auto tag = GetTag(custom);
 			UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key);
-			UpdatePrimaryBadge(data->GetNamedNumber("badge", 0));
+			//UpdatePrimaryBadge(data->GetNamedNumber(L"badge", 0));
 
 			if (loc_key != L"DC_UPDATE")
 			{
