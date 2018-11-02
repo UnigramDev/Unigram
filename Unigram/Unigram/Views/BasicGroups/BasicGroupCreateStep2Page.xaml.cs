@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Common;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Chats;
 using Unigram.Views;
@@ -25,6 +26,8 @@ namespace Unigram.Views.BasicGroups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<BasicGroupCreateStep2ViewModel>();
             View.Attach();
+
+            Transitions = ApiInfo.CreateSlideTransition();
         }
     }
 }
