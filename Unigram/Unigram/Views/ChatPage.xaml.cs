@@ -45,7 +45,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatPage : Page, INavigablePage, IDialogDelegate
+    public sealed partial class ChatPage : Page, INavigablePage, IDialogDelegate, IDisposable
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -297,8 +297,8 @@ namespace Unigram.Views
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
+        public void Dispose()
+        { 
             if (ViewModel != null)
             {
                 ViewModel.PropertyChanged -= OnPropertyChanged;
@@ -331,7 +331,7 @@ namespace Unigram.Views
             //LosingFocus -= DialogPage_LosingFocus;
             //LosingFocus += DialogPage_LosingFocus;
 
-            base.OnNavigatedTo(e);
+            //base.OnNavigatedTo(e);
 
             TextField.FocusMaybe(FocusState.Keyboard);
         }
@@ -446,6 +446,7 @@ namespace Unigram.Views
 
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
+            UnloadVisibleMessages();
             ViewVisibleMessages(false);
 
 
