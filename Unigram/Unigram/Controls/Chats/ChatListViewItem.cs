@@ -26,6 +26,9 @@ namespace Unigram.Controls.Chats
 
         private DependencyObject _originalSource;
 
+        private bool _forward;
+        private bool _reply;
+
         public ChatListViewItem(ChatListView parent)
             : base(parent)
         {
@@ -68,7 +71,7 @@ namespace Unigram.Controls.Chats
             return ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message && message.IsService();
         }
 
-        private bool CantReply()
+        private bool CanReply()
         {
             if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
             {
@@ -78,23 +81,36 @@ namespace Unigram.Controls.Chats
                     var supergroup = _parent.ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                     if (supergroup.IsChannel)
                     {
-                        return !(supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator);
+                        return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator;
                     }
                     else if (supergroup.Status is ChatMemberStatusRestricted restricted)
                     {
-                        return !restricted.CanSendMessages;
+                        return restricted.CanSendMessages;
                     }
                 }
 
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
+        }
+
+        private bool CanForward()
+        {
+            if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
+            {
+                return message.CanBeForwarded;
+            }
+
+            return false;
         }
 
         protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e)
         {
-            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect() || CantReply())
+            _reply = CanReply();
+            _forward = CanForward();
+
+            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect() || (!_reply && !_forward))
             {
                 e.Complete();
             }
@@ -144,7 +160,7 @@ namespace Unigram.Controls.Chats
                 ElementCompositionPreview.SetElementChildVisual(this, _indicator);
             }
 
-            var offset = Math.Min(0, Math.Max(-72, (float)e.Cumulative.Translation.X));
+            var offset = (e.Cumulative.Translation.X < 0 && !_reply) || (e.Cumulative.Translation.X >= 0 && !_forward) ? 0 : Math.Max(0, Math.Min(72, Math.Abs((float)e.Cumulative.Translation.X)));
 
             var abs = Math.Abs(offset);
             var percent = abs / 72f;
@@ -152,12 +168,12 @@ namespace Unigram.Controls.Chats
             var width = (float)ActualWidth;
             var height = (float)ActualHeight;
 
-            _visual.Offset = new Vector3(offset, 0, 0);
+            _visual.Offset = new Vector3(e.Cumulative.Translation.X < 0 ? -offset : offset, 0, 0);
 
             if (_indicator != null)
             {
-                _indicator.Offset = new Vector3(width - percent * 60, (height - 30) / 2, 0);
-                _indicator.Scale = new Vector3(0.8f + percent * 0.2f);
+                _indicator.Offset = new Vector3(e.Cumulative.Translation.X < 0 ? width - percent * 60 : -30 + percent * 60, (height - 30) / 2, 0);
+                _indicator.Scale = new Vector3(e.Cumulative.Translation.X < 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
                 _indicator.Opacity = percent;
             }
 
@@ -215,8 +231,8 @@ namespace Unigram.Controls.Chats
                 var height = (float)ActualHeight;
 
                 indicator.Opacity = 1;
-                indicator.Scale = new Vector3(1);
-                indicator.StartAnimation("Offset", CreateAnimation(visual.Compositor, indicator.Offset, new Vector3(width, (height - 30) / 2, 0)));
+                indicator.Scale = new Vector3(e.Cumulative.Translation.X < 0 ? 1 : -1, 1, 1);
+                indicator.StartAnimation("Offset", CreateAnimation(visual.Compositor, indicator.Offset, new Vector3(e.Cumulative.Translation.X < 0 ? width : -30, (height - 30) / 2, 0)));
 
                 batch.Completed += (s, args) =>
                 {
@@ -227,9 +243,16 @@ namespace Unigram.Controls.Chats
                 batch.End();
             }
 
-            if (e.Cumulative.Translation.X <= -45)
+            if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
             {
-                _parent.ViewModel.ReplyToMessage(_parent.ItemFromContainer(this) as MessageViewModel);
+                if (e.Cumulative.Translation.X <= -45 && _reply)
+                {
+                    _parent.ViewModel.MessageReplyCommand.Execute(message);
+                }
+                else if (e.Cumulative.Translation.X >= 45 && _forward)
+                {
+                    _parent.ViewModel.MessageForwardCommand.Execute(message);
+                }
             }
 
             base.OnManipulationCompleted(e);
