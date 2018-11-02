@@ -11,7 +11,8 @@
     d:DesignWidth="400">
 
     <TextBlock Margin="0,0,0,8" IsTextSelectionEnabled="True" Style="{StaticResource BodyTextBlockStyle}">
-        <Run x:Name="Title" Foreground="{ThemeResource MessageHeaderForegroundBrush}"/>
+        <Run x:Name="Title" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/>
+        <LineBreak/>
         <Run x:Name="Description"/>
     </TextBlock>
 
