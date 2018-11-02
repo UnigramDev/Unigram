@@ -65,7 +65,9 @@
                                   AllowDrop="True"
                                   CanDragItems="True"
                                   CanReorderItems="True"
-                                  DragItemsCompleted="OnDragItemsCompleted">
+                                  DragItemsCompleted="OnDragItemsCompleted"
+                                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollMode="Disabled">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Margin="12,6">

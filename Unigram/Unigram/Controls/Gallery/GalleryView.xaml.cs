@@ -721,15 +721,16 @@ namespace Unigram.Controls.Gallery
                 {
                     viewModel.SelectedItem = viewModel.Items[selected - 1];
                     PrepareNext(-1);
+                    Dispose();
                 }
                 else if (index == 2 && next)
                 {
                     viewModel.SelectedItem = viewModel.Items[selected + 1];
                     PrepareNext(+1);
+                    Dispose();
                 }
 
                 viewModel.LoadMore();
-                Dispose();
 
 #if GALLERY_EXPERIMENTAL
                 if (ViewModel.SelectedIndex == 0 || !previous)

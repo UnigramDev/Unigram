@@ -81,7 +81,7 @@ namespace Unigram.Controls.Chats
             ContextFlyout = new MenuFlyout();
             ContextFlyout.Opening += OnContextFlyoutOpening;
 
-            ContextMenuOpening += OnContextMenuOpening;
+            //ContextMenuOpening += OnContextMenuOpening;
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
             {
