@@ -17,11 +17,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStatsPage : Page
+    public sealed partial class SettingsNetworkPage : Page
     {
         public SettingsNetworkViewModel ViewModel => DataContext as SettingsNetworkViewModel;
 
-        public SettingsStatsPage()
+        public SettingsNetworkPage()
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsNetworkViewModel>();

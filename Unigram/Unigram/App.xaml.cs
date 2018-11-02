@@ -246,7 +246,7 @@ namespace Unigram
                     return container.Resolve<SettingsPasscodeViewModel>(id);
                 case SettingsSessionsPage settingsSessions:
                     return container.Resolve<SettingsSessionsViewModel>(id);
-                case SettingsStatsPage settingsNetwork:
+                case SettingsNetworkPage settingsNetwork:
                     return container.Resolve<SettingsNetworkViewModel>(id);
                 case SettingsStickersArchivedPage settingsStickersArchived:
                     return container.Resolve<SettingsStickersArchivedViewModel>(id);
