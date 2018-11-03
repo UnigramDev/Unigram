@@ -77,6 +77,7 @@ namespace Unigram.ViewModels.Settings
                 Settings.Appearance.RequestedTheme = IsSystemTheme ? (TelegramTheme)value : ((TelegramTheme)value | TelegramTheme.Brand);
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => IsSystemTheme);
+                RaisePropertyChanged(() => IsNightModeAvailable);
             }
         }
 
@@ -91,6 +92,22 @@ namespace Unigram.ViewModels.Settings
                 Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => RequestedTheme);
+            }
+        }
+
+        public bool IsNightModeAvailable
+        {
+            get
+            {
+                return Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light);
+            }
+        }
+
+        public bool IsNightModeEnabled
+        {
+            get
+            {
+                return Settings.Appearance.IsNightModeEnabled;
             }
         }
     }

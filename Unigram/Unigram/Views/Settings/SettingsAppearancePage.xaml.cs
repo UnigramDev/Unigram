@@ -49,6 +49,20 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsWallpaperPage));
         }
 
+        private void NightMode_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsNightModePage));
+        }
+
+        #region Binding
+
+        private string ConvertNightMode(bool enabled)
+        {
+            return enabled ? Strings.Resources.AutoNightScheduled : Strings.Resources.AutoNightDisabled;
+        }
+
+        #endregion
+
         private int _advanced;
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {

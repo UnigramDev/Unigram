@@ -1,0 +1,82 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsNightModePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <DrillInNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="{CustomResource AutoNightTheme}"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <RadioButton Content="{CustomResource AutoNightDisabled}"
+                             IsChecked="{x:Bind ViewModel.IsEnabled, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
+                             Click="UpdateTheme_Click"
+                             Margin="12,6,12,0"/>
+                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+
+                <RadioButton Content="{CustomResource AutoNightScheduled}"
+                             IsChecked="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
+                             Click="UpdateTheme_Click"
+                             Margin="12,0"/>
+                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+
+                <StackPanel Visibility="{x:Bind ViewModel.IsEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,24,0,0">
+                    <TextBlock Text="{CustomResource AutoNightSchedule}" Margin="12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    
+                    <!--<ToggleSwitch Header="{CustomResource AutoNightLocation}"
+                                  IsOn="{x:Bind ViewModel.IsLocationBased, Mode=TwoWay}"
+                                  Style="{StaticResource CheckButtonStyle}"/>-->
+
+                    <CheckBox x:Name="AutoNightLocation"
+                              Content="{CustomResource AutoNightLocation}"
+                              IsChecked="{x:Bind ViewModel.IsLocationBased, Mode=TwoWay}"
+                              Click="UpdateTheme_Click"
+                              Margin="12,0,0,0"/>
+
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+
+                    <StackPanel Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                        <controls:BadgeButton Content="{CustomResource AutoNightFrom}"
+                                              Badge="{x:Bind ConvertTimeSpan(ViewModel.From), Mode=OneWay}">
+                            <Button.Flyout>
+                                <TimePickerFlyout x:Name="FromPicker" Time="{x:Bind ViewModel.From, Mode=TwoWay}" TimePicked="UpdateTheme_Picked" Placement="BottomEdgeAlignedLeft"/>
+                            </Button.Flyout>
+                        </controls:BadgeButton>
+                        <controls:BadgeButton Content="{CustomResource AutoNightTo}"
+                                              Badge="{x:Bind ConvertTimeSpan(ViewModel.To), Mode=OneWay}">
+                            <Button.Flyout>
+                                <TimePickerFlyout x:Name="ToPicker" Time="{x:Bind ViewModel.To, Mode=TwoWay}" TimePicked="UpdateTheme_Picked" Placement="BottomEdgeAlignedLeft"/>
+                            </Button.Flyout>
+                        </controls:BadgeButton>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <controls:BadgeButton Content="{CustomResource AutoNightUpdateLocation}"
+                                              Command="{x:Bind ViewModel.UpdateLocationCommand}"
+                                              Badge="{x:Bind ViewModel.Town, Mode=OneWay}"/>
+                        <TextBlock Text="{x:Bind ConvertSunDate(ViewModel.Location), Mode=OneWay}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
