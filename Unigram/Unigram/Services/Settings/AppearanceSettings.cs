@@ -44,7 +44,12 @@ namespace Unigram.Services.Settings
                     var sunset = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
 
                     from = from.Add(sunset);
-                    to = to.AddDays(1).Add(sunrise);
+                    to = to.Add(sunrise);
+
+                    if (sunrise < sunset)
+                    {
+                        to = to.AddDays(1);
+                    }
                 }
                 else
                 {
@@ -250,7 +255,12 @@ namespace Unigram.Services.Settings
                     var sunset = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
 
                     from = from.Add(sunset);
-                    to = to.AddDays(1).Add(sunrise);
+                    to = to.Add(sunrise);
+
+                    if (sunrise < sunset)
+                    {
+                        to = to.AddDays(1);
+                    }
                 }
                 else
                 {
