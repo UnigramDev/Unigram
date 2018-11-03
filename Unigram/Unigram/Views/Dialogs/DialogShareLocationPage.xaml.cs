@@ -45,7 +45,7 @@ namespace Unigram.Views.Dialogs
         private Geoposition _lastPosition;
 
         public InputMessageContent Media { get; private set; }
-        public ContentDialogBase Dialog { get; set; }
+        public OverlayPage Dialog { get; set; }
 
         private bool? _liveLocation;
         public bool? LiveLocation

@@ -122,6 +122,7 @@
     <Compile Include="Common\ColorsHelper.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\ImageHelper.cs" />
+    <Compile Include="Common\SunDate.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
+    <Compile Include="Controls\OverlayPage.cs" />
     <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
@@ -560,6 +562,7 @@
     <Compile Include="ViewModels\Settings\SettingsDataAutoViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNetworkViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsNightModeViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPasscodeViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
@@ -754,6 +757,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsNetworkPage.xaml.cs">
       <DependentUpon>SettingsNetworkPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsNightModePage.xaml.cs">
+      <DependentUpon>SettingsNightModePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsPasscodePage.xaml.cs">
       <DependentUpon>SettingsPasscodePage.xaml</DependentUpon>
@@ -1202,7 +1208,6 @@
     <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
       <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ContentDialogBase.cs" />
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\Views\InlineBotResultsView.xaml.cs">
       <DependentUpon>InlineBotResultsView.xaml</DependentUpon>
@@ -2085,6 +2090,10 @@
     <Page Include="Views\Settings\SettingsNetworkPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsNightModePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsPasscodePage.xaml">
       <Generator>MSBuild:Compile</Generator>

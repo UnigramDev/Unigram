@@ -104,14 +104,17 @@ namespace Unigram.Common
             var current = app.UISettings.GetColorValue(UIColorType.Background);
 
             // Apply buttons feedback based on Light or Dark theme
-            if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && current == Colors.Black))
+            var theme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
+            //if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && current == Colors.Black))
+            if (theme == ElementTheme.Dark || (theme == ElementTheme.Default && current == Colors.Black))
             {
                 background = Color.FromArgb(255, 43, 43, 43);
                 foreground = Colors.White;
                 buttonHover = Color.FromArgb(25, 255, 255, 255);
                 buttonPressed = Color.FromArgb(51, 255, 255, 255);
             }
-            else if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light) || (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && current == Colors.White))
+            //else if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light) || (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && current == Colors.White))
+            else if (theme == ElementTheme.Light || (theme == ElementTheme.Default && current == Colors.White))
             {
                 background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;

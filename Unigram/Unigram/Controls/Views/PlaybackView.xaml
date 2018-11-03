@@ -1,4 +1,4 @@
-<controls:ContentDialogBase
+<controls:OverlayPage
     x:Class="Unigram.Controls.Views.PlaybackView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -17,7 +17,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <controls:ContentDialogBase.Resources>
+    <controls:OverlayPage.Resources>
         <Style TargetType="ScrollViewer">
             <Setter Property="HorizontalScrollMode" Value="Auto" />
             <Setter Property="VerticalScrollMode" Value="Auto" />
@@ -533,7 +533,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </controls:ContentDialogBase.Resources>
+    </controls:OverlayPage.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -647,4 +647,4 @@
             </ListView.ItemsPanel>
         </ListView>
     </Grid>
-</controls:ContentDialogBase>
+</controls:OverlayPage>

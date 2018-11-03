@@ -44,7 +44,7 @@ using Unigram.Controls.Gallery;
 
 namespace Unigram.Controls.Gallery
 {
-    public sealed partial class GalleryView : ContentDialogBase, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
+    public sealed partial class GalleryView : OverlayPage, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
@@ -82,9 +82,8 @@ namespace Unigram.Controls.Gallery
             //CreateKeyboardAccelerator(Windows.System.VirtualKey.Right, Windows.System.VirtualKeyModifiers.None);
             //CreateKeyboardAccelerator(Windows.System.VirtualKey.GamepadRightShoulder, Windows.System.VirtualKeyModifiers.None);
 
-            Layer.Visibility = Visibility.Collapsed;
-
             _layer = ElementCompositionPreview.GetElementVisual(Layer);
+            _layer.Opacity = 0;
 
             _mediaPlayerElement = new MediaPlayerElement { Style = Resources["TransportLessMediaPlayerStyle"] as Style };
             _mediaPlayerElement.AreTransportControlsEnabled = true;
@@ -92,27 +91,6 @@ namespace Unigram.Controls.Gallery
             _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
 
             Initialize();
-
-            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
-            {
-                var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
-                var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
-
-                var layerShowAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                layerShowAnimation.InsertKeyFrame(0.0f, 0.0f, easing);
-                layerShowAnimation.InsertKeyFrame(1.0f, 1.0f, easing);
-                layerShowAnimation.Target = nameof(Visual.Opacity);
-                layerShowAnimation.Duration = duration;
-
-                var layerHideAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                layerHideAnimation.InsertKeyFrame(0.0f, 1.0f, easing);
-                layerHideAnimation.InsertKeyFrame(1.0f, 0.0f, easing);
-                layerHideAnimation.Target = nameof(Visual.Opacity);
-                layerHideAnimation.Duration = duration;
-
-                ElementCompositionPreview.SetImplicitShowAnimation(Layer, layerShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(Layer, layerHideAnimation);
-            }
         }
 
         private void CreateKeyboardAccelerator(Windows.System.VirtualKey key, Windows.System.VirtualKeyModifiers modifiers = Windows.System.VirtualKeyModifiers.Control)
@@ -362,10 +340,21 @@ namespace Unigram.Controls.Gallery
                     }
 
                     var element = _closing();
-                    if (element.ActualWidth > 0)
+                    if (element.ActualWidth > 0 && animation.TryStart(element))
                     {
-                        animation.TryStart(element);
+                        animation.Completed += (s, args) =>
+                        {
+                            Hide();
+                        };
                     }
+                    else
+                    {
+                        Hide();
+                    }
+                }
+                else
+                {
+                    Hide();
                 }
             }
             else if (root != null)
@@ -379,9 +368,11 @@ namespace Unigram.Controls.Gallery
                 animation.Duration = duration;
 
                 _layout.StartAnimation("Offset.Y", animation);
+
+                Hide();
             }
 
-            Layer.Visibility = Visibility.Collapsed;
+            _layer.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
 
             if (Transport.IsVisible)
             {
@@ -391,7 +382,7 @@ namespace Unigram.Controls.Gallery
             Unload();
 
             Dispose();
-            Hide();
+            //Hide();
 
             e.Handled = true;
         }
@@ -418,7 +409,7 @@ namespace Unigram.Controls.Gallery
                     animation.Configuration = new BasicConnectedAnimationConfiguration();
                 }
 
-                Layer.Visibility = Visibility.Visible;
+                _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
 
                 if (animation.TryStart(image.Presenter))
                 {
@@ -442,6 +433,16 @@ namespace Unigram.Controls.Gallery
             {
                 Play(image.Presenter, item, item.GetFile());
             }
+        }
+
+        private CompositionAnimation CreateScalarAnimation(float from, float to)
+        {
+            var scalar = _layer.Compositor.CreateScalarKeyFrameAnimation();
+            scalar.InsertKeyFrame(0, from);
+            scalar.InsertKeyFrame(1, to, ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction);
+            scalar.Duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+
+            return scalar;
         }
 
         #region Binding

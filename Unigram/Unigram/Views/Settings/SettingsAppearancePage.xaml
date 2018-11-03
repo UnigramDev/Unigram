@@ -256,6 +256,12 @@
                     Click="Wallpaper_Click"
                     Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                     Style="{StaticResource HyperButtonStyle}"/>
+                <controls:BadgeButton
+                    Content="{CustomResource AutoNightTheme}"
+                    Badge="{x:Bind ConvertNightMode(ViewModel.IsNightModeEnabled), Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsNightModeAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Click="NightMode_Click"
+                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
                 <StackPanel Padding="12" Margin="0,18,0,0">
                     <TextBlock Text="{CustomResource Theme}" Margin="0,0,0,4" Style="{StaticResource SettingsGroupTextBlockStyle}"/>

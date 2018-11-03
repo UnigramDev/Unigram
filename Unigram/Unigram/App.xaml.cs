@@ -110,7 +110,7 @@ namespace Unigram
 
             if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
             {
-                RequestedTheme = SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) ? ApplicationTheme.Dark : ApplicationTheme.Light;
+                RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             }
 
             InitializeComponent();
@@ -346,6 +346,7 @@ namespace Unigram
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
             HandleActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
+            SettingsService.Current.Appearance.UpdateTimer();
         }
 
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)

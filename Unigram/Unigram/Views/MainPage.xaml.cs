@@ -694,7 +694,7 @@ namespace Unigram.Views
             {
                 Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
                 SetTitleBarVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
-                MasterDetail.AllowCompact = e.SourcePageType != typeof(BlankPage);
+                MasterDetail.AllowCompact = e.SourcePageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
             }
 
             if (e.SourcePageType == typeof(ChatPage))
@@ -1171,7 +1171,7 @@ namespace Unigram.Views
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MasterDetail.AllowCompact = rpMasterTitlebar.SelectedIndex == 0;
+            MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
 
             Root?.SetSelectedIndex(rpMasterTitlebar.SelectedIndex);
 
@@ -1241,7 +1241,7 @@ namespace Unigram.Views
             if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
             {
                 rpMasterTitlebar.IsLocked = false;
-                MasterDetail.AllowCompact = true;
+                MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
 
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {

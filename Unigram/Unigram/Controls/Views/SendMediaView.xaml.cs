@@ -38,7 +38,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SendMediaView : ContentDialogBase, INotifyPropertyChanged
+    public sealed partial class SendMediaView : OverlayPage, INotifyPropertyChanged
     {
         public DialogViewModel ViewModel { get; set; }
 

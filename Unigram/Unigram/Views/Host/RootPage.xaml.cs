@@ -41,7 +41,7 @@ namespace Unigram.Views.Host
         {
             if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
             {
-                RequestedTheme = SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
+                RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             }
 
             InitializeComponent();
@@ -86,7 +86,7 @@ namespace Unigram.Views.Host
             var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
             foreach (var popup in popups)
             {
-                if (popup.Child is ContentDialogBase contentDialog)
+                if (popup.Child is OverlayPage contentDialog)
                 {
                     contentDialog.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
                 }
