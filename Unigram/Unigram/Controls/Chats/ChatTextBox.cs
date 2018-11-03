@@ -218,7 +218,7 @@ namespace Unigram.Controls.Chats
             var start = Math.Min(range.StartPosition, range.EndPosition);
             var end = Math.Max(range.StartPosition, range.EndPosition);
 
-            var dialog = new CreateLinkView();
+            var dialog = new CreateLinkView(ViewModel.ProtoService);
             dialog.Text = text;
             dialog.Link = range.Link.Trim('"');
 
