@@ -1522,30 +1522,20 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:ContentDialogBase">
+    <Style TargetType="local:OverlayPage">
         <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}" />
         <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" />
         <Setter Property="OverlayBrush" Value="#99000000" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="MaxHeight" Value="Infinity" />
-        <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />
-        <Setter Property="MaxWidth" Value="Infinity" />
-        <Setter Property="MinWidth" Value="{ThemeResource ContentDialogMinWidth}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:ContentDialogBase">
+                <ControlTemplate TargetType="local:OverlayPage">
                     <Border x:Name="Container" Background="{TemplateBinding OverlayBrush}" Padding="{TemplateBinding Padding}">
                         <Border x:Name="BackgroundElement"
                                 Background="{TemplateBinding Background}"
                                 FlowDirection="{TemplateBinding FlowDirection}"
-                                BorderThickness="1,0,1,1"
-                                BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}"
-                                MaxWidth="{ThemeResource ContentDialogMaxWidth}"
-                                MaxHeight="{ThemeResource ContentDialogMaxHeight}"
-                                MinWidth="{ThemeResource ContentDialogMinWidth}"
-                                MinHeight="{ThemeResource ContentDialogMinHeight}"
                                 VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                 HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
                             <ContentPresenter x:Name="Content"

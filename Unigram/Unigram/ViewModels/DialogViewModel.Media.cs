@@ -582,7 +582,7 @@ namespace Unigram.ViewModels
         {
             var page = new DialogShareLocationPage();
 
-            var dialog = new ContentDialogBase();
+            var dialog = new OverlayPage();
             dialog.Content = page;
 
             page.Dialog = dialog;

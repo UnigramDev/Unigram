@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class PlaybackView : ContentDialogBase
+    public sealed partial class PlaybackView : OverlayPage
     {
         public PlaybackViewModel ViewModel => DataContext as PlaybackViewModel;
 
@@ -334,10 +334,10 @@ namespace Unigram.Controls.Views
             var minHeigth = itemWidth * 3d - 12 + 48 + 48;
             var top = Math.Max(0, e.NewSize.Height - minHeigth);
 
-            if (!IsFullScreenMode())
-            {
-                top = 0;
-            }
+            //if (!IsFullScreenMode())
+            //{
+            //    top = 0;
+            //}
 
             if (top == 0)
             {

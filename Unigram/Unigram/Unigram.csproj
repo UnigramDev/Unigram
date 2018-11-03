@@ -276,6 +276,7 @@
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
+    <Compile Include="Controls\OverlayPage.cs" />
     <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
@@ -1198,7 +1199,6 @@
     <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
       <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ContentDialogBase.cs" />
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\Views\InlineBotResultsView.xaml.cs">
       <DependentUpon>InlineBotResultsView.xaml</DependentUpon>

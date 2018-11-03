@@ -26,7 +26,7 @@ using Windows.ApplicationModel.Core;
 
 namespace Unigram.Controls
 {
-    public class ContentDialogBase : ContentControl, INavigablePage
+    public class OverlayPage : ContentControl, INavigablePage
     {
         private int _lastHide;
 
@@ -44,9 +44,9 @@ namespace Unigram.Controls
 
         public event EventHandler Closing;
 
-        public ContentDialogBase()
+        public OverlayPage()
         {
-            DefaultStyleKey = typeof(ContentDialogBase);
+            DefaultStyleKey = typeof(OverlayPage);
 
             Loading += OnLoading;
             Loaded += OnLoaded;
@@ -228,6 +228,7 @@ namespace Unigram.Controls
         {
             if (_closing)
             {
+                e.Handled = true;
                 return;
             }
 
@@ -327,98 +328,8 @@ namespace Unigram.Controls
         private void UpdateViewBase()
         {
             var bounds = _applicationView.VisibleBounds;
-            MinWidth = bounds.Width;
-            MinHeight = bounds.Height;
-            MaxWidth = bounds.Width;
-            MaxHeight = bounds.Height;
-
-            UpdateView(bounds);
-        }
-
-        protected bool IsFullScreenMode()
-        {
-            var bounds = _applicationView.VisibleBounds;
-            return IsFullScreenMode(bounds);
-        }
-
-        protected virtual bool IsFullScreenMode(Rect bounds)
-        {
-            return (HorizontalAlignment == HorizontalAlignment.Stretch && VerticalAlignment == VerticalAlignment.Stretch) || (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500));
-        }
-
-        protected virtual void UpdateView(Rect bounds)
-        {
-            if (BackgroundElement == null) return;
-
-            if (IsFullScreenMode(bounds))
-            {
-                //BackgroundElement.MinWidth = bounds.Width;
-                //BackgroundElement.MinHeight = bounds.Height;
-                BackgroundElement.MaxWidth = double.PositiveInfinity;
-                BackgroundElement.MaxHeight = double.PositiveInfinity;
-                BackgroundElement.HorizontalAlignment = HorizontalAlignment.Stretch;
-                BackgroundElement.VerticalAlignment = VerticalAlignment.Stretch;
-                BackgroundElement.BorderThickness = new Thickness(0);
-            }
-            else
-            {
-                BackgroundElement.MinWidth = Math.Min(360, bounds.Width);
-                BackgroundElement.MinHeight = Math.Min(460, bounds.Height);
-                BackgroundElement.MaxWidth = Math.Min(360, bounds.Width);
-                BackgroundElement.MaxHeight = Math.Min(460, bounds.Height);
-
-                if (BackgroundElement.MinWidth == bounds.Width && BackgroundElement.MinHeight == bounds.Height)
-                {
-                    BackgroundElement.BorderThickness = new Thickness(0);
-                }
-                else if (BackgroundElement.MinWidth == bounds.Width && BackgroundElement.MinHeight != bounds.Height)
-                {
-                    BackgroundElement.BorderThickness = new Thickness(0, 0, 0, 1);
-                }
-                else if (BackgroundElement.MinWidth != bounds.Width && BackgroundElement.MinHeight == bounds.Height)
-                {
-                    BackgroundElement.BorderThickness = new Thickness(1, 0, 1, 0);
-                }
-                else
-                {
-                    var left = 0;
-                    var right = 0;
-                    var top = 0;
-                    var bottom = 0;
-                    switch (HorizontalAlignment)
-                    {
-                        case HorizontalAlignment.Left:
-                            left = 0;
-                            right = 1;
-                            break;
-                        case HorizontalAlignment.Right:
-                            left = 1;
-                            right = 0;
-                            break;
-                        default:
-                            left = 1;
-                            right = 1;
-                            break;
-                    }
-                    switch (VerticalAlignment)
-                    {
-                        case VerticalAlignment.Top:
-                            top = 0;
-                            bottom = 1;
-                            break;
-                        case VerticalAlignment.Bottom:
-                            top = 1;
-                            bottom = 0;
-                            break;
-                        default:
-                            top = 1;
-                            bottom = 1;
-                            break;
-                    }
-
-                    BackgroundElement.BorderThickness = new Thickness(left, top, right, bottom);
-                }
-            }
+            Width = bounds.Width;
+            Height = bounds.Height;
         }
 
         #region OverlayBrush
@@ -430,16 +341,16 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty OverlayBrushProperty =
-            DependencyProperty.Register("OverlayBrush", typeof(Brush), typeof(ContentDialogBase), new PropertyMetadata(null));
+            DependencyProperty.Register("OverlayBrush", typeof(Brush), typeof(OverlayPage), new PropertyMetadata(null));
 
         #endregion
     }
 
     public class ContentDialogNavigationService : INavigationService
     {
-        private readonly ContentDialogBase _contentDialog;
+        private readonly OverlayPage _contentDialog;
 
-        public ContentDialogNavigationService(ContentDialogBase contentDialog)
+        public ContentDialogNavigationService(OverlayPage contentDialog)
         {
             _contentDialog = contentDialog;
         }

@@ -32,7 +32,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class RoundVideoView : ContentDialogBase
+    public sealed partial class RoundVideoView : OverlayPage
     {
         public RoundVideoView()
         {

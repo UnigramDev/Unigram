@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class EditYourPhotoView : ContentDialogBase
+    public sealed partial class EditYourPhotoView : OverlayPage
     {
         //private InkPresenter _inkPresenter;
 
