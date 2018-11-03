@@ -365,7 +365,7 @@
                                 x:Name="UserCommonChats"
                                 Visibility="Collapsed"
                                 Command="{x:Bind ViewModel.CommonChatsCommand}"
-                                Content="{CustomResource GroupsInCommon}"
+                                Content="{CustomResource GroupsInCommonTitle}"
                                 Glyph="&#xE902;"
                                 Style="{StaticResource GlyphBadgeButtonStyle}"/>
                         </StackPanel>
