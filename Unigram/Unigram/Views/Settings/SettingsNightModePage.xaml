@@ -27,14 +27,14 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <RadioButton Content="{CustomResource AutoNightDisabled}"
-                             IsChecked="{x:Bind ViewModel.IsEnabled, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
+                <RadioButton x:Name="Disabled"
+                             Content="{CustomResource AutoNightDisabled}"
                              Click="UpdateTheme_Click"
                              Margin="12,6,12,0"/>
                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
 
-                <RadioButton Content="{CustomResource AutoNightScheduled}"
-                             IsChecked="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
+                <RadioButton x:Name="Scheduled"
+                             Content="{CustomResource AutoNightScheduled}"
                              Click="UpdateTheme_Click"
                              Margin="12,0"/>
                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
