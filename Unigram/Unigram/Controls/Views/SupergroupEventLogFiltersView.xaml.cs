@@ -28,6 +28,8 @@ namespace Unigram.Controls.Views
         public ChatEventLogFilters Filters { get; private set; }
         public IList<int> UserIds { get; private set; }
 
+        public bool AreAllAdministratorsSelected { get; private set; }
+
         public SupergroupEventLogFiltersView()
         {
             InitializeComponent();
@@ -49,7 +51,7 @@ namespace Unigram.Controls.Views
 
             MemberRestrictions.IsChecked = filters.MemberRestrictions;
             MemberPromotions.IsChecked = filters.MemberPromotions;
-            MemberJoins.IsChecked = filters.MemberJoins;
+            MemberJoins.IsChecked = filters.MemberJoins || filters.MemberInvites;
             InfoChanges.IsChecked = filters.InfoChanges || filters.SettingChanges;
             MessageDeletions.IsChecked = filters.MessageDeletions;
             MessageEdits.IsChecked = filters.MessageEdits;
@@ -159,6 +161,7 @@ namespace Unigram.Controls.Views
                 MemberRestrictions = MemberRestrictions.IsChecked == true,
                 MemberPromotions = MemberPromotions.IsChecked == true,
                 MemberJoins = MemberJoins.IsChecked == true,
+                MemberInvites = MemberJoins.IsChecked == true,
                 InfoChanges = InfoChanges.IsChecked == true,
                 SettingChanges = InfoChanges.IsChecked == true,
                 MessageDeletions = MessageDeletions.IsChecked == true,
@@ -167,6 +170,7 @@ namespace Unigram.Controls.Views
                 MemberLeaves = MemberLeaves.IsChecked == true,
             };
 
+            AreAllAdministratorsSelected = List.Items.All(x => List.SelectedItems.Contains(x));
             UserIds = List.SelectedItems.OfType<ChatMember>().Select(x => x.UserId).ToList();
         }
 

@@ -143,7 +143,7 @@ namespace Unigram.ViewModels.Supergroups
             {
                 Filters = dialog.Filters;
                 UserIds = dialog.UserIds;
-                Items = new ItemsCollection(ProtoService, _messageFactory, this, chat.Id, supergroup.IsChannel, dialog.Filters, dialog.UserIds);
+                Items = new ItemsCollection(ProtoService, _messageFactory, this, chat.Id, supergroup.IsChannel, dialog.Filters, dialog.AreAllAdministratorsSelected ? new int[0] : dialog.UserIds);
 
                 RaisePropertyChanged(() => Items);
             }
