@@ -103,11 +103,11 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public bool IsNightModeEnabled
+        public NightMode NightMode
         {
             get
             {
-                return Settings.Appearance.IsNightModeEnabled;
+                return Settings.Appearance.NightMode;
             }
         }
     }

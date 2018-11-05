@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:settings="using:Unigram.Services.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -27,24 +28,31 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <RadioButton x:Name="Disabled"
-                             Content="{CustomResource AutoNightDisabled}"
-                             Click="UpdateTheme_Click"
-                             Margin="12,6,12,0"/>
+                <controls:PivotRadioButton
+                    x:Name="Disabled"
+                    Content="{CustomResource AutoNightDisabled}"
+                    SelectedValue="{x:Bind ConvertMode(ViewModel.Mode), BindBack=ConvertModeBack, Mode=TwoWay}"
+                    Index="0"
+                    Click="UpdateTheme_Click"
+                    Margin="12,6,12,0"/>
                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
 
-                <RadioButton x:Name="Scheduled"
-                             Content="{CustomResource AutoNightScheduled}"
-                             Click="UpdateTheme_Click"
-                             Margin="12,0"/>
+                <controls:PivotRadioButton
+                    x:Name="Scheduled"
+                    Content="{CustomResource AutoNightScheduled}"
+                    SelectedValue="{x:Bind ConvertMode(ViewModel.Mode), BindBack=ConvertModeBack, Mode=TwoWay}"
+                    Index="1"
+                    Click="UpdateTheme_Click"
+                    Margin="12,0"/>
                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.IsEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,24,0,0">
+                <!--<StackPanel Visibility="{x:Bind ViewModel.Mode, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,24,0,0">-->
+                <StackPanel Visibility="{x:Bind ConvertModeVisibility(ViewModel.Mode, settings:NightMode.Scheduled), Mode=OneWay}" Margin="0,24,0,0">
                     <TextBlock Text="{CustomResource AutoNightSchedule}" Margin="12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     
                     <!--<ToggleSwitch Header="{CustomResource AutoNightLocation}"
-                                  IsOn="{x:Bind ViewModel.IsLocationBased, Mode=TwoWay}"
-                                  Style="{StaticResource CheckButtonStyle}"/>-->
+                         IsOn="{x:Bind ViewModel.IsLocationBased, Mode=TwoWay}"
+                         Style="{StaticResource CheckButtonStyle}"/>-->
 
                     <CheckBox x:Name="AutoNightLocation"
                               Content="{CustomResource AutoNightLocation}"

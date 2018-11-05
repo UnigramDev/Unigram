@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
@@ -29,9 +30,6 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsNightModeViewModel>();
 
-            Disabled.IsChecked = !ViewModel.IsEnabled;
-            Scheduled.IsChecked = ViewModel.IsEnabled;
-
             // We have to do this as english copy contains a randomic \n at the end of the string.
             AutoNightLocation.Content = Strings.Resources.AutoNightLocation.TrimEnd('\n');
 
@@ -40,6 +38,21 @@ namespace Unigram.Views.Settings
         }
 
         #region Binding
+
+        private int ConvertMode(NightMode mode)
+        {
+            return (int)mode;
+        }
+
+        private void ConvertModeBack(int mode)
+        {
+            ViewModel.Mode = (NightMode)mode;
+        }
+
+        private Visibility ConvertModeVisibility(NightMode current, NightMode expected)
+        {
+            return current == expected ? Visibility.Visible : Visibility.Collapsed;
+        }
 
         private string ConvertTimeSpan(TimeSpan time)
         {
@@ -64,7 +77,6 @@ namespace Unigram.Views.Settings
 
         private void UpdateTheme_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.IsEnabled = Scheduled.IsChecked == true;
             ViewModel.UpdateTheme();
         }
 

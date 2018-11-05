@@ -26,8 +26,7 @@
                     <controls:GlyphButton
                         Glyph="&#xE11A;"
                         Click="Search_Click"
-                        FontSize="18"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
                 </Grid>
 

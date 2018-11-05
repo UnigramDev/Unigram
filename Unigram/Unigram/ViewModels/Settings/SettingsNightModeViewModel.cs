@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Windows.Devices.Geolocation;
 using Windows.Services.Maps;
 using Windows.UI.Xaml;
@@ -65,17 +66,17 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public bool IsEnabled
+        public NightMode Mode
         {
             get
             {
-                return Settings.Appearance.IsNightModeEnabled;
+                return Settings.Appearance.NightMode;
             }
             set
             {
-                if (Settings.Appearance.IsNightModeEnabled != value)
+                if (Settings.Appearance.NightMode != value)
                 {
-                    if (value == false)
+                    if (value == NightMode.Disabled)
                     {
                         IsLocationBased = false;
                         From = new TimeSpan(22, 0, 0);
@@ -84,7 +85,7 @@ namespace Unigram.ViewModels.Settings
                         Town = null;
                     }
 
-                    Settings.Appearance.IsNightModeEnabled = value;
+                    Settings.Appearance.NightMode = value;
                     RaisePropertyChanged();
                 }
             }

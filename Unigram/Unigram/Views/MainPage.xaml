@@ -216,7 +216,6 @@
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
-                                FontSize="18"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"/>
                         </StackPanel>
                         <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
@@ -237,7 +236,6 @@
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
-                                FontSize="18"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"/>
                         </StackPanel>
                     </Grid>
