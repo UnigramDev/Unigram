@@ -56,5 +56,10 @@ namespace Unigram.Views.Settings
                 ViewModel.SetPinnedChats();
             }
         }
+
+        private void OnSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
+        {
+            AdaptiveWide.Visibility = e.NewSize.Width >= 880 ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed;
+        }
     }
 }

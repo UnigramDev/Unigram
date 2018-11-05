@@ -32,6 +32,7 @@ namespace Unigram.Services
         int VerbosityLevel { get; }
         bool UseTestDC { get; set; }
 
+        bool IsAdaptiveWideEnabled { get; set; }
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
@@ -155,8 +156,9 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (2UL << 48) | (3UL << 32) | (1924UL << 16);
-        public const string CurrentChangelog = "- Swipe left on any message to reply to it.\r\n- Manage basic groups administrators.\r\n- Bug fixes and improvements.";
+        public const ulong CurrentVersion = (2UL << 48) | (4UL << 32) | (2000UL << 16);
+        public const string CurrentChangelog = "- Auto-Night Mode. Automatically switch to the dark version of the interface after nightfall.\r\n- Swipe right on any message to forward it.";
+        public const bool CurrentMedia = false;
 
         public int Session => _session;
 
@@ -343,7 +345,7 @@ namespace Unigram.Services
             }
         }
 
-        private double? _dialogsWidthRatio;
+        private static double? _dialogsWidthRatio;
         public double DialogsWidthRatio
         {
             get
@@ -357,6 +359,23 @@ namespace Unigram.Services
             {
                 _dialogsWidthRatio = value;
                 AddOrUpdateValue(_local, "DialogsWidthRatio", value);
+            }
+        }
+
+        private static bool? _isAdaptiveWideEnabled;
+        public bool IsAdaptiveWideEnabled
+        {
+            get
+            {
+                if (_isAdaptiveWideEnabled == null)
+                    _isAdaptiveWideEnabled = GetValueOrDefault(_local, "IsAdaptiveWideEnabled", true);
+
+                return _isAdaptiveWideEnabled ?? true;
+            }
+            set
+            {
+                _isAdaptiveWideEnabled = value;
+                AddOrUpdateValue(_local, "IsAdaptiveWideEnabled", value);
             }
         }
 

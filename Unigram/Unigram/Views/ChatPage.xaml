@@ -256,7 +256,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested">
+            <messages:MessageBubble x:Name="Bubble" HorizontalAlignment="Right" ContextRequested="Message_ContextRequested">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -287,15 +287,19 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate">
-            <Grid Margin="-50,0,0,0" HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+            <Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="38"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
                                          Click="Photo_Click"
-                                         Style="{StaticResource MessageBubbleProfilePictureStyle}"/>
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Bottom"
+                                         Margin="0,0,0,2"
+                                         Width="30"
+                                         Height="30"/>
                 <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
 
                 <Border x:Name="Action"
@@ -538,6 +542,7 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ListViewItem">
                                             <ListViewItemPresenter
+                                                x:Name="Presenter"
                                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                                 SelectionCheckMarkVisualEnabled="True"
                                                 CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
@@ -583,6 +588,7 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ListViewItem">
                                             <ListViewItemPresenter
+                                                x:Name="Presenter"
                                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                                 SelectionCheckMarkVisualEnabled="False"
                                                 CheckBrush="{x:Null}"

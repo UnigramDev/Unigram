@@ -238,8 +238,8 @@
                 <Grid x:Name="Preview">
                     <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                     <StackPanel Padding="12,12,12,10">
-                        <messages:MessageBubble x:Name="Message1"/>
-                        <messages:MessageBubble x:Name="Message2">
+                        <messages:MessageBubble x:Name="Message1" HorizontalAlignment="Left"/>
+                        <messages:MessageBubble x:Name="Message2" HorizontalAlignment="Right">
                             <FrameworkElement.Resources>
                                 <ResourceDictionary>
                                     <ResourceDictionary.MergedDictionaries>

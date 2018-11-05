@@ -6,6 +6,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    SizeChanged="OnSizeChanged"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -48,6 +49,12 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsAutoPlayEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoplayGifs}"
+                        Style="{StaticResource CheckButtonStyle}"/>
+
+                    <ToggleSwitch
+                        x:Name="AdaptiveWide"
+                        IsOn="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
+                        Header="Adaptive layout for wide screens"
                         Style="{StaticResource CheckButtonStyle}"/>
 
                     <ToggleSwitch

@@ -42,6 +42,13 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        public void UpdateAdaptive(HorizontalAlignment alignment)
+        {
+            UpdateAttach(_message, alignment == HorizontalAlignment.Left);
+
+            HorizontalAlignment = alignment;
+        }
+
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
@@ -56,14 +63,14 @@ namespace Unigram.Controls.Messages
             Markup.Update(message, message.ReplyMarkup);
         }
 
-        public void UpdateAttach(MessageViewModel message)
+        public void UpdateAttach(MessageViewModel message, bool wide = false)
         {
             var topLeft = 15d;
             var topRight = 15d;
             var bottomRight = 15d;
             var bottomLeft = 15d;
 
-            if (message.IsOutgoing)
+            if (message.IsOutgoing && !wide)
             {
                 if (message.IsFirst && message.IsLast)
                 {

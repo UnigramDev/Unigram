@@ -49,11 +49,11 @@ namespace Unigram.Controls
                     {
                         if (message.Content is MessageSticker || message.Content is MessageVideoNote)
                         {
-                            container.Padding = new Thickness(50, 0, 12, 0);
+                            container.Padding = new Thickness(12, 0, 12, 0);
                         }
                         else
                         {
-                            container.Padding = new Thickness(50, 0, action ? 14 : 50, 0);
+                            container.Padding = new Thickness(12, 0, action ? 14 : 50, 0);
                         }
                     }
                 }
