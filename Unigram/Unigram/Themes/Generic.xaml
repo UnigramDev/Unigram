@@ -1225,7 +1225,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProfilePicture">
-                    <Ellipse>
+                    <Ellipse FlowDirection="LeftToRight">
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="{Binding Source, RelativeSource={RelativeSource Mode=TemplatedParent}}" AlignmentY="Center" AlignmentX="Center" Stretch="UniformToFill"/>
                         </Ellipse.Fill>

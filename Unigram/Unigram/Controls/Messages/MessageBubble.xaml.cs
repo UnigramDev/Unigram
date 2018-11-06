@@ -776,9 +776,19 @@ namespace Unigram.Controls.Messages
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
             }
 
-            if (MessageHelper.IsAnyCharacterRightToLeft(text))
+            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
-                span.Inlines.Add(new LineBreak());
+                Footer.HorizontalAlignment = HorizontalAlignment.Left;
+                //span.Inlines.Add(new LineBreak());
+            }
+            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
+            {
+                Footer.HorizontalAlignment = HorizontalAlignment.Left;
+                //span.Inlines.Add(new LineBreak());
+            }
+            else
+            {
+                Footer.HorizontalAlignment = HorizontalAlignment.Right;
             }
 
             return true;
@@ -1123,7 +1133,7 @@ namespace Unigram.Controls.Messages
 
             return base.MeasureOverride(availableSize);
 
-            Calculate:
+        Calculate:
 
             if (Footer.DesiredSize.IsEmpty)
                 Footer.Measure(availableSize);
