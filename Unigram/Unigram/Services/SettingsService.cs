@@ -156,8 +156,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (2UL << 48) | (4UL << 32) | (2000UL << 16);
-        public const string CurrentChangelog = "- Auto-Night Mode. Automatically switch to the dark version of the interface after nightfall.\r\n- Swipe right on any message to forward it.";
+        public const ulong CurrentVersion = (2UL << 48) | (4UL << 32) | (2004UL << 16);
+        public const string CurrentChangelog = "- Auto-Night Mode. Automatically switch to the dark version of the interface after nightfall.\r\n- Swipe right on any message to forward it.\r\n-Adaptive layout for wide screens.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
