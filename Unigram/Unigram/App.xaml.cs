@@ -305,6 +305,10 @@ namespace Unigram
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
+            //var flowDirectionSetting = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
+
+            //args.Window.CoreWindow.FlowDirection = flowDirectionSetting == "RTL" ? CoreWindowFlowDirection.RightToLeft : CoreWindowFlowDirection.LeftToRight;
+
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
         }
@@ -511,7 +515,7 @@ namespace Unigram
 
             if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
             {
-                var navigationFrame = new Frame();
+                var navigationFrame = new Frame { FlowDirection = ApiInfo.FlowDirection };
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
                 navigationService.SerializationService = TLSerializationService.Current;
 
@@ -523,13 +527,13 @@ namespace Unigram
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
                 navigationService.SerializationService = TLSerializationService.Current;
 
-                return new RootPage(navigationService);
+                return new RootPage(navigationService) { FlowDirection = ApiInfo.FlowDirection };
             }
         }
 
         public override UIElement CreateRootElement(Frame frame)
         {
-            return new StandalonePage(frame);
+            return new StandalonePage(frame) { FlowDirection = ApiInfo.FlowDirection };
         }
 
         protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)

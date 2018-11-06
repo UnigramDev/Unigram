@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation.Metadata;
 using Windows.Graphics.Imaging;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Common
@@ -32,6 +34,21 @@ namespace Unigram.Common
             }
 
             return null;
+        }
+
+
+
+        private static FlowDirection? _flowDirection;
+        public static FlowDirection FlowDirection => (_flowDirection = _flowDirection ?? LoadFlowDirection()) ?? FlowDirection.LeftToRight;
+
+        private static FlowDirection LoadFlowDirection()
+        {
+#if DEBUG
+            var flowDirectionSetting = ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
+            return flowDirectionSetting == "RTL" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+#else
+            return FlowDirection.LeftToRight;
+#endif
         }
     }
 }

@@ -131,6 +131,7 @@
                 FontSize="{ThemeResource MessageFontSize}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 ContextMenuOpening="Message_ContextMenuOpening"
+                TextAlignment="DetectFromContent"
                 Grid.Column="1"
                 Grid.Row="2">
                 <RichTextBlock.Resources>
