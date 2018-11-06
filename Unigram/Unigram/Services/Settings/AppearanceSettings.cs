@@ -241,6 +241,23 @@ namespace Unigram.Services.Settings
             }
         }
 
+        private float? _threshold;
+        public float Threshold
+        {
+            get
+            {
+                if (_threshold == null)
+                    _threshold = GetValueOrDefault("Threshold", 0.25f);
+
+                return _threshold ?? 0.25f;
+            }
+            set
+            {
+                _threshold = value;
+                AddOrUpdateValue("Threshold", value);
+            }
+        }
+
         public bool? CheckNightModeConditions()
         {
             if (NightMode == NightMode.Scheduled && RequestedTheme.HasFlag(TelegramTheme.Light))

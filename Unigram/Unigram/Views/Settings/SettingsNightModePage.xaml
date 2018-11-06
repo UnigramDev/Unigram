@@ -29,7 +29,6 @@
                       Grid.Row="1">
             <StackPanel>
                 <controls:PivotRadioButton
-                    x:Name="Disabled"
                     Content="{CustomResource AutoNightDisabled}"
                     SelectedValue="{x:Bind ConvertMode(ViewModel.Mode), BindBack=ConvertModeBack, Mode=TwoWay}"
                     Index="0"
@@ -38,7 +37,6 @@
                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
 
                 <controls:PivotRadioButton
-                    x:Name="Scheduled"
                     Content="{CustomResource AutoNightScheduled}"
                     SelectedValue="{x:Bind ConvertMode(ViewModel.Mode), BindBack=ConvertModeBack, Mode=TwoWay}"
                     Index="1"
@@ -46,7 +44,16 @@
                     Margin="12,0"/>
                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
 
-                <!--<StackPanel Visibility="{x:Bind ViewModel.Mode, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,24,0,0">-->
+                <controls:PivotRadioButton
+                    x:Name="Automatic"
+                    x:DeferLoadStrategy="Lazy"
+                    Content="{CustomResource AutoNightAutomatic}"
+                    SelectedValue="{x:Bind ConvertMode(ViewModel.Mode), BindBack=ConvertModeBack, Mode=TwoWay}"
+                    Index="2"
+                    Click="UpdateTheme_Click"
+                    Margin="12,0"/>
+                <Rectangle x:Name="AutomaticSeparator" x:DeferLoadStrategy="Lazy" Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+
                 <StackPanel Visibility="{x:Bind ConvertModeVisibility(ViewModel.Mode, settings:NightMode.Scheduled), Mode=OneWay}" Margin="0,24,0,0">
                     <TextBlock Text="{CustomResource AutoNightSchedule}" Margin="12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     
@@ -83,6 +90,27 @@
                                               Badge="{x:Bind ViewModel.Town, Mode=OneWay}"/>
                         <TextBlock Text="{x:Bind ConvertSunDate(ViewModel.Location), Mode=OneWay}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind ConvertModeVisibility(ViewModel.Mode, settings:NightMode.Automatic), Mode=OneWay}" Margin="0,24,0,0">
+                    <TextBlock Text="{CustomResource AutoNightBrightness}" Margin="12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="48"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xEC8A;"/>
+                        <FontIcon Glyph="&#xE706;" Grid.Column="2"/>
+
+                        <ProgressBar x:Name="Lux" Grid.Column="1"/>
+                        <Slider Background="Transparent" Foreground="Transparent" Grid.Column="1"/>
+                    </Grid>
+
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+
+                    <TextBlock Text="{x:Bind ConvertBrightness(5), Mode=OneWay}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
