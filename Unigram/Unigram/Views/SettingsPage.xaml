@@ -67,18 +67,26 @@
                 </Grid>
 
                 <StackPanel>
-                    <Button x:Name="PhoneNumber"
-                            Tag="{CustomResource Phone}"
-                            Style="{StaticResource SubtitleButtonStyle}"
-                            Click="Phone_Click"/>
-                    <Button x:Name="Username"
-                            Tag="{CustomResource Username}"
-                            Style="{StaticResource SubtitleButtonStyle}"
-                            Click="Username_Click"/>
-                    <Button x:Name="Bio"
-                            Tag="{CustomResource UserBio}"
-                            Style="{StaticResource SubtitleButtonStyle}"
-                            Click="About_Click"/>
+                    <controls:BadgeButton
+                        x:Name="PhoneNumber"
+                        Content="{CustomResource Phone}"
+                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                        Glyph="&#xE717;"
+                        Click="Phone_Click"/>
+                    <controls:BadgeButton
+                        x:Name="Username"
+                        Content="{CustomResource Username}"
+                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                        FontSize="18"
+                        Glyph="@"
+                        Click="Username_Click"/>
+                    <controls:BadgeButton
+                        x:Name="Bio"
+                        Content="{CustomResource UserBio}"
+                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                        Glyph="&#xE946;"
+                        Click="About_Click"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">
@@ -138,12 +146,6 @@
                             Margin="12,8,12,0"/>
                         <Button Click="Diagnostics_Click" Opacity="0" Style="{StaticResource EmptyButtonStyle}"/>
                     </Grid>
-                </StackPanel>
-
-                <StackPanel x:Name="OptionsGroup3" Margin="0,24,0,0">
-                    <!--<controls:HyperButton Content="Accounts management"
-                         Click="Accounts_Click"
-                         Style="{StaticResource HyperButtonStyle}"/>-->
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

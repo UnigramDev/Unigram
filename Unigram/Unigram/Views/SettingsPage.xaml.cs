@@ -289,13 +289,18 @@ namespace Unigram.Views
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
-            PhoneNumber.Content = Common.PhoneNumber.Format(user.PhoneNumber);
-            Username.Content = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"@{user.Username}";
+#if DEBUG
+            PhoneNumber.Badge = "+39 --- --- ----";
+#else
+            PhoneNumber.Badge = Common.PhoneNumber.Format(user.PhoneNumber);
+#endif
+
+            Username.Badge = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"{user.Username}";
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            Bio.Content = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Resources.UserBioEmpty : fullInfo.Bio;
+            Bio.Badge = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Resources.UserBioEmpty : fullInfo.Bio;
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -336,7 +341,7 @@ namespace Unigram.Views
             }
         }
 
-        #endregion
+#endregion
 
         private int _advanced;
 
