@@ -5,8 +5,10 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.Devices.Geolocation;
+using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System.UserProfile;
@@ -34,9 +36,65 @@ namespace Unigram.Views.Settings
 
             FromPicker.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
             ToPicker.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
+
+            //var sensor = LightSensor.GetDefault();
+            //if (sensor != null)
+            //{
+            //    Automatic.Visibility = Visibility.Visible;
+            //    AutomaticSeparator.Visibility = Visibility.Visible;
+
+            //    sensor.ReportInterval = 50000;
+            //    sensor.ReadingChanged += LightSensor_ReadingChanged;
+            //}
+            //else
+            //{
+            //    Automatic.Visibility = Visibility.Collapsed;
+            //    AutomaticSeparator.Visibility = Visibility.Collapsed;
+            //}
         }
 
+        //private const float MAXIMUM_LUX_BREAKPOINT = 500.0f;
+
+        //private void LightSensor_ReadingChanged(LightSensor sender, LightSensorReadingChangedEventArgs args)
+        //{
+        //    var lux = args.Reading.IlluminanceInLux;
+        //    if (lux <= 0)
+        //    {
+        //        lux = 0.1f;
+        //    }
+
+        //    var last = lux;
+        //    if (lux > MAXIMUM_LUX_BREAKPOINT)
+        //    {
+        //        last = 1.0f;
+        //    }
+        //    else
+        //    {
+        //        last = (float)Math.Ceiling(9.9323f * Math.Log(lux) + 27.059f) / 100.0f;
+        //    }
+
+        //    this.BeginOnUIThread(() =>
+        //    {
+        //        Lux.Value = last * 100;
+        //    });
+        //}
+
         #region Binding
+
+        private int ConvertMode(NightMode mode)
+        {
+            return (int)mode;
+        }
+
+        private void ConvertModeBack(int mode)
+        {
+            ViewModel.Mode = (NightMode)mode;
+        }
+
+        private Visibility ConvertModeVisibility(NightMode current, NightMode expected)
+        {
+            return current == expected ? Visibility.Visible : Visibility.Collapsed;
+        }
 
         private string ConvertTimeSpan(TimeSpan time)
         {
@@ -55,6 +113,11 @@ namespace Unigram.Views.Settings
             var sunset = new DateTime(1, 1, 1, t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
 
             return string.Format(Strings.Resources.AutoNightUpdateLocationInfo, BindConvert.Current.ShortTime.Format(sunset), BindConvert.Current.ShortTime.Format(sunrise));
+        }
+
+        private string ConvertBrightness(float value)
+        {
+            return string.Format(Strings.Resources.AutoNightBrightnessInfo, value);
         }
 
         #endregion

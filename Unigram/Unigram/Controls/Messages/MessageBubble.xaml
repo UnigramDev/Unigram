@@ -9,15 +9,14 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Margin="{ThemeResource MessageContentMargin}"
-    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="{ThemeResource MessageMaxWidth}">
+    Margin="{StaticResource MessageContentMargin}"
+    MaxWidth="{StaticResource MessageMaxWidth}">
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"
               MinHeight="30"
-              Padding="{ThemeResource MessageContentPadding}"
-              CornerRadius="{ThemeResource MessageCornerRadius}"
+              Padding="{StaticResource MessageContentPadding}"
+              CornerRadius="{StaticResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}"
               DoubleTapped="ContentPanel_DoubleTapped">
             <VisualStateManager.VisualStateGroups>

@@ -254,7 +254,6 @@
             <controls:GlyphButton
                 Glyph="&#xE11A;"
                 Click="Search_Click"
-                FontSize="18"
                 AllowFocusOnInteraction="False"
                 Height="{ThemeResource AppBarThemeCompactHeight}"
                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>

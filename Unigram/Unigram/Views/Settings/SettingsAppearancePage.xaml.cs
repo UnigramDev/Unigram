@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -56,9 +57,18 @@ namespace Unigram.Views.Settings
 
         #region Binding
 
-        private string ConvertNightMode(bool enabled)
+        private string ConvertNightMode(NightMode mode)
         {
-            return enabled ? Strings.Resources.AutoNightScheduled : Strings.Resources.AutoNightDisabled;
+            return mode == NightMode.Scheduled
+                ? Strings.Resources.AutoNightScheduled
+                : mode == NightMode.Automatic
+                ? Strings.Resources.AutoNightAutomatic
+                : Strings.Resources.AutoNightDisabled;
+        }
+
+        private Visibility ConvertNightModeVisibility(NightMode mode)
+        {
+            return mode == NightMode.Disabled ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion

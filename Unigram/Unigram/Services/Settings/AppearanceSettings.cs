@@ -32,7 +32,7 @@ namespace Unigram.Services.Settings
 
         public void UpdateTimer()
         {
-            if (IsNightModeEnabled && RequestedTheme.HasFlag(TelegramTheme.Light))
+            if (NightMode == NightMode.Scheduled && RequestedTheme.HasFlag(TelegramTheme.Light))
             {
                 var from = DateTime.Now.Date;
                 var to = DateTime.Now.Date;
@@ -127,20 +127,20 @@ namespace Unigram.Services.Settings
             }
         }
 
-        private bool? _isNightModeEnabled;
-        public bool IsNightModeEnabled
+        private NightMode? _nightMode;
+        public NightMode NightMode
         {
             get
             {
-                if (_isNightModeEnabled == null)
-                    _isNightModeEnabled = GetValueOrDefault(_container, "IsNightModeEnabled", false);
+                if (_nightMode == null)
+                    _nightMode = (NightMode)GetValueOrDefault(_container, "NightMode", (int)NightMode.Disabled);
 
-                return _isNightModeEnabled ?? false;
+                return _nightMode ?? NightMode.Disabled;
             }
             set
             {
-                _isNightModeEnabled = value;
-                AddOrUpdateValue(_container, "IsNightModeEnabled", value);
+                _nightMode = value;
+                AddOrUpdateValue(_container, "NightMode", (int)value);
                 UpdateTimer();
             }
         }
@@ -241,9 +241,26 @@ namespace Unigram.Services.Settings
             }
         }
 
+        private float? _threshold;
+        public float Threshold
+        {
+            get
+            {
+                if (_threshold == null)
+                    _threshold = GetValueOrDefault("Threshold", 0.25f);
+
+                return _threshold ?? 0.25f;
+            }
+            set
+            {
+                _threshold = value;
+                AddOrUpdateValue("Threshold", value);
+            }
+        }
+
         public bool? CheckNightModeConditions()
         {
-            if (IsNightModeEnabled && RequestedTheme.HasFlag(TelegramTheme.Light))
+            if (NightMode == NightMode.Scheduled && RequestedTheme.HasFlag(TelegramTheme.Light))
             {
                 var from = DateTime.Now.Date;
                 var to = DateTime.Now.Date;
@@ -326,5 +343,12 @@ namespace Unigram.Services.Settings
                 ? ApplicationTheme.Dark
                 : ApplicationTheme.Light;
         }
+    }
+
+    public enum NightMode
+    {
+        Disabled,
+        Scheduled,
+        Automatic
     }
 }

@@ -83,6 +83,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsAdaptiveWideEnabled
+        {
+            get
+            {
+                return Settings.IsAdaptiveWideEnabled;
+            }
+            set
+            {
+                Settings.IsAdaptiveWideEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool IsWorkModeVisible
         {
             get

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -29,6 +31,8 @@ namespace Unigram.Controls.Chats
         private bool _forward;
         private bool _reply;
 
+        private ListViewItemPresenter _presenter;
+
         public ChatListViewItem(ChatListView parent)
             : base(parent)
         {
@@ -36,6 +40,13 @@ namespace Unigram.Controls.Chats
 
             ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateRailsX | ManipulationModes.System;
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            _presenter = GetTemplateChild("Presenter") as ListViewItemPresenter;
+
+            base.OnApplyTemplate();
         }
 
         #region ContentMargin
@@ -256,6 +267,54 @@ namespace Unigram.Controls.Chats
             }
 
             base.OnManipulationCompleted(e);
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (SettingsService.Current.IsAdaptiveWideEnabled)
+            {
+                var size = availableSize.Width >= 880 ? new Size(Math.Min(availableSize.Width, 542 /* 432 + 50 + 12 */), availableSize.Height) : availableSize;
+                _presenter.Measure(size);
+
+                size.Height = _presenter.DesiredSize.Height;
+                return size;
+            }
+
+            return base.MeasureOverride(availableSize);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (SettingsService.Current.IsAdaptiveWideEnabled)
+            {
+                var size = finalSize.Width >= 880 ? new Size(Math.Min(finalSize.Width, 542 /* 432 + 50 + 12 */), finalSize.Height) : finalSize;
+                _presenter.Arrange(new Rect(0, 0, size.Width, size.Height));
+            }
+            else
+            {
+                finalSize = base.ArrangeOverride(finalSize);
+            }
+
+            //var content = ContentTemplateRoot as FrameworkElement;
+            //var message = content.Tag as MessageViewModel;
+
+            //if (content is Grid grid)
+            //{
+            //    content = grid.FindName("Bubble") as FrameworkElement;
+            //}
+
+            //if (content is MessageBubble bubble)
+            //{
+            //    var wide = message.IsOutgoing && finalSize.Width >= 880 && SettingsService.Current.IsAdaptiveWideEnabled;
+            //    var alignment = wide || !message.IsOutgoing ? HorizontalAlignment.Left : HorizontalAlignment.Right;
+            //    if (alignment != bubble.HorizontalAlignment)
+            //    {
+            //        bubble.UpdateAdaptive(alignment);
+            //        _parent.PrepareContainerForItem(this, message, wide);
+            //    }
+            //}
+
+            return finalSize;
         }
     }
 }

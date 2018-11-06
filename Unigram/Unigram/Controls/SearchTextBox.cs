@@ -34,7 +34,7 @@ namespace Unigram.Controls
                 clean.Click += Clean;
             }
 
-            var search = GetTemplateChild("SearchButton") as Button;
+            var search = GetTemplateChild("QueryButton") as Button;
             if (search != null)
             {
                 search.Click += Search_Click;

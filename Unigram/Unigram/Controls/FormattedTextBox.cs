@@ -188,7 +188,7 @@ namespace Unigram.Controls
             var start = Math.Min(range.StartPosition, range.EndPosition);
             var end = Math.Max(range.StartPosition, range.EndPosition);
 
-            var dialog = new CreateLinkView();
+            var dialog = new CreateLinkView(null);
             dialog.Text = text;
             dialog.Link = range.Link.Trim('"');
 
