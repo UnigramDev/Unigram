@@ -359,17 +359,15 @@ namespace Unigram.Controls.Gallery
             }
             else if (root != null)
             {
-                var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
-                var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+                var batch = _layout.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
-                var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
-                animation.InsertKeyFrame(0, _layout.Offset.Y, easing);
-                animation.InsertKeyFrame(1, (float)ActualHeight, easing);
-                animation.Duration = duration;
+                _layout.StartAnimation("Offset.Y", CreateScalarAnimation(_layout.Offset.Y, (float)ActualHeight));
 
-                _layout.StartAnimation("Offset.Y", animation);
-
-                Hide();
+                batch.End();
+                batch.Completed += (s, args) =>
+                {
+                    Hide();
+                };
             }
 
             _layer.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
@@ -1099,7 +1097,7 @@ namespace Unigram.Controls.Gallery
 
                 if (direction != 0)
                 {
-                    Layer.Visibility = Visibility.Collapsed;
+                    _layer.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
 
                     if (Transport.IsVisible)
                     {
@@ -1113,11 +1111,7 @@ namespace Unigram.Controls.Gallery
                 }
                 else
                 {
-                    var opacity = _layout.Compositor.CreateScalarKeyFrameAnimation();
-                    opacity.InsertKeyFrame(0, _layer.Opacity);
-                    opacity.InsertKeyFrame(1, 1);
-
-                    _layer.StartAnimation("Opacity", opacity);
+                    _layer.StartAnimation("Opacity", CreateScalarAnimation(_layer.Opacity, 1));
                 }
 
                 _layout.StartAnimation("Offset.Y", animation);
