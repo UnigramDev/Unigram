@@ -8,6 +8,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
+using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace Unigram.Services
@@ -254,6 +255,12 @@ namespace Unigram.Services
 
             Task.Run(() =>
             {
+#if DEBUG
+                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
+                _client.Send(new SetOption("localization_target", new OptionValueString("android")));
+                _client.Send(new SetOption("language_pack_id", new OptionValueString("en")));
+#endif
+
                 _client.Send(new SetOption("online", new OptionValueBoolean(online)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
@@ -274,12 +281,35 @@ namespace Unigram.Services
 
                     var title = $"What's new in Unigram {major}.{minor}.{build}:";
                     var message = title + Environment.NewLine + SettingsService.CurrentChangelog;
+                    var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
 
-                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } }), true, false)));
+                    if (SettingsService.CurrentMedia)
+                    {
+                        Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageAnimation(
+                            new InputFileLocal(Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\Changelog.mp4")), new InputThumbnail(
+                                new InputFileLocal(Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\Changelog.jpg")), 450, 392), 5, 450, 392, formattedText)));
+                    }
+                    else
+                    {
+                        Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, true, false)));
+                    }
                 }
             }
 
             _settings.UpdateVersion();
+        }
+
+        private async void UpdateLanguagePackStrings(UpdateLanguagePackStrings update)
+        {
+            var response = await SendAsync(new CreatePrivateChat(777000, false));
+            if (response is Chat chat)
+            {
+                var title = $"New language pack strings for {update.LocalizationTarget}:";
+                var message = title + Environment.NewLine + string.Join(Environment.NewLine, update.Strings);
+                var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
+
+                Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, true, false)));
+            }
         }
 
         public void CleanUp()
@@ -939,6 +969,12 @@ namespace Unigram.Services
                     _installedStickerSets = updateInstalledStickerSets.StickerSetIds;
                 }
             }
+#if DEBUG
+            else if (update is UpdateLanguagePackStrings updateLanguagePackStrings)
+            {
+                UpdateLanguagePackStrings(updateLanguagePackStrings);
+            }
+#endif
             else if (update is UpdateMessageContent updateMessageContent)
             {
 
