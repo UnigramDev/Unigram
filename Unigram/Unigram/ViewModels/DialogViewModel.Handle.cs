@@ -480,6 +480,13 @@ namespace Unigram.ViewModels
             }
 
             BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
+
+            var header = _composerHeader;
+            if (header?.EditingMessageMedia != null && header?.EditingMessageFileId == update.File.Id && update.File.Size == update.File.Remote.UploadedSize)
+            {
+                BeginOnUIThread(() => ComposerHeader = null);
+                ProtoService.Send(new EditMessageMedia(chat.Id, header.EditingMessage.Id, null, header.EditingMessageMedia.Delegate(new InputFileId(update.File.Id), header.EditingMessageCaption)));
+            }
         }
 
         private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action)

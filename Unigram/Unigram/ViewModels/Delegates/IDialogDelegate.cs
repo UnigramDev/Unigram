@@ -15,6 +15,8 @@ namespace Unigram.ViewModels.Delegates
         void UpdatePinnedMessage(Chat chat, MessageViewModel message, bool loading);
         void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);
 
+        void UpdateComposerHeader(Chat chat, MessageComposerHeader header);
+
         void UpdateNotificationSettings(Chat chat);
 
 

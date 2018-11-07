@@ -238,10 +238,10 @@ namespace Unigram.Common
                 var cropWidth = (double)decoder.PixelWidth;
                 var cropHeight = (double)decoder.PixelHeight;
 
-                if (decoder.PixelWidth > 1280 || decoder.PixelHeight > 1280)
+                if (decoder.PixelWidth > min || decoder.PixelHeight > min)
                 {
-                    double ratioX = (double)1280 / cropWidth;
-                    double ratioY = (double)1280 / cropHeight;
+                    double ratioX = (double)min / cropWidth;
+                    double ratioY = (double)min / cropHeight;
                     double ratio = Math.Min(ratioX, ratioY);
 
                     cropWidth = cropWidth * ratio;

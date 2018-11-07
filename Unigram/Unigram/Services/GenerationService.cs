@@ -52,7 +52,7 @@ namespace Unigram.Services
             }
             else if (update.Conversion.StartsWith("thumbnail_transcode"))
             {
-                await ThumbnailAsync(update);
+                await ThumbnailTranscodeAsync(update);
             }
             else if (update.Conversion.Equals("#url#"))
             {
@@ -168,6 +168,32 @@ namespace Unigram.Services
             }
         }
 
+        private async Task ThumbnailAsync(UpdateFileGenerationStart update)
+        {
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(update.OriginalPath);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+
+                var args = update.Conversion.Split('#');
+                if (args.Length > 2)
+                {
+                    var rect = JsonConvert.DeserializeObject<Rect>(args[1]);
+                    await ImageHelper.CropAsync(file, temp, rect, 90);
+                }
+                else
+                {
+                    await ImageHelper.ScaleJpegAsync(file, temp, 90, 0.77);
+                }
+
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
+            }
+            catch (Exception ex)
+            {
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+            }
+        }
+
         private async Task TranscodeAsync(UpdateFileGenerationStart update)
         {
             try
@@ -233,7 +259,7 @@ namespace Unigram.Services
             }
         }
 
-        private async Task ThumbnailAsync(UpdateFileGenerationStart update)
+        private async Task ThumbnailTranscodeAsync(UpdateFileGenerationStart update)
         {
             try
             {

@@ -52,7 +52,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Border x:Name="ThumbRoot" x:DeferLoadStrategy="Lazy" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Margin="6,0,0,0">
+            <Border x:Name="ThumbRoot" x:DeferLoadStrategy="Lazy" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Margin="8,0,0,0">
                 <Border x:Name="ThumbEllipse">
                     <Border.Background>
                         <ImageBrush x:Name="ThumbImage" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>

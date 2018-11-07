@@ -200,10 +200,14 @@ namespace Unigram.ViewModels
 
             SendStickerCommand = new RelayCommand<Sticker>(SendStickerExecute);
             SendAnimationCommand = new RelayCommand<Animation>(SendAnimationExecute);
-            SendFileCommand = new RelayCommand(SendFileExecute);
+            SendDocumentCommand = new RelayCommand(SendDocumentExecute);
             SendMediaCommand = new RelayCommand(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
+
+            EditDocumentCommand = new RelayCommand(EditDocumentExecute);
+            EditMediaCommand = new RelayCommand(EditMediaExecute);
+            EditCurrentCommand = new RelayCommand(EditCurrentExecute);
 
             //Items = new LegacyMessageCollection();
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
@@ -2037,6 +2041,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _composerHeader, value);
+                Delegate?.UpdateComposerHeader(_chat, value);
             }
         }
 
@@ -2091,6 +2096,11 @@ namespace Unigram.ViewModels
             {
                 if (container.EditingMessage != null)
                 {
+                    if (container.EditingMessageFileId is int fileId)
+                    {
+                        ProtoService.Send(new CancelUploadFile(fileId));
+                    }
+
                     SetText(null, false);
                     //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
                 }
@@ -2151,36 +2161,57 @@ namespace Unigram.ViewModels
             var disablePreview = DisableWebPagePreview;
             DisableWebPagePreview = false;
 
-            var embedded = ComposerHeader;
-            if (embedded != null && embedded.EditingMessage != null)
+            var header = _composerHeader;
+            if (header?.EditingMessage != null)
             {
-                var editing = embedded.EditingMessage;
-
-                Function function;
-                if (editing.Content is MessageText)
+                var editing = header.EditingMessage;
+                var factory = header.EditingMessageMedia;
+                if (factory != null)
                 {
-                    function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
-                }
-                else
-                {
-                    function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
-                }
-
-                var response = await ProtoService.SendAsync(function);
-                if (response is Message message)
-                {
-                    ComposerHeader = null;
-                    Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
-                }
-                else if (response is Error error)
-                {
-                    if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                    var response = await ProtoService.SendAsync(new UploadFile(factory.InputFile, factory.Type, 32));
+                    if (response is File file)
                     {
-                        ComposerHeader = null;
+                        ComposerHeader = new MessageComposerHeader
+                        {
+                            EditingMessage = editing,
+                            EditingMessageMedia = factory,
+                            EditingMessageCaption = formattedText,
+                            EditingMessageFileId = file.Id
+                        };
                     }
                     else
                     {
                         // TODO: ...
+                    }
+                }
+                else
+                {
+                    Function function;
+                    if (editing.Content is MessageText)
+                    {
+                        function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
+                    }
+                    else
+                    {
+                        function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
+                    }
+
+                    var response = await ProtoService.SendAsync(function);
+                    if (response is Message message)
+                    {
+                        ComposerHeader = null;
+                        Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
+                    }
+                    else if (response is Error error)
+                    {
+                        if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                        {
+                            ComposerHeader = null;
+                        }
+                        else
+                        {
+                            // TODO: ...
+                        }
                     }
                 }
             }
@@ -3309,6 +3340,10 @@ namespace Unigram.ViewModels
     {
         public MessageViewModel ReplyToMessage { get; set; }
         public MessageViewModel EditingMessage { get; set; }
+
+        public int? EditingMessageFileId { get; set; }
+        public InputMessageFactory EditingMessageMedia { get; set; }
+        public FormattedText EditingMessageCaption { get; set; }
 
         public WebPage WebPagePreview { get; set; }
         public string WebPageUrl { get; set; }

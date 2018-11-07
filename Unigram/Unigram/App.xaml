@@ -158,7 +158,6 @@
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <converters:InitialNameStringConverter x:Key="InitialNameStringConverter" />
             <converters:DateTimeToFormatConverter x:Key="DateTimeToFormatConverter" />
-            <converters:ReplyInfoToGlyphConverter x:Key="ReplyInfoToGlyphConverter"/>
             <converters:EditToVisibilityConverter x:Key="EditToVisibilityConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
 

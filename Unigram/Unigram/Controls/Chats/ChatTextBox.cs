@@ -1592,6 +1592,14 @@ namespace Unigram.Controls.Chats
 
         #endregion
 
+        public void SetText(FormattedText formatted)
+        {
+            if (formatted != null)
+            {
+                SetText(formatted.Text, formatted.Entities);
+            }
+        }
+
         public void SetText(string text, IList<TextEntity> entities)
         {
             Document.BatchDisplayUpdates();

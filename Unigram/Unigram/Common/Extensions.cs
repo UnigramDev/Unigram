@@ -27,6 +27,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using static Unigram.Services.GenerationService;
 
 namespace Unigram.Common
 {
@@ -190,7 +191,7 @@ namespace Unigram.Common
             return new InputFileGenerated(file.Path, conversion + "#" + props.DateModified.ToString("s"), (int)props.Size);
         }
 
-        public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, DialogViewModel.VideoConversion video = null, string conversion = "copy")
+        public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, VideoConversion video = null, string conversion = "copy")
         {
             var props = await file.Properties.GetVideoPropertiesAsync();
 

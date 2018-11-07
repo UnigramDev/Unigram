@@ -15,6 +15,7 @@ using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Native;
 using Unigram.Services;
+using Unigram.Services.Factories;
 using Unigram.Views;
 using Unigram.Views.Dialogs;
 using Windows.ApplicationModel.Contacts;
@@ -32,6 +33,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels
 {
@@ -107,31 +109,39 @@ namespace Unigram.ViewModels
             return false;
         }
 
-        public RelayCommand SendFileCommand { get; }
-        private async void SendFileExecute()
+        public RelayCommand SendDocumentCommand { get; }
+        private async void SendDocumentExecute()
         {
-            if (MediaLibrary.SelectedCount > 0)
+            var header = _composerHeader;
+            if (header?.EditingMessage == null)
             {
-                foreach (var storage in MediaLibrary.Where(x => x.IsSelected))
+                if (MediaLibrary.SelectedCount > 0)
                 {
-                    await SendFileAsync(storage.File, storage.Caption);
+                    foreach (var storage in MediaLibrary.Where(x => x.IsSelected))
+                    {
+                        await SendDocumentAsync(storage.File, storage.Caption);
+                    }
+
+                    return;
                 }
 
-                return;
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+                picker.FileTypeFilter.Add("*");
+
+                var files = await picker.PickMultipleFilesAsync();
+                if (files != null && files.Count > 0)
+                {
+                    foreach (var storage in files)
+                    {
+                        await SendDocumentAsync(storage, null);
+                    }
+                }
             }
-
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            picker.FileTypeFilter.Add("*");
-
-            var files = await picker.PickMultipleFilesAsync();
-            if (files != null && files.Count > 0)
+            else
             {
-                foreach (var storage in files)
-                {
-                    await SendFileAsync(storage, null);
-                }
+
             }
         }
 
@@ -139,11 +149,59 @@ namespace Unigram.ViewModels
         {
             foreach (var file in files)
             {
-                await SendFileAsync(file, null);
+                await SendDocumentAsync(file, null);
             }
         }
 
-        private async Task SendFileAsync(StorageFile file, FormattedText caption = null)
+        private async Task SendDocumentAsync(StorageFile file, FormattedText caption = null)
+        {
+            var factory = await _messageFactory.CreateDocumentAsync(file);
+            if (factory != null)
+            {
+                var reply = GetReply(true);
+                var input = factory.Delegate(factory.InputFile, caption);
+
+                await SendMessageAsync(reply, input);
+            }
+        }
+
+        public async Task SendVideoAsync(StorageFile file, FormattedText caption, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        {
+            var factory = await _messageFactory.CreateVideoAsync(file, animated, asFile, ttl, profile, transform);
+            if (factory != null)
+            {
+                var reply = GetReply(true);
+                var input = factory.Delegate(factory.InputFile, caption);
+
+                await SendMessageAsync(reply, input);
+            }
+        }
+
+        public async Task SendVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        {
+            var factory = await _messageFactory.CreateVideoNoteAsync(file, profile, transform);
+            if (factory != null)
+            {
+                var reply = GetReply(true);
+                var input = factory.Delegate(factory.InputFile, null);
+
+                await SendMessageAsync(reply, input);
+            }
+        }
+
+        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int ttl = 0, Rect? crop = null)
+        {
+            var factory = await _messageFactory.CreatePhotoAsync(file, asFile, ttl, crop);
+            if (factory != null)
+            {
+                var reply = GetReply(true);
+                var input = factory.Delegate(factory.InputFile, caption);
+
+                await SendMessageAsync(reply, input);
+            }
+        }
+
+        public async Task SendVoiceNoteAsync(StorageFile file, int duration, string caption)
         {
             var chat = _chat;
             if (chat == null)
@@ -151,149 +209,8 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (file.FileType.Equals(".webp", StringComparison.OrdinalIgnoreCase))
-            {
-                try
-                {
-                    var buffer = await FileIO.ReadBufferAsync(file);
-                    var webp = WebPImage.DecodeFromBuffer(buffer);
-
-                    var stickerReply = GetReply(true);
-                    var stickerInput = new InputMessageSticker(await file.ToGeneratedAsync(), null, webp.PixelWidth, webp.PixelHeight);
-
-                    await SendMessageAsync(stickerReply, stickerInput);
-                    return;
-                }
-                catch
-                {
-                    // Not really a sticker, go on sending as a file
-                }
-            }
-
             var reply = GetReply(true);
-            var input = new InputMessageDocument(await file.ToGeneratedAsync(), null, caption);
-
-            await SendMessageAsync(reply, input);
-        }
-
-        public class VideoConversion
-        {
-            public bool Transcode { get; set; }
-            public bool Mute { get; set; }
-            public uint Width { get; set; }
-            public uint Height { get; set; }
-            public uint Bitrate { get; set; }
-
-            public bool Transform { get; set; }
-            public MediaRotation Rotation { get; set; }
-            public Size OutputSize { get; set; }
-            public MediaMirroringOptions Mirror { get; set; }
-            public Rect CropRectangle { get; set; }
-        }
-
-        public async Task SendVideoAsync(StorageFile file, FormattedText caption, bool animated, bool asFile, int? ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
-        {
-            var basicProps = await file.GetBasicPropertiesAsync();
-            var videoProps = await file.Properties.GetVideoPropertiesAsync();
-
-            //var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform);
-
-            var videoWidth = (int)videoProps.GetWidth();
-            var videoHeight = (int)videoProps.GetHeight();
-
-            if (profile != null)
-            {
-                videoWidth = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
-                videoHeight = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
-            }
-
-            var conversion = new VideoConversion();
-            if (profile != null)
-            {
-                conversion.Transcode = true;
-                conversion.Mute = profile.Audio == null;
-                conversion.Width = profile.Video.Width;
-                conversion.Height = profile.Video.Height;
-                conversion.Bitrate = profile.Video.Bitrate;
-
-                if (transform != null)
-                {
-                    conversion.Transform = true;
-                    conversion.Rotation = transform.Rotation;
-                    conversion.OutputSize = transform.OutputSize;
-                    conversion.Mirror = transform.Mirror;
-                    conversion.CropRectangle = transform.CropRectangle;
-                }
-            }
-
-            var generated = await file.ToGeneratedAsync("transcode#" + JsonConvert.SerializeObject(conversion));
-            var thumbnail = await file.ToThumbnailAsync(conversion, "thumbnail_transcode#" + JsonConvert.SerializeObject(conversion));
-
-            if (asFile)
-            {
-                var reply = GetReply(true);
-                var input = new InputMessageDocument(generated, thumbnail, caption);
-
-                await SendMessageAsync(reply, input);
-            }
-            else
-            {
-                if (profile != null && profile.Audio == null)
-                {
-                    var reply = GetReply(true);
-                    var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, caption);
-
-                    await SendMessageAsync(reply, input);
-                }
-                else
-                {
-                    var reply = GetReply(true);
-                    var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, caption, ttl ?? 0);
-
-                    await SendMessageAsync(reply, input);
-                }
-            }
-        }
-
-        public async Task SendVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
-        {
-            var basicProps = await file.GetBasicPropertiesAsync();
-            var videoProps = await file.Properties.GetVideoPropertiesAsync();
-
-            //var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform);
-
-            var videoWidth = (int)videoProps.GetWidth();
-            var videoHeight = (int)videoProps.GetHeight();
-
-            if (profile != null)
-            {
-                videoWidth = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
-                videoHeight = videoProps.Orientation == VideoOrientation.Rotate180 || videoProps.Orientation == VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
-            }
-
-            var conversion = new VideoConversion();
-            if (profile != null)
-            {
-                conversion.Transcode = true;
-                conversion.Width = profile.Video.Width;
-                conversion.Height = profile.Video.Height;
-                conversion.Bitrate = profile.Video.Bitrate;
-
-                if (transform != null)
-                {
-                    conversion.Transform = true;
-                    conversion.Rotation = transform.Rotation;
-                    conversion.OutputSize = transform.OutputSize;
-                    conversion.Mirror = transform.Mirror;
-                    conversion.CropRectangle = transform.CropRectangle;
-                }
-            }
-
-            var generated = await file.ToGeneratedAsync("transcode#" + JsonConvert.SerializeObject(conversion));
-            var thumbnail = await file.ToThumbnailAsync(conversion, "thumbnail_transcode#" + JsonConvert.SerializeObject(conversion));
-
-            var reply = GetReply(true);
-            var input = new InputMessageVideoNote(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, Math.Min(videoWidth, videoHeight));
+            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(), duration, new byte[0], GetFormattedText(caption));
 
             await SendMessageAsync(reply, input);
         }
@@ -433,58 +350,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int? ttl = null, Rect? crop = null)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            using (var stream = await file.OpenReadAsync())
-            {
-                var decoder = await BitmapDecoder.CreateAsync(stream);
-                if (decoder.FrameCount > 1)
-                {
-                    asFile = true;
-                }
-            }
-
-            var size = await ImageHelper.GetScaleAsync(file, crop: crop);
-
-            var generated = await file.ToGeneratedAsync((asFile ? "copy" : "compress") + (crop.HasValue ? "#" + JsonConvert.SerializeObject(crop) : string.Empty));
-            var thumbnail = default(InputThumbnail);
-
-            if (asFile)
-            {
-                var reply = GetReply(true);
-                var input = new InputMessageDocument(generated, thumbnail, caption);
-
-                await SendMessageAsync(reply, input);
-            }
-            else
-            {
-                var reply = GetReply(true);
-                var input = new InputMessagePhoto(generated, thumbnail, new int[0], size.Width, size.Height, caption, ttl ?? 0);
-
-                await SendMessageAsync(reply, input);
-            }
-        }
-
-        public async Task SendVoiceNoteAsync(StorageFile file, int duration, string caption)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var reply = GetReply(true);
-            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(), duration, new byte[0], GetFormattedText(caption));
-
-            await SendMessageAsync(reply, input);
-        }
-
         public RelayCommand SendContactCommand { get; }
         private async void SendContactExecute()
         {
@@ -575,6 +440,17 @@ namespace Unigram.ViewModels
             }
 
             return ProtoService.SendAsync(new SendMessage(chat.Id, replyToMessageId, false, false, null, inputMessageContent));
+        }
+
+        private async Task<BaseObject> EditMessageAsync(MessageViewModel message, InputFile inputFile, FileType type, Func<InputFile, InputMessageContent> inputMessageContent)
+        {
+            var response = await ProtoService.SendAsync(new UploadFile(inputFile, type, 32));
+            if (response is Telegram.Td.Api.File file)
+            {
+                ComposerHeader = new MessageComposerHeader { EditingMessage = message, EditingMessageMedia = null, EditingMessageFileId = file.Id };
+            }
+
+            return response;
         }
 
         public RelayCommand SendLocationCommand { get; }
@@ -878,6 +754,136 @@ namespace Unigram.ViewModels
 
                 var text = await package.GetWebLinkAsync();
                 field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text.ToString());
+            }
+        }
+
+
+
+        public RelayCommand EditDocumentCommand { get; }
+        private async void EditDocumentExecute()
+        {
+            var header = _composerHeader;
+            if (header?.EditingMessage == null)
+            {
+                return;
+            }
+
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            picker.FileTypeFilter.Add("*");
+
+            var file = await picker.PickSingleFileAsync();
+            if (file == null)
+            {
+                return;
+            }
+
+            var factory = await _messageFactory.CreateDocumentAsync(file);
+            if (factory != null)
+            {
+                header.EditingMessageMedia = factory;
+            }
+        }
+        public RelayCommand EditMediaCommand { get; }
+        private async void EditMediaExecute()
+        {
+            var header = _composerHeader;
+            if (header?.EditingMessage == null)
+            {
+                return;
+            }
+
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.AddRange(Constants.MediaTypes);
+
+            var file = await picker.PickSingleFileAsync();
+            if (file == null)
+            {
+                return;
+            }
+
+            await EditMediaAsync(file);
+        }
+
+        public RelayCommand EditCurrentCommand { get; }
+        private async void EditCurrentExecute()
+        {
+            var header = _composerHeader;
+            if (header?.EditingMessage == null)
+            {
+                return;
+            }
+
+            var fileInfo = header.EditingMessage.Get().GetFileAndName(true);
+            if (fileInfo.File == null || !fileInfo.File.Local.IsDownloadingCompleted)
+            {
+                return;
+            }
+
+            var file = await StorageFile.GetFileFromPathAsync(fileInfo.File.Local.Path);
+            if (file == null)
+            {
+                return;
+            }
+
+            await EditMediaAsync(file);
+        }
+
+        private async Task EditMediaAsync(StorageFile file)
+        {
+            var header = _composerHeader;
+            if (header?.EditingMessage == null)
+            {
+                return;
+            }
+
+            var storage = await StorageMedia.CreateAsync(file, true);
+            if (storage == null)
+            {
+                return;
+            }
+
+            var formattedText = GetFormattedText(true);
+            storage.Caption = formattedText
+                .Substring(0, CacheService.Options.MessageCaptionLengthMax);
+
+            var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = false, IsMultipleSelection = false };
+            dialog.SetItems(new ObservableCollection<StorageMedia> { storage });
+            dialog.SelectedItem = storage;
+
+            var confirm = await dialog.ShowAsync();
+
+            TextField?.FocusMaybe(FocusState.Keyboard);
+
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            TextField?.SetText(storage.Caption);
+
+            Task<InputMessageFactory> request = null;
+            if (storage is StoragePhoto photo)
+            {
+                request = _messageFactory.CreatePhotoAsync(storage.File, storage.IsForceFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null);
+            }
+            else if (storage is StorageVideo video)
+            {
+                request = _messageFactory.CreateVideoAsync(storage.File, video.IsMuted, storage.IsForceFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
+            }
+
+            if (request == null)
+            {
+                return;
+            }
+
+            var factory = await request;
+            if (factory != null)
+            {
+                header.EditingMessageMedia = factory;
             }
         }
     }

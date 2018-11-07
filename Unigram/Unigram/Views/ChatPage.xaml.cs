@@ -186,41 +186,41 @@ namespace Unigram.Views
             {
                 FocusManager.GettingFocus += (s, args) =>
                 {
-//#if DEBUG
-//                    var element = args.NewFocusedElement as FrameworkElement;
-//                    if (element != null)
-//                    {
-//                        ViewModel.LastSeen = Enum.GetName(typeof(FocusInputDeviceKind), args.InputDevice) + ", " + Enum.GetName(typeof(FocusState), args.FocusState) + ": ";
+                    //#if DEBUG
+                    //                    var element = args.NewFocusedElement as FrameworkElement;
+                    //                    if (element != null)
+                    //                    {
+                    //                        ViewModel.LastSeen = Enum.GetName(typeof(FocusInputDeviceKind), args.InputDevice) + ", " + Enum.GetName(typeof(FocusState), args.FocusState) + ": ";
 
 
-//                        //var control = element as Control;
-//                        //if (control != null)
-//                        //{
-//                        //    if (control.FocusState == FocusState.Pointer && control is ChatListViewItem && args.OldFocusedElement is ChatTextBox)
-//                        //    {
-//                        //        args.Cancel = true;
-//                        //    }
-//                        //}
+                    //                        //var control = element as Control;
+                    //                        //if (control != null)
+                    //                        //{
+                    //                        //    if (control.FocusState == FocusState.Pointer && control is ChatListViewItem && args.OldFocusedElement is ChatTextBox)
+                    //                        //    {
+                    //                        //        args.Cancel = true;
+                    //                        //    }
+                    //                        //}
 
-//                        if (element.Name != null)
-//                        {
-//                            if (ViewModel.LastSeen != null)
-//                            {
-//                                ViewModel.LastSeen += element.Name + ", ";
-//                            }
-//                            else
-//                            {
-//                                ViewModel.LastSeen = element.Name + ", ";
-//                            }
-//                        }
+                    //                        if (element.Name != null)
+                    //                        {
+                    //                            if (ViewModel.LastSeen != null)
+                    //                            {
+                    //                                ViewModel.LastSeen += element.Name + ", ";
+                    //                            }
+                    //                            else
+                    //                            {
+                    //                                ViewModel.LastSeen = element.Name + ", ";
+                    //                            }
+                    //                        }
 
-//                        ViewModel.LastSeen += element.GetType().FullName;
-//                    }
-//                    else
-//                    {
-//                        ViewModel.LastSeen = null;
-//                    }
-//#endif
+                    //                        ViewModel.LastSeen += element.GetType().FullName;
+                    //                    }
+                    //                    else
+                    //                    {
+                    //                        ViewModel.LastSeen = null;
+                    //                    }
+                    //#endif
 
                     // We want to apply this behavior when using mouse only
                     if (args.InputDevice != FocusInputDeviceKind.Mouse)
@@ -299,7 +299,7 @@ namespace Unigram.Views
         }
 
         public void Dispose()
-        { 
+        {
             if (ViewModel != null)
             {
                 ViewModel.PropertyChanged -= OnPropertyChanged;
@@ -1738,7 +1738,7 @@ namespace Unigram.Views
             AttachTextAreaExpression(ButtonTimer);
             AttachTextAreaExpression(btnCommands);
             AttachTextAreaExpression(btnStickers);
-            AttachTextAreaExpression(btnEditMessage);
+            AttachTextAreaExpression(ButtonEdit);
             AttachTextAreaExpression(btnSendMessage);
         }
 
@@ -1760,7 +1760,7 @@ namespace Unigram.Views
             DetachTextAreaExpression(ButtonTimer);
             DetachTextAreaExpression(btnCommands);
             DetachTextAreaExpression(btnStickers);
-            DetachTextAreaExpression(btnEditMessage);
+            DetachTextAreaExpression(ButtonEdit);
             DetachTextAreaExpression(btnSendMessage);
         }
 
@@ -2374,6 +2374,103 @@ namespace Unigram.Views
             }
         }
 
+        public void UpdateComposerHeader(Chat chat, MessageComposerHeader header)
+        {
+            if (header == null)
+            {
+                // Let's reset
+                ComposerHeader.Visibility = Visibility.Collapsed;
+                ComposerHeaderReference.Message = null;
+
+                AttachMedia.Command = ViewModel.SendMediaCommand;
+                AttachDocument.Command = ViewModel.SendDocumentCommand;
+
+                AttachRecent.Height = double.NaN;
+                AttachLocation.Visibility = Visibility.Visible;
+                AttachContact.Visibility = Visibility.Visible;
+                AttachCurrent.Visibility = Visibility.Collapsed;
+
+                ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
+                ButtonAttach.IsEnabled = true;
+
+                ButtonsPanel.Visibility = Visibility.Visible;
+                btnEdit.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ComposerHeader.Visibility = Visibility.Visible;
+                ComposerHeaderReference.Message = header;
+
+                TextField.Reply = header;
+
+                var editing = header.EditingMessage;
+                if (editing != null)
+                {
+                    switch (editing.Content)
+                    {
+                        case MessageAnimation animation:
+                        case MessageAudio audio:
+                        case MessageDocument document:
+                        case MessagePhoto photo:
+                        case MessageVideo video:
+                            ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachEditGlyph;
+                            ButtonAttach.IsEnabled = true;
+                            break;
+                        //case MessageVoiceNote voiceNote:
+                        //    ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
+                        //    ButtonAttach.IsEnabled = false;
+                        //    break;
+                        default:
+                            ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
+                            ButtonAttach.IsEnabled = false;
+                            break;
+                    }
+
+                    AttachMedia.Command = ViewModel.EditMediaCommand;
+                    AttachDocument.Command = ViewModel.EditDocumentCommand;
+
+                    AttachRecent.Height = 0;
+                    AttachLocation.Visibility = Visibility.Collapsed;
+                    AttachContact.Visibility = Visibility.Collapsed;
+                    AttachCurrent.Visibility = editing.Content is MessagePhoto || editing.Content is MessageVideo ? Visibility.Visible : Visibility.Collapsed;
+
+                    ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.EditGlyph;
+
+                    ButtonsPanel.Visibility = Visibility.Collapsed;
+                    btnEdit.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    AttachMedia.Command = ViewModel.SendMediaCommand;
+                    AttachDocument.Command = ViewModel.SendDocumentCommand;
+
+                    AttachRecent.Height = double.NaN;
+                    AttachLocation.Visibility = Visibility.Visible;
+                    AttachContact.Visibility = Visibility.Visible;
+                    AttachCurrent.Visibility = Visibility.Collapsed;
+
+                    ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
+                    ButtonAttach.IsEnabled = true;
+
+                    if (header.WebPagePreview != null)
+                    {
+                        ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.GlobeGlyph;
+                    }
+                    else if (header.ReplyToMessage != null)
+                    {
+                        ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.ReplyGlyph;
+                    }
+                    else
+                    {
+                        ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.LoadingGlyph;
+                    }
+
+                    ButtonsPanel.Visibility = Visibility.Visible;
+                    btnEdit.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
 
 
         public void UpdateUser(Chat chat, User user, bool secret)
@@ -2788,6 +2885,13 @@ namespace Unigram.Views
                         photo.Source = PlaceholderHelper.GetUser(null, user, 36);
                     }
                 }
+            }
+
+            var header = ViewModel.ComposerHeader;
+            if (header?.EditingMessageFileId == file.Id)
+            {
+                var size = Math.Max(file.Size, file.ExpectedSize);
+                ComposerHeaderUpload.Value = (double)file.Remote.UploadedSize / size;
             }
 
             if (!file.Local.IsDownloadingCompleted)
