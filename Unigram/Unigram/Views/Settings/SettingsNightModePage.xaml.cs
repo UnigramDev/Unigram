@@ -11,6 +11,7 @@ using Windows.Devices.Geolocation;
 using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -36,6 +37,12 @@ namespace Unigram.Views.Settings
 
             FromPicker.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
             ToPicker.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedLeft"))
+            {
+                FromPicker.Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft;
+                ToPicker.Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft;
+            }
 
             //var sensor = LightSensor.GetDefault();
             //if (sensor != null)

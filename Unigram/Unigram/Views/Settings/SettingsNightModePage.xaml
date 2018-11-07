@@ -73,13 +73,13 @@
                         <controls:BadgeButton Content="{CustomResource AutoNightFrom}"
                                               Badge="{x:Bind ConvertTimeSpan(ViewModel.From), Mode=OneWay}">
                             <Button.Flyout>
-                                <TimePickerFlyout x:Name="FromPicker" Time="{x:Bind ViewModel.From, Mode=TwoWay}" TimePicked="UpdateTheme_Picked" Placement="BottomEdgeAlignedLeft"/>
+                                <TimePickerFlyout x:Name="FromPicker" Time="{x:Bind ViewModel.From, Mode=TwoWay}" TimePicked="UpdateTheme_Picked"/>
                             </Button.Flyout>
                         </controls:BadgeButton>
                         <controls:BadgeButton Content="{CustomResource AutoNightTo}"
                                               Badge="{x:Bind ConvertTimeSpan(ViewModel.To), Mode=OneWay}">
                             <Button.Flyout>
-                                <TimePickerFlyout x:Name="ToPicker" Time="{x:Bind ViewModel.To, Mode=TwoWay}" TimePicked="UpdateTheme_Picked" Placement="BottomEdgeAlignedLeft"/>
+                                <TimePickerFlyout x:Name="ToPicker" Time="{x:Bind ViewModel.To, Mode=TwoWay}" TimePicked="UpdateTheme_Picked"/>
                             </Button.Flyout>
                         </controls:BadgeButton>
                     </StackPanel>
