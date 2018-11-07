@@ -263,6 +263,12 @@ namespace Unigram.Views
                         item.Presenter.MediaPlayer.IsMuted = false;
                         item.Presenter.MediaPlayer.IsLoopingEnabled = false;
                         item.Presenter.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+
+                        // Mark it as viewed if needed
+                        if (message.Content is MessageVideoNote videoNote && !message.IsOutgoing && !videoNote.IsViewed)
+                        {
+                            ViewModel.ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                        }
                     }
                     // If the video player is paused, then resume playback
                     else if (item.Presenter.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
