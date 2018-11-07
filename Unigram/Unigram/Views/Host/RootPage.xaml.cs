@@ -32,8 +32,6 @@ namespace Unigram.Views.Host
         private ILifetimeService _lifetime;
         private NavigationService _navigationService;
 
-        private bool _showSessions;
-
         private const string NavigationAdd = "NavigationAdd";
         private const string NavigationAddSeparator = "NavigationAddSeparator";
 
@@ -189,7 +187,7 @@ namespace Unigram.Views.Host
                 InitializeUser(main.ViewModel);
             }
 
-            InitializeSessions(_showSessions, _lifetime.Items);
+            InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
 
             foreach (var item in NavigationViewItems)
             {
@@ -219,7 +217,7 @@ namespace Unigram.Views.Host
 #else
             PhoneLabel.Text = PhoneNumber.Format(user.PhoneNumber);
 #endif
-            Expanded.IsChecked = _showSessions;
+            Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
         }
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
@@ -303,10 +301,10 @@ namespace Unigram.Views.Host
 
         private void Expand_Click(object sender, RoutedEventArgs e)
         {
-            _showSessions = !_showSessions;
+            SettingsService.Current.IsAccountsSelectorExpanded = !SettingsService.Current.IsAccountsSelectorExpanded;
 
-            InitializeSessions(_showSessions, _lifetime.Items);
-            Expanded.IsChecked = _showSessions;
+            InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+            Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
