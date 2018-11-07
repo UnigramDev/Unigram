@@ -622,38 +622,39 @@ namespace Unigram.Controls.Messages
             Span.Inlines.Clear();
 
             var result = false;
+            var adjust = false;
+
             if (message.Content is MessageText text)
             {
-                result = ReplaceEntities(message, Span, text.Text);
+                result = ReplaceEntities(message, Span, text.Text, out adjust);
             }
             else if (message.Content is MessageAnimation animation)
             {
-                result = ReplaceEntities(message, Span, animation.Caption);
+                result = ReplaceEntities(message, Span, animation.Caption, out adjust);
             }
             else if (message.Content is MessageAudio audio)
             {
-                result = ReplaceEntities(message, Span, audio.Caption);
+                result = ReplaceEntities(message, Span, audio.Caption, out adjust);
             }
             else if (message.Content is MessageDocument document)
             {
-                result = ReplaceEntities(message, Span, document.Caption);
+                result = ReplaceEntities(message, Span, document.Caption, out adjust);
             }
             else if (message.Content is MessagePhoto photo)
             {
-                result = ReplaceEntities(message, Span, photo.Caption);
+                result = ReplaceEntities(message, Span, photo.Caption, out adjust);
             }
             else if (message.Content is MessageVideo video)
             {
-                result = ReplaceEntities(message, Span, video.Caption);
+                result = ReplaceEntities(message, Span, video.Caption, out adjust);
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {
-                result = ReplaceEntities(message, Span, voiceNote.Caption);
+                result = ReplaceEntities(message, Span, voiceNote.Caption, out adjust);
             }
             else if (message.Content is MessageUnsupported unsupported)
             {
-                GetEntities(message, Strings.Resources.UnsupportedMedia);
-                result = true;
+                result = GetEntities(message, Span, Strings.Resources.UnsupportedMedia, out adjust);
             }
             else if (message.Content is MessageVenue venue)
             {
@@ -664,39 +665,44 @@ namespace Unigram.Controls.Messages
             }
 
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
+            Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
         }
 
-        private void GetEntities(MessageViewModel message, string text)
+        private bool GetEntities(MessageViewModel message, Span span, string text, out bool adjust)
         {
             if (string.IsNullOrEmpty(text))
             {
-                Message.Visibility = Visibility.Collapsed;
+                //Message.Visibility = Visibility.Collapsed;
+                adjust = false;
+                return false;
             }
             else
             {
-                Message.Visibility = Visibility.Visible;
+                //Message.Visibility = Visibility.Visible;
 
                 var response = message.ProtoService.Execute(new GetTextEntities(text));
                 if (response is TextEntities entities)
                 {
-                    ReplaceEntities(message, Span, text, entities.Entities);
+                    return ReplaceEntities(message, span, text, entities.Entities, out adjust);
                 }
-                else
-                {
-                    Span.Inlines.Add(new Run { Text = text });
-                }
+
+                Span.Inlines.Add(new Run { Text = text });
+
+                adjust = false;
+                return true;
             }
         }
 
-        private bool ReplaceEntities(MessageViewModel message, Span span, FormattedText text)
+        private bool ReplaceEntities(MessageViewModel message, Span span, FormattedText text, out bool adjust)
         {
-            return ReplaceEntities(message, span, text.Text, text.Entities);
+            return ReplaceEntities(message, span, text.Text, text.Entities, out adjust);
         }
 
-        private bool ReplaceEntities(MessageViewModel message, Span span, string text, IList<TextEntity> entities)
+        private bool ReplaceEntities(MessageViewModel message, Span span, string text, IList<TextEntity> entities, out bool adjust)
         {
             if (string.IsNullOrEmpty(text))
             {
+                adjust = false;
                 return false;
             }
 
@@ -778,17 +784,20 @@ namespace Unigram.Controls.Messages
 
             if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
-                Footer.HorizontalAlignment = HorizontalAlignment.Left;
+                //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
+                adjust = true;
             }
             else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
             {
-                Footer.HorizontalAlignment = HorizontalAlignment.Left;
+                //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
+                adjust = true;
             }
             else
             {
-                Footer.HorizontalAlignment = HorizontalAlignment.Right;
+                //Footer.HorizontalAlignment = HorizontalAlignment.Right;
+                adjust = false;
             }
 
             return true;
