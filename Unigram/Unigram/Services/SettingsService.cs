@@ -40,6 +40,7 @@ namespace Unigram.Services
         bool IsSecretPreviewsEnabled { get; set; }
         bool IsAutoPlayEnabled { get; set; }
         bool IsSendGrouped { get; set; }
+        bool IsAccountsSelectorExpanded { get; set; }
 
         int LastMessageTtl { get; set; }
 
@@ -376,6 +377,23 @@ namespace Unigram.Services
             {
                 _isAdaptiveWideEnabled = value;
                 AddOrUpdateValue(_local, "IsAdaptiveWideEnabled", value);
+            }
+        }
+
+        private static bool? _isAccountsSelectorExpanded;
+        public bool IsAccountsSelectorExpanded
+        {
+            get
+            {
+                if (_isAccountsSelectorExpanded == null)
+                    _isAccountsSelectorExpanded = GetValueOrDefault(_local, "IsAccountsSelectorExpanded", false);
+
+                return _isAccountsSelectorExpanded ?? false;
+            }
+            set
+            {
+                _isAccountsSelectorExpanded = value;
+                AddOrUpdateValue(_local, "IsAccountsSelectorExpanded", value);
             }
         }
 
