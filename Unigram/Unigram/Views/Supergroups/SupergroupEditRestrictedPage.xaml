@@ -72,10 +72,9 @@
                                   Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
 
-                <StackPanel Margin="0,24">
-                    <DatePicker Header="{CustomResource UserRestrictionsUntil}"/>
-                    <TimePicker/>
-                </StackPanel>
+                <controls:BadgeButton Content="{CustomResource UserRestrictionsUntil}"
+                                      Badge="{x:Bind ConvertUntilDate(ViewModel.UntilDate), Mode=OneWay}"
+                                      Command="{x:Bind ViewModel.EditUntilCommand}"/>
 
                 <StackPanel x:Name="DismissPanel" Visibility="Collapsed" Margin="0,24">
                     <Button Command="{x:Bind ViewModel.DismissCommand}"
