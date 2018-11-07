@@ -105,6 +105,8 @@ namespace Unigram.Controls.Views
             }
         }
 
+        public bool IsMultipleSelection { get; set; } = true;
+
         public bool IsGroupingEnabled
         {
             get

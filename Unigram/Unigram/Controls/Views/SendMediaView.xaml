@@ -694,7 +694,7 @@
                 </Border>
             </StackPanel>
 
-            <Grid Background="#AA000000" Grid.ColumnSpan="2">
+            <Grid Visibility="{x:Bind IsMultipleSelection, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#AA000000" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
