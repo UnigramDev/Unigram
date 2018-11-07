@@ -43,7 +43,9 @@ namespace Unigram.Controls.Gallery
             Panel.Background = null;
             Texture.Source = null;
 
-            //ScrollingHost.ChangeView(0, 0, 1, true);
+#if GALLERY_EXPERIMENTAL
+            ScrollingHost.ChangeView(0, 0, 1, true);
+#endif
 
             if (item == null)
             {
@@ -161,15 +163,24 @@ namespace Unigram.Controls.Gallery
 
         public void Reset()
         {
-            //ScrollingHost.ChangeView(0, 0, 1, true);
+#if GALLERY_EXPERIMENTAL
+            ScrollingHost.ChangeView(0, 0, 1, true);
+#endif
         }
 
-        //protected override Size MeasureOverride(Size availableSize)
-        //{
-        //    Panel.MaxWidth = availableSize.Width;
-        //    Panel.MaxHeight = availableSize.Height;
+#if GALLERY_EXPERIMENTAL
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            Panel.MaxWidth = availableSize.Width;
+            Panel.MaxHeight = availableSize.Height;
 
-        //    return base.MeasureOverride(availableSize);
-        //}
+            return base.MeasureOverride(availableSize);
+        }
+
+        private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            Panel.ManipulationMode = ScrollingHost.ZoomFactor == 1 ? ManipulationModes.TranslateY | ManipulationModes.TranslateRailsY | ManipulationModes.System : ManipulationModes.System;
+        }
+#endif
     }
 }

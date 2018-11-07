@@ -20,11 +20,14 @@
                   VerticalContentAlignment="Stretch"
                   VerticalScrollBarVisibility="Hidden"
                   HorizontalScrollBarVisibility="Hidden"
-                  HorizontalScrollMode="Auto">-->
+                  HorizontalScrollMode="Auto"
+                  ViewChanged="ScrollingHost_ViewChanged">
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center">-->
     <controls:AspectView x:Name="Panel" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Image x:Name="Texture" Stretch="UniformToFill"/>
 
         <controls:FileButton x:Name="Button" Click="Button_Click" ManipulationMode="System" Style="{StaticResource ImmersiveFileButtonStyle}"/>
     </controls:AspectView>
-    <!--</ScrollViewer>-->
+        <!--</Border>
+    </ScrollViewer>-->
 </Grid>

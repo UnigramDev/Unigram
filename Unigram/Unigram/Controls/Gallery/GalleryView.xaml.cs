@@ -378,9 +378,7 @@ namespace Unigram.Controls.Gallery
             }
 
             Unload();
-
             Dispose();
-            //Hide();
 
             e.Handled = true;
         }
@@ -1015,6 +1013,24 @@ namespace Unigram.Controls.Gallery
         {
             _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
 
+#if GALLERY_EXPERIMENTAL
+            void Register(Grid presenter)
+            {
+                presenter.ManipulationMode =
+                    //ManipulationModes.TranslateX |
+                    ManipulationModes.TranslateY |
+                    //ManipulationModes.TranslateRailsX |
+                    ManipulationModes.TranslateRailsY |
+                    ManipulationModes.TranslateInertia |
+                    ManipulationModes.System;
+                presenter.ManipulationDelta += LayoutRoot_ManipulationDelta;
+                presenter.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
+            }
+
+            Register(Element2.Presenter);
+            Register(Element0.Presenter);
+            Register(Element1.Presenter);
+#else
             LayoutRoot.ManipulationMode =
                 //ManipulationModes.TranslateX |
                 ManipulationModes.TranslateY |
@@ -1024,6 +1040,7 @@ namespace Unigram.Controls.Gallery
                 ManipulationModes.System;
             LayoutRoot.ManipulationDelta += LayoutRoot_ManipulationDelta;
             LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
+#endif
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MediaTransportControls", "ShowAndHideAutomatically"))
             {
@@ -1120,6 +1137,6 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        #endregion
+#endregion
     }
 }
