@@ -377,6 +377,9 @@
     <Compile Include="Controls\Views\StickerSetView.xaml.cs">
       <DependentUpon>StickerSetView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\SupergroupEditRestrictedUntilView.xaml.cs">
+      <DependentUpon>SupergroupEditRestrictedUntilView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SupergroupEventLogFiltersView.xaml.cs">
       <DependentUpon>SupergroupEventLogFiltersView.xaml</DependentUpon>
     </Compile>
@@ -1824,6 +1827,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\StickersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SupergroupEditRestrictedUntilView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

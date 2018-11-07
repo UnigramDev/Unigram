@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -21,6 +22,7 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
 
+            View.CalendarIdentifier = GlobalizationPreferences.Calendars.FirstOrDefault();
             View.Language = Native.NativeUtils.GetCurrentCulture();
 
             PrimaryButtonText = Strings.Resources.OK;
