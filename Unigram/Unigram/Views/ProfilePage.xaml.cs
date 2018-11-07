@@ -187,15 +187,17 @@ namespace Unigram.Views
         {
             if (user.Type is UserTypeBot)
             {
-                GetEntities(fullInfo.Bio);
+                GetEntities(fullInfo.ShareText);
+
+                DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.ShareText) ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {
                 DescriptionSpan.Inlines.Clear();
                 DescriptionSpan.Inlines.Add(new Run { Text = fullInfo.Bio });
-            }
 
-            DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
+                DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
+            }
 
             UserCommonChats.Badge = fullInfo.GroupInCommonCount;
             UserCommonChats.Visibility = fullInfo.GroupInCommonCount > 0 ? Visibility.Visible : Visibility.Collapsed;
