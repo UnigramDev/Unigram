@@ -827,8 +827,9 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageEditCommand { get; }
         private void MessageEditExecute(MessageViewModel message)
         {
-            DisposeSearch();
             CurrentInlineBot = null;
+            DisposeSearch();
+            SaveDraft();
 
             var container = new MessageComposerHeader { EditingMessage = message };
             var input = message.Content.GetCaption();
