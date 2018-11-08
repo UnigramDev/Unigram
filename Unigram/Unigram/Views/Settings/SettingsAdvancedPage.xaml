@@ -61,6 +61,11 @@
                         IsOn="{x:Bind ViewModel.IsWorkModeVisible, Mode=TwoWay}"
                         Header="Show work mode toggle"
                         Style="{StaticResource CheckButtonStyle}"/>
+
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                        Header="Try connecting through IPv6"
+                        Style="{StaticResource CheckButtonStyle}"/>
                     
                     <controls:StartupSwitch Margin="0,24"/>
 

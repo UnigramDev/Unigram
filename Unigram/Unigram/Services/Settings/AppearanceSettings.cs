@@ -34,8 +34,8 @@ namespace Unigram.Services.Settings
         {
             if (NightMode == NightMode.Scheduled && RequestedTheme.HasFlag(TelegramTheme.Light))
             {
-                var from = DateTime.Now.Date;
-                var to = DateTime.Now.Date;
+                var start = DateTime.Now.Date;
+                var end = DateTime.Now.Date;
 
                 if (IsLocationBased && Location.Latitude != 0 && Location.Longitude != 0)
                 {
@@ -43,33 +43,41 @@ namespace Unigram.Services.Settings
                     var sunrise = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
                     var sunset = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
 
-                    from = from.Add(sunset);
-                    to = to.Add(sunrise);
+                    start = start.Add(sunset);
+                    end = end.Add(sunrise);
 
-                    if (sunrise < sunset)
+                    if (sunrise > DateTime.Now.TimeOfDay)
                     {
-                        to = to.AddDays(1);
+                        start = start.AddDays(-1);
+                    }
+                    else if (sunrise < sunset)
+                    {
+                        end = end.AddDays(1);
                     }
                 }
                 else
                 {
-                    from = from.Add(From);
-                    to = to.Add(To);
+                    start = start.Add(From);
+                    end = end.Add(To);
 
-                    if (To < From)
+                    if (From < DateTime.Now.TimeOfDay)
                     {
-                        to = to.AddDays(1);
+                        start = start.AddDays(-1);
+                    }
+                    else if (To < From)
+                    {
+                        end = end.AddDays(1);
                     }
                 }
 
                 var now = DateTime.Now;
-                if (now < from)
+                if (now < start)
                 {
-                    _nightModeTimer.Change(from - now, TimeSpan.Zero);
+                    _nightModeTimer.Change(start - now, TimeSpan.Zero);
                 }
-                else if (now < to)
+                else if (now < end)
                 {
-                    _nightModeTimer.Change(to - now, TimeSpan.Zero);
+                    _nightModeTimer.Change(end - now, TimeSpan.Zero);
                 }
                 else
                 {
@@ -262,8 +270,8 @@ namespace Unigram.Services.Settings
         {
             if (NightMode == NightMode.Scheduled && RequestedTheme.HasFlag(TelegramTheme.Light))
             {
-                var from = DateTime.Now.Date;
-                var to = DateTime.Now.Date;
+                var start = DateTime.Now.Date;
+                var end = DateTime.Now.Date;
 
                 if (IsLocationBased && Location.Latitude != 0 && Location.Longitude != 0)
                 {
@@ -271,32 +279,38 @@ namespace Unigram.Services.Settings
                     var sunrise = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
                     var sunset = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
 
-                    from = from.Add(sunset);
-                    to = to.Add(sunrise);
+                    start = start.Add(sunset);
+                    end = end.Add(sunrise);
 
-                    if (sunrise < sunset)
+                    if (sunrise > DateTime.Now.TimeOfDay)
                     {
-                        to = to.AddDays(1);
+                        start = start.AddDays(-1);
+                    }
+                    else if (sunrise < sunset)
+                    {
+                        end = end.AddDays(1);
                     }
                 }
                 else
                 {
-                    from = from.Add(From);
-                    to = to.Add(To);
+                    start = start.Add(From);
+                    end = end.Add(To);
 
-                    if (To < From)
+                    if (From < DateTime.Now.TimeOfDay)
                     {
-                        to = to.AddDays(1);
+                        start = start.AddDays(-1);
+                    }
+                    else if (To < From)
+                    {
+                        end = end.AddDays(1);
                     }
                 }
 
                 var now = DateTime.Now;
-                if (now >= from && now < to)
+                if (now >= start && now < end)
                 {
                     return true;
                 }
-
-                return false;
             }
 
             return null;

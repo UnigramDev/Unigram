@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Devices.Geolocation;
 using Windows.Services.Maps;
+using Windows.System;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -29,6 +32,17 @@ namespace Unigram.ViewModels.Settings
         private async void UpdateLocationExecute()
         {
             var location = await _locationService.GetPositionAsync();
+            if (location == null)
+            {
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    await Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));
+                }
+
+                return;
+            }
+
             var geopoint = new Geopoint(new BasicGeoposition { Latitude = location.Point.Position.Latitude, Longitude = location.Point.Position.Longitude });
 
             Location = new BasicGeoposition { Latitude = location.Point.Position.Latitude, Longitude = location.Point.Position.Longitude };

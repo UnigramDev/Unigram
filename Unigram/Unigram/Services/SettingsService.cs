@@ -369,9 +369,9 @@ namespace Unigram.Services
             get
             {
                 if (_isAdaptiveWideEnabled == null)
-                    _isAdaptiveWideEnabled = GetValueOrDefault(_local, "IsAdaptiveWideEnabled", true);
+                    _isAdaptiveWideEnabled = GetValueOrDefault(_local, "IsAdaptiveWideEnabled", false);
 
-                return _isAdaptiveWideEnabled ?? true;
+                return _isAdaptiveWideEnabled ?? false;
             }
             set
             {
