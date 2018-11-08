@@ -271,13 +271,9 @@ namespace Unigram.Controls.Chats
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (SettingsService.Current.IsAdaptiveWideEnabled)
+            if (SettingsService.Current.IsAdaptiveWideEnabled && availableSize.Width >= 880)
             {
-                var size = availableSize.Width >= 880 ? new Size(Math.Min(availableSize.Width, 542 /* 432 + 50 + 12 */), availableSize.Height) : availableSize;
-                _presenter.Measure(size);
-
-                size.Height = _presenter.DesiredSize.Height;
-                return size;
+                return base.MeasureOverride(new Size(Math.Min(availableSize.Width, 542 /* 432 + 50 + 12 */), availableSize.Height));
             }
 
             return base.MeasureOverride(availableSize);
@@ -285,15 +281,15 @@ namespace Unigram.Controls.Chats
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (SettingsService.Current.IsAdaptiveWideEnabled)
+            if (SettingsService.Current.IsAdaptiveWideEnabled && finalSize.Width >= 880)
             {
-                var size = finalSize.Width >= 880 ? new Size(Math.Min(finalSize.Width, 542 /* 432 + 50 + 12 */), finalSize.Height) : finalSize;
+                var size = new Size(Math.Min(finalSize.Width, 542 /* 432 + 50 + 12 */), finalSize.Height);
                 _presenter.Arrange(new Rect(0, 0, size.Width, size.Height));
+
+                return finalSize;
             }
-            else
-            {
-                finalSize = base.ArrangeOverride(finalSize);
-            }
+
+            return base.ArrangeOverride(finalSize);
 
             //var content = ContentTemplateRoot as FrameworkElement;
             //var message = content.Tag as MessageViewModel;
