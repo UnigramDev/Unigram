@@ -10,7 +10,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <TextBlock Margin="0,0,0,8" IsTextSelectionEnabled="True" Style="{StaticResource BodyTextBlockStyle}">
+    <TextBlock Margin="0,0,0,8" TextAlignment="DetectFromContent" IsTextSelectionEnabled="True" Style="{StaticResource BodyTextBlockStyle}">
         <Run x:Name="Title" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/>
         <LineBreak/>
         <Run x:Name="Description"/>

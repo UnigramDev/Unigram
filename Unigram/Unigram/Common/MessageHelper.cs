@@ -88,6 +88,11 @@ namespace Unigram.Common
 
         public static bool IsAnyCharacterRightToLeft(string s)
         {
+            if (s == null)
+            {
+                return false;
+            }
+
             //if (s.Length > 2)
             //{
             //    s = s.Substring(s.Length - 2);

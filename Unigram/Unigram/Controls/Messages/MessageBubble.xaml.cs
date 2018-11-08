@@ -665,7 +665,12 @@ namespace Unigram.Controls.Messages
             }
 
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
-            Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
+            //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
+
+            if (adjust)
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
         }
 
         private bool GetEntities(MessageViewModel message, Span span, string text, out bool adjust)
