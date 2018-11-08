@@ -23,10 +23,26 @@ namespace Unigram.Controls.Chats
         private const float PI = 3.1415926535897931f;
 
         private Visual _previous;
-        private ChatAction _action;
+        private AnimationType _action;
+
+        private enum AnimationType
+        {
+            None,
+            Typing,
+            Uploading,
+            Playing,
+            VideoRecording,
+            VoiceRecording
+        }
 
         public void UpdateAction(ChatAction action)
         {
+            var type = GetAnimationType(action);
+            if (type == _action)
+            {
+                return;
+            }
+
             if (_previous != null)
             {
                 _previous.Dispose();
@@ -42,10 +58,10 @@ namespace Unigram.Controls.Chats
             var height = 8f;
             var color = Fill;
 
-            var visual = GetVisual(action, Window.Current.Compositor, width, height, color);
+            var visual = GetVisual(type, Window.Current.Compositor, width, height, color);
             //if (visual != null)
             {
-                _action = action;
+                _action = type;
                 _previous = visual;
 
                 ElementCompositionPreview.SetElementChildVisual(this, visual);
@@ -66,25 +82,43 @@ namespace Unigram.Controls.Chats
 
         #endregion
 
-        private Visual GetVisual(ChatAction action, Compositor compositor, float width, float height, Color color)
+        private AnimationType GetAnimationType(ChatAction action)
         {
             switch (action)
             {
-                // Doesn't work yet
                 case ChatActionTyping typing:
-                    return GetTyping(compositor, width, height, color);
+                    return AnimationType.Typing;
                 case ChatActionUploadingDocument document:
                 case ChatActionUploadingPhoto photo:
                 case ChatActionUploadingVideo video:
                 case ChatActionUploadingVideoNote videoNote:
                 case ChatActionUploadingVoiceNote voiceNote:
-                    return GetUploading(compositor, width, height, color);
+                    return AnimationType.Uploading;
                 case ChatActionStartPlayingGame game:
-                    return GetPlaying(compositor, 24, height, color);
+                    return AnimationType.Playing;
                 case ChatActionRecordingVideo recordingVideo:
                 case ChatActionRecordingVideoNote recordingVideoNote:
-                    return GetVideoRecording(compositor, 8, height, color);
+                    return AnimationType.VideoRecording;
                 case ChatActionRecordingVoiceNote recordingVoiceNote:
+                    return AnimationType.VoiceRecording;
+                default:
+                    return AnimationType.None;
+            }
+        }
+
+        private Visual GetVisual(AnimationType action, Compositor compositor, float width, float height, Color color)
+        {
+            switch (action)
+            {
+                case AnimationType.Typing:
+                    return GetTyping(compositor, width, height, color);
+                case AnimationType.Uploading:
+                    return GetUploading(compositor, width, height, color);
+                case AnimationType.Playing:
+                    return GetPlaying(compositor, 24, height, color);
+                case AnimationType.VideoRecording:
+                    return GetVideoRecording(compositor, 8, height, color);
+                case AnimationType.VoiceRecording:
                     return GetVoiceRecording(compositor, width, height, color);
             }
 
@@ -478,20 +512,15 @@ namespace Unigram.Controls.Chats
         {
             switch (_action)
             {
-                case ChatActionTyping typing:
+                case AnimationType.Typing:
                     return new Size(36, 16);
-                case ChatActionUploadingDocument document:
-                case ChatActionUploadingPhoto photo:
-                case ChatActionUploadingVideo video:
-                case ChatActionUploadingVideoNote videoNote:
-                case ChatActionUploadingVoiceNote voiceNote:
+                case AnimationType.Uploading:
                     return new Size(36, 16);
-                case ChatActionStartPlayingGame game:
+                case AnimationType.Playing:
                     return new Size(40, 16);
-                case ChatActionRecordingVideo recordingVideo:
-                case ChatActionRecordingVideoNote recordingVideoNote:
+                case AnimationType.VideoRecording:
                     return new Size(22, 16);
-                case ChatActionRecordingVoiceNote recordingVoiceNote:
+                case AnimationType.VoiceRecording:
                     return new Size(34, 16);
             }
 
