@@ -17,8 +17,6 @@ namespace Unigram.ViewModels.Delegates
 
         void UpdateComposerHeader(Chat chat, MessageComposerHeader header);
 
-        void UpdateNotificationSettings(Chat chat);
-
 
 
         void PlayMessage(MessageViewModel message, FrameworkElement target);

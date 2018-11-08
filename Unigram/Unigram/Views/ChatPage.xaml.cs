@@ -2295,7 +2295,7 @@ namespace Unigram.Views
         }
 
 
-        public void UpdateNotificationSettings(Chat chat)
+        public void UpdateChatNotificationSettings(Chat chat)
         {
             if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
             {

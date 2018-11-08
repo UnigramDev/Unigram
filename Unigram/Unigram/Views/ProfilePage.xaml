@@ -222,52 +222,97 @@
                         </Grid>
 
                         <StackPanel>
-                            <Button x:Name="UserPhone"
-                                    Visibility="Collapsed"
-                                    Tag="{CustomResource PhoneMobile}"
-                                    Command="{x:Bind ViewModel.CallCommand}"
-                                    Style="{StaticResource SubtitleButtonStyle}">
+                            <controls:BadgeButton
+                                x:Name="UserPhone"
+                                Visibility="Collapsed"
+                                Content="{CustomResource Phone}"
+                                Command="{x:Bind ViewModel.CallCommand}"
+                                Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                                Glyph="&#xE717;">
                                 <Button.ContextFlyout>
                                     <MenuFlyout>
                                         <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}"/>
                                     </MenuFlyout>
                                 </Button.ContextFlyout>
-                            </Button>
+                            </controls:BadgeButton>
 
-                            <StackPanel x:Name="DescriptionPanel" Visibility="Collapsed">
-                                <StackPanel.ContextFlyout>
+                            <Grid x:Name="DescriptionPanel" Visibility="Collapsed">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="48"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ContextFlyout>
                                     <MenuFlyout>
                                         <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}"/>
                                     </MenuFlyout>
-                                </StackPanel.ContextFlyout>
-                                <TextBlock x:Name="DescriptionTitle" Visibility="Collapsed" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                                </Grid.ContextFlyout>
+                                <Border Height="44" VerticalAlignment="Top">
+                                    <TextBlock
+                                        FontSize="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        AutomationProperties.AccessibilityView="Raw"
+                                        Text="&#xE946;"
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                                </Border>
+
                                 <RichTextBlock x:Name="DescriptionLabel"
                                                ContextRequested="About_ContextRequested"
                                                ContextMenuOpening="About_ContextMenuOpening"
-                                               Padding="12,0,12,12"
-                                               Style="{StaticResource BodyRichTextBlockStyle}">
+                                               Padding="0,11,12,12"
+                                               Style="{StaticResource BodyRichTextBlockStyle}"
+                                               Grid.Column="1">
                                     <Paragraph>
                                         <Span x:Name="DescriptionSpan"/>
                                     </Paragraph>
                                 </RichTextBlock>
-                                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
-                            </StackPanel>
 
-                            <Button x:Name="Username"
-                                    Visibility="Collapsed"
-                                    Tag="{CustomResource Username}"
-                                    Style="{StaticResource SubtitleButtonStyle}">
+                                <TextBlock x:Name="DescriptionTitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,-14,12,12" Grid.Column="1" Grid.Row="1"/>
+                                
+                                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2" Grid.ColumnSpan="2"/>
+                            </Grid>
+
+                            <controls:BadgeButton
+                                x:Name="Username"
+                                Visibility="Collapsed"
+                                Content="{CustomResource Username}"
+                                Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                                FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                FontSize="15"
+                                Glyph="&#xE91A;">
                                 <Button.ContextFlyout>
                                     <MenuFlyout>
                                         <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}"/>
                                     </MenuFlyout>
                                 </Button.ContextFlyout>
-                            </Button>
+                            </controls:BadgeButton>
 
-                            <ToggleSwitch x:Name="Notifications"
-                                          Header="{CustomResource Notifications}"
-                                          Style="{StaticResource CheckButtonStyle}"
-                                          Toggled="Notifications_Toggled"/>
+                            <Grid x:Name="NotificationsPanel">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="48"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    x:Name="NotificationGlyph"
+                                    FontSize="14"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    Text="&#xE609;"
+                                    FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+
+                                <ToggleSwitch x:Name="Notifications"
+                                              Padding="48,11,12,12"
+                                              Header="{CustomResource Notifications}"
+                                              Style="{StaticResource CheckButtonStyle}"
+                                              Toggled="Notifications_Toggled"
+                                              Grid.ColumnSpan="2"/>
+                            </Grid>
                         </StackPanel>
 
                         <StackPanel x:Name="ChannelMembersPanel" Visibility="Collapsed" Margin="0,24,0,0">

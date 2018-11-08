@@ -201,7 +201,7 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                BeginOnUIThread(() => Delegate?.UpdateNotificationSettings(_chat));
+                BeginOnUIThread(() => Delegate?.UpdateChatNotificationSettings(_chat));
             }
         }
 

@@ -1099,12 +1099,12 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock
-                                    FontSize="{TemplateBinding FontSize}"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    Text="{TemplateBinding Glyph}"
-                                    FontFamily="{TemplateBinding FontFamily}"/>
+                                FontSize="{TemplateBinding FontSize}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding Glyph}"
+                                FontFamily="{TemplateBinding FontFamily}"/>
 
                             <ContentPresenter x:Name="ContentPresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Badge}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
                             <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Content}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" Grid.Column="1" Grid.Row="1">
@@ -1983,6 +1983,7 @@
         <Setter Property="ManipulationMode" Value="System,TranslateX" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-7,-3,-7,-3" />
+        <Setter Property="Padding" Value="12,11,12,12"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleSwitch">
@@ -2179,7 +2180,7 @@
                                           Content="{TemplateBinding Header}"
                                           ContentTemplate="{TemplateBinding HeaderTemplate}"
                                           VerticalContentAlignment="Center"
-                                          Padding="12,11,12,12"
+                                          Padding="{TemplateBinding Padding}"
                                           IsHitTestVisible="False"
                                           AutomationProperties.AccessibilityView="Raw" 
                                           Grid.RowSpan="4"/>

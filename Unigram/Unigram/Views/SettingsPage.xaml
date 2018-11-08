@@ -77,9 +77,9 @@
                         x:Name="Username"
                         Content="{CustomResource Username}"
                         Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                        FontSize="18"
-                        Glyph="@"
+                        FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                        Glyph="&#xE91A;"
+                        FontSize="15"
                         Click="Username_Click"/>
                     <controls:BadgeButton
                         x:Name="Bio"

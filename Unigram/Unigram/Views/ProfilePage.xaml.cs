@@ -111,6 +111,7 @@ namespace Unigram.Views
             UpdateChatPhoto(chat);
 
             Notifications.IsOn = chat.NotificationSettings.MuteFor == 0;
+            NotificationGlyph.Text = chat.NotificationSettings.MuteFor == 0 ? "\uE609" : "\uE60A";
 
             Call.Visibility = Visibility.Collapsed;
         }
@@ -125,29 +126,32 @@ namespace Unigram.Views
             Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
         }
 
+        public void UpdateChatNotificationSettings(Chat chat)
+        {
+            NotificationGlyph.Text = chat.NotificationSettings.MuteFor == 0 ? "\uE609" : "\uE60A";
+        }
+
         public void UpdateUser(Chat chat, User user, bool secret)
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
-            UserPhone.Content = PhoneNumber.Format(user.PhoneNumber);
+            UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
             UserPhone.Visibility = string.IsNullOrEmpty(user.PhoneNumber) ? Visibility.Collapsed : Visibility.Visible;
 
-            Username.Content = $"@{user.Username}";
+            Username.Badge = $"{user.Username}";
             Username.Visibility = string.IsNullOrEmpty(user.Username) ? Visibility.Collapsed : Visibility.Visible;
 
-            DescriptionTitle.Text = user.Type is UserTypeBot ? "About" : Strings.Resources.UserBio;
-            DescriptionTitle.Visibility = Visibility.Visible;
-            DescriptionLabel.Padding = new Thickness(12, 0, 12, 12);
+            DescriptionTitle.Text = user.Type is UserTypeBot ? Strings.Resources.DescriptionPlaceholder : Strings.Resources.UserBio;
 
             if (user.Id == ViewModel.CacheService.Options.MyId)
             {
-                Notifications.Visibility = Visibility.Collapsed;
+                NotificationsPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Notifications.Visibility = Visibility.Visible;
+                NotificationsPanel.Visibility = Visibility.Visible;
             }
 
             if (secret)
@@ -278,11 +282,8 @@ namespace Unigram.Views
 
             Verified.Visibility = group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
-            Username.Content = $"@{group.Username}";
+            Username.Badge = $"{group.Username}";
             Username.Visibility = string.IsNullOrEmpty(group.Username) ? Visibility.Collapsed : Visibility.Visible;
-
-            DescriptionTitle.Visibility = Visibility.Collapsed;
-            DescriptionLabel.Padding = new Thickness(12);
 
             if (group.IsChannel && !(group.Status is ChatMemberStatusCreator) && !(group.Status is ChatMemberStatusLeft) && !(group.Status is ChatMemberStatusBanned))
             {
