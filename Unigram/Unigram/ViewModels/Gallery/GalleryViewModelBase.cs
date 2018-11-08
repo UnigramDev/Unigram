@@ -203,6 +203,7 @@ namespace Unigram.ViewModels.Gallery
         public RelayCommand ViewCommand { get; }
         protected virtual void ViewExecute()
         {
+            FirstItem = null;
             NavigationService.GoBack();
 
             var message = _selectedItem as GalleryMessage;

@@ -1825,6 +1825,14 @@ namespace Unigram.ViewModels
                     {
                         ComposerHeader = new MessageComposerHeader { ReplyToMessage = _messageFactory.Create(this, message) };
                     }
+                    else
+                    {
+                        ComposerHeader = null;
+                    }
+                }
+                else
+                {
+                    ComposerHeader = null;
                 }
             }
         }
@@ -2101,8 +2109,15 @@ namespace Unigram.ViewModels
                         ProtoService.Send(new CancelUploadFile(fileId));
                     }
 
-                    SetText(null, false);
-                    //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
+                    var chat = _chat;
+                    if (chat != null)
+                    {
+                        ShowDraftMessage(chat);
+                    }
+                    else
+                    {
+                        SetText(null, false);
+                    }
                 }
 
                 ComposerHeader = null;
@@ -2196,22 +2211,21 @@ namespace Unigram.ViewModels
                         function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
                     }
 
-                    var response = await ProtoService.SendAsync(function);
-                    if (response is Message message)
+                var response = await ProtoService.SendAsync(function);
+                if (response is Message message)
+                {
+                    ShowDraftMessage(chat);
+                    Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
+                }
+                else if (response is Error error)
+                {
+                    if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
                     {
-                        ComposerHeader = null;
-                        Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
+                        ShowDraftMessage(chat);
                     }
-                    else if (response is Error error)
+                    else
                     {
-                        if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
-                        {
-                            ComposerHeader = null;
-                        }
-                        else
-                        {
-                            // TODO: ...
-                        }
+                        // TODO: ...
                     }
                 }
             }

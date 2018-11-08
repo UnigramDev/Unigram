@@ -329,10 +329,10 @@ namespace Unigram.Controls.Gallery
             var container = GetContainer(0);
             var root = container.Presenter;
 
-            if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem)
+            if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
             {
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                if (animation != null && _closing != null)
+                if (animation != null)
                 {
                     if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                     {
@@ -856,14 +856,25 @@ namespace Unigram.Controls.Gallery
 
         private void ImageView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
 
             var element = sender as FrameworkElement;
+            if (element == null)
+            {
+                return;
+            }
+
             var item = element.Tag as GalleryContent;
             if (item == null)
             {
                 return;
             }
+
+            var flyout = new MenuFlyout();
 
             CreateFlyoutItem(ref flyout, item.CanView, ViewModel.ViewCommand, item, Strings.Resources.ShowInChat);
             CreateFlyoutItem(ref flyout, item.CanCopy, ViewModel.CopyCommand, item, Strings.Resources.Copy, Windows.System.VirtualKey.C);
