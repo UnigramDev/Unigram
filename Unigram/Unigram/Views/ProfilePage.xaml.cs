@@ -177,10 +177,10 @@ namespace Unigram.Views
 
             ChannelMembersPanel.Visibility = Visibility.Collapsed;
             MembersPanel.Visibility = Visibility.Collapsed;
-            Admins.Visibility = Visibility.Collapsed;
-            Banned.Visibility = Visibility.Collapsed;
-            Restricted.Visibility = Visibility.Collapsed;
-            Members.Visibility = Visibility.Collapsed;
+            //Admins.Visibility = Visibility.Collapsed;
+            //Banned.Visibility = Visibility.Collapsed;
+            //Restricted.Visibility = Visibility.Collapsed;
+            //Members.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
@@ -259,10 +259,10 @@ namespace Unigram.Views
 
             ChannelMembersPanel.Visibility = Visibility.Collapsed;
             MembersPanel.Visibility = Visibility.Visible;
-            Admins.Visibility = Visibility.Collapsed;
-            Banned.Visibility = Visibility.Collapsed;
-            Restricted.Visibility = Visibility.Collapsed;
-            Members.Visibility = Visibility.Collapsed;
+            //Admins.Visibility = Visibility.Collapsed;
+            //Banned.Visibility = Visibility.Collapsed;
+            //Restricted.Visibility = Visibility.Collapsed;
+            //Members.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -300,10 +300,10 @@ namespace Unigram.Views
 
             ChannelMembersPanel.Visibility = group.IsChannel && (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator) ? Visibility.Visible : Visibility.Collapsed;
             MembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-            Admins.Visibility = Visibility.Collapsed;
-            Banned.Visibility = Visibility.Collapsed;
-            Restricted.Visibility = Visibility.Collapsed;
-            Members.Visibility = Visibility.Collapsed;
+            //Admins.Visibility = Visibility.Collapsed;
+            //Banned.Visibility = Visibility.Collapsed;
+            //Restricted.Visibility = Visibility.Collapsed;
+            //Members.Visibility = Visibility.Collapsed;
 
             if (!group.IsChannel)
             {
@@ -324,16 +324,16 @@ namespace Unigram.Views
             DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
 
             Admins.Badge = fullInfo.AdministratorCount;
-            Admins.Visibility = fullInfo.AdministratorCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //Admins.Visibility = fullInfo.AdministratorCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             Banned.Badge = fullInfo.BannedCount;
-            Banned.Visibility = fullInfo.BannedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //Banned.Visibility = fullInfo.BannedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             Restricted.Badge = fullInfo.RestrictedCount;
-            Restricted.Visibility = fullInfo.RestrictedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //Restricted.Visibility = fullInfo.RestrictedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             Members.Badge = fullInfo.MemberCount;
-            Members.Visibility = fullInfo.CanGetMembers && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            //Members.Visibility = fullInfo.CanGetMembers && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
         }
 
 

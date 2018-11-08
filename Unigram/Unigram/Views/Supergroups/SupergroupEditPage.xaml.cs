@@ -163,16 +163,16 @@ namespace Unigram.Views.Supergroups
 
 
             Admins.Badge = fullInfo.AdministratorCount;
-            Admins.Visibility = fullInfo.AdministratorCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //Admins.Visibility = fullInfo.AdministratorCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             Banned.Badge = fullInfo.BannedCount;
-            Banned.Visibility = fullInfo.BannedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //Banned.Visibility = fullInfo.BannedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             Restricted.Badge = fullInfo.RestrictedCount;
-            Restricted.Visibility = fullInfo.RestrictedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //Restricted.Visibility = fullInfo.RestrictedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             Members.Badge = fullInfo.MemberCount;
-            Members.Visibility = fullInfo.MemberCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //Members.Visibility = fullInfo.MemberCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
 
             if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))

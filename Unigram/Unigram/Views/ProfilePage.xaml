@@ -273,25 +273,21 @@
                         <StackPanel x:Name="ChannelMembersPanel" Visibility="Collapsed" Margin="0,24,0,0">
                             <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                             <controls:BadgeButton x:Name="Members"
-                                                  Visibility="Collapsed"
                                                   Content="{CustomResource ChannelSubscribers}"
                                                   Command="{x:Bind ViewModel.MembersCommand}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   Glyph="&#xE902;"/>
                             <controls:BadgeButton x:Name="Admins"
-                                                  Visibility="Collapsed"
                                                   Content="{CustomResource ChannelAdministrators}"
                                                   Command="{x:Bind ViewModel.AdminsCommand}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   Glyph="&#xE734;"/>
                             <controls:BadgeButton x:Name="Restricted"
-                                                  Visibility="Collapsed"
                                                   Content="{CustomResource ChannelRestrictedUsers}"
                                                   Command="{x:Bind ViewModel.KickedCommand}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   Glyph="&#xE72E;"/>
                             <controls:BadgeButton x:Name="Banned"
-                                                  Visibility="Collapsed"
                                                   Content="{CustomResource ChannelBlockedUsers}"
                                                   Command="{x:Bind ViewModel.BannedCommand}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
