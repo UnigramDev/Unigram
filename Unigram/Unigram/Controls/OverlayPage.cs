@@ -163,10 +163,12 @@ namespace Unigram.Controls
                 {
                     _popupHost = new Popup();
                     _popupHost.Child = this;
+                    _popupHost.IsLightDismissEnabled = false;
                     _popupHost.Loading += PopupHost_Loading;
                     _popupHost.Loaded += PopupHostLoaded;
                     _popupHost.Opened += PopupHost_Opened;
                     _popupHost.Closed += PopupHost_Closed;
+
                     this.Unloaded += PopupHost_Unloaded;
                 }
 

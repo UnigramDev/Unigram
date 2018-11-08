@@ -42,7 +42,7 @@ namespace Unigram.Services
         private VoIPControllerWrapper _controller;
 
         private VoIPPage _callPage;
-        private ContentDialogBase _callDialog;
+        private OverlayPage _callDialog;
         private ViewLifetimeControl _callLifetime;
 
         public VoIPService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
@@ -255,7 +255,7 @@ namespace Unigram.Services
                 {
                     _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _callStarted);
 
-                    _callDialog = new ContentDialogBase();
+                    _callDialog = new OverlayPage();
                     _callDialog.HorizontalAlignment = HorizontalAlignment.Stretch;
                     _callDialog.VerticalAlignment = VerticalAlignment.Stretch;
                     _callDialog.Content = _callPage;

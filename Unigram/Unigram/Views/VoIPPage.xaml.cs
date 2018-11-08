@@ -66,7 +66,7 @@ namespace Unigram.Views
 
         private bool _disposed;
 
-        public ContentDialogBase Dialog { get; set; }
+        public OverlayPage Dialog { get; set; }
 
         public VoIPPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, Call call, VoIPControllerWrapper controller, DateTime started)
         {
