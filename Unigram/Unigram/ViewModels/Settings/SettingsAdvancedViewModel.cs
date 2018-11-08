@@ -115,5 +115,18 @@ namespace Unigram.ViewModels.Settings
                 Aggregator.Publish(new UpdateWorkMode(value, Settings.IsWorkModeEnabled));
             }
         }
+
+        public bool PreferIpv6
+        {
+            get
+            {
+                return CacheService.Options.PreferIpv6;
+            }
+            set
+            {
+                CacheService.Options.PreferIpv6 = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }
