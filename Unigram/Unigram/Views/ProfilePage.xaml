@@ -457,6 +457,9 @@
                         </StackPanel>
                     </StackPanel>
                 </ListView.Header>
+                <ListView.Footer>
+                    <Border Height="48"/>
+                </ListView.Footer>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

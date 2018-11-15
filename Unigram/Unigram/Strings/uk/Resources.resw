@@ -395,7 +395,7 @@
     <value>Дозволяти...</value>
   </data>
   <data name="AlwaysShareWith" xml:space="preserve">
-    <value>Ділитися із</value>
+    <value>Показувати для</value>
   </data>
   <data name="AlwaysShareWithPlaceholder" xml:space="preserve">
     <value>Ділитися із...</value>
@@ -1862,7 +1862,7 @@
     <value>Редагувати заголовок</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Перейменувати контакт</value>
+    <value>Редагувати контакт</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Редагувати повідомлення</value>
@@ -2725,7 +2725,7 @@
     <value>Хибне прізвище</value>
   </data>
   <data name="InvalidPhoneNumber" xml:space="preserve">
-    <value>Хибний номер телефону</value>
+    <value>Хибний номер телефону. Перевірте номер і спробуйте ще.</value>
   </data>
   <data name="Invisible" xml:space="preserve">
     <value>невидимий</value>
@@ -2898,7 +2898,7 @@
     <value>Ніхто (+{0})</value>
   </data>
   <data name="LastSeenTitle" xml:space="preserve">
-    <value>Хто може бачити ваші відвідини?</value>
+    <value>Хто може бачити мої відвідини?</value>
   </data>
   <data name="Lately" xml:space="preserve">
     <value>відвідини – недавно</value>
@@ -3300,7 +3300,7 @@
     <value>Не дозволяти...</value>
   </data>
   <data name="NeverShareWith" xml:space="preserve">
-    <value>Не ділитися із</value>
+    <value>Приховувати від</value>
   </data>
   <data name="NeverShareWithPlaceholder" xml:space="preserve">
     <value>Не ділитися із...</value>
@@ -3354,10 +3354,10 @@
     <value>Заблокованих користувачів ще немає</value>
   </data>
   <data name="NoBlockedChannel" xml:space="preserve">
-    <value>Заблоковані користувачі вилучаються з каналу та можуть повернутися лише за запрошенням адміна. Запрошувальні посилання для них не працюють.</value>
+    <value>Заблоковані користувачі вилучаються з каналу і лише адмін може їх повернути. Запрошувальні посилання для них не працюють.</value>
   </data>
   <data name="NoBlockedGroup" xml:space="preserve">
-    <value>Заблоковані користувачі вилучаються з групи та можуть повернутися лише за запрошенням адміна. Запрошувальні посилання для них не працюють.</value>
+    <value>Заблоковані користувачі вилучаються з каналу і лише адмін може їх повернути. Запрошувальні посилання для них не працюють.</value>
   </data>
   <data name="NoBlockedUsers" xml:space="preserve">
     <value>Немає заблокованих користувачів</value>
@@ -3369,9 +3369,8 @@
     <value>Чатів ще немає...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Почніть спілкування, натиснувши
-кнопку нового повідомлення в правому нижньому кутку,
-чи натисніть меню для інших варіантів.</value>
+    <value>Почніть спілкування, натиснувши на олівець у правому нижньому кутку
+або відкрийте меню для доступу до інших функцій.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
     <value>Почніть спілкування, натиснувши
@@ -3755,7 +3754,7 @@
     <value>Сповіщення</value>
   </data>
   <data name="NotificationsAndSounds" xml:space="preserve">
-    <value>Сповіщення та звук</value>
+    <value>Сповіщення та звуки</value>
   </data>
   <data name="NotificationsCustom" xml:space="preserve">
     <value>Власні</value>
@@ -4550,7 +4549,7 @@
     <value>Паролі не збігаються</value>
   </data>
   <data name="PasswordEmailInvalid" xml:space="preserve">
-    <value>Хибна е-пошта</value>
+    <value>Хибна е-пошта. Перевірте, чи ви правильно її ввели і спробуйте ще.</value>
   </data>
   <data name="PasswordHint" xml:space="preserve">
     <value>Підказка пароля</value>
@@ -6436,7 +6435,7 @@ http://telegram.org/update</value>
     <value>Ви можете вибрати, хто може додавати вас до груп і каналів.</value>
   </data>
   <data name="WhoCanAddMembers" xml:space="preserve">
-    <value>Хто може додавати нових учасників?</value>
+    <value>Хто може додавати учасників?</value>
   </data>
   <data name="WhoCanAddMembersAdmins" xml:space="preserve">
     <value>Лише адміністратори</value>

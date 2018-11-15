@@ -781,6 +781,15 @@ Nascer do Sol: {1}</value>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Contador no Ícone</value>
   </data>
+  <data name="BadgeNumberMutedChats" xml:space="preserve">
+    <value>Incluir Chats Silenciados</value>
+  </data>
+  <data name="BadgeNumberShow" xml:space="preserve">
+    <value>Ativado</value>
+  </data>
+  <data name="BadgeNumberUnread" xml:space="preserve">
+    <value>Contar Mensagens Não-Lidas</value>
+  </data>
   <data name="BanFromTheGroup" xml:space="preserve">
     <value>BANIR DO GRUPO</value>
   </data>
@@ -1190,7 +1199,7 @@ Se não estiver interessado, sugerimos que crie um canal privado.</value>
     <value>Inscritos</value>
   </data>
   <data name="ChannelType" xml:space="preserve">
-    <value>Tipo de canal</value>
+    <value>Tipo de Canal</value>
   </data>
   <data name="ChannelUnmute" xml:space="preserve">
     <value>RESTAURAR SOM</value>
@@ -1583,6 +1592,9 @@ Para ir além do limite e ter funções adcionais, converta para um supergrupo:
   <data name="CustomNotifications" xml:space="preserve">
     <value>Notificações Personalizadas</value>
   </data>
+  <data name="CustomP2PInfo" xml:space="preserve">
+    <value>Ponta a Ponta em chamadas irá, ou não irá, ser usada com esses usuários, ignorando as opções acima.</value>
+  </data>
   <data name="CustomShareInfo" xml:space="preserve">
     <value>Esses usuários poderão ou não te adicionar em grupos e canais, dependendo de suas configurações.</value>
   </data>
@@ -1830,7 +1842,7 @@ Para ir além do limite e ter funções adcionais, converta para um supergrupo:
     <value>Banir Usuários</value>
   </data>
   <data name="EditAdminCantEdit" xml:space="preserve">
-    <value>Você não tem permissão para editar esse admin.</value>
+    <value>Você não tem permissão para editar os direitos desse admin.</value>
   </data>
   <data name="EditAdminChangeChannelInfo" xml:space="preserve">
     <value>Alterar Info do Canal</value>
@@ -1866,7 +1878,7 @@ Para ir além do limite e ter funções adcionais, converta para um supergrupo:
     <value>Editar Legenda</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Renomear Contato</value>
+    <value>Editar contato</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Editar Mensagem</value>
@@ -1893,6 +1905,9 @@ Para ir além do limite e ter funções adcionais, converta para um supergrupo:
 {0}
 
 2. Clique no link de validação.</value>
+  </data>
+  <data name="EmailPasswordConfirmText2" xml:space="preserve">
+    <value>Para completar a Configuração da Verificação em Duas Etapas, verifique o seu email (verifique também a pasta de spam) e digite o código que nós acabamos de te enviar.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -2785,7 +2800,7 @@ sobre o Telegram?</value>
     <value>Sobrenome inválido</value>
   </data>
   <data name="InvalidPhoneNumber" xml:space="preserve">
-    <value>Número de telefone inválido</value>
+    <value>Número de telefone inválido. Por favor, verifique o número e tente de novo.</value>
   </data>
   <data name="Invisible" xml:space="preserve">
     <value>invisível</value>
@@ -3975,6 +3990,9 @@ Equipe Telegram</value>
   <data name="OutgoingCalls" xml:space="preserve">
     <value>Chamadas Efetuadas</value>
   </data>
+  <data name="P2PEnabledWith" xml:space="preserve">
+    <value>Usar ponta a ponta com</value>
+  </data>
   <data name="Page1Message" xml:space="preserve">
     <value>O aplicativo de mensagem mais **rápido** do mundo.
 É **gratuito** e **seguro**.</value>
@@ -4003,8 +4021,8 @@ de ataques de hackers.</value>
     <value>Seguro</value>
   </data>
   <data name="Page5Message" xml:space="preserve">
-    <value>O **Telegram** não possui limites no tamanho de
-suas mídia e conversas.</value>
+    <value>O **Telegram** não tem limites no
+tamanho de suas mídias e conversas.</value>
   </data>
   <data name="Page5Title" xml:space="preserve">
     <value>Poderoso</value>
@@ -4611,7 +4629,7 @@ Você pode visitar nossa FAQ para saber mais.</value>
     <value>As senhas não são iguais</value>
   </data>
   <data name="PasswordEmailInvalid" xml:space="preserve">
-    <value>E-mail inválido</value>
+    <value>Endereço de e-mail inválido. Por favor, verifique se você digitou corretamente e tente de novo.</value>
   </data>
   <data name="PasswordHint" xml:space="preserve">
     <value>Dica da senha</value>
@@ -5001,6 +5019,9 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>Último Acesso</value>
   </data>
+  <data name="PrivacyP2P" xml:space="preserve">
+    <value>Ponta a Ponta em Chamadas</value>
+  </data>
   <data name="PrivacyPayments" xml:space="preserve">
     <value>Pagamentos</value>
   </data>
@@ -5027,6 +5048,9 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
   </data>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Privacidade</value>
+  </data>
+  <data name="ProfileJoinChannel" xml:space="preserve">
+    <value>Entrar no Canal</value>
   </data>
   <data name="ProfilePopupNotification" xml:space="preserve">
     <value>Notificações popup</value>
@@ -5236,7 +5260,7 @@ Se você apagar a sua conta, todas as suas mensagens e chats serão apagados.</v
 {0}</value>
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
-    <value>Por favor, verifique o seu e-mail e digite abaixo o código de 6 dígitos recebido.</value>
+    <value>Por favor, verifique o seu e-mail e digite o código de 6 dígitos que nós enviamos.</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>Está tendo problemas para acessar seu e-mail {0}?</value>
@@ -6011,7 +6035,7 @@ Por favor, tente de novo em {0}.</value>
 
 Ao contrário de outros, não utilizamos seus dados para segmentação de anúncios ou outros fins comerciais. O Telegram armazena apenas as informações necessárias para funcionar como um serviço em nuvem, rico em recursos. Você pode ajustar como usamos seus dados nas configurações de Privacidade e Segurança.
 
-Se de forma geral você não concorda com as necessidades do Telegram, não será possível te fornecer nosso serviço.</value>
+Se de forma geral você não concorda com os requisitos modestos do Telegram, não será possível te fornecer nosso serviço.</value>
   </data>
   <data name="TosDeclineDeleteAccount" xml:space="preserve">
     <value>Atenção, isso apagará irreversivelmente sua conta do Telegram, juntamente com todos os dados armazenados na nuvem do Telegram.
@@ -6021,7 +6045,7 @@ Importante: em vez de perder tudo, você pode Cancelar agora e exportar seus dad
   <data name="TosUpdateDecline" xml:space="preserve">
     <value>Sentimos muito, mas isso significa que devemos nos separar aqui. Ao contrário de outros, não utilizamos seus dados para segmentação de anúncios ou outros fins comerciais. O Telegram armazena apenas as informações necessárias para funcionar como um serviço em nuvem rico em recursos. Você pode ajustar como usamos seus dados nas configurações de Privacidade e Segurança.
 
-Se de forma geral você não concorda com as necessidades do Telegram, não será possível te fornecer nossos serviços. Você pode apagar sua conta agora ou dar uma olhada e apaga-lá mais tarde se achar que não está satisfeito com o modo como usamos seus dados.</value>
+Se de forma geral você não concorda com os requisitos modestos do Telegram, não será possível te fornecer nossos serviços. Você pode apagar sua conta agora ou dar uma olhada e apaga-lá mais tarde se achar que não está satisfeito com o modo como usamos seus dados.</value>
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>Total</value>
@@ -6038,8 +6062,17 @@ Se de forma geral você não concorda com as necessidades do Telegram, não ser�
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Verificação em Duas Etapas</value>
   </data>
+  <data name="TwoStepVerificationTitle" xml:space="preserve">
+    <value>Verificação em Duas Etapas</value>
+  </data>
   <data name="TypeMessage" xml:space="preserve">
     <value>Mensagem</value>
+  </data>
+  <data name="TypePrivate" xml:space="preserve">
+    <value>Privado</value>
+  </data>
+  <data name="TypePublic" xml:space="preserve">
+    <value>Público</value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>escrevendo...</value>
@@ -6495,7 +6528,7 @@ Você pode usar **a–z**, **0–9** e underline. O tamanho mínimo é **5** car
     <value>Você pode restringir quem pode te adicionar em grupos ou canais com precisão.</value>
   </data>
   <data name="WhoCanAddMembers" xml:space="preserve">
-    <value>Quem pode adicionar novos membros?</value>
+    <value>Quem pode adicionar membros?</value>
   </data>
   <data name="WhoCanAddMembersAdmins" xml:space="preserve">
     <value>Somente Administradores</value>
@@ -6620,10 +6653,10 @@ Se você esquecer a sua senha, você perderá o acesso a sua conta do Telegram. 
     <value>Abrir Google Play</value>
   </data>
   <data name="ChatDate" xml:space="preserve">
-    <value>d MMMM</value>
+    <value>d 'de' MMMM</value>
   </data>
   <data name="ChatFullDate" xml:space="preserve">
-    <value>d MMMM, yyyy</value>
+    <value>d 'de' MMMM 'de' yyyy</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
     <value>Você precisa do Telegram para fazer login em **{0}**. Você gostaria de instalar agora?</value>
@@ -6653,7 +6686,7 @@ Se você esquecer a sua senha, você perderá o acesso a sua conta do Telegram. 
     <value>dd MMM</value>
   </data>
   <data name="FormatterMonthYear" xml:space="preserve">
-    <value>MMMM yyyy</value>
+    <value>MMMM 'de' yyyy</value>
   </data>
   <data name="FormatterStats12H" xml:space="preserve">
     <value>dd MMM yyyy, h:mm a</value>

@@ -2211,21 +2211,22 @@ namespace Unigram.ViewModels
                         function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
                     }
 
-                var response = await ProtoService.SendAsync(function);
-                if (response is Message message)
-                {
-                    ShowDraftMessage(chat);
-                    Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
-                }
-                else if (response is Error error)
-                {
-                    if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                    var response = await ProtoService.SendAsync(function);
+                    if (response is Message message)
                     {
                         ShowDraftMessage(chat);
+                        Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
                     }
-                    else
+                    else if (response is Error error)
                     {
-                        // TODO: ...
+                        if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                        {
+                            ShowDraftMessage(chat);
+                        }
+                        else
+                        {
+                            // TODO: ...
+                        }
                     }
                 }
             }

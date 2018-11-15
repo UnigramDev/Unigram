@@ -131,7 +131,7 @@ namespace Unigram.Services
                 }
 
                 _controller.SetEncryptionKey(ready.EncryptionKey.ToArray(), update.Call.IsOutgoing);
-                _controller.SetPublicEndpoints(endpoints, ready.Protocol.UdpP2p && p2p, 74);
+                _controller.SetPublicEndpoints(endpoints, ready.Protocol.UdpP2p && p2p, ready.Protocol.MaxLayer);
                 _controller.Start();
                 _controller.Connect();
             }

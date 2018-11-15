@@ -61,6 +61,9 @@
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>آخرین بازدید خیلی وقت پیش</value>
   </data>
+  <data name="AbortEmail" xml:space="preserve">
+    <value>لغو راه‌اندازی ایمیل بازیابی</value>
+  </data>
   <data name="AbortPassword" xml:space="preserve">
     <value>لغو راه‌اندازی تأیید دو مرحله‌ای</value>
   </data>
@@ -69,6 +72,9 @@
   </data>
   <data name="AccessError" xml:space="preserve">
     <value>خطای دسترسی</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>حساب کاربری</value>
   </data>
   <data name="AccountAlreadyLoggedIn" xml:space="preserve">
     <value>این حساب کاربری در حال حاضر از این برنامه وارد شده است.</value>
@@ -86,7 +92,7 @@
     <value>⁧⁨un1⁩، ⁨un2⁩ را اضافه کرد⁩</value>
   </data>
   <data name="ActionAddUserSelf" xml:space="preserve">
-    <value>⁧⁨un1⁩  به گروه بازگشت⁩</value>
+    <value>⁧⁨un1⁩ به گروه بازگشت⁩</value>
   </data>
   <data name="ActionAddUserSelfMega" xml:space="preserve">
     <value>⁧⁨un1⁩ به گروه پیوست⁩</value>
@@ -282,7 +288,7 @@
     <value>متأسفانه شما نمی‌توانید این کاربر را به عنوان مدیر اضافه کنید، زیرا او در فهرست سیاه است و شما نمی‌توانید محرومیت او را رفع کنید.</value>
   </data>
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
-    <value>متأسفانه شما نمی‌توانید این کاربر را به عنوان مدیر اضافه کنید زیرا او عضو این گروه نیست و شما مجاز به دعوت او نیستید.</value>
+    <value>متأسفانه شما نمی‌توانید این کاربر را به عنوان مدیر اضافه کنید زیرا او عضو این گروه نیست و شما اجازه ندارید او را اضافه کنید.</value>
   </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>متأسفانه شما نمی‌توانید این کاربر را محروم کنید زیرا او مدیری در این گروه است و شما اجازه ندارید مقام او را کسر کنید.</value>
@@ -470,6 +476,9 @@
   <data name="AppNameBeta" xml:space="preserve">
     <value>تلگرام</value>
   </data>
+  <data name="Appearance" xml:space="preserve">
+    <value>ظاهر</value>
+  </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>اعمال فایل زبان</value>
   </data>
@@ -596,7 +605,7 @@
   <data name="AskAQuestionInfo" xml:space="preserve">
     <value>لطفاً توجه داشته باشید که پشتیبانی تلگرام توسط داوطلبان انجام می‌شود. ما سعی می‌کنیم هر چه سریع‌تر پاسخگو باشیم، اما ممکن است مدتی طول بکشد.
 
-لطفاً به صفحه <![CDATA[<a href="https://telegram.org/faq/fa#a">پرسش‌های متداول تلگرام</a>]]> سری بزنید: این بخش حاوی پاسخ به اکثر پرسش‌ها و توصیه‌های مهمی برای <![CDATA[<a href="https://telegram.org/faq/fa#j">عیب‌یابی</a>]]>  است.</value>
+لطفاً به صفحه <![CDATA[<a href="https://telegram.org/faq/fa#a">پرسش‌های متداول تلگرام</a>]]> سری بزنید: این بخش حاوی پاسخ به اکثر پرسش‌ها و توصیه‌های مهمی برای <![CDATA[<a href="https://telegram.org/faq/fa#j">عیب‌یابی</a>]]> است.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>پرسش از یک داوطلب</value>
@@ -773,13 +782,22 @@
     <value>⁧در انتظار آنلاین شدن ⁨{0}⁩...⁩</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>قبلی</value>
+    <value>بازگشت</value>
   </data>
   <data name="BackgroundRestricted" xml:space="preserve">
     <value>داده‌های پس‌زمینه محدود شد.</value>
   </data>
   <data name="BadgeNumber" xml:space="preserve">
     <value>شمارنده نشانگر</value>
+  </data>
+  <data name="BadgeNumberMutedChats" xml:space="preserve">
+    <value>افزودن گفتگوهای بی‌صدا</value>
+  </data>
+  <data name="BadgeNumberShow" xml:space="preserve">
+    <value>فعال</value>
+  </data>
+  <data name="BadgeNumberUnread" xml:space="preserve">
+    <value>شمارش پیام‌های خوانده نشده</value>
   </data>
   <data name="BanFromTheGroup" xml:space="preserve">
     <value>محروم کردن از گروه</value>
@@ -939,11 +957,17 @@
 
 اگر این درخواست از جانب شما نبوده، لطفاً کدی که از طریق پیامک به شماره شما ارسال کرده‌ایم را وارد کنید.⁩</value>
   </data>
+  <data name="CancelEmailQuestion" xml:space="preserve">
+    <value>آیا از لغو راه‌اندازی ایمیل بازیابی اطمینان دارید؟</value>
+  </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>لینک منقضی شده یا نامعتبر است.</value>
   </data>
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>⁧فرآیند حذف حساب کاربری شما (⁨{0}⁩) لغو شد. شما می‌توانید این پنجره را ببندید.⁩</value>
+  </data>
+  <data name="CancelPasswordQuestion" xml:space="preserve">
+    <value>آیا از لغو راه‌اندازی تأیید دو مرحله‌ای اطمینان دارید؟</value>
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>لغو ثبت نام</value>
@@ -956,6 +980,9 @@
   </data>
   <data name="Caption" xml:space="preserve">
     <value>عنوان</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>تغییر</value>
   </data>
   <data name="ChangeLanguageLater" xml:space="preserve">
     <value>شما می‌توانید بعداً زبان خود را در بخش تنظیمات تغییر دهید.</value>
@@ -972,7 +999,7 @@
     <value>تغییر گذرواژه</value>
   </data>
   <data name="ChangePhoneHelp" xml:space="preserve">
-    <value>ما پیامکی حاوی کد تأییدیه به شماره جدیدتان ارسال می‌کنیم.</value>
+    <value>ما پیامکی حاوی کد تأیید به شماره جدیدتان ارسال می‌کنیم.</value>
   </data>
   <data name="ChangePhoneNewNumber" xml:space="preserve">
     <value>شماره تلفن جدید</value>
@@ -981,7 +1008,7 @@
     <value>⁧شماره تلفن ⁨{0}⁩ قبلاً به یک حساب کاربری تلگرام متصل شده است. لطفاً آن حساب کاربری را قبل از انتقال به شماره جدید حذف کنید.⁩</value>
   </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
-    <value>متأسفانه شما بیش از حد مجاز برای خود نام کاربری انتخاب کرده‌اید. شما می‌توانید توسط یکی از گروه‌ها یا کانال‌های قبلی خود لینک را باطل کرده، و یا یک هویت خصوصی ایجاد کنید.</value>
+    <value>متأسفانه شما بیش از حد مجاز برای خود نام کاربری انتخاب کرده‌اید. شما می‌توانید توسط یکی از گروه‌ها یا کانال‌های قبلی خود لینک را باطل کرده، یا یک هویت خصوصی ایجاد کنید.</value>
   </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
     <value>تغییر ایمیل بازیابی</value>
@@ -1000,6 +1027,9 @@
   </data>
   <data name="ChannelAddedByNotification" xml:space="preserve">
     <value>⁧⁨{0}⁩ شما را به کانال ⁨{1}⁩ اضافه کرد⁩</value>
+  </data>
+  <data name="ChannelAdmin" xml:space="preserve">
+    <value>مدیر</value>
   </data>
   <data name="ChannelAdministrators" xml:space="preserve">
     <value>مدیران </value>
@@ -1029,7 +1059,7 @@
     <value>انتشار</value>
   </data>
   <data name="ChannelCantOpenBanned" xml:space="preserve">
-    <value>متأسفانه شما از فعالیت در گروه‌های عمومی محروم شده‌اید.</value>
+    <value>متأسفانه شما از مشارکت در گروه‌های عمومی محروم شده‌اید.</value>
   </data>
   <data name="ChannelCantOpenNa" xml:space="preserve">
     <value>متأسفانه این گفتگو دیگر قابل دسترسی نیست.</value>
@@ -1189,6 +1219,9 @@
   <data name="ChannelSubscribers" xml:space="preserve">
     <value>دنبال کننده‌ها</value>
   </data>
+  <data name="ChannelType" xml:space="preserve">
+    <value>نوع کانال</value>
+  </data>
   <data name="ChannelUnmute" xml:space="preserve">
     <value>صدادار کردن</value>
   </data>
@@ -1205,13 +1238,31 @@
     <value>متأسفانه تعداد مدیران در این کانال بسیار زیاد است.</value>
   </data>
   <data name="ChannelUserLeftError" xml:space="preserve">
-    <value>متأسفانه این کاربر تصمیم به ترک این کانال گرفته است و شما نمی‌توانید دوباره او را به اینجا دعوت کنید.</value>
+    <value>متأسفانه این کاربر تصمیم گرفت این کانال را ترک کند و شما نمی‌توانید دوباره او را به اینجا اضافه کنید.</value>
   </data>
   <data name="ChannelUsernameHelp" xml:space="preserve">
     <value>افراد می‌توانند این لینک را با دیگران به اشتراک بگذارند و با استفاده از جستجوی تلگرام کانال شما را پیدا کنند.</value>
   </data>
   <data name="ChannelUsernamePlaceholder" xml:space="preserve">
     <value>لینک</value>
+  </data>
+  <data name="ChannelsZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChannelsOne" xml:space="preserve">
+    <value>⁧⁨{0}⁩ کانال⁩</value>
+  </data>
+  <data name="ChannelsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChannelsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChannelsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChannelsOther" xml:space="preserve">
+    <value>⁧⁨{0}⁩ کانال⁩</value>
   </data>
   <data name="ChatAdmin" xml:space="preserve">
     <value>مدیر</value>
@@ -1229,7 +1280,7 @@
     <value>گالری</value>
   </data>
   <data name="ChatHints" xml:space="preserve">
-    <value>گفتگوها</value>
+    <value>افراد</value>
   </data>
   <data name="ChatHintsDelete" xml:space="preserve">
     <value>⁧آیا ⁨{0}⁩ از پیشنهادات حذف شود؟⁩</value>
@@ -1251,6 +1302,9 @@
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>موقعیت</value>
+  </data>
+  <data name="ChatSettings" xml:space="preserve">
+    <value>تنظیمات گفتگو</value>
   </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>ویدئو</value>
@@ -1300,11 +1354,20 @@
   <data name="ChooseCountry" xml:space="preserve">
     <value>کشورتان را انتخاب کنید</value>
   </data>
+  <data name="ChooseFromGallery" xml:space="preserve">
+    <value>آپلود از گالری</value>
+  </data>
+  <data name="ChooseFromSearch" xml:space="preserve">
+    <value>جستجوی وب</value>
+  </data>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>از میان استیکرهای خودتان انتخاب کنید</value>
   </data>
   <data name="ChooseMapPreviewProvider" xml:space="preserve">
     <value>ارائه دهنده پیش‌نمایش نقشه را انتخاب کنید</value>
+  </data>
+  <data name="ChoosePhoto" xml:space="preserve">
+    <value>انتخاب عکس</value>
   </data>
   <data name="ChooseStickerSet" xml:space="preserve">
     <value>انتخاب بسته استیکر</value>
@@ -1320,6 +1383,9 @@
   </data>
   <data name="ChooseStickerSetPlaceholder" xml:space="preserve">
     <value>بسته استیکر</value>
+  </data>
+  <data name="ChooseTakePhoto" xml:space="preserve">
+    <value>گرفتن عکس</value>
   </data>
   <data name="ChooseYourLanguage" xml:space="preserve">
     <value>زبان خود را انتخاب کنید</value>
@@ -1579,6 +1645,9 @@
   <data name="CustomNotifications" xml:space="preserve">
     <value>اعلان‌های سفارشی</value>
   </data>
+  <data name="CustomP2PInfo" xml:space="preserve">
+    <value>علی‌رغم تنظیمات بالا، نظیر به نظیر در تماس‌ها با این کاربران استفاده خواهد یا نخواهد شد.</value>
+  </data>
   <data name="CustomShareInfo" xml:space="preserve">
     <value>علی‌رغم تنظیمات بالا، این کاربران خواهند یا نخواهند توانست شما را به گروه‌ها و کانال‌ها اضافه کنند.</value>
   </data>
@@ -1635,6 +1704,9 @@
   </data>
   <data name="DebugMenu" xml:space="preserve">
     <value>فهرست رفع اشکال</value>
+  </data>
+  <data name="DebugMenuCallSettings" xml:space="preserve">
+    <value>تنظیمات تماس</value>
   </data>
   <data name="DebugMenuClearMediaCache" xml:space="preserve">
     <value>پاک کردن حافظه موقت رسانه ارسالی</value>
@@ -1862,7 +1934,7 @@
     <value>ویرایش عنوان</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>تغییر نام مخاطب</value>
+    <value>ویرایش مخاطب</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>ویرایش پیام</value>
@@ -1889,6 +1961,12 @@
 ⁨{0}⁩
 
 2. بر روی لینک فعال‌سازی کلیک کنید.⁩</value>
+  </data>
+  <data name="EmailPasswordConfirmText2" xml:space="preserve">
+    <value>جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای ایمیل خود را بررسی کرده (پوشه هرزنامه را فراموش نکنید) و کدی که به ایمیل شما ارسال شده است را وارد کنید.</value>
+  </data>
+  <data name="EmailPasswordConfirmText3" xml:space="preserve">
+    <value>⁧جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای ⁨{0}⁩ را بررسی کرده (پوشه هرزنامه را فراموش نکنید) و کدی که به ایمیل شما ارسال شده است را وارد کنید.⁩</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>شکلک</value>
@@ -2025,7 +2103,7 @@
     <value>⁧⁨un1⁩ لینک کانال را تغییر داد:⁩</value>
   </data>
   <data name="EventLogChangedGroupLink" xml:space="preserve">
-    <value>⁧⁨un1⁩  لینک گروه را تغییر داد:⁩</value>
+    <value>⁧⁨un1⁩ لینک گروه را تغییر داد:⁩</value>
   </data>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>⁧⁨un1⁩ بسته استیکر گروه را تغییر داد⁩</value>
@@ -2061,7 +2139,7 @@
     <value>⁧⁨un1⁩ برای گروه عکس جدیدی تنظیم کرد⁩</value>
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
-    <value>⁧⁨un1⁩ نام گروه را به  "⁨{0}⁩" تغییر داد⁩</value>
+    <value>⁧⁨un1⁩ نام گروه را به "⁨{0}⁩" تغییر داد⁩</value>
   </data>
   <data name="EventLogEditedMedia" xml:space="preserve">
     <value>⁧⁨un1⁩ رسانه را ویرایش کرد:⁩</value>
@@ -2244,13 +2322,31 @@
     <value>⁧⁨un1⁩ امضاها را غیرفعال کرد⁩</value>
   </data>
   <data name="EventLogToggledSignaturesOn" xml:space="preserve">
-    <value>⁧⁨un1⁩ امضاها را فعال  کرد⁩</value>
+    <value>⁧⁨un1⁩ امضاها را فعال کرد⁩</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>⁧⁨un1⁩ سنجاق پیام را برداشت⁩</value>
   </data>
   <data name="Events" xml:space="preserve">
     <value>رویدادها</value>
+  </data>
+  <data name="ExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ExceptionOne" xml:space="preserve">
+    <value>⁧⁨{0}⁩ استثنا⁩</value>
+  </data>
+  <data name="ExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ExceptionOther" xml:space="preserve">
+    <value>⁧⁨{0}⁩ استثنا⁩</value>
   </data>
   <data name="Exposure" xml:space="preserve">
     <value>آشکارسازی</value>
@@ -2592,6 +2688,9 @@
   <data name="GroupStickersInfo" xml:space="preserve">
     <value> شما می‌توانید بسته‌ استیکری را انتخاب کنید که هنگام گفتگو در این گروه در دسترس تمامی اعضای گروه باشد.</value>
   </data>
+  <data name="GroupType" xml:space="preserve">
+    <value>نوع گروه</value>
+  </data>
   <data name="GroupUserAddLimit" xml:space="preserve">
     <value>متأسفانه ظرفیت این گروه تکمیل است.</value>
   </data>
@@ -2605,7 +2704,25 @@
     <value>متأسفانه تعداد ربات‌ها در این گروه بسیار زیاد است.</value>
   </data>
   <data name="GroupUserLeftError" xml:space="preserve">
-    <value>متأسفانه این کاربر تصمیم به ترک این گروه گرفته است و شما نمی‌توانید دوباره او را به اینجا دعوت کنید.</value>
+    <value>متأسفانه این کاربر تصمیم گرفت این گروه را ترک کند و شما نمی‌توانید دوباره او را به اینجا اضافه کنید.</value>
+  </data>
+  <data name="GroupsZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GroupsOne" xml:space="preserve">
+    <value>⁧⁨{0}⁩ گروه⁩</value>
+  </data>
+  <data name="GroupsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GroupsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GroupsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GroupsOther" xml:space="preserve">
+    <value>⁧⁨{0}⁩ گروه⁩</value>
   </data>
   <data name="GroupsAndChannels" xml:space="preserve">
     <value>گروه‌ها</value>
@@ -2725,7 +2842,7 @@
     <value>نام خانوادگی نامتعبر است</value>
   </data>
   <data name="InvalidPhoneNumber" xml:space="preserve">
-    <value>شماره تلفن نامعتبر است</value>
+    <value>شماره تلفن نامعتبر است. لطفاً شماره را بررسی کرده و دوباره تلاش کنید.</value>
   </data>
   <data name="Invisible" xml:space="preserve">
     <value>پنهان</value>
@@ -2846,17 +2963,49 @@
   <data name="Language" xml:space="preserve">
     <value>زبان</value>
   </data>
+  <data name="LanguageAlert" xml:space="preserve">
+    <value>⁧شما می‌خواهید بسته زبانی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩% کامل است.
+
+این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را در [صفحه ترجمه] پیشنهاد دهید.
+
+شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات به زبان قبلی تغییر دهید.⁩</value>
+  </data>
   <data name="LanguageCode" xml:space="preserve">
     <value>fa</value>
   </data>
   <data name="LanguageCustom" xml:space="preserve">
     <value>دلخواه</value>
   </data>
+  <data name="LanguageCustomAlert" xml:space="preserve">
+    <value>⁧شما می‌خواهید یک بسته زبان غیر رسمی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩% کامل است.
+
+این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را در [صفحه ترجمه] پیشنهاد دهید.
+
+شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات به زبان قبلی تغییر دهید.⁩</value>
+  </data>
   <data name="LanguageName" xml:space="preserve">
     <value>فارسی</value>
   </data>
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>فارسی</value>
+  </data>
+  <data name="LanguageSame" xml:space="preserve">
+    <value>⁧شما در حال حاضر از این بسته زبان (**⁨{0}⁩**) استفاده می‌کنید. شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات تغییر دهید.⁩</value>
+  </data>
+  <data name="LanguageTitle" xml:space="preserve">
+    <value>زبان تغییر کند؟</value>
+  </data>
+  <data name="LanguageUnknownCustomAlert" xml:space="preserve">
+    <value>⁧متأسفانه این بسته‌ زبان سفارشی (**⁨{0}⁩**) حاوی اطلاعاتی برای تلگرام اندروید نیست.⁩</value>
+  </data>
+  <data name="LanguageUnknownTitle" xml:space="preserve">
+    <value>اطلاعات ناکافی</value>
+  </data>
+  <data name="LanguageUnofficial" xml:space="preserve">
+    <value>زبان‌های غیر رسمی</value>
+  </data>
+  <data name="LanguageUnsupportedError" xml:space="preserve">
+    <value>چنین زبانی موجود نیست.</value>
   </data>
   <data name="LastName" xml:space="preserve">
     <value>نام خانوادگی (اختیاری)</value>
@@ -2868,13 +3017,13 @@
     <value>مخاطبین من</value>
   </data>
   <data name="LastSeenContactsMinus" xml:space="preserve">
-    <value>⁧ مخاطبین من  (-⁨{0}⁩)⁩</value>
+    <value>⁧ مخاطبین من (-⁨{0}⁩)⁩</value>
   </data>
   <data name="LastSeenContactsMinusPlus" xml:space="preserve">
     <value>⁧ مخاطبین من (-⁨{0}⁩, +⁨{1}⁩)⁩</value>
   </data>
   <data name="LastSeenContactsPlus" xml:space="preserve">
-    <value>⁧مخاطبین من  (+⁨{0}⁩)⁩</value>
+    <value>⁧مخاطبین من (+⁨{0}⁩)⁩</value>
   </data>
   <data name="LastSeenDate" xml:space="preserve">
     <value>آخرین بازدید</value>
@@ -2886,7 +3035,7 @@
     <value>همه</value>
   </data>
   <data name="LastSeenEverybodyMinus" xml:space="preserve">
-    <value>⁧همه  (-⁨{0}⁩)⁩</value>
+    <value>⁧همه (-⁨{0}⁩)⁩</value>
   </data>
   <data name="LastSeenFormatted" xml:space="preserve">
     <value>⁧آخرین بازدید ⁨{0}⁩⁩</value>
@@ -2895,7 +3044,7 @@
     <value>هیچ‌کس</value>
   </data>
   <data name="LastSeenNobodyPlus" xml:space="preserve">
-    <value>⁧هیچ‌کس  (+⁨{0}⁩)⁩</value>
+    <value>⁧هیچ‌کس (+⁨{0}⁩)⁩</value>
   </data>
   <data name="LastSeenTitle" xml:space="preserve">
     <value>چه کسی می‌تواند زمان آخرین بازدید شما را ببیند؟</value>
@@ -3016,6 +3165,12 @@
   <data name="LogOut" xml:space="preserve">
     <value>خروج از حساب کاربری</value>
   </data>
+  <data name="LoginAttempts" xml:space="preserve">
+    <value>تلاش‌های ناتمام جهت ورود به حساب کاربری</value>
+  </data>
+  <data name="LoginAttemptsInfo" xml:space="preserve">
+    <value>دستگاه‌های بالا هیچ گونه دسترسی به حساب کاربری شما ندارند. در این دستگاه‌ها کد به درستی وارد شده، اما گذرواژه درستی وارد نشده بود.</value>
+  </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>گذرواژه</value>
   </data>
@@ -3119,7 +3274,7 @@
     <value>گروه خصوصی</value>
   </data>
   <data name="MegaPrivateInfo" xml:space="preserve">
-    <value>تنها با اضافه شدن توسط سایر اعضا یا داشتن لینک دعوت می‌توان به گروه‌های خصوصی پیوست.</value>
+    <value>تنها با دعوت شدن یا داشتن لینک دعوت می‌توان به گروه‌های خصوصی پیوست.</value>
   </data>
   <data name="MegaPrivateLinkHelp" xml:space="preserve">
     <value>افراد می‌توانند با استفاده از این لینک به گروه شما بپیوندند. شما می‌توانید لینک را هر زمان که بخواهید باطل کنید.</value>
@@ -3353,10 +3508,10 @@
     <value>هنوز کاربر مسدودی موجود نیست</value>
   </data>
   <data name="NoBlockedChannel" xml:space="preserve">
-    <value>کاربران محروم از گروه کانال حذف می‌شوند و تنها با دعوت مدیر می‌توانند به کانال بازگردند. لینک‌های دعوت برای این افراد کار نمی‌کند.</value>
+    <value>کاربران محروم از کانال حذف می‌شوند و تنها با اضافه شدن توسط مدیر می‌توانند به کانال بازگردند. لینک‌های دعوت برای این افراد کار نمی‌کند.</value>
   </data>
   <data name="NoBlockedGroup" xml:space="preserve">
-    <value>کاربران محروم از گروه حذف می‌شوند و تنها با دعوت مدیر می‌توانند به گروه بازگردند. لینک‌های دعوت برای این افراد کار نمی‌کند.</value>
+    <value>کاربران محروم از گروه حذف می‌شوند و تنها با اضافه شدن توسط مدیر می‌توانند به گروه بازگردند. لینک‌های دعوت برای این افراد کار نمی‌کند.</value>
   </data>
   <data name="NoBlockedUsers" xml:space="preserve">
     <value>کاربر محرومی موجود نیست</value>
@@ -3368,9 +3523,9 @@
     <value>هنوز گفتگویی موجود نیست...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>با فشردن دکمه پیام جدید در گوشه پایین سمت راست
-شروع به پیام‌رسانی کنید
-و یا برای گزینه‌های بیشتر دکمه فهرست را لمس کنید. </value>
+    <value>با فشردن دکمه مداد در گوشه پایین سمت راست
+پیام‌رسانی را شروع کنید
+یا برای گزینه‌های بیشتر دکمه فهرست را لمس کنید. </value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
     <value>با فشردن دکمه ارسال در گوشه پایین سمت راست
@@ -3483,6 +3638,9 @@
   </data>
   <data name="NobodyLikesSpam2" xml:space="preserve">
     <value>متأسفانه شما در حال حاضر تنها می‌توانید مخاطبین مشترک را به گروه‌ها اضافه کنید.</value>
+  </data>
+  <data name="NobodyLikesSpam3" xml:space="preserve">
+    <value>متأسفانه شما در حال حاضر از ارسال پیام به گروه‌های عمومی محدود شده‌اید.</value>
   </data>
   <data name="NotMounted" xml:space="preserve">
     <value>فضای ذخیره‌سازی نصب نشده است</value>
@@ -3599,7 +3757,7 @@
     <value>⁧⁨{0}⁩، ⁨{2}⁩ را به گروه ⁨{1}⁩ دعوت کرد⁩</value>
   </data>
   <data name="NotificationGroupAddSelf" xml:space="preserve">
-    <value>⁧⁨{0}⁩ به گروه ⁨{1}⁩  بازگشت⁩</value>
+    <value>⁧⁨{0}⁩ به گروه ⁨{1}⁩ بازگشت⁩</value>
   </data>
   <data name="NotificationGroupAddSelfMega" xml:space="preserve">
     <value>⁧⁨{0}⁩ به گروه ⁨{1}⁩ پیوست⁩</value>
@@ -3757,6 +3915,9 @@
   <data name="NotificationsAndSounds" xml:space="preserve">
     <value>اعلان‌ها و صداها</value>
   </data>
+  <data name="NotificationsChannels" xml:space="preserve">
+    <value>کانال‌ها</value>
+  </data>
   <data name="NotificationsCustom" xml:space="preserve">
     <value>سفارشی</value>
   </data>
@@ -3775,6 +3936,27 @@
   <data name="NotificationsExceptions" xml:space="preserve">
     <value>استثنائات</value>
   </data>
+  <data name="NotificationsExceptionsAlert" xml:space="preserve">
+    <value>⁧لطفاً توجه داشته باشید که **⁨{0}⁩** در فهرست استثنائات قرار دارند و این تغییرات بر روی آن‌ها تأثیری ندارد.⁩</value>
+  </data>
+  <data name="NotificationsExceptionsSingleAlert" xml:space="preserve">
+    <value>⁧لطفاً توجه داشته باشید که **⁨{0}⁩** در فهرست استثنائات قرار دارد و این تغییرات بر روی آن تأثیری ندارد.⁩</value>
+  </data>
+  <data name="NotificationsForChannels" xml:space="preserve">
+    <value>اعلان‌ها برای کانال‌ها</value>
+  </data>
+  <data name="NotificationsForChats" xml:space="preserve">
+    <value>اعلان‌ها برای گفتگوها</value>
+  </data>
+  <data name="NotificationsForGroups" xml:space="preserve">
+    <value>اعلان‌ها برای گروه‌ها</value>
+  </data>
+  <data name="NotificationsForPrivateChats" xml:space="preserve">
+    <value>اعلان‌ها برای گفتگوهای خصوصی</value>
+  </data>
+  <data name="NotificationsGroups" xml:space="preserve">
+    <value>گروه‌ها</value>
+  </data>
   <data name="NotificationsImportance" xml:space="preserve">
     <value>اهمیت</value>
   </data>
@@ -3792,6 +3974,9 @@
   </data>
   <data name="NotificationsOff" xml:space="preserve">
     <value>غیرفعال</value>
+  </data>
+  <data name="NotificationsOffUntil" xml:space="preserve">
+    <value>⁧غیرفعال تا ⁨{0}⁩⁩</value>
   </data>
   <data name="NotificationsOn" xml:space="preserve">
     <value>فعال</value>
@@ -3822,6 +4007,9 @@
   </data>
   <data name="NotificationsPriorityUrgent" xml:space="preserve">
     <value>ضروری</value>
+  </data>
+  <data name="NotificationsPrivateChats" xml:space="preserve">
+    <value>گفتگوهای خصوصی</value>
   </data>
   <data name="NotificationsService" xml:space="preserve">
     <value>سرویس اتصال دائم</value>
@@ -3913,6 +4101,33 @@
   <data name="OutgoingCalls" xml:space="preserve">
     <value>تماس‌های خروجی</value>
   </data>
+  <data name="P2PContacts" xml:space="preserve">
+    <value>مخاطبین من</value>
+  </data>
+  <data name="P2PContactsMinus" xml:space="preserve">
+    <value>⁧مخاطبین من (-⁨{0}⁩)⁩</value>
+  </data>
+  <data name="P2PContactsMinusPlus" xml:space="preserve">
+    <value>⁧مخاطبین من (-⁨{0}⁩، +⁨{1}⁩)⁩</value>
+  </data>
+  <data name="P2PContactsPlus" xml:space="preserve">
+    <value>⁧مخاطبین من (+⁨{0}⁩)⁩</value>
+  </data>
+  <data name="P2PEnabledWith" xml:space="preserve">
+    <value>با این افراد از تنظیمات نظیر به نظیر استفاده شود</value>
+  </data>
+  <data name="P2PEverybody" xml:space="preserve">
+    <value>همه</value>
+  </data>
+  <data name="P2PEverybodyMinus" xml:space="preserve">
+    <value>⁧همه (-⁨{0}⁩)⁩</value>
+  </data>
+  <data name="P2PNobody" xml:space="preserve">
+    <value>هیچ‌کس</value>
+  </data>
+  <data name="P2PNobodyPlus" xml:space="preserve">
+    <value>⁧هیچ‌کس (+⁨{0}⁩)⁩</value>
+  </data>
   <data name="Page1Message" xml:space="preserve">
     <value>**سریع‌ترین** برنامه پیام‌رسان دنیا.
 تلگرام **رایگان** و **امن** است.</value>
@@ -3943,7 +4158,7 @@
   </data>
   <data name="Page5Message" xml:space="preserve">
     <value>**تلگرام** هیچ محدودیتی برای حجم
-گفتگوها و رسانه‌های شما ندارد.</value>
+رسانه‌ها و گفتگوهای شما ندارد.</value>
   </data>
   <data name="Page5Title" xml:space="preserve">
     <value>قدرتمند</value>
@@ -4151,10 +4366,10 @@
     <value>آدرس ایمیل خود را وارد کنید</value>
   </data>
   <data name="PassportEmailUploadInfo" xml:space="preserve">
-    <value>توجه: شما کد تأییدیه‌ای را در آدرس ایمیلی که ارائه می‌کنید دریافت خواهید کرد.</value>
+    <value>توجه: شما کد تأییدی را در آدرس ایمیلی که ارائه می‌کنید دریافت خواهید کرد.</value>
   </data>
   <data name="PassportEmailVerifyInfo" xml:space="preserve">
-    <value>⁧لطفاً کد تأییدیه‌ای که به ⁨{0}⁩ ارسال کرده‌ایم را وارد کنید.⁩</value>
+    <value>⁧لطفاً کد تأییدی که به ⁨{0}⁩ ارسال کرده‌ایم را وارد کنید.⁩</value>
   </data>
   <data name="PassportExpired" xml:space="preserve">
     <value>انقضا</value>
@@ -4411,7 +4626,7 @@
     <value>شماره تلفن خود را وارد کنید</value>
   </data>
   <data name="PassportPhoneUploadInfo" xml:space="preserve">
-    <value>توجه: شما کد تأییدیه‌ای را در شماره تلفنی که ارائه می‌کنید دریافت خواهید کرد.</value>
+    <value>توجه: شما کد تأییدی را در شماره تلفنی که ارائه می‌کنید دریافت خواهید کرد.</value>
   </data>
   <data name="PassportPhoneUseOther" xml:space="preserve">
     <value>یا شماره تلفن جدیدی را وارد کنید</value>
@@ -4549,13 +4764,13 @@
     <value>گذرواژه‌ها همخوانی ندارند</value>
   </data>
   <data name="PasswordEmailInvalid" xml:space="preserve">
-    <value>ایمیل نامعتبر است</value>
+    <value>آدرس ایمیل نامعتبر است. لطفاً درست وارد شدن آن را بررسی کرده و دوباره تلاش کنید.</value>
   </data>
   <data name="PasswordHint" xml:space="preserve">
     <value>راهنمای گذرواژه</value>
   </data>
   <data name="PasswordHintText" xml:space="preserve">
-    <value>لطفاً برای گذرواژه خود یک راهنما ایجاد کنید</value>
+    <value>برای گذرواژه خود یک راهنما ایجاد کنید</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>بازیابی گذرواژه</value>
@@ -4627,7 +4842,7 @@
     <value>دسترسی به سرور پرداخت امکان‌پذیر نیست. لطفاً اتصال اینترنت خود را بررسی کرده و دوباره تلاش کنید.</value>
   </data>
   <data name="PaymentEmailToProvider" xml:space="preserve">
-    <value>⁧ایمیل به عنوان اطلاعات صدور قبض به ⁨{0}⁩ منتقل خواهد شد.⁩</value>
+    <value>⁧آدرس ایمیل به عنوان اطلاعات صدور قبض به ⁨{0}⁩ منتقل خواهد شد.⁩</value>
   </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>متأسفانه پرداخت پذیرفته نشد.</value>
@@ -4642,7 +4857,7 @@
     <value>گذرواژه و ایمیل</value>
   </data>
   <data name="PaymentPasswordEmail" xml:space="preserve">
-    <value>ایمیل شما</value>
+    <value>آدرس ایمیل شما</value>
   </data>
   <data name="PaymentPasswordEmailInfo" xml:space="preserve">
     <value>لطفاً آدرس ایمیل معتبری را وارد کنید. این تنها راه برای بازیابی یک گذرواژه فراموش شده است.</value>
@@ -4775,6 +4990,9 @@
   <data name="PermissionStorage" xml:space="preserve">
     <value>تلگرام باید به فضای ذخیره‌سازی شما دسترسی داشته باشد تا بتوانید عکس‌ها، ویدئوها، موسیقی‌ها و دیگر رسانه‌ها را ارسال و ذخیره کنید.</value>
   </data>
+  <data name="PermissionXiaomiLockscreen" xml:space="preserve">
+    <value>لطفاً به تلگرام اجازه نمایش در صفحه قفل را بدهید تا تماس‌ها به درستی عمل کنند.</value>
+  </data>
   <data name="Phone" xml:space="preserve">
     <value>تلفن</value>
   </data>
@@ -4835,10 +5053,13 @@
     <value>سنجاق کردن</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>آیا می‌خواهید این پیام در این گروه سنجاق کنید؟</value>
+    <value>آیا می‌خواهید این پیام را در این گروه سنجاق کنید؟</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>آیا می‌خواهید این پیام را در این کانال سنجاق کنید؟</value>
+  </data>
+  <data name="PinMessageAlertChat" xml:space="preserve">
+    <value>آیا می‌خواهید این پیام را در بالای گفتگو سنجاق کنید؟</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
     <value>به تمامی اعضا اطلاع داده شود</value>
@@ -4859,19 +5080,19 @@
     <value>لطفاً ابتدا رسانه را دانلود نمایید</value>
   </data>
   <data name="PleaseEnterCurrentPassword" xml:space="preserve">
-    <value>لطفاً گذرواژه خود را وارد کنید</value>
+    <value>گذرواژه خود را وارد کنید</value>
   </data>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>یک گذرواژه وارد کنید</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
-    <value>لطفاً گذرواژه‌ جدید خود را وارد کنید</value>
+    <value>گذرواژه‌ جدید خود را وارد کنید</value>
   </data>
   <data name="PleaseLoginPassport" xml:space="preserve">
     <value>جهت استفاده از پاسپورت تلگرام، به حساب کاربری تلگرام خود وارد شوید.</value>
   </data>
   <data name="PleaseReEnterPassword" xml:space="preserve">
-    <value>لطفاً گذرواژه‌ خود را دوباره وارد کنید</value>
+    <value>گذرواژه‌ خود را دوباره وارد کنید</value>
   </data>
   <data name="PleaseStreamDownload" xml:space="preserve">
     <value>لطفاً تا دانلود کامل ویدئو صبر کنید.</value>
@@ -4939,6 +5160,9 @@
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>آخرین بازدید</value>
   </data>
+  <data name="PrivacyP2P" xml:space="preserve">
+    <value>نظیر به نظیر در تماس‌ها</value>
+  </data>
   <data name="PrivacyPayments" xml:space="preserve">
     <value>پرداخت‌ها</value>
   </data>
@@ -4965,6 +5189,12 @@
   </data>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>حریم خصوصی</value>
+  </data>
+  <data name="ProfileJoinChannel" xml:space="preserve">
+    <value>پیوستن به کانال</value>
+  </data>
+  <data name="ProfileJoinGroup" xml:space="preserve">
+    <value>پیوستن به گروه</value>
   </data>
   <data name="ProfilePopupNotification" xml:space="preserve">
     <value>اعلان‌های پاپ‌آپ</value>
@@ -5110,6 +5340,12 @@
   <data name="ReportSpamAndLeave" xml:space="preserve">
     <value>گزارش هرزنامه و ترک کردن</value>
   </data>
+  <data name="ResendCode" xml:space="preserve">
+    <value>ارسال مجدد کد</value>
+  </data>
+  <data name="ResendCodeInfo" xml:space="preserve">
+    <value>کد تأیید به ایمیل شما ارسال شد.</value>
+  </data>
   <data name="Reset" xml:space="preserve">
     <value>بازنشانی</value>
   </data>
@@ -5168,12 +5404,12 @@
     <value>آیا می‌خواهید آمار مصرفی خود را بازنشانی کنید؟</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
-    <value>⁧ما کد بازیابی را به ایمیلی که شما ارائه کردید ارسال کرده‌ایم:
+    <value>⁧ما کد بازیابی را به آدرس ایمیلی که شما ارائه کردید ارسال کرده‌ایم:
 
 ⁨{0}⁩⁩</value>
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
-    <value>لطفاً ایمیل خود را بررسی کرده و کد 6 رقمی که برای شما ارسال کردیم را در قسمت زیر وارد کنید.</value>
+    <value>لطفاً ایمیل خود را بررسی کرده و کد 6 رقمی که برای شما ارسال کردیم را وارد کنید.</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>⁧در دسترسی به ایمیل خود ⁨{0}⁩ مشکلی دارید؟⁩</value>
@@ -5203,7 +5439,7 @@
     <value>آیا از باطل کردن این لینک اطمینان دارید؟ با این کار، هیچ‌کس قادر نخواهد بود با استفاده از آن بپیوندد.</value>
   </data>
   <data name="RevokeAlertNewLink" xml:space="preserve">
-    <value>لینک دعوت قبلی هم اکنون غیرفعال است. لینک دعوت جدیدی ایجاد شده است.</value>
+    <value>لینک دعوت قبلی هم اکنون غیرفعال است. لینک جدیدی ایجاد شده است.</value>
   </data>
   <data name="RevokeButton" xml:space="preserve">
     <value>باطل کردن</value>
@@ -5261,7 +5497,7 @@
     <value>اجازه عکس گرفتن از صفحه</value>
   </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
-    <value>در صورت فعال بودن، شما می‌توانید از صفحه برنامه عکس بگیرید. اما سیستم گفتگوهای شما را حتی در صورتی که  گذرواژه را فعال کرده باشید، در صفحه مدیریت برنامه‌ها نشان خواهد داد.
+    <value>در صورت فعال بودن، شما می‌توانید از صفحه برنامه عکس بگیرید. اما سیستم گفتگوهای شما را حتی در صورتی که گذرواژه را فعال کرده باشید، در صفحه مدیریت برنامه‌ها نشان خواهد داد.
 
  ممکن است شما برای اعمال این تغییرات نیاز به راه‌‌اندازی مجدد برنامه داشته باشید.</value>
   </data>
@@ -5493,7 +5729,7 @@
     <value>تنظیم گذرواژه‌ اضافی</value>
   </data>
   <data name="SetAdditionalPasswordInfo" xml:space="preserve">
-    <value>شما می‌توانید گذرواژه‌ای تنظیم کنید تا هنگام ورود به حساب کاربری تلگرام در یک دستگاه جدید، علاوه بر کد تأییدیه‌ای که با پیامک دریافت می‌کنید از شما خواسته شود.</value>
+    <value>شما می‌توانید گذرواژه‌ای تنظیم کنید تا هنگام ورود به حساب کاربری تلگرام در یک دستگاه جدید، علاوه بر کد تأییدی که با پیامک دریافت می‌کنید از شما خواسته شود.</value>
   </data>
   <data name="SetAdmins" xml:space="preserve">
     <value>انتخاب مدیران</value>
@@ -5521,6 +5757,9 @@
   </data>
   <data name="Settings" xml:space="preserve">
     <value>تنظیمات</value>
+  </data>
+  <data name="SettingsHelp" xml:space="preserve">
+    <value>راهنمایی</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>سایه‌ها</value>
@@ -5567,8 +5806,17 @@
   <data name="ShareYouPhoneNumberTitle" xml:space="preserve">
     <value>شماره تلفن خود را به اشتراک می‌گذارید؟</value>
   </data>
+  <data name="SharedAudioFiles" xml:space="preserve">
+    <value>فایل‌های صوتی</value>
+  </data>
+  <data name="SharedContent" xml:space="preserve">
+    <value>محتوای اشتراکی</value>
+  </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>فایل‌ها</value>
+  </data>
+  <data name="SharedLinks" xml:space="preserve">
+    <value>لینک‌ها</value>
   </data>
   <data name="SharedLinksTab" xml:space="preserve">
     <value>لینک‌ها</value>
@@ -5584,6 +5832,9 @@
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
     <value>صداها</value>
+  </data>
+  <data name="SharedPhotosAndVideos" xml:space="preserve">
+    <value>عکس‌ها و ویدئوها</value>
   </data>
   <data name="SharedPlace" xml:space="preserve">
     <value>مکان‌</value>
@@ -5613,7 +5864,7 @@
     <value>نمایش در گفتگو</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
-    <value>برای مشاهده مکان‌های نزدیک خود صفحه را بالا بکشید</value>
+    <value>جهت مشاهده مکان‌های نزدیک خود صفحه را به بالا بکشید</value>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>پخش تصادفی</value>
@@ -5689,6 +5940,9 @@
   </data>
   <data name="StickersOther" xml:space="preserve">
     <value>⁧⁨{0}⁩ استیکر⁩</value>
+  </data>
+  <data name="StickersAndMasks" xml:space="preserve">
+    <value>استیکرها و ماسک‌ها</value>
   </data>
   <data name="StickersCopy" xml:space="preserve">
     <value>کپی لینک</value>
@@ -5894,6 +6148,12 @@
   <data name="ThemeDark" xml:space="preserve">
     <value>تیره</value>
   </data>
+  <data name="ThemeDarkBlue" xml:space="preserve">
+    <value>آبی تیره</value>
+  </data>
+  <data name="ThemeInfo" xml:space="preserve">
+    <value>انتخاب قالب‌های رنگی سفارشی</value>
+  </data>
   <data name="ThemePreview" xml:space="preserve">
     <value>پیش‌نمایش قالب</value>
   </data>
@@ -5946,7 +6206,7 @@
   <data name="TosDecline" xml:space="preserve">
     <value>متأسفانه این یعنی شما نمی‌توانید در تلگرام ثبت نام کنید.
 
-برخلاف برنامه‌های دیگر، ما از اطلاعات شما برای تبلیغات و یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای عمل به‌ عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید نحوه استفاده ما از داده‌های خود را در تنظیمات حریم خصوصی و امنیت تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
+برخلاف برنامه‌های دیگر، ما از اطلاعات شما برای تبلیغات یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای عمل به عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید نحوه استفاده ما از داده‌های خود را در تنظیمات حریم خصوصی و امنیت تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
 
 اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود.</value>
   </data>
@@ -5956,9 +6216,9 @@
 توجه: شما می‌توانید همین الان این عمل را لغو کرده و پیش از حذف حساب کاربری خود و از دست دادن تمامی داده‌هایتان، آن‌ها را ذخیره کنید. (جهت انجام این کار، آخرین نسخه تلگرام دسکتاپ را باز کرده و به قسمت تنظیمات > ذخیره داده‌های تلگرام مراجعه کنید.)</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
-    <value>متأسفانه این یعنی ما مجبوریم در اینجا راهمان را از هم جدا کنیم. برخلاف دیگران، ما از داده‌های شما برای تبلیغات و یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای فعالیت به‌ عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید در تنظیمات حریم خصوصی و امنیت نحوه استفاده ما از داده‌های خود را تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
+    <value>متأسفانه این یعنی ما مجبوریم در اینجا راهمان را از هم جدا کنیم. برخلاف دیگران، ما از داده‌های شما برای تبلیغات یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای عمل به عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید در تنظیمات حریم خصوصی و امنیت نحوه استفاده ما از داده‌های خود را تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
 
-اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود. شما می‌توانید همین حالا حساب کاربری خود را غیرفعال کنید - و یا کمی صبر کرده و بعداً در صورتی که همچنان از نحوه استفاده ما از داده‌های خود راضی نیستید آن را غیرفعال کنید.</value>
+اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود. شما می‌توانید همین حالا حساب کاربری خود را غیرفعال کنید - یا کمی صبر کرده و بعداً در صورتی که همچنان از نحوه استفاده ما از داده‌های خود راضی نیستید آن را غیرفعال کنید.</value>
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>مجموع</value>
@@ -5975,8 +6235,23 @@
   <data name="TwoStepVerification" xml:space="preserve">
     <value>تأیید دو مرحله‌ای</value>
   </data>
+  <data name="TwoStepVerificationTitle" xml:space="preserve">
+    <value>تأیید دو مرحله‌ای</value>
+  </data>
   <data name="TypeMessage" xml:space="preserve">
     <value> پیام</value>
+  </data>
+  <data name="TypePrivate" xml:space="preserve">
+    <value>خصوصی</value>
+  </data>
+  <data name="TypePrivateGroup" xml:space="preserve">
+    <value>خصوصی</value>
+  </data>
+  <data name="TypePublic" xml:space="preserve">
+    <value>عمومی</value>
+  </data>
+  <data name="TypePublicGroup" xml:space="preserve">
+    <value>عمومی</value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>در حال نوشتن...</value>
@@ -6039,10 +6314,10 @@
     <value>به‌روزرسانی برنامه</value>
   </data>
   <data name="UpdateAppAlert" xml:space="preserve">
-    <value>متأسفانه برنامه تلگرام شما به‌روز نیست و نمی‌تواند این درخواست را مدیریت کند. لطفاً تلگرام را به‌روزرسانی کنید.</value>
+    <value>متأسفانه برنامه تلگرام شما به‌روز نیست و نمی‌تواند این درخواست را انجام دهد. لطفاً تلگرام را به‌روزرسانی کنید.</value>
   </data>
   <data name="UpdateContactsMessage" xml:space="preserve">
-    <value>تلگرام مخاطبین همگام‌سازی نشده بسیاری را شناسایی کرده است، آیا تمایل دارید اکنون آن‌ها را همگام‌سازی کنید؟ در صورت استفاده از دستگاه، سیم‌کارت و حساب  کاربری گوگل خود گزینه «تأیید» را انتخاب کنید.</value>
+    <value>تلگرام مخاطبین همگام‌سازی نشده بسیاری را شناسایی کرده است، آیا تمایل دارید اکنون آن‌ها را همگام‌سازی کنید؟ در صورت استفاده از دستگاه، سیم‌کارت و حساب کاربری گوگل خود گزینه «تأیید» را انتخاب کنید.</value>
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>مخاطبین به‌روزرسانی شوند؟</value>
@@ -6143,6 +6418,9 @@
   <data name="UserBio" xml:space="preserve">
     <value>بیوگرافی</value>
   </data>
+  <data name="UserBioDetail" xml:space="preserve">
+    <value>چند کلمه درباره خودتان اضافه کنید</value>
+  </data>
   <data name="UserBioEmpty" xml:space="preserve">
     <value>خالی</value>
   </data>
@@ -6150,7 +6428,7 @@
     <value>شما می‌توانید چند خط درباره خودتان اضافه کنید. هرکس که پروفایل شما را مشاهده کند این متن را خواهد دید.</value>
   </data>
   <data name="UserRestricted" xml:space="preserve">
-    <value>متأسفانه شما قادر به انجام این کار نیستید.</value>
+    <value>متأسفانه شما اجازه انجام این کار را ندارید.</value>
   </data>
   <data name="UserRestrictions" xml:space="preserve">
     <value>محدودیت‌های کاربر</value>
@@ -6266,6 +6544,9 @@
   <data name="ViewDetails" xml:space="preserve">
     <value>مشاهده مخاطب</value>
   </data>
+  <data name="ViewExceptions" xml:space="preserve">
+    <value>مشاهده استثنائات</value>
+  </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>مشاهده بسته</value>
   </data>
@@ -6337,7 +6618,7 @@
     <value>شما در حال حاضر آفلاین هستید. لطفاً جهت برقراری تماس به اینترنت متصل شوید.</value>
   </data>
   <data name="VoipOfflineAirplane" xml:space="preserve">
-    <value>در حال حاضر حالت هواپیما فعال است. لطفاً جهت برقراری تماس آن را غیرفعال کرده و یا به Wi-Fi متصل شوید.</value>
+    <value>در حال حاضر حالت هواپیما فعال است. لطفاً جهت برقراری تماس آن را غیرفعال کرده یا به Wi-Fi متصل شوید.</value>
   </data>
   <data name="VoipOfflineAirplaneTitle" xml:space="preserve">
     <value>حالت هواپیما</value>
@@ -6433,7 +6714,7 @@
     <value>شما می‌توانید کسانی که قادرند شما را به گروه‌ها و کانال‌ها اضافه کنند را محدود کنید.</value>
   </data>
   <data name="WhoCanAddMembers" xml:space="preserve">
-    <value>چه کسانی می‌توانند اعضای جدید اضافه کنند؟</value>
+    <value>چه کسانی می‌توانند اعضا اضافه کنند؟</value>
   </data>
   <data name="WhoCanAddMembersAdmins" xml:space="preserve">
     <value>فقط مدیران</value>
@@ -6522,6 +6803,12 @@
   <data name="YourEmailAlmostThereText" xml:space="preserve">
     <value>لطفاً جهت تکمیل راه‌اندازی تأیید دو مرحله‌ای، ایمیل خود را بررسی کنید (پوشه هرزنامه‌ها را فراموش نکنید).</value>
   </data>
+  <data name="YourEmailCode" xml:space="preserve">
+    <value>کد ایمیل شما</value>
+  </data>
+  <data name="YourEmailCodeInfo" xml:space="preserve">
+    <value>⁧لطفاً ایمیل خود را با وارد کردن کدی که در ⁨{0}⁩ دریافت کرده‌اید، تأیید کنید.⁩</value>
+  </data>
   <data name="YourEmailInfo" xml:space="preserve">
     <value>لطفاً ایمیل معتبر خود را وارد کنید. این تنها راه برای بازیابی یک گذرواژه فراموش شده است.</value>
   </data>
@@ -6535,6 +6822,9 @@
     <value>توجه داشته باشید،
 
 در صورت فراموش کردن گذرواژه، شما دسترسی به حساب کاربری تلگرام خود را از دست خواهید داد و هیچ راهی برای بازگرداندن حساب کاربری شما وجود نخواهد داشت.</value>
+  </data>
+  <data name="YourEmailSuccessText" xml:space="preserve">
+    <value>ایمیل بازیابی شما برای تأیید دو مرحله‌ای هم اکنون فعال است.</value>
   </data>
   <data name="YourName" xml:space="preserve">
     <value>نام شما</value>
@@ -6568,6 +6858,9 @@
   </data>
   <data name="FormatDateAtTime" xml:space="preserve">
     <value>⁧⁨{0}⁩ در ⁨{1}⁩⁩</value>
+  </data>
+  <data name="FormatDateScheduleDay" xml:space="preserve">
+    <value>EEE MMM d</value>
   </data>
   <data name="FormatterBannedUntil12H" xml:space="preserve">
     <value>MMM dd yyyy, h:mm a</value>

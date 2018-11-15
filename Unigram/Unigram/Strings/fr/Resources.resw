@@ -281,7 +281,7 @@
     <value>Vous ne pouvez pas ajouter cet utilisateur aux administrateurs car il est sur liste noire et vous ne pouvez pas le débannir.</value>
   </data>
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
-    <value>Vous ne pouvez pas ajouter cet utilisateur aux administrateurs car il n'est pas membre du groupe et vous n'êtes pas autorisé à l'y inviter.</value>
+    <value>Vous ne pouvez pas ajouter cet utilisateur aux administrateurs car il n'est pas membre du groupe et vous n'êtes pas autorisé à l'y ajouter.</value>
   </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>Vous ne pouvez pas bannir cet utilisateur car c'est un administrateur et vous n'êtes pas autorisé à le rétrograder.</value>
@@ -778,6 +778,12 @@ Coucher : {1}</value>
   <data name="BadgeNumber" xml:space="preserve">
     <value>Compteur de notifications</value>
   </data>
+  <data name="BadgeNumberMutedChats" xml:space="preserve">
+    <value>Inclure les échanges en sourdine</value>
+  </data>
+  <data name="BadgeNumberUnread" xml:space="preserve">
+    <value>Compter les messages non lus</value>
+  </data>
   <data name="BanFromTheGroup" xml:space="preserve">
     <value>BANNIR DU GROUPE</value>
   </data>
@@ -1186,6 +1192,9 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
   <data name="ChannelSubscribers" xml:space="preserve">
     <value>Abonnés</value>
   </data>
+  <data name="ChannelType" xml:space="preserve">
+    <value>Type de canal</value>
+  </data>
   <data name="ChannelUnmute" xml:space="preserve">
     <value>ENLEVER LA SOURDINE</value>
   </data>
@@ -1202,7 +1211,7 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
     <value>Il y a trop de bots sur ce canal.</value>
   </data>
   <data name="ChannelUserLeftError" xml:space="preserve">
-    <value>Cet utilisateur a décidé de quitter ce canal, vous ne pouvez donc plus l'y inviter.</value>
+    <value>Cet utilisateur a décidé de quitter ce canal, vous ne pouvez donc plus l'y ajouter.</value>
   </data>
   <data name="ChannelUsernameHelp" xml:space="preserve">
     <value>Il est possible de partager ce lien et de trouver votre canal en faisant une recherche sur Telegram.</value>
@@ -1226,7 +1235,7 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
     <value>Galerie</value>
   </data>
   <data name="ChatHints" xml:space="preserve">
-    <value>ÉCHANGES</value>
+    <value>PERSONNES</value>
   </data>
   <data name="ChatHintsDelete" xml:space="preserve">
     <value>Supprimer {0} des suggestions ?</value>
@@ -1248,6 +1257,9 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Position</value>
+  </data>
+  <data name="ChatSettings" xml:space="preserve">
+    <value>Paramètres des échanges</value>
   </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>Vidéo</value>
@@ -1303,6 +1315,9 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
   <data name="ChooseMapPreviewProvider" xml:space="preserve">
     <value>Choisissez votre source d'aperçus de carte</value>
   </data>
+  <data name="ChoosePhoto" xml:space="preserve">
+    <value>Choisir une photo</value>
+  </data>
   <data name="ChooseStickerSet" xml:space="preserve">
     <value>CHOISIR LE LOT D'AUTOCOLLANTS</value>
   </data>
@@ -1317,6 +1332,9 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
   </data>
   <data name="ChooseStickerSetPlaceholder" xml:space="preserve">
     <value>lot d'autocollants</value>
+  </data>
+  <data name="ChooseTakePhoto" xml:space="preserve">
+    <value>Prendre une photo</value>
   </data>
   <data name="ChooseYourLanguage" xml:space="preserve">
     <value>Choisissez votre langue</value>
@@ -1859,7 +1877,7 @@ Pour aller au delà, passez à un supergroupe :
     <value>Modifier la légende</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Renommer le contact</value>
+    <value>Modifier le contact</value>
   </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Modifier le message</value>
@@ -1886,6 +1904,9 @@ Pour aller au delà, passez à un supergroupe :
 {0}
 
 2. Cliquez sur le lien de validation.</value>
+  </data>
+  <data name="EmailPasswordConfirmText2" xml:space="preserve">
+    <value>Consultez votre courriel (n'oubliez pas les pourriels), et cliquez sur le lien de validation pour activer la double authentification.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -2590,6 +2611,9 @@ sur Telegram ?</value>
   <data name="GroupStickersInfo" xml:space="preserve">
     <value>Vous pouvez choisir un lot d'autocollants qui sera disponible pour tous les membres lorsqu'ils échangent ici.</value>
   </data>
+  <data name="GroupType" xml:space="preserve">
+    <value>Type de groupe</value>
+  </data>
   <data name="GroupUserAddLimit" xml:space="preserve">
     <value>Ce groupe est complet.</value>
   </data>
@@ -2603,7 +2627,7 @@ sur Telegram ?</value>
     <value>Il y a trop de bots dans ce groupe.</value>
   </data>
   <data name="GroupUserLeftError" xml:space="preserve">
-    <value>Ct utilisateur a décidé de quitter ce groupe, vous ne pouvez donc plus l'y inviter.</value>
+    <value>Ct utilisateur a décidé de quitter ce groupe, vous ne pouvez donc plus l'y ajouter.</value>
   </data>
   <data name="GroupsAndChannels" xml:space="preserve">
     <value>Groupes et canaux</value>
@@ -2723,7 +2747,7 @@ sur Telegram ?</value>
     <value>Nom de famille invalide</value>
   </data>
   <data name="InvalidPhoneNumber" xml:space="preserve">
-    <value>Numéro de téléphone invalide</value>
+    <value>Numéro de téléphone invalide. Merci de vérifier le numéro de réessayer.</value>
   </data>
   <data name="Invisible" xml:space="preserve">
     <value>invisible</value>
@@ -3013,6 +3037,12 @@ Cette opération peut prendre plusieurs minutes.</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Se déconnecter</value>
+  </data>
+  <data name="LoginAttempts" xml:space="preserve">
+    <value>Tentatives de connexion incomplètes</value>
+  </data>
+  <data name="LoginAttemptsInfo" xml:space="preserve">
+    <value>Ces appareils n'ont pas accès à votre compte. Le code a été saisi correctement, mais aucun mot de passe correct n'a été entré.</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Mot de passe</value>
@@ -3351,10 +3381,10 @@ Cette opération peut prendre plusieurs minutes.</value>
     <value>Aucun utilisateur bloqué pour l'instant</value>
   </data>
   <data name="NoBlockedChannel" xml:space="preserve">
-    <value>Les utilisateurs bannis sont éjectés du canal et peuvent seulement être réinvités par un administrateur. Les liens d'invitation ne fonctionnent pas pour eux.</value>
+    <value>Les utilisateurs bannis sont éjectés du canal et ne peuvent revenir que si un administrateur les ajoute. Les liens d'invitation ne fonctionnent pas pour eux.</value>
   </data>
   <data name="NoBlockedGroup" xml:space="preserve">
-    <value>Les utilisateurs bannis sont éjectés du groupe et peuvent seulement être réinvités par un administrateur. Les liens d'invitation ne fonctionnent pas pour eux.</value>
+    <value>Les utilisateurs bannis sont éjectés du groupe et ne peuvent revenir que si un administrateur les ajoute. Les liens d'invitation ne fonctionnent pas pour eux.</value>
   </data>
   <data name="NoBlockedUsers" xml:space="preserve">
     <value>Pas d'utilisateurs bannis</value>
@@ -3939,8 +3969,8 @@ Pas de publicités. Pas de frais d'inscription.</value>
     <value>Sécurisé</value>
   </data>
   <data name="Page5Message" xml:space="preserve">
-    <value>**Telegram** n'a pas de limites sur la taille
-de vos échanges et de vos médias.</value>
+    <value>**Telegram** n'a pas de limites sur
+la taille de vos échanges et de vos médias.</value>
   </data>
   <data name="Page5Title" xml:space="preserve">
     <value>Puissant</value>
@@ -4547,7 +4577,7 @@ Vous pouvez consulter notre FAQ pour plus d'information.</value>
     <value>Les mots de passe ne correspondent pas</value>
   </data>
   <data name="PasswordEmailInvalid" xml:space="preserve">
-    <value>Courriel invalide</value>
+    <value>Courriel invalide. Merci de vérifier que vous l'avez entré correctement et de réessayer.</value>
   </data>
   <data name="PasswordHint" xml:space="preserve">
     <value>Indice du mot de passe</value>
@@ -4863,7 +4893,7 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
     <value>Entrez un mot de passe</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
-    <value>Entrez un nouveau mot de passe</value>
+    <value>Entrez votre nouveau mot de passe</value>
   </data>
   <data name="PleaseLoginPassport" xml:space="preserve">
     <value>Merci de vous connecter à votre compte Telegram pour utiliser Telegram Passport.</value>
@@ -4963,6 +4993,12 @@ Les paiements iront directement au développeur de {0}. Telegram n'offre aucune 
   </data>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Confidentialité</value>
+  </data>
+  <data name="ProfileJoinChannel" xml:space="preserve">
+    <value>Rejoindre le canal</value>
+  </data>
+  <data name="ProfileJoinGroup" xml:space="preserve">
+    <value>Rejoindre le groupe</value>
   </data>
   <data name="ProfilePopupNotification" xml:space="preserve">
     <value>Notifications flottantes</value>
@@ -5569,6 +5605,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>FICHIERS</value>
   </data>
+  <data name="SharedLinks" xml:space="preserve">
+    <value>Liens</value>
+  </data>
   <data name="SharedLinksTab" xml:space="preserve">
     <value>LIENS</value>
   </data>
@@ -5976,6 +6015,12 @@ Mais si les besoins modestes de Telegram ne vous conviennent pas, il nous est im
   </data>
   <data name="TypeMessage" xml:space="preserve">
     <value>Message</value>
+  </data>
+  <data name="TypePrivate" xml:space="preserve">
+    <value>Privé</value>
+  </data>
+  <data name="TypePublic" xml:space="preserve">
+    <value>Public</value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>écrit…</value>
@@ -6431,7 +6476,7 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
     <value>Vous pouvez choisir précisément qui peut vous ajouter aux groupes et canaux.</value>
   </data>
   <data name="WhoCanAddMembers" xml:space="preserve">
-    <value>Qui peut ajouter de nouveaux membres ?</value>
+    <value>Qui peut ajouter des membres ?</value>
   </data>
   <data name="WhoCanAddMembersAdmins" xml:space="preserve">
     <value>Seulement les administrateurs</value>

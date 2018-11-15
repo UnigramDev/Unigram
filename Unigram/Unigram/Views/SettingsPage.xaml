@@ -107,7 +107,7 @@
                                           Click="Stickers_Click"
                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="Appearance"
+                    <controls:GlyphButton Content="{CustomResource Appearance}"
                                           Glyph="&#xE2B1;"
                                           Click="Appearance_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>

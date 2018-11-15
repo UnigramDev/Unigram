@@ -252,36 +252,6 @@ namespace Unigram.Views
 
         #region Binding
 
-        private string ConvertFullName(User user)
-        {
-            if (string.IsNullOrEmpty(user.LastName))
-            {
-                return user.FirstName;
-            }
-
-            return $"{user.FirstName} {user.LastName}";
-        }
-
-        private string ConvertUsername(string username)
-        {
-            if (string.IsNullOrEmpty(username))
-            {
-                return Strings.Resources.UsernameEmpty;
-            }
-
-            return "@" + username;
-        }
-
-        private string ConvertAbout(string about)
-        {
-            if (string.IsNullOrEmpty(about))
-            {
-                return Strings.Resources.UserBioEmpty;
-            }
-
-            return about;
-        }
-
         public void UpdateUser(Chat chat, User user, bool secret)
         {
             Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
@@ -300,7 +270,7 @@ namespace Unigram.Views
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            Bio.Badge = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Resources.UserBioEmpty : fullInfo.Bio;
+            Bio.Badge = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Resources.UserBioDetail : fullInfo.Bio;
         }
 
         public void UpdateUserStatus(Chat chat, User user)

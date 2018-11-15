@@ -35,7 +35,15 @@ namespace Unigram.Controls.Cells
                 Name.Text = string.Format("{0} {1} (ID: {2})", session.ApplicationName, session.ApplicationVersion, session.ApiId);
             }
 
-            Title.Text = string.Format("{0}, {1} {2}", session.DeviceModel, session.Platform, session.SystemVersion);
+            if (string.IsNullOrEmpty(session.Platform))
+            {
+                Title.Text = string.Format("{0}, {1}", session.DeviceModel, session.SystemVersion);
+            }
+            else
+            {
+                Title.Text = string.Format("{0}, {1} {2}", session.DeviceModel, session.Platform, session.SystemVersion);
+            }
+
             Subtitle.Text = string.Format("{0} — {1}", session.Ip, session.Country);
 
             LastActiveDate.Text = BindConvert.Current.DateExtended(session.LastActiveDate);

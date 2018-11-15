@@ -68,7 +68,7 @@ namespace Unigram.Services
                 ulong minor = (version & 0x0000FFFF00000000L) >> 32;
                 ulong build = (version & 0x00000000FFFF0000L) >> 16;
                 ulong revision = version & 0x000000000000FFFFL;
-                return $"{major}.{minor}.{build}.{revision}";
+                return $"Windows {major}.{minor}.{build}.{revision}";
             }
         }
 
@@ -87,6 +87,7 @@ namespace Unigram.Services
                 //return "4.7";
 
                 var v = Package.Current.Id.Version;
+                return $"{v.Major}.{v.Minor}.{v.Build}";
                 return $"{v.Major}.{v.Minor}.{v.Build}.{v.Revision}";
             }
         }

@@ -280,6 +280,8 @@ namespace Unigram.Views
         {
             Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
 
+            DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
+
             Verified.Visibility = group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
             Username.Badge = $"{group.Username}";
