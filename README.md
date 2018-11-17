@@ -59,13 +59,8 @@ The app uses the following NuGet packages to work:
 
 The project also relies on `libogg`, `libopus`, `libopusfile`, `libwebp` and `libtgvoip` that are included in the repository.
 
-## Bugs and feature requests
-Have a bug or a feature request?
-1. Please first read the [issue guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md#using-the-issue-tracker), [missing features](https://github.com/UnigramDev/Unigram/wiki/Missing-features) and search for existing and closed issues.
-2. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/UnigramDev/Unigram/issues/new).
-
-## Contributing
-Please read through our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md). Included are directions for opening issues, bug and feature requests, and notes on pull requests.
+## Contributing (Feature requests, bug reports and pull requests)
+Before reporting bugs, doing features or pull requests, be sure you have already read our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md).
 
 ## Changelog
 See the [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) for changelogs for each release version of Unigram. Release announcement posts on the official [Unigram News channel](https://t.me/unigram) contain summaries of the most noteworthy changes made in each release.
