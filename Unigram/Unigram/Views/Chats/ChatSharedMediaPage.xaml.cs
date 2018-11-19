@@ -32,6 +32,7 @@ using System.Reactive.Linq;
 using Unigram.ViewModels.Chats;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Gallery;
+using Unigram.Converters;
 
 namespace Unigram.Views.Chats
 {
@@ -267,6 +268,10 @@ namespace Unigram.Views.Chats
             else if (args.ItemContainer.ContentTemplateRoot is SharedLinkCell linkCell)
             {
                 linkCell.UpdateMessage(message, ViewModel.ProtoService, ViewModel.NavigationService);
+            }
+            else if (message.Content is MessageHeaderDate && args.ItemContainer.ContentTemplateRoot is Border content && content.Child is TextBlock header)
+            {
+                header.Text = DateTimeToFormatConverter.ConvertMonthGrouping(Utils.UnixTimestampToDateTime(message.Date));
             }
 
             if (args.ItemContainer.ContentTemplateRoot is FrameworkElement element)

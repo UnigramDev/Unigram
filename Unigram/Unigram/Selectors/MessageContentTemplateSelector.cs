@@ -14,6 +14,9 @@ namespace Unigram.Selectors
     {
         public DataTemplate PhotoTemplate { get; set; }
         public DataTemplate VideoTemplate { get; set; }
+        public DataTemplate TextTemplate { get; set; }
+        public DataTemplate DocumentTemplate { get; set; }
+        public DataTemplate HeaderDateTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -25,6 +28,12 @@ namespace Unigram.Selectors
                         return PhotoTemplate;
                     case MessageVideo video:
                         return VideoTemplate;
+                    case MessageText text:
+                        return TextTemplate;
+                    case MessageHeaderDate headerDate:
+                        return HeaderDateTemplate;
+                    default:
+                        return DocumentTemplate;
                 }
             }
             else if (item is MessageViewModel viewModel)
@@ -35,6 +44,12 @@ namespace Unigram.Selectors
                         return PhotoTemplate;
                     case MessageVideo video:
                         return VideoTemplate;
+                    case MessageText text:
+                        return TextTemplate;
+                    case MessageHeaderDate headerDate:
+                        return HeaderDateTemplate;
+                    default:
+                        return DocumentTemplate;
                 }
             }
 

@@ -32,12 +32,6 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
-            <CollectionViewSource x:Name="MediaSource" Source="{x:Bind ViewModel.Media, Mode=OneWay}" IsSourceGrouped="True"/>
-            <CollectionViewSource x:Name="FilesSource" Source="{x:Bind ViewModel.Files, Mode=OneWay}" IsSourceGrouped="True"/>
-            <CollectionViewSource x:Name="LinksSource" Source="{x:Bind ViewModel.Links, Mode=OneWay}" IsSourceGrouped="True"/>
-            <CollectionViewSource x:Name="MusicSource" Source="{x:Bind ViewModel.Music, Mode=OneWay}" IsSourceGrouped="True"/>
-            <CollectionViewSource x:Name="VoiceSource" Source="{x:Bind ViewModel.Voice, Mode=OneWay}" IsSourceGrouped="True"/>
-
             <Style TargetType="PivotItem">
                 <Setter Property="Margin" Value="0"/>
             </Style>
@@ -65,10 +59,9 @@
                    Style="{StaticResource HeaderlessPivotStyle}"
                    Grid.Row="1">
                 <PivotItem>
-                    <controls:GroupedGridView
+                    <GridView
                         x:Name="ScrollingMedia"
-                        ItemsSource="{x:Bind MediaSource.View, Mode=OneWay}"
-                        ViewSource="{x:Bind MediaSource}"
+                        ItemsSource="{x:Bind ViewModel.Media, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
                         ContainerContentChanging="OnContainerContentChanging"
@@ -85,51 +78,12 @@
                                 <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                             </Style>
                         </GridView.ItemContainerStyle>
-                        <!--<GridView.Header>
-                             <Border Height="6"/>
-                             </GridView.Header>-->
+                        <GridView.Header>
+                             <Border Height="8"/>
+                        </GridView.Header>
                         <GridView.Footer>
                             <Border Height="8"/>
                         </GridView.Footer>
-                        <GridView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="GridViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="-8,0,-8,0"/>
-                                        <Setter Property="Padding" Value="12,0,12,0"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="GridViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
-                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </GridView.GroupStyle>
                         <GridView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
                                 <selectors:MessageContentTemplateSelector.PhotoTemplate>
@@ -153,6 +107,13 @@
                                         </controls:SimpleHyperlinkButton>
                                     </DataTemplate>
                                 </selectors:MessageContentTemplateSelector.VideoTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                             </selectors:MessageContentTemplateSelector>
                         </GridView.ItemTemplateSelector>
                         <GridView.ItemsPanel>
@@ -160,18 +121,18 @@
                                 <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8"/>
                             </ItemsPanelTemplate>
                         </GridView.ItemsPanel>
-                    </controls:GroupedGridView>
+                    </GridView>
                 </PivotItem>
                 <PivotItem>
-                    <controls:GroupedListView
+                    <ListView
                         x:Name="ScrollingFiles"
-                        ItemsSource="{x:Bind FilesSource.View, Mode=OneWay}"
-                        ViewSource="{x:Bind FilesSource}"
+                        ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
                         </ListView.ItemContainerStyle>
@@ -185,62 +146,34 @@
                         <ListView.Footer>
                             <Border Height="6"/>
                         </ListView.Footer>
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="ListViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="12,0,12,0"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ListViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
-                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                        <ListView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                    <DataTemplate>
+                                        <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
                                     </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </controls:GroupedListView>
+                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </ListView.ItemTemplateSelector>
+                    </ListView>
                 </PivotItem>
                 <PivotItem>
-                    <controls:GroupedListView
+                    <ListView
                         x:Name="ScrollingLinks"
-                        ItemsSource="{x:Bind LinksSource.View, Mode=OneWay}"
-                        ViewSource="{x:Bind LinksSource}"
+                        ItemsSource="{x:Bind ViewModel.Links, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
                         </ListView.ItemContainerStyle>
@@ -254,62 +187,34 @@
                         <ListView.Footer>
                             <Border Height="6"/>
                         </ListView.Footer>
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="ListViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="12,0,12,0"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ListViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
-                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                        <ListView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.TextTemplate>
+                                    <DataTemplate>
+                                        <cells:SharedLinkCell ContextRequested="Message_ContextRequested"/>
                                     </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <cells:SharedLinkCell ContextRequested="Message_ContextRequested"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </controls:GroupedListView>
+                                </selectors:MessageContentTemplateSelector.TextTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </ListView.ItemTemplateSelector>
+                    </ListView>
                 </PivotItem>
                 <PivotItem>
-                    <controls:GroupedListView
+                    <ListView
                         x:Name="ScrollingMusic"
-                        ItemsSource="{x:Bind MusicSource.View, Mode=OneWay}"
-                        ViewSource="{x:Bind MusicSource}"
+                        ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
                         </ListView.ItemContainerStyle>
@@ -323,62 +228,34 @@
                         <ListView.Footer>
                             <Border Height="6"/>
                         </ListView.Footer>
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="ListViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="12,0,12,0"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ListViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
-                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                        <ListView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                    <DataTemplate>
+                                        <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
                                     </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </controls:GroupedListView>
+                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </ListView.ItemTemplateSelector>
+                    </ListView>
                 </PivotItem>
                 <PivotItem>
-                    <controls:GroupedListView
+                    <ListView
                         x:Name="ScrollingVoice"
-                        ItemsSource="{x:Bind VoiceSource.View, Mode=OneWay}"
-                        ViewSource="{x:Bind VoiceSource}"
+                        ItemsSource="{x:Bind ViewModel.Voice, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
                         </ListView.ItemContainerStyle>
@@ -392,51 +269,23 @@
                         <ListView.Footer>
                             <Border Height="6"/>
                         </ListView.Footer>
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="ListViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="12,0,12,0"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ListViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate x:DataType="collections:DateMessageKeyedList">
-                                        <TextBlock Text="{x:Bind Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                        <ListView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                    <DataTemplate>
+                                        <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
                                     </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </controls:GroupedListView>
+                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </ListView.ItemTemplateSelector>
+                    </ListView>
                 </PivotItem>
             </Pivot>
         </microsoft:NavigationView>

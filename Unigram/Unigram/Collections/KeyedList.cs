@@ -49,22 +49,4 @@ namespace Unigram.Collections
 
         //protected override event PropertyChangedEventHandler PropertyChanged;
     }
-
-    public class DateMessageKeyedList : KeyedList<DateTime, Message>
-    {
-        public DateMessageKeyedList(DateTime key)
-            : base(key)
-        {
-        }
-
-        public DateMessageKeyedList(DateTime key, IEnumerable<Message> source)
-            : base(key, source)
-        {
-        }
-
-        public DateMessageKeyedList(IGrouping<DateTime, Message> source)
-            : base(source)
-        {
-        }
-    }
 }
