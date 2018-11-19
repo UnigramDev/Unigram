@@ -102,6 +102,11 @@ namespace Unigram.Controls.Chats
 
         private string ConvertOf(int index, int count)
         {
+            if (count == 0)
+            {
+                return Strings.Resources.NoResult;
+            }
+
             return string.Format(Strings.Resources.Of, index + 1, count);
         }
 

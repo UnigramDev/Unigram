@@ -203,6 +203,11 @@ namespace Unigram.ViewModels.Chats
 
                     await Dialog.LoadMessageSliceAsync(null, collection[0].Id);
                 }
+                else
+                {
+                    Items = collection;
+                    SelectedItem = null;
+                }
             }
         }
 

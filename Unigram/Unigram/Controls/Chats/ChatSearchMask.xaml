@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="48"
+    d:DesignHeight="100"
     d:DesignWidth="400">
 
     <UserControl.Resources>
@@ -31,69 +31,6 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
                         <Grid>
-                            <Grid.Resources>
-                                <Style x:Name="DeleteButtonStyle" TargetType="Button">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Grid x:Name="ButtonLayoutGrid"
-                                                      BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
-                                                      BorderThickness="{TemplateBinding BorderThickness}"
-                                                      Background="{ThemeResource TextControlButtonBackground}">
-                                                    <VisualStateManager.VisualStateGroups>
-                                                        <VisualStateGroup x:Name="CommonStates">
-                                                            <VisualState x:Name="Normal" />
-                                                            <VisualState x:Name="PointerOver">
-                                                                <Storyboard>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Pressed">
-                                                                <Storyboard>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPressed}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPressed}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Disabled">
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
-                                                                                     Storyboard.TargetProperty="Opacity"
-                                                                                     To="0"
-                                                                                     Duration="0" />
-                                                                </Storyboard>
-                                                            </VisualState>
-                                                        </VisualStateGroup>
-                                                    </VisualStateManager.VisualStateGroups>
-                                                    <TextBlock x:Name="GlyphElement"
-                                                               Foreground="{ThemeResource TextControlButtonForeground}"
-                                                               VerticalAlignment="Center"
-                                                               HorizontalAlignment="Center"
-                                                               FontStyle="Normal"
-                                                               FontSize="12"
-                                                               Text="&#xE10A;"
-                                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                               AutomationProperties.AccessibilityView="Raw" />
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Grid.Resources>
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Disabled">
@@ -213,24 +150,13 @@
                                             Grid.ColumnSpan="2"
                                             Content="{CustomResource Search}"
                                             IsHitTestVisible="False" />
-                            <controls:GlyphButton
-                                x:Name="Delete"
-                                Glyph="&#xE10A;"
-                                Click="Delete_Click"
-                                IsTabStop="False"
-                                Grid.Column="3"
-                                FontSize="16"
-                                Height="{ThemeResource AppBarThemeCompactHeight}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                MinWidth="48"
-                                VerticalAlignment="Stretch" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -249,14 +175,24 @@
                 InputScope="Search"
                 SelectionChanged="OnSelectionChanged"
                 Style="{StaticResource Test}"
-                Grid.ColumnSpan="2"/>
-            
+                Grid.ColumnSpan="3"/>
+
+            <controls:GlyphButton
+                Glyph="&#xE10A;"
+                Click="Delete_Click"
+                IsTabStop="False"
+                Grid.Column="2"
+                FontSize="16"
+                Height="{ThemeResource AppBarThemeCompactHeight}"
+                AutomationProperties.AccessibilityView="Raw"
+                MinWidth="48"
+                VerticalAlignment="Stretch" />
+
             <controls:GlyphButton
                 Glyph="&#xE11A;"
                 Click="Search_Click"
                 AllowFocusOnInteraction="False"
-                Height="{ThemeResource AppBarThemeCompactHeight}"
-                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                Style="{StaticResource HeaderGlyphButtonStyle}"/>
         </Grid>
 
         <ListView x:Name="ListAutocomplete"
@@ -302,7 +238,7 @@
                 <controls:GlyphButton Click="Filter_Click" Glyph="&#xE2AF;" AllowFocusOnInteraction="False" Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1"/>
             </Grid>
 
-            <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}" Visibility="{x:Bind ViewModel.Items.TotalCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="12,0" VerticalAlignment="Center" Grid.Column="2"/>
+            <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}" Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Margin="12,0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2"/>
 
             <controls:GlyphButton Command="{x:Bind ViewModel.PreviousCommand}" Glyph="&#xE0A0;" AllowFocusOnInteraction="False" Grid.Column="3"/>
             <controls:GlyphButton Command="{x:Bind ViewModel.NextCommand}" Glyph="&#xE0A1;" AllowFocusOnInteraction="False" Grid.Column="4"/>
