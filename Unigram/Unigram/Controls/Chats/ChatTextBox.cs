@@ -523,12 +523,7 @@ namespace Unigram.Controls.Chats
                     reader.ReadBytes(buffer);
                     await FileIO.WriteBytesAsync(cache, buffer);
 
-                    var photo = await StoragePhoto.CreateAsync(cache, true) as StorageMedia;
-                    if (photo == null)
-                    {
-                        photo = await StorageVideo.CreateAsync(cache, true);
-                    }
-
+                    var photo = await StoragePhoto.CreateAsync(cache, true);
                     if (photo == null)
                     {
                         return;

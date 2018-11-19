@@ -689,7 +689,7 @@ namespace Unigram.Controls.Views
                     reader.ReadBytes(buffer);
                     await FileIO.WriteBytesAsync(cache, buffer);
 
-                    var photo = await StoragePhoto.CreateAsync(cache, true) as StorageMedia;
+                    var photo = await StoragePhoto.CreateAsync(cache, true);
                     if (photo == null)
                     {
                         return;

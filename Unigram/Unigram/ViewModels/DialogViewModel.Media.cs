@@ -660,6 +660,8 @@ namespace Unigram.ViewModels
                     {
                         return;
                     }
+
+                    media.Add(photo);
                 }
 
                 if (package.AvailableFormats.Contains(StandardDataFormats.Text))
