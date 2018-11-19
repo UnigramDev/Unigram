@@ -204,36 +204,58 @@
                              Style="{StaticResource InlinePlaceholderTextBoxStyle}"
                              Margin="12,8,12,2"/>
 
-                    <Grid Margin="0,0,0,-6" Visibility="{x:Bind ViewModel.SelectedItem, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <ContentControl Content="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
-                                        HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch"
-                                        Padding="12,0,0,0">
-                            <ContentControl.ContentTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,6" Background="Transparent" DataContextChanged="Grid_DataContextChanged">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid Margin="0,0,0,-6" Visibility="{x:Bind ViewModel.SelectedItem, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentControl Content="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            Padding="12,0,0,0">
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,6" Background="Transparent" DataContextChanged="Grid_DataContextChanged">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
 
-                                        <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+                                            <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
-                                        <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
-                                        <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ContentControl.ContentTemplate>
-                        </ContentControl>
-                        <controls:GlyphButton Command="{x:Bind ViewModel.CancelCommand}" Glyph="&#xE10A;" VerticalAlignment="Center" Width="40" Height="40" Margin="4" CornerRadius="20" Grid.Column="1"/>
+                                            <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
+
+
+                            <controls:GlyphButton Command="{x:Bind ViewModel.CancelCommand}" Glyph="&#xE10A;" VerticalAlignment="Center" Width="40" Height="40" Margin="4" CornerRadius="20" Grid.Column="1"/>
+                        </Grid>
+
+                        <Grid Margin="12,6,0,0" Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="&#9785;" IsColorFontEnabled="False" Width="48" Height="48" FontSize="36" TextAlignment="Center" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+                            <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+
+                            <TextBlock Text="{CustomResource ChooseStickerSetNotFound}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                            <TextBlock Text="{CustomResource ChooseStickerSetNotFoundInfo}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
+                        </Grid>
+                        
                     </Grid>
                     <Grid Margin="12,6,0,6" Background="Transparent" Visibility="Collapsed">
                         <Grid.ColumnDefinitions>

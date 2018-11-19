@@ -135,7 +135,9 @@ namespace Unigram.Views.Supergroups
 
 
             ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
-            ChatType.Badge = group.Username.Length > 0 ? Strings.Resources.TypePublic : Strings.Resources.TypePrivate;
+            ChatType.Badge = group.Username.Length > 0
+                ? group.IsChannel ? Strings.Resources.TypePublic : Strings.Resources.TypePublicGroup
+                : group.IsChannel ? Strings.Resources.TypePrivate : Strings.Resources.TypePrivateGroup;
             ChatType.Visibility = Visibility.Collapsed;
 
             ChatDemocracy.Badge = group.AnyoneCanInvite ? Strings.Resources.WhoCanAddMembersAllMembers : Strings.Resources.WhoCanAddMembersAdmins;

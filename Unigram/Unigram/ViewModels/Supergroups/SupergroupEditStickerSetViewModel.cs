@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        private bool _isAvailable;
+        private bool _isAvailable = true;
         public bool IsAvailable
         {
             get
@@ -78,7 +78,6 @@ namespace Unigram.ViewModels.Supergroups
                 }
 
                 Set(ref _selectedItem, value);
-                Set(() => ShortName, ref _shortName, value?.Name);
 
                 if (value != null && value.IsInstalled)
                 {
@@ -110,6 +109,7 @@ namespace Unigram.ViewModels.Supergroups
                 if (value != null)
                 {
                     SelectedItem = value;
+                    ShortName = value.Name;
                 }
             }
         }
@@ -210,6 +210,7 @@ namespace Unigram.ViewModels.Supergroups
             if (already != null)
             {
                 SelectedItem = already;
+                ShortName = already.Name;
             }
             else
             {
@@ -217,6 +218,7 @@ namespace Unigram.ViewModels.Supergroups
                 if (response is StickerSet set)
                 {
                     SelectedItem = new StickerSetInfo(set.Id, set.Title, set.Name, set.IsInstalled, set.IsArchived, set.IsOfficial, set.IsMasks, set.IsViewed, set.Stickers.Count, set.Stickers);
+                    ShortName = set.Name;
                 }
             }
         }
@@ -226,9 +228,9 @@ namespace Unigram.ViewModels.Supergroups
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (_shortName != _selectedItem?.Name)
+            if (_shortName != _selectedItem?.Name && !string.IsNullOrWhiteSpace(_shortName))
             {
-
+                await CheckAvailabilityAsync(_shortName);
             }
 
             var chat = _chat;
@@ -239,53 +241,16 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                var response = await ProtoService.SendAsync(new SetSupergroupStickerSet(supergroup.SupergroupId, 0));
+                var response = await ProtoService.SendAsync(new SetSupergroupStickerSet(supergroup.SupergroupId, _selectedItem?.Id ?? 0));
+                if (response is Ok)
+                {
+                    NavigationService.GoBack();
+                }
+                else
+                {
+
+                }
             }
-
-
-            //if (_shortName != _selectedItem?.Set.ShortName && !string.IsNullOrWhiteSpace(_shortName))
-            //{
-            //    var stickerSet = _stickersService.GetStickerSetByName(_shortName);
-            //    if (stickerSet == null)
-            //    {
-            //        var stickerResponse = await LegacyService.GetStickerSetAsync(new TLInputStickerSetShortName { ShortName = _shortName });
-            //        if (stickerResponse.IsSucceeded)
-            //        {
-            //            stickerSet = stickerResponse.Result;
-            //        }
-            //    }
-
-            //    if (stickerSet != null)
-            //    {
-            //        SelectedItem = Items.FirstOrDefault(x => x.Set.Id == stickerSet.Set.Id) ?? stickerSet;
-            //    }
-            //    else
-            //    {
-            //        // TODO
-            //        return;
-            //    }
-            //}
-
-            //var set = SelectedItem?.Set;
-            //var inputSet = set != null ? new TLInputStickerSetID { Id = set.Id, AccessHash = set.AccessHash } : (TLInputStickerSetBase)new TLInputStickerSetEmpty();
-
-            //var response = await LegacyService.SetStickersAsync(_item.ToInputChannel(), inputSet);
-            //if (response.IsSucceeded)
-            //{
-            //    if (set != null)
-            //    {
-            //        _stickersService.GetGroupStickerSetById(set);
-            //    }
-
-            //    Full.StickerSet = set;
-            //    Full.HasStickerSet = set != null;
-
-            //    NavigationService.GoBack();
-            //}
-            //else
-            //{
-            //    // TODO
-            //}
         }
 
         public RelayCommand CancelCommand { get; }
@@ -297,6 +262,11 @@ namespace Unigram.ViewModels.Supergroups
 
         public async void CheckAvailability(string shortName)
         {
+            await CheckAvailabilityAsync(shortName);
+        }
+        
+        private async Task CheckAvailabilityAsync(string shortName)
+        {
             IsLoading = true;
 
             var response = await ProtoService.SendAsync(new SearchStickerSet(shortName));
@@ -305,6 +275,7 @@ namespace Unigram.ViewModels.Supergroups
                 IsLoading = false;
                 IsAvailable = true;
                 SelectedItem = new StickerSetInfo(stickerSet.Id, stickerSet.Title, stickerSet.Name, stickerSet.IsInstalled, stickerSet.IsArchived, stickerSet.IsOfficial, stickerSet.IsMasks, stickerSet.IsViewed, stickerSet.Stickers.Count, stickerSet.Stickers);
+                ShortName = stickerSet.Name;
             }
             else
             {
