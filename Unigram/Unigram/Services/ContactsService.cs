@@ -11,11 +11,14 @@ using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.UserDataAccounts;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
+using Windows.UI.StartScreen;
 
 namespace Unigram.Services
 {
     public interface IContactsService
     {
+        Task JumpListAsync();
+
         Task SyncAsync(Telegram.Td.Api.Users result);
 
         Task<Telegram.Td.Api.BaseObject> ImportAsync();
@@ -43,6 +46,23 @@ namespace Unigram.Services
 
             _syncLock = new DisposableMutex();
             _importedPhonesRoot = new object();
+        }
+
+        public async Task JumpListAsync()
+        {
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
+            {
+                var current = await JumpList.LoadCurrentAsync();
+                current.SystemGroupKind = JumpListSystemGroupKind.None;
+                current.Items.Clear();
+
+                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", _cacheService.Options.MyId), Strings.Resources.SavedMessages);
+                cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
+
+                current.Items.Add(cloud);
+
+                await current.SaveAsync();
+            }
         }
 
         public async Task SyncAsync(Telegram.Td.Api.Users result)

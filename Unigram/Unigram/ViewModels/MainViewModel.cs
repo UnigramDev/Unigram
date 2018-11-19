@@ -23,6 +23,7 @@ namespace Unigram.ViewModels
     public class MainViewModel : TLMultipleViewModelBase, IHandle<UpdateServiceNotification>, IHandle<UpdateUnreadMessageCount>
     {
         private readonly INotificationsService _pushService;
+        private readonly IContactsService _contactsService;
         private readonly IVibrationService _vibrationService;
         private readonly ILiveLocationService _liveLocationService;
         private readonly IPasscodeService _passcodeService;
@@ -32,10 +33,11 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
+            _contactsService = contactsService;
             _vibrationService = vibrationService;
             _liveLocationService = liveLocationService;
             _passcodeService = passcodeService;
@@ -132,6 +134,7 @@ namespace Unigram.ViewModels
             if (mode == NavigationMode.New)
             {
                 Task.Run(() => _pushService.RegisterAsync());
+                Task.Run(() => _contactsService.JumpListAsync());
             }
 
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
