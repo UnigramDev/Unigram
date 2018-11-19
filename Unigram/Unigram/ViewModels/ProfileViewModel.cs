@@ -98,7 +98,7 @@ namespace Unigram.ViewModels
             set { Set(ref _chat, value); }
         }
 
-        private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0 };
+        private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
         public int[] SharedCount
         {
             get { return _sharedCount; }

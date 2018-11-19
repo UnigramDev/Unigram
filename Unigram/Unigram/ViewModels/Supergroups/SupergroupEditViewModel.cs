@@ -357,7 +357,7 @@ namespace Unigram.ViewModels.Supergroups
             if (confirm == ContentDialogResult.Primary)
             {
                 var isAllHistoryAvailable = true;
-                foreach (RadioButton current in stack.Children)
+                foreach (RadioButton current in stack.Children.OfType<RadioButton>())
                 {
                     if (current.IsChecked == true)
                     {

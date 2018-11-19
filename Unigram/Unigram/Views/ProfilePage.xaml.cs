@@ -203,6 +203,9 @@ namespace Unigram.Views
                 DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
             }
 
+            ViewModel.SharedCount[5] = fullInfo.GroupInCommonCount;
+            ViewModel.RaisePropertyChanged(() => ViewModel.SharedCount);
+
             UserCommonChats.Badge = fullInfo.GroupInCommonCount;
             UserCommonChats.Visibility = fullInfo.GroupInCommonCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -332,7 +335,7 @@ namespace Unigram.Views
             Banned.Badge = fullInfo.BannedCount;
             //Banned.Visibility = fullInfo.BannedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-            Restricted.Badge = fullInfo.RestrictedCount;
+            //Restricted.Badge = fullInfo.RestrictedCount;
             //Restricted.Visibility = fullInfo.RestrictedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             Members.Badge = fullInfo.MemberCount;
@@ -379,9 +382,9 @@ namespace Unigram.Views
 
         #region Binding
 
-        private Visibility ConvertSharedCount(int a, int b, int c, int d, int e)
+        private Visibility ConvertSharedCount(int a, int b, int c, int d, int e, int f)
         {
-            return a > 0 || b > 0 || c > 0 || d > 0 || e > 0 ? Visibility.Visible : Visibility.Collapsed;
+            return a > 0 || b > 0 || c > 0 || d > 0 || e > 0 || f > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion

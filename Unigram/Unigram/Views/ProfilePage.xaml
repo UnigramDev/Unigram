@@ -222,20 +222,6 @@
                         </Grid>
 
                         <StackPanel>
-                            <controls:BadgeButton
-                                x:Name="UserPhone"
-                                Visibility="Collapsed"
-                                Content="{CustomResource Phone}"
-                                Command="{x:Bind ViewModel.CallCommand}"
-                                Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                Glyph="&#xE717;">
-                                <Button.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}"/>
-                                    </MenuFlyout>
-                                </Button.ContextFlyout>
-                            </controls:BadgeButton>
-
                             <Grid x:Name="DescriptionPanel" Visibility="Collapsed">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="48"/>
@@ -276,6 +262,20 @@
                                 
                                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2" Grid.ColumnSpan="2"/>
                             </Grid>
+
+                            <controls:BadgeButton
+                                x:Name="UserPhone"
+                                Visibility="Collapsed"
+                                Content="{CustomResource Phone}"
+                                Command="{x:Bind ViewModel.CallCommand}"
+                                Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                                Glyph="&#xE717;">
+                                <Button.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}"/>
+                                    </MenuFlyout>
+                                </Button.ContextFlyout>
+                            </controls:BadgeButton>
 
                             <controls:BadgeButton
                                 x:Name="Username"
@@ -327,11 +327,6 @@
                                                   Command="{x:Bind ViewModel.AdminsCommand}"
                                                   Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   Glyph="&#xE734;"/>
-                            <controls:BadgeButton x:Name="Restricted"
-                                                  Content="{CustomResource ChannelRestrictedUsers}"
-                                                  Command="{x:Bind ViewModel.KickedCommand}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  Glyph="&#xE72E;"/>
                             <controls:BadgeButton x:Name="Banned"
                                                   Content="{CustomResource ChannelBlockedUsers}"
                                                   Command="{x:Bind ViewModel.BannedCommand}"
@@ -339,7 +334,7 @@
                                                   Glyph="&#xF140;"/>
                         </StackPanel>
 
-                        <StackPanel Visibility="{x:Bind ConvertSharedCount(ViewModel.SharedCount[0], ViewModel.SharedCount[1], ViewModel.SharedCount[2], ViewModel.SharedCount[3], ViewModel.SharedCount[4]), Mode=OneWay}" Margin="0,24,0,0">
+                        <StackPanel Visibility="{x:Bind ConvertSharedCount(ViewModel.SharedCount[0], ViewModel.SharedCount[1], ViewModel.SharedCount[2], ViewModel.SharedCount[3], ViewModel.SharedCount[4], ViewModel.SharedCount[5]), Mode=OneWay}" Margin="0,24,0,0">
                             <TextBlock Text="{CustomResource SharedContent}" Margin="12,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
 
                             <controls:BadgeButton
