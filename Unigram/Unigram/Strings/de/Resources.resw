@@ -65,7 +65,7 @@
     <value>E-Mail-Einrichtung abbrechen</value>
   </data>
   <data name="AbortPassword" xml:space="preserve">
-    <value>Einrichten abbrechen</value>
+    <value>Einrichtung abbrechen</value>
   </data>
   <data name="Accept" xml:space="preserve">
     <value>Akzeptieren</value>
@@ -5570,7 +5570,7 @@ Du musst die App nach der Änderung neu starten.</value>
     <value>Suche</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>Freunde suchen</value>
+    <value>Nach Kontakten suchen</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>von:</value>
@@ -6079,10 +6079,10 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Sticker für Emoji vorschlagen</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
-    <value>Alle</value>
+    <value>Alle Pakete</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
-    <value>Hinzugefügte</value>
+    <value>Meine Pakete</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>Keine</value>
@@ -6454,7 +6454,7 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
     <value>Proxy-Einstellungen benutzen</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
-    <value>SOCKS5</value>
+    <value>SOCKS5 Proxy</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
     <value>Proxy-Sponsor</value>

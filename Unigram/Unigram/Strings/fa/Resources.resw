@@ -2966,7 +2966,7 @@
   <data name="LanguageAlert" xml:space="preserve">
     <value>⁧شما می‌خواهید بسته زبانی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩% کامل است.
 
-این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را در [صفحه ترجمه] پیشنهاد دهید.
+این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را در [پلتفرم ترجمه] پیشنهاد دهید.
 
 شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات به زبان قبلی تغییر دهید.⁩</value>
   </data>
@@ -2979,7 +2979,7 @@
   <data name="LanguageCustomAlert" xml:space="preserve">
     <value>⁧شما می‌خواهید یک بسته زبان غیر رسمی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩% کامل است.
 
-این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را در [صفحه ترجمه] پیشنهاد دهید.
+این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را در [پلتفرم ترجمه] پیشنهاد دهید.
 
 شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات به زبان قبلی تغییر دهید.⁩</value>
   </data>
@@ -5508,7 +5508,7 @@
     <value>جستجو</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>جستجوی دوستان</value>
+    <value>جستجوی مخاطبین</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>از:</value>
@@ -6017,10 +6017,10 @@
     <value>پیشنهاد بر اساس شکلک</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
-    <value>همه</value>
+    <value>تمامی بسته‌ها</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
-    <value>اضافه شده</value>
+    <value>بسته‌های من</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>هیچ‌کدام</value>
@@ -6392,7 +6392,7 @@
     <value>استفاده از پروکسی</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
-    <value>SOCKS5</value>
+    <value>پروکسی SOCKS5</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
     <value>حامی پروکسی</value>

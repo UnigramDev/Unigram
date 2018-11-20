@@ -61,6 +61,9 @@
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>آخر ظهور كان منذ زمن طويل</value>
   </data>
+  <data name="AbortEmail" xml:space="preserve">
+    <value>إلغاء عملية إعداد بريد الاسترداد</value>
+  </data>
   <data name="AbortPassword" xml:space="preserve">
     <value>إلغاء عملية إعداد التحقق بخطوتين</value>
   </data>
@@ -954,11 +957,17 @@
 
 إن لم يكن أنت، فقم رجاء بإدخال الرمز الذي أرسلناه للتوِّ برسالة SMS قصيرة.⁩</value>
   </data>
+  <data name="CancelEmailQuestion" xml:space="preserve">
+    <value>هل أنت متأكد من رغبتك في إلغاء عملية إعداد بريد الاسترداد؟</value>
+  </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>رابط غير صحيح أو منتهي الصلاحية.</value>
   </data>
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>⁧تم إلغاء عملية حذف حسابك ⁨{0}⁩. يمكنك الآن إغلاق هذه النافذة.⁩</value>
+  </data>
+  <data name="CancelPasswordQuestion" xml:space="preserve">
+    <value>هل أنت متأكد من رغبتك في إلغاء عملية إعداد التحقق بخطوتين؟</value>
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>إلغاء التسجيل</value>
@@ -990,7 +999,7 @@
     <value>تغيير كلمة المرور</value>
   </data>
   <data name="ChangePhoneHelp" xml:space="preserve">
-    <value>سيتم إرسال رسالة SMS قصيرة تحوي رمز التفعيل إلى رقمك الجديد.</value>
+    <value>سيتم إرسال رسالة SMS قصيرة تحوي رمز التأكيد إلى رقمك الجديد.</value>
   </data>
   <data name="ChangePhoneNewNumber" xml:space="preserve">
     <value>الرقم الجديد</value>
@@ -1943,6 +1952,12 @@
 ١. تفقَّد بريدك الإلكتروني ⁨{0}⁩ (بما في ذلك مجلد الرسائل غير المرغوب فيها).
 
 ٢. اضغط على رابط التأكيد.⁩</value>
+  </data>
+  <data name="EmailPasswordConfirmText2" xml:space="preserve">
+    <value>يرجى تفقُّد بريدك الإلكتروني وكتابة رمز التأكيد الذي أرسلناه للتو لإتمام تفعيل التحقق بخطوتين. قم بتفقُّد مجلدِ الرسائل غير المرغوب بها أيضًا.</value>
+  </data>
+  <data name="EmailPasswordConfirmText3" xml:space="preserve">
+    <value>⁧يرجى تفقُّد بريدك الإلكتروني ⁨{0}⁩ وكتابة رمز التأكيد الذي أرسلناه للتو لإتمام عملية إعداد بريد الاسترداد. قم بتفقُّد مجلدِ الرسائل غير المرغوب بها أيضًا.⁩</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>الرموز التعبيرية</value>
@@ -2998,7 +3013,7 @@
   <data name="LanguageAlert" xml:space="preserve">
     <value>⁧أنت على وشك تطبيق حزمة اللغة (**⁨{0}⁩**) والمكتملة بنسبة ⁨{1}⁩%.
 
-سيؤدي هذا إلى ترجمة الواجهة بالكامل، يمكنك اقتراح التصحيحات في [لوحة الترجمة].
+سيؤدي هذا إلى ترجمة الواجهة بالكامل، يمكنك اقتراح التصحيحات في [منصة الترجمة].
 
 يمكنك تغيير لغتك مرة أخرى في أي وقت من خلال الإعدادات.⁩</value>
   </data>
@@ -3008,11 +3023,21 @@
   <data name="LanguageCustom" xml:space="preserve">
     <value>مخصص</value>
   </data>
+  <data name="LanguageCustomAlert" xml:space="preserve">
+    <value>⁧أنت على وشك تطبيق حزمة اللغة (**⁨{0}⁩**) والمكتملة بنسبة ⁨{1}⁩%.
+
+سيؤدي هذا إلى ترجمة الواجهة بالكامل، يمكنك اقتراح التصحيحات في [منصة الترجمة].
+
+يمكنك تغيير لغتك مرة أخرى في أي وقت من خلال الإعدادات.⁩</value>
+  </data>
   <data name="LanguageName" xml:space="preserve">
     <value>العربية</value>
   </data>
   <data name="LanguageNameInEnglish" xml:space="preserve">
     <value>Arabic</value>
+  </data>
+  <data name="LanguageSame" xml:space="preserve">
+    <value>⁧أنت تستخدم حزمة اللغة (**⁨{0}⁩**) هذه بالفعل. يمكنك تغيير لغتك في أي وقت من خلال الإعدادات.⁩</value>
   </data>
   <data name="LanguageSuggested" xml:space="preserve">
     <value/>
@@ -3524,10 +3549,10 @@
     <value>لا يوجد مستخدمون محظورون بعد</value>
   </data>
   <data name="NoBlockedChannel" xml:space="preserve">
-    <value>في حال حَظرِ العضو من القناة فإنه تتم إزالته منها، ولا يمكنه العودة إليها إلا بدعوة من المشرف، ولن يتمكن من الدخول عبر الروابط الخاصة.</value>
+    <value>الأعضاء المحظورون هم أعضاء تمت إزالتهم من القناة، ولا يمكنهم العودة إليها إلا عبر إضافتهم من مشرف ما، روابط الدعوة لن تفيدهم.</value>
   </data>
   <data name="NoBlockedGroup" xml:space="preserve">
-    <value>الأعضاء المحظورون هم أعضاء تمت إزالتهم من المجموعة، ولا يمكنهم العودة إليها إلا بدعوة من مشرف ما، روابط الدعوة لن تفيدهم.</value>
+    <value>الأعضاء المحظورون هم أعضاء تمت إزالتهم من المجموعة، ولا يمكنهم العودة إليها إلا عبر إضافتهم من مشرف ما، روابط الدعوة لن تفيدهم.</value>
   </data>
   <data name="NoBlockedUsers" xml:space="preserve">
     <value>لا يوجد مستخدمون محظورون</value>
@@ -4372,7 +4397,7 @@
     <value>تنويه: سيصلك رمز التأكيد عبر البريد الإلكتروني الذي أضفتَه. </value>
   </data>
   <data name="PassportEmailVerifyInfo" xml:space="preserve">
-    <value>⁧قم بإدخال رمز التفعيل الذي أرسلناه إلى ⁨{0}⁩⁩</value>
+    <value>⁧قم بإدخال رمز التأكيد الذي أرسلناه إلى ⁨{0}⁩.⁩</value>
   </data>
   <data name="PassportExpired" xml:space="preserve">
     <value>انتهاء الصلاحية</value>
@@ -4974,13 +4999,13 @@
     <value>يحتاج تيليجرام إلى صلاحية الظهور فوق التطبيقات لتشغيل المقاطع المرئية في وضع (صورة في الصورة).</value>
   </data>
   <data name="PermissionNoAudio" xml:space="preserve">
-    <value>يحتاج تيليجرام إلى السماح له بالوصول للمايكروفون الخاص بك لتتمكن من إرسال رسائل صوتية.</value>
+    <value>يحتاج تيليجرام إلى استخدام الميكروفون من أجل إرسال الرسائل الصوتية.</value>
   </data>
   <data name="PermissionNoAudioVideo" xml:space="preserve">
-    <value>يحتاج تيليجرام إلى صلاحية الوصول للمايكروفون الخاص بك لتتمكن من تسجيل المقاطع المرئية.</value>
+    <value>يحتاج تيليجرام إلى استخدام الميكروفون من أجل تسجيل المقاطع المرئية.</value>
   </data>
   <data name="PermissionNoCamera" xml:space="preserve">
-    <value>يحتاج تيليجرام إلى السماح له بالوصول للكاميرا لتتمكن من التقاط الصور والمقاطع المرئية.</value>
+    <value>يحتاج تيليجرام إلى استخدام الكاميرا لكي تستطيع أخذ الصور والمقاطع المرئية.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
     <value>يحتاج تيليجرام إلى السماح له بتحديد موقعك لتتمكن من مشاركته مع أصدقائك.</value>
@@ -5090,7 +5115,7 @@
     <value>قم بإدخال كلمة مرور</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
-    <value>يرجى إدخال كلمة المرور الجديدة الخاصة بك:</value>
+    <value>قم بإدخال كلمة مرورك الجديدة</value>
   </data>
   <data name="PleaseLoginPassport" xml:space="preserve">
     <value>يرجى تسجيل الدخول إلى حسابك في تيليجرام لتتمكن من استخدام جواز تيليجرام.</value>
@@ -5512,7 +5537,7 @@
     <value>بحث</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>بحث الأصدقاء</value>
+    <value>بحث جهات الاتصال</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>من:</value>
@@ -5530,7 +5555,7 @@
     <value>بحث على الإنترنت</value>
   </data>
   <data name="SearchImagesTitle" xml:space="preserve">
-    <value>بحث على الإنترنت</value>
+    <value>البحث في الويب</value>
   </data>
   <data name="SearchMembers" xml:space="preserve">
     <value>البحث عن أعضاء</value>
@@ -6018,10 +6043,10 @@
     <value>اقتراح ملصقات عبر الرموز</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
-    <value>الكل</value>
+    <value>كل الحزم</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
-    <value>المُضافة</value>
+    <value>حزمي</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>إيقاف</value>
@@ -6119,7 +6144,7 @@
     <value>إنهاء هذه الجلسة؟</value>
   </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
-    <value>اضغط لفك الارتباط مع حسابك في تيليجرام.</value>
+    <value>اضغط لفك الارتباط من حسابك في تيليجرام.</value>
   </data>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>⁧فك الارتباط مع ⁨{0}⁩؟⁩</value>
@@ -6390,7 +6415,7 @@
     <value>استخدام بروكسي</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
-    <value>SOCKS5</value>
+    <value>بروكسي SOCKS5</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
     <value>راعي البروكسي</value>
@@ -6604,7 +6629,7 @@
     <value>مكالمة واردة</value>
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
-    <value>تيليجرام يحتاج للسماح له بالوصول للمايكروفون الخاص بك لتتمكن من إجراء مكالمات.</value>
+    <value>يحتاج تيليجرام إلى استخدام الميكروفون من أجل إجراء المكالمات.</value>
   </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
     <value>المكالمات الصوتية</value>

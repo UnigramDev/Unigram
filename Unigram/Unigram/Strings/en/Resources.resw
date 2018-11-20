@@ -61,6 +61,9 @@
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>last seen a long time ago</value>
   </data>
+  <data name="AbortEmail" xml:space="preserve">
+    <value>Abort recovery email setup</value>
+  </data>
   <data name="AbortPassword" xml:space="preserve">
     <value>Abort two-step verification setup</value>
   </data>
@@ -954,11 +957,17 @@ Sunrise: {1}</value>
 
 If this wasn't you, please enter the code we've just sent you via SMS to your number.</value>
   </data>
+  <data name="CancelEmailQuestion" xml:space="preserve">
+    <value>Are you sure you want to abort recovery email setup?</value>
+  </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Link is invalid or expired.</value>
   </data>
   <data name="CancelLinkSuccess" xml:space="preserve">
     <value>The deletion process was cancelled for your account {0}. You may close this window now.</value>
+  </data>
+  <data name="CancelPasswordQuestion" xml:space="preserve">
+    <value>Are you sure you want to abort two-step verification setup?</value>
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>Cancel registration</value>
@@ -1958,6 +1967,9 @@ To go over the limit and get additional features, upgrade to a supergroup:
   </data>
   <data name="EmailPasswordConfirmText2" xml:space="preserve">
     <value>To complete Two-Step Verification Setup, check your email (don't forget the spam folder) and enter the code we just sent you.</value>
+  </data>
+  <data name="EmailPasswordConfirmText3" xml:space="preserve">
+    <value>To complete reсoverу email setup, check {0} (don't forget the spam folder) and enter the code we just sent you.</value>
   </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
@@ -3013,7 +3025,7 @@ All media will stay in the Telegram cloud and can be re-downloaded if you need i
   <data name="LanguageAlert" xml:space="preserve">
     <value>You are about to apply a language pack (**{0}**) that is {1}% complete.
 
-This will translate the entire interface. You can suggest corrections in the [translation panel].
+This will translate the entire interface. You can suggest corrections via the [translation platform].
 
 You can change your language back at any time in Settings.</value>
   </data>
@@ -3026,7 +3038,7 @@ You can change your language back at any time in Settings.</value>
   <data name="LanguageCustomAlert" xml:space="preserve">
     <value>You are about to apply an unofficial language pack (**{0}**) that is {1}% complete.
 
-This will translate the entire interface. You can suggest corrections in the [translation panel].
+This will translate the entire interface. You can suggest corrections via the [translation platform].
 
 You can change your language back at any time in Settings.</value>
   </data>
@@ -5558,7 +5570,7 @@ You may need to restart the app for this to take effect.</value>
     <value>Search</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>Search friends</value>
+    <value>Search contacts</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>from:</value>
@@ -6067,10 +6079,10 @@ Don't accept the call, Telegram will process everything automatically.</value>
     <value>Suggest stickers by emoji</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
-    <value>All</value>
+    <value>All Sets</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
-    <value>Added</value>
+    <value>My Sets</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>None</value>
@@ -6285,13 +6297,22 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Two-Step Verification</value>
   </data>
+  <data name="TwoStepVerificationTitle" xml:space="preserve">
+    <value>Two-Step Verification</value>
+  </data>
   <data name="TypeMessage" xml:space="preserve">
     <value>Message</value>
   </data>
   <data name="TypePrivate" xml:space="preserve">
     <value>Private</value>
   </data>
+  <data name="TypePrivateGroup" xml:space="preserve">
+    <value>Private</value>
+  </data>
   <data name="TypePublic" xml:space="preserve">
+    <value>Public</value>
+  </data>
+  <data name="TypePublicGroup" xml:space="preserve">
     <value>Public</value>
   </data>
   <data name="Typing" xml:space="preserve">
@@ -6433,7 +6454,7 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
     <value>Use Proxy</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
-    <value>SOCKS5</value>
+    <value>SOCKS5 Proxy</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
     <value>Proxy sponsor</value>

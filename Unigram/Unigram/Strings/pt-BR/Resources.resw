@@ -4629,7 +4629,7 @@ Você pode visitar nossa FAQ para saber mais.</value>
     <value>As senhas não são iguais</value>
   </data>
   <data name="PasswordEmailInvalid" xml:space="preserve">
-    <value>Endereço de e-mail inválido. Por favor, verifique se você digitou corretamente e tente de novo.</value>
+    <value>Endereço de email inválido. Por favor, verifique se você digitou corretamente e tente de novo.</value>
   </data>
   <data name="PasswordHint" xml:space="preserve">
     <value>Dica da senha</value>
@@ -4939,7 +4939,7 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
     <value>Baixar o vídeo primeiro</value>
   </data>
   <data name="PleaseEnterCurrentPassword" xml:space="preserve">
-    <value>Por favor, digite a sua senha</value>
+    <value>Insira sua senha</value>
   </data>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Insira uma senha</value>
@@ -5255,21 +5255,21 @@ Se você apagar a sua conta, todas as suas mensagens e chats serão apagados.</v
     <value>Você deseja reiniciar suas estatísticas de uso?</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
-    <value>O código de recuperação foi enviado para o e-mail fornecido:
+    <value>O código de recuperação foi enviado para o email fornecido:
 
 {0}</value>
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
-    <value>Por favor, verifique o seu e-mail e digite o código de 6 dígitos que nós enviamos.</value>
+    <value>Por favor, verifique o seu email e digite o código de 6 dígitos que nós enviamos.</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
-    <value>Está tendo problemas para acessar seu e-mail {0}?</value>
+    <value>Está tendo problemas para acessar seu email {0}?</value>
   </data>
   <data name="RestoreEmailTroubleText" xml:space="preserve">
-    <value>Se você não puder acessar o seu e-mail, as suas únicas opções são lembrar a senha ou apagar a sua conta.</value>
+    <value>Se você não puder acessar o seu email, as suas únicas opções são lembrar a senha ou apagar a sua conta.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
-    <value>Como você não indicou um e-mail de recuperação quando configurou a sua senha, as únicas opções restantes são lembrar a senha ou apagar a sua conta.</value>
+    <value>Como você não indicou um email de recuperação quando configurou a sua senha, as únicas opções restantes são lembrar a senha ou apagar a sua conta.</value>
   </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Desculpe</value>

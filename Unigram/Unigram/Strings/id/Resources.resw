@@ -658,7 +658,7 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
     <value>Foto</value>
   </data>
   <data name="AttachPhotoExpired" xml:space="preserve">
-    <value>Foto kadaluarsa</value>
+    <value>Foto sudah kedaluwarsa</value>
   </data>
   <data name="AttachRound" xml:space="preserve">
     <value>Pesan video</value>
@@ -676,7 +676,7 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
     <value>Video</value>
   </data>
   <data name="AttachVideoExpired" xml:space="preserve">
-    <value>Video kadaluarsa</value>
+    <value>Video sudah kedaluwarsa</value>
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Pesan suara</value>
@@ -1427,7 +1427,7 @@ Jika Anda tidak tertarik, kami sarankan untuk membuat channel privat.</value>
     <value>Kode</value>
   </data>
   <data name="CodeExpired" xml:space="preserve">
-    <value>Kode kadaluwarsa, harap login lagi</value>
+    <value>Kode kedaluwarsa, harap login lagi</value>
   </data>
   <data name="ColorBlue" xml:space="preserve">
     <value>Biru</value>
@@ -5506,7 +5506,7 @@ Anda mungkin perlu memulai ulang aplikasi agar berlaku.</value>
     <value>Cari</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>Cari teman</value>
+    <value>Cari kontak</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>dari:</value>
@@ -6018,7 +6018,7 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
     <value>Semua</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
-    <value>Ditambahkan</value>
+    <value>Set saya</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>Tidak ada</value>

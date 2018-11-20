@@ -65,7 +65,7 @@
     <value>Annulla impostazione email di recupero</value>
   </data>
   <data name="AbortPassword" xml:space="preserve">
-    <value>Annulla configurazione della verifica in due passaggi</value>
+    <value>Annulla configurazione verifica in due passaggi</value>
   </data>
   <data name="Accept" xml:space="preserve">
     <value>Accetta</value>
@@ -958,7 +958,7 @@ Alba: {1}</value>
 Se non sei stato tu, per favore inserisci il codice che abbiamo appena inviato tramite SMS al tuo numero.</value>
   </data>
   <data name="CancelEmailQuestion" xml:space="preserve">
-    <value>Sei sicuro di voler annullare l'impostazione dell'email di recupero?</value>
+    <value>Sei sicuro di voler annullare la configurazione dell'email di recupero?</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Link non valido o scaduto.</value>
@@ -967,7 +967,7 @@ Se non sei stato tu, per favore inserisci il codice che abbiamo appena inviato t
     <value>Il processo di eliminazione per il tuo account {0} è stato annullato. Puoi chiudere questa finestra ora.</value>
   </data>
   <data name="CancelPasswordQuestion" xml:space="preserve">
-    <value>Sei sicuro di voler annullare l'impostazione della verifica in due passaggi?</value>
+    <value>Sei sicuro di voler annullare la configurazione della verifica in due passaggi?</value>
   </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>Annulla iscrizione</value>
@@ -1963,7 +1963,7 @@ Per superare il limite e sbloccare nuove funzioni, aggiorna a supergruppo:
 2. Clicca sul link di conferma.</value>
   </data>
   <data name="EmailPasswordConfirmText2" xml:space="preserve">
-    <value>Per completare l'impostazione della verifica in due passaggi, controlla la tua email (non dimenticare lo spam) e inserisci il codice che ti abbiamo appena inviato.</value>
+    <value>Per completare la configurazione della verifica in due passaggi, controlla la tua email (non dimenticare lo spam) e inserisci il codice che ti abbiamo appena inviato.</value>
   </data>
   <data name="EmailPasswordConfirmText3" xml:space="preserve">
     <value>Per completare l'impostazione dell'email di recupero, controlla {0} (non dimenticare lo spam) e inserisci il codice che ti abbiamo appena inviato.</value>
@@ -3021,7 +3021,7 @@ Tutti i media rimarranno nel cloud Telegram e potranno essere riscaricati ogni v
   <data name="LanguageAlert" xml:space="preserve">
     <value>Stai per applicare una lingua (**{0}**) che è completa al {1}%.
 
-Questo tradurrà l'intera interfaccia. Puoi suggerire correzioni nel [pannello delle traduzioni].
+Questo tradurrà l'intera interfaccia. Puoi suggerire correzioni nella [piattaforma di traduzione].
 
 Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</value>
   </data>
@@ -3034,7 +3034,7 @@ Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</value>
   <data name="LanguageCustomAlert" xml:space="preserve">
     <value>Stai per applicare una lingua non ufficiale (**{0}**) che è completa al {1}%.
 
-Questo tradurrà l'intera interfaccia. Puoi suggerire correzioni nel [pannello delle traduzioni].
+Questo tradurrà l'intera interfaccia. Puoi suggerire correzioni nella [piattaforma di traduzione].
 
 Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</value>
   </data>
@@ -5567,7 +5567,7 @@ Potresti dover riavviare l'app per rendere effettive le modifiche.</value>
     <value>Cerca</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>Cerca amici</value>
+    <value>Cerca contatti</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>da:</value>
@@ -6076,10 +6076,10 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>Suggerisci da emoji</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
-    <value>Tutti</value>
+    <value>Tutti i set</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
-    <value>Aggiunti</value>
+    <value>I miei set</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>Nessuno</value>
@@ -6452,7 +6452,7 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
     <value>Usa proxy</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
-    <value>SOCKS5</value>
+    <value>Proxy SOCKS5</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
     <value>Sponsor del proxy</value>
@@ -6860,7 +6860,7 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è di **5** ca
     <value>Ci siamo quasi!</value>
   </data>
   <data name="YourEmailAlmostThereText" xml:space="preserve">
-    <value>Controlla la tua email (non dimenticare lo spam) per completare l'impostazione della verifica in due passaggi.</value>
+    <value>Controlla la tua email (non dimenticare lo spam) per completare la configurazione della verifica in due passaggi.</value>
   </data>
   <data name="YourEmailCode" xml:space="preserve">
     <value>Il tuo codice email</value>

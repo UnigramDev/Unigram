@@ -65,7 +65,7 @@
     <value>Cancelar la configuración del correo de recuperación</value>
   </data>
   <data name="AbortPassword" xml:space="preserve">
-    <value>Anular la configuración de la verificación en dos pasos</value>
+    <value>Cancelar la configuración de la verificación</value>
   </data>
   <data name="Accept" xml:space="preserve">
     <value>Aceptar</value>
@@ -230,7 +230,7 @@
     <value>un1 ancló "{0}"</value>
   </data>
   <data name="ActionPinnedVideo" xml:space="preserve">
-    <value>un1 ancló un vídeo</value>
+    <value>un1 ancló un video</value>
   </data>
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>un1 ancló un mensaje de voz</value>
@@ -560,7 +560,7 @@
     <value>¿Quieres eliminar este chat?</value>
   </data>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
-    <value>¿Quieres eliminar este vídeo?</value>
+    <value>¿Quieres eliminar este video?</value>
   </data>
   <data name="AreYouSureLogout" xml:space="preserve">
     <value>¿Quieres cerrar sesión?
@@ -623,7 +623,7 @@ Por favor, mira las <![CDATA[<a href="https://telegram.org/faq/es#general">Pregu
     <value>Foto con autodestrucción</value>
   </data>
   <data name="AttachDestructingVideo" xml:space="preserve">
-    <value>Vídeo con autodestrucción</value>
+    <value>Video con autodestrucción</value>
   </data>
   <data name="AttachDocument" xml:space="preserve">
     <value>Archivo</value>
@@ -677,10 +677,10 @@ Por favor, mira las <![CDATA[<a href="https://telegram.org/faq/es#general">Pregu
     <value>Los administradores del grupo han restringido que envíes stickers</value>
   </data>
   <data name="AttachVideo" xml:space="preserve">
-    <value>Vídeo</value>
+    <value>Video</value>
   </data>
   <data name="AttachVideoExpired" xml:space="preserve">
-    <value>El vídeo expiró</value>
+    <value>El video expiró</value>
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Mensajes de voz</value>
@@ -976,7 +976,7 @@ Si no eras tú, por favor, inserta el código que enviamos por SMS a tu número.
     <value>Cancelar envío</value>
   </data>
   <data name="CantPlayVideo" xml:space="preserve">
-    <value>La app no logró reproducir este vídeo. ¿Quieres intentarlo con un reproductor externo?</value>
+    <value>La app no logró reproducir este video. ¿Quieres intentarlo con un reproductor externo?</value>
   </data>
   <data name="Caption" xml:space="preserve">
     <value>Comentario</value>
@@ -1161,7 +1161,7 @@ Nota: Si olvidas el código, tendrás que eliminar y reinstalar la aplicación. 
     <value>{0} publicó un {1} sticker</value>
   </data>
   <data name="ChannelMessageVideo" xml:space="preserve">
-    <value>{0} publicó un vídeo</value>
+    <value>{0} publicó un video</value>
   </data>
   <data name="ChannelMute" xml:space="preserve">
     <value>SILENCIAR</value>
@@ -1307,7 +1307,7 @@ Si no estás interesado, te sugerimos crear un canal privado.</value>
     <value>Ajustes de chat</value>
   </data>
   <data name="ChatVideo" xml:space="preserve">
-    <value>Vídeo</value>
+    <value>Video</value>
   </data>
   <data name="ChatYourSelf" xml:space="preserve">
     <value>reenvía aquí para guardar</value>
@@ -1850,7 +1850,7 @@ Para superar el límite y tener características adicionales, conviértelo en un
     <value>Foto secreta</value>
   </data>
   <data name="DisappearingVideo" xml:space="preserve">
-    <value>Vídeo secreto</value>
+    <value>Video secreto</value>
   </data>
   <data name="DiscardChanges" xml:space="preserve">
     <value>¿Descartar cambios?</value>
@@ -1984,7 +1984,7 @@ Para superar el límite y tener características adicionales, conviértelo en un
     <value>Ninguna</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
-    <value>Algunos vídeos no se pueden reproducir en streaming. Por ejemplo, todos los vídeos que fueron enviados desde Android usando Telegram 4.7 y versiones anteriores.</value>
+    <value>Algunos videos no se pueden reproducir en streaming. Por ejemplo, todos los videos que fueron enviados desde Android usando Telegram 4.7 y versiones anteriores.</value>
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>Activar animaciones</value>
@@ -1996,7 +1996,7 @@ Para superar el límite y tener características adicionales, conviértelo en un
     <value>Puedes cambiar tu servidor proxy más tarde en Ajustes > Datos y almacenamiento.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
-    <value>Streaming de vídeo y audio</value>
+    <value>Streaming de video y audio</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>Tienes activada la verificación en dos pasos.
@@ -2458,7 +2458,7 @@ Duración: {1}</value>
     <value>Nombre (requerido)</value>
   </data>
   <data name="FloodWait" xml:space="preserve">
-    <value>Muchos intentos. Por favor, prueba de nuevo más tarde.</value>
+    <value>Demasiados intentos. Por favor, reinténtalo más tarde.</value>
   </data>
   <data name="FloodWaitTime" xml:space="preserve">
     <value>Demasiados intentos. Por favor, reinténtalo en {0}</value>
@@ -2647,7 +2647,7 @@ Duración: {1}</value>
     <value/>
   </data>
   <data name="ForwardedVideoOne" xml:space="preserve">
-    <value>Vídeo reenviado</value>
+    <value>Video reenviado</value>
   </data>
   <data name="ForwardedVideoTwo" xml:space="preserve">
     <value/>
@@ -2659,7 +2659,7 @@ Duración: {1}</value>
     <value/>
   </data>
   <data name="ForwardedVideoOther" xml:space="preserve">
-    <value>{0} vídeos reenviados</value>
+    <value>{0} videos reenviados</value>
   </data>
   <data name="FreeOfTotal" xml:space="preserve">
     <value>{0} de {1} libres</value>
@@ -2804,10 +2804,10 @@ sobre Telegram?</value>
     <value>Historial borrado</value>
   </data>
   <data name="HoldToAudio" xml:space="preserve">
-    <value>Mantén para grabar audio. Toca para vídeo.</value>
+    <value>Mantén para grabar audio. Toca para video.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
-    <value>Mantén para grabar vídeo. Toca para audio.</value>
+    <value>Mantén para grabar video. Toca para audio.</value>
   </data>
   <data name="HoursZero" xml:space="preserve">
     <value/>
@@ -2969,7 +2969,7 @@ sobre Telegram?</value>
     <value>{0} está enviando una foto...</value>
   </data>
   <data name="IsSendingVideo" xml:space="preserve">
-    <value>{0} está enviando un vídeo...</value>
+    <value>{0} está enviando un video...</value>
   </data>
   <data name="IsTyping" xml:space="preserve">
     <value>está escribiendo...</value>
@@ -3002,7 +3002,7 @@ sobre Telegram?</value>
     <value>Siempre</value>
   </data>
   <data name="KeepMediaInfo" xml:space="preserve">
-    <value>Las fotos, los vídeos y los archivos de los chats en la nube a los que **no accedas** durante ese periodo de tiempo se eliminarán del dispositivo para liberar espacio.
+    <value>Las fotos, los videos y los archivos de los chats en la nube a los que **no accedas** durante ese periodo de tiempo se eliminarán del dispositivo para liberar espacio.
 
 Toda la multimedia permanecerá en la nube de Telegram y podrás volver a descargarla si la necesitas.</value>
   </data>
@@ -3021,7 +3021,7 @@ Toda la multimedia permanecerá en la nube de Telegram y podrás volver a descar
   <data name="LanguageAlert" xml:space="preserve">
     <value>Estás a punto de aplicar un pack de idioma (**{0}**) que está completo en un {1}%.
 
-Esto traducirá toda la interfaz. Puedes sugerir correcciones en el [panel de traducciones].
+Esto traducirá toda la interfaz. Puedes sugerir correcciones en la [plataforma de traducción].
 
 Puedes cambiar el idioma cuando quieras en Ajustes.</value>
   </data>
@@ -3034,7 +3034,7 @@ Puedes cambiar el idioma cuando quieras en Ajustes.</value>
   <data name="LanguageCustomAlert" xml:space="preserve">
     <value>Estás a punto de aplicar un pack de idioma no oficial (**{0}**) que está completo en un {1}%.
 
-Esto traducirá toda la interfaz. Puedes sugerir correcciones en el [panel de traducciones].
+Esto traducirá toda la interfaz. Puedes sugerir correcciones en la [plataforma de traducción].
 
 Puedes cambiar el idioma cuando quieras en Ajustes.</value>
   </data>
@@ -3180,7 +3180,7 @@ Puedes cambiar el idioma cuando quieras en Ajustes.</value>
     <value>Cargando...</value>
   </data>
   <data name="LocalAudioCache" xml:space="preserve">
-    <value>Mensajes de voz/vídeo</value>
+    <value>Mensajes de voz/video</value>
   </data>
   <data name="LocalCache" xml:space="preserve">
     <value>Otros archivos</value>
@@ -3209,7 +3209,7 @@ Esto puede tardar algunos minutos.</value>
     <value>Fotos</value>
   </data>
   <data name="LocalVideoCache" xml:space="preserve">
-    <value>Vídeos</value>
+    <value>Videos</value>
   </data>
   <data name="LocationUpdated" xml:space="preserve">
     <value>actualizada</value>
@@ -3389,7 +3389,7 @@ Esto puede tardar algunos minutos.</value>
     <value>{0} desactivó la autodestrucción</value>
   </data>
   <data name="MessageLifetimeVideo" xml:space="preserve">
-    <value>Si pones un temporizador, el vídeo se autodestruirá después ser visto.</value>
+    <value>Si pones un temporizador, el video se autodestruirá después ser visto.</value>
   </data>
   <data name="MessageLifetimeYouRemoved" xml:space="preserve">
     <value>Desactivaste la autodestrucción</value>
@@ -3611,13 +3611,13 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>Aún no hay máscaras</value>
   </data>
   <data name="NoMedia" xml:space="preserve">
-    <value>Comparte fotos y vídeos en este chat y accede a ellos desde cualquier dispositivo.</value>
+    <value>Comparte fotos y videos en este chat y accede a ellos desde cualquier dispositivo.</value>
   </data>
   <data name="NoMediaAutoDownload" xml:space="preserve">
     <value>Ningún contenido multimedia</value>
   </data>
   <data name="NoMediaSecret" xml:space="preserve">
-    <value>Las fotos y vídeos de este chat aparecerán aquí.</value>
+    <value>Las fotos y videos de este chat aparecerán aquí.</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Aún no hay mensajes...</value>
@@ -3638,7 +3638,7 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>Aún no hay fotos</value>
   </data>
   <data name="NoPlayerInstalled" xml:space="preserve">
-    <value>No tienes reproductor de vídeo. Por favor, instala uno para continuar.</value>
+    <value>No tienes reproductor de video. Por favor, instala uno para continuar.</value>
   </data>
   <data name="NoPopup" xml:space="preserve">
     <value>Desactivadas</value>
@@ -3788,10 +3788,10 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} ancló "{1}"</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
-    <value>{0} ancló un vídeo en el grupo {1}</value>
+    <value>{0} ancló un video en el grupo {1}</value>
   </data>
   <data name="NotificationActionPinnedVideoChannel" xml:space="preserve">
-    <value>{0} ancló un vídeo</value>
+    <value>{0} ancló un video</value>
   </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
     <value>{0} ancló un mensaje de voz en el grupo {1}</value>
@@ -3908,7 +3908,7 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} @ {1}: {2}</value>
   </data>
   <data name="NotificationMessageGroupVideo" xml:space="preserve">
-    <value>{0} envió un vídeo al grupo {1}</value>
+    <value>{0} envió un video al grupo {1}</value>
   </data>
   <data name="NotificationMessageInvoice" xml:space="preserve">
     <value>{0} te envió una factura por {1}</value>
@@ -3935,7 +3935,7 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} te envió una foto con autodestrucción</value>
   </data>
   <data name="NotificationMessageSDVideo" xml:space="preserve">
-    <value>{0} te envió un vídeo con autodestrucción</value>
+    <value>{0} te envió un video con autodestrucción</value>
   </data>
   <data name="NotificationMessageSticker" xml:space="preserve">
     <value>{0} te envió un sticker</value>
@@ -3947,7 +3947,7 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0}: {1}</value>
   </data>
   <data name="NotificationMessageVideo" xml:space="preserve">
-    <value>{0} te envió un vídeo</value>
+    <value>{0} te envió un video</value>
   </data>
   <data name="NotificationMessagesPeopleDisplayOrder" xml:space="preserve">
     <value>{0} {1}</value>
@@ -4186,8 +4186,8 @@ El equipo de Telegram</value>
     <value>Nadie (+{0})</value>
   </data>
   <data name="Page1Message" xml:space="preserve">
-    <value>La app de mensajería **más rápida** del mundo.
-Es **gratis** y **segura**.</value>
+    <value>La app de mensajería **más rápida**
+del mundo. Es **gratis** y **segura**.</value>
   </data>
   <data name="Page1Title" xml:space="preserve">
     <value>Telegram</value>
@@ -4204,7 +4204,7 @@ que cualquier otra aplicación.</value>
 Sin publicidad ni suscripciones.</value>
   </data>
   <data name="Page3Title" xml:space="preserve">
-    <value>Gratis</value>
+    <value>Gratuita</value>
   </data>
   <data name="Page4Message" xml:space="preserve">
     <value>**Telegram** mantiene tus mensajes
@@ -4930,7 +4930,7 @@ Puedes visitar nuestras Preguntas frecuentes para conocer más.</value>
     <value>Por favor, crea una contraseña para proteger tu información de pago. Será requerida al iniciar sesión.</value>
   </data>
   <data name="PaymentPasswordReEnter" xml:space="preserve">
-    <value>Pon tu contraseña otra vez</value>
+    <value>Repite tu contraseña</value>
   </data>
   <data name="PaymentPasswordTitle" xml:space="preserve">
     <value>Contraseña</value>
@@ -5031,10 +5031,10 @@ Los pagos irán directamente al desarrollador de {0}. Telegram no puede entregar
     <value>Telegram necesita acceso a tu micrófono para que puedas enviar mensajes de voz.</value>
   </data>
   <data name="PermissionNoAudioVideo" xml:space="preserve">
-    <value>Telegram necesita acceso a tu micrófono para que puedas grabar vídeos.</value>
+    <value>Telegram necesita acceso a tu micrófono para que puedas grabar videos.</value>
   </data>
   <data name="PermissionNoCamera" xml:space="preserve">
-    <value>Telegram necesita acceso a tu cámara para que puedas hacer fotos y vídeos.</value>
+    <value>Telegram necesita acceso a tu cámara para que puedas tomar fotos y videos.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
     <value>Telegram necesita acceso a tu ubicación para que puedas compartirla con tus amigos.</value>
@@ -5046,7 +5046,7 @@ Los pagos irán directamente al desarrollador de {0}. Telegram no puede entregar
     <value>AJUSTES</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
-    <value>Telegram necesita acceso a tu espacio de almacenamiento para que puedas enviar y guardar fotos, vídeos, música y otros archivos.</value>
+    <value>Telegram necesita acceso a tu espacio de almacenamiento para que puedas enviar y guardar fotos, videos, música y otros archivos.</value>
   </data>
   <data name="PermissionXiaomiLockscreen" xml:space="preserve">
     <value>Por favor, permite a Telegram aparecer en la pantalla bloqueada para que las llamadas funcionen correctamente.</value>
@@ -5150,10 +5150,10 @@ Los pagos irán directamente al desarrollador de {0}. Telegram no puede entregar
     <value>Por favor, inicia sesión en tu cuenta de Telegram para usar Telegram Passport.</value>
   </data>
   <data name="PleaseReEnterPassword" xml:space="preserve">
-    <value>Pon tu contraseña otra vez</value>
+    <value>Repite tu contraseña</value>
   </data>
   <data name="PleaseStreamDownload" xml:space="preserve">
-    <value>Por favor, espera hasta que el vídeo esté descargado completamente.</value>
+    <value>Por favor, espera hasta que el video esté descargado completamente.</value>
   </data>
   <data name="PointsZero" xml:space="preserve">
     <value/>
@@ -5291,7 +5291,7 @@ Los pagos irán directamente al desarrollador de {0}. Telegram no puede entregar
     <value>Elevar para hablar</value>
   </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
-    <value>Pon, otra vez, tu nuevo código</value>
+    <value>Repite tu nuevo código</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>RECIENTES</value>
@@ -5567,7 +5567,7 @@ Puede ser necesario reiniciar la aplicación para que tenga efecto.</value>
     <value>Buscar</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>Buscar amigos</value>
+    <value>Buscar contactos</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>de:</value>
@@ -5753,10 +5753,10 @@ Puede ser necesario reiniciar la aplicación para que tenga efecto.</value>
     <value>enviando una foto...</value>
   </data>
   <data name="SendingVideo" xml:space="preserve">
-    <value>Enviando vídeo...</value>
+    <value>Enviando video...</value>
   </data>
   <data name="SendingVideoStatus" xml:space="preserve">
-    <value>enviando un vídeo...</value>
+    <value>enviando un video...</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>Enviamos el código a la aplicación **Telegram** en tu otro dispositivo.</value>
@@ -5893,7 +5893,7 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
     <value>AUDIO</value>
   </data>
   <data name="SharedPhotosAndVideos" xml:space="preserve">
-    <value>Fotos y vídeos</value>
+    <value>Fotos y videos</value>
   </data>
   <data name="SharedPlace" xml:space="preserve">
     <value>Lugar</value>
@@ -6076,10 +6076,10 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
     <value>Sugerir stickers por emoji</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
-    <value>Todos</value>
+    <value>Todos los packs</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
-    <value>Añadidos</value>
+    <value>Mis packs</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>Ninguno</value>
@@ -6451,7 +6451,7 @@ Pero si no estás de acuerdo con las modestas necesidades de Telegram, no podrem
     <value>Usar proxy</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
-    <value>SOCKS5</value>
+    <value>Proxy SOCKS5</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
     <value>Sponsor del proxy</value>
@@ -6589,10 +6589,10 @@ Puedes usar **a–z**, **0–9** y guiones bajos. La longitud mínima es de **5*
     <value>Desactivadas</value>
   </data>
   <data name="VideoCaption" xml:space="preserve">
-    <value>Comentario de vídeo</value>
+    <value>Comentario de video</value>
   </data>
   <data name="VideoDoesNotSupportStreaming" xml:space="preserve">
-    <value>Este vídeo no está optimizado para streaming. Tendrás que descargarlo completamente para reproducirlo.</value>
+    <value>Este video no está optimizado para streaming. Tendrás que descargarlo completamente para reproducirlo.</value>
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Videomensajes</value>
@@ -6667,7 +6667,7 @@ Puedes usar **a–z**, **0–9** y guiones bajos. La longitud mínima es de **5*
     <value>Llamada entrante</value>
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
-    <value>Telegram necesita acceso a tu micrófono para poder realizar llamadas.</value>
+    <value>Telegram necesita acceso a tu micrófono para que puedas realizar llamadas.</value>
   </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
     <value>Llamadas de voz</value>
@@ -6676,7 +6676,7 @@ Puedes usar **a–z**, **0–9** y guiones bajos. La longitud mínima es de **5*
     <value>Estás sin conexión. Por favor, conéctate a internet para realizar llamadas.</value>
   </data>
   <data name="VoipOfflineAirplane" xml:space="preserve">
-    <value>Tienes activado el modo avión. Por favor, desactívalo o conéctate a una red Wi-Fi para hacer llamadas.</value>
+    <value>Tienes activado el modo avión. Por favor, desactívalo o conéctate a una red Wi-Fi para realizar llamadas.</value>
   </data>
   <data name="VoipOfflineAirplaneTitle" xml:space="preserve">
     <value>Modo avión</value>

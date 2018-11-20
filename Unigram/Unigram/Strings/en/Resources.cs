@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/15/2018 10:50:59
+// 	Generated: 11/19/2018 10:13:36
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -60,6 +60,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ALongTimeAgo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Abort recovery email setup"
+        /// </summary>
+        public static string AbortEmail
+        {
+            get
+            {
+                return resourceLoader.GetString("AbortEmail");
             }
         }
         
@@ -3309,6 +3320,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to abort recovery email setup?"
+        /// </summary>
+        public static string CancelEmailQuestion
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelEmailQuestion");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Link is invalid or expired."
         /// </summary>
         public static string CancelLinkExpired
@@ -3327,6 +3349,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CancelLinkSuccess");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to abort two-step verification setup?"
+        /// </summary>
+        public static string CancelPasswordQuestion
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelPasswordQuestion");
             }
         }
         
@@ -6926,6 +6959,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EmailPasswordConfirmText2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "To complete re?over? email setup, check {0} (don't forget the spam folder) and enter the code we just sent you."
+        /// </summary>
+        public static string EmailPasswordConfirmText3
+        {
+            get
+            {
+                return resourceLoader.GetString("EmailPasswordConfirmText3");
             }
         }
         
@@ -10727,7 +10771,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "You are about to apply a language pack (**{0}**) that is {1}% complete.
         ///
-        ///This will translate the entire interface. You can suggest corrections in the [translation panel].
+        ///This will translate the entire interface. You can suggest corrections via the [translation platform].
         ///
         ///You can change your language back at any time in Settings."
         /// </summary>
@@ -10764,7 +10808,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "You are about to apply an unofficial language pack (**{0}**) that is {1}% complete.
         ///
-        ///This will translate the entire interface. You can suggest corrections in the [translation panel].
+        ///This will translate the entire interface. You can suggest corrections via the [translation platform].
         ///
         ///You can change your language back at any time in Settings."
         /// </summary>
@@ -19920,7 +19964,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Search friends"
+        /// Localized resource similar to "Search contacts"
         /// </summary>
         public static string SearchFriends
         {
@@ -21781,7 +21825,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "All"
+        /// Localized resource similar to "All Sets"
         /// </summary>
         public static string SuggestStickersAll
         {
@@ -21792,7 +21836,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Added"
+        /// Localized resource similar to "My Sets"
         /// </summary>
         public static string SuggestStickersInstalled
         {
@@ -22552,6 +22596,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Two-Step Verification"
+        /// </summary>
+        public static string TwoStepVerificationTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TwoStepVerificationTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Message"
         /// </summary>
         public static string TypeMessage
@@ -22574,6 +22629,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Private"
+        /// </summary>
+        public static string TypePrivateGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("TypePrivateGroup");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Public"
         /// </summary>
         public static string TypePublic
@@ -22581,6 +22647,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TypePublic");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Public"
+        /// </summary>
+        public static string TypePublicGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("TypePublicGroup");
             }
         }
         
@@ -23091,7 +23168,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "SOCKS5"
+        /// Localized resource similar to "SOCKS5 Proxy"
         /// </summary>
         public static string UseProxySocks5
         {

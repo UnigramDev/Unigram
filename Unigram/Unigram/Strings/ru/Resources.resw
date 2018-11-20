@@ -1764,10 +1764,10 @@
     <value>Если Вас не было</value>
   </data>
   <data name="DeleteAccountIfAwayFor2" xml:space="preserve">
-    <value>Удаление аккаунта при неактивности</value>
+    <value>Автоудаление аккаунта</value>
   </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
-    <value>Самоуничтожение аккаунта</value>
+    <value>Удаление аккаунта при неактивности</value>
   </data>
   <data name="DeleteAllFrom" xml:space="preserve">
     <value>Удалить всё от {0}</value>
@@ -5565,7 +5565,7 @@
     <value>Поиск</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>Поиск друзей</value>
+    <value>Поиск контактов</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>от:</value>
@@ -6452,7 +6452,7 @@
     <value>Использовать прокси</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
-    <value>SOCKS5</value>
+    <value>Прокси SOCKS5</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
     <value>Спонсор прокси</value>

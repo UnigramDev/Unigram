@@ -2965,7 +2965,7 @@ Semua media akan berada di awan Telegram dan boleh dimuat turun jika perlu. </va
   <data name="LanguageAlert" xml:space="preserve">
     <value>Anda hampir mengguna pek bahasa (**{0}**) yang telah {1}% siap..
 
-Ini akan menterjemah keseluruhan interfes. Anda boleh cadang pembebetulan di [translation.panel].
+Ini akan menterjemah keseluruhan interfes. Anda boleh cadang pembebetulan di [platfom terjemahan].
 
 Anda boleh tukar ke bahasa anda pada bila-bila masa di Aturan.</value>
   </data>
@@ -2978,7 +2978,7 @@ Anda boleh tukar ke bahasa anda pada bila-bila masa di Aturan.</value>
   <data name="LanguageCustomAlert" xml:space="preserve">
     <value>Anda hampir mengguna pek bahasa tersuai (**{0}**) yang  {1}% siap.
 
-Ini akan terjemah kesemua interfes. Anda boleh cadang pembetulan  di  [translation panel].
+Ini akan terjemah kesemua interfes. Anda boleh cadang pembetulan  di  [platfom terjemahanl].
 
 Anda boleh tukar pek bahasa anda pada bila-bila masa di Aturan</value>
   </data>
@@ -5506,7 +5506,7 @@ Anda mungkin diminta untuk mula semula aplikasi bagi mengaktfikannya.</value>
     <value>Cari</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
-    <value>Cari teman</value>
+    <value>Cari kenalan</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>dari:</value>
@@ -6015,10 +6015,10 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
     <value>Cadang sticker dengan emoji</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
-    <value>Semua</value>
+    <value>Semua Set</value>
   </data>
   <data name="SuggestStickersInstalled" xml:space="preserve">
-    <value>Ditambah</value>
+    <value>Set Saya</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>Tiada</value>
@@ -6389,7 +6389,7 @@ Namun sekiranya anda tidak bersetuju dengan keperluan kecil Telegram, kami tak a
     <value>Guna Proksi</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
-    <value>SOCKS5</value>
+    <value>Proksi SOCKS5</value>
   </data>
   <data name="UseProxySponsor" xml:space="preserve">
     <value>Penaja proksi</value>
