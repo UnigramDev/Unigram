@@ -242,6 +242,7 @@ namespace Unigram.Common
             string user = null;
             string pass = null;
             string secret = null;
+            string phoneCode = null;
             bool hasUrl = false;
 
             var query = scheme.Query.ParseQueryString();
@@ -341,6 +342,10 @@ namespace Unigram.Common
                 pass = query.GetParameter("pass");
                 secret = query.GetParameter("secret");
             }
+            else if (scheme.AbsoluteUri.StartsWith("tg:login") || scheme.AbsoluteUri.StartsWith("tg://login"))
+            {
+                phoneCode = query.GetParameter("code");
+            }
 
             if (message != null && message.StartsWith("@"))
             {
@@ -370,6 +375,10 @@ namespace Unigram.Common
             else if (message != null)
             {
                 NavigateToShare(message, hasUrl);
+            }
+            else if (phoneCode != null)
+            {
+                NavigateToSendCode(protoService, phoneCode);
             }
             else if (auth != null)
             {
@@ -451,6 +460,10 @@ namespace Unigram.Common
 
                                 NavigateToConfirmPhone(null, phone, hash);
                             }
+                            else if (username.Equals("login", StringComparison.OrdinalIgnoreCase))
+                            {
+                                NavigateToSendCode(protoService, post);
+                            }
                             else if (username.Equals("iv", StringComparison.OrdinalIgnoreCase))
                             {
                                 navigation.Navigate(typeof(InstantPage), url);
@@ -504,6 +517,70 @@ namespace Unigram.Common
                         }
                     }
                 }
+            }
+        }
+
+        public static async void NavigateToSendCode(IProtoService protoService, string phoneCode)
+        {
+            var state = protoService.GetAuthorizationState();
+            if (state is AuthorizationStateWaitCode)
+            {
+                var firstName = string.Empty;
+                var lastName = string.Empty;
+
+                if (protoService.Options.TryGetValue("x_firstname", out string firstValue))
+                {
+                    firstName = firstValue;
+                }
+
+                if (protoService.Options.TryGetValue("x_lastname", out string lastValue))
+                {
+                    lastName = lastValue;
+                }
+
+                var response = await protoService.SendAsync(new CheckAuthenticationCode(phoneCode, firstName, lastName));
+                if (response is Error error)
+                {
+                    if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                    }
+                    else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
+                    }
+                    else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
+                    }
+                    else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
+                    }
+                    else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
+                    }
+                    else if (error.Message.StartsWith("FLOOD_WAIT"))
+                    {
+                        await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    }
+                    else if (error.Code != -1000)
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    }
+
+                    Logs.Log.Write("account.signIn error " + error);
+                }
+            }
+            else
+            {
+                if (phoneCode.Length > 3)
+                {
+                    phoneCode = phoneCode.Substring(0, 3) + "-" + phoneCode.Substring(3);
+                }
+
+                await TLMessageDialog.ShowAsync(string.Format("Strings.Resources.OtherLoginCode", phoneCode), Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
