@@ -2186,13 +2186,21 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new UploadFile(factory.InputFile, factory.Type, 32));
                     if (response is File file)
                     {
-                        ComposerHeader = new MessageComposerHeader
+                        if (file.Remote.IsUploadingCompleted)
                         {
-                            EditingMessage = editing,
-                            EditingMessageMedia = factory,
-                            EditingMessageCaption = formattedText,
-                            EditingMessageFileId = file.Id
-                        };
+                            ComposerHeader = null;
+                            ProtoService.Send(new EditMessageMedia(chat.Id, header.EditingMessage.Id, null, header.EditingMessageMedia.Delegate(new InputFileId(file.Id), header.EditingMessageCaption)));
+                        }
+                        else
+                        {
+                            ComposerHeader = new MessageComposerHeader
+                            {
+                                EditingMessage = editing,
+                                EditingMessageMedia = factory,
+                                EditingMessageCaption = formattedText,
+                                EditingMessageFileId = file.Id
+                            };
+                        }
                     }
                     else
                     {
