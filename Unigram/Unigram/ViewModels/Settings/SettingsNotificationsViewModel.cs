@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Mvvm;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
-using Unigram.Strings;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsNotificationsViewModel : TLViewModelBase, IHandle<UpdateScopeNotificationSettings>
+    public class SettingsNotificationsViewModel : TLMultipleViewModelBase, IHandle<UpdateScopeNotificationSettings>
     {
         private readonly IVibrationService _vibrationService;
 
@@ -25,6 +26,18 @@ namespace Unigram.ViewModels.Settings
         {
             _vibrationService = vibrationService;
 
+            Scopes = new MvxObservableCollection<SettingsNotificationsScope>
+            {
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsForPrivateChats),
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsForGroups),
+                //new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeChannels), Strings.Resources.NotificationsForChannels),
+            };
+
+            foreach (var scope in Scopes)
+            {
+                ChildViewModels.Add(scope);
+            }
+
             ResetCommand = new RelayCommand(ResetExecute);
 
             Aggregator.Subscribe(this);
@@ -33,41 +46,12 @@ namespace Unigram.ViewModels.Settings
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            ProtoService.Send(new GetScopeNotificationSettings(new NotificationSettingsScopePrivateChats()), result =>
+            foreach (var scope in Scopes)
             {
-                if (result is ScopeNotificationSettings settings)
-                {
-                    BeginOnUIThread(() =>
-                    {
-                        PrivateAlert = settings.MuteFor == 0;
-                        PrivatePreview = settings.ShowPreview;
-                    });
-                }
-            });
-
-            ProtoService.Send(new GetScopeNotificationSettings(new NotificationSettingsScopeGroupChats()), result =>
-            {
-                if (result is ScopeNotificationSettings settings)
-                {
-                    BeginOnUIThread(() =>
-                    {
-                        GroupAlert = settings.MuteFor == 0;
-                        GroupPreview = settings.ShowPreview;
-                    });
-                }
-            });
+                scope.Update();
+            }
 
             IsVibrationAvailable = await _vibrationService.GetAvailabilityAsync();
-        }
-
-        public Task UpdatePrivateAsync()
-        {
-            return ProtoService.SendAsync(new SetScopeNotificationSettings(new NotificationSettingsScopePrivateChats(), new ScopeNotificationSettings(_privateAlert ? 0 : int.MaxValue, string.Empty, _privatePreview)));
-        }
-
-        public Task UpdateGroupAsync()
-        {
-            return ProtoService.SendAsync(new SetScopeNotificationSettings(new NotificationSettingsScopeGroupChats(), new ScopeNotificationSettings(_groupAlert ? 0 : int.MaxValue, string.Empty, _groupPreview)));
         }
 
         private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -83,91 +67,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        #region Private
-
-        private bool _privateAlert;
-        public bool PrivateAlert
-        {
-            get
-            {
-                return _privateAlert;
-            }
-            set
-            {
-                Set(ref _privateAlert, value);
-            }
-        }
-
-        private bool _privatePreview;
-        public bool PrivatePreview
-        {
-            get
-            {
-                return _privatePreview;
-            }
-            set
-            {
-                Set(ref _privatePreview, value);
-            }
-        }
-
-        private string _privateSound;
-        public string PrivateSound
-        {
-            get
-            {
-                return _privateSound;
-            }
-            set
-            {
-                Set(ref _privateSound, value);
-            }
-        }
-
-        #endregion
-
-        #region Group
-
-        private bool _groupAlert;
-        public bool GroupAlert
-        {
-            get
-            {
-                return _groupAlert;
-            }
-            set
-            {
-                Set(ref _groupAlert, value);
-            }
-        }
-
-        private bool _groupPreview;
-        public bool GroupPreview
-        {
-            get
-            {
-                return _groupPreview;
-            }
-            set
-            {
-                Set(ref _groupPreview, value);
-            }
-        }
-
-        private string _groupSound;
-        public string GroupSound
-        {
-            get
-            {
-                return _groupSound;
-            }
-            set
-            {
-                Set(ref _groupSound, value);
-            }
-        }
-
-        #endregion
+        public MvxObservableCollection<SettingsNotificationsScope> Scopes { get; private set; }
 
         #region InApp
 
@@ -283,21 +183,9 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(UpdateScopeNotificationSettings update)
         {
-            if (update.Scope is NotificationSettingsScopePrivateChats)
+            foreach (var scope in Scopes)
             {
-                BeginOnUIThread(() =>
-                {
-                    PrivateAlert = update.NotificationSettings.MuteFor == 0;
-                    PrivatePreview = update.NotificationSettings.ShowPreview;
-                });
-            }
-            else if (update.Scope is NotificationSettingsScopeGroupChats)
-            {
-                BeginOnUIThread(() =>
-                {
-                    GroupAlert = update.NotificationSettings.MuteFor == 0;
-                    GroupPreview = update.NotificationSettings.ShowPreview;
-                });
+                scope.Update(update);
             }
         }
 
@@ -307,13 +195,12 @@ namespace Unigram.ViewModels.Settings
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetNotificationsAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
+                foreach (var scope in Scopes)
+                {
+                    scope.Reset();
+                }
+
                 _suppressUpdating = true;
-                PrivateAlert = true;
-                PrivatePreview = true;
-                PrivateSound = string.Empty;
-                GroupAlert = true;
-                GroupPreview = true;
-                GroupSound = string.Empty;
                 InAppSounds = true;
                 InAppPreview = true;
                 InAppVibrate = true;
@@ -321,6 +208,91 @@ namespace Unigram.ViewModels.Settings
 
                 ProtoService.Send(new ResetAllNotificationSettings());
             }
+        }
+    }
+
+    public class SettingsNotificationsScope : TLViewModelBase
+    {
+        private readonly IProtoService _protoService;
+        private readonly Type _type;
+        private readonly string _title;
+
+        public SettingsNotificationsScope(IProtoService protoService, Type type, string title)
+            : base(protoService, null, null, null)
+        {
+            _protoService = protoService;
+            _type = type;
+            _title = title;
+        }
+
+        public string Title => _title;
+
+        private bool _alert;
+        public bool Alert
+        {
+            get { return _alert; }
+            set { Set(ref _alert, value); }
+        }
+
+        private bool _preview;
+        public bool Preview
+        {
+            get { return _preview; }
+            set { Set(ref _preview, value); }
+        }
+
+        private string _sound;
+        public string Sound
+        {
+            get { return _sound; }
+            set { Set(ref _sound, value); }
+        }
+
+        public void Reset()
+        {
+            Alert = true;
+            Preview = true;
+            Sound = string.Empty;
+        }
+
+        public void Update(UpdateScopeNotificationSettings update)
+        {
+            if (update.Scope.GetType() == _type)
+            {
+                BeginOnUIThread(() =>
+                {
+                    Alert = update.NotificationSettings.MuteFor == 0;
+                    Preview = update.NotificationSettings.ShowPreview;
+                    Sound = string.Empty;
+                });
+            }
+        }
+
+        public void Update()
+        {
+            ProtoService.Send(new GetScopeNotificationSettings(GetScope()), result =>
+            {
+                if (result is ScopeNotificationSettings settings)
+                {
+                    BeginOnUIThread(() =>
+                    {
+                        Alert = settings.MuteFor == 0;
+                        Preview = settings.ShowPreview;
+                        Sound = string.Empty;
+                    });
+                }
+            });
+        }
+
+        public RelayCommand SendCommand { get; }
+        public async void SendExecute()
+        {
+            await _protoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, string.Empty, _preview)));
+        }
+
+        private NotificationSettingsScope GetScope()
+        {
+            return Activator.CreateInstance(_type) as NotificationSettingsScope;
         }
     }
 }

@@ -27,22 +27,6 @@ namespace Unigram.Views.Settings
             DataContext = TLContainer.Current.Resolve<SettingsNotificationsViewModel>();
         }
 
-        private async void Private_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.PrivateAlert = PrivateAlert.IsChecked == true;
-            ViewModel.PrivatePreview = PrivatePreview.IsChecked == true;
-
-            await ViewModel.UpdatePrivateAsync();
-        }
-
-        private async void Group_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.GroupAlert = GroupAlert.IsChecked == true;
-            ViewModel.GroupPreview = GroupPreview.IsChecked == true;
-
-            await ViewModel.UpdateGroupAsync();
-        }
-
         #region Binding
 
         private string ConvertCountInfo(bool count)
