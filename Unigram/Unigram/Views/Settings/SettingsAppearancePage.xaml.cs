@@ -204,7 +204,15 @@ namespace Unigram.Views.Settings
 
                     if (window.Content is FrameworkElement element)
                     {
-                        element.RequestedTheme = ViewModel.GetElementTheme();
+                        var value = ViewModel.GetElementTheme();
+                        if (value == element.RequestedTheme)
+                        {
+                            element.RequestedTheme = value == ElementTheme.Dark
+                                ? ElementTheme.Light
+                                : ElementTheme.Dark;
+                        }
+
+                        element.RequestedTheme = value;
                     }
                 });
             }
@@ -212,21 +220,7 @@ namespace Unigram.Views.Settings
 
         private void Switch_Click(object sender, RoutedEventArgs e)
         {
-            //if (a)
-            //{
-            //    Message2.Resources.MergedDictionaries.Clear();
-            //    Message1.IsOutgoing = true;
-            //}
-            //else
-            //{
-            //    Message1.Resources.MergedDictionaries.Clear();
-            //    Message2.IsOutgoing = true;
-            //}
-
-            //a = !a;
-
-            UpdatePreview(false);
-
+            UpdatePreview(true);
         }
     }
 }
