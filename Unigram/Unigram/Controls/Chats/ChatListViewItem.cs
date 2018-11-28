@@ -183,7 +183,7 @@ namespace Unigram.Controls.Chats
 
             if (_indicator != null)
             {
-                _indicator.Offset = new Vector3(e.Cumulative.Translation.X < 0 ? width - percent * 60 : -30 + percent * 60, (height - 30) / 2, 0);
+                _indicator.Offset = new Vector3(e.Cumulative.Translation.X < 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
                 _indicator.Scale = new Vector3(e.Cumulative.Translation.X < 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
                 _indicator.Opacity = percent;
             }

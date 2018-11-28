@@ -580,7 +580,7 @@ namespace Unigram.Controls.Cells
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
-                return "\uE125";
+                return "\uE902"; //"\uE125";
             }
             else if (chat.Type is ChatTypeSecret)
             {

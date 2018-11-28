@@ -441,6 +441,11 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _selectionMode, value);
+
+                if (value != ListViewSelectionMode.None)
+                {
+                    DisposeSearch();
+                }
             }
         }
 

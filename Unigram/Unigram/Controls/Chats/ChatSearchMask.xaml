@@ -26,7 +26,7 @@
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
-            <Setter Property="Padding" Value="48,3,6,5" />
+            <Setter Property="Padding" Value="48,3,48,5" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
