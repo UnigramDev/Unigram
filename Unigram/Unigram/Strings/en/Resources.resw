@@ -212,7 +212,7 @@
     <value>un1 pinned a GIF</value>
   </data>
   <data name="ActionPinnedMusic" xml:space="preserve">
-    <value>un1 pinned a track</value>
+    <value>un1 pinned an audio file</value>
   </data>
   <data name="ActionPinnedNoText" xml:space="preserve">
     <value>un1 pinned a message</value>
@@ -1143,7 +1143,7 @@ Note: if you forget the passcode, you'll need to delete and reinstall the app. A
     <value>{0} posted a location</value>
   </data>
   <data name="ChannelMessageMusic" xml:space="preserve">
-    <value>{0} posted a track</value>
+    <value>{0} posted an audio file</value>
   </data>
   <data name="ChannelMessageNoText" xml:space="preserve">
     <value>{0} posted a message</value>
@@ -1351,6 +1351,24 @@ If you're not interested, we suggest creating a private channel instead.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chats</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>{0} chats</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>Checking...</value>
   </data>
@@ -1532,6 +1550,9 @@ Once {1} updates Telegram, photos with timers for 1 minute or less will start wo
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>NOT NOW</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>Continue in English</value>
@@ -1839,6 +1860,9 @@ To go over the limit and get additional features, upgrade to a supergroup:
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Didn't get the code?</value>
+  </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>Send the code as an SMS</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Direct Share</value>
@@ -2456,7 +2480,7 @@ Duration: {1}</value>
     <value>Confirm fingerprint to continue</value>
   </data>
   <data name="FingerprintNotRecognized" xml:space="preserve">
-    <value>Fingerprint not recognized. Try again</value>
+    <value>Fingerprint not recognized. Try again.</value>
   </data>
   <data name="FirstName" xml:space="preserve">
     <value>First name (required)</value>
@@ -2579,7 +2603,7 @@ Duration: {1}</value>
     <value/>
   </data>
   <data name="ForwardedMusicOne" xml:space="preserve">
-    <value>Forwarded track</value>
+    <value>Forwarded audio file</value>
   </data>
   <data name="ForwardedMusicTwo" xml:space="preserve">
     <value/>
@@ -2591,7 +2615,7 @@ Duration: {1}</value>
     <value/>
   </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
-    <value>{0} forwarded tracks</value>
+    <value>{0} forwarded audio files</value>
   </data>
   <data name="ForwardedPhotoZero" xml:space="preserve">
     <value/>
@@ -2888,6 +2912,9 @@ about Telegram?</value>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>The dark theme will turn automatically during night time</value>
   </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>Reference</value>
+  </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Internal Storage</value>
   </data>
@@ -3036,7 +3063,7 @@ You can change your language back at any time in Settings.</value>
     <value>Custom</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>You are about to apply an unofficial language pack (**{0}**) that is {1}% complete.
+    <value>You are about to apply a custom language pack (**{0}**) that is {1}% complete.
 
 This will translate the entire interface. You can suggest corrections via the [translation platform].
 
@@ -3585,13 +3612,10 @@ This operation can take a few minutes to complete.</value>
     <value>No chats yet...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Start messaging by tapping the pencil button in the bottom right corner
-or tap the menu button for more options.</value>
+    <value>Start messaging by tapping the pencil button in the bottom right corner.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>Start messaging by pressing the
-new message button in the bottom right corner
-or tap the menu button for more options.</value>
+    <value>Start messaging by pressing the pencil button in the bottom right corner.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>No contacts yet</value>
@@ -3749,10 +3773,10 @@ You can customize notifications for a chat by opening its profile and choosing '
     <value>{0} pinned an invoice</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
-    <value>{0} pinned a track in the group {1}</value>
+    <value>{0} pinned an audio file in the group {1}</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
-    <value>{0} pinned a track</value>
+    <value>{0} pinned an audio file</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
     <value>{0} pinned a message in the group {1}</value>
@@ -3884,13 +3908,13 @@ You can customize notifications for a chat by opening its profile and choosing '
     <value>{0} sent an invoice to the group {1} for {2}</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
-    <value>{0} sent a live location to the group {1}</value>
+    <value>{0} shared a live location with the group {1}</value>
   </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} sent a location to the group {1}</value>
   </data>
   <data name="NotificationMessageGroupMusic" xml:space="preserve">
-    <value>{0} sent a track to the group {1}</value>
+    <value>{0} sent an audio file to the group {1}</value>
   </data>
   <data name="NotificationMessageGroupNoText" xml:space="preserve">
     <value>{0} sent a message to the group {1}</value>
@@ -3923,7 +3947,7 @@ You can customize notifications for a chat by opening its profile and choosing '
     <value>{0} sent you a location</value>
   </data>
   <data name="NotificationMessageMusic" xml:space="preserve">
-    <value>{0} sent you a track</value>
+    <value>{0} sent you an audio file</value>
   </data>
   <data name="NotificationMessageNoText" xml:space="preserve">
     <value>{0} sent you a message</value>
@@ -4078,10 +4102,10 @@ The Telegram Team</value>
     <value>Background Connection</value>
   </data>
   <data name="NotificationsServiceConnectionInfo" xml:space="preserve">
-    <value>Keep a low impact background connection to Telegram to receive notifications. Enable for reliable notifications.</value>
+    <value>Keep a low impact background connection to Telegram for reliable notifications.</value>
   </data>
   <data name="NotificationsServiceInfo" xml:space="preserve">
-    <value>Relaunch app when shut down by user or system. This will ensure app can show notifications.</value>
+    <value>Relaunch app when shut down. Enable for reliable notifications.</value>
   </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>Turn Off</value>
@@ -4151,6 +4175,11 @@ The Telegram Team</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Open url {0}?</value>
+  </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>Your login code is **{0}**. Enter it in the Telegram app where you are trying to log in.
+
+Do not give this code to anyone.</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Active Sessions</value>
@@ -4432,7 +4461,7 @@ from multiple devices.</value>
     <value>Please enter the confirmation code we've just sent to {0}.</value>
   </data>
   <data name="PassportExpired" xml:space="preserve">
-    <value>Expires</value>
+    <value>Expiry Date</value>
   </data>
   <data name="PassportFemale" xml:space="preserve">
     <value>Female</value>
@@ -5755,6 +5784,9 @@ You may need to restart the app for this to take effect.</value>
   <data name="SendingPhoto" xml:space="preserve">
     <value>sending a photo...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>Sending SMS...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Sending video...</value>
   </data>
@@ -5763,6 +5795,9 @@ You may need to restart the app for this to take effect.</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>We've sent the code to the **Telegram** app on your other device.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>Check your Telegram messages</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>We're calling your phone **{0}**.
@@ -5774,6 +5809,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>We've sent an SMS with an activation code to your phone **{0}**.</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>Enter code</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>Service notifications</value>
@@ -5873,6 +5911,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   </data>
   <data name="SharedContent" xml:space="preserve">
     <value>Shared content</value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
+    <value>Shared Content</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>FILES</value>
@@ -6024,6 +6065,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="StickersShare" xml:space="preserve">
     <value>Share</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>STOP ALL</value>
   </data>
@@ -6041,6 +6085,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Are you sure you want to stop sharing live location with {0}?</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>Do you want to stop the phone number verification process?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Storage Usage</value>
@@ -6337,7 +6384,7 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
     <value>Tap and hold on user to unblock.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Undo all custom notification settings for all your contacts and groups</value>
+    <value>Undo all custom notification settings for all your contacts, groups and channels.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Unknown error</value>

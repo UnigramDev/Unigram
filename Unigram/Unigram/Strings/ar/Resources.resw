@@ -212,7 +212,7 @@
     <value>⁧⁨un1⁩ ثبت صورة متحركة⁩</value>
   </data>
   <data name="ActionPinnedMusic" xml:space="preserve">
-    <value>⁧ثبت ⁨un1⁩ مقطعًا صوتيًا⁩</value>
+    <value>⁧ثبت ⁨un1⁩ ملفًا صوتيًا⁩</value>
   </data>
   <data name="ActionPinnedNoText" xml:space="preserve">
     <value>⁧⁨un1⁩ ثبت رسالة⁩</value>
@@ -503,7 +503,8 @@
     <value>ما من أقنعة مؤرشفة</value>
   </data>
   <data name="ArchivedMasksInfo" xml:space="preserve">
-    <value>يمكنك الاحتفاظ بـ 200 حزمة أقنعة كحدٍ أقصى. ستتم أرشفة الحزم غير المستخدمة عند إضافتك للمزيد.</value>
+    <value>يمكنك الاحتفاظ بـ 200 حزمة أقنعة كحدٍ أقصى.
+ستتم أرشفة الحزم غير المستخدمة عند إضافتك للمزيد.</value>
   </data>
   <data name="ArchivedStickers" xml:space="preserve">
     <value>الملصقات المؤرشفة</value>
@@ -518,7 +519,8 @@
     <value>ما من ملصقات مؤرشفة</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
-    <value>يمكنك الاحتفاظ بـ 200 حزمة ملصقات كحدٍ أقصى. ستتم أرشفة الحزم غير المستخدمة عند إضافتك للمزيد.</value>
+    <value>يمكنك الاحتفاظ بـ 200 حزمة ملصقات كحدٍ أقصى.
+ستتم أرشفة الحزم غير المستخدمة عند إضافتك للمزيد.</value>
   </data>
   <data name="AreTyping" xml:space="preserve">
     <value>يكتبون… </value>
@@ -1028,6 +1030,9 @@
   <data name="ChannelAddedByNotification" xml:space="preserve">
     <value>⁧⁨{0}⁩ أضافك لقناة ⁨{1}⁩ ⁩</value>
   </data>
+  <data name="ChannelAdmin" xml:space="preserve">
+    <value>مشرف</value>
+  </data>
   <data name="ChannelAdministrators" xml:space="preserve">
     <value>المشرفون</value>
   </data>
@@ -1068,7 +1073,7 @@
     <value>المعذرة، لا يمكنك إرسال رسائل لهذه القناة.</value>
   </data>
   <data name="ChannelCreator" xml:space="preserve">
-    <value>المُنشئ</value>
+    <value>المالك</value>
   </data>
   <data name="ChannelDelete" xml:space="preserve">
     <value>حذف القناة</value>
@@ -1140,7 +1145,7 @@
     <value>⁧⁨{0}⁩ نشر موقعًا⁩</value>
   </data>
   <data name="ChannelMessageMusic" xml:space="preserve">
-    <value>⁧نشر ⁨{0}⁩ مقطعًا صوتيًا⁩</value>
+    <value>⁧نشر ⁨{0}⁩ ملفًا صوتيًا⁩</value>
   </data>
   <data name="ChannelMessageNoText" xml:space="preserve">
     <value>⁧⁨{0}⁩ نشر رسالة⁩</value>
@@ -1351,6 +1356,12 @@
   <data name="ChooseCountry" xml:space="preserve">
     <value>اختر دولة</value>
   </data>
+  <data name="ChooseFromGallery" xml:space="preserve">
+    <value>الاختيار من المعرض</value>
+  </data>
+  <data name="ChooseFromSearch" xml:space="preserve">
+    <value>البحث في الويب</value>
+  </data>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>اختر من ملصقاتك</value>
   </data>
@@ -1545,7 +1556,7 @@
 • يمكن للأعضاء الجدد مشاهدة سجل المحادثات كاملًا
 • تختفي الرسائل المحذوفة من أجهزة جميع الأعضاء
 • يمكن للمشرفين تثبيت الرسائل المهمة
-• يمكن لمُنشئ المجموعة إنشاء رابط عام لها⁩</value>
+• يمكن لمالك المجموعة إنشاء رابط عام لها⁩</value>
   </data>
   <data name="ConvertGroupInfo2" xml:space="preserve">
     <value>** في المجموعات الخارقة:**
@@ -1553,7 +1564,7 @@
 • يمكن للأعضاء الجدد مشاهدة سجل المحادثات كاملًا
 • تختفي الرسائل المحذوفة من أجهزة جميع الأعضاء
 • يمكن للمشرفين تثبيت الرسائل المهمة
-• يمكن لمُنشئ المجموعة إنشاء رابط عام لها</value>
+• يمكن لمالك المجموعة إنشاء رابط عام لها</value>
   </data>
   <data name="ConvertGroupInfo3" xml:space="preserve">
     <value>**ملحوظة:** لن يكون بإمكانك التراجع عن هذا القرار.</value>
@@ -1828,6 +1839,9 @@
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>لم يصلك الرمز؟</value>
+  </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>إرسال الرمز برسالة SMS قصيرة</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
     <value>مشاركة مباشرة</value>
@@ -2444,7 +2458,7 @@
     <value>قم بتأكيد البصمة للاستمرار</value>
   </data>
   <data name="FingerprintNotRecognized" xml:space="preserve">
-    <value>لم يتم التعرف على البصمة. حاول مرة أخرى</value>
+    <value>لم يتم التعرف على البصمة. حاول مرة أخرى.</value>
   </data>
   <data name="FirstName" xml:space="preserve">
     <value>الاسم الأول (مطلوب)</value>
@@ -2564,22 +2578,22 @@
     <value>⁧⁨{0}⁩ رسالة معاد توجيهها⁩</value>
   </data>
   <data name="ForwardedMusicZero" xml:space="preserve">
-    <value>⁧⁨{0}⁩ مسار معاد توجيهه⁩</value>
+    <value>⁧⁨{0}⁩ ملف صوتي معاد توجيهه⁩</value>
   </data>
   <data name="ForwardedMusicOne" xml:space="preserve">
-    <value>مسار واحد معاد توجيهه</value>
+    <value>ملف صوتي واحد معاد توجيهه</value>
   </data>
   <data name="ForwardedMusicTwo" xml:space="preserve">
-    <value>مساران معاد توجيههما</value>
+    <value>ملفان صوتيان معاد توجيههما</value>
   </data>
   <data name="ForwardedMusicFew" xml:space="preserve">
-    <value>⁧⁨{0}⁩ مسارات معاد توجيهها⁩</value>
+    <value>⁧⁨{0}⁩ ملفات صوتية معاد توجيهها⁩</value>
   </data>
   <data name="ForwardedMusicMany" xml:space="preserve">
-    <value>⁧⁨{0}⁩ مسارًا معاد توجيهه⁩</value>
+    <value>⁧⁨{0}⁩ ملفًا صوتيًا معاد توجيهه⁩</value>
   </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
-    <value>⁧⁨{0}⁩ مسار معاد توجيهه⁩</value>
+    <value>⁧⁨{0}⁩ ملف صوتي معاد توجيهه⁩</value>
   </data>
   <data name="ForwardedPhotoZero" xml:space="preserve">
     <value>⁧⁨{0}⁩ صورة معاد توجيهها⁩</value>
@@ -3024,7 +3038,7 @@
     <value>مخصص</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>⁧أنت على وشك تطبيق حزمة اللغة (**⁨{0}⁩**) والمكتملة بنسبة ⁨{1}⁩%.
+    <value>⁧أنت على وشك تطبيق حزمة اللغة المخصصة (**⁨{0}⁩**) والمكتملة بنسبة ⁨{1}⁩%.
 
 سيؤدي هذا إلى ترجمة الواجهة بالكامل، يمكنك اقتراح التصحيحات في [منصة الترجمة].
 
@@ -3037,16 +3051,19 @@
     <value>Arabic</value>
   </data>
   <data name="LanguageSame" xml:space="preserve">
-    <value>⁧أنت تستخدم حزمة اللغة (**⁨{0}⁩**) هذه بالفعل. يمكنك تغيير لغتك في أي وقت من خلال الإعدادات.⁩</value>
+    <value>⁧أنت تستخدم حزمة اللغة (**⁨{0}⁩**) بالفعل. يمكنك تغيير لغتك في أي وقت من خلال الإعدادات.⁩</value>
   </data>
   <data name="LanguageSuggested" xml:space="preserve">
     <value/>
   </data>
+  <data name="LanguageTitle" xml:space="preserve">
+    <value>تغييرُ اللغة؟</value>
+  </data>
   <data name="LanguageUnknownCustomAlert" xml:space="preserve">
-    <value>⁧للأسف، لا تحتوي حزمة اللغة المخصصةُ هذه (**⁨{0}⁩ **) على بيانات تيليجرام للأندرويد.⁩</value>
+    <value>⁧للأسف، لا تحتوي حزمة اللغة المخصصةُ هذه (**⁨{0}⁩ **) على بيانات لتيليجرام للأندرويد.⁩</value>
   </data>
   <data name="LanguageUnofficial" xml:space="preserve">
-    <value>لغة غير رسمية</value>
+    <value>لغات غير رسمية</value>
   </data>
   <data name="LastName" xml:space="preserve">
     <value>اسم العائلة (اختياري)</value>
@@ -3564,14 +3581,10 @@
     <value>لا توجد محادثات بعد...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>ابدأ المراسلة عبر الضغط على
-زر القلم في الزاوية السفلية الشاشة
-أو اضغط على زر القائمة للمزيد من الخيارات.</value>
+    <value>ابدأ المراسلة عبر الضغط على زر القلم في الزاوية السفلية للشاشة.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>ابدأ المراسلة عبر الضغط على
-زر الرسالة في الزاوية السفلية للشاشة
-أو اضغط على زر القائمة للمزيد من الخيارات.</value>
+    <value>ابدأ المراسلة عبر الضغط على زر القلم في الزاوية السفلية للشاشة.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>لا توجد جهات اتصال بعد</value>
@@ -3726,10 +3739,10 @@
     <value>⁧⁨{0}⁩ ثبت فاتورة⁩</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
-    <value>⁧ثبت ⁨{0}⁩ مقطعًا صوتيًا في المجموعة ⁨{1}⁩⁩</value>
+    <value>⁧ثبت ⁨{0}⁩ ملفًا صوتيًا في مجموعة ⁨{1}⁩⁩</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
-    <value>⁧ثبت ⁨{0}⁩ مقطعًا صوتيًا⁩</value>
+    <value>⁧ثبت ⁨{0}⁩ ملفًا صوتيًا⁩</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
     <value>⁧⁨{0}⁩ ثبت رسالة في المجموعة ⁨{1}⁩⁩</value>
@@ -3867,7 +3880,7 @@
     <value>⁧⁨{0}⁩ أرسل موقعًا حيًا للمجموعة ⁨{1}⁩⁩</value>
   </data>
   <data name="NotificationMessageGroupMusic" xml:space="preserve">
-    <value>⁧أرسل ⁨{0}⁩ مقطعًا صوتيًا لمجموعة ⁨{1}⁩⁩</value>
+    <value>⁧أرسل ⁨{0}⁩ ملفًا صوتيًا لمجموعة ⁨{1}⁩⁩</value>
   </data>
   <data name="NotificationMessageGroupNoText" xml:space="preserve">
     <value>⁧أرسل ⁨{0}⁩ رسالة للمجموعة ⁨{1}⁩⁩</value>
@@ -3900,7 +3913,7 @@
     <value>⁧أرسل لك ⁨{0}⁩ موقعًا⁩</value>
   </data>
   <data name="NotificationMessageMusic" xml:space="preserve">
-    <value>⁧أرسل لك ⁨{0}⁩ مسارًا⁩</value>
+    <value>⁧أرسل لك ⁨{0}⁩ ملفًا صوتيًا⁩</value>
   </data>
   <data name="NotificationMessageNoText" xml:space="preserve">
     <value>⁧أرسل لك ⁨{0}⁩ رسالةً⁩</value>
@@ -4006,6 +4019,9 @@
   <data name="NotificationsOff" xml:space="preserve">
     <value>إيقاف</value>
   </data>
+  <data name="NotificationsOffUntil" xml:space="preserve">
+    <value>⁧معطّلة حتى ⁨{0}⁩⁩</value>
+  </data>
   <data name="NotificationsOn" xml:space="preserve">
     <value>تشغيل</value>
   </data>
@@ -4046,10 +4062,10 @@
     <value>الاتصال في الخلفية</value>
   </data>
   <data name="NotificationsServiceConnectionInfo" xml:space="preserve">
-    <value>استخدام اتصال طفيف في الخلفية للتأكد من وصول إشعارات تيليجرام. قم بالتفعيل لإشعارات أقوى.</value>
+    <value>البقاء على اتصال طفيف مع تيليجرام في الخلفية لضمان ظهور الإشعارات.</value>
   </data>
   <data name="NotificationsServiceInfo" xml:space="preserve">
-    <value>إعادة تشغيل التطبيق في الخلفية إذا قام المستخدم أو النظام بإيقافه. سيضمن هذا إظهارَ التطبيق للإشعارات.</value>
+    <value>إعادة تشغيل التطبيق عند إيقافه. قم بالتفعيل لضمان ظهور الإشعارات.</value>
   </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>إيقاف</value>
@@ -4119,6 +4135,11 @@
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>⁧هل ترغب في فتح الرابط ⁨{0}⁩؟⁩</value>
+  </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>⁧رمز الدخول هو **⁨{0}⁩**. قم بإدخاله في تطبيق تيليجرام الذي تحاول تسجيل الدخول منه.
+
+لا تعطِ هذا الرمز لأي شخص كان.⁩</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>الجلسات النشطة</value>
@@ -4400,7 +4421,7 @@
     <value>⁧قم بإدخال رمز التأكيد الذي أرسلناه إلى ⁨{0}⁩.⁩</value>
   </data>
   <data name="PassportExpired" xml:space="preserve">
-    <value>انتهاء الصلاحية</value>
+    <value>تاريخ انتهاء الصلاحية</value>
   </data>
   <data name="PassportFemale" xml:space="preserve">
     <value>أنثى</value>
@@ -4898,7 +4919,7 @@
     <value>أدخل كلمة مرور</value>
   </data>
   <data name="PaymentPasswordInfo" xml:space="preserve">
-    <value>يرجى اختيار كلمة مرور لحماية معلومات الدفع الخاصة بك. ستطلب منك عند تسجيل الدخول.</value>
+    <value>يرجى إنشاء كلمة مرور لحماية معلومات الدفع الخاصة بك، سيتم طلبها منك في كل مرة تقوم بتسجيل دخولك.</value>
   </data>
   <data name="PaymentPasswordReEnter" xml:space="preserve">
     <value>قم بإعادة إدخال كلمة مرورك</value>
@@ -5722,6 +5743,9 @@
   <data name="SendingPhoto" xml:space="preserve">
     <value>يرسل صورة...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>يتم إرسال رسالة SMS قصيرة...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>يتم إرسال المقطع المرئي...</value>
   </data>
@@ -5730,6 +5754,9 @@
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>أرسلنا الرمز إلى تطبيق **تيليجرام** على جهازك الآخر.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>قم بتفقُّد رسائل تيليجرام</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>⁧يتم الاتصال على رقمك **⁨{0}⁩**.
@@ -5741,6 +5768,9 @@
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>⁧تم إرسال رسالة SMS قصيرة تحتوي على رمز التفعيل لرقمك **⁨{0}⁩**.⁩</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>أدخل الرمز</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>إشعارات الخدمة</value>
@@ -5837,6 +5867,12 @@
   </data>
   <data name="SharedAudioFiles" xml:space="preserve">
     <value>الصوتيات</value>
+  </data>
+  <data name="SharedContent" xml:space="preserve">
+    <value>الوسائط المتبادلة</value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
+    <value>الوسائط المتبادلة</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>ملفات</value>
@@ -5988,6 +6024,9 @@
   <data name="StickersShare" xml:space="preserve">
     <value>مشاركة</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>إيقاف الكل</value>
   </data>
@@ -6005,6 +6044,9 @@
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>⁧هل أنت متأكد من رغبتك في إيقاف مشاركة موقعك الحي مع ⁨{0}⁩؟⁩</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>هل أنت متأكد من رغبتك في إيقاف عملية التحقق من رقم الهاتف؟</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>استخدام التخزين</value>
@@ -6177,6 +6219,9 @@
   <data name="ThemeDarkBlue" xml:space="preserve">
     <value>أزرق غامق</value>
   </data>
+  <data name="ThemeInfo" xml:space="preserve">
+    <value>اختيار لون مخصص للتطبيق</value>
+  </data>
   <data name="ThemePreview" xml:space="preserve">
     <value>معاينة النمط</value>
   </data>
@@ -6298,7 +6343,7 @@
     <value>اضغط باستمرار على المستخدم لرفع الحظر عنه</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>إعادة تعيين كافة إعدادات الإشعارات لجميع جهات الاتصال والمجموعات</value>
+    <value>إعادة تعيين كافة إعدادات الإشعارات المخصصة لجميع جهات الاتصال، المجموعات والقنوات.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>حدث خطأ غير معروف</value>
@@ -6441,6 +6486,9 @@
   </data>
   <data name="UserBio" xml:space="preserve">
     <value>النبذة التعريفية</value>
+  </data>
+  <data name="UserBioDetail" xml:space="preserve">
+    <value>أضف بضعَ كلمات عن نفسِك</value>
   </data>
   <data name="UserBioEmpty" xml:space="preserve">
     <value>لا شيء</value>

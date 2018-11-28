@@ -580,7 +580,7 @@ namespace Unigram.Common
                     phoneCode = phoneCode.Substring(0, 3) + "-" + phoneCode.Substring(3);
                 }
 
-                await TLMessageDialog.ShowAsync(string.Format("Strings.Resources.OtherLoginCode", phoneCode), Strings.Resources.AppName, Strings.Resources.OK);
+                await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OtherLoginCode, phoneCode), Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 

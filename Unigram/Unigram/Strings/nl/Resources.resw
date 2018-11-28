@@ -550,6 +550,9 @@
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Contact echt verwijderen?</value>
   </data>
+  <data name="AreYouSureDeleteGIF" xml:space="preserve">
+    <value>Echt deze GIF verwijderen?</value>
+  </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>{0} echt verwijderen?</value>
   </data>
@@ -1348,6 +1351,24 @@ Wil je dit niet dan kun je een privé-kanaal aanmaken.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chats</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>{0} chats</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>Controleren...</value>
   </data>
@@ -1529,6 +1550,9 @@ Zodra {1} Telegram updatet werken foto's met timers voor 1 minuut of minder in d
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>NU NIET</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Doorgaan</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>Doorgaan in het Nederlands</value>
@@ -1836,6 +1860,9 @@ Wil je extra functies en een hogere limiet? Waardeer op naar een supergroep:
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Geen code ontvangen?</value>
+  </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>Verstuur de code per SMS</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Snel delen</value>
@@ -2884,6 +2911,9 @@ over Telegram?</value>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>Donker thema schakelt automatisch in tijdens de nacht</value>
   </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>Referentie</value>
+  </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Interne opslag</value>
   </data>
@@ -3032,7 +3062,7 @@ Je kunt je taal altijd aanpassen via Instellingen.</value>
     <value>Aangepast</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Je staat op het punt om een onofficieel taalbestand toe te passen, dit taalbestand (**{0}**) is {1}% compleet.
+    <value>Je staat op het punt om een aangepast taalbestand toe te passen, dit taalbestand (**{0}**) is {1}% compleet.
 
 Hiermee vertaal je de complete app, correctie kun je doorgeven via het [translation platform].
 
@@ -3581,13 +3611,10 @@ Dit kan enkele minuten duren.</value>
     <value>Nog geen chats</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Begin een gesprek door op de opstelknop rechtsonder te drukken
-of druk op de menuknop voor meer opties.</value>
+    <value>Begin een gesprek door op de opstelknop rechtsonder te drukken.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>Begin een gesprek door op de
-opstelknop rechtsonder te drukken
-of druk op de menuknop voor meer opties.</value>
+    <value>Begin een gesprek door op de opstelknop rechtsonder te drukken.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Nog geen contacten</value>
@@ -4148,6 +4175,11 @@ Het Telegram-team</value>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>URL {0} openen?</value>
   </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>Je logincode is **{0}**. Voer de code in in de Telegram-app waarop je probeert in te loggen.
+
+Geef deze code nooit aan iemand anders.</value>
+  </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Actieve sessies</value>
   </data>
@@ -4428,7 +4460,7 @@ vanaf meerdere apparaten.</value>
     <value>Voer de bevestigingscode in die we hebben verstuurd naar {0}.</value>
   </data>
   <data name="PassportExpired" xml:space="preserve">
-    <value>Verloopt</value>
+    <value>Verloopdatum</value>
   </data>
   <data name="PassportFemale" xml:space="preserve">
     <value>Vrouw</value>
@@ -5752,6 +5784,9 @@ Herstart de app om deze optie actief te maken.</value>
   <data name="SendingPhoto" xml:space="preserve">
     <value>foto versturen</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>SMS sturen...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Video versturen</value>
   </data>
@@ -5760,6 +5795,9 @@ Herstart de app om deze optie actief te maken.</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>We hebben de code naar je andere  **Telegram**-app gestuurd.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>Controleer je Telegramberichten</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>We bellen je op nummer **{0}**.
@@ -5771,6 +5809,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>We hebben een sms-bericht met activatiecode verzonden naar **{0}**.</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>Code invoeren</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>Servicemeldingen</value>
@@ -5870,6 +5911,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="SharedContent" xml:space="preserve">
     <value>Gedeelde inhoud</value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
+    <value>Gedeelde content</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>BESTANDEN</value>
@@ -6021,6 +6065,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="StickersShare" xml:space="preserve">
     <value>Delen</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>ALLES STOPPEN</value>
   </data>
@@ -6038,6 +6085,12 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Echt stoppen met het delen van je live-locatie met {0}?</value>
+  </data>
+  <data name="StopLoading" xml:space="preserve">
+    <value>Stopped met laden?</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>Wil je telefoonnummerverificatieproces stoppen?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Opslaggebruik</value>
@@ -6335,7 +6388,7 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
     <value>Gebruiker vasthouden om te deblokkeren.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Aangepaste meldingsinstellingen wissen voor contacten en groepen.</value>
+    <value>Alle aangepaste meldingsinstellingen wissen voor contacten, groepen en kanalen.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Onbekende fout</value>
@@ -6729,6 +6782,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Wachten</value>
+  </data>
+  <data name="WaitMore" xml:space="preserve">
+    <value>Langer wachten</value>
   </data>
   <data name="WaitingForNetwork" xml:space="preserve">
     <value>Wachten op netwerk</value>

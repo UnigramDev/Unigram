@@ -212,7 +212,7 @@
     <value>un1 ancló un GIF</value>
   </data>
   <data name="ActionPinnedMusic" xml:space="preserve">
-    <value>un1 ancló una pista</value>
+    <value>un1 ancló un audio</value>
   </data>
   <data name="ActionPinnedNoText" xml:space="preserve">
     <value>un1 ancló un mensaje</value>
@@ -386,10 +386,10 @@
     <value>Permitir personalización</value>
   </data>
   <data name="AllowFillNumber" xml:space="preserve">
-    <value>Por favor, permite a Telegram recibir llamadas y SMS, para que podamos ingresar tu número, enviarte un código e ingresarlo por ti.</value>
+    <value>Por favor, permite a Telegram recibir llamadas y SMS para que podamos ingresar tu número, enviarte un código e ingresarlo por ti.</value>
   </data>
   <data name="AllowReadCall" xml:space="preserve">
-    <value>Por favor, permite a Telegram recibir llamadas, para ingresar el código automáticamente.</value>
+    <value>Por favor, permite a Telegram recibir llamadas para ingresar el código automáticamente.</value>
   </data>
   <data name="AllowReadCallAndSms" xml:space="preserve">
     <value>Por favor, permite a Telegram recibir llamadas y SMS, para ingresar el código automáticamente.</value>
@@ -503,7 +503,7 @@
     <value>Sin máscaras archivadas</value>
   </data>
   <data name="ArchivedMasksInfo" xml:space="preserve">
-    <value>Puedes instalar hasta 200 packs de máscaras. Cuando instales más, se archivarán los que no usas.</value>
+    <value>Puedes añadir hasta 200 packs de máscaras. Si añades más, se archivarán los que no uses.</value>
   </data>
   <data name="ArchivedStickers" xml:space="preserve">
     <value>Stickers archivados</value>
@@ -518,7 +518,7 @@
     <value>Stickers no archivados</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
-    <value>Puedes instalar hasta 200 packs de stickers. Cuando instales más, se archivarán los que no usas.</value>
+    <value>Puedes añadir hasta 200 packs de stickers. Si añades más, se archivarán los que no uses.</value>
   </data>
   <data name="AreTyping" xml:space="preserve">
     <value>están escribiendo...</value>
@@ -549,6 +549,9 @@
   </data>
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>¿Quieres eliminar este contacto?</value>
+  </data>
+  <data name="AreYouSureDeleteGIF" xml:space="preserve">
+    <value>¿Quieres eliminar este GIF?</value>
   </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>¿Quieres eliminar {0}?</value>
@@ -641,7 +644,7 @@ Por favor, mira las <![CDATA[<a href="https://telegram.org/faq/es#general">Pregu
     <value>Los administradores del grupo han restringido que envíes contenido integrado</value>
   </data>
   <data name="AttachLiveLocation" xml:space="preserve">
-    <value>Ubicación en directo</value>
+    <value>Ubicación en tiempo real</value>
   </data>
   <data name="AttachLiveLocationIsSharing" xml:space="preserve">
     <value>{0} compartida con {1}</value>
@@ -1137,13 +1140,13 @@ Nota: Si olvidas el código, tendrás que eliminar y reinstalar la aplicación. 
     <value>{0} publicó un GIF</value>
   </data>
   <data name="ChannelMessageLiveLocation" xml:space="preserve">
-    <value>{0} publicó una ubicación en directo</value>
+    <value>{0} publicó una ubicación en tiempo real</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} publicó una ubicación</value>
   </data>
   <data name="ChannelMessageMusic" xml:space="preserve">
-    <value>{0} publicó una pista</value>
+    <value>{0} publicó un audio</value>
   </data>
   <data name="ChannelMessageNoText" xml:space="preserve">
     <value>{0} publicó un mensaje</value>
@@ -1286,7 +1289,7 @@ Si no estás interesado, te sugerimos crear un canal privado.</value>
     <value>¿Eliminar a {0} de las sugerencias?</value>
   </data>
   <data name="ChatHistory" xml:space="preserve">
-    <value>Historial para los nuevos miembros</value>
+    <value>Historial para nuevos miembros</value>
   </data>
   <data name="ChatHistoryHidden" xml:space="preserve">
     <value>Oculto</value>
@@ -1348,6 +1351,24 @@ Si no estás interesado, te sugerimos crear un canal privado.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chats</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>{0} chats</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>Comprobando...</value>
   </data>
@@ -1355,10 +1376,10 @@ Si no estás interesado, te sugerimos crear un canal privado.</value>
     <value>Elige un país</value>
   </data>
   <data name="ChooseFromGallery" xml:space="preserve">
-    <value>Subir desde galería</value>
+    <value>Subir desde la galería</value>
   </data>
   <data name="ChooseFromSearch" xml:space="preserve">
-    <value>Búsqueda web</value>
+    <value>Buscar en la web</value>
   </data>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Elige desde tus stickers</value>
@@ -1529,6 +1550,9 @@ Cuando {1} actualice Telegram, las fotos con autodestrucción de 1 minuto o meno
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>AHORA NO</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continuar</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>Continuar en español</value>
@@ -1837,6 +1861,9 @@ Para superar el límite y tener características adicionales, conviértelo en un
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>¿No recibiste el código?</value>
   </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>Enviar el código como un SMS</value>
+  </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Direct Share</value>
   </data>
@@ -1940,7 +1967,7 @@ Para superar el límite y tener características adicionales, conviértelo en un
     <value>Editar mensaje</value>
   </data>
   <data name="EditMessageError" xml:space="preserve">
-    <value>No puedes editar este mensaje.</value>
+    <value>Lo sentimos, no puedes editar este mensaje.</value>
   </data>
   <data name="EditMessageMedia" xml:space="preserve">
     <value>Toca para reemplazar</value>
@@ -2347,10 +2374,10 @@ Duración: {1}</value>
     <value>Acciones seleccionadas</value>
   </data>
   <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
-    <value>un1 ocultó el historial para los nuevos miembros</value>
+    <value>un1 ocultó el historial para nuevos miembros</value>
   </data>
   <data name="EventLogToggledInvitesHistoryOn" xml:space="preserve">
-    <value>un1 dejó visible el historial para los nuevos miembros</value>
+    <value>un1 dejó visible el historial para nuevos miembros</value>
   </data>
   <data name="EventLogToggledInvitesOff" xml:space="preserve">
     <value>un1 desactivó las invitaciones</value>
@@ -2575,7 +2602,7 @@ Duración: {1}</value>
     <value/>
   </data>
   <data name="ForwardedMusicOne" xml:space="preserve">
-    <value>Pista reenviada</value>
+    <value>Audio reenviado</value>
   </data>
   <data name="ForwardedMusicTwo" xml:space="preserve">
     <value/>
@@ -2587,7 +2614,7 @@ Duración: {1}</value>
     <value/>
   </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
-    <value>{0} pistas reenviadas</value>
+    <value>{0} audios reenviados</value>
   </data>
   <data name="ForwardedPhotoZero" xml:space="preserve">
     <value/>
@@ -2884,6 +2911,9 @@ sobre Telegram?</value>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>El tema oscuro se usará automáticamente en la noche</value>
   </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>Referencia</value>
+  </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Almacenamiento interno</value>
   </data>
@@ -3032,7 +3062,7 @@ Puedes cambiar el idioma cuando quieras en Ajustes.</value>
     <value>Personalizado</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Estás a punto de aplicar un pack de idioma no oficial (**{0}**) que está completo en un {1}%.
+    <value>Estás a punto de aplicar un pack de idioma personalizado (**{0}**) que está completo en un {1}%.
 
 Esto traducirá toda la interfaz. Puedes sugerir correcciones en la [plataforma de traducción].
 
@@ -3168,7 +3198,7 @@ Puedes cambiar el idioma cuando quieras en Ajustes.</value>
     <value>Enlaces</value>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
-    <value>Elige durante cuánto tiempo las personas de este chat verán tu ubicación en directo.</value>
+    <value>Elige durante cuánto tiempo las personas de este chat verán tu ubicación en tiempo real.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>Elige durante cuánto tiempo {0} verá tu ubicación exacta.</value>
@@ -3581,14 +3611,10 @@ Esto puede tardar algunos minutos.</value>
     <value>Aún no hay chats...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Envía mensajes tocando el botón del
-lápiz, en la esquina inferior derecha, 
-o pulsa el botón menú para más opciones.</value>
+    <value>Envía mensajes tocando el botón del lápiz en la esquina inferior derecha.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>Envía mensajes tocando el botón del
-lápiz, en la esquina inferior derecha, 
-o pulsa el botón menú para más opciones.</value>
+    <value>Envía mensajes tocando el botón del lápiz en la esquina inferior derecha.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Aún no hay contactos</value>
@@ -3728,10 +3754,10 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} ancló un mapa</value>
   </data>
   <data name="NotificationActionPinnedGeoLive" xml:space="preserve">
-    <value>{0} ancló una ubicación en directo en el grupo {1}</value>
+    <value>{0} ancló una ubicación en tiempo real en el grupo {1}</value>
   </data>
   <data name="NotificationActionPinnedGeoLiveChannel" xml:space="preserve">
-    <value>{0} ancló una ubicación en directo</value>
+    <value>{0} ancló una ubicación en tiempo real</value>
   </data>
   <data name="NotificationActionPinnedGif" xml:space="preserve">
     <value>{0} ancló un GIF en el grupo {1}</value>
@@ -3746,10 +3772,10 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} ancló una factura</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
-    <value>{0} ancló una pista en el grupo {1}</value>
+    <value>{0} ancló un audio en el grupo {1}</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
-    <value>{0} ancló una pista</value>
+    <value>{0} ancló un audio</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
     <value>{0} ancló un mensaje en el grupo {1}</value>
@@ -3881,13 +3907,13 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} envió una factura al grupo {1} por {2}</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
-    <value>{0} envió una ubicación en directo al grupo {1}</value>
+    <value>{0} compartió una ubicación en tiempo real al grupo {1}</value>
   </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} envió una ubicación al grupo {1}</value>
   </data>
   <data name="NotificationMessageGroupMusic" xml:space="preserve">
-    <value>{0} envió una pista al grupo {1}</value>
+    <value>{0} envió un audio al grupo {1}</value>
   </data>
   <data name="NotificationMessageGroupNoText" xml:space="preserve">
     <value>{0} envió un mensaje al grupo {1}</value>
@@ -3914,13 +3940,13 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} te envió una factura por {1}</value>
   </data>
   <data name="NotificationMessageLiveLocation" xml:space="preserve">
-    <value>{0} te envió una ubicación en directo</value>
+    <value>{0} te envió una ubicación en tiempo real</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} te envió una ubicación</value>
   </data>
   <data name="NotificationMessageMusic" xml:space="preserve">
-    <value>{0} te envió una pista</value>
+    <value>{0} te envió un audio</value>
   </data>
   <data name="NotificationMessageNoText" xml:space="preserve">
     <value>{0} te envió un mensaje</value>
@@ -4075,10 +4101,10 @@ El equipo de Telegram</value>
     <value>Conexión en segundo plano</value>
   </data>
   <data name="NotificationsServiceConnectionInfo" xml:space="preserve">
-    <value>Conexión de bajo impacto, en segundo plano, para recibir notificaciones. Úsala para tener notificaciones fiables.</value>
+    <value>Mantiene una conexión de bajo impacto en segundo plano de Telegram para notificaciones más fiables.</value>
   </data>
   <data name="NotificationsServiceInfo" xml:space="preserve">
-    <value>Vuelve a abrir la app cuando el usuario o el sistema la cierra. Esto garantiza que la app pueda mostrar notificaciones.</value>
+    <value>Vuelve a abrir la app cuando se cierra. Actívala para notificaciones más fiables.</value>
   </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>Desactivar</value>
@@ -4148,6 +4174,11 @@ El equipo de Telegram</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>¿Abrir {0}?</value>
+  </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>Tu código de inicio de sesión es **{0}**. Ponlo en la app de Telegram en la que estás intentando iniciar sesión.
+
+No le des este código a nadie.</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Sesiones activas</value>
@@ -5365,6 +5396,9 @@ Los pagos irán directamente al desarrollador de {0}. Telegram no puede entregar
   <data name="ReportChat" xml:space="preserve">
     <value>Reportar</value>
   </data>
+  <data name="ReportChatChild" xml:space="preserve">
+    <value>Abuso infantil</value>
+  </data>
   <data name="ReportChatDescription" xml:space="preserve">
     <value>Descripción</value>
   </data>
@@ -5696,7 +5730,7 @@ Puede ser necesario reiniciar la aplicación para que tenga efecto.</value>
     <value>Enviar {0}</value>
   </data>
   <data name="SendLiveLocation" xml:space="preserve">
-    <value>Enviar mi ubicación durante...</value>
+    <value>Ubicación en tiempo real</value>
   </data>
   <data name="SendLiveLocationFor15m" xml:space="preserve">
     <value>durante 15 minutos</value>
@@ -5752,6 +5786,9 @@ Puede ser necesario reiniciar la aplicación para que tenga efecto.</value>
   <data name="SendingPhoto" xml:space="preserve">
     <value>enviando una foto...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>Enviando SMS...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Enviando video...</value>
   </data>
@@ -5760,6 +5797,9 @@ Puede ser necesario reiniciar la aplicación para que tenga efecto.</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>Enviamos el código a la aplicación **Telegram** en tu otro dispositivo.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>Revisa tus mensajes en Telegram</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Estamos llamando al número **{0}**.
@@ -5771,6 +5811,9 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Enviamos un SMS con el código de activación al **{0}**.</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>Pon el código</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>Servicio de notificaciones</value>
@@ -5871,6 +5914,9 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
   <data name="SharedContent" xml:space="preserve">
     <value>Contenido compartido</value>
   </data>
+  <data name="SharedContentTitle" xml:space="preserve">
+    <value>Contenido compartido</value>
+  </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>ARCHIVOS</value>
   </data>
@@ -5902,7 +5948,7 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
     <value>VOZ</value>
   </data>
   <data name="SharingLiveLocationTitle" xml:space="preserve">
-    <value>Estás enviando tu ubicación en directo a {0}</value>
+    <value>Enviando tu ubicación en tiempo real a {0}</value>
   </data>
   <data name="SharingYouAndOtherName" xml:space="preserve">
     <value>Tú y {0}</value>
@@ -6021,6 +6067,9 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
   <data name="StickersShare" xml:space="preserve">
     <value>Compartir</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Detener</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>DETENER TODO</value>
   </data>
@@ -6031,13 +6080,19 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
     <value>Dejar de enviar mi ubicación</value>
   </data>
   <data name="StopLiveLocationAlertAll" xml:space="preserve">
-    <value>¿Quieres dejar de enviar tu ubicación en directo?</value>
+    <value>¿Quieres dejar de enviar tu ubicación en tiempo real?</value>
   </data>
   <data name="StopLiveLocationAlertToGroup" xml:space="preserve">
-    <value>¿Quieres dejar de enviar la ubicación en directo a {0}?</value>
+    <value>¿Quieres dejar de enviar la ubicación en tiempo real a {0}?</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
-    <value>¿Quieres dejar de enviar la ubicación en directo a {0}?</value>
+    <value>¿Quieres dejar de enviar la ubicación en tiempo real a {0}?</value>
+  </data>
+  <data name="StopLoading" xml:space="preserve">
+    <value>¿Detener la carga?</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>¿Quieres detener el proceso de verificación del número de teléfono?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Uso de almacenamiento</value>
@@ -6334,7 +6389,7 @@ Pero si no estás de acuerdo con las modestas necesidades de Telegram, no podrem
     <value>Mantén pulsado sobre un usuario para desbloquearlo.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Deshacer las notificaciones personalizadas para todos tus contactos y grupos</value>
+    <value>Deshacer todos los ajustes de notificaciones personalizadas para todos tus contactos, grupos y canales.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Error desconocido</value>
@@ -6728,6 +6783,9 @@ Puedes usar **a–z**, **0–9** y guiones bajos. La longitud mínima es de **5*
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Esperando</value>
+  </data>
+  <data name="WaitMore" xml:space="preserve">
+    <value>Esperar más</value>
   </data>
   <data name="WaitingForNetwork" xml:space="preserve">
     <value>Esperando red...</value>

@@ -1346,6 +1346,24 @@ Wenn du das nicht möchtest, empfehlen wir dir einen privaten Kanal.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} Chats</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value>{0} Chat</value>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>{0} Chats</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>Prüfe...</value>
   </data>
@@ -1527,6 +1545,9 @@ Sobald {1} Telegram aktualisiert, werden Bilder mit Timern von 1 Minute und kür
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>JETZT NICHT</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Fortsetzen</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>Weiter auf Deutsch</value>
@@ -1835,6 +1856,9 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Code nicht erhalten?</value>
+  </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>Code per SMS senden</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Direktes Teilen</value>
@@ -2455,7 +2479,7 @@ Dauer: {1}</value>
     <value>Fingerabdruck bestätigen </value>
   </data>
   <data name="FingerprintNotRecognized" xml:space="preserve">
-    <value>Abdruck nicht erkannt; erneut versuchen </value>
+    <value>Fingerabdruck wurde nicht erkannt. Bitte erneut versuchen.</value>
   </data>
   <data name="FirstName" xml:space="preserve">
     <value>Vorname (erforderlich)</value>
@@ -2887,6 +2911,9 @@ zu Telegram?</value>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>Das dunkle Farbthema wird Nachts automatisch aktiviert</value>
   </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>Einzelnachweis</value>
+  </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Interner Speicher</value>
   </data>
@@ -3035,7 +3062,7 @@ Die Sprache lässt sich jederzeit wieder in den Einstellungen ändern.</value>
     <value>Eigene</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Du versuchst ein inoffizielles Sprachpaket (**{0}**) anzuwenden, was zu {1}% fertiggestellt wurde.
+    <value>Du versuchst ein benutzerdefiniertes Sprachpaket (**{0}**) anzuwenden, was zu {1}% fertiggestellt wurde.
 
 Das wird die gesamte Oberfläche übersetzen. Korrekturen kannst du auf der [Übersetzungsplattform] vorschlagen.
 
@@ -3584,14 +3611,11 @@ Hinweis: Der Vorgang kann mehrere Minuten dauern.</value>
     <value>Noch keine Chats…</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Tippe unten auf den Stift für deine erste
-Chatnachricht oder auf den Menüknopf
-um die restlichen Optionen zu öffnen.</value>
+    <value>Tippe unten rechts auf den Stift
+für deine erste Chatnachricht.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>Tippe unten auf den Stift für deine erste
-Chatnachricht oder auf den Menüknopf
-um die restlichen Optionen zu öffnen.</value>
+    <value>Tippe unten auf den Stift für deine erste Chatnachricht.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Noch keine Kontakte</value>
@@ -4150,6 +4174,11 @@ Dein Telegram Team</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>URL {0} öffnen?</value>
+  </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>Dein Anmeldecode lautet **{0}**. Gebe ihn in der Telegram-App ein, bei der du dich anmelden möchtest.
+
+Den Code niemals weitergeben.</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Andere Sitzungen</value>
@@ -5755,6 +5784,9 @@ Du musst die App nach der Änderung neu starten.</value>
   <data name="SendingPhoto" xml:space="preserve">
     <value>schickt Bild...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>SMS wird gesendet...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Sende Video...</value>
   </data>
@@ -5763,6 +5795,9 @@ Du musst die App nach der Änderung neu starten.</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>Code wurde dir per **Telegram** an deine aktive App geschickt.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>Prüfe deine Telegram-Nachrichten</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Wir rufen dich jetzt unter **{0}** an.
@@ -5774,6 +5809,9 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Wir haben dir eine SMS mit Aktivierungscode an **{0}** gesendet.</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>Code eingeben</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>Servicemeldungen</value>
@@ -5872,6 +5910,9 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Audiodateien</value>
   </data>
   <data name="SharedContent" xml:space="preserve">
+    <value>Geteilte Inhalte</value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
     <value>Geteilte Inhalte</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
@@ -6024,6 +6065,9 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="StickersShare" xml:space="preserve">
     <value>Teilen</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Stoppen</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>ALLE BEENDEN</value>
   </data>
@@ -6041,6 +6085,9 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Möchtest du deinen Live-Standort mit {0} nicht mehr teilen?</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>Möchtest du wirklich den Verifikationsvorgang stoppen? </value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Speichernutzung</value>
@@ -6337,7 +6384,7 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
     <value>Gedrückt halten um freizugeben.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Das setzt alle deine benutzerdefinierten Einstellungen für Kontakte und Gruppen zurück.</value>
+    <value>Das setzt all deine angepassten Einstellungen für Kontakte, Gruppen und Kanäle zurück.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Unbekannter Fehler</value>
@@ -6583,7 +6630,7 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
     <value>{0} Nutzer</value>
   </data>
   <data name="Vibrate" xml:space="preserve">
-    <value>Vibrieren</value>
+    <value>Vibration</value>
   </data>
   <data name="VibrationDefault" xml:space="preserve">
     <value>Standard</value>

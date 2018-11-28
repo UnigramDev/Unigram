@@ -1348,6 +1348,24 @@
   <data name="ChatsOther" xml:space="preserve">
     <value>⁧⁨{0}⁩ گفتگو⁩</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value>⁧⁨{0}⁩ گفتگو⁩</value>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>⁧⁨{0}⁩ گفتگو⁩</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>در حال بررسی...</value>
   </data>
@@ -1529,6 +1547,9 @@
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>الان نه</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>ادامه</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>با زبان فارسی ادامه دهید</value>
@@ -1836,6 +1857,9 @@
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>کد را دریافت نکردید؟</value>
+  </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>ارسال کد به صورت پیامک</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
     <value>به اشتراک گذاری مستقیم</value>
@@ -2334,7 +2358,7 @@
     <value/>
   </data>
   <data name="ExceptionOne" xml:space="preserve">
-    <value>⁧⁨{0}⁩ استثنا⁩</value>
+    <value>⁧⁨{0}⁩ استثناء⁩</value>
   </data>
   <data name="ExceptionTwo" xml:space="preserve">
     <value/>
@@ -2346,7 +2370,7 @@
     <value/>
   </data>
   <data name="ExceptionOther" xml:space="preserve">
-    <value>⁧⁨{0}⁩ استثنا⁩</value>
+    <value>⁧⁨{0}⁩ استثناء⁩</value>
   </data>
   <data name="Exposure" xml:space="preserve">
     <value>آشکارسازی</value>
@@ -2364,7 +2388,7 @@
     <value>استیکرهای محبوب</value>
   </data>
   <data name="FeaturedStickersInfo" xml:space="preserve">
-    <value>این استکیرها در حال حاضر در تلگرام محبوب هستند. شما می‌توانید استیکرهای سفارشی را توسط ربات @stickers اضافه کنید.</value>
+    <value>این استکیرها در حال حاضر در تلگرام محبوب هستند. شما می‌توانید استیکرهای سفارشی را از طریق ربات @stickers اضافه کنید.</value>
   </data>
   <data name="FileUploadLimit" xml:space="preserve">
     <value>⁧حجم فایل نباید بیش از ⁨{0}⁩ باشد⁩</value>
@@ -2829,6 +2853,9 @@
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>قالب تیره به‌ صورت خودکار در هنگام شب فعال خواهد شد</value>
   </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>منابع</value>
+  </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>فضای ذخیره‌سازی داخلی</value>
   </data>
@@ -2966,7 +2993,7 @@
   <data name="LanguageAlert" xml:space="preserve">
     <value>⁧شما می‌خواهید بسته زبانی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩% کامل است.
 
-این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را در [پلتفرم ترجمه] پیشنهاد دهید.
+این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را از طریق [پلتفرم ترجمه] پیشنهاد دهید.
 
 شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات به زبان قبلی تغییر دهید.⁩</value>
   </data>
@@ -2979,7 +3006,7 @@
   <data name="LanguageCustomAlert" xml:space="preserve">
     <value>⁧شما می‌خواهید یک بسته زبان غیر رسمی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩% کامل است.
 
-این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را در [پلتفرم ترجمه] پیشنهاد دهید.
+این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را از طریق [پلتفرم ترجمه] پیشنهاد دهید.
 
 شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات به زبان قبلی تغییر دهید.⁩</value>
   </data>
@@ -3523,14 +3550,10 @@
     <value>هنوز گفتگویی موجود نیست...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>با فشردن دکمه مداد در گوشه پایین سمت راست
-پیام‌رسانی را شروع کنید
-یا برای گزینه‌های بیشتر دکمه فهرست را لمس کنید. </value>
+    <value>با لمس دکمه مداد در گوشه پایین سمت راست پیام‌رسانی را شروع کنید.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>با فشردن دکمه ارسال در گوشه پایین سمت راست
-پیام‌رسانی را شروع کنید
-یا برای گزینه‌های بیشتر دکمه فهرست را بزنید.</value>
+    <value>با فشردن دکمه مداد در گوشه پایین سمت راست پیام‌رسانی را شروع کنید.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>هنوز مخاطبی موجود نیست</value>
@@ -3970,7 +3993,7 @@
     <value>چراغ LED، یک چراغ کوچک بر روی بعضی از دستگاه‌ها است که هنگام دریافت پیام جدید، چشمک می‌زند.</value>
   </data>
   <data name="NotificationsMuted" xml:space="preserve">
-    <value>بی‌صدا شد</value>
+    <value>بی‌صدا</value>
   </data>
   <data name="NotificationsOff" xml:space="preserve">
     <value>غیرفعال</value>
@@ -4030,7 +4053,7 @@
     <value>فعال کردن</value>
   </data>
   <data name="NotificationsUnmuted" xml:space="preserve">
-    <value>صدادار شد</value>
+    <value>صدادار</value>
   </data>
   <data name="NumberUnknown" xml:space="preserve">
     <value>ناشناس</value>
@@ -4092,6 +4115,11 @@
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>⁧آدرس ⁨{0}⁩ باز شود؟⁩</value>
   </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>⁧کد ورود به حساب کاربری شما **⁨{0}⁩** است. آن را در برنامه تلگرامی وارد کنید که سعی دارید در آن به حساب کاربری خود وارد شوید.
+
+این کد را به کسی ندهید.⁩</value>
+  </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>نشست‌های فعال</value>
   </data>
@@ -4114,7 +4142,7 @@
     <value>⁧مخاطبین من (+⁨{0}⁩)⁩</value>
   </data>
   <data name="P2PEnabledWith" xml:space="preserve">
-    <value>با این افراد از تنظیمات نظیر به نظیر استفاده شود</value>
+    <value>با این افراد از نظیر به نظیر استفاده شود</value>
   </data>
   <data name="P2PEverybody" xml:space="preserve">
     <value>همه</value>
@@ -4869,7 +4897,7 @@
     <value>یک گذرواژه وارد کنید</value>
   </data>
   <data name="PaymentPasswordInfo" xml:space="preserve">
-    <value>لطفاً جهت حفاظت از اطلاعات پرداخت خود گذرواژه‌ای ایجاد کنید. این گذرواژه هنگام ورود به حساب کاربری از شما پرسیده می‌شود.</value>
+    <value>لطفاً جهت محافظت از اطلاعات پرداخت خود گذرواژه‌ای ایجاد کنید. این گذرواژه هنگام ورود به حساب کاربری از شما پرسیده می‌شود.</value>
   </data>
   <data name="PaymentPasswordReEnter" xml:space="preserve">
     <value>گذرواژه خود را دوباره وارد کنید</value>
@@ -5128,7 +5156,7 @@
     <value>درباره این پیش‌نمایش نظر دهید</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
-    <value>حتی اگر دستگاه شما روی حالت مزاحم نشوید باشد اعلان‌های با اولویت بالا کار خواهند کرد.</value>
+    <value>حتی اگر دستگاه شما بر روی حالت مزاحم نشوید باشد اعلان‌های با اولویت بالا کار خواهند کرد.</value>
   </data>
   <data name="PrivacyAdvanced" xml:space="preserve">
     <value>پیشرفته</value>
@@ -5272,7 +5300,7 @@
     <value>در حال ضبط پیام ویدئویی...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
-    <value>ایمیل بازیابی </value>
+    <value>ایمیل بازیابی</value>
   </data>
   <data name="RegisterText" xml:space="preserve">
     <value>نام و نام خانوادگی خود را وارد نمایید</value>
@@ -5693,6 +5721,9 @@
   <data name="SendingPhoto" xml:space="preserve">
     <value>در حال ارسال عکس...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>در حال ارسال پیامک...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>در حال ارسال ویدئو...</value>
   </data>
@@ -5701,6 +5732,9 @@
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>ما کد را به برنامه‌ **تلگرام** نصب‌ شده در دستگاه دیگرتان ارسال کرده‌ایم.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>پیام‌های تلگرام خود را بررسی کنید</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>⁧ما با شماره شما **⁨{0}⁩** تماس می‌گیریم.
@@ -5712,6 +5746,9 @@
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>⁧ما پیامکی حاوی کد فعال‌سازی به شماره شما **⁨{0}⁩** ارسال کرده‌ایم.⁩</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>کد را وارد کنید</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>اعلان‌های سرویس‌</value>
@@ -5811,6 +5848,9 @@
   </data>
   <data name="SharedContent" xml:space="preserve">
     <value>محتوای اشتراکی</value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
+    <value>مخاطبین اشتراکی</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>فایل‌ها</value>
@@ -5962,6 +6002,9 @@
   <data name="StickersShare" xml:space="preserve">
     <value>به اشتراک گذاشتن</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>متوقف کردن</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>متوقف کردن همه</value>
   </data>
@@ -5979,6 +6022,9 @@
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>⁧آیا از متوقف کردن به اشتراک گذاری موقعیت لحظه‌ای خود با ⁨{0}⁩ اطمینان دارید؟⁩</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>آیا می‌خواهید فرآیند تأیید شماره تلفن را متوقف کنید؟</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>میزان استفاده از فضای ذخیره‌سازی</value>
@@ -6041,7 +6087,7 @@
     <value>این کار مخاطبین شما را از سرورهای تلگرام حذف می‌کند. در صورتی که «همگام‌سازی مخاطبین» فعال باشد، مخاطبین مجدداً همگام‌سازی می‌شوند.</value>
   </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
-    <value>این گزینه را روشن کنید تا مخاطبین این دستگاه به طور مداوم با حساب کاربری شما همگام‌سازی شوند.</value>
+    <value>این گزینه را فعال کنید تا مخاطبین این دستگاه به طور مداوم با حساب کاربری شما همگام‌سازی شوند.</value>
   </data>
   <data name="SyncContactsInfoOn" xml:space="preserve">
     <value>مخاطبین این دستگاه به حساب کاربری شما اضافه خواهند شد.</value>
@@ -6275,7 +6321,7 @@
     <value>روی کاربر لمس کنید و نگه دارید تا مسدودیت او رفع شود.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>بازگردانی تمامی اعلان‌های سفارشی برای تمامی مخاطبین و گروه‌ها به حالت قبلی</value>
+    <value>بازگردانی تمامی اعلان‌های سفارشی برای تمامی مخاطبین، گروه‌ها و کانال‌ها به حالت قبلی</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>خطای ناشناخته</value>
@@ -6287,7 +6333,7 @@
     <value>صدادار کردن</value>
   </data>
   <data name="UnofficialApp" xml:space="preserve">
-    <value>برنامه غیررسمی</value>
+    <value>برنامه غیر رسمی</value>
   </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>برداشتن سنجاق از بالا</value>

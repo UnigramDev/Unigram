@@ -550,6 +550,9 @@
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Вы точно хотите удалить этот контакт?</value>
   </data>
+  <data name="AreYouSureDeleteGIF" xml:space="preserve">
+    <value>Вы точно хотите удалить GIF?</value>
+  </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>Вы точно хотите удалить {0}?</value>
   </data>
@@ -1352,6 +1355,24 @@
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} чатов</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value>{0} чат</value>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value>{0} чата</value>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>Проверка...</value>
   </data>
@@ -1533,6 +1554,9 @@
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>НЕ СЕЙЧАС</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Продолжить</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>Продолжить на русском</value>
@@ -1840,6 +1864,9 @@
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Не получили код?</value>
+  </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>Отправить код через SMS</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Direct Share</value>
@@ -2886,6 +2913,9 @@
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>Тёмная тема будет автоматически включаться в ночное время</value>
   </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>Сноска</value>
+  </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Внутреннее хранилище</value>
   </data>
@@ -3034,7 +3064,7 @@
     <value>Сторонний</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Неофициальный перевод (**{0}**), который Вы собираетесь использовать, закончен на  {1}%.
+    <value>Сторонний перевод (**{0}**), который Вы собираетесь установить, закончен на  {1}%.
 
 Это изменит язык всего интерфейса. Предложить свою версию перевода можно через [платформу переводов].
 
@@ -3583,14 +3613,10 @@
     <value>Чатов пока нет...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Чтобы начать общаться,
-нажмите на значок карандаша в правом нижнем
-углу или на кнопку меню.</value>
+    <value>Чтобы написать сообщение, нажмите на значок карандаша в правом нижнем углу.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>Чтобы начать общаться,
-нажмите на значок нового чата в правом нижнем
-углу или на кнопку меню.</value>
+    <value>Чтобы написать сообщение, нажмите на значок карандаша в правом нижнем углу.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Контактов пока нет</value>
@@ -4148,6 +4174,11 @@
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Открыть URL {0}?</value>
+  </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>Ваш код для входа: **{0}**. Укажите его в приложении Telegram, в котором хотите зайти в свой аккаунт.
+
+Никому не передавайте этот код.</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Активные сеансы</value>
@@ -5750,6 +5781,9 @@
   <data name="SendingPhoto" xml:space="preserve">
     <value>отправляет фото...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>Отправка SMS...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Отправка видео...</value>
   </data>
@@ -5758,6 +5792,9 @@
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>Мы отправили код в приложение **Telegram** на другом вашем устройстве.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>Проверьте сообщения в Telegram</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Наш робот звонит на номер **{0}**.
@@ -5769,6 +5806,9 @@
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Мы отправили SMS с кодом проверки на Ваш телефон **{0}**.</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>Введите код</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>Служебные уведомления</value>
@@ -5867,6 +5907,9 @@
     <value>Аудиофайлы</value>
   </data>
   <data name="SharedContent" xml:space="preserve">
+    <value>Общие материалы</value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
     <value>Общие материалы</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
@@ -6020,6 +6063,9 @@
   <data name="StickersShare" xml:space="preserve">
     <value>Поделиться</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Остановить</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>ОСТАНОВИТЬ ВСЕ</value>
   </data>
@@ -6037,6 +6083,12 @@
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Вы точно хотите прекратить транслировать геопозицию в чат с {0}?</value>
+  </data>
+  <data name="StopLoading" xml:space="preserve">
+    <value>Остановить загрузку?</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>Вы действительно хотите остановить подтверждение номера телефона?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Использование диска</value>

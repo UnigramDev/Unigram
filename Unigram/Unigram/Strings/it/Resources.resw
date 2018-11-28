@@ -212,7 +212,7 @@
     <value>un1 ha fissato una GIF</value>
   </data>
   <data name="ActionPinnedMusic" xml:space="preserve">
-    <value>un1 ha fissato una traccia</value>
+    <value>un1 ha fissato un file audio</value>
   </data>
   <data name="ActionPinnedNoText" xml:space="preserve">
     <value>un1 ha fissato un messaggio</value>
@@ -479,7 +479,7 @@
     <value>Telegram</value>
   </data>
   <data name="Appearance" xml:space="preserve">
-    <value>Apparenza</value>
+    <value>Aspetto</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Applica traduzione</value>
@@ -503,7 +503,8 @@
     <value>Nessuna maschera archiviata</value>
   </data>
   <data name="ArchivedMasksInfo" xml:space="preserve">
-    <value>Puoi avere fino a 200 set di maschere installati. Le maschere non usate saranno archiviate quando ne aggiungerai altre.</value>
+    <value>Puoi aggiungere fino a 200 set di maschere.
+I set non usati saranno archiviati quando ne aggiungerai altri.</value>
   </data>
   <data name="ArchivedStickers" xml:space="preserve">
     <value>Sticker archiviati</value>
@@ -518,7 +519,8 @@
     <value>Nessuno sticker archiviato</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
-    <value>Puoi avere fino a 200 set di sticker installati. Gli sticker non usati saranno archiviati quando ne aggiungerai altri.</value>
+    <value>Puoi aggiungere fino a 200 set di sticker.
+I set non usati saranno archiviati quando ne aggiungerai altri.</value>
   </data>
   <data name="AreTyping" xml:space="preserve">
     <value>stanno scrivendo...</value>
@@ -549,6 +551,9 @@
   </data>
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Sei sicuro di voler eliminare questo contatto?</value>
+  </data>
+  <data name="AreYouSureDeleteGIF" xml:space="preserve">
+    <value>Sei sicuro di voler eliminare questa GIF?</value>
   </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>Sei sicuro di voler eliminare {0}?</value>
@@ -1143,7 +1148,7 @@ Nota: se ti dimentichi il codice, dovrai eliminare e reinstallare l'app. Tutte l
     <value>{0} ha pubblicato una posizione</value>
   </data>
   <data name="ChannelMessageMusic" xml:space="preserve">
-    <value>{0} ha pubblicato una traccia</value>
+    <value>{0} ha pubblicato una file audio</value>
   </data>
   <data name="ChannelMessageNoText" xml:space="preserve">
     <value>{0} ha pubblicato un messaggio</value>
@@ -1348,6 +1353,24 @@ Se non sei interessato, ti consigliamo di creare un canale privato.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chat</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>Controllo...</value>
   </data>
@@ -1529,6 +1552,9 @@ Una volta che {1} avrà aggiornato Telegram, le foto con il timer minore di 1 mi
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>NON ADESSO</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continua</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>Continua in italiano</value>
@@ -1837,6 +1863,9 @@ Per superare il limite e sbloccare nuove funzioni, aggiorna a supergruppo:
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Non hai ricevuto il codice?</value>
   </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>Invia il codice come SMS</value>
+  </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Condivisione diretta</value>
   </data>
@@ -1856,7 +1885,7 @@ Per superare il limite e sbloccare nuove funzioni, aggiorna a supergruppo:
     <value>Annullare le modifiche?</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
-    <value>Sei sicuro di voler interrompere la registrazione e scartare il tuo videomessaggio?</value>
+    <value>Sei sicuro di voler arrestare la registrazione e scartare il tuo videomessaggio?</value>
   </data>
   <data name="DiscardVideoMessageTitle" xml:space="preserve">
     <value>Scarta videomessaggio</value>
@@ -1865,7 +1894,7 @@ Per superare il limite e sbloccare nuove funzioni, aggiorna a supergruppo:
     <value>Scarta</value>
   </data>
   <data name="DiscardVoiceMessageDescription" xml:space="preserve">
-    <value>Sei sicuro di voler interrompere la registrazione e scartare il tuo messaggio vocale?</value>
+    <value>Sei sicuro di voler arrestare la registrazione e scartare il tuo messaggio vocale?</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>Scarta messaggio vocale</value>
@@ -2452,7 +2481,7 @@ Durata: {1}</value>
     <value>Conferma impronta digitale per continuare</value>
   </data>
   <data name="FingerprintNotRecognized" xml:space="preserve">
-    <value>Impronta digitale non riconosciuta. Riprova</value>
+    <value>Impronta digitale non riconosciuta. Riprova.</value>
   </data>
   <data name="FirstName" xml:space="preserve">
     <value>Nome (obbligatorio)</value>
@@ -2575,7 +2604,7 @@ Durata: {1}</value>
     <value/>
   </data>
   <data name="ForwardedMusicOne" xml:space="preserve">
-    <value>Traccia inoltrata</value>
+    <value>File audio inoltrato</value>
   </data>
   <data name="ForwardedMusicTwo" xml:space="preserve">
     <value/>
@@ -2587,7 +2616,7 @@ Durata: {1}</value>
     <value/>
   </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
-    <value>{0} tracce inoltrate</value>
+    <value>{0} file audio inoltrati</value>
   </data>
   <data name="ForwardedPhotoZero" xml:space="preserve">
     <value/>
@@ -2884,6 +2913,9 @@ su Telegram?</value>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>Il tema scuro si attiverà automaticamente durante la notte</value>
   </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>Note</value>
+  </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Archivio interno</value>
   </data>
@@ -3032,7 +3064,7 @@ Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</value>
     <value>Personalizzata</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Stai per applicare una lingua non ufficiale (**{0}**) che è completa al {1}%.
+    <value>Stai per applicare una lingua (**{0}**) che è completa al {1}%.
 
 Questo tradurrà l'intera interfaccia. Puoi suggerire correzioni nella [piattaforma di traduzione].
 
@@ -3227,7 +3259,7 @@ Questa operazione può richiedere alcuni minuti.</value>
     <value>Tentativi di accesso non completi</value>
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
-    <value>I dispositivi qui sopra non hanno accesso al tuo account. Il codice è stato inserito correttamente, ma nessuna password corretta è stata inserita.</value>
+    <value>I dispositivi elencati non hanno accesso ai tuoi messaggi. Il codice è stato inserito correttamente, ma la password inserita non è corretta.</value>
   </data>
   <data name="LoginPassword" xml:space="preserve">
     <value>Password</value>
@@ -3581,13 +3613,10 @@ Questa operazione può richiedere alcuni minuti.</value>
     <value>Ancora nessuna chat...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Inizia a messaggiare toccando il pulsante con la matita in basso a destra
-o apri il menù per avere più opzioni.</value>
+    <value>Inizia a messaggiare toccando il pulsante con la matita in basso a destra.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>Inizia a messaggiare premendo il
-tasto nuovo messaggio in basso a destra
-o apri il menù per avere più opzioni.</value>
+    <value>Inizia a messaggiare premendo il pulsante con la matita in basso a destra.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Ancora nessun contatto</value>
@@ -3604,7 +3633,7 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>Non hai applicazioni che possono gestire il tipo di file '{0}': installane una per proseguire</value>
   </data>
   <data name="NoMailInstalled" xml:space="preserve">
-    <value>Per favore invia un’e-mail a sms@stel.com spiegandoci il problema.</value>
+    <value>Per favore invia un’email a sms@stel.com spiegandoci il problema.</value>
   </data>
   <data name="NoMasks" xml:space="preserve">
     <value>Ancora nessuna maschera</value>
@@ -3745,10 +3774,10 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>{0} ha fissato una fattura</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
-    <value>{0} ha fissato una traccia nel gruppo {1}</value>
+    <value>{0} ha fissato un file audio nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
-    <value>{0} ha fissato una traccia</value>
+    <value>{0} ha fissato un file audio</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
     <value>{0} ha fissato un messaggio nel gruppo {1}</value>
@@ -3880,13 +3909,13 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>{0} ha inviato una fattura nel gruppo {1} per {2}</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
-    <value>{0} ha inviato una posizione attuale nel gruppo {1}</value>
+    <value>{0} ha condiviso una posizione attuale nel gruppo {1}</value>
   </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} ha inviato una posizione al gruppo {1}</value>
   </data>
   <data name="NotificationMessageGroupMusic" xml:space="preserve">
-    <value>{0} ha inviato una traccia al gruppo {1}</value>
+    <value>{0} ha inviato un file audio al gruppo {1}</value>
   </data>
   <data name="NotificationMessageGroupNoText" xml:space="preserve">
     <value>{0} ha inviato un messaggio al gruppo {1}</value>
@@ -3919,7 +3948,7 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>{0} ti ha inviato una posizione</value>
   </data>
   <data name="NotificationMessageMusic" xml:space="preserve">
-    <value>{0} ti ha inviato una traccia</value>
+    <value>{0} ti ha inviato un file audio</value>
   </data>
   <data name="NotificationMessageNoText" xml:space="preserve">
     <value>{0} ti ha inviato un messaggio</value>
@@ -4032,7 +4061,7 @@ il team di Telegram</value>
     <value>No</value>
   </data>
   <data name="NotificationsOffUntil" xml:space="preserve">
-    <value>Spente fino al {0}</value>
+    <value>Disattivate fino a {0}</value>
   </data>
   <data name="NotificationsOn" xml:space="preserve">
     <value>Sì</value>
@@ -4074,10 +4103,10 @@ il team di Telegram</value>
     <value>Connessione in background</value>
   </data>
   <data name="NotificationsServiceConnectionInfo" xml:space="preserve">
-    <value>Mantiene una connessione a basso impatto con Telegram per ricevere le notifiche. Attivala per notifiche affidabili.</value>
+    <value>Mantiene una connessione a basso impatto con Telegram per notifiche affidabili.</value>
   </data>
   <data name="NotificationsServiceInfo" xml:space="preserve">
-    <value>Riavvia l'app quando terminata dall'utente o dal sistema. Questo assicura che l'app possa mostrare le notifiche.</value>
+    <value>Riavvia l'app quando terminata. Attiva per notifiche affidabili.</value>
   </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>Disattiva</value>
@@ -4147,6 +4176,11 @@ il team di Telegram</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Aprire url {0}?</value>
+  </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>Il tuo codice di accesso è **{0}**. Inseriscilo nell'app Telegram in cui stai cercando di accedere.
+
+Non dare questo codice a nessuno.</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Sessioni attive</value>
@@ -5365,6 +5399,9 @@ I pagamenti saranno inviati direttamente allo sviluppatore di {0}. Telegram non 
   <data name="ReportChat" xml:space="preserve">
     <value>Segnala</value>
   </data>
+  <data name="ReportChatChild" xml:space="preserve">
+    <value>Abuso minorile</value>
+  </data>
   <data name="ReportChatDescription" xml:space="preserve">
     <value>Descrizione</value>
   </data>
@@ -5752,6 +5789,9 @@ Potresti dover riavviare l'app per rendere effettive le modifiche.</value>
   <data name="SendingPhoto" xml:space="preserve">
     <value>sta inviando una foto...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>Invio SMS...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Invio video...</value>
   </data>
@@ -5760,6 +5800,9 @@ Potresti dover riavviare l'app per rendere effettive le modifiche.</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>Abbiamo inviato il codice su **Telegram** nel tuo altro dispositivo.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>Controlla i tuoi messaggi Telegram</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value> Stiamo chiamando il tuo numero **{0}**.
@@ -5771,6 +5814,9 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Abbiamo inviato un SMS con un codice di attivazione al tuo numero **{0}**.</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>Inserisci codice</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>Notifiche di servizio</value>
@@ -5869,6 +5915,9 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>File audio</value>
   </data>
   <data name="SharedContent" xml:space="preserve">
+    <value>Contenuto condiviso</value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
     <value>Contenuto condiviso</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
@@ -6021,6 +6070,9 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="StickersShare" xml:space="preserve">
     <value>Condividi</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Arresta</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>ARRESTA TUTTO</value>
   </data>
@@ -6038,6 +6090,9 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Sei sicuro di voler terminare la condivisione della posizione attuale con {0}?</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>Vuoi arrestare il processo di verifica del numero di telefono?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Utilizzo archivio</value>
@@ -6334,7 +6389,7 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
     <value>Tieni premuto sull’utente per sbloccarlo.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Annulla tutte le impostazioni di notifica personalizzate per tutti i tuoi contatti e gruppi</value>
+    <value>Ripristina tutte le impostazioni personalizzate di notifica per i contatti, i gruppi e i canali.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Errore sconosciuto</value>

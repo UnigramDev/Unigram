@@ -212,7 +212,7 @@
     <value>un1 menyematkan GIF</value>
   </data>
   <data name="ActionPinnedMusic" xml:space="preserve">
-    <value>un1 menyematkan trek</value>
+    <value>un1 menyematkan berkas audio</value>
   </data>
   <data name="ActionPinnedNoText" xml:space="preserve">
     <value>un1 menyematkan pesan</value>
@@ -500,7 +500,7 @@
     <value>Tidak ada mask diarsipkan</value>
   </data>
   <data name="ArchivedMasksInfo" xml:space="preserve">
-    <value>Anda dapat memiliki hingga 200 set mask yang dipasang. Mask yang tidak terpakai akan diarsipkan ketika Anda memasang yang baru.</value>
+    <value>Anda dapat menyimpan lebih dari 200 set mask. Set yang tidak digunakan akan diarsipkan ketika Anda menambah yang baru. </value>
   </data>
   <data name="ArchivedStickers" xml:space="preserve">
     <value>Sticker Diarsipkan</value>
@@ -515,7 +515,7 @@
     <value>Tidak ada sticker diarsipkan</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
-    <value>Anda dapat memiliki sticker terpasang hingga 200 set. Sticker tak terpakai akan diarsipkan ketika Anda memasang set baru.</value>
+    <value>Anda dapat menyimpan lebih dari 200 set stiker. Stiker yang tidak digunakan akan diarsipkan ketika Anda menambah stiker baru. </value>
   </data>
   <data name="AreTyping" xml:space="preserve">
     <value>mengetik...</value>
@@ -546,6 +546,9 @@
   </data>
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Apakah Anda yakin ingin menghapus kontak ini?</value>
+  </data>
+  <data name="AreYouSureDeleteGIF" xml:space="preserve">
+    <value>Anda yakin ingin hapus GIF ini?</value>
   </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>Apakah Anda yakin ingin menghapus {0}?</value>
@@ -1137,7 +1140,7 @@ kepada banyak pengguna.</value>
     <value>{0} mengeposkan lokasi</value>
   </data>
   <data name="ChannelMessageMusic" xml:space="preserve">
-    <value>{0} mengeposkan sebuah trek</value>
+    <value>{0} mengeposkan berkas audio</value>
   </data>
   <data name="ChannelMessageNoText" xml:space="preserve">
     <value>{0} mengeposkan pesan</value>
@@ -1342,6 +1345,24 @@ Jika Anda tidak tertarik, kami sarankan untuk membuat channel privat.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} obrolan</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>Mengecek...</value>
   </data>
@@ -1524,6 +1545,9 @@ Ketika Telegram {1} diperbarui, foto tampil dengan waktu 1 menit atau kurang dan
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>TIDAK SEKARANG</value>
   </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Lanjut</value>
+  </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>Lanjutkan dengan Bahasa Indonesia</value>
   </data>
@@ -1640,7 +1664,7 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
     <value>Notifikasi Kustom</value>
   </data>
   <data name="CustomP2PInfo" xml:space="preserve">
-    <value>Peer-to-Peer dalam panggilan akan atau tidak akan digunakan dengan pengguna ini terlepas dari pengaturan di atas.</value>
+    <value>Panggilan peer-to-peer akan atau tidak akan digunakan dengan pengguna ini terlepas dari pengaturan di atas.</value>
   </data>
   <data name="CustomShareInfo" xml:space="preserve">
     <value>Pengguna ini dapat atau tidak dapat menambah Anda ke dalam group dan channel tanpa memperhatikan pengaturan di atas.</value>
@@ -1830,6 +1854,9 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergroup:
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Tidak mendapatkan kode?</value>
+  </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>Kirim kode via SMS</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Bagikan Langsung</value>
@@ -2395,7 +2422,7 @@ Durasi: {1}</value>
     <value>Konfirmasi sidik jari untuk melanjutkan</value>
   </data>
   <data name="FingerprintNotRecognized" xml:space="preserve">
-    <value>Sidik jari tidak dikenal. Coba lagi</value>
+    <value>Sidik jari tidak dikenal. Coba lagi.</value>
   </data>
   <data name="FirstName" xml:space="preserve">
     <value>Nama depan (wajib)</value>
@@ -2530,7 +2557,7 @@ Durasi: {1}</value>
     <value/>
   </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
-    <value>{0} trek diteruskan</value>
+    <value>{0}  meneruskan berkas audio</value>
   </data>
   <data name="ForwardedPhotoZero" xml:space="preserve">
     <value/>
@@ -2826,6 +2853,9 @@ tentang Telegram?</value>
   </data>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>Tema gelap akan betukar secara otomatis di waktu malam</value>
+  </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>Referensi</value>
   </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Penyimpanan Internal</value>
@@ -3521,11 +3551,11 @@ Operasi Ini memakan waktu beberapa menit untuk diselesaikan.</value>
     <value>Belum ada obrolan...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Mulai percakapan Anda dengan menekan tombol pensil di pojok kanan bawah atau tekan tombol menu untuk pilihan lainnya.</value>
+    <value>Mulai obrolan dengan menekan tombol pensil di pojok kanan bawah. </value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
     <value>Mulai berkirim pesan dengan menekan 
-tombol pesan baru di sudut kanan bawah 
+tombol pesan baru di pojok kanan bawah 
 atau tekan tombol menu untuk opsi lain.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
@@ -3684,10 +3714,10 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
     <value>{0} menyematkan tagihan</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
-    <value>{0} menyematkan trek di group {1}</value>
+    <value>{0} menyematkan audio di grup  {1}</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
-    <value>{0} menyematkan trek</value>
+    <value>{0} menyematkan audio</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
     <value>{0} menyematkan pesan di group {1}</value>
@@ -3819,13 +3849,13 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
     <value>{0} mengirim tagihan ke dalam grup  {1} untuk {2}</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
-    <value>{0}  mengeposkan live location dalam grup  {1}</value>
+    <value>{0}  mengeposkan lokasi langsung dalam grup  {1}</value>
   </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} kirim lokasi pada group {1}</value>
   </data>
   <data name="NotificationMessageGroupMusic" xml:space="preserve">
-    <value>{0} kirim trek ke group {1}</value>
+    <value>{0} kirim berkas audio ke grup {1}</value>
   </data>
   <data name="NotificationMessageGroupNoText" xml:space="preserve">
     <value>{0} kirim pesan pada group {1}</value>
@@ -3858,7 +3888,7 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
     <value>{0} kirim lokasi untuk Anda</value>
   </data>
   <data name="NotificationMessageMusic" xml:space="preserve">
-    <value>{0} kirim trek untuk Anda</value>
+    <value>{0} kirim audio untuk Anda</value>
   </data>
   <data name="NotificationMessageNoText" xml:space="preserve">
     <value>{0} kirim pesan untuk Anda</value>
@@ -4013,10 +4043,10 @@ Tim Telegram</value>
     <value>Koneksi Latar</value>
   </data>
   <data name="NotificationsServiceConnectionInfo" xml:space="preserve">
-    <value>Pertahankan koneksi latar yang berdaya rendah agar Telegram dapat menerima notifikasi. Aktifkan untuk notifikasi yang lebih akurat.</value>
+    <value>Jaga koneksi latar belakang seminimum mungkin ke Telegram untuk notifikasi lebih akurat. </value>
   </data>
   <data name="NotificationsServiceInfo" xml:space="preserve">
-    <value>Buka ulang aplikasi ketika ditutup oleh pengguna atau sistem. Hal ini akan memastikan notifikasi dapat muncul di perangkat Anda.</value>
+    <value>Luncurkan ulang aplikasi saat ditutup. Aktifkan untuk notifikasi lebih akurat.</value>
   </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>Matikan</value>
@@ -4086,6 +4116,11 @@ Tim Telegram</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Buka url {0}?</value>
+  </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>Kode masuk Anda adalah **{0}**. Masukkan di aplikasi tempat Anda ingin masuk. 
+
+Jangan berikan kode ini ke siapapun. </value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Sesi Aktif</value>
@@ -4367,7 +4402,7 @@ dari beberapa perangkat.</value>
     <value>Mohon masukkan kode konfirmasi yang sudah kami kirimkan ke  {0}.</value>
   </data>
   <data name="PassportExpired" xml:space="preserve">
-    <value>Kadaluwarsa</value>
+    <value>Tanggal Kedaluwarsa</value>
   </data>
   <data name="PassportFemale" xml:space="preserve">
     <value>Perempuan</value>
@@ -5302,7 +5337,7 @@ Anda dapat mengunjungi FAQ kami untuk mempelajari lebih lanjut.</value>
     <value>Balas ke {0}</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
-    <value>Laporan</value>
+    <value>Laporkan</value>
   </data>
   <data name="ReportChatDescription" xml:space="preserve">
     <value>Deskripsi</value>
@@ -5691,6 +5726,9 @@ Anda mungkin perlu memulai ulang aplikasi agar berlaku.</value>
   <data name="SendingPhoto" xml:space="preserve">
     <value>mengirim foto...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>Kirim SMS...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Mengirim video...</value>
   </data>
@@ -5699,6 +5737,9 @@ Anda mungkin perlu memulai ulang aplikasi agar berlaku.</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>Kami telah mengirimkan kode ke aplikasi **Telegram** di perangkat lain.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>Cek pesan Telegram Anda</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Kami telah mengirim panggilan aktivasi ke ponsel Anda **{0}**.
@@ -5710,6 +5751,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Kami telah mengirim SMS berisi kode aktivasi ke ponsel Anda **{0}**.</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>Masukkan kode</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>Layanan notifikasi</value>
@@ -5808,7 +5852,10 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
     <value>Berkas audio</value>
   </data>
   <data name="SharedContent" xml:space="preserve">
-    <value>Bagikan konten</value>
+    <value>Konten Bersama </value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
+    <value>Konten Bersama</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>BERKAS</value>
@@ -5960,6 +6007,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="StickersShare" xml:space="preserve">
     <value>Bagikan</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>HENTIKAN SEMUA</value>
   </data>
@@ -5977,6 +6027,12 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Apakah Anda yakin ingin berhenti membagikan live location Anda dengan {0}?</value>
+  </data>
+  <data name="StopLoading" xml:space="preserve">
+    <value>Stop memuat?</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>Anda ingin menghentikan proses verifikasi nomor telepon? </value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Pemakaian Penyimpanan</value>
@@ -6274,7 +6330,7 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
     <value>Tekan dan tahan pada pengguna untuk melepas blokir</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Hilangkan semua penyesuaian notifikasi di semua kontak dan group Anda</value>
+    <value>Kembalikan semua pengaturan notifikasi untuk semua kontak, grup dan channel. </value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Error tidak diketahui</value>
@@ -6668,6 +6724,9 @@ Anda dapat menggunakan **a–z**, **0–9** dan underscore. Panjang minimal **5*
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Menunggu</value>
+  </data>
+  <data name="WaitMore" xml:space="preserve">
+    <value>Tunggu sejenak</value>
   </data>
   <data name="WaitingForNetwork" xml:space="preserve">
     <value>Menunggu jaringan...</value>

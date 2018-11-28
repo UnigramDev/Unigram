@@ -1345,6 +1345,24 @@ Jika tidak berminat, kami cadang tubuhkan channel peribadi.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chat</value>
   </data>
+  <data name="ChatsExceptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOne" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsExceptionOther" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
   <data name="Checking" xml:space="preserve">
     <value>Memeriksa...</value>
   </data>
@@ -1519,13 +1537,16 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
     <value>Kenalan</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>**Telegram** perlu akses ke kenalan anda agar anda boleh berhubung dengan rakan anda di semua peranti. Kenalan anda akan diselaras secara berterusan dengan pelayan awan Telegram yang dipersulitkan.</value>
+    <value>**Telegram** perlu akses ke kenalan anda agar anda boleh berhubung dengan rakan anda di semua peranti. Kenalan anda akan disegerak secara berterusan dengan pelayan awan Telegram yang dipersulitkan.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>TERUSKAN</value>
   </data>
   <data name="ContactsPermissionAlertNotNow" xml:space="preserve">
     <value>BUKAN SEKARANG</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Teruskan</value>
   </data>
   <data name="ContinueOnThisLanguage" xml:space="preserve">
     <value>Teruskan dengan Melayu</value>
@@ -1833,6 +1854,9 @@ Setelah {1} Telegram dikemaskini, foto dengan pemasa untuk 1 minit atau kurang a
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Tak dapat kod?</value>
+  </data>
+  <data name="DidNotGetTheCodeSms" xml:space="preserve">
+    <value>Kirim kod sebagai SMS</value>
   </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Kongsi Terus</value>
@@ -2828,6 +2852,9 @@ tentang Telegram?</value>
   <data name="InstantViewNightMode" xml:space="preserve">
     <value>Tema gelap akan betukar secara automatik di waktu malam</value>
   </data>
+  <data name="InstantViewReference" xml:space="preserve">
+    <value>Rujukan</value>
+  </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Storan Dalaman</value>
   </data>
@@ -2978,7 +3005,7 @@ Anda boleh tukar ke bahasa anda pada bila-bila masa di Aturan.</value>
   <data name="LanguageCustomAlert" xml:space="preserve">
     <value>Anda hampir mengguna pek bahasa tersuai (**{0}**) yang  {1}% siap.
 
-Ini akan terjemah kesemua interfes. Anda boleh cadang pembetulan  di  [platfom terjemahanl].
+Ini akan terjemah kesemua interfes. Anda boleh cadang pembetulan di [platfom terjemahanl].
 
 Anda boleh tukar pek bahasa anda pada bila-bila masa di Aturan</value>
   </data>
@@ -3522,14 +3549,10 @@ Operasi ini akan mengambil masa beberapa minit.</value>
     <value>Belum ada chat...</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Mula bermesej dengan menekan butang baru 
-di penjuru kanan bawah atau 
-sentuh butang menu untuk pilihan lanjut.</value>
+    <value>Mula bermesej dengan menyentuh butang pensil di penjuru kanan bawah.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>Tekan butang mesej baru di bahagian 
-sudut kanan untuk mula mesej atau 
-sentuh butang menu untuk pilihan lain.</value>
+    <value>Mula bermesej dengan menekan butang pensil di penjuru kanan bawah.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Belum ada kenalan </value>
@@ -3567,7 +3590,7 @@ Anda boleh sesuaikan notifikasi untuk chat dengan membuka profil dan pilih Notif
     <value>Tiada sesi aktif lain</value>
   </data>
   <data name="NoOtherSessionsInfo" xml:space="preserve">
-    <value>Anda boleh log masuk ke Telegram dari fon mudahalih lain, tablet dan komputer, dengan nombor fon yang sama. Semua data akan diselaras dengan segera.</value>
+    <value>Anda boleh log masuk ke Telegram dari fon mudah alih lain, tablet dan komputer, dengan nombor fon yang sama. Semua data akan disegerakkan dengan segera.</value>
   </data>
   <data name="NoOtherWebSessions" xml:space="preserve">
     <value>Tiada log masuk yang aktif.</value>
@@ -4089,6 +4112,11 @@ Pasukan Telegram </value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Buka url {0}? </value>
+  </data>
+  <data name="OtherLoginCode" xml:space="preserve">
+    <value>Kod log masuk anda adalah **{0}**. Masukkan kod ke aplikasi Telegram di mana anda sedang cuba untuk log masuk.
+
+Jangan beri kod ini kepada sesiapa.</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Sesi aktif</value>
@@ -4961,7 +4989,7 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
     <value>Emel pemulihan anda {0} belum diaktifkan lagi dan menunggu pengesahan.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>Untuk membolehkan anda berhubung dengan rakan di semua peranti anda, kenalan anda akan diselaraskan secara berterusan dengan pelayan awan Telegram yang disulittkan dengan kukuh. </value>
+    <value>Untuk membolehkan anda berhubung dengan rakan di semua peranti anda, kenalan anda akan disegerakkan secara berterusan dengan pelayan awan Telegram yang disulittkan dengan kukuh. </value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>Telegram perlu akses untuk menarik ke atas aplikasi lain untuk mainkan video dalam mod Gambar-dalam-Gambar.</value>
@@ -5003,7 +5031,7 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
     <value>Utama</value>
   </data>
   <data name="PhoneMobile" xml:space="preserve">
-    <value>Mudahalih</value>
+    <value>Mudah alih</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
     <value>Kesemua kenalan Telegram anda akan dapat nombor baru ke dalam buku alamat  mereka, asalkan mereka ada nombor lama anda dan anda tidak sekat mereka dalam Telegram.</value>
@@ -5691,6 +5719,9 @@ Anda mungkin diminta untuk mula semula aplikasi bagi mengaktfikannya.</value>
   <data name="SendingPhoto" xml:space="preserve">
     <value>mengirim foto...</value>
   </data>
+  <data name="SendingSms" xml:space="preserve">
+    <value>Mengirim SMS...</value>
+  </data>
   <data name="SendingVideo" xml:space="preserve">
     <value>Mengirim video...</value>
   </data>
@@ -5699,6 +5730,9 @@ Anda mungkin diminta untuk mula semula aplikasi bagi mengaktfikannya.</value>
   </data>
   <data name="SentAppCode" xml:space="preserve">
     <value>Kita sudah hantar kod ke **Telegram** aplikasi di peranti lain anda.</value>
+  </data>
+  <data name="SentAppCodeTitle" xml:space="preserve">
+    <value>Semak mesej Telegram anda</value>
   </data>
   <data name="SentCallCode" xml:space="preserve">
     <value>Kita membuat panggilan ke fon anda **{0}**.
@@ -5710,6 +5744,9 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   </data>
   <data name="SentSmsCode" xml:space="preserve">
     <value>Kami telah hantar SMS dengan kod activasi ke fon anda **{0}**.</value>
+  </data>
+  <data name="SentSmsCodeTitle" xml:space="preserve">
+    <value>Masukkan kod</value>
   </data>
   <data name="ServiceNotifications" xml:space="preserve">
     <value>Notifikasi servis</value>
@@ -5809,6 +5846,9 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   </data>
   <data name="SharedContent" xml:space="preserve">
     <value>Kandungan dikongsi</value>
+  </data>
+  <data name="SharedContentTitle" xml:space="preserve">
+    <value>Kandungan Dikongsi</value>
   </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>FAIL</value>
@@ -5960,6 +6000,9 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   <data name="StickersShare" xml:space="preserve">
     <value>Kongsi</value>
   </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Berhenti</value>
+  </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
     <value>HENTIKAN SEMUA</value>
   </data>
@@ -5977,6 +6020,9 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Anda pasti ingin berhenti dari berkongsi lokasi langsung dengan  {0}?</value>
+  </data>
+  <data name="StopVerification" xml:space="preserve">
+    <value>Anda ingin hentikan proses verifikasi nombor fon?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Kegunaan Storan</value>
@@ -6027,16 +6073,16 @@ Jangan jawab, Telegram akan proses semuanya secara automatik. </value>
     <value>Bantuan</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
-    <value>Selaras Kenalan</value>
+    <value>Segerak Kenalan</value>
   </data>
   <data name="SyncContactsAdded" xml:space="preserve">
     <value>Kenalan dari peranti ini ditambah ke akaun anda.</value>
   </data>
   <data name="SyncContactsDelete" xml:space="preserve">
-    <value>Hapus Kenalan yang Diselaraskan</value>
+    <value>Hapus Kenalan yang Disegerakkan</value>
   </data>
   <data name="SyncContactsDeleteInfo" xml:space="preserve">
-    <value>Ini akan menghapus kenalan anda dari pelayan Telegram. Jika 'Selaras Kenalan" dipilih, kenalan akan diselaraskan semula.</value>
+    <value>Ini akan menghapus kenalan anda dari pelayan Telegram. Jika 'Segerak Kenalan" dipilih, kenalan akan disegerakkan semula.</value>
   </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
     <value>Hidupkan untuk menyelaras kenalan secara berterusan dari peranti ini dengan akaun anda.</value>
@@ -6203,9 +6249,9 @@ Sila cuba lagi dalam {0}.</value>
   <data name="TosDecline" xml:space="preserve">
     <value>Kami mohon maaf, kerana ini bermakna anda tak boleh daftar ke Telegram.
 
-Bukan seperti yang lain, kami tidak guna data anda untuk maksud periklanan atau kegunaan komersil lain. Telegram hanya simpan informasi yang perlu untuk berfungsi sebagai servis awan yang berciri kaya. Anda boleh tukar bagaimana kami gunakan data anda (contoh, menghapus kenalan terselaras) di aturan Privasi &amp; Sekuriti.
+Bukan seperti yang lain, kami tidak guna data anda untuk maksud periklanan atau kegunaan komersil lain. Telegram hanya simpan informasi yang perlu untuk berfungsi sebagai servis awan yang berciri kaya. Anda boleh tukar bagaimana kami gunakan data anda (contoh, menghapus kenalan tersegerak) di aturan Privasi &amp; Sekuriti.
 
-Namun sekiranya anda tidak setuju dengan permintaan kecil Telegram, servis ini kami tak akan dapat laksnakan.</value>
+Namun sekiranya anda tidak setuju dengan permintaan kecil Telegram, servis ini kami tak akan dapat laksanakan.</value>
   </data>
   <data name="TosDeclineDeleteAccount" xml:space="preserve">
     <value>Amaran, ini akan menghapus akaun Telegram anda secara kekal berserta dengan data yang anda simpan di awan Telegram.
@@ -6213,7 +6259,7 @@ Namun sekiranya anda tidak setuju dengan permintaan kecil Telegram, servis ini k
 Mustahak: Anda boleh Batalkan sekarang atau ekspot data anda sebelum menghapus akaun anda bagi mengelak dari hilang kesemuanya. (Untuk melakukan ini, buka versi terkini Telegram Desktop dan pergi ke Aturan > Ekspot Data Telegram.)</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
-    <value>Kami mohon maaf, ini bermakna kita terpaksa berpisah di sini. Bukan seperti yang lain, kami tidak guna data anda untuk maksud periklanan atau tujuan komersil  lain. Telegram hanya simpan informasi yang diperlukan untuk berfungsi sebagai servis awan berciri kaya. Anda boleh tukar cara data anda diguna (contoh, menghapus kenalan terselaras) di aturan Privasi &amp; Sikuriti. 
+    <value>Kami mohon maaf, ini bermakna kita terpaksa berpisah di sini. Bukan seperti yang lain, kami tidak guna data anda untuk maksud periklanan atau tujuan komersil  lain. Telegram hanya simpan informasi yang diperlukan untuk berfungsi sebagai servis awan berciri kaya. Anda boleh tukar cara data anda diguna (contoh, menghapus kenalan tersegerak) di aturan Privasi &amp; Sekuriti. 
 
 Namun sekiranya anda tidak bersetuju dengan keperluan kecil Telegram, kami tak akan dapat berikan servis ini. Anda boleh hapus akaun anda sekarang - atau cari lagi dan hapuskannya kemudian jika anda tidak suka cara kami mengendali data anda.</value>
   </data>
@@ -6272,7 +6318,7 @@ Namun sekiranya anda tidak bersetuju dengan keperluan kecil Telegram, kami tak a
     <value>Sentuh lama pada pengguna untuk keluar dari sekatan.</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Tukar balik aturan notifikasi tersuai untuk semua kenalan dan group</value>
+    <value>Tukar balik aturan notifikasi tersuai untuk semua kenalan, group can channel</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Ralat tidak diketahui</value>
@@ -6314,7 +6360,7 @@ Namun sekiranya anda tidak bersetuju dengan keperluan kecil Telegram, kami tak a
     <value>Maaf, Telegram aplikasi anda adalah dari versi yang lama dan tak boleh laksana permintaan ini. Sila kemaskini Telegram anda. </value>
   </data>
   <data name="UpdateContactsMessage" xml:space="preserve">
-    <value>Telegram menjumpai banyak kenalan tidak diselaras, adakah anda igin selaraskan sekarang? Pilih "OK' jika anda menggunakan peralatan, kad SIM dan akaun Google sendiri.</value>
+    <value>Telegram menjumpai banyak kenalan tidak disegerak, adakah anda igin segerakkan sekarang? Pilih "OK' jika anda menggunakan peralatan, kad SIM dan akaun Google sendiri.</value>
   </data>
   <data name="UpdateContactsTitle" xml:space="preserve">
     <value>Kemas kini kenalan? </value>
@@ -6362,7 +6408,7 @@ Namun sekiranya anda tidak bersetuju dengan keperluan kecil Telegram, kami tak a
     <value>Tak pernah</value>
   </data>
   <data name="UseLessDataOnMobile" xml:space="preserve">
-    <value>Hanya dengan data mudahalih</value>
+    <value>Hanya dengan data mudah alih</value>
   </data>
   <data name="UseProxyAddress" xml:space="preserve">
     <value>Pelayan</value>
@@ -6701,7 +6747,7 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
     <value>Ketika dalam Perayauan</value>
   </data>
   <data name="WhenUsingMobileData" xml:space="preserve">
-    <value>Bila guna data mudahalih</value>
+    <value>Bila guna data mudah alih</value>
   </data>
   <data name="WhoCanAddMe" xml:space="preserve">
     <value>Siapa yang boleh tambah saya ke group chat?</value>
