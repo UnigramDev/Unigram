@@ -20,6 +20,7 @@ namespace Unigram.ViewModels.Supergroups
             AddCommand = new RelayCommand(AddExecute);
 
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
+            MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
         }
 
@@ -47,6 +48,18 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), new ChatMemberNavigation(chat.Id, member.UserId));
+        }
+
+        public RelayCommand<ChatMember> MemberRestrictCommand { get; }
+        private void MemberRestrictExecute(ChatMember member)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), new ChatMemberNavigation(chat.Id, member.UserId));
         }
 
         public RelayCommand<ChatMember> MemberRemoveCommand { get; }

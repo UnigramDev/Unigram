@@ -63,18 +63,6 @@ namespace Unigram.Controls.Gallery
         {
             InitializeComponent();
 
-            #region Localizations
-
-            FlyoutSaveAs.Text = Strings.Additional.SaveAs;
-
-            #endregion
-
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
-            {
-                FlyoutCopy.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.C, IsEnabled = false });
-                FlyoutSaveAs.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = Windows.System.VirtualKey.S, IsEnabled = false });
-            }
-
             //CreateKeyboardAccelerator(Windows.System.VirtualKey.C);
             //CreateKeyboardAccelerator(Windows.System.VirtualKey.S);
             //CreateKeyboardAccelerator(Windows.System.VirtualKey.Left, Windows.System.VirtualKeyModifiers.None);
@@ -850,9 +838,34 @@ namespace Unigram.Controls.Gallery
             return true;
         }
 
-#endregion
+        #endregion
 
         #region Context menu
+
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            var item = viewModel.SelectedItem as GalleryContent;
+            if (item == null)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Message });
+            flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Resources.Copy, new FontIcon { Glyph = Icons.Copy }, Windows.System.VirtualKey.C);
+            flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
+            flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
+            flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+
+            flyout.ShowAt(sender as FrameworkElement);
+        }
 
         private void ImageView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
@@ -876,40 +889,13 @@ namespace Unigram.Controls.Gallery
 
             var flyout = new MenuFlyout();
 
-            CreateFlyoutItem(ref flyout, item.CanView, ViewModel.ViewCommand, item, Strings.Resources.ShowInChat);
-            CreateFlyoutItem(ref flyout, item.CanCopy, ViewModel.CopyCommand, item, Strings.Resources.Copy, Windows.System.VirtualKey.C);
-            CreateFlyoutItem(ref flyout, item.CanSave, ViewModel.SaveCommand, item, Strings.Additional.SaveAs, Windows.System.VirtualKey.S);
-            CreateFlyoutItem(ref flyout, ViewModel.CanOpenWith, ViewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp);
-            CreateFlyoutItem(ref flyout, ViewModel.CanDelete, ViewModel.DeleteCommand, item, Strings.Resources.Delete);
+            flyout.CreateFlyoutItem(x => item.CanView, viewModel.ViewCommand, item, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Message });
+            flyout.CreateFlyoutItem(x => item.CanCopy, viewModel.CopyCommand, item, Strings.Resources.Copy, new FontIcon { Glyph = Icons.Copy }, Windows.System.VirtualKey.C);
+            flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
+            flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
+            flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
-            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                flyout.ShowAt(sender, point);
-            }
-        }
-
-        private void CreateFlyoutItem(ref MenuFlyout flyout, bool create, ICommand command, object parameter, string text, Windows.System.VirtualKey? key = null)
-        {
-            if (create)
-            {
-                var flyoutItem = new MenuFlyoutItem();
-                flyoutItem.IsEnabled = command != null;
-                flyoutItem.Command = command;
-                flyoutItem.CommandParameter = parameter;
-                flyoutItem.Text = text;
-
-                if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
-                {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
-                }
-
-                flyout.Items.Add(flyoutItem);
-            }
+            args.ShowAt(flyout, element);
         }
 
         #endregion
@@ -1148,6 +1134,6 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-#endregion
+        #endregion
     }
 }

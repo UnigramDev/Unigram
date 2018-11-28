@@ -1050,42 +1050,42 @@ namespace Unigram.Views
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            CreateFlyoutItem(ref flyout, ViewModel.SearchCommand, Strings.Resources.Search);
+            flyout.CreateFlyoutItem(ViewModel.SearchCommand, Strings.Resources.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
 
             if (supergroup != null && !(supergroup.Status is ChatMemberStatusCreator) && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
             {
-                CreateFlyoutItem(ref flyout, ViewModel.ReportCommand, Strings.Resources.ReportChat);
+                flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.Report });
             }
             if (user != null && user.Id != ViewModel.CacheService.Options.MyId)
             {
                 if (user.OutgoingLink is LinkStateNone)
                 {
-                    CreateFlyoutItem(ref flyout, ViewModel.ShareContactCommand, Strings.Resources.ShareMyContactInfo);
+                    flyout.CreateFlyoutItem(ViewModel.ShareContactCommand, Strings.Resources.ShareMyContactInfo);
                 }
                 else if (user.OutgoingLink is LinkStateKnowsPhoneNumber)
                 {
-                    CreateFlyoutItem(ref flyout, ViewModel.AddContactCommand, Strings.Resources.AddToContacts);
+                    flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts);
                 }
             }
             if (secret)
             {
-                CreateFlyoutItem(ref flyout, ViewModel.SetTimerCommand, Strings.Resources.SetTimer);
+                flyout.CreateFlyoutItem(ViewModel.SetTimerCommand, Strings.Resources.SetTimer, new FontIcon { Glyph = Icons.Timer });
             }
             if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
             {
-                CreateFlyoutItem(ref flyout, ViewModel.DialogClearCommand, Strings.Resources.ClearHistory);
+                flyout.CreateFlyoutItem(ViewModel.DialogClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
             }
             if (user != null)
             {
-                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Resources.DeleteChatUser);
+                flyout.CreateFlyoutItem(ViewModel.DialogDeleteCommand, Strings.Resources.DeleteChatUser, new FontIcon { Glyph = Icons.Delete });
             }
             if (basicGroup != null)
             {
-                CreateFlyoutItem(ref flyout, ViewModel.DialogDeleteCommand, Strings.Resources.DeleteAndExit);
+                flyout.CreateFlyoutItem(ViewModel.DialogDeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
             }
             if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                CreateFlyoutItem(ref flyout, chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.MuteNotifications : Strings.Resources.UnmuteNotifications);
+                flyout.CreateFlyoutItem(chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.MuteNotifications : Strings.Resources.UnmuteNotifications, new FontIcon { Glyph = chat.NotificationSettings.MuteFor == 0 ? Icons.Mute : Icons.Unmute });
             }
 
             //if (currentUser == null || !currentUser.IsSelf)
@@ -1103,12 +1103,12 @@ namespace Unigram.Views
                 {
                     if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
                     {
-                        CreateFlyoutItem(ref flyout, null, Strings.Resources.BotSettings);
+                        flyout.CreateFlyoutItem(null, Strings.Resources.BotSettings);
                     }
 
                     if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("help")))
                     {
-                        CreateFlyoutItem(ref flyout, null, Strings.Resources.BotHelp);
+                        flyout.CreateFlyoutItem(null, Strings.Resources.BotHelp);
                     }
                 }
             }
@@ -1157,10 +1157,10 @@ namespace Unigram.Views
             //}
 
             // Generic
-            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply);
-            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit);
+            flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });
+            flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
 
-            CreateFlyoutSeparator(ref flyout);
+            flyout.CreateFlyoutSeparator();
 
             // Manage
             if (chat.Type is ChatTypeSupergroup supergroup)
@@ -1168,42 +1168,42 @@ namespace Unigram.Views
                 var fullInfo = ViewModel.CacheService.GetSupergroupFull(supergroup.SupergroupId);
                 if (fullInfo != null)
                 {
-                    CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, fullInfo.PinnedMessageId == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage);
+                    flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, fullInfo.PinnedMessageId == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = fullInfo.PinnedMessageId == message.Id ? Icons.Unpin : Icons.Pin });
                 }
                 else
                 {
-                    CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, message, Strings.Resources.PinMessage);
+                    flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, Strings.Resources.PinMessage, new FontIcon { Glyph = Icons.Pin });
                 }
             }
 
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward);
-            CreateFlyoutItem(ref flyout, MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select);
+            flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Forward });
+            flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.Report });
+            flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Select });
 
-            CreateFlyoutSeparator(ref flyout);
+            flyout.CreateFlyoutSeparator();
 
             // Copy
-            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy);
-            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Resources.CopyLink);
-            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Additional.CopyImage);
+            flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy, new FontIcon { Glyph = Icons.Copy });
+            flyout.CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Resources.CopyLink, new FontIcon { Glyph = Icons.CopyLink });
+            flyout.CreateFlyoutItem(MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Additional.CopyImage, new FontIcon { Glyph = Icons.CopyImage });
 
-            CreateFlyoutSeparator(ref flyout);
+            flyout.CreateFlyoutSeparator();
 
             // Stickers
-            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, ViewModel.MessageAddStickerCommand, message, Strings.Resources.AddToStickers);
-            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites);
-            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites);
+            flyout.CreateFlyoutItem(MessageAddSticker_Loaded, ViewModel.MessageAddStickerCommand, message, Strings.Resources.AddToStickers, new FontIcon { Glyph = Icons.Stickers });
+            flyout.CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.AddFavorite });
+            flyout.CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.RemoveFavorite });
 
-            CreateFlyoutSeparator(ref flyout);
+            flyout.CreateFlyoutSeparator();
 
             // Files
-            CreateFlyoutItem(ref flyout, MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs);
-            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Additional.SaveAs);
-            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, Strings.Additional.ShowInFolder);
+            flyout.CreateFlyoutItem(MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs, new FontIcon { Glyph = Icons.Animations });
+            flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
+            flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, Strings.Additional.ShowInFolder, new FontIcon { Glyph = Icons.Folder });
 
             // Contacts
-            CreateFlyoutItem(ref flyout, MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle);
+            flyout.CreateFlyoutItem(MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle, new FontIcon { Glyph = Icons.Contact });
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Resources.SaveToDownloads);
 
             //sender.ContextFlyout = menu;
@@ -1213,57 +1213,10 @@ namespace Unigram.Views
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
 
-            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                flyout.ShowAt(element, point);
-            }
-            else if (flyout.Items.Count > 0)
-            {
-                flyout.ShowAt(element);
-            }
-
-            args.Handled = true;
+            args.ShowAt(flyout, element);
         }
 
-        private void CreateFlyoutSeparator(ref MenuFlyout flyout)
-        {
-            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem)
-            {
-                flyout.Items.Add(new MenuFlyoutSeparator());
-            }
-        }
-
-        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<MessageViewModel, Visibility> visibility, ICommand command, object parameter, string text)
-        {
-            var value = visibility(parameter as MessageViewModel);
-            if (value == Visibility.Visible)
-            {
-                var flyoutItem = new MenuFlyoutItem();
-                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
-                flyoutItem.Command = command;
-                flyoutItem.CommandParameter = parameter;
-                flyoutItem.Text = text;
-
-                flyout.Items.Add(flyoutItem);
-            }
-        }
-
-        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, string text)
-        {
-            var flyoutItem = new MenuFlyoutItem();
-            flyoutItem.IsEnabled = command != null;
-            flyoutItem.Command = command;
-            flyoutItem.Text = text;
-
-            flyout.Items.Add(flyoutItem);
-        }
-
-        private Visibility MessageReply_Loaded(MessageViewModel message)
+        private bool MessageReply_Loaded(MessageViewModel message)
         {
             //var channel = ViewModel.With as TLChannel;
             //if (channel != null && channel.MigratedFromChatId != null)
@@ -1280,18 +1233,18 @@ namespace Unigram.Views
                 var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                 if (supergroup.IsChannel)
                 {
-                    return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
+                    return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator;
                 }
                 else if (supergroup.Status is ChatMemberStatusRestricted restricted)
                 {
-                    return restricted.CanSendMessages ? Visibility.Visible : Visibility.Collapsed;
+                    return restricted.CanSendMessages;
                 }
             }
 
-            return Visibility.Visible;
+            return true;
         }
 
-        private Visibility MessagePin_Loaded(MessageViewModel message)
+        private bool MessagePin_Loaded(MessageViewModel message)
         {
             var chat = message.GetChat();
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
@@ -1299,238 +1252,211 @@ namespace Unigram.Views
                 var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                 if (supergroup == null)
                 {
-                    return Visibility.Collapsed;
+                    return false;
                 }
 
                 if (message.IsService())
                 {
-                    return Visibility.Collapsed;
+                    return false;
                 }
 
-                return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages)) ? Visibility.Visible : Visibility.Collapsed;
+                return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages));
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageEdit_Loaded(MessageViewModel message)
+        private bool MessageEdit_Loaded(MessageViewModel message)
         {
-            return message.CanBeEdited ? Visibility.Visible : Visibility.Collapsed;
+            return message.CanBeEdited;
         }
 
-        private Visibility MessageDelete_Loaded(MessageViewModel message)
+        private bool MessageDelete_Loaded(MessageViewModel message)
         {
-            return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers ? Visibility.Visible : Visibility.Collapsed;
+            return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers;
         }
 
-        private Visibility MessageForward_Loaded(MessageViewModel message)
+        private bool MessageForward_Loaded(MessageViewModel message)
         {
-            return message.CanBeForwarded ? Visibility.Visible : Visibility.Collapsed;
+            return message.CanBeForwarded;
         }
 
-        private Visibility MessageReport_Loaded(MessageViewModel message)
+        private bool MessageReport_Loaded(MessageViewModel message)
         {
             var chat = ViewModel.Chat;
             if (chat == null || !chat.CanBeReported)
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
             if (message.IsService())
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
             var myId = ViewModel.CacheService.Options.MyId;
-            return message.SenderUserId != myId ? Visibility.Visible : Visibility.Collapsed;
+            return message.SenderUserId != myId;
         }
 
-        private Visibility MessageCopy_Loaded(MessageViewModel message)
+        private bool MessageCopy_Loaded(MessageViewModel message)
         {
             if (message.Content is MessageText text)
             {
-                return string.IsNullOrEmpty(text.Text.Text) ? Visibility.Collapsed : Visibility.Visible;
+                return !string.IsNullOrEmpty(text.Text.Text);
             }
             else if (message.Content is MessageContact)
             {
-                return Visibility.Visible;
+                return true;
             }
 
-            return message.Content.HasCaption() ? Visibility.Visible : Visibility.Collapsed;
+            return message.Content.HasCaption();
         }
 
-        private Visibility MessageCopyMedia_Loaded(MessageViewModel message)
+        private bool MessageCopyMedia_Loaded(MessageViewModel message)
         {
             if (message.Ttl > 0)
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
             if (message.Content is MessagePhoto)
             {
-                return Visibility.Visible;
+                return true;
             }
             else if (message.Content is MessageInvoice invoice)
             {
-                return invoice.Photo != null ? Visibility.Visible : Visibility.Collapsed;
+                return invoice.Photo != null;
             }
             else if (message.Content is MessageText text)
             {
-                return text.WebPage != null && text.WebPage.IsPhoto() ? Visibility.Visible : Visibility.Collapsed;
+                return text.WebPage != null && text.WebPage.IsPhoto();
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageCopyLink_Loaded(MessageViewModel message)
+        private bool MessageCopyLink_Loaded(MessageViewModel message)
         {
             var chat = message.GetChat();
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
                 var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
-                return string.IsNullOrEmpty(supergroup.Username) ? Visibility.Collapsed : Visibility.Visible;
+                return !string.IsNullOrEmpty(supergroup.Username);
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageSelect_Loaded(MessageViewModel message)
+        private bool MessageSelect_Loaded(MessageViewModel message)
         {
             if (_myPeople || message.IsService())
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
-            return Visibility.Visible;
+            return true;
         }
 
-        private Visibility MessageAddSticker_Loaded(MessageViewModel message)
+        private bool MessageAddSticker_Loaded(MessageViewModel message)
         {
             if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
             {
-                return ViewModel.ProtoService.IsStickerSetInstalled(sticker.Sticker.SetId) ? Visibility.Collapsed : Visibility.Visible;
+                return !ViewModel.ProtoService.IsStickerSetInstalled(sticker.Sticker.SetId);
             }
             else if (message.Content is MessageText text && text.WebPage?.Sticker != null && text.WebPage.Sticker.SetId != 0)
             {
-                return ViewModel.ProtoService.IsStickerSetInstalled(text.WebPage.Sticker.SetId) ? Visibility.Collapsed : Visibility.Visible;
+                return !ViewModel.ProtoService.IsStickerSetInstalled(text.WebPage.Sticker.SetId);
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageFaveSticker_Loaded(MessageViewModel message)
+        private bool MessageFaveSticker_Loaded(MessageViewModel message)
         {
             if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
             {
-                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerValue.Id) ? Visibility.Collapsed : Visibility.Visible;
+                return !ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerValue.Id);
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageUnfaveSticker_Loaded(MessageViewModel message)
+        private bool MessageUnfaveSticker_Loaded(MessageViewModel message)
         {
             if (message.Content is MessageSticker sticker && sticker.Sticker.SetId != 0)
             {
-                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerValue.Id) ? Visibility.Visible : Visibility.Collapsed;
+                return ViewModel.ProtoService.IsStickerFavorite(sticker.Sticker.StickerValue.Id);
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageSaveMedia_Loaded(MessageViewModel message)
+        private bool MessageSaveMedia_Loaded(MessageViewModel message)
         {
+            if (message.Ttl > 0)
+            {
+                return false;
+            }
+
             var file = message.Get().GetFileAndName(true);
             if (file.File != null && file.File.Local.IsDownloadingCompleted)
             {
-                return Visibility.Visible;
+                return true;
             }
 
-            //if (messageCommon is TLMessage message)
-            //{
-            //    if (message.Media is TLMessageMediaPhoto photoMedia)
-            //    {
-            //        return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-            //    }
-            //    else if (message.Media is TLMessageMediaDocument documentMedia)
-            //    {
-            //        return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-            //    }
-            //    else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
-            //    {
-            //        return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
-            //    }
-            //}
-
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageSaveDownload_Loaded(MessageViewModel messageCommon)
+        private bool MessageSaveDownload_Loaded(MessageViewModel messageCommon)
         {
-            //if (messageCommon is TLMessage message)
-            //{
-            //    if (message.Media is TLMessageMediaPhoto photoMedia)
-            //    {
-            //        return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-            //    }
-            //    else if (message.Media is TLMessageMediaDocument documentMedia)
-            //    {
-            //        return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-            //    }
-            //    else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
-            //    {
-            //        return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
-            //    }
-            //}
-
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageSaveAnimation_Loaded(MessageViewModel message)
+        private bool MessageSaveAnimation_Loaded(MessageViewModel message)
         {
             if (message.Content is MessageText text)
             {
-                return text.WebPage != null && text.WebPage.Animation != null ? Visibility.Visible : Visibility.Collapsed;
+                return text.WebPage != null && text.WebPage.Animation != null;
             }
             else if (message.Content is MessageAnimation)
             {
-                return Visibility.Visible;
+                return true;
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageCallAgain_Loaded(MessageViewModel message)
+        private bool MessageCallAgain_Loaded(MessageViewModel message)
         {
             if (message.Content is MessageCall)
             {
-                return Visibility.Visible;
+                return true;
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
-        private Visibility MessageAddContact_Loaded(MessageViewModel message)
+        private bool MessageAddContact_Loaded(MessageViewModel message)
         {
             if (message.Content is MessageContact contact)
             {
                 var user = ViewModel.ProtoService.GetUser(contact.Contact.UserId);
                 if (user == null)
                 {
-                    return Visibility.Collapsed;
+                    return false;
                 }
 
                 if (user.OutgoingLink is LinkStateIsContact)
                 {
-                    return Visibility.Collapsed;
+                    return false;
                 }
                 else
                 {
-                    return Visibility.Visible;
+                    return true;
                 }
             }
 
-            return Visibility.Collapsed;
+            return false;
         }
 
         #endregion

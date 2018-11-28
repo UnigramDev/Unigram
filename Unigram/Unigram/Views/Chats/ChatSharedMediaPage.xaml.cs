@@ -172,61 +172,38 @@ namespace Unigram.Views.Chats
             var element = sender as FrameworkElement;
             var message = element.Tag as Message;
 
-            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.Resources.ShowInChat);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select);
-            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.Additional.SaveAs);
+            flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Message });
+            flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Forward });
+            flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Select });
+            flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
 
-            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                flyout.ShowAt(sender, point);
-            }
+            args.ShowAt(flyout, element);
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<Message, Visibility> visibility, ICommand command, object parameter, string text)
+        private bool MessageView_Loaded(Message message)
         {
-            var value = visibility(parameter as Message);
-            if (value == Visibility.Visible)
-            {
-                var flyoutItem = new MenuFlyoutItem();
-                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
-                flyoutItem.Command = command;
-                flyoutItem.CommandParameter = parameter;
-                flyoutItem.Text = text;
-
-                flyout.Items.Add(flyoutItem);
-            }
+            return true;
         }
 
-        private Visibility MessageView_Loaded(Message message)
+        private bool MessageSave_Loaded(Message message)
         {
-            return Visibility.Visible;
+            return true;
         }
 
-        private Visibility MessageSave_Loaded(Message message)
+        private bool MessageDelete_Loaded(Message message)
         {
-            return Visibility.Visible;
+            return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers;
         }
 
-        private Visibility MessageDelete_Loaded(Message message)
+        private bool MessageForward_Loaded(Message message)
         {
-            return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers ? Visibility.Visible : Visibility.Collapsed;
+            return message.CanBeForwarded;
         }
 
-        private Visibility MessageForward_Loaded(Message message)
+        private bool MessageSelect_Loaded(Message message)
         {
-            return Visibility.Visible;
-        }
-
-        private Visibility MessageSelect_Loaded(Message message)
-        {
-            return ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
+            return ViewModel.SelectionMode == ListViewSelectionMode.None;
         }
 
         #endregion

@@ -100,7 +100,8 @@
                                       FontSize="16"
                                       Grid.Column="2"/>
 
-                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                <Button Click="Menu_ContextRequested"
+                        Padding="{StaticResource EllipsisButtonPadding}"
                         HorizontalAlignment="Right"
                         Style="{StaticResource EllipsisButton}"
                         Grid.Column="3">
@@ -110,27 +111,6 @@
                               FontSize="16"
                               Glyph="&#xE10C;"
                               Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                    <Button.Flyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanView, Mode=OneWay}"
-                                            Text="{CustomResource ShowInChat}"/>
-                            <MenuFlyoutItem x:Name="FlyoutCopy"
-                                            Command="{x:Bind ViewModel.CopyCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanCopy, Mode=OneWay}"
-                                            Text="{CustomResource Copy}"/>
-                            <MenuFlyoutItem x:Name="FlyoutSaveAs"
-                                            Command="{x:Bind ViewModel.SaveCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanSave, Mode=OneWay}"
-                                            Text="Save as..."/>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
-                                            Text="{CustomResource OpenInExternalApp}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
-                                            Text="{CustomResource Delete}"/>
-                        </MenuFlyout>
-                    </Button.Flyout>
                 </Button>
             </Grid>
         </local:GalleryTransportControls.Header>

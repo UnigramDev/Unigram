@@ -300,7 +300,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
-                <controls:GlyphButton Glyph="&#xE111;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
+                <controls:GlyphButton Glyph="&#xEE35;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
 
                 <ContentControl
                     Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"

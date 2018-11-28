@@ -474,7 +474,7 @@
                     <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" ToolTipService.ToolTip="{CustomResource Delete}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
                     <controls:GlyphButton Glyph="&#xE730;" Command="{x:Bind ViewModel.MessagesReportCommand}" ToolTipService.ToolTip="{CustomResource ReportChat}" Style="{StaticResource HeaderGlyphButtonStyle}" x:Name="Report" Grid.Column="1"/>
                     <controls:GlyphButton Glyph="&#xE16F;" Command="{x:Bind ViewModel.MessagesCopyCommand}" ToolTipService.ToolTip="{CustomResource Copy}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="2"/>
-                    <controls:GlyphButton Glyph="&#xE111;" Command="{x:Bind ViewModel.MessagesForwardCommand}" ToolTipService.ToolTip="{CustomResource Forward}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="3"/>
+                    <controls:GlyphButton Glyph="&#xEE35;" Command="{x:Bind ViewModel.MessagesForwardCommand}" ToolTipService.ToolTip="{CustomResource Forward}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="3"/>
 
                     <ContentControl
                         Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
@@ -1000,9 +1000,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <controls:GlyphToggleButton x:Name="ButtonSilent"
-                                                UncheckedGlyph="&#xE609;"
-                                                CheckedGlyph="&#xE60A;"
-                                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                UncheckedGlyph="&#xEA8F;"
+                                                CheckedGlyph="&#xE7ED;"
                                                 Command="{x:Bind ViewModel.ToggleSilentCommand}"
                                                 VerticalAlignment="Bottom"/>
                     <controls:GlyphButton x:Name="ButtonTimer"

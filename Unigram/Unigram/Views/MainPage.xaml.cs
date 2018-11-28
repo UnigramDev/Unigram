@@ -27,6 +27,7 @@ using Unigram.Views.Host;
 using Unigram.Views.Passport;
 using Unigram.Views.SecretChats;
 using Unigram.Views.Settings;
+using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
@@ -568,6 +569,7 @@ namespace Unigram.Views
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Main", Frame, ViewModel.ProtoService.SessionId);
+                MasterDetail.NavigationService.Frame.Navigating += OnNavigating;
                 MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
             }
 
@@ -671,6 +673,19 @@ namespace Unigram.Views
             }
         }
 
+        private void OnNavigating(object sender, NavigatingCancelEventArgs e)
+        {
+            var frame = sender as Frame;
+
+            MasterDetail.BackgroundOpacity =
+                e.SourcePageType == typeof(ChatPage) ||
+                e.SourcePageType == typeof(BlankPage) ||
+                e.SourcePageType == typeof(SupergroupEventLogPage) ||
+                frame.CurrentSourcePageType == typeof(ChatPage) ||
+                frame.CurrentSourcePageType == typeof(BlankPage) ||
+                frame.CurrentSourcePageType == typeof(SupergroupEventLogPage) ? 1 : 0;
+        }
+
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
             //if (e.SourcePageType == typeof(BlankPage))
@@ -706,11 +721,6 @@ namespace Unigram.Views
             {
                 UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
             }
-
-            MasterDetail.BackgroundOpacity =
-                e.SourcePageType == typeof(ChatPage) ||
-                e.SourcePageType == typeof(ProfilePage) || // Needed for slide transition
-                e.SourcePageType == typeof(BlankPage) ? 1 : 0;
         }
 
         private void OnStateChanged(object sender, EventArgs e)
@@ -944,22 +954,14 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var chat = element.Tag as Chat;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Chats.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop);
-            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Chats.ChatNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications);
-            CreateFlyoutItem(ref flyout, DialogMark_Loaded, ViewModel.Chats.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread);
-            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Chats.ChatClearCommand, chat, Strings.Resources.ClearHistory);
-            CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Chats.ChatDeleteCommand, chat, DialogDelete_Text(chat));
-            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Chats.ChatDeleteAndStopCommand, chat, Strings.Resources.DeleteAndStop);
+            flyout.CreateFlyoutItem(DialogPin_Loaded, ViewModel.Chats.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = chat.IsPinned ? Icons.Unpin : Icons.Pin });
+            flyout.CreateFlyoutItem(DialogNotify_Loaded, ViewModel.Chats.ChatNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = chat.NotificationSettings.MuteFor == 0 ? Icons.Unmute : Icons.Mute });
+            flyout.CreateFlyoutItem(DialogMark_Loaded, ViewModel.Chats.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+            flyout.CreateFlyoutItem(DialogClear_Loaded, ViewModel.Chats.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
+            flyout.CreateFlyoutItem(DialogDelete_Loaded, ViewModel.Chats.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(DialogDeleteAndStop_Loaded, ViewModel.Chats.ChatDeleteAndStopCommand, chat, Strings.Resources.DeleteAndStop, new FontIcon { Glyph = Icons.Delete });
 
-            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                flyout.ShowAt(sender, point);
-            }
+            args.ShowAt(flyout, element);
         }
 
         private void Call_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -969,45 +971,22 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var call = element.Tag as TLCallGroup;
 
-            CreateFlyoutItem(ref flyout, _ => Visibility.Visible, ViewModel.Calls.CallDeleteCommand, call, Strings.Resources.Delete);
+            flyout.CreateFlyoutItem(_ => true, ViewModel.Calls.CallDeleteCommand, call, Strings.Resources.Delete);
 
-            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                flyout.ShowAt(sender, point);
-            }
+            args.ShowAt(flyout, element);
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<Chat, Visibility> visibility, ICommand command, object parameter, string text)
-        {
-            var value = visibility(parameter as Chat);
-            if (value == Visibility.Visible)
-            {
-                var flyoutItem = new MenuFlyoutItem();
-                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
-                flyoutItem.Command = command;
-                flyoutItem.CommandParameter = parameter;
-                flyoutItem.Text = text;
-
-                flyout.Items.Add(flyoutItem);
-            }
-        }
-
-        private Visibility DialogMark_Loaded(Chat chat)
+        private bool DialogMark_Loaded(Chat chat)
         {
             if (ViewModel.CacheService.IsSavedMessages(chat))
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
-            return Visibility.Visible;
+            return true;
         }
 
-        private Visibility DialogPin_Loaded(Chat chat)
+        private bool DialogPin_Loaded(Chat chat)
         {
             //if (!chat.IsPinned)
             //{
@@ -1019,27 +998,27 @@ namespace Unigram.Views
 
             if (ViewModel.CacheService.IsChatSponsored(chat))
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
-            return Visibility.Visible;
+            return true;
         }
 
-        private Visibility DialogNotify_Loaded(Chat chat)
+        private bool DialogNotify_Loaded(Chat chat)
         {
             if (ViewModel.CacheService.IsSavedMessages(chat))
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
-            return Visibility.Visible;
+            return true;
         }
 
-        private Visibility DialogClear_Loaded(Chat chat)
+        private bool DialogClear_Loaded(Chat chat)
         {
             if (ViewModel.CacheService.IsChatSponsored(chat))
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
             if (chat.Type is ChatTypeSupergroup super)
@@ -1047,18 +1026,18 @@ namespace Unigram.Views
                 var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
                 if (supergroup != null)
                 {
-                    return super.IsChannel || !string.IsNullOrEmpty(supergroup.Username) ? Visibility.Collapsed : Visibility.Visible;
+                    return string.IsNullOrEmpty(supergroup.Username) && !super.IsChannel;
                 }
             }
 
-            return Visibility.Visible;
+            return true;
         }
 
-        private Visibility DialogDelete_Loaded(Chat chat)
+        private bool DialogDelete_Loaded(Chat chat)
         {
             if (ViewModel.CacheService.IsChatSponsored(chat))
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
             //if (dialog.With is TLChannel channel)
@@ -1076,7 +1055,7 @@ namespace Unigram.Views
 
             //return Visibility.Collapsed;
 
-            return Visibility.Visible;
+            return true;
         }
 
         private string DialogDelete_Text(Chat chat)
@@ -1093,11 +1072,11 @@ namespace Unigram.Views
             return Strings.Resources.Delete;
         }
 
-        private Visibility DialogDeleteAndStop_Loaded(Chat chat)
+        private bool DialogDeleteAndStop_Loaded(Chat chat)
         {
             if (ViewModel.CacheService.IsChatSponsored(chat))
             {
-                return Visibility.Collapsed;
+                return false;
             }
 
             if (chat.Type is ChatTypePrivate privata)
@@ -1108,11 +1087,11 @@ namespace Unigram.Views
                     var userFull = ViewModel.ProtoService.GetUserFull(privata.UserId);
                     if (userFull != null)
                     {
-                        return userFull.IsBlocked ? Visibility.Collapsed : Visibility.Visible;
+                        return !userFull.IsBlocked;
                     }
                     else
                     {
-                        return Visibility.Visible;
+                        return true;
                     }
                 }
             }
@@ -1134,7 +1113,7 @@ namespace Unigram.Views
             //    //element.Visibility = user.IsBot && !user.IsBlocked ? Visibility.Visible : Visibility.Collapsed;
             //}
 
-            return Visibility.Collapsed;
+            return false;
         }
 
 

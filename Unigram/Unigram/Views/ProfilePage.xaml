@@ -127,6 +127,13 @@
                         Command="{x:Bind ViewModel.CallCommand}"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
+                    <controls:GlyphButton
+                        x:Name="Edit"
+                        Glyph="&#xE713;"
+                        Visibility="Collapsed"
+                        Command="{x:Bind ViewModel.EditCommand}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="2"/>
                     <!--<controls:GlyphButton
                          x:Name="SendMessage"
                          Glyph="&#xE8BD;"
@@ -299,12 +306,12 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock
                                     x:Name="NotificationGlyph"
-                                    FontSize="14"
+                                    FontSize="16"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     AutomationProperties.AccessibilityView="Raw"
-                                    Text="&#xE609;"
-                                    FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                                    Text="&#xEA8F;"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"/>
 
                                 <ToggleSwitch x:Name="Notifications"
                                               Padding="48,11,12,12"
