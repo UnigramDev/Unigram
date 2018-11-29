@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation.Metadata;
 using Windows.Graphics.Imaging;
+using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -24,6 +25,15 @@ namespace Unigram.Common
 
         private static bool? _canUseDirectComposition;
         public static bool CanUseDirectComposition => (_canUseDirectComposition = _canUseDirectComposition ?? ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7)) ?? false;
+
+        private static bool? _canUseFlyoutIcons;
+        public static bool CanUseFlyoutIcons => (_canUseFlyoutIcons = _canUseFlyoutIcons ?? ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon")) ?? false;
+
+        private static bool? _canUseAccelerators;
+        public static bool CanUseAccelerators => (_canUseAccelerators = _canUseAccelerators ?? ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators")) ?? false;
+
+        private static bool? _isFullExperience;
+        public static bool IsFullExperience => (_isFullExperience = _isFullExperience ?? AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile") ?? true;
 
         public static TransitionCollection CreateSlideTransition()
         {

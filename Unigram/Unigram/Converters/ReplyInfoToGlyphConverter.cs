@@ -35,7 +35,7 @@ namespace Unigram.Converters
         public const string Unmute = "\uEA8F";
 
         public const string Pin = "\uE840";
-        public const string Unpin = "\uE718";
+        public const string Unpin = "\uE77A";
 
         public const string MarkAsRead = "\uE91B";
         public const string MarkAsUnread = "\uE91C";
@@ -65,6 +65,7 @@ namespace Unigram.Converters
         public const string Restricted = "\uE72E";
         public const string Banned = "\uF140";
 
+        public const string Share = "\uE72D";
         public const string Search = "\uE721";
         public const string Settings = "\uE713";
     }

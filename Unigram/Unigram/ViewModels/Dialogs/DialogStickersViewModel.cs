@@ -19,6 +19,8 @@ using Windows.UI.Xaml.Data;
 using Windows.Foundation;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Collections;
+using Windows.UI.Xaml;
+using Windows.UI.ViewManagement;
 
 namespace Unigram.ViewModels.Dialogs
 {
@@ -68,6 +70,28 @@ namespace Unigram.ViewModels.Dialogs
             //SyncGifs();
 
             InstallCommand = new RelayCommand<TLFeaturedStickerSet>(InstallExecute);
+        }
+
+        private static Dictionary<int, Dictionary<int, DialogStickersViewModel>> _windowContext = new Dictionary<int, Dictionary<int, DialogStickersViewModel>>();
+        public static DialogStickersViewModel GetForCurrentView(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        {
+            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+            if (_windowContext.TryGetValue(id, out Dictionary<int, DialogStickersViewModel> reference))
+            {
+                if (reference.TryGetValue(protoService.SessionId, out DialogStickersViewModel value))
+                {
+                    return value;
+                }
+            }
+            else
+            {
+                _windowContext[id] = new Dictionary<int, DialogStickersViewModel>();
+            }
+
+            var context = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
+            _windowContext[id][protoService.SessionId] = context;
+
+            return context;
         }
 
         public void Handle(UpdateFavoriteStickers update)

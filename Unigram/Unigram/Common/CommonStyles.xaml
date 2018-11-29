@@ -4266,8 +4266,8 @@
         <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="48" />
         <Setter Property="Width" Value="48" />
-        <Setter Property="MinHeight" Value="48" />
-        <Setter Property="MinWidth" Value="48" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="MinWidth" Value="0" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
         <Setter Property="Template">

@@ -322,9 +322,6 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="NarrowState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0"/>
-                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="StickersPanel.Height" Value="300"/>
                         <Setter Target="StickersPanel.MinHeight" Value="260"/>
@@ -333,9 +330,6 @@
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FilledState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="500"/>
-                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
                         <!--<Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>-->
@@ -445,6 +439,7 @@
                         Command="{x:Bind ViewModel.CallCommand}"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Glyph="&#xE13A;"
+                        ToolTipService.ToolTip="{CustomResource Call}"
                         Grid.Column="1"/>
 
                     <Button x:Name="Options"

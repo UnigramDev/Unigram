@@ -127,7 +127,8 @@ namespace Unigram.ViewModels
             _networkService = networkService;
             _messageFactory = messageFactory;
 
-            _stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
+            //_stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
+            _stickers = DialogStickersViewModel.GetForCurrentView(protoService, cacheService, settingsService, aggregator);
 
             _informativeTimer = new DispatcherTimer();
             _informativeTimer.Interval = TimeSpan.FromSeconds(5);

@@ -34,6 +34,8 @@ namespace Unigram.Controls.Views
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        public FrameworkElement Presenter => BackgroundElement;
+
         public Action<string> EmojiClick { get; set; }
         public Action<Sticker> StickerClick { get; set; }
         public Action<Animation> AnimationClick { get; set; }

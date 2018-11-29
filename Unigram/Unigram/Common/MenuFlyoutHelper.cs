@@ -53,14 +53,14 @@ namespace Unigram.Common
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
 
-                if (icon != null && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
+                if (icon != null && ApiInfo.CanUseFlyoutIcons)
                 {
                     flyoutItem.Icon = icon;
                 }
 
-                if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+                if (key.HasValue && ApiInfo.CanUseAccelerators)
                 {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
+                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
                 }
 
                 flyout.Items.Add(flyoutItem);
@@ -78,14 +78,14 @@ namespace Unigram.Common
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
 
-                if (icon != null && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
+                if (icon != null && ApiInfo.CanUseFlyoutIcons)
                 {
                     flyoutItem.Icon = icon;
                 }
 
-                if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+                if (key.HasValue && ApiInfo.CanUseAccelerators)
                 {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
+                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
                 }
 
                 flyout.Items.Add(flyoutItem);
@@ -99,14 +99,14 @@ namespace Unigram.Common
             flyoutItem.Command = command;
             flyoutItem.Text = text;
 
-            if (icon != null && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
+            if (icon != null && ApiInfo.CanUseFlyoutIcons)
             {
                 flyoutItem.Icon = icon;
             }
 
-            if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+            if (key.HasValue && ApiInfo.CanUseAccelerators)
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
+                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
             }
 
             flyout.Items.Add(flyoutItem);
@@ -120,14 +120,14 @@ namespace Unigram.Common
             flyoutItem.CommandParameter = parameter;
             flyoutItem.Text = text;
 
-            if (icon != null && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
+            if (icon != null && ApiInfo.CanUseFlyoutIcons)
             {
                 flyoutItem.Icon = icon;
             }
 
-            if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+            if (key.HasValue && ApiInfo.CanUseAccelerators)
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = Windows.System.VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
+                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
             }
 
             flyout.Items.Add(flyoutItem);
