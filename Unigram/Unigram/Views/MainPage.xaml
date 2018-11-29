@@ -195,7 +195,7 @@
                                           Glyph="&#xE10C;"
                                           Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                                 <Button.Flyout>
-                                    <MenuFlyout>
+                                    <MenuFlyout x:Name="SettingsFlyout">
                                         <controls:GlyphMenuFlyoutItem
                                             x:Name="EditNameItem"
                                             Click="EditName_Click"

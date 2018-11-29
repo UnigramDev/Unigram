@@ -289,12 +289,16 @@ namespace Unigram.Views
 
                 StickersPanel.PointerEntered += StickersPanel_PointerEntered;
                 StickersPanel.PointerExited += StickersPanel_PointerExited;
+
+                StickersPanel.AllowFocusOnInteraction = true;
             }
             else
             {
                 // Not working here
                 VisualStateManager.GoToState(this, "NarrowState", false);
                 VisualStateManager.GoToState(StickersPanel, "NarrowState", false);
+
+                StickersPanel.AllowFocusOnInteraction = false;
             }
         }
 
@@ -1289,8 +1293,8 @@ namespace Unigram.Views
 
             // Stickers
             flyout.CreateFlyoutItem(MessageAddSticker_Loaded, ViewModel.MessageAddStickerCommand, message, Strings.Resources.AddToStickers, new FontIcon { Glyph = Icons.Stickers });
-            flyout.CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.AddFavorite });
-            flyout.CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.RemoveFavorite });
+            flyout.CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Favorite });
+            flyout.CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.Unfavorite });
 
             flyout.CreateFlyoutSeparator();
 

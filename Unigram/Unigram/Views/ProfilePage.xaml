@@ -58,7 +58,7 @@
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
+                        <TextBlock ToolTipService.ToolTip="{CustomResource ChannelAdmin}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
                             <Run />
                             <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
                         </TextBlock>
@@ -86,7 +86,7 @@
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
+                        <TextBlock ToolTipService.ToolTip="{CustomResource ChannelCreator}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
                             <Run />
                             <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
                         </TextBlock>
@@ -123,10 +123,21 @@
                     <controls:GlyphButton
                         x:Name="Call"
                         Glyph="&#xE13A;"
+                        ToolTipService.ToolTip="{CustomResource Call}"
                         Visibility="Collapsed"
                         Command="{x:Bind ViewModel.CallCommand}"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
+
+                    <controls:GlyphButton
+                        x:Name="GroupInvite"
+                        Glyph="&#xE8FA;"
+                        ToolTipService.ToolTip="{CustomResource AddMember}"
+                        Visibility="Collapsed"
+                        Command="{x:Bind ViewModel.InviteCommand}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="1"/>
+
                     <controls:GlyphButton
                         x:Name="Edit"
                         Glyph="&#xE713;"
@@ -447,15 +458,8 @@
                                     Foreground="Red"/>
                         </StackPanel>
 
-                        <StackPanel x:Name="MembersPanel" Visibility="Collapsed" Margin="0,24,0,8">
-                            <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                            
-                            <controls:BadgeButton x:Name="GroupInvite"
-                                                  Visibility="Collapsed"
-                                                  Content="{CustomResource AddMember}"
-                                                  Command="{x:Bind ViewModel.InviteCommand}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  Glyph="&#xE8FA;"/>
+                        <StackPanel x:Name="MembersPanel" Visibility="Collapsed" Margin="0,24,0,0">
+                            <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </StackPanel>
                     </StackPanel>
                 </ListView.Header>

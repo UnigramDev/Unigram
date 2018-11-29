@@ -114,6 +114,11 @@ namespace Unigram.Views
             {
                 visual.Size = new Vector2(20, (float)args.NewSize.Height);
             };
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                SettingsFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
         }
 
         ~MainPage()

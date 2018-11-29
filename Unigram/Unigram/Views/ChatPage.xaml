@@ -864,7 +864,7 @@
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
-            <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
+            <views:StickersView x:Name="StickersPanel" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
         </Grid>
 
         <!-- Input pane -->

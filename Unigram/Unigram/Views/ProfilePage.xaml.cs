@@ -245,11 +245,14 @@ namespace Unigram.Views
             Subtitle.Text = Locale.Declension("Members", group.MemberCount);
 
             GroupInvite.Visibility = group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || group.EveryoneIsAdministrator ? Visibility.Visible : Visibility.Collapsed;
-            MembersPanel.Margin = GroupInvite.Visibility == Visibility.Visible ? new Thickness(0, 24, 0, 0) : new Thickness(0, 24, 0, 8);
+
+            Edit.Visibility = group.EveryoneIsAdministrator || group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
+            Edit.Glyph = Icons.Edit;
+
+            ToolTipService.SetToolTip(Edit, Strings.Resources.ChannelEdit);
 
             // Unused:
             Call.Visibility = Visibility.Collapsed;
-            Edit.Visibility = Visibility.Collapsed;
 
             Verified.Visibility = Visibility.Collapsed;
             UserPhone.Visibility = Visibility.Collapsed;
@@ -288,8 +291,11 @@ namespace Unigram.Views
 
             DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
 
+            ToolTipService.SetToolTip(Edit, group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu);
+
             Call.Visibility = Visibility.Collapsed;
             Edit.Visibility = group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
+            Edit.Glyph = Icons.Settings;
 
             Verified.Visibility = group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
@@ -308,7 +314,6 @@ namespace Unigram.Views
             }
 
             GroupInvite.Visibility = !group.IsChannel && group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
-            MembersPanel.Margin = GroupInvite.Visibility == Visibility.Visible ? new Thickness(0, 24, 0, 0) : new Thickness(0, 24, 0, 8);
 
             ChannelMembersPanel.Visibility = group.IsChannel && (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator) ? Visibility.Visible : Visibility.Collapsed;
             MembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
@@ -463,8 +468,8 @@ namespace Unigram.Views
                     //}
                     if (user.OutgoingLink is LinkStateIsContact)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact);
-                        flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact);
+                        flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
+                        flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
                         flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.EditContact, new FontIcon { Glyph = Icons.Edit });
                         flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteContact, new FontIcon { Glyph = Icons.Delete });
                     }
@@ -474,34 +479,34 @@ namespace Unigram.Views
                         {
                             if (bot.CanJoinGroups)
                             {
-                                flyout.CreateFlyoutItem(ViewModel.InviteCommand, Strings.Resources.BotInvite);
+                                flyout.CreateFlyoutItem(ViewModel.InviteCommand, Strings.Resources.BotInvite, new FontIcon { Glyph = Icons.AddUser });
                             }
 
-                            flyout.CreateFlyoutItem(null, Strings.Resources.BotShare);
+                            flyout.CreateFlyoutItem(null, Strings.Resources.BotShare, new FontIcon { Glyph = Icons.Share });
                         }
 
                         if (user.PhoneNumber != null && user.PhoneNumber.Length > 0)
                         {
-                            flyout.CreateFlyoutItem(ViewModel.AddCommand, Strings.Resources.AddContact);
-                            flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact);
-                            flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact);
+                            flyout.CreateFlyoutItem(ViewModel.AddCommand, Strings.Resources.AddContact, new FontIcon { Glyph = Icons.AddUser });
+                            flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
+                            flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
                         }
                         else
                         {
                             if (user.Type is UserTypeBot)
                             {
-                                flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.BotRestart : Strings.Resources.BotStop);
+                                flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.BotRestart : Strings.Resources.BotStop, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
                             }
                             else
                             {
-                                flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact);
+                                flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
                             }
                         }
                     }
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact);
+                    flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
                 }
             }
             //if (writeButton != null)
@@ -551,7 +556,7 @@ namespace Unigram.Views
 
                     if (!(supergroup.Status is ChatMemberStatusCreator) && !(supergroup.Status is ChatMemberStatusLeft) && !(supergroup.Status is ChatMemberStatusBanned))
                     {
-                        flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.LeaveMegaMenu);
+                        flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.LeaveMegaMenu, new FontIcon { Glyph = Icons.Delete });
                     }
                 }
             }
@@ -570,11 +575,11 @@ namespace Unigram.Views
                 //item = menu.addItem(10, R.drawable.ic_ab_other);
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.SetAdminsCommand, Strings.Resources.SetAdmins);
+                    flyout.CreateFlyoutItem(ViewModel.SetAdminsCommand, Strings.Resources.SetAdmins, new FontIcon { Glyph = Icons.Admin });
                 }
-                if (!basicGroup.EveryoneIsAdministrator || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)
+                if (basicGroup.EveryoneIsAdministrator || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ChannelEdit);
+                    flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ChannelEdit, new FontIcon { Glyph = Icons.Edit });
                 }
 
                 flyout.CreateFlyoutItem(new RelayCommand(() =>
@@ -588,13 +593,13 @@ namespace Unigram.Views
 
                 if (basicGroup.Status is ChatMemberStatusCreator && basicGroup.MemberCount > 0)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.MigrateCommand, Strings.Resources.ConvertGroupMenu);
+                    flyout.CreateFlyoutItem(ViewModel.MigrateCommand, Strings.Resources.ConvertGroupMenu, new FontIcon { Glyph = Icons.Group });
                 }
 
-                flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteAndExit);
+                flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
             }
 
-            flyout.CreateFlyoutItem(null, Strings.Resources.AddShortcut);
+            flyout.CreateFlyoutItem(null, Strings.Resources.AddShortcut, new FontIcon { Glyph = Icons.Pin });
 
             if (flyout.Items.Count > 0)
             {

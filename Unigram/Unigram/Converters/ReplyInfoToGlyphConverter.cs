@@ -25,6 +25,12 @@ namespace Unigram.Converters
 
     public class Icons
     {
+        public const string BasicGroup = "\uE125";
+        public const string Group = "\uE902";
+        public const string Channel = "\uE789";
+        public const string Secret = "\uE1F6";
+        public const string Bot = "\uE99A";
+
         public const string Reply = "\uE248";
         public const string Edit = "\uE104";
         public const string Timer = "\uE916";
@@ -47,8 +53,8 @@ namespace Unigram.Converters
         public const string Stickers = "\uF4AA";
         public const string Animations = "\uF4A9";
 
-        public const string AddFavorite = "\uE734";
-        public const string RemoveFavorite = "\uE735";
+        public const string Favorite = "\uE734";
+        public const string Unfavorite = "\uE8D9";
 
         public const string Message = "\uE8BD";
 
@@ -60,6 +66,7 @@ namespace Unigram.Converters
         public const string OpenIn = "\uE7AC";
 
         public const string Contact = "\uE8D4";
+        public const string AddUser = "\uE8FA";
 
         public const string Admin = "\uE734";
         public const string Restricted = "\uE72E";

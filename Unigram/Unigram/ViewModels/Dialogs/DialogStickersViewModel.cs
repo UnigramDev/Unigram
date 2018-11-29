@@ -21,6 +21,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.ViewManagement;
+using Unigram.Native;
 
 namespace Unigram.ViewModels.Dialogs
 {
@@ -298,6 +299,14 @@ namespace Unigram.ViewModels.Dialogs
             {
                 Set(ref _search, value);
             }
+        }
+
+        public async void Find(string query)
+        {
+            var items = Search = new SearchStickerSetsCollection(ProtoService, Aggregator, false, query);
+            await items.LoadMoreItemsAsync(0);
+            await items.LoadMoreItemsAsync(1);
+            await items.LoadMoreItemsAsync(2);
         }
 
         //public void SyncGroup(TLChannelFull channelFull)
@@ -753,11 +762,6 @@ namespace Unigram.ViewModels.Dialogs
         private readonly bool _masks;
         private readonly string _query;
 
-        private readonly List<int> _users = new List<int>();
-
-        private KeyedList<string, object> _local;
-        private KeyedList<string, object> _remote;
-
         public SearchStickerSetsCollection(IProtoService protoService, IEventAggregator aggregator, bool masks, string query)
         {
             _protoService = protoService;
@@ -777,15 +781,44 @@ namespace Unigram.ViewModels.Dialogs
                     var response = await _protoService.SendAsync(new SearchInstalledStickerSets(_masks, _query, 100));
                     if (response is StickerSets sets)
                     {
-                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)));
+                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)))
+                        {
+                            Add(item);
+                        }
+
+                        //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)));
                     }
                 }
                 else if (phase == 1)
                 {
+                    var emojis = EmojiSuggestion.GetSuggestions(_query);
+                    if (emojis == null)
+                    {
+                        emojis = new EmojiSuggestion[0];
+                    }
+
+                    foreach (var emoji in emojis)
+                    {
+                        var response = await _protoService.SendAsync(new GetStickers(emoji.Emoji, 100));
+                        if (response is Stickers stickers)
+                        {
+                            Add(new StickerSetViewModel(_protoService, _aggregator,
+                                new StickerSetInfo(0, emoji.Emoji, "emoji", false, false, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
+                                new StickerSet(0, emoji.Emoji, "emoji", false, false, false, false, false, stickers.StickersValue, new StickerEmojis[0])));
+                        }
+                    }
+                }
+                else if (phase == 2)
+                {
                     var response = await _protoService.SendAsync(new SearchStickerSets(_query));
                     if (response is StickerSets sets)
                     {
-                        AddRange(sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)));
+                        foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)))
+                        {
+                            Add(item);
+                        }
+
+                        //AddRange(sets.Sets.Select(x => new StickerSetViewModel(_protoService, _aggregator, x)));
                     }
                 }
 
