@@ -25,6 +25,7 @@ using Unigram.Views.Chats;
 using Unigram.Views.Dialogs;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
@@ -61,6 +62,7 @@ namespace Unigram.Views
 
         private DispatcherTimer _stickersTimer;
         private Visual _stickersPanel;
+        private bool _stickersOpen;
 
         private DispatcherTimer _elapsedTimer;
         private Visual _messageVisual;
@@ -180,6 +182,34 @@ namespace Unigram.Views
 
             _textShadowVisual = Shadow.Attach(Separator, 20, 0.25f);
             _textShadowVisual.IsVisible = false;
+
+            if (ApiInfo.IsFullExperience && ApiInformation.IsEventPresent("Windows.UI.Xaml.Input.FocusManager", "GettingFocus"))
+            {
+                FocusManager.GettingFocus += (s, args) =>
+                {
+                    if (args.NewFocusedElement is FrameworkElement element)
+                    {
+                        bool IsStickersPanel(Uri uri)
+                        {
+                            var segment = uri?.Segments.LastOrDefault();
+                            if (segment == null)
+                            {
+                                return false;
+                            }
+
+                            var paths = new string[] { "StickersView.xaml", "StickersSearchView.xaml", "EmojisView.xaml" };
+
+                            return paths.Contains(segment);
+                        }
+
+                        if (_stickersOpen && !IsStickersPanel(element.BaseUri))
+                        {
+                            Collapse_Click(StickersPanel, null);
+                            args.TrySetNewFocusedElement(TextField);
+                        }
+                    };
+                };
+            }
 
             return;
 
@@ -356,7 +386,14 @@ namespace Unigram.Views
 
         private void StickersPanel_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            _stickersTimer.Start();
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+            {
+                _stickersTimer.Start();
+            }
+            else if (_stickersTimer.IsEnabled)
+            {
+                _stickersTimer.Stop();
+            }
         }
 
         private void Stickers_Click(object sender, PointerRoutedEventArgs e)
@@ -370,6 +407,8 @@ namespace Unigram.Views
             {
                 return;
             }
+
+            _stickersOpen = true;
 
             VisualStateManager.GoToState(this, "FilledState", false);
             VisualStateManager.GoToState(StickersPanel, "FilledState", false);
@@ -981,6 +1020,8 @@ namespace Unigram.Views
 
             if (StickersPanel.Visibility == Visibility.Collapsed)
             {
+                _stickersOpen = true;
+
                 Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Programmatic);
 
@@ -1978,10 +2019,12 @@ namespace Unigram.Views
         {
             if (ApiInfo.IsFullExperience)
             {
-                if (StickersPanel.Visibility == Visibility.Collapsed)
+                if (StickersPanel.Visibility == Visibility.Collapsed || !_stickersOpen)
                 {
                     return;
                 }
+
+                _stickersOpen = false;
 
                 var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 batch.Completed += (s, args) =>
@@ -2017,6 +2060,8 @@ namespace Unigram.Views
                 }
                 else
                 {
+                    _stickersOpen = false;
+
                     StickersPanel.MinHeight = 260;
                     StickersPanel.MaxHeight = 360;
                     StickersPanel.Height = _lastKnownKeyboardHeight;

@@ -214,8 +214,10 @@ namespace Unigram.Controls.Views
 
         private void Emojis_Switch(object sender, EventArgs e)
         {
-            Emojis.Visibility = Visibility.Collapsed;
+            FocusCatcher.Focus(FocusState.Programmatic);
+
             RootPanel.Visibility = Visibility.Visible;
+            Emojis.Visibility = Visibility.Collapsed;
         }
 
         private void Emojis_Click(object sender, RoutedEventArgs e)
@@ -223,8 +225,10 @@ namespace Unigram.Controls.Views
             if (Emojis == null)
                 FindName(nameof(Emojis));
 
-            RootPanel.Visibility = Visibility.Collapsed;
+            FocusCatcher.Focus(FocusState.Programmatic);
+
             Emojis.Visibility = Visibility.Visible;
+            RootPanel.Visibility = Visibility.Collapsed;
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)

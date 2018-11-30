@@ -121,8 +121,8 @@
                 <VisualState x:Name="NarrowState"/>
                 <VisualState x:Name="FilledState">
                     <VisualState.Setters>
-                        <Setter Target="Show.Width" Value="376*"/>
-                        <Setter Target="Show.MaxWidth" Value="376"/>
+                        <Setter Target="Show.Width" Value="362*"/>
+                        <Setter Target="Show.MaxWidth" Value="362"/>
                         <Setter Target="Hide.Width" Value="*"/>
                         <Setter Target="BackgroundElement.BorderThickness" Value="1"/>
                         <Setter Target="BackgroundElement.Margin" Value="8"/>
@@ -151,6 +151,7 @@
                   MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                   BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
                   BorderThickness="0,0,0,0">
+                <Button x:Name="FocusCatcher" IsHitTestVisible="False" Opacity="0"/>
                 <Grid x:Name="RootPanel">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -711,6 +712,7 @@
                         <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.Row="2"/>
                     </Grid>
                 </Grid>
+                <local:StickersSearchView x:Name="Search" x:DeferLoadStrategy="Lazy" Grid.Row="1"/>
                 <local:EmojisView x:Name="Emojis" x:DeferLoadStrategy="Lazy" Switch="Emojis_Switch" ItemClick="Emojis_ItemClick" Grid.RowSpan="3"/>
             </Grid>
         </Border>
