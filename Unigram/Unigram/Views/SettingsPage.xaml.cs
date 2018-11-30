@@ -26,6 +26,9 @@ using Unigram.ViewModels.Delegates;
 using Windows.ApplicationModel;
 using Unigram.Views.Passport;
 using Unigram.Controls.Gallery;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Controls.Primitives;
+using Unigram.Converters;
 
 namespace Unigram.Views
 {
@@ -40,7 +43,18 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            Diagnostics.Text = $"Unigram {GetVersion()}";
+            Diagnostics.Text = $"Unigram " + GetVersion();
+
+            if (ApiInfo.CanUseFlyoutIcons)
+            {
+                EditCamera.Icon = new FontIcon { Glyph = Icons.Camera };
+                EditPhoto.Icon = new FontIcon { Glyph = Icons.Photo };
+            }
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                PhotoFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
         }
 
         private string GetVersion()

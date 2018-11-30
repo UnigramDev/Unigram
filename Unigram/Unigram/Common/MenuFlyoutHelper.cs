@@ -43,7 +43,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, ICommand command, T parameter, string text, IconElement icon = null, VirtualKey? key = null) where T : class
+        public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, ICommand command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
         {
             var value = visibility(parameter as T);
             if (value)
@@ -60,7 +60,7 @@ namespace Unigram.Common
 
                 if (key.HasValue && ApiInfo.CanUseAccelerators)
                 {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
+                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
                 }
 
                 flyout.Items.Add(flyoutItem);
@@ -68,7 +68,7 @@ namespace Unigram.Common
         }
 
         // Probably used only for members context menu
-        public static void CreateFlyoutItem<T1, T2, T3>(this MenuFlyout flyout, Func<T1, T2, T3, bool> visibility, ICommand command, T1 chatType, T2 status, T3 parameter, string text, IconElement icon = null, VirtualKey? key = null) where T3 : class
+        public static void CreateFlyoutItem<T1, T2, T3>(this MenuFlyout flyout, Func<T1, T2, T3, bool> visibility, ICommand command, T1 chatType, T2 status, T3 parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T3 : class
         {
             var value = visibility(chatType, status, parameter as T3);
             if (value)
@@ -85,14 +85,14 @@ namespace Unigram.Common
 
                 if (key.HasValue && ApiInfo.CanUseAccelerators)
                 {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
+                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
                 }
 
                 flyout.Items.Add(flyoutItem);
             }
         }
 
-        public static void CreateFlyoutItem(this MenuFlyout flyout, ICommand command, string text, IconElement icon = null, VirtualKey? key = null)
+        public static void CreateFlyoutItem(this MenuFlyout flyout, ICommand command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = command != null;
@@ -106,13 +106,13 @@ namespace Unigram.Common
 
             if (key.HasValue && ApiInfo.CanUseAccelerators)
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
+                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
 
             flyout.Items.Add(flyoutItem);
         }
 
-        public static void CreateFlyoutItem(this MenuFlyout flyout, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null)
+        public static void CreateFlyoutItem(this MenuFlyout flyout, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = command != null;
@@ -127,7 +127,7 @@ namespace Unigram.Common
 
             if (key.HasValue && ApiInfo.CanUseAccelerators)
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = VirtualKeyModifiers.Control, Key = key.Value, IsEnabled = false });
+                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
 
             flyout.Items.Add(flyoutItem);

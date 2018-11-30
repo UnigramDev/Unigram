@@ -895,6 +895,12 @@ namespace Unigram.Common
                     open.Click += LinkOpen_Click;
                     copy.Click += LinkCopy_Click;
 
+                    if (ApiInfo.CanUseFlyoutIcons)
+                    {
+                        open.Icon = new FontIcon { Glyph = Icons.OpenInNewWindow };
+                        copy.Icon = new FontIcon { Glyph = Icons.Copy };
+                    }
+
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(open);
                     flyout.Items.Add(copy);

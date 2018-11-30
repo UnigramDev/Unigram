@@ -576,22 +576,22 @@ namespace Unigram.Controls.Cells
         {
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                return supergroup.IsChannel ? "\uE789" : "\uE902"; //"\uE125";
+                return supergroup.IsChannel ? Icons.Channel : Icons.Group;
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
-                return "\uE902"; //"\uE125";
+                return Icons.Group;
             }
             else if (chat.Type is ChatTypeSecret)
             {
-                return "\uE1F6";
+                return Icons.Secret;
             }
             else if (chat.Type is ChatTypePrivate privata && _protoService != null)
             {
                 var user = _protoService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
-                    return "\uE99A";
+                    return Icons.Bot;
                 }
             }
 

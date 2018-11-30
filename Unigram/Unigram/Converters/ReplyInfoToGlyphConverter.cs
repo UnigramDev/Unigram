@@ -25,6 +25,12 @@ namespace Unigram.Converters
 
     public class Icons
     {
+        public const string Undo = "\uE7A7";
+        public const string Redo = "\uE7A6";
+        public const string Cut = "\uE8C6";
+        public const string Copy = "\uE8C8";
+        public const string Paste = "\uE77F";
+
         public const string BasicGroup = "\uE125";
         public const string Group = "\uE902";
         public const string Channel = "\uE789";
@@ -46,7 +52,6 @@ namespace Unigram.Converters
         public const string MarkAsRead = "\uE91B";
         public const string MarkAsUnread = "\uE91C";
 
-        public const string Copy = "\uE8C8";
         public const string CopyLink = "\uE71B";
         public const string CopyImage = "\uEB9F";
 
@@ -64,6 +69,7 @@ namespace Unigram.Converters
         public const string SaveAs = "\uE792";
         public const string Folder = "\uE838";
         public const string OpenIn = "\uE7AC";
+        public const string OpenInNewWindow = "\uE8A7";
 
         public const string Contact = "\uE8D4";
         public const string AddUser = "\uE8FA";
@@ -75,5 +81,8 @@ namespace Unigram.Converters
         public const string Share = "\uE72D";
         public const string Search = "\uE721";
         public const string Settings = "\uE713";
+
+        public const string Camera = "\uE722";
+        public const string Photo = "\uEB9F";
     }
 }

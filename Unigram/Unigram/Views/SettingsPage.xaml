@@ -57,9 +57,9 @@
                         </Border.Background>
                         <controls:GlyphButton Glyph="&#xE114;" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Width="36" Height="36" CornerRadius="18" Padding="0,0,0,0" FontSize="16">
                             <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Click="EditCamera_Click" Text="{CustomResource FromCamera}"/>
-                                    <MenuFlyoutItem Click="EditPhoto_Click" Text="{CustomResource FromGalley}"/>
+                                <MenuFlyout x:Name="PhotoFlyout">
+                                    <MenuFlyoutItem x:Name="EditCamera" Click="EditCamera_Click" Text="{CustomResource FromCamera}"/>
+                                    <MenuFlyoutItem x:Name="EditPhoto" Click="EditPhoto_Click" Text="{CustomResource FromGalley}"/>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </controls:GlyphButton>

@@ -252,7 +252,7 @@
                                 </Grid.RowDefinitions>
                                 <Grid.ContextFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}"/>
+                                        <MenuFlyoutItem x:Name="CopyDescription" Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}"/>
                                     </MenuFlyout>
                                 </Grid.ContextFlyout>
                                 <Border Height="44" VerticalAlignment="Top">
@@ -290,7 +290,7 @@
                                 Glyph="&#xE717;">
                                 <Button.ContextFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}"/>
+                                        <MenuFlyoutItem x:Name="CopyPhone" Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}"/>
                                     </MenuFlyout>
                                 </Button.ContextFlyout>
                             </controls:BadgeButton>
@@ -305,7 +305,7 @@
                                 Glyph="&#xE91A;">
                                 <Button.ContextFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}"/>
+                                        <MenuFlyoutItem x:Name="CopyUsername" Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}"/>
                                     </MenuFlyout>
                                 </Button.ContextFlyout>
                             </controls:BadgeButton>

@@ -39,6 +39,7 @@ using System.Windows.Input;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Controls.Views;
+using Unigram.Converters;
 
 namespace Unigram.Controls.Chats
 {
@@ -142,25 +143,25 @@ namespace Unigram.Controls.Chats
             var mention = TryGetUserId(clone, out int userId);
 
             var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
-            CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, "Bold", VirtualKey.B);
-            CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, "Italic", VirtualKey.I);
-            CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, "Monospace", VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, "Bold", null, VirtualKey.B);
+            CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, "Italic", null, VirtualKey.I);
+            CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, "Monospace", null, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : "Create link", VirtualKey.K);
+            CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : "Create link", null, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, "Plain text", VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, "Plain text", null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
-            CreateFlyoutItem(flyout.Items, Document.CanUndo(), StandardUICommandKind.Undo, "Undo", VirtualKey.Z);
-            CreateFlyoutItem(flyout.Items, Document.CanRedo(), StandardUICommandKind.Redo, "Redo", VirtualKey.Y);
+            CreateFlyoutItem(flyout.Items, Document.CanUndo(), ContextUndo_Click, "Undo", new FontIcon { Glyph = Icons.Undo }, VirtualKey.Z);
+            CreateFlyoutItem(flyout.Items, Document.CanRedo(), ContextRedo_Click, "Redo", new FontIcon { Glyph = Icons.Redo }, VirtualKey.Y);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), StandardUICommandKind.Cut, "Cut", VirtualKey.X);
-            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), StandardUICommandKind.Copy, "Copy", VirtualKey.C);
-            CreateFlyoutItem(flyout.Items, Document.CanPaste(), StandardUICommandKind.Paste, "Paste", VirtualKey.V);
-            CreateFlyoutItem(flyout.Items, length, StandardUICommandKind.Delete, "Delete");
+            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCut_Click, "Cut", new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
+            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCopy_Click, "Copy", new FontIcon { Glyph = Icons.Copy }, VirtualKey.C);
+            CreateFlyoutItem(flyout.Items, Document.CanPaste(), ContextPaste_Click, "Paste", new FontIcon { Glyph = Icons.Paste }, VirtualKey.V);
+            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, "Delete");
             flyout.Items.Add(new MenuFlyoutSeparator());
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, !IsEmpty, StandardUICommandKind.SelectAll, "Select All", VirtualKey.A);
+            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
         }
 
         private void ContextBold_Click()
@@ -346,66 +347,19 @@ namespace Unigram.Controls.Chats
             Document.Selection.Expand(TextRangeUnit.Paragraph);
         }
 
-        private void CreateFlyoutItem(IList<MenuFlyoutItemBase> flyout, bool create, Action command, string text, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        private void CreateFlyoutItem(IList<MenuFlyoutItemBase> flyout, bool create, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = create;
             flyoutItem.Command = new RelayCommand(command);
             flyoutItem.Text = text;
 
-            if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+            if (icon != null && ApiInfo.CanUseFlyoutIcons)
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
+                flyoutItem.Icon = icon;
             }
 
-            flyout.Add(flyoutItem);
-        }
-
-        private void CreateFlyoutItem(IList<MenuFlyoutItemBase> flyout, bool create, StandardUICommandKind kind, string text, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
-        {
-            var flyoutItem = new MenuFlyoutItem();
-            flyoutItem.IsEnabled = create;
-
-            RelayCommand command = null;
-            switch (kind)
-            {
-                case StandardUICommandKind.Undo:
-                    command = new RelayCommand(ContextUndo_Click);
-                    break;
-                case StandardUICommandKind.Redo:
-                    command = new RelayCommand(ContextRedo_Click);
-                    break;
-                case StandardUICommandKind.Cut:
-                    command = new RelayCommand(ContextCut_Click);
-                    break;
-                case StandardUICommandKind.Copy:
-                    command = new RelayCommand(ContextCopy_Click);
-                    break;
-                case StandardUICommandKind.Paste:
-                    command = new RelayCommand(ContextPaste_Click);
-                    break;
-                case StandardUICommandKind.Delete:
-                    command = new RelayCommand(ContextDelete_Click);
-                    break;
-                case StandardUICommandKind.SelectAll:
-                    command = new RelayCommand(ContextSelectAll_Click);
-                    break;
-            }
-
-            //if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Input.StandardUICommand"))
-            //{
-            //    var standard = new StandardUICommand(kind) { Command = command, IconSource = null };
-            //    standard.KeyboardAccelerators.Clear();
-
-            //    flyoutItem.Command = standard;
-            //}
-            //else
-            {
-                flyoutItem.Command = command;
-                flyoutItem.Text = text;
-            }
-
-            if (key.HasValue && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+            if (key.HasValue && ApiInfo.CanUseAccelerators)
             {
                 flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
@@ -415,7 +369,7 @@ namespace Unigram.Controls.Chats
 
         private void CreateKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
+            if (ApiInfo.CanUseAccelerators)
             {
                 var accelerator = new KeyboardAccelerator { Modifiers = modifiers, Key = key, ScopeOwner = this };
                 accelerator.Invoked += FlyoutAccelerator_Invoked;
