@@ -384,6 +384,16 @@
     <Compile Include="Controls\Views\SupergroupEventLogFiltersView.xaml.cs">
       <DependentUpon>SupergroupEventLogFiltersView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\ThemeEditorView.xaml.cs">
+      <DependentUpon>ThemeEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\Theme\ColorMapping.cs" />
+    <Compile Include="Controls\Views\Theme\ControlPaletteResources.xaml.cs">
+      <DependentUpon>ControlPaletteResources.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\Theme\Model\ControlPaletteExportProvider.cs" />
+    <Compile Include="Controls\Views\Theme\Model\ControlPaletteModel.cs" />
+    <Compile Include="Controls\Views\Theme\Model\Preset.cs" />
     <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
@@ -1447,6 +1457,7 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <Content Include="Assets\secureid_ocr_nn.bin" />
+    <Content Include="Controls\Views\Theme\controlPaletteData.json" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1838,6 +1849,14 @@
     <Page Include="Controls\Views\SupergroupEventLogFiltersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\ThemeEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\Theme\ControlPaletteResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\UsersSelectionView.xaml">
       <SubType>Designer</SubType>
@@ -2313,6 +2332,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Libraries\fluent-xaml-theme-editor\FluentEditorShared\FluentEditorShared.csproj">
+      <Project>{42a312ef-7c4a-4661-a684-db14e40a2a90}</Project>
+      <Name>FluentEditorShared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
       <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
       <Name>libtgvoip</Name>
