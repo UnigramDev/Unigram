@@ -693,7 +693,7 @@ namespace Unigram.ViewModels
                     var messageCommon = _messageFactory.Create(this, message);
                     var result = new List<MessageViewModel> { messageCommon };
                     ProcessFiles(_chat, result);
-                    ProcessReplies(result);
+                    ProcessReplies(_chat, result);
 
                     InsertMessageInOrder(Items, messageCommon);
                 }

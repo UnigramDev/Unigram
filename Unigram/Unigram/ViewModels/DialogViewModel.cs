@@ -666,7 +666,7 @@ namespace Unigram.ViewModels
 
                     var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
                     ProcessFiles(chat, replied);
-                    ProcessReplies(replied);
+                    ProcessReplies(chat, replied);
 
                     foreach (var message in replied)
                     {
@@ -760,8 +760,8 @@ namespace Unigram.ViewModels
                     var added = false;
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
-                    ProcessFiles(_chat, replied);
-                    ProcessReplies(replied);
+                    ProcessFiles(chat, replied);
+                    ProcessReplies(chat, replied);
 
                     foreach (var message in replied)
                     {
@@ -836,10 +836,10 @@ namespace Unigram.ViewModels
 
         private async Task<MessageViewModel> PrepareMigratedAsync(int basicGroupId)
         {
-            if (_migratedChat != null)
-            {
-                return null;
-            }
+            //if (_migratedChat != null)
+            //{
+            //    return null;
+            //}
 
             var chat = _chat;
             if (chat == null)
@@ -1061,7 +1061,7 @@ namespace Unigram.ViewModels
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
                     ProcessFiles(chat, replied);
-                    ProcessReplies(replied);
+                    ProcessReplies(chat, replied);
 
                     // If we're loading from the last read message
                     // then we want to skip it to align first unread message at top
@@ -1357,14 +1357,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async void ProcessReplies(IList<MessageViewModel> replied)
+        private async void ProcessReplies(Chat chat, IList<MessageViewModel> replied)
         {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
             foreach (var message in replied)
             {
                 message.ReplyToMessageState = ReplyToMessageState.Loading;
