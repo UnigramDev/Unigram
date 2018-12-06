@@ -241,7 +241,7 @@ namespace Unigram.Services
             var tag = GetTag(update.Message);
             var group = GetGroup(chat);
             var picture = GetPhoto(chat);
-            var date = BindConvert.Current.DateTime(update.Message.Date).ToString("o");
+            var date = BindConvert.Current.DateTime(update.Message.Date).ToUniversalTime().ToString("s") + "Z";
             var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
@@ -322,7 +322,7 @@ namespace Unigram.Services
                 var tag = GetTag(message);
                 var group = GetGroup(chat);
                 var picture = GetPhoto(chat);
-                var date = BindConvert.Current.DateTime(message.Date).ToString("o");
+                var date = BindConvert.Current.DateTime(message.Date).ToUniversalTime().ToString("s") + "Z";
                 var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
 
                 var hero = GetPhoto(message);

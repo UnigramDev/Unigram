@@ -371,8 +371,8 @@ String^ NotificationTask::GetDate(JsonObject^ notification)
 	const time_t rawtime = notification->GetNamedNumber(L"date");
 	struct tm dt;
 	wchar_t buffer[30];
-	localtime_s(&dt, &rawtime);
-	wcsftime(buffer, sizeof(buffer), L"%FT%T%zZ", &dt);
+	gmtime_s(&dt, &rawtime);
+	wcsftime(buffer, sizeof(buffer), L"%FT%TZ", &dt);
 	return ref new String(buffer);
 }
 
@@ -698,7 +698,7 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 
 	std::wstring xml = L"<toast launch='";
 	xml += launch->Data();
-	xml += L"' displaytimestamp='";
+	xml += L"' displayTimestamp='";
 	xml += date->Data();
 	//xml += L"' hint-people='remoteid:";
 	//xml += group->Data();
