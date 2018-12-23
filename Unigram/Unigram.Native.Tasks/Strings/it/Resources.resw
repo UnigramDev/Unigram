@@ -147,6 +147,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>ha pubblicato una foto</value>
   </data>
+  <data name="CHANNEL_MESSAGE_POLL" xml:space="preserve">
+    <value>ha pubblicato un sondaggio</value>
+  </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
     <value>ha pubblicato un videomessaggio</value>
   </data>
@@ -160,7 +163,7 @@
     <value>ha pubblicato un video</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} ha invitato {2} nel gruppo</value>
+    <value>{0} ha aggiunto {2} nel gruppo</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
     <value>{0} ti ha invitato nel gruppo</value>
@@ -196,7 +199,7 @@
     <value>{0} ha inviato una posizione al gruppo</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} ha iniziato a condividere la sua posizione attuale</value>
+    <value>{0} ha iniziato a condividere la sua posizione attuale con</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} ha inviato una GIF al gruppo</value>
@@ -209,6 +212,9 @@
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} ha inviato una foto al gruppo</value>
+  </data>
+  <data name="CHAT_MESSAGE_POLL" xml:space="preserve">
+    <value>{0} ha inviato un sondaggio al gruppo</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
     <value>{0} ha inviato un videomessaggio al gruppo</value>
@@ -241,7 +247,7 @@
     <value>La tua chat segreta è stata accettata{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Nuova richiesta di crittografia{0}</value>
+    <value>Nuova richiesta di chat segreta{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
     <value>Hai un nuovo messaggio{0}</value>
@@ -281,6 +287,9 @@
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
     <value>ti ha inviato una foto con autodistruzione</value>
+  </data>
+  <data name="MESSAGE_POLL" xml:space="preserve">
+    <value>ti ha inviato un sondaggio</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>ti ha inviato un videomessaggio</value>
@@ -335,6 +344,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>ha fissato una foto</value>
+  </data>
+  <data name="PINNED_POLL" xml:space="preserve">
+    <value>ha fissato un sondaggio</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>ha fissato un videomessaggio</value>

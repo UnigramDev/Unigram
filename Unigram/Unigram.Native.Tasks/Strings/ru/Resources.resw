@@ -121,13 +121,13 @@
     <value>Вход с нового устройства: {0}; местоположение: {1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
-    <value>В канале {0} новое голосовое сообщение</value>
+    <value>В канале «{0}» новое голосовое сообщение</value>
   </data>
   <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
     <value>В канал {0} отправили контакт</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>В канале {0} новый файл</value>
+    <value>В канале «{0}» новый файл</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>приглашает вас сыграть в {1}</value>
@@ -139,16 +139,19 @@
     <value>начал(а) транслировать геопозицию</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
-    <value>В канале {0} новый GIF</value>
+    <value>В канале «{0}» новый GIF</value>
   </data>
   <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>Новое сообщение в канале {0}</value>
+    <value>В канале «{0}» новый пост</value>
   </data>
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
-    <value>В канале {0} новая фотография</value>
+    <value>В канале «{0}» новая фотография</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_POLL" xml:space="preserve">
+    <value>В канале «{0}» новый опрос</value>
   </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
-    <value>В канале {0} новое видеосообщение</value>
+    <value>В канале «{0}» новое видеосообщение</value>
   </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
     <value>В канал {0} отправили стикер {1}</value>
@@ -157,7 +160,7 @@
     <value>{1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
-    <value>В канале {0} новое видео</value>
+    <value>В канале «{0}» новое видео</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
     <value>{0} пригласил(а) {2} в</value>
@@ -210,6 +213,9 @@
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} отправил(а) фото в группу</value>
   </data>
+  <data name="CHAT_MESSAGE_POLL" xml:space="preserve">
+    <value>{0} отправил(а) опрос в группу</value>
+  </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
     <value>{0} отправил(а) видеосообщение в группу</value>
   </data>
@@ -241,7 +247,7 @@
     <value>Ваш секретный чат принят{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Новый секретный чат {0}</value>
+    <value>Новый секретный чат{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
     <value>Вам пришло сообщение{0}</value>
@@ -281,6 +287,9 @@
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
     <value>прислал(а) вам самоуничтожающееся фото</value>
+  </data>
+  <data name="MESSAGE_POLL" xml:space="preserve">
+    <value>прислал(а) опрос</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>прислал(а) видеосообщение</value>
@@ -335,6 +344,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>закрепил(а) фото</value>
+  </data>
+  <data name="PINNED_POLL" xml:space="preserve">
+    <value>закрепил(а) опрос</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>закрепил(а) видеосообщение</value>

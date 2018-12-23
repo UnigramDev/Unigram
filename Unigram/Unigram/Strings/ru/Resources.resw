@@ -212,13 +212,16 @@
     <value>un1 закрепил(а) GIF</value>
   </data>
   <data name="ActionPinnedMusic" xml:space="preserve">
-    <value>un1 закрепил(а) трек</value>
+    <value>un1 закрепил(а) аудиофайл</value>
   </data>
   <data name="ActionPinnedNoText" xml:space="preserve">
     <value>un1 закрепил(а) сообщение</value>
   </data>
   <data name="ActionPinnedPhoto" xml:space="preserve">
     <value>un1 закрепил(а) фото</value>
+  </data>
+  <data name="ActionPinnedPoll" xml:space="preserve">
+    <value>un1 закрепил(а) опрос</value>
   </data>
   <data name="ActionPinnedRound" xml:space="preserve">
     <value>un1 закрепил(а) видеосообщение</value>
@@ -288,6 +291,15 @@
   </data>
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>Вы не можете назначить этого пользователя администратором, потому что он не состоит в группе и Вы не можете его пригласить.</value>
+  </data>
+  <data name="AddAnOption" xml:space="preserve">
+    <value>Добавить ответ...</value>
+  </data>
+  <data name="AddAnOptionInfo" xml:space="preserve">
+    <value>Можно добавить {0}.</value>
+  </data>
+  <data name="AddAnOptionInfoMax" xml:space="preserve">
+    <value>Вы указали максимальное количество вариантов ответа.</value>
   </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>К сожалению, Вы не можете заблокировать этого пользователя, поскольку он администрирует эту группу, а у Вас нет прав, чтобы его разжаловать.</value>
@@ -468,6 +480,9 @@
   </data>
   <data name="AndOtherOther" xml:space="preserve">
     <value>и {0} других</value>
+  </data>
+  <data name="AnonymousPoll" xml:space="preserve">
+    <value>Анонимный опрос</value>
   </data>
   <data name="ApkRestricted" xml:space="preserve">
     <value>Приложению не разрешена установка APK. Вы можете изменить это в настройках системы.</value>
@@ -972,6 +987,12 @@
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>Вы точно хотите прервать настройку двухэтапной аутентификации?</value>
   </data>
+  <data name="CancelPollAlertText" xml:space="preserve">
+    <value>Вы уверены, что хотите удалить этот опрос?</value>
+  </data>
+  <data name="CancelPollAlertTitle" xml:space="preserve">
+    <value>Удалить опрос?</value>
+  </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>Отмена регистрации</value>
   </data>
@@ -1060,7 +1081,7 @@
     <value>Заблокированные пользователи</value>
   </data>
   <data name="ChannelBroadcast" xml:space="preserve">
-    <value>Опубликовать</value>
+    <value>Публикация</value>
   </data>
   <data name="ChannelCantOpenBanned" xml:space="preserve">
     <value>К сожалению, Вам запрещено состоять в публичных группах.</value>
@@ -1126,37 +1147,40 @@
     <value>Этот список видят только администраторы канала.</value>
   </data>
   <data name="ChannelMessageAudio" xml:space="preserve">
-    <value>В канал {0} отправили голосовое сообщение</value>
+    <value>В канале «{0}» новое голосовое сообщение</value>
   </data>
   <data name="ChannelMessageContact" xml:space="preserve">
     <value>В канал {0} отправили контакт</value>
   </data>
   <data name="ChannelMessageDocument" xml:space="preserve">
-    <value>В канал {0} отправили файл</value>
+    <value>В канале «{0}» новый файл</value>
   </data>
   <data name="ChannelMessageFew" xml:space="preserve">
     <value>{0} опубликовал(а) {1}</value>
   </data>
   <data name="ChannelMessageGIF" xml:space="preserve">
-    <value>В канал {0} отправили GIF</value>
+    <value>В канале «{0}» новый GIF</value>
   </data>
   <data name="ChannelMessageLiveLocation" xml:space="preserve">
-    <value>В канале {0} новая трансляция геопозиции</value>
+    <value>В канале «{0}» новая трансляция геопозиции</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
-    <value>В канале {0} новая геопозиция</value>
+    <value>В канале «{0}» новая геопозиция</value>
   </data>
   <data name="ChannelMessageMusic" xml:space="preserve">
-    <value>В канале {0} новый трек</value>
+    <value>В канале «{0}» новый аудиофайл</value>
   </data>
   <data name="ChannelMessageNoText" xml:space="preserve">
-    <value>В канале {0} новый пост</value>
+    <value>В канале «{0}» новый пост</value>
   </data>
   <data name="ChannelMessagePhoto" xml:space="preserve">
-    <value>В канале {0} новое фото</value>
+    <value>В канале «{0}» новое фото</value>
+  </data>
+  <data name="ChannelMessagePoll" xml:space="preserve">
+    <value>В канале «{0}» новый опрос</value>
   </data>
   <data name="ChannelMessageRound" xml:space="preserve">
-    <value>В канале {0} новое видеосообщение</value>
+    <value>В канале «{0}» новое видеосообщение</value>
   </data>
   <data name="ChannelMessageSticker" xml:space="preserve">
     <value>В канале {0} новый стикер</value>
@@ -1165,7 +1189,7 @@
     <value>В канал {0} отправили стикер {1}</value>
   </data>
   <data name="ChannelMessageVideo" xml:space="preserve">
-    <value>В канале {0} новое видео</value>
+    <value>В канале «{0}» новое видео</value>
   </data>
   <data name="ChannelModerator" xml:space="preserve">
     <value>Модератор</value>
@@ -1221,7 +1245,7 @@
     <value>Добавлять имена администраторов к их сообщениям в канале.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
-    <value>Опубликовать тихо</value>
+    <value>Тихая публикация</value>
   </data>
   <data name="ChannelSubscribers" xml:space="preserve">
     <value>Подписчики</value>
@@ -1287,7 +1311,7 @@
     <value>Галерея</value>
   </data>
   <data name="ChatHints" xml:space="preserve">
-    <value>ЛЮДИ</value>
+    <value>Люди</value>
   </data>
   <data name="ChatHintsDelete" xml:space="preserve">
     <value>Удалить {0} из подсказок?</value>
@@ -1517,7 +1541,7 @@
     <value>Отключить</value>
   </data>
   <data name="ConnectingToProxyDisableAlert" xml:space="preserve">
-    <value>Хотите отключить прокси-сервер {0}? Вы всегда можете включить его в настройках > Данные и диск.</value>
+    <value>Хотите отключить прокси-сервер {0}? Вы всегда можете включить его в настройках > Данные и память.</value>
   </data>
   <data name="ConnectingToProxyEnable" xml:space="preserve">
     <value>Включить</value>
@@ -1581,7 +1605,7 @@
 • В супергруппах могут общаться до {0} участников
 • Новые участники могут видеть всю историю сообщений
 • Удалённые сообщения исчезают у всех пользователей
-• Администраторы могут закреплять важные сообщения
+• Администраторы могут указать описание группы
 • Создатель может выбрать для группы публичную ссылку</value>
   </data>
   <data name="ConvertGroupInfo2" xml:space="preserve">
@@ -1589,7 +1613,7 @@
 
 • Новые участники видят всю историю сообщений
 • Удалённые сообщения исчезают у всех участников
-• Администраторы могут закреплять важные сообщения
+• Администраторы могут указать описание группы
 • Создатель может выбрать для группы публичную ссылку</value>
   </data>
   <data name="ConvertGroupInfo3" xml:space="preserve">
@@ -1683,7 +1707,7 @@
     <value>Эти исключения будут работать всегда, независимо от настроек выше.</value>
   </data>
   <data name="DataSettings" xml:space="preserve">
-    <value>Данные и диск</value>
+    <value>Данные и память</value>
   </data>
   <data name="DataUsage" xml:space="preserve">
     <value>Использование сети и кэша</value>
@@ -2024,7 +2048,7 @@
     <value>Хотите включить этот прокси?</value>
   </data>
   <data name="EnableProxyAlert2" xml:space="preserve">
-    <value>Вы всегда можете изменить прокси-сервер в настройках > Данные и диск.</value>
+    <value>Вы всегда можете изменить прокси-сервер в настройках > Данные и память.</value>
   </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Стриминг аудиофайлов и видео</value>
@@ -2089,7 +2113,7 @@
     <value>Имя канала</value>
   </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
-    <value>Введите текущий код доступа</value>
+    <value>Введите текущий код-пароль</value>
   </data>
   <data name="EnterGroupNamePlaceholder" xml:space="preserve">
     <value>Введите имя группы</value>
@@ -2098,7 +2122,7 @@
     <value>Введите имя списка</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
-    <value>Введите код доступа</value>
+    <value>Введите код-пароль</value>
   </data>
   <data name="EnterNewPasscode" xml:space="preserve">
     <value>Введите новый код-пароль</value>
@@ -2475,6 +2499,9 @@
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Файлы</value>
   </data>
+  <data name="FinalResults" xml:space="preserve">
+    <value>Результаты</value>
+  </data>
   <data name="FingerprintHelp" xml:space="preserve">
     <value>Сканер отпечатков пальцев</value>
   </data>
@@ -2530,37 +2557,37 @@
     <value/>
   </data>
   <data name="ForwardedContactOne" xml:space="preserve">
-    <value>{0} пересланный контакт</value>
+    <value>{0} пересылаемый контакт</value>
   </data>
   <data name="ForwardedContactTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="ForwardedContactFew" xml:space="preserve">
-    <value>{0} пересланных контакта</value>
+    <value>{0} пересылаемых контакта</value>
   </data>
   <data name="ForwardedContactMany" xml:space="preserve">
-    <value>{0} пересланных контактов</value>
+    <value>{0} пересылаемых контактов</value>
   </data>
   <data name="ForwardedContactOther" xml:space="preserve">
-    <value>{0} пересланных контактов</value>
+    <value>{0} пересылаемых контактов</value>
   </data>
   <data name="ForwardedFileZero" xml:space="preserve">
     <value/>
   </data>
   <data name="ForwardedFileOne" xml:space="preserve">
-    <value>{0} пересланный файл</value>
+    <value>{0} пересылаемый файл</value>
   </data>
   <data name="ForwardedFileTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="ForwardedFileFew" xml:space="preserve">
-    <value>{0} пересланных файла</value>
+    <value>{0} пересылаемых файла</value>
   </data>
   <data name="ForwardedFileMany" xml:space="preserve">
-    <value>{0} пересланных файлов</value>
+    <value>{0} пересылаемых файлов</value>
   </data>
   <data name="ForwardedFileOther" xml:space="preserve">
-    <value>{0} пересланных файлов</value>
+    <value>{0} пересылаемых файлов</value>
   </data>
   <data name="ForwardedLocationZero" xml:space="preserve">
     <value/>
@@ -2605,19 +2632,19 @@
     <value/>
   </data>
   <data name="ForwardedMusicOne" xml:space="preserve">
-    <value>{0} пересланный трек</value>
+    <value>{0} пересылаемый аудиофайл</value>
   </data>
   <data name="ForwardedMusicTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="ForwardedMusicFew" xml:space="preserve">
-    <value>{0} пересланных трека</value>
+    <value>{0} пересылаемых аудиофайла</value>
   </data>
   <data name="ForwardedMusicMany" xml:space="preserve">
-    <value>{0} пересланных треков</value>
+    <value>{0} пересылаемых аудиофайлов</value>
   </data>
   <data name="ForwardedMusicOther" xml:space="preserve">
-    <value>{0} пересланных треков</value>
+    <value>{0} пересылаемых аудиофайлов</value>
   </data>
   <data name="ForwardedPhotoZero" xml:space="preserve">
     <value/>
@@ -2636,6 +2663,24 @@
   </data>
   <data name="ForwardedPhotoOther" xml:space="preserve">
     <value>{0} пересланных фото</value>
+  </data>
+  <data name="ForwardedPollZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForwardedPollOne" xml:space="preserve">
+    <value>{0} пересылаемый опрос</value>
+  </data>
+  <data name="ForwardedPollTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForwardedPollFew" xml:space="preserve">
+    <value>{0} пересылаемых опроса</value>
+  </data>
+  <data name="ForwardedPollMany" xml:space="preserve">
+    <value>{0} пересылаемых опросов</value>
+  </data>
+  <data name="ForwardedPollOther" xml:space="preserve">
+    <value>{0} пересылаемых опросов</value>
   </data>
   <data name="ForwardedRoundZero" xml:space="preserve">
     <value/>
@@ -2659,19 +2704,19 @@
     <value/>
   </data>
   <data name="ForwardedStickerOne" xml:space="preserve">
-    <value>{0} пересланный стикер</value>
+    <value>{0} пересылаемый стикер</value>
   </data>
   <data name="ForwardedStickerTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="ForwardedStickerFew" xml:space="preserve">
-    <value>{0} пересланных стикера</value>
+    <value>{0} пересылаемых стикера</value>
   </data>
   <data name="ForwardedStickerMany" xml:space="preserve">
-    <value>{0} пересланных стикеров</value>
+    <value>{0} пересылаемых стикеров</value>
   </data>
   <data name="ForwardedStickerOther" xml:space="preserve">
-    <value>{0} пересланных стикеров</value>
+    <value>{0} пересылаемых стикеров</value>
   </data>
   <data name="ForwardedVideoZero" xml:space="preserve">
     <value/>
@@ -2743,7 +2788,7 @@
     <value>Подпись к GIF</value>
   </data>
   <data name="GlobalSearch" xml:space="preserve">
-    <value>ГЛОБАЛЬНЫЙ ПОИСК</value>
+    <value>Глобальный поиск</value>
   </data>
   <data name="GotAQuestion" xml:space="preserve">
     <value>Вопрос по Telegram?</value>
@@ -2907,6 +2952,9 @@
   <data name="Info" xml:space="preserve">
     <value>Информация</value>
   </data>
+  <data name="InstallGoogleMaps" xml:space="preserve">
+    <value>Установить Google Maps?</value>
+  </data>
   <data name="InstantView" xml:space="preserve">
     <value>ПОСМОТРЕТЬ</value>
   </data>
@@ -2923,10 +2971,10 @@
     <value>Неверный код</value>
   </data>
   <data name="InvalidFirstName" xml:space="preserve">
-    <value>Неверное имя</value>
+    <value>Некорректное имя</value>
   </data>
   <data name="InvalidLastName" xml:space="preserve">
-    <value>Неверная фамилия</value>
+    <value>Некорректная фамилия</value>
   </data>
   <data name="InvalidPhoneNumber" xml:space="preserve">
     <value>Некорректный номер телефона. Пожалуйста, проверьте номер и попробуйте ещё раз.</value>
@@ -3206,7 +3254,7 @@
     <value>Укажите, в течение какого времени {0} будет видеть Ваше актуальное местоположение.</value>
   </data>
   <data name="LiveLocations" xml:space="preserve">
-    <value>ТРАНСЛЯЦИИ ГЕОПОЗИЦИИ</value>
+    <value>Трансляции геопозиции</value>
   </data>
   <data name="Loading" xml:space="preserve">
     <value>Загрузка...</value>
@@ -3463,19 +3511,19 @@
     <value/>
   </data>
   <data name="MinutesOne" xml:space="preserve">
-    <value>{0} минута</value>
+    <value>{0} мин.</value>
   </data>
   <data name="MinutesTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="MinutesFew" xml:space="preserve">
-    <value>{0} минуты</value>
+    <value>{0} мин.</value>
   </data>
   <data name="MinutesMany" xml:space="preserve">
-    <value>{0} минут</value>
+    <value>{0} мин.</value>
   </data>
   <data name="MinutesOther" xml:space="preserve">
-    <value>{0} минут</value>
+    <value>{0} мин.</value>
   </data>
   <data name="MinutesBoldZero" xml:space="preserve">
     <value/>
@@ -3522,6 +3570,9 @@
   <data name="MoreInfo" xml:space="preserve">
     <value>Больше информации</value>
   </data>
+  <data name="MusicInfo" xml:space="preserve">
+    <value>Для отправки музыки</value>
+  </data>
   <data name="MuteDisable" xml:space="preserve">
     <value>Отключить</value>
   </data>
@@ -3532,7 +3583,7 @@
     <value>Отключить уведомления</value>
   </data>
   <data name="NearbyPlaces" xml:space="preserve">
-    <value>ИЛИ ВЫБЕРИТЕ МЕСТО</value>
+    <value>Или выберите место</value>
   </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>Использование сети с {0}</value>
@@ -3562,7 +3613,7 @@
     <value>Новая беседа</value>
   </data>
   <data name="NewGroup" xml:space="preserve">
-    <value>Новая группа</value>
+    <value>Создать группу</value>
   </data>
   <data name="NewMessageTitle" xml:space="preserve">
     <value>Новое сообщение</value>
@@ -3585,8 +3636,11 @@
   <data name="NewMessagesOther" xml:space="preserve">
     <value>{0} новых сообщений</value>
   </data>
+  <data name="NewPoll" xml:space="preserve">
+    <value>Новый опрос</value>
+  </data>
   <data name="NewSecretChat" xml:space="preserve">
-    <value>Новый секретный чат</value>
+    <value>Создать секретный чат</value>
   </data>
   <data name="NewTheme" xml:space="preserve">
     <value>Новая тема</value>
@@ -3719,6 +3773,9 @@
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Нет аккаунта Telegram с таким именем пользователя.</value>
   </data>
+  <data name="NoVotes" xml:space="preserve">
+    <value>Нет голосов</value>
+  </data>
   <data name="NobodyLikesSpam1" xml:space="preserve">
     <value>К сожалению, в данный момент Вы можете отправлять сообщения только взаимным контактам.</value>
   </data>
@@ -3774,10 +3831,10 @@
     <value>{0} закрепил(а) счёт</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
-    <value>{0} закрепил(а) трек в группе {1}</value>
+    <value>{0} закрепил(а) аудиофайл в группе {1}</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
-    <value>{0} закрепил(а) трек</value>
+    <value>{0} закрепил(а) аудиофайл</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
     <value>{0} закрепил(а) сообщение в «{1}»</value>
@@ -3790,6 +3847,12 @@
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
     <value>{0} закрепил(а) фото</value>
+  </data>
+  <data name="NotificationActionPinnedPoll" xml:space="preserve">
+    <value>{0} закрепил(а) опрос в группе «{1}»</value>
+  </data>
+  <data name="NotificationActionPinnedPollChannel" xml:space="preserve">
+    <value>{0} закрепил(а) опрос</value>
   </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0} закрепил(а) видеосообщение в группе {1}</value>
@@ -3915,13 +3978,16 @@
     <value>{0} отправил(а) геопозицию в «{1}»</value>
   </data>
   <data name="NotificationMessageGroupMusic" xml:space="preserve">
-    <value>{0} отправил(а) трек в «{1}»</value>
+    <value>{0} отправил(а) аудиофайл в «{1}»</value>
   </data>
   <data name="NotificationMessageGroupNoText" xml:space="preserve">
     <value>{0} отправил(а) сообщение группе {1}</value>
   </data>
   <data name="NotificationMessageGroupPhoto" xml:space="preserve">
     <value>{0} отправил(а) фото в «{1}»</value>
+  </data>
+  <data name="NotificationMessageGroupPoll" xml:space="preserve">
+    <value>{0} отправил(а) опрос в группу «{1}»</value>
   </data>
   <data name="NotificationMessageGroupRound" xml:space="preserve">
     <value>{0} отправил(а) видеосообщение в «{1}»</value>
@@ -3948,13 +4014,16 @@
     <value>{0} прислал(а) геопозицию</value>
   </data>
   <data name="NotificationMessageMusic" xml:space="preserve">
-    <value>{0} прислал(а) трек</value>
+    <value>{0} прислал(а) аудиофайл</value>
   </data>
   <data name="NotificationMessageNoText" xml:space="preserve">
     <value>{0} прислал(а) сообщение</value>
   </data>
   <data name="NotificationMessagePhoto" xml:space="preserve">
     <value>{0} прислал(а) фото</value>
+  </data>
+  <data name="NotificationMessagePoll" xml:space="preserve">
+    <value>{0} прислал(а) опрос</value>
   </data>
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>{0} прислал(а) видеосообщение</value>
@@ -4056,13 +4125,13 @@
     <value>Без уведомлений</value>
   </data>
   <data name="NotificationsOff" xml:space="preserve">
-    <value>Откл.</value>
+    <value>Отключены</value>
   </data>
   <data name="NotificationsOffUntil" xml:space="preserve">
     <value>Откл. до {0}</value>
   </data>
   <data name="NotificationsOn" xml:space="preserve">
-    <value>Вкл.</value>
+    <value>Включены</value>
   </data>
   <data name="NotificationsOther" xml:space="preserve">
     <value>Другое</value>
@@ -4104,7 +4173,7 @@
     <value>Поддерживать минимальное фоновое соединение с Telegram, чтобы получать уведомления. Обеспечивает надежность уведомлений.</value>
   </data>
   <data name="NotificationsServiceInfo" xml:space="preserve">
-    <value>Перезапускать приложение, если оно закрыто пользователем или системой. Обеспечивает работу уведомлений.</value>
+    <value>Перезапускать приложение, если оно закрыто. Обеспечивает надежность уведомлений.</value>
   </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>Отключить</value>
@@ -4160,6 +4229,9 @@
   <data name="OpenChannel" xml:space="preserve">
     <value>ПЕРЕЙТИ В КАНАЛ</value>
   </data>
+  <data name="OpenFile" xml:space="preserve">
+    <value>ОТКРЫТЬ ФАЙЛ</value>
+  </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>ПЕРЕЙТИ В ГРУППУ</value>
   </data>
@@ -4174,6 +4246,27 @@
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Открыть URL {0}?</value>
+  </data>
+  <data name="OptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="OptionOne" xml:space="preserve">
+    <value>ещё {0} вариант ответа</value>
+  </data>
+  <data name="OptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="OptionFew" xml:space="preserve">
+    <value>ещё {0} варианта ответа</value>
+  </data>
+  <data name="OptionMany" xml:space="preserve">
+    <value>ещё {0} вариантов ответа</value>
+  </data>
+  <data name="OptionOther" xml:space="preserve">
+    <value>ещё {0} вариантов ответа</value>
+  </data>
+  <data name="OptionHint" xml:space="preserve">
+    <value>Ответ</value>
   </data>
   <data name="OtherLoginCode" xml:space="preserve">
     <value>Ваш код для входа: **{0}**. Укажите его в приложении Telegram, в котором хотите зайти в свой аккаунт.
@@ -4275,7 +4368,7 @@
     <value>Код-пароль</value>
   </data>
   <data name="PasscodeDoNotMatch" xml:space="preserve">
-    <value>Коды доступа не совпадают</value>
+    <value>Код-пароли не совпадают</value>
   </data>
   <data name="PasscodePIN" xml:space="preserve">
     <value>ПИН-код</value>
@@ -5086,6 +5179,9 @@
   <data name="PhoneCopied" xml:space="preserve">
     <value>Телефон скопирован в буфер обмена</value>
   </data>
+  <data name="PhoneHidden" xml:space="preserve">
+    <value>Неизвестен</value>
+  </data>
   <data name="PhoneHome" xml:space="preserve">
     <value>Дом</value>
   </data>
@@ -5163,6 +5259,9 @@
   <data name="PinnedMessages" xml:space="preserve">
     <value>Закреплённые сообщения</value>
   </data>
+  <data name="PinnedPoll" xml:space="preserve">
+    <value>Закреплённый опрос</value>
+  </data>
   <data name="PleaseDownload" xml:space="preserve">
     <value>Сначала загрузите медиа</value>
   </data>
@@ -5201,6 +5300,12 @@
   </data>
   <data name="PointsOther" xml:space="preserve">
     <value>{0}</value>
+  </data>
+  <data name="Poll" xml:space="preserve">
+    <value>Опрос</value>
+  </data>
+  <data name="PollOptions" xml:space="preserve">
+    <value>Варианты ответа</value>
   </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Отключены</value>
@@ -5301,6 +5406,12 @@
   <data name="ProxySettings" xml:space="preserve">
     <value>Настройки прокси</value>
   </data>
+  <data name="Question" xml:space="preserve">
+    <value>Вопрос</value>
+  </data>
+  <data name="QuestionHint" xml:space="preserve">
+    <value>Задайте вопрос</value>
+  </data>
   <data name="QuickReplyCustom" xml:space="preserve">
     <value>Ваше сообщение...</value>
   </data>
@@ -5320,10 +5431,10 @@
     <value>Запись голоса при приближении</value>
   </data>
   <data name="ReEnterYourPasscode" xml:space="preserve">
-    <value>Повторите новый код доступа</value>
+    <value>Введите код-пароль ещё раз</value>
   </data>
   <data name="Recent" xml:space="preserve">
-    <value>НЕДАВНЕЕ</value>
+    <value>Недавние</value>
   </data>
   <data name="RecentStickers" xml:space="preserve">
     <value>Недавние</value>
@@ -5394,6 +5505,9 @@
   <data name="ReportChat" xml:space="preserve">
     <value>Пожаловаться</value>
   </data>
+  <data name="ReportChatChild" xml:space="preserve">
+    <value>Детская порнография</value>
+  </data>
   <data name="ReportChatDescription" xml:space="preserve">
     <value>Описание</value>
   </data>
@@ -5425,7 +5539,7 @@
     <value>Хотите сообщить о спаме от этой группы?</value>
   </data>
   <data name="ReportSpamAndLeave" xml:space="preserve">
-    <value>СООБЩИТЬ О СПАМЕ И ПОКИНУТЬ</value>
+    <value>СООБЩИТЬ О СПАМЕ И ВЫЙТИ</value>
   </data>
   <data name="ResendCode" xml:space="preserve">
     <value>Отправить ещё раз</value>
@@ -5585,9 +5699,9 @@
     <value>Разрешить снимки экрана</value>
   </data>
   <data name="ScreenCaptureInfo" xml:space="preserve">
-    <value>Если включено, Вы сможете делать скриншоты приложения, но Ваши чаты будет видно в окне переключения задач даже при установленном коде доступа.
+    <value>Если включено, Вы сможете делать снимки экранов приложения, но чаты будут видны в окне переключения задач даже при установленном код-пароле.
 
-Для вступления настроек в силу требуется перезапуск приложения.</value>
+Чтобы эта настройка вступила в силу, нужно перезапустить приложение.</value>
   </data>
   <data name="SdCard" xml:space="preserve">
     <value>Карта памяти</value>
@@ -5620,7 +5734,7 @@
     <value>Поиск участников</value>
   </data>
   <data name="SearchMessages" xml:space="preserve">
-    <value>СООБЩЕНИЯ</value>
+    <value>Сообщения</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Поиск стикеров</value>
@@ -5957,6 +6071,9 @@
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Откл.</value>
   </data>
+  <data name="ShowAllFiles" xml:space="preserve">
+    <value>Все файлы</value>
+  </data>
   <data name="ShowAllMedia" xml:space="preserve">
     <value>Показать все медиа</value>
   </data>
@@ -5964,7 +6081,7 @@
     <value>Показать в чате</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
-    <value>ПОТЯНИТЕ, ЧТОБЫ ВЫБРАТЬ МЕСТО</value>
+    <value>Потяните, чтобы выбрать место</value>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>Случайный порядок</value>
@@ -5977,7 +6094,7 @@
 Не группировать фотографии</value>
   </data>
   <data name="SlideToCancel" xml:space="preserve">
-    <value>ПРОВЕДИТЕ ДЛЯ ОТМЕНЫ</value>
+    <value>ВЛЕВО — ОТМЕНА</value>
   </data>
   <data name="SmartNotifications" xml:space="preserve">
     <value>Умные уведомления</value>
@@ -6023,6 +6140,9 @@
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Пожалуйста, укажите код страны и свой номер телефона.</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Статистика</value>
   </data>
   <data name="StickersZero" xml:space="preserve">
     <value/>
@@ -6087,11 +6207,20 @@
   <data name="StopLoading" xml:space="preserve">
     <value>Остановить загрузку?</value>
   </data>
+  <data name="StopPoll" xml:space="preserve">
+    <value>Остановить опрос</value>
+  </data>
+  <data name="StopPollAlertText" xml:space="preserve">
+    <value>Если Вы остановите опрос, никто больше не сможет проголосовать в нём. Это действие нельзя будет отменить.</value>
+  </data>
+  <data name="StopPollAlertTitle" xml:space="preserve">
+    <value>Остановить опрос?</value>
+  </data>
   <data name="StopVerification" xml:space="preserve">
     <value>Вы действительно хотите остановить подтверждение номера телефона?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
-    <value>Использование диска</value>
+    <value>Использование памяти</value>
   </data>
   <data name="Streaming" xml:space="preserve">
     <value>Стриминг</value>
@@ -6170,6 +6299,9 @@
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
     <value>Нажмите, чтобы изменить номер телефона</value>
+  </data>
+  <data name="TapToDownload" xml:space="preserve">
+    <value>Нажмите для загрузки</value>
   </data>
   <data name="TelegramContactsZero" xml:space="preserve">
     <value/>
@@ -6387,7 +6519,7 @@
     <value>Нажмите и удерживайте имя пользователя для разблокировки</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Сбросить особые настройки уведомлений для отдельных контактов и чатов.</value>
+    <value>Сбросить особые настройки уведомлений для отдельных контактов, чатов и каналов.</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Неизвестная ошибка</value>
@@ -6418,6 +6550,9 @@
   </data>
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>Сообщение не поддерживается Вашей версией Telegram. Пожалуйста, обновите приложение, чтобы его увидеть: https://telegram.org/update</value>
+  </data>
+  <data name="Unvote" xml:space="preserve">
+    <value>Отменить голос</value>
   </data>
   <data name="Update" xml:space="preserve">
     <value>ОБНОВИТЬ</value>
@@ -6800,6 +6935,27 @@
   <data name="VoipWaiting" xml:space="preserve">
     <value>Ожидание</value>
   </data>
+  <data name="VoteZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoteOne" xml:space="preserve">
+    <value>{0} голос</value>
+  </data>
+  <data name="VoteTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoteFew" xml:space="preserve">
+    <value>{0} голоса</value>
+  </data>
+  <data name="VoteMany" xml:space="preserve">
+    <value>{0} голосов</value>
+  </data>
+  <data name="VoteOther" xml:space="preserve">
+    <value>{0} голосов</value>
+  </data>
+  <data name="WaitMore" xml:space="preserve">
+    <value>Подождать ещё</value>
+  </data>
   <data name="WaitingForNetwork" xml:space="preserve">
     <value>Ожидание сети...</value>
   </data>
@@ -6813,19 +6969,19 @@
     <value/>
   </data>
   <data name="WeeksOne" xml:space="preserve">
-    <value>{0} неделя</value>
+    <value>{0} нед.</value>
   </data>
   <data name="WeeksTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="WeeksFew" xml:space="preserve">
-    <value>{0} недели</value>
+    <value>{0} нед.</value>
   </data>
   <data name="WeeksMany" xml:space="preserve">
-    <value>{0} недель</value>
+    <value>{0} нед.</value>
   </data>
   <data name="WeeksOther" xml:space="preserve">
-    <value>{0} недель</value>
+    <value>{0} нед.</value>
   </data>
   <data name="WhenConnectedOnWiFi" xml:space="preserve">
     <value>Через сети Wi-Fi</value>
@@ -6870,7 +7026,7 @@
     <value>был(а) на этой неделе</value>
   </data>
   <data name="WrongCountry" xml:space="preserve">
-    <value>Неверный код страны</value>
+    <value>Некорректный код страны</value>
   </data>
   <data name="WrongNumber" xml:space="preserve">
     <value>Неправильный номер?</value>
@@ -7012,8 +7168,14 @@
   <data name="FormatterMonth" xml:space="preserve">
     <value>dd MMM</value>
   </data>
+  <data name="FormatterMonthName" xml:space="preserve">
+    <value>MMM</value>
+  </data>
   <data name="FormatterMonthYear" xml:space="preserve">
     <value>MMMM yyyy</value>
+  </data>
+  <data name="FormatterMonthYear2" xml:space="preserve">
+    <value>MMM yyyy</value>
   </data>
   <data name="FormatterStats12H" xml:space="preserve">
     <value>dd MMM yyyy, h:mm a</value>

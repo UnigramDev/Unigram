@@ -127,7 +127,7 @@
     <value>postou um contato</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>postou um documento</value>
+    <value>postou um arquivo</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>te convidou para jogar {1}</value>
@@ -147,6 +147,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>postou uma foto</value>
   </data>
+  <data name="CHANNEL_MESSAGE_POLL" xml:space="preserve">
+    <value>postou uma enquete</value>
+  </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
     <value>postou uma mensagem de vídeo</value>
   </data>
@@ -160,7 +163,7 @@
     <value>postou um vídeo</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} convidou {2} para o grupo</value>
+    <value>{0} adicionou {2} ao grupo</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
     <value>{0} convidou você para o grupo</value>
@@ -196,7 +199,7 @@
     <value>{0} enviou uma localização para o grupo</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} começou a compartilhar a localização em tempo real</value>
+    <value>{0} começou a compartilhar a localização em tempo real com</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} enviou um GIF para o grupo</value>
@@ -209,6 +212,9 @@
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} enviou uma foto para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_POLL" xml:space="preserve">
+    <value>{0} enviou uma enquete ao grupo</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
     <value>{0} enviou uma mensagem de vídeo para o grupo</value>
@@ -229,7 +235,7 @@
     <value>{0} voltou para o grupo</value>
   </data>
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
-    <value>{0} alterou o nome do grupo</value>
+    <value>{0} editou o nome do grupo</value>
   </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
     <value>{0} entrou para o Telegram!</value>
@@ -238,10 +244,10 @@
     <value>Você tem uma nova mensagem{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Pedido de criptografia aceito{0}</value>
+    <value>Seu chat secreto foi aceito{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Nova criptografia solicitada{0}</value>
+    <value>Chat secreto solicitado{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
     <value>Você tem uma nova mensagem{0}</value>
@@ -280,7 +286,10 @@
     <value>enviou uma foto</value>
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
-    <value>enviou uma foto auto-destrutiva</value>
+    <value>te enviou uma foto autodestrutiva</value>
+  </data>
+  <data name="MESSAGE_POLL" xml:space="preserve">
+    <value>te enviou uma enquete</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>enviou uma mensagem de vídeo</value>
@@ -298,7 +307,7 @@
     <value>enviou um vídeo</value>
   </data>
   <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
-    <value>te enviou um vídeo auto-destrutivo</value>
+    <value>te enviou um vídeo autodestrutivo</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
     <value>Você perdeu uma chamada de {0}</value>
@@ -335,6 +344,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>fixou uma foto</value>
+  </data>
+  <data name="PINNED_POLL" xml:space="preserve">
+    <value>fixou uma enquete</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>fixou uma mensagem de vídeo</value>

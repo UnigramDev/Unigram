@@ -47,6 +47,12 @@
     <Filter Include="Strings\ar">
       <UniqueIdentifier>{a1f9a63a-e522-42ad-99f1-f15e18ea2a2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Strings\ca">
+      <UniqueIdentifier>{dc8423c7-bf67-4c17-8353-402a3df53c2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\tr">
+      <UniqueIdentifier>{50689c61-0590-49f5-bccd-7c993837e7a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -95,6 +101,12 @@
     </PRIResource>
     <PRIResource Include="Strings\ar\Resources.resw">
       <Filter>Strings\ar</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\ca\Resources.resw">
+      <Filter>Strings\ca</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\tr\Resources.resw">
+      <Filter>Strings\tr</Filter>
     </PRIResource>
   </ItemGroup>
 </Project>

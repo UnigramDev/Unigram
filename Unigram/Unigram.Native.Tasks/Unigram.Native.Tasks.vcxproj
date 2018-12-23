@@ -233,6 +233,7 @@
     <ClCompile Include="NotificationTask.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="Strings\ca\Resources.resw" />
     <PRIResource Include="Strings\de\Resources.resw" />
     <PRIResource Include="Strings\nl\Resources.resw" />
     <PRIResource Include="Strings\es\Resources.resw" />
@@ -240,6 +241,7 @@
     <PRIResource Include="Strings\en\Resources.resw" />
     <PRIResource Include="Strings\pt-BR\Resources.resw" />
     <PRIResource Include="Strings\fr\Resources.resw" />
+    <PRIResource Include="Strings\tr\Resources.resw" />
     <PRIResource Include="Strings\uk\Resources.resw" />
     <PRIResource Include="Strings\ru\Resources.resw" />
     <PRIResource Include="Strings\ko\Resources.resw" />

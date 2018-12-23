@@ -127,7 +127,7 @@
     <value>posted a contact</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>posted a document</value>
+    <value>posted a file</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>invited you to play {1}</value>
@@ -147,6 +147,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>posted a photo</value>
   </data>
+  <data name="CHANNEL_MESSAGE_POLL" xml:space="preserve">
+    <value>posted a poll</value>
+  </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
     <value>posted a video message</value>
   </data>
@@ -160,7 +163,7 @@
     <value>posted a video</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} invited {2} to the group</value>
+    <value>{0} added {2} to the group</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
     <value>{0} invited you to the group</value>
@@ -196,7 +199,7 @@
     <value>{0} sent a map to the group</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} started sharing their live location</value>
+    <value>{0} started sharing their live location with</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} sent a GIF to the group</value>
@@ -209,6 +212,9 @@
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} sent a photo to the group</value>
+  </data>
+  <data name="CHAT_MESSAGE_POLL" xml:space="preserve">
+    <value>{0} sent a poll to the group</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
     <value>{0} sent a video message to the group</value>
@@ -241,7 +247,7 @@
     <value>Your secret chat was accepted{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>New encryption request{0}</value>
+    <value>New secret chat request{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
     <value>You have a new message{0}</value>
@@ -281,6 +287,9 @@
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
     <value>sent you a self-destructing photo</value>
+  </data>
+  <data name="MESSAGE_POLL" xml:space="preserve">
+    <value>sent you a poll</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>sent you a video message</value>
@@ -335,6 +344,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>pinned a photo</value>
+  </data>
+  <data name="PINNED_POLL" xml:space="preserve">
+    <value>pinned a poll</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>pinned a video message</value>

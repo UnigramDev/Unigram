@@ -127,7 +127,7 @@
     <value>mengeposkan sebuah kontak</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>mengeposkan sebuah berkas</value>
+    <value>mengeposkan dokumen</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>mengundang Anda untuk bermain {1}</value>
@@ -147,6 +147,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>mengeposkan sebuah foto</value>
   </data>
+  <data name="CHANNEL_MESSAGE_POLL" xml:space="preserve">
+    <value>mengeposkan pol</value>
+  </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
     <value>mengeposkan pesan video</value>
   </data>
@@ -160,7 +163,7 @@
     <value>mengeposkan sebuah video</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} mengundang {2} ke group</value>
+    <value>{0} mengundang {2} ke grup</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
     <value>{0} mengundang Anda ke group</value>
@@ -196,7 +199,7 @@
     <value>{0} kirim sebuah peta ke group</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} mulai berbagi live location mereka</value>
+    <value>{0} mulai berbagi live location mereka dengan</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} kirim GIF ke group</value>
@@ -209,6 +212,9 @@
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} kirim sebuah foto ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_POLL" xml:space="preserve">
+    <value>{0} mengirim pol ke grup</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
     <value>{0} kirim pesan video ke group</value>
@@ -238,7 +244,7 @@
     <value>Anda mendapat pesan baru{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Permintaan enkripsi Anda telah diterima{0}</value>
+    <value>Permintaan enkripsi Anda telah disetujui{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
     <value>Permintaan enkripsi baru{0}</value>
@@ -281,6 +287,9 @@
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
     <value>mengirimkan Anda foto yang dapat hancur otomatis</value>
+  </data>
+  <data name="MESSAGE_POLL" xml:space="preserve">
+    <value>mengirim pol untuk Anda</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>kirim pesan video ke Anda</value>
@@ -335,6 +344,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>menyematkan foto</value>
+  </data>
+  <data name="PINNED_POLL" xml:space="preserve">
+    <value>menyematkan pol</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>menyematkan pesan video</value>

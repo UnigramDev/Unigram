@@ -220,6 +220,9 @@
   <data name="ActionPinnedPhoto" xml:space="preserve">
     <value>un1 heeft foto vastgezet</value>
   </data>
+  <data name="ActionPinnedPoll" xml:space="preserve">
+    <value>un1 heeft een poll vastgezet</value>
+  </data>
   <data name="ActionPinnedRound" xml:space="preserve">
     <value>un1 heeft videobericht vastgezet</value>
   </data>
@@ -288,6 +291,15 @@
   </data>
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>Je mag geen leden toevoegen, deze gebruiker is nog geen lid en kan daarom niet worden toegevoegd als beheerder.</value>
+  </data>
+  <data name="AddAnOption" xml:space="preserve">
+    <value>Optie toevoegen</value>
+  </data>
+  <data name="AddAnOptionInfo" xml:space="preserve">
+    <value>Je kan nog {0}.</value>
+  </data>
+  <data name="AddAnOptionInfoMax" xml:space="preserve">
+    <value>Maximaal aantal opties zijn toegevoegd.</value>
   </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>Je mag geen leden degraderen, deze gebruiker is een beheerder en kan daarom niet worden geblokkeerd.</value>
@@ -468,6 +480,9 @@
   </data>
   <data name="AndOtherOther" xml:space="preserve">
     <value>en {0} anderen</value>
+  </data>
+  <data name="AnonymousPoll" xml:space="preserve">
+    <value>Anonieme poll</value>
   </data>
   <data name="ApkRestricted" xml:space="preserve">
     <value>APK-installatie is beperkt voor deze app. Je kunt dit inschakelen via de systeeminstellingen.</value>
@@ -972,6 +987,12 @@ Als jij dit niet was, geef dan de code in die we zojuist per SMS hebben gestuurd
   <data name="CancelPasswordQuestion" xml:space="preserve">
     <value>Instellen van Twee-staps-verificatie annuleren?</value>
   </data>
+  <data name="CancelPollAlertText" xml:space="preserve">
+    <value>Deze poll echt weggooien?</value>
+  </data>
+  <data name="CancelPollAlertTitle" xml:space="preserve">
+    <value>Poll verwijderen?</value>
+  </data>
   <data name="CancelRegistration" xml:space="preserve">
     <value>Registratie annuleren</value>
   </data>
@@ -1154,6 +1175,9 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   <data name="ChannelMessagePhoto" xml:space="preserve">
     <value>{0} plaatste een foto</value>
   </data>
+  <data name="ChannelMessagePoll" xml:space="preserve">
+    <value>{0} heeft een poll geplaatst</value>
+  </data>
   <data name="ChannelMessageRound" xml:space="preserve">
     <value>{0} plaatste een videobericht</value>
   </data>
@@ -1283,7 +1307,7 @@ Wil je dit niet dan kun je een privé-kanaal aanmaken.</value>
     <value>Galerij</value>
   </data>
   <data name="ChatHints" xml:space="preserve">
-    <value>MENSEN</value>
+    <value>Mensen</value>
   </data>
   <data name="ChatHintsDelete" xml:space="preserve">
     <value>{0} uit suggesties verwijderen?</value>
@@ -2472,6 +2496,9 @@ voor je zoekopdracht.</value>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Bestanden</value>
   </data>
+  <data name="FinalResults" xml:space="preserve">
+    <value>Eindresultaat</value>
+  </data>
   <data name="FingerprintHelp" xml:space="preserve">
     <value>Vingerafdruksensor</value>
   </data>
@@ -2634,6 +2661,24 @@ voor je zoekopdracht.</value>
   <data name="ForwardedPhotoOther" xml:space="preserve">
     <value>Bijlage: {0} foto's</value>
   </data>
+  <data name="ForwardedPollZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForwardedPollOne" xml:space="preserve">
+    <value>Doorgestuurde poll</value>
+  </data>
+  <data name="ForwardedPollTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForwardedPollFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForwardedPollMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ForwardedPollOther" xml:space="preserve">
+    <value>{0} doorgestuurde polls</value>
+  </data>
   <data name="ForwardedRoundZero" xml:space="preserve">
     <value/>
   </data>
@@ -2740,7 +2785,7 @@ voor je zoekopdracht.</value>
     <value>GIF-Onderschrift</value>
   </data>
   <data name="GlobalSearch" xml:space="preserve">
-    <value>WERELDWIJD ZOEKEN</value>
+    <value>Wereldwijd zoeken</value>
   </data>
   <data name="GotAQuestion" xml:space="preserve">
     <value>Heb je een vraag
@@ -2904,6 +2949,9 @@ over Telegram?</value>
   </data>
   <data name="Info" xml:space="preserve">
     <value>Info</value>
+  </data>
+  <data name="InstallGoogleMaps" xml:space="preserve">
+    <value>Google Maps installeren?</value>
   </data>
   <data name="InstantView" xml:space="preserve">
     <value>SNELLE WEERGAVE</value>
@@ -3204,7 +3252,7 @@ Je kunt je taal altijd aanpassen via Instellingen.</value>
     <value>Kies hoelang je je nauwkeurige locatie met {0} wilt delen.</value>
   </data>
   <data name="LiveLocations" xml:space="preserve">
-    <value>LIVE-LOCATIES</value>
+    <value>Live-locaties</value>
   </data>
   <data name="Loading" xml:space="preserve">
     <value>Bezig met laden</value>
@@ -3520,6 +3568,9 @@ Dit kan enkele minuten duren.</value>
   <data name="MoreInfo" xml:space="preserve">
     <value>Meer informatie</value>
   </data>
+  <data name="MusicInfo" xml:space="preserve">
+    <value>Om muziek bestanden te versturen</value>
+  </data>
   <data name="MuteDisable" xml:space="preserve">
     <value>Uitschakelen</value>
   </data>
@@ -3530,7 +3581,7 @@ Dit kan enkele minuten duren.</value>
     <value>Meldingen stil</value>
   </data>
   <data name="NearbyPlaces" xml:space="preserve">
-    <value>OF KIES EEN PLEK</value>
+    <value>Of kies een plek</value>
   </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>Datagebruik sinds {0}</value>
@@ -3582,6 +3633,9 @@ Dit kan enkele minuten duren.</value>
   </data>
   <data name="NewMessagesOther" xml:space="preserve">
     <value>{0} nieuwe berichten</value>
+  </data>
+  <data name="NewPoll" xml:space="preserve">
+    <value>Nieuwe poll</value>
   </data>
   <data name="NewSecretChat" xml:space="preserve">
     <value>Nieuwe geheime chat</value>
@@ -3717,6 +3771,9 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Er is geen Telegram-account met deze gebruikersnaam.</value>
   </data>
+  <data name="NoVotes" xml:space="preserve">
+    <value>Geen stemmen</value>
+  </data>
   <data name="NobodyLikesSpam1" xml:space="preserve">
     <value>Je kunt momenteel alleen berichten sturen aan onderlingen contacten.</value>
   </data>
@@ -3788,6 +3845,12 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
     <value>{0} heeft foto vastgezet</value>
+  </data>
+  <data name="NotificationActionPinnedPoll" xml:space="preserve">
+    <value>{0} heeft poll vastgezet in de groep {1}</value>
+  </data>
+  <data name="NotificationActionPinnedPollChannel" xml:space="preserve">
+    <value>{0} heeft een poll vastgezet</value>
   </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0} heeft videobericht vastgezet in de groep {1}</value>
@@ -3921,6 +3984,9 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   <data name="NotificationMessageGroupPhoto" xml:space="preserve">
     <value>{0} heeft een foto gestuurd naar de groep {1}</value>
   </data>
+  <data name="NotificationMessageGroupPoll" xml:space="preserve">
+    <value>{0} heeft een poll gestuurd naar de groep {1}</value>
+  </data>
   <data name="NotificationMessageGroupRound" xml:space="preserve">
     <value>{0} heeft een videobericht gestuurd naar de groep {1}</value>
   </data>
@@ -3953,6 +4019,9 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   </data>
   <data name="NotificationMessagePhoto" xml:space="preserve">
     <value>{0} heeft je een foto gestuurd</value>
+  </data>
+  <data name="NotificationMessagePoll" xml:space="preserve">
+    <value>{0} heeft je een poll gestuurd</value>
   </data>
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>{0} heeft je een videobericht gestuurd</value>
@@ -4160,6 +4229,9 @@ Het Telegram-team</value>
   <data name="OpenChannel" xml:space="preserve">
     <value>KANAAL OPENEN</value>
   </data>
+  <data name="OpenFile" xml:space="preserve">
+    <value>BESTAND OPENEN</value>
+  </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>BEKIJK GROEP</value>
   </data>
@@ -4174,6 +4246,27 @@ Het Telegram-team</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>URL {0} openen?</value>
+  </data>
+  <data name="OptionZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="OptionOne" xml:space="preserve">
+    <value>{0} optie</value>
+  </data>
+  <data name="OptionTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="OptionFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="OptionMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="OptionOther" xml:space="preserve">
+    <value>{0} meer opties</value>
+  </data>
+  <data name="OptionHint" xml:space="preserve">
+    <value>Optie</value>
   </data>
   <data name="OtherLoginCode" xml:space="preserve">
     <value>Je logincode is **{0}**. Voer de code in in de Telegram-app waarop je probeert in te loggen.
@@ -5089,6 +5182,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="PhoneCopied" xml:space="preserve">
     <value>Nummer gekopieerd naar klembord</value>
   </data>
+  <data name="PhoneHidden" xml:space="preserve">
+    <value>Onbekend</value>
+  </data>
   <data name="PhoneHome" xml:space="preserve">
     <value>Thuis</value>
   </data>
@@ -5166,6 +5262,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="PinnedMessages" xml:space="preserve">
     <value>Vastgezette berichten</value>
   </data>
+  <data name="PinnedPoll" xml:space="preserve">
+    <value>Vastgezette poll</value>
+  </data>
   <data name="PleaseDownload" xml:space="preserve">
     <value>Download media eerst</value>
   </data>
@@ -5204,6 +5303,12 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   </data>
   <data name="PointsOther" xml:space="preserve">
     <value>{0} punten</value>
+  </data>
+  <data name="Poll" xml:space="preserve">
+    <value>Poll</value>
+  </data>
+  <data name="PollOptions" xml:space="preserve">
+    <value>Poll opties</value>
   </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Uitgeschakeld</value>
@@ -5304,6 +5409,12 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="ProxySettings" xml:space="preserve">
     <value>Proxy-instellingen</value>
   </data>
+  <data name="Question" xml:space="preserve">
+    <value>Vraag</value>
+  </data>
+  <data name="QuestionHint" xml:space="preserve">
+    <value>Stel een vraag</value>
+  </data>
   <data name="QuickReplyCustom" xml:space="preserve">
     <value>Aangepast bericht.</value>
   </data>
@@ -5326,7 +5437,7 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
     <value>Toegangscode opnieuw invoeren</value>
   </data>
   <data name="Recent" xml:space="preserve">
-    <value>RECENT</value>
+    <value>Recent</value>
   </data>
   <data name="RecentStickers" xml:space="preserve">
     <value>Recent gebruikt</value>
@@ -5396,6 +5507,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Melden</value>
+  </data>
+  <data name="ReportChatChild" xml:space="preserve">
+    <value>Kindermisbruik</value>
   </data>
   <data name="ReportChatDescription" xml:space="preserve">
     <value>Beschrijving</value>
@@ -5623,7 +5737,7 @@ Herstart de app om deze optie actief te maken.</value>
     <value>Leden zoeken</value>
   </data>
   <data name="SearchMessages" xml:space="preserve">
-    <value>BERICHTEN</value>
+    <value>Berichten</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Zoek stickerbundels</value>
@@ -5960,6 +6074,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Uit</value>
   </data>
+  <data name="ShowAllFiles" xml:space="preserve">
+    <value>Alle bestanden</value>
+  </data>
   <data name="ShowAllMedia" xml:space="preserve">
     <value>Alle media weergeven</value>
   </data>
@@ -5967,7 +6084,7 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
     <value>In chat weergeven</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
-    <value>VEEG OMHOOG VOOR PLEKKEN DICHTBIJ</value>
+    <value>Veeg omhoog voor plekken dichtbij</value>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>Shuffle</value>
@@ -6025,6 +6142,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Bevestig je landnummer en voer je telefoonnummer in.</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistieken</value>
   </data>
   <data name="StickersZero" xml:space="preserve">
     <value/>
@@ -6088,6 +6208,15 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="StopLoading" xml:space="preserve">
     <value>Stopped met laden?</value>
+  </data>
+  <data name="StopPoll" xml:space="preserve">
+    <value>Poll stoppen</value>
+  </data>
+  <data name="StopPollAlertText" xml:space="preserve">
+    <value>Als je deze poll nu stopt kan niemand meer stemmen. Deze actie kan niet ongedaan worden gemaakt.</value>
+  </data>
+  <data name="StopPollAlertTitle" xml:space="preserve">
+    <value>Poll stoppen?</value>
   </data>
   <data name="StopVerification" xml:space="preserve">
     <value>Wil je telefoonnummerverificatieproces stoppen?</value>
@@ -6173,6 +6302,9 @@ als 'Contacten Synchroniseren' is ingeschakeld worden je contacten opnieuw gesyn
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
     <value>Tik om je nummer te wijzigen</value>
+  </data>
+  <data name="TapToDownload" xml:space="preserve">
+    <value>Tik om te downloaden</value>
   </data>
   <data name="TelegramContactsZero" xml:space="preserve">
     <value/>
@@ -6419,6 +6551,9 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   </data>
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>Dit bericht wordt niet ondersteund door jouw versie van Telegram. Werk Telegram bij om dit bericht te bekijken: https://telegram.org/update</value>
+  </data>
+  <data name="Unvote" xml:space="preserve">
+    <value>Stem intrekken</value>
   </data>
   <data name="Update" xml:space="preserve">
     <value>BIJWERKEN</value>
@@ -6783,6 +6918,24 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   <data name="VoipWaiting" xml:space="preserve">
     <value>Wachten</value>
   </data>
+  <data name="VoteZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoteOne" xml:space="preserve">
+    <value>{0} stem</value>
+  </data>
+  <data name="VoteTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoteFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoteMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoteOther" xml:space="preserve">
+    <value>{0} stemmen</value>
+  </data>
   <data name="WaitMore" xml:space="preserve">
     <value>Langer wachten</value>
   </data>
@@ -6998,8 +7151,14 @@ Als je je wachtwoord vergeet verlies je toegang tot je Telegram-account. Er is g
   <data name="FormatterMonth" xml:space="preserve">
     <value>dd MMM</value>
   </data>
+  <data name="FormatterMonthName" xml:space="preserve">
+    <value>LLLL</value>
+  </data>
   <data name="FormatterMonthYear" xml:space="preserve">
     <value>MMMM yyyy</value>
+  </data>
+  <data name="FormatterMonthYear2" xml:space="preserve">
+    <value>LLLL yyyy</value>
   </data>
   <data name="FormatterStats12H" xml:space="preserve">
     <value>dd MMM yyyy, h:mm a</value>

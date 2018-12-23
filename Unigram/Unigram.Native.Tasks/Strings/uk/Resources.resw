@@ -127,7 +127,7 @@
     <value>публікує контакт</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>публікує документ</value>
+    <value>публікує файл</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>запрошує вас зіграти в {1}</value>
@@ -147,6 +147,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>публікує фото</value>
   </data>
+  <data name="CHANNEL_MESSAGE_POLL" xml:space="preserve">
+    <value>публікує опитування</value>
+  </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
     <value>публікує відеоповідомлення</value>
   </data>
@@ -160,7 +163,7 @@
     <value>публікує відео</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} запрошує {2} до групи</value>
+    <value>{0} додає {2} до групи</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
     <value>{0} запрошує вас до групи</value>
@@ -196,7 +199,7 @@
     <value>{0} надсилає мапу групі</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} починає ділитися маячком</value>
+    <value>{0} починає ділитися маячком із</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} надсилає GIF групі</value>
@@ -209,6 +212,9 @@
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} надсилає фото групі</value>
+  </data>
+  <data name="CHAT_MESSAGE_POLL" xml:space="preserve">
+    <value>{0} надсилає опитування до групи</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
     <value>{0} надсилає відеоповідомлення групі</value>
@@ -238,10 +244,10 @@
     <value>У вас нове повідомлення{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Ваш запит на шифрування прийнято{0}</value>
+    <value>Ваш секретний чат прийнято{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Новий запит на шифрування{0}</value>
+    <value>Новий запит секретного чату{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
     <value>У вас нове повідомлення{0}</value>
@@ -282,11 +288,14 @@
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
     <value>надсилає вам самознищуване фото</value>
   </data>
+  <data name="MESSAGE_POLL" xml:space="preserve">
+    <value>надсилає вам опитування</value>
+  </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>надсилає вам відеоповідомлення</value>
   </data>
   <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
-    <value>робить скриншот!</value>
+    <value>робить скріншот!</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>надсилає вам {1}наліпку</value>
@@ -335,6 +344,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>прикріплює фото</value>
+  </data>
+  <data name="PINNED_POLL" xml:space="preserve">
+    <value>прикріплює опитування</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>прикріплює відеоповідомлення</value>

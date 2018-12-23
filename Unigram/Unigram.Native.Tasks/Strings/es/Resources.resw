@@ -136,7 +136,7 @@
     <value>publicó un mapa</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>publicó una ubicación en directo</value>
+    <value>publicó una ubicación en tiempo real</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
     <value>publicó un GIF</value>
@@ -146,6 +146,9 @@
   </data>
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>publicó una foto</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_POLL" xml:space="preserve">
+    <value>publicó una encuesta</value>
   </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
     <value>publicó un videomensaje</value>
@@ -157,16 +160,16 @@
     <value>{1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
-    <value>publicó un vídeo</value>
+    <value>publicó un video</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} invitó a {2} al grupo</value>
+    <value>{0} añadió a {2} al grupo</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
-    <value>{0} te invitó al grupo</value>
+    <value>{0} te añadió al grupo</value>
   </data>
   <data name="CHAT_CREATED" xml:space="preserve">
-    <value>{0} te invitó al grupo</value>
+    <value>{0} te añadió al grupo</value>
   </data>
   <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
     <value>{0} eliminó a {2} del grupo</value>
@@ -196,7 +199,7 @@
     <value>{0} envió una ubicación al grupo</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} está enviando su ubicación en directo</value>
+    <value>{0} comenzó a enviar su ubicación en tiempo real a</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} envió un GIF al grupo</value>
@@ -210,6 +213,9 @@
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} envió una foto al grupo</value>
   </data>
+  <data name="CHAT_MESSAGE_POLL" xml:space="preserve">
+    <value>{0} envió una encuesta al grupo</value>
+  </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
     <value>{0} envió un videomensaje al grupo</value>
   </data>
@@ -220,7 +226,7 @@
     <value>{0}: {2}</value>
   </data>
   <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
-    <value>{0} envió un vídeo al grupo</value>
+    <value>{0} envió un video al grupo</value>
   </data>
   <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
     <value>{0} cambió la foto del grupo</value>
@@ -238,10 +244,10 @@
     <value>Tienes un mensaje nuevo{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Tu solicitud de cifrado fue aceptada{0}</value>
+    <value>Tu chat secreto fue aceptado{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Nueva solicitud de cifrado{0}</value>
+    <value>Nueva solicitud de chat secreto{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
     <value>Tienes un mensaje nuevo{0}</value>
@@ -265,7 +271,7 @@
     <value>te envió una ubicación</value>
   </data>
   <data name="MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>comenzó a enviar su ubicación en directo</value>
+    <value>comenzó a enviar su ubicación en tiempo real</value>
   </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>te envió un GIF</value>
@@ -282,11 +288,14 @@
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
     <value>te envió una foto con autodestrucción</value>
   </data>
+  <data name="MESSAGE_POLL" xml:space="preserve">
+    <value>te envió una encuesta</value>
+  </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>te envió un videomensaje</value>
   </data>
   <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
-    <value>¡hizo una captura de pantalla!</value>
+    <value>¡{0} hizo una captura de pantalla!</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>te envió un {1}sticker</value>
@@ -295,10 +304,10 @@
     <value>{1}</value>
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
-    <value>te envió un vídeo</value>
+    <value>te envió un video</value>
   </data>
   <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
-    <value>te envió un vídeo con autodestrucción</value>
+    <value>te envió un video con autodestrucción</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
     <value>Perdiste una llamada de {0}</value>
@@ -322,7 +331,7 @@
     <value>ancló una ubicación</value>
   </data>
   <data name="PINNED_GEOLIVE" xml:space="preserve">
-    <value>ancló una ubicación en directo</value>
+    <value>ancló una ubicación en tiempo real</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>ancló un GIF</value>
@@ -336,6 +345,9 @@
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>ancló una foto</value>
   </data>
+  <data name="PINNED_POLL" xml:space="preserve">
+    <value>ancló una encuesta</value>
+  </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>ancló un videomensaje</value>
   </data>
@@ -346,6 +358,6 @@
     <value>ancló “{1}”</value>
   </data>
   <data name="PINNED_VIDEO" xml:space="preserve">
-    <value>ancló un vídeo</value>
+    <value>ancló un video</value>
   </data>
 </root>

@@ -147,6 +147,9 @@
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
     <value>hat ein Bild gesendet</value>
   </data>
+  <data name="CHANNEL_MESSAGE_POLL" xml:space="preserve">
+    <value>hat eine Umfrage gesendet</value>
+  </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
     <value>hat eine Videonachricht gesendet</value>
   </data>
@@ -160,7 +163,7 @@
     <value>hat ein Video gesendet</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} hat {2} in die Gruppe eingeladen</value>
+    <value>{0} hat {2} der Gruppe hinzugefügt</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
     <value>{0} hat dich in die Gruppe eingeladen</value>
@@ -196,19 +199,22 @@
     <value>{0} hat einen Standort an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} teilt jetzt seinen Live-Standort</value>
+    <value>{0} teilt jetzt den Live-Standort mit</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} hat ein GIF an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
-    <value>{0} hat eine Rechnung über {2} gesendet</value>
+    <value>{0} hat eine Rechnung für {2} an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
     <value>{0} hat eine Nachricht an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} hat ein Bild an die Gruppe gesendet</value>
+  </data>
+  <data name="CHAT_MESSAGE_POLL" xml:space="preserve">
+    <value>{0} hat eine Umfrage an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
     <value>{0} hat eine Videonachricht an die Gruppe gesendet</value>
@@ -238,10 +244,10 @@
     <value>Du hast eine neue Nachricht{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Deine Verschlüsselungs-Aufforderung wurde angenommen{0}</value>
+    <value>Geheimer Chat wurde akzeptiert{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Neue Verschlüsselungs-Aufforderung{0}</value>
+    <value>Neue geheime Chat-Anfrage{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
     <value>Du hast eine neue Nachricht {0}</value>
@@ -271,7 +277,7 @@
     <value>hat dir ein GIF gesendet</value>
   </data>
   <data name="MESSAGE_INVOICE" xml:space="preserve">
-    <value>hat dir eine Rechnung über {1} gesendet</value>
+    <value>hat dir eine Rechnung für {1} gesendet</value>
   </data>
   <data name="MESSAGE_NOTEXT" xml:space="preserve">
     <value>hat dir eine Nachricht gesendet</value>
@@ -281,6 +287,9 @@
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
     <value>hat dir ein selbstzerstörendes Bild gesendet</value>
+  </data>
+  <data name="MESSAGE_POLL" xml:space="preserve">
+    <value>hat dir eine Umfrage gesendet</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>hat dir eine Videonachricht gesendet</value>
@@ -301,7 +310,7 @@
     <value>hat dir ein selbstzerstörendes Video gesendet</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
-    <value>Anruf in Abwesenheit</value>
+    <value>Du hast einen Anruf von {0} verpasst</value>
   </data>
   <data name="PHONE_CALL_REQUEST" xml:space="preserve">
     <value>{0} ruft dich an</value>
@@ -335,6 +344,9 @@
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
     <value>hat ein Bild angeheftet</value>
+  </data>
+  <data name="PINNED_POLL" xml:space="preserve">
+    <value>hat eine Umfrage angeheftet</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>hat eine Videonachricht angeheftet</value>
