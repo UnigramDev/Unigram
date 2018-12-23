@@ -59,7 +59,7 @@
                    Style="{StaticResource HeaderlessPivotStyle}"
                    Grid.Row="1">
                 <PivotItem>
-                    <GridView
+                    <controls:SelectGridView
                         x:Name="ScrollingMedia"
                         ItemsSource="{x:Bind ViewModel.Media, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
@@ -121,10 +121,10 @@
                                 <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8"/>
                             </ItemsPanelTemplate>
                         </GridView.ItemsPanel>
-                    </GridView>
+                    </controls:SelectGridView>
                 </PivotItem>
                 <PivotItem>
-                    <ListView
+                    <controls:SelectListView
                         x:Name="ScrollingFiles"
                         ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
@@ -162,10 +162,10 @@
                                 </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                             </selectors:MessageContentTemplateSelector>
                         </ListView.ItemTemplateSelector>
-                    </ListView>
+                    </controls:SelectListView>
                 </PivotItem>
                 <PivotItem>
-                    <ListView
+                    <controls:SelectListView
                         x:Name="ScrollingLinks"
                         ItemsSource="{x:Bind ViewModel.Links, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
@@ -203,10 +203,10 @@
                                 </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                             </selectors:MessageContentTemplateSelector>
                         </ListView.ItemTemplateSelector>
-                    </ListView>
+                    </controls:SelectListView>
                 </PivotItem>
                 <PivotItem>
-                    <ListView
+                    <controls:SelectListView
                         x:Name="ScrollingMusic"
                         ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
@@ -244,10 +244,10 @@
                                 </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                             </selectors:MessageContentTemplateSelector>
                         </ListView.ItemTemplateSelector>
-                    </ListView>
+                    </controls:SelectListView>
                 </PivotItem>
                 <PivotItem>
-                    <ListView
+                    <controls:SelectListView
                         x:Name="ScrollingVoice"
                         ItemsSource="{x:Bind ViewModel.Voice, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
@@ -285,7 +285,7 @@
                                 </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                             </selectors:MessageContentTemplateSelector>
                         </ListView.ItemTemplateSelector>
-                    </ListView>
+                    </controls:SelectListView>
                 </PivotItem>
             </Pivot>
         </microsoft:NavigationView>
@@ -300,7 +300,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
-                <controls:GlyphButton Glyph="&#xEE35;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
+                <controls:GlyphButton Glyph="&#xE72D;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
 
                 <ContentControl
                     Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
