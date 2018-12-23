@@ -49,7 +49,7 @@ namespace Unigram.Views
         private readonly string _injectedJs;
         private ScrollViewer _scrollingHost;
 
-        private FileContext<FrameworkElement> _filesMap = new FileContext<FrameworkElement>();
+        private FileContext<Tuple<IContentWithFile, MessageViewModel>> _filesMap = new FileContext<Tuple<IContentWithFile, MessageViewModel>>();
 
         public InstantPage()
         {
@@ -78,34 +78,26 @@ namespace Unigram.Views
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (sender is ScrollViewer scroll)
+            if (sender is ScrollViewer scroll && scroll.ScrollableHeight > 0)
             {
                 Reading.Value = scroll.VerticalOffset / scroll.ScrollableHeight * 100;
+            }
+            else
+            {
+                Reading.Value = 0;
             }
         }
 
         public void Handle(UpdateFile update)
         {
-            if (_filesMap.TryGetValue(update.File.Id, out List<FrameworkElement> elements))
+            if (_filesMap.TryGetValue(update.File.Id, out List<Tuple<IContentWithFile, MessageViewModel>> elements))
             {
                 this.BeginOnUIThread(() =>
                 {
                     foreach (var panel in elements)
                     {
-                        var message = panel.Tag as MessageViewModel;
-                        if (message == null)
-                        {
-                            return;
-                        }
-
-                        var content = panel as IContentWithFile;
-                        if (content == null)
-                        {
-                            return;
-                        }
-
-                        message.UpdateFile(update.File);
-                        content.UpdateFile(message, update.File);
+                        panel.Item2.UpdateFile(update.File);
+                        panel.Item1.UpdateFile(panel.Item2, update.File);
                     }
 
                     if (update.File.Local.IsDownloadingCompleted && !update.File.Remote.IsUploadingActive)
@@ -617,7 +609,7 @@ namespace Unigram.Views
 
             foreach (var size in block.Photo.Sizes)
             {
-                _filesMap[size.Photo.Id].Add(content);
+                _filesMap[size.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
             element.Children.Add(content);
@@ -648,10 +640,10 @@ namespace Unigram.Views
 
             if (block.Video.Thumbnail != null)
             {
-                _filesMap[block.Video.Thumbnail.Photo.Id].Add(content);
+                _filesMap[block.Video.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
-            _filesMap[block.Video.VideoValue.Id].Add(content);
+            _filesMap[block.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
             element.Children.Add(content);
 
@@ -681,10 +673,10 @@ namespace Unigram.Views
 
             if (block.Animation.Thumbnail != null)
             {
-                _filesMap[block.Animation.Thumbnail.Photo.Id].Add(content);
+                _filesMap[block.Animation.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
-            _filesMap[block.Animation.AnimationValue.Id].Add(content);
+            _filesMap[block.Animation.AnimationValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
             element.Children.Add(content);
 
@@ -786,7 +778,7 @@ namespace Unigram.Views
 
                     foreach (var size in photoBlock.Photo.Sizes)
                     {
-                        _filesMap[size.Photo.Id].Add(content);
+                        _filesMap[size.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
                     }
 
                     items.Add(content);
@@ -806,10 +798,10 @@ namespace Unigram.Views
 
                     if (videoBlock.Video.Thumbnail != null)
                     {
-                        _filesMap[videoBlock.Video.Thumbnail.Photo.Id].Add(content);
+                        _filesMap[videoBlock.Video.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
                     }
 
-                    _filesMap[videoBlock.Video.VideoValue.Id].Add(content);
+                    _filesMap[videoBlock.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
                     items.Add(content);
                 }
