@@ -14,7 +14,7 @@ namespace Unigram.Converters
         public const string EditGlyph = "\uE104";
         public const string ReplyGlyph = "\uE248";
         public const string GlobeGlyph = "\uE12B";
-        public const string ForwardGlyph = "\uEE35";
+        public const string ForwardGlyph = "\uE72D";
         public const string LoadingGlyph = "\uE1CD";
         public const string SendGlyph = "\uE725";
         public const string ConfirmGlyph = "\uE10B";
@@ -64,7 +64,7 @@ namespace Unigram.Converters
         public const string Message = "\uE8BD";
 
         public const string Delete = "\uE74D";
-        public const string Forward = "\uEE35";
+        public const string Forward = "\uE72D";
         public const string Select = "\uE762";
         public const string SaveAs = "\uE792";
         public const string Folder = "\uE838";

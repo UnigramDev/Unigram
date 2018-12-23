@@ -469,7 +469,7 @@
                     <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" ToolTipService.ToolTip="{CustomResource Delete}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
                     <controls:GlyphButton Glyph="&#xE730;" Command="{x:Bind ViewModel.MessagesReportCommand}" ToolTipService.ToolTip="{CustomResource ReportChat}" Style="{StaticResource HeaderGlyphButtonStyle}" x:Name="Report" Grid.Column="1"/>
                     <controls:GlyphButton Glyph="&#xE16F;" Command="{x:Bind ViewModel.MessagesCopyCommand}" ToolTipService.ToolTip="{CustomResource Copy}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="2"/>
-                    <controls:GlyphButton Glyph="&#xEE35;" Command="{x:Bind ViewModel.MessagesForwardCommand}" ToolTipService.ToolTip="{CustomResource Forward}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="3"/>
+                    <controls:GlyphButton Glyph="&#xE72D;" Command="{x:Bind ViewModel.MessagesForwardCommand}" ToolTipService.ToolTip="{CustomResource Forward}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="3"/>
 
                     <ContentControl
                         Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
@@ -502,7 +502,6 @@
             <chats:ChatListView x:Name="Messages"
                                 Style="{StaticResource BubbleListViewStyle}"
                                 ItemsSource="{x:Bind ViewModel.Items}"
-                                ItemContainerTransitions="{x:Null}"
                                 ShowsScrollingPlaceholders="False"
                                 SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                                 SelectionChanged="List_SelectionChanged"
@@ -731,6 +730,7 @@
                             CornerRadius="10"
                             HorizontalAlignment="Center"
                             Margin="0,0,0,-12"
+                            IsHitTestVisible="False"
                             Canvas.ZIndex="1">
                         <TextBlock x:Name="Mentions"
                                    Style="{StaticResource CaptionTextBlockStyle}"
@@ -757,6 +757,7 @@
                             CornerRadius="10"
                             HorizontalAlignment="Center"
                             Margin="0,6,0,-12"
+                            IsHitTestVisible="False"
                             Canvas.ZIndex="1">
                         <TextBlock x:Name="UnreadCount"
                                    Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"

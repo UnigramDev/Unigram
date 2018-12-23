@@ -426,13 +426,13 @@ namespace Unigram.Views
 
             ViewModel.OpenStickersCommand.Execute(null);
 
-            var opacity = _compositor.CreateSpringScalarAnimation();
-            opacity.InitialValue = 0;
-            opacity.FinalValue = 1;
+            var opacity = _compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 0);
+            opacity.InsertKeyFrame(1, 1);
 
-            var clip = _compositor.CreateSpringScalarAnimation();
-            clip.InitialValue = 48;
-            clip.FinalValue = 0;
+            var clip = _compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(0, 48);
+            clip.InsertKeyFrame(1, 0);
 
             _stickersPanel.StopAnimation("Opacity");
             _stickersPanel.Clip.StopAnimation("LeftInset");

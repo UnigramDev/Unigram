@@ -151,10 +151,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (message.Content is MessageVoiceNote voiceNote)
-            {
-                Subtitle.Text = voiceNote.VoiceNote.GetDuration() + (voiceNote.IsListened ? string.Empty : " ●");
-            }
+            UpdateDuration();
         }
 
         public void UpdateFile(MessageViewModel message, File file)

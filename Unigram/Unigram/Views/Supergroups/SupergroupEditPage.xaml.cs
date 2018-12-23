@@ -134,6 +134,10 @@ namespace Unigram.Views.Supergroups
             ViewModel.IsSignatures = group.SignMessages;
 
 
+            Photo.IsEnabled = group.CanChangeInfo();
+            Title.IsReadOnly = !group.CanChangeInfo();
+            About.IsReadOnly = !group.CanChangeInfo();
+
             ChatType.Content = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
             ChatType.Badge = group.Username.Length > 0
                 ? group.IsChannel ? Strings.Resources.TypePublic : Strings.Resources.TypePublicGroup
@@ -146,6 +150,7 @@ namespace Unigram.Views.Supergroups
             ChatHistory.Badge = null;
             ChatHistory.Visibility = group.CanChangeInfo() && string.IsNullOrEmpty(group.Username) && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
+            InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
             GroupMembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             ChannelSignMessagesPanel.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
@@ -176,23 +181,29 @@ namespace Unigram.Views.Supergroups
             Members.Badge = fullInfo.MemberCount;
             //Members.Visibility = fullInfo.MemberCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-
-            if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))
+            if (group.CanInviteUsers())
             {
-                InviteLinkPanel.Visibility = Visibility.Collapsed;
-                ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
-            }
-            else if (string.IsNullOrEmpty(group.Username))
-            {
-                InviteLink.Text = fullInfo.InviteLink;
-                RevokeLink.Visibility = Visibility.Visible;
-                InviteLinkPanel.Visibility = Visibility.Visible;
+                if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))
+                {
+                    InviteLinkPanel.Visibility = Visibility.Collapsed;
+                    ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+                }
+                else if (string.IsNullOrEmpty(group.Username))
+                {
+                    InviteLink.Text = fullInfo.InviteLink;
+                    RevokeLink.Visibility = Visibility.Visible;
+                    InviteLinkPanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    InviteLink.Text = MeUrlPrefixConverter.Convert(ViewModel.CacheService, group.Username);
+                    RevokeLink.Visibility = Visibility.Collapsed;
+                    InviteLinkPanel.Visibility = Visibility.Visible;
+                }
             }
             else
             {
-                InviteLink.Text = MeUrlPrefixConverter.Convert(ViewModel.CacheService, group.Username);
-                RevokeLink.Visibility = Visibility.Collapsed;
-                InviteLinkPanel.Visibility = Visibility.Visible;
+                InviteLinkPanel.Visibility = Visibility.Collapsed;
             }
 
             if (fullInfo.StickerSetId == 0 || !fullInfo.CanSetStickerSet)

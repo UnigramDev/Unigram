@@ -72,6 +72,7 @@
 
                 <StackPanel>
                     <TextBox
+                        x:Name="About"
                         Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         MaxLength="{StaticResource ChannelAboutMaxLength}"
                         PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"

@@ -147,7 +147,7 @@
                 <controls:GlyphButton
                     Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanShare, Mode=OneWay}"
                     Click="{x:Bind ViewModel.SelectedItem.Share, Mode=OneWay}"
-                    Glyph="&#xEE35;"
+                    Glyph="&#xE72D;"
                     Grid.Column="1"
                     Grid.Row="2"/>
             </Grid>

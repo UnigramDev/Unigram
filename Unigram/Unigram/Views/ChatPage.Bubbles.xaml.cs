@@ -624,7 +624,7 @@ namespace Unigram.Views
                     }
                     else if (message.IsShareable())
                     {
-                        button.Glyph = "\uEE35";
+                        button.Glyph = "\uE72D";
                         action.Visibility = Visibility.Visible;
                     }
                     else
