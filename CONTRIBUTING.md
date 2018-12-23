@@ -1,5 +1,5 @@
 ## Using the issue tracker
-The [issue tracker](https://github.com/UnigramDev/Unigram/issues) is the preferred channel for [bug reports](#bug-reports), [features requests](#feature-requests) and [submitting pull requests](#pull-requests), but please respect the following restrictions:
+The [issue tracker](https://github.com/UnigramDev/Unigram/issues) is the preferred channel for [bug reports](#bug-reports), [features requests](#feature-requests) and [submitting pull requests](#pull-requests), but please respect the following rules:
 
 * Please **do not** derail or troll issues. Keep the discussion on topic and respect the opinions of others.
 
@@ -32,10 +32,10 @@ Example:
 >Any other information you want to share that is relevant to the issue being reported. This might include the lines of code that you have identified as causing the bug, and potential solutions (and your opinions on their merits).
 
 ## Feature requests
-Feature requests are welcome, anyway you should firstly read [missing features](https://github.com/UnigramDev/Unigram/wiki/Missing-features) and consider that Unigram follows official clients guidelines, so refrain from asking particoular features of non-official clients (Telegram X is considered unofficial at the moment) or features (non OS related) that aren't in official clients.
+Feature requests are welcome, anyway you should firstly read [missing features](https://github.com/UnigramDev/Unigram/wiki/Missing-features) and [TDLib missing features](https://telegra.ph/Features-not-supported-by-TDLib-12-23), as well. Consider that Unigram follows official clients guidelines, so refrain from asking particoular features of non-official clients (Telegram X is unofficial) or features (non-OS related) that aren't in official clients.
 
 ## Pull requests
-**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that developers might not want to merge into the project. To avoid that, you can join the official [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ) group and talk with the developers.
+**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that developers might not want to merge into the project. To avoid that, you can join the official [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ) group and talk with the team. 
 
 ## License
 By contributing your code, you agree to license your contribution under the [GNU General Public License](https://github.com/UnigramDev/Unigram/blob/develop/LICENSE). 
