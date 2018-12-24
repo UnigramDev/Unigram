@@ -59,19 +59,25 @@ The app uses the following NuGet packages to work:
 
 The project also relies on `libogg`, `libopus`, `libopusfile`, `libwebp` and `libtgvoip` that are included in the repository.
 
-## Contributing (Feature requests, bug reports and pull requests)
+## Contributing
 Before reporting bugs, doing features or pull requests, be sure you have already read our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md).
 
 ## Changelog
 See the [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) for changelogs for each release version of Unigram. Release announcement posts on the official [Unigram News channel](https://t.me/unigram) contain summaries of the most noteworthy changes made in each release.
 
+## Download without the store
+If you don't want Microsoft Store you can install Unigram from [here](https://unigramdev.github.io/). (versions posted here aren't as up-to-date as the ones released in Microsoft Store)
+
 ## Community
-Get updates on Unigram's development and chat with the project maintainers and community members.
+Get updates on Unigram's development and chat with the project team and other users.
 
 * Follow [@UnigramApp on Twitter](https://twitter.com/UnigramApp).
 * Like and follow [Unigram on Facebook](https://www.facebook.com/UnigramApp/).
 * Join the official group [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ).
 * Join the official channel [Unigram News](https://t.me/unigram).
+
+## Wiki
+For additional information (missing features, FAQ, keyboard shortcuts and other stuff) you can check [Unigram wiki](https://github.com/UnigramDev/Unigram/wiki).
 
 ## License
 Copyright © 2016-2018 [Unigram Authors](https://github.com/UnigramDev/Unigram/graphs/contributors).
