@@ -36,7 +36,7 @@ Furthermore, the project is open-source, built by the community for the communit
 ## Features
 - Based on [TDlib](https://github.com/tdlib/td);
 - Secret chats;
-- Instanti view;
+- Instant view;
 - Multi-account;
 - Work mode (hide your muted chat to focus on what's more important);
 - Calls;
