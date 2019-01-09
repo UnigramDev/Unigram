@@ -17,67 +17,50 @@
 
 <br>
 
-## Build instructions
-1. First, check that you have the [necessary tools](#requirements) installed.
-2. Go to <https://my.telegram.org/apps> and register a new app.
-3. Clone the repository __*recursively*__ `git clone --recursive https://github.com/UnigramDev/Unigram.git`.
-4. Create a new file inside `Unigram/Unigram/Unigram` and name it `Constants.Secret.cs`: 
-```csharp
-namespace Unigram
-{
-    public static partial class Constants
-    {
-        static Constants()
-        {
-            ApiId = your_api_id;
-            ApiHash = "your_api_hash";
-        }
-    }
-}
-```
-5. Replace `your_api_id` and `your_api_hash` with the data obtained from step 2.
 
-## Requirements
-The following tools and SDKs are mandatory for the project development:
-* Visual Studio 2017, with
-    * .NET Native
-    * .NET Framework 4.7 SDK
-    * NuGet package manager
-    * Universal Windows Platform tools
-    * Windows 10 SDK 17134
-    * [TDLib for Universal Windows Platform](https://github.com/tdlib/td/)
+Unigram is a third-party Telegram client specifically designed for the Windows 10 platform. 
 
-## Dependencies
-The app uses the following NuGet packages to work:
-* [Autofac](https://www.nuget.org/packages/Autofac/)
-* [HockeySDK.UWP](https://www.nuget.org/packages/HockeySDK.UWP/)
-* [Microsoft.NETCore.UniversalWindowsPlatform](https://www.nuget.org/packages/Microsoft.NETCore.UniversalWindowsPlatform/)
-* [Microsoft.Xaml.Behaviors.Uwp.Managed](https://www.nuget.org/packages/Microsoft.Xaml.Behaviors.Uwp.Managed/)
-* [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/)
-* [System.Reactive](https://www.nuget.org/packages/System.Reactive/)
-* [Win2D.uwp](https://www.nuget.org/packages/Win2D.uwp/)
+In fact, thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones and Xbox One) providing a seamless, performant and consistent user experience.
 
-The project also relies on `libogg`, `libopus`, `libopusfile`, `libwebp` and `libtgvoip` that are included in the repository.
+Furthermore, the project is open-source, built by the community for the community, providing the best transparency possible.
 
-## Contributing (Feature requests, bug reports and pull requests)
-Before reporting bugs, doing features or pull requests, be sure you have already read our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md).
+## Table of contents
+- [Features](#features);
+- [Contributing](#contributing);
+- [Changelog](#changelog);
+- [Download without Microsoft Store](#alternativedownload);
+- [Wiki](#wiki).
 
+
+<a name="features"></a>
+## Features
+- Based on [TDlib](https://github.com/tdlib/td);
+- Secret chats;
+- Instant view;
+- Multi-account;
+- Work mode (hide your muted chat to focus on what's more important);
+- Calls;
+- Videos and photos editor (easily crop photos, set video resultion or remove some parts of the videos before sending them);
+- Drag&drop files to chats to send them quickly;
+- Open chats in separated windows (Shift+click);
+- Built-in app lock (fingerprint and Windows Hello authentication available);
+- Windows My People integration;
+- Full support of Windows 10 Action Centre (reply from notification or mark as read).
+
+
+<a name="contributing"></a>
+## Contributing
+Before reporting bugs, doing features requests or embarking pull requests, be sure you have already read our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md).
+
+<a name="changelog"></a>
 ## Changelog
-See the [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) for changelogs for each release version of Unigram. Release announcement posts on the official [Unigram News channel](https://t.me/unigram) contain summaries of the most noteworthy changes made in each release.
+Changelogs are provided both in [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) and [Unigram News channel](https://t.me/unigram).
 
-## Community
-Get updates on Unigram's development and chat with the project maintainers and community members.
+<a name="alternativedownload"></a>
+## Download without the store
+If you don't want Microsoft Store you can install Unigram from [here](https://unigramdev.github.io/) (versions posted here aren't as up-to-date as the ones released in Microsoft Store).
 
-* Follow [@UnigramApp on Twitter](https://twitter.com/UnigramApp).
-* Like and follow [Unigram on Facebook](https://www.facebook.com/UnigramApp/).
-* Join the official group [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ).
-* Join the official channel [Unigram News](https://t.me/unigram).
+<a name="wiki"></a>
+## Wiki
+For additional information (keyboard shortcuts, other contact information, FAQ, missing features, building instructions and other stuff) you can check [Unigram wiki](https://github.com/UnigramDev/Unigram/wiki).
 
-## License
-Copyright © 2016-2018 [Unigram Authors](https://github.com/UnigramDev/Unigram/graphs/contributors).
-
-Unigram is free software: you can redistribute it and / or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-Unigram is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with Unigram. If not, see http://www.gnu.org/licenses/.
