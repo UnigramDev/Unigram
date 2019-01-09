@@ -589,8 +589,11 @@ namespace Unigram.Views
 
             Window.Current.Activated += Window_Activated;
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
+            Window.Current.SizeChanged += Window_SizeChanged;
 
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+
+            OnSizeChanged(Window.Current.Bounds.Width);
 
             UnloadVisibleMessages();
             ViewVisibleMessages(false);
@@ -611,6 +614,7 @@ namespace Unigram.Views
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
+            Window.Current.SizeChanged -= Window_SizeChanged;
 
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
@@ -650,6 +654,17 @@ namespace Unigram.Views
             {
                 TextField.FocusMaybe(FocusState.Keyboard);
             }
+        }
+
+        private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+        {
+            OnSizeChanged(e.Size.Width);
+        }
+
+        private void OnSizeChanged(double width)
+        {
+            AttachRecent.MaxWidth = AttachRestriction.MaxWidth = width < 500 ? width - 16 - 2 : 360;
+            AttachRecent.MinWidth = AttachRestriction.MinWidth = width < 500 ? width - 16 - 2 : 360;
         }
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
@@ -868,11 +883,11 @@ namespace Unigram.Views
                 return;
             }
 
-            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
-            if (restricted)
-            {
-                return;
-            }
+            //var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+            //if (restricted)
+            //{
+            //    return;
+            //}
 
             var pane = InputPane.GetForCurrentView();
             if (pane.OccludedRect != Rect.Empty)
@@ -2294,7 +2309,7 @@ namespace Unigram.Views
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     //DownloadFile(file.Id, sticker);
-                    ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1));
+                    ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
                 }
             }
             else
@@ -2487,7 +2502,13 @@ namespace Unigram.Views
                 AttachMedia.Command = ViewModel.SendMediaCommand;
                 AttachDocument.Command = ViewModel.SendDocumentCommand;
 
-                AttachRecent.Height = double.NaN;
+                var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
+
+                AttachRecent.Height = rights ? 0 : double.NaN;
+                AttachRestriction.Tag = label ?? string.Empty;
+                AttachRestriction.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
+                AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
+                AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                 AttachLocation.Visibility = Visibility.Visible;
                 AttachContact.Visibility = Visibility.Visible;
                 AttachCurrent.Visibility = Visibility.Collapsed;
@@ -2532,6 +2553,9 @@ namespace Unigram.Views
                     AttachDocument.Command = ViewModel.EditDocumentCommand;
 
                     AttachRecent.Height = 0;
+                    AttachRestriction.Visibility = Visibility.Collapsed;
+                    AttachMedia.Visibility = Visibility.Visible;
+                    AttachDocument.Visibility = Visibility.Visible;
                     AttachLocation.Visibility = Visibility.Collapsed;
                     AttachContact.Visibility = Visibility.Collapsed;
                     AttachCurrent.Visibility = editing.Content is MessagePhoto || editing.Content is MessageVideo ? Visibility.Visible : Visibility.Collapsed;
@@ -2546,7 +2570,13 @@ namespace Unigram.Views
                     AttachMedia.Command = ViewModel.SendMediaCommand;
                     AttachDocument.Command = ViewModel.SendDocumentCommand;
 
-                    AttachRecent.Height = double.NaN;
+                    var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
+
+                    AttachRecent.Height = rights ? 0 : double.NaN;
+                    AttachRestriction.Tag = label ?? string.Empty;
+                    AttachRestriction.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
+                    AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
+                    AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                     AttachLocation.Visibility = Visibility.Visible;
                     AttachContact.Visibility = Visibility.Visible;
                     AttachCurrent.Visibility = Visibility.Collapsed;
@@ -2779,6 +2809,8 @@ namespace Unigram.Views
                     ViewModel.HasBotCommands = commands.Count > 0;
                 }
             }
+
+            UpdateComposerHeader(chat, ViewModel.ComposerHeader);
         }
 
         public async void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)

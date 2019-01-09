@@ -109,6 +109,36 @@ namespace Unigram.ViewModels
             return false;
         }
 
+        public bool VerifyRights(Chat chat, Func<ChatMemberStatusRestricted, bool> permission, string forever, string temporary, out string label)
+        {
+            if (chat.Type is ChatTypeSupergroup super)
+            {
+                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                if (supergroup == null)
+                {
+                    label = null;
+                    return false;
+                }
+
+                if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted))
+                {
+                    if (restricted.IsForever())
+                    {
+                        label = forever;
+                    }
+                    else
+                    {
+                        label = string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
+                    }
+
+                    return true;
+                }
+            }
+
+            label = null;
+            return false;
+        }
+
         public RelayCommand SendDocumentCommand { get; }
         private async void SendDocumentExecute()
         {

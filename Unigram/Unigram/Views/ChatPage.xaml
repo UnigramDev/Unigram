@@ -501,6 +501,7 @@
         <Grid Grid.Row="2">
             <chats:ChatListView x:Name="Messages"
                                 Style="{StaticResource BubbleListViewStyle}"
+                                ItemContainerTransitions="{x:Null}"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ShowsScrollingPlaceholders="False"
                                 SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
@@ -939,6 +940,17 @@
                                     <MenuFlyoutSeparator.Template>
                                         <ControlTemplate TargetType="MenuFlyoutSeparator">
                                             <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
+                                        </ControlTemplate>
+                                    </MenuFlyoutSeparator.Template>
+                                </MenuFlyoutSeparator>
+                                <MenuFlyoutSeparator x:Name="AttachRestriction">
+                                    <MenuFlyoutSeparator.Template>
+                                        <ControlTemplate TargetType="MenuFlyoutSeparator">
+                                            <TextBlock
+                                                Text="{TemplateBinding Tag}"
+                                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Margin="12,4,12,8"/>
                                         </ControlTemplate>
                                     </MenuFlyoutSeparator.Template>
                                 </MenuFlyoutSeparator>
