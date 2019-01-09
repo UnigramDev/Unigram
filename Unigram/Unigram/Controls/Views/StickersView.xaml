@@ -10,6 +10,7 @@
     xmlns:messages="using:Telegram.Api.TL.Messages"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     xmlns:behaviors="using:Unigram.Behaviors"
+    xmlns:cells="using:Unigram.Controls.Cells"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:td="using:Telegram.Td.Api"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -714,6 +715,34 @@
                 </Grid>
                 <local:StickersSearchView x:Name="Search" x:DeferLoadStrategy="Lazy" Grid.Row="1"/>
                 <local:EmojisView x:Name="Emojis" x:DeferLoadStrategy="Lazy" Switch="Emojis_Switch" ItemClick="Emojis_ItemClick" Grid.RowSpan="3"/>
+
+                <!--<Grid Background="White" Grid.Row="1">
+                    <ListView ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
+                              SelectionMode="None"
+                              ContainerContentChanging="ListView_ContainerContentChanging">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <cells:StickerSetCell/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <ContentPresenter/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection/>
+                        </ListView.ItemContainerTransitions>
+                    </ListView>
+                </Grid>-->
             </Grid>
         </Border>
     </Grid>

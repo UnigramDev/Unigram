@@ -185,7 +185,7 @@ namespace Unigram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _protoService.Send(new DownloadFile(file.Id, 32));
+                _protoService.Send(new DownloadFile(file.Id, 32, 0));
             }
             else
             {

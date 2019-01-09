@@ -183,7 +183,7 @@ namespace Unigram.ViewModels
 
             var reply = GetReply(true);
 
-            var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, reply, false, false, queryId, queryResult.GetId()));
+            var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, reply, false, false, queryId, queryResult.GetId(), false));
         }
 
         private User GetBot(MessageViewModel message)

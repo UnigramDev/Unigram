@@ -283,7 +283,7 @@ namespace Unigram.Views
                         Image.Source = null;
                         BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
 
-                        _protoService?.Send(new DownloadFile(file.Id, 1));
+                        _protoService?.Send(new DownloadFile(file.Id, 1, 0));
                     }
                 }
                 else

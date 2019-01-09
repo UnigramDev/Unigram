@@ -54,7 +54,7 @@ namespace Unigram.Controls.Passport
                 Transfer.Value = 0;
                 Transfer.Opacity = 0;
 
-                protoService.Send(new DownloadFile(file.Id, 32));
+                protoService.Send(new DownloadFile(file.Id, 32, 0));
             }
             else
             {

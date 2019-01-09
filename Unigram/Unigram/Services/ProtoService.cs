@@ -346,7 +346,7 @@ namespace Unigram.Services
 
         public BaseObject Execute(Function function)
         {
-            return _client.Execute(function);
+            return Client.Execute(function);
         }
 
 

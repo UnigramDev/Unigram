@@ -2947,12 +2947,14 @@ namespace Unigram.ViewModels
             var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
             var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
             var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatChild, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt5 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
             var stack = new StackPanel();
             stack.Children.Add(opt1);
             stack.Children.Add(opt2);
             stack.Children.Add(opt3);
             stack.Children.Add(opt4);
+            stack.Children.Add(opt5);
             stack.Margin = new Thickness(12, 16, 12, 0);
 
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
@@ -2975,7 +2977,9 @@ namespace Unigram.ViewModels
                     ? new ChatReportReasonViolence()
                     : (opt3.IsChecked == true
                         ? new ChatReportReasonPornography()
-                        : (ChatReportReason)new ChatReportReasonCustom()));
+                        : (opt4.IsChecked == true
+                            ? new ChatReportReasonChildAbuse()
+                            : (ChatReportReason)new ChatReportReasonCustom())));
 
             if (reason is ChatReportReasonCustom other)
             {

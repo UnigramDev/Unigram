@@ -511,13 +511,13 @@ namespace Unigram.Controls.Views
         private void DownloadFile(int id, ViewModels.Dialogs.StickerViewModel sticker)
         {
             _stickers[id].Add(sticker);
-            ViewModel.ProtoService.Send(new DownloadFile(id, 1));
+            ViewModel.ProtoService.Send(new DownloadFile(id, 1, 0));
         }
 
         private void DownloadFile(int id, Animation animation)
         {
             _animations[id][animation.AnimationValue.Id] = animation;
-            ViewModel.ProtoService.Send(new DownloadFile(id, 1));
+            ViewModel.ProtoService.Send(new DownloadFile(id, 1, 0));
         }
 
         private void Animations_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -591,8 +591,23 @@ namespace Unigram.Controls.Views
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 //DownloadFile(file.Id, cover);
-                ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1));
+                ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
             }
+        }
+
+        private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            if (args.ItemContainer.ContentTemplateRoot is Cells.StickerSetCell cell && args.Item is ViewModels.Dialogs.StickerSetViewModel vm)
+            {
+                cell.Update(ViewModel.ProtoService, vm);
+            }
+
+            args.Handled = true;
         }
     }
 }

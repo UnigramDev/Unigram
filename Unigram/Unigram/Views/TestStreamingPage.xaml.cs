@@ -127,7 +127,7 @@ namespace Unigram.Views
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             var service = TLContainer.Current.Resolve<IProtoService>();
-            service.Send(new DownloadFile(_file.Id, 32));
+            service.Send(new DownloadFile(_file.Id, 32, 0));
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)

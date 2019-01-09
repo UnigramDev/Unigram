@@ -142,11 +142,11 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return Settings.Notifications.IsPinnedEnabled;
+                return !CacheService.Options.DisablePinnedMessageNotifications && Settings.Notifications.IsPinnedEnabled;
             }
             set
             {
-                Settings.Notifications.IsPinnedEnabled = value;
+                CacheService.Options.DisablePinnedMessageNotifications = !(Settings.Notifications.IsPinnedEnabled = value);
                 RaisePropertyChanged();
             }
         }

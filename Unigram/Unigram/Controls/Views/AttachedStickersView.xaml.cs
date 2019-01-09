@@ -148,7 +148,7 @@ namespace Unigram.Controls.Views
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    ViewModel.ProtoService.Send(new DownloadFile(1, file.Id));
+                    ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
                 }
             }
 

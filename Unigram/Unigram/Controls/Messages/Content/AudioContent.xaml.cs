@@ -100,7 +100,7 @@ namespace Unigram.Controls.Messages.Content
 
                 if (message.Delegate.CanBeDownloaded(message))
                 {
-                    _message.ProtoService.Send(new DownloadFile(file.Id, 32));
+                    _message.ProtoService.Send(new DownloadFile(file.Id, 32, 0));
                 }
             }
             else
@@ -123,7 +123,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.Send(new DownloadFile(file.Id, 1));
+                message.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
             }
         }
 
@@ -174,7 +174,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.Send(new DownloadFile(file.Id, 1));
+                _message.ProtoService.Send(new DownloadFile(file.Id, 32, 0));
             }
             else
             {

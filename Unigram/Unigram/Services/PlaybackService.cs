@@ -416,7 +416,7 @@ namespace Unigram.Services
                 {
                     _inverse[args.MediaBinder.Token] = deferral;
                     _binders[args.MediaBinder.Token] = args;
-                    _protoService.Send(new DownloadFile(file.Id, 10));
+                    _protoService.Send(new DownloadFile(file.Id, 10, 0));
                 }
             }
         }
@@ -430,6 +430,17 @@ namespace Unigram.Services
             else if (message.Content is MessageVoiceNote voiceNote)
             {
                 return voiceNote.VoiceNote.Voice;
+            }
+            else if (message.Content is MessageText text && text.WebPage != null)
+            {
+                if (text.WebPage.Audio != null)
+                {
+                    return text.WebPage.Audio.AudioValue;
+                }
+                else if (text.WebPage.VoiceNote != null)
+                {
+                    return text.WebPage.VoiceNote.Voice;
+                }
             }
 
             return null;
