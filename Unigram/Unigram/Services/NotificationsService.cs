@@ -35,12 +35,13 @@ namespace Unigram.Services
     public class NotificationsService : INotificationsService,
         IHandle<UpdateUnreadMessageCount>,
         IHandle<UpdateUnreadChatCount>,
-        IHandle<UpdateNewMessage>,
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateServiceNotification>,
         IHandle<UpdateTermsOfService>,
         IHandle<UpdateAuthorizationState>,
-        IHandle<UpdateFile>
+        IHandle<UpdateFile>,
+        IHandle<UpdateNotification>,
+        IHandle<UpdateNotificationGroup>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -205,9 +206,72 @@ namespace Unigram.Services
             }
         }
 
+        public void Handle(UpdateNotificationGroup update)
+        {
+            foreach (var notification in update.AddedNotifications)
+            {
+                ProcessNotification(update.NotificationGroupId, notification);
+            }
+
+            foreach (var removed in update.RemovedNotificationIds)
+            {
+                ToastNotificationManager.History.Remove(removed.ToString(), update.NotificationGroupId.ToString());
+            }
+        }
+
+        public void Handle(UpdateNotification update)
+        {
+            ProcessNotification(update.NotificationGroupId, update.Notification);
+        }
+
+        private void ProcessNotification(int group, Telegram.Td.Api.Notification notification)
+        {
+            switch (notification.Type)
+            {
+                case NotificationTypeNewCall newCall:
+                    break;
+                case NotificationTypeNewMessage newMessage:
+                    ProcessNewMessage(newMessage.Message);
+                    break;
+                case NotificationTypeNewSecretChat newSecretChat:
+                    break;
+            }
+        }
+
+        private void ProcessNewMessage(Message message)
+        {
+            var chat = _protoService.GetChat(message.ChatId);
+            if (chat == null)
+            {
+                return;
+            }
+
+            var caption = GetCaption(chat);
+            var content = GetContent(chat, message);
+            var sound = "";
+            var launch = GetLaunch(chat, message);
+            var tag = GetTag(message);
+            var group = GetGroup(chat);
+            var picture = GetPhoto(chat);
+            var date = BindConvert.Current.DateTime(message.Date).ToUniversalTime().ToString("s") + "Z";
+            var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
+
+            var user = _protoService.GetUser(_protoService.Options.MyId);
+
+            Update(chat, () =>
+            {
+                NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, string.Empty, date, loc_key);
+
+                if (_sessionService.IsActive)
+                {
+                    NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
+                }
+            });
+        }
+
         public void Handle(UpdateNewMessage update)
         {
-            if (update.DisableNotification || !_settings.Notifications.InAppPreview)
+            if (/*update.DisableNotification ||*/ !_settings.Notifications.InAppPreview)
             {
                 return;
             }
@@ -289,7 +353,7 @@ namespace Unigram.Services
                 if (small == null || !small.Photo.Local.IsDownloadingCompleted)
                 {
                     _files[small.Photo.Id] = message;
-                    _protoService.Send(new DownloadFile(small.Photo.Id, 1));
+                    _protoService.Send(new DownloadFile(small.Photo.Id, 1, 0));
                     return string.Empty;
                 }
 
