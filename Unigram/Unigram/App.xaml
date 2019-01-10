@@ -241,7 +241,7 @@
                 <common:Theme/>
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <themes:Messages/>
-                <ResourceDictionary Source="ms-appx:///FluentEditorShared/FluentEditorSharedResources.xaml" />
+                <!--<ResourceDictionary Source="ms-appx:///FluentEditorShared/FluentEditorSharedResources.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -167,6 +167,12 @@
     <Compile Include="Controls\Cells\SharedVoiceCell.xaml.cs">
       <DependentUpon>SharedVoiceCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\StickerSetCell.xaml.cs">
+      <DependentUpon>StickerSetCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\UserCell.xaml.cs">
+      <DependentUpon>UserCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
     </Compile>
@@ -323,6 +329,9 @@
     <Compile Include="Controls\Views\CreateLinkView.xaml.cs">
       <DependentUpon>CreateLinkView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\CreatePollView.xaml.cs">
+      <DependentUpon>CreatePollView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\EditUserNameView.xaml.cs">
       <DependentUpon>EditUserNameView.xaml</DependentUpon>
     </Compile>
@@ -378,22 +387,15 @@
     <Compile Include="Controls\Views\StickerSetView.xaml.cs">
       <DependentUpon>StickerSetView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\StickersSearchView.xaml.cs">
+      <DependentUpon>StickersSearchView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SupergroupEditRestrictedUntilView.xaml.cs">
       <DependentUpon>SupergroupEditRestrictedUntilView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\SupergroupEventLogFiltersView.xaml.cs">
       <DependentUpon>SupergroupEventLogFiltersView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\ThemeEditorView.xaml.cs">
-      <DependentUpon>ThemeEditorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\Theme\ColorMapping.cs" />
-    <Compile Include="Controls\Views\Theme\ControlPaletteResources.xaml.cs">
-      <DependentUpon>ControlPaletteResources.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\Theme\Model\ControlPaletteExportProvider.cs" />
-    <Compile Include="Controls\Views\Theme\Model\ControlPaletteModel.cs" />
-    <Compile Include="Controls\Views\Theme\Model\Preset.cs" />
     <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
@@ -1457,7 +1459,6 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <Content Include="Assets\secureid_ocr_nn.bin" />
-    <Content Include="Controls\Views\Theme\controlPaletteData.json" />
     <PRIResource Include="Strings\tr\Resources.resw" />
     <PRIResource Include="Strings\ca\Resources.resw" />
     <None Include="Unigram_StoreKey.pfx" />
@@ -1608,6 +1609,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\StickerSetCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\UserCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\WebSessionCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1752,6 +1761,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\CreatePollView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\EditYourAboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1840,6 +1853,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\StickersSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\StickersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1851,14 +1868,6 @@
     <Page Include="Controls\Views\SupergroupEventLogFiltersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\ThemeEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\Theme\ControlPaletteResources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\UsersSelectionView.xaml">
       <SubType>Designer</SubType>
@@ -2334,10 +2343,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\fluent-xaml-theme-editor\FluentEditorShared\FluentEditorShared.csproj">
-      <Project>{42a312ef-7c4a-4661-a684-db14e40a2a90}</Project>
-      <Name>FluentEditorShared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
       <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
       <Name>libtgvoip</Name>
