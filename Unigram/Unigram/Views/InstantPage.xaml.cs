@@ -56,6 +56,12 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<InstantViewModel>();
 
+            if (ApiInfo.CanUseFlyoutIcons)
+            {
+                BrowserButton.Icon = new FontIcon { Glyph = Icons.OpenIn };
+                CopyButton.Icon = new FontIcon { Glyph = Icons.Copy };
+            }
+
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = System.IO.File.ReadAllText(jsPath);
         }

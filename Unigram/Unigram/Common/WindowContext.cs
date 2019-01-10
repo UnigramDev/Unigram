@@ -384,11 +384,15 @@ namespace Unigram.Common
 
                 if (App.ShareWindow != null)
                 {
-                    await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    try
                     {
-                        App.ShareWindow.Close();
-                        App.ShareWindow = null;
-                    });
+                        await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            App.ShareWindow.Close();
+                            App.ShareWindow = null;
+                        });
+                    }
+                    catch { }
                 }
             }
             else

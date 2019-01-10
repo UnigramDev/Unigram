@@ -173,8 +173,8 @@
                 <Button Padding="{StaticResource EllipsisButtonPadding}" Style="{StaticResource EllipsisButton}" Grid.Column="2">
                     <Button.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}"/>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.CopyCommand}" Text="{CustomResource CopyLink}"/>
+                            <MenuFlyoutItem x:Name="BrowserButton" Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}"/>
+                            <MenuFlyoutItem x:Name="CopyButton" Command="{x:Bind ViewModel.CopyCommand}" Text="{CustomResource CopyLink}"/>
                         </MenuFlyout>
                     </Button.Flyout>
                     <FontIcon x:Name="EllipsisIcon"
