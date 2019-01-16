@@ -185,12 +185,32 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public static bool UpdateFilterMode(Chat chat, ChatFilterMode filter)
+        public static bool UpdateFilterMode(ICacheService cacheService, Chat chat, ChatFilterMode filter)
         {
             switch (filter)
             {
                 case ChatFilterMode.Work:
                     return chat.NotificationSettings.MuteFor > 0 ? false : true;
+                case ChatFilterMode.Users:
+                    var user = cacheService.GetUser(chat);
+                    if (user != null)
+                    {
+                        return user.Type is UserTypeRegular;
+                    }
+
+                    return false;
+                case ChatFilterMode.Bots:
+                    var bot = cacheService.GetUser(chat);
+                    if (bot != null)
+                    {
+                        return bot.Type is UserTypeBot;
+                    }
+
+                    return false;
+                case ChatFilterMode.Groups:
+                    return chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup super && !super.IsChannel;
+                case ChatFilterMode.Channels:
+                    return chat.Type is ChatTypeSupergroup channel && channel.IsChannel;
                 default:
                 case ChatFilterMode.None:
                     return true;
@@ -199,7 +219,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateViewState(Chat chat, ChatFilterMode filter, bool selected, bool compact)
         {
-            var visible = UpdateFilterMode(chat, filter);
+            var visible = UpdateFilterMode(_protoService, chat, filter);
             if (visible)
             {
                 Visibility = Visibility.Visible;
@@ -675,5 +695,10 @@ namespace Unigram.Controls.Cells
     {
         None,
         Work,
+
+        Users,
+        Bots,
+        Groups,
+        Channels
     }
 }

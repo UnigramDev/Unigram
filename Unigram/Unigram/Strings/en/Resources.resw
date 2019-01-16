@@ -7236,4 +7236,46 @@ If you forget your password, you will lose access to your Telegram account. Ther
   <data name="MessagesOther" xml:space="preserve">
     <value>{0} messages</value>
   </data>
+  <data name="AreYouSureClearHistoryWithChat" xml:space="preserve">
+    <value>Are you sure you want to clear chat history in **{0}**?</value>
+  </data>
+  <data name="AreYouSureClearHistoryWithUser" xml:space="preserve">
+    <value>Are you sure you want to clear chat history with **{0}**?</value>
+  </data>
+  <data name="AreYouSureDeleteAndExitName" xml:space="preserve">
+    <value>Are you sure you want to delete and leave group **{0}**?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
+    <value>Are you sure you want to delete chat **{0}**?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatWithUser" xml:space="preserve">
+    <value>Are you sure you want to delete chat with **{0}**?</value>
+  </data>
+  <data name="AreYouSureClearHistoryWithSecretUser" xml:space="preserve">
+    <value>Are you sure you want to clear secret chat history with **{0}**?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatWithSecretUser" xml:space="preserve">
+    <value>Are you sure you want to delete secret chat with **{0}**?</value>
+  </data>
+  <data name="ChannelLeaveAlertWithName" xml:space="preserve">
+    <value>Are you sure you want to leave channel **{0}**?</value>
+  </data>
+  <data name="ChatDeletedUndo" xml:space="preserve">
+    <value>Chat deleted.</value>
+  </data>
+  <data name="ChannelDeletedUndo" xml:space="preserve">
+    <value>Channel deleted.</value>
+  </data>
+  <data name="GroupDeletedUndo" xml:space="preserve">
+    <value>Group deleted.</value>
+  </data>
+  <data name="HistoryClearedUndo" xml:space="preserve">
+    <value>History cleared.</value>
+  </data>
+  <data name="MegaLeaveAlertWithName" xml:space="preserve">
+    <value>Are you sure you want to leave group **{0}**?</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>UNDO</value>
+  </data>
 </root>

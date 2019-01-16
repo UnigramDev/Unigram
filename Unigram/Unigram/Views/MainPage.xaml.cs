@@ -20,6 +20,7 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
 using Unigram.Views.Chats;
@@ -52,6 +53,7 @@ namespace Unigram.Views
     public sealed partial class MainPage : Page,
         IRootContentPage,
         INavigablePage,
+        IChatsDelegate,
         IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatLastMessage>,
         IHandle<UpdateChatIsPinned>,
@@ -90,6 +92,7 @@ namespace Unigram.Views
 
             SettingsView.DataContext = ViewModel.Settings;
             ViewModel.Settings.Delegate = SettingsView;
+            ViewModel.Chats.Delegate = this;
 
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
@@ -434,6 +437,11 @@ namespace Unigram.Views
         }
 
         #endregion
+        
+        public void DeleteChat(Chat chat, bool clear, Action<Chat> action, Action<Chat> undo)
+        {
+            Undo.Show(chat, clear, action, undo);
+        }
 
         public void OnBackRequested(HandledEventArgs args)
         {
@@ -1715,6 +1723,14 @@ namespace Unigram.Views
         private void EditName_Click(object sender, RoutedEventArgs e)
         {
             SettingsView.EditName_Click(sender, e);
+        }
+
+        private void Filter_Click(object sender, RoutedEventArgs e)
+        {
+            var radio = sender as RadioButton;
+            var filter = (ChatFilterMode)radio.CommandParameter;
+
+            ChatsList.UpdateFilterMode(filter);
         }
     }
 

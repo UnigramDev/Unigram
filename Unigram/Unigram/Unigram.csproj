@@ -314,6 +314,9 @@
     <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TLContentDialog.cs" />
     <Compile Include="Controls\GlyphMenuFlyoutItem.cs" />
+    <Compile Include="Controls\UndoView.xaml.cs">
+      <DependentUpon>UndoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\VideoTimelineControl.xaml.cs">
       <DependentUpon>VideoTimelineControl.xaml</DependentUpon>
     </Compile>
@@ -331,6 +334,9 @@
     </Compile>
     <Compile Include="Controls\Views\CreatePollView.xaml.cs">
       <DependentUpon>CreatePollView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\DeleteChatView.xaml.cs">
+      <DependentUpon>DeleteChatView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\EditUserNameView.xaml.cs">
       <DependentUpon>EditUserNameView.xaml</DependentUpon>
@@ -515,6 +521,7 @@
     <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IChatsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Delegates\IGalleryDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
@@ -1741,6 +1748,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\UndoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\VideoTimelineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1762,6 +1773,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\CreatePollView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\DeleteChatView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

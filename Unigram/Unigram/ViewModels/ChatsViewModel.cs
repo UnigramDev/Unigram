@@ -12,16 +12,22 @@ using Template10.Mvvm;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : TLViewModelBase, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
         private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
+
+        private readonly Dictionary<long, bool> _deletedChats = new Dictionary<long, bool>();
+
+        public IChatsDelegate Delegate { get; set; }
 
         public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -123,50 +129,77 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> ChatDeleteCommand { get; }
         private async void ChatDeleteExecute(Chat chat)
         {
-            var message = Strings.Resources.AreYouSureDeleteAndExit;
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
-            {
-                message = Strings.Resources.AreYouSureDeleteThisChat;
-            }
-            else if (chat.Type is ChatTypeSupergroup super)
-            {
-                message = super.IsChannel ? Strings.Resources.ChannelLeaveAlert : Strings.Resources.MegaLeaveAlert;
-            }
+            var dialog = new DeleteChatView(ProtoService, chat, false);
 
-            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                if (chat.Type is ChatTypeSecret secret)
-                {
-                    await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-                }
-                else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
-                {
-                    await ProtoService.SendAsync(new LeaveChat(chat.Id));
-                }
+                _deletedChats[chat.Id] = true;
+                Handle(chat.Id, 0);
 
-                ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+                Delegate?.DeleteChat(chat, false, async delete =>
+                {
+                    if (delete.Type is ChatTypeSecret secret)
+                    {
+                        await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                    }
+                    else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                    {
+                        await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                    }
+
+                    ProtoService.Send(new DeleteChatHistory(delete.Id, true));
+                }, undo =>
+                {
+                    _deletedChats.Remove(undo.Id);
+                    Handle(undo.Id, undo.Order);
+                });
             }
         }
 
         public RelayCommand<Chat> ChatClearCommand { get; }
         private async void ChatClearExecute(Chat chat)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistory, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var dialog = new DeleteChatView(ProtoService, chat, true);
+
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new DeleteChatHistory(chat.Id, false));
+                Delegate?.DeleteChat(chat, true, delete =>
+                {
+                    ProtoService.Send(new DeleteChatHistory(delete.Id, false));
+                }, undo =>
+                {
+                    _deletedChats.Remove(undo.Id);
+                    Handle(undo.Id, undo.Order);
+                });
             }
         }
 
         public RelayCommand<Chat> ChatDeleteAndStopCommand { get; }
         private async void ChatDeleteAndStopExecute(Chat chat)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeleteThisChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm == ContentDialogResult.Primary && chat.Type is ChatTypePrivate privata)
+            var dialog = new DeleteChatView(ProtoService, chat, false);
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new BlockUser(privata.UserId));
-                ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+                _deletedChats[chat.Id] = true;
+                Handle(chat.Id, 0);
+
+                Delegate?.DeleteChat(chat, false, delete =>
+                {
+                    if (delete.Type is ChatTypePrivate privata)
+                    {
+                        ProtoService.Send(new BlockUser(privata.UserId));
+                    }
+
+                    ProtoService.Send(new DeleteChatHistory(delete.Id, true));
+                }, undo =>
+                {
+                    _deletedChats.Remove(undo.Id);
+                    Handle(undo.Id, undo.Order);
+                });
             }
         }
 
@@ -219,6 +252,18 @@ namespace Unigram.ViewModels
 
         private void Handle(long chatId, long order)
         {
+            if (_deletedChats.ContainsKey(chatId))
+            {
+                if (order == 0)
+                {
+                    _deletedChats.Remove(chatId);
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             var chat = GetChat(chatId);
             if (chat != null)
             {

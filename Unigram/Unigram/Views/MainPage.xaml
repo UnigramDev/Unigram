@@ -480,20 +480,47 @@
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.Header>
-                                    <ToggleButton x:Name="WorkMode" Checked="WorkMode_Click" Unchecked="WorkMode_Click" Style="{StaticResource WorkModeButtonStyle}">
-                                        <Border Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"
-                                                MinWidth="20"
-                                                Height="20"
-                                                CornerRadius="10"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Right">
-                                            <TextBlock Text="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                                                       TextAlignment="Center"
-                                                       Margin="4,2,4,0"/>
-                                        </Border>
-                                    </ToggleButton>
+                                    <StackPanel>
+                                        <ToggleButton x:Name="WorkMode" Checked="WorkMode_Click" Unchecked="WorkMode_Click" Style="{StaticResource WorkModeButtonStyle}">
+                                            <Border Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"
+                                                    MinWidth="20"
+                                                    Height="20"
+                                                    CornerRadius="10"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Right">
+                                                <TextBlock Text="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
+                                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                           TextAlignment="Center"
+                                                           Margin="4,2,4,0"/>
+                                            </Border>
+                                        </ToggleButton>
+                                        <!--<RadioButton Content="All" Checked="Filter_Click">
+                                            <RadioButton.CommandParameter>
+                                                <cells:ChatFilterMode>None</cells:ChatFilterMode>
+                                            </RadioButton.CommandParameter>
+                                        </RadioButton>
+                                        <RadioButton Content="Users" Checked="Filter_Click">
+                                            <RadioButton.CommandParameter>
+                                                <cells:ChatFilterMode>Users</cells:ChatFilterMode>
+                                            </RadioButton.CommandParameter>
+                                        </RadioButton>
+                                        <RadioButton Content="Bots" Checked="Filter_Click">
+                                            <RadioButton.CommandParameter>
+                                                <cells:ChatFilterMode>Bots</cells:ChatFilterMode>
+                                            </RadioButton.CommandParameter>
+                                        </RadioButton>
+                                        <RadioButton Content="Groups" Checked="Filter_Click">
+                                            <RadioButton.CommandParameter>
+                                                <cells:ChatFilterMode>Groups</cells:ChatFilterMode>
+                                            </RadioButton.CommandParameter>
+                                        </RadioButton>
+                                        <RadioButton Content="Channels" Checked="Filter_Click">
+                                            <RadioButton.CommandParameter>
+                                                <cells:ChatFilterMode>Channels</cells:ChatFilterMode>
+                                            </RadioButton.CommandParameter>
+                                        </RadioButton>-->
+                                    </StackPanel>
                                 </ListView.Header>
                                 <ListView.Footer>
                                     <Border Height="6"/>
@@ -502,6 +529,8 @@
                                     <TransitionCollection/>
                                 </ListView.ItemContainerTransitions>
                             </controls:ChatsListView>
+
+                            <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48"/>
 
                             <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                  --><!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"--><!--

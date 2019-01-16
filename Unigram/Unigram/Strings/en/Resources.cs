@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/23/2018 19:22:23
+// 	Generated: 01/16/2019 18:22:20
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -26019,6 +26019,160 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessagesOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to clear chat history in **{0}**?"
+        /// </summary>
+        public static string AreYouSureClearHistoryWithChat
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureClearHistoryWithChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to clear chat history with **{0}**?"
+        /// </summary>
+        public static string AreYouSureClearHistoryWithUser
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureClearHistoryWithUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete and leave group **{0}**?"
+        /// </summary>
+        public static string AreYouSureDeleteAndExitName
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeleteAndExitName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete chat **{0}**?"
+        /// </summary>
+        public static string AreYouSureDeleteThisChatWithGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeleteThisChatWithGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete chat with **{0}**?"
+        /// </summary>
+        public static string AreYouSureDeleteThisChatWithUser
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeleteThisChatWithUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to clear secret chat history with **{0}**?"
+        /// </summary>
+        public static string AreYouSureClearHistoryWithSecretUser
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureClearHistoryWithSecretUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete secret chat with **{0}**?"
+        /// </summary>
+        public static string AreYouSureDeleteThisChatWithSecretUser
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeleteThisChatWithSecretUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to leave channel **{0}**?"
+        /// </summary>
+        public static string ChannelLeaveAlertWithName
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelLeaveAlertWithName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat deleted."
+        /// </summary>
+        public static string ChatDeletedUndo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatDeletedUndo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel deleted."
+        /// </summary>
+        public static string ChannelDeletedUndo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelDeletedUndo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group deleted."
+        /// </summary>
+        public static string GroupDeletedUndo
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupDeletedUndo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "History cleared."
+        /// </summary>
+        public static string HistoryClearedUndo
+        {
+            get
+            {
+                return resourceLoader.GetString("HistoryClearedUndo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to leave group **{0}**?"
+        /// </summary>
+        public static string MegaLeaveAlertWithName
+        {
+            get
+            {
+                return resourceLoader.GetString("MegaLeaveAlertWithName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "UNDO"
+        /// </summary>
+        public static string Undo
+        {
+            get
+            {
+                return resourceLoader.GetString("Undo");
             }
         }
     }

@@ -295,7 +295,28 @@ namespace Unigram.Controls
                     outerRadius + StrokeThickness / 2,
                     outerRadius + StrokeThickness / 2);
 
-            if (EndAngle > 0 && EndAngle < 360)
+            if (StartAngle == 0 && EndAngle == 360)
+            {
+                var geometry = new GeometryGroup();
+                geometry.FillRule = FillRule.EvenOdd;
+
+                var innerSegment = new EllipseGeometry();
+                innerSegment.Center = center;
+                innerSegment.RadiusX = innerRadius;
+                innerSegment.RadiusY = innerRadius;
+
+                var outerSegment = new EllipseGeometry();
+                outerSegment.Center = center;
+                outerSegment.RadiusX = outerRadius;
+                outerSegment.RadiusY = outerRadius;
+
+                geometry.Children.Add(innerSegment);
+                geometry.Children.Add(outerSegment);
+
+                InvalidateArrange();
+                Data = geometry;
+            }
+            else
             {
                 var pathGeometry = new PathGeometry();
                 var pathFigure = new PathFigure();
@@ -342,29 +363,6 @@ namespace Unigram.Controls
 
                 InvalidateArrange();
                 Data = pathGeometry;
-            }
-            else if (EndAngle == 360)
-            {
-                var geometry = new GeometryGroup();
-                geometry.FillRule = FillRule.EvenOdd;
-
-                var innerSegment = new EllipseGeometry();
-                innerSegment.Center = center;
-                innerSegment.RadiusX = innerRadius;
-                innerSegment.RadiusY = innerRadius;
-
-                var outerSegment = new EllipseGeometry();
-                outerSegment.Center = center;
-                outerSegment.RadiusX = outerRadius;
-                outerSegment.RadiusY = outerRadius;
-
-                geometry.Children.Add(innerSegment);
-                geometry.Children.Add(outerSegment);
-
-                InvalidateArrange();
-                Data = geometry;
-
-                return;
             }
         }
     }
