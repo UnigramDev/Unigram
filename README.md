@@ -58,9 +58,10 @@ Changelogs are provided both in [Releases section of our GitHub project](https:/
 
 <a name="alternativedownload"></a>
 ## Download without the store
-If you don't want Microsoft Store you can install Unigram from [here](https://unigramdev.github.io/) (versions posted here aren't as up-to-date as the ones released in Microsoft Store).
+If you don't want Microsoft Store you can install Unigram from [here](https://1drv.ms/f/s!Ag2j6e4vFa5YsGZAqGkDxSYdwpeb).
+Only major update will be posted here. If you care about minor updates you have to use Microsoft Store.
 
 <a name="wiki"></a>
 ## Wiki
-For additional information (keyboard shortcuts, other contact information, FAQ, missing features, building instructions and other stuff) you can check [Unigram wiki](https://github.com/UnigramDev/Unigram/wiki).
+For additional information (keyboard shortcuts, other contact information, FAQ, missing features, build instructions and other stuff) you can check [Unigram wiki](https://github.com/UnigramDev/Unigram/wiki).
 
