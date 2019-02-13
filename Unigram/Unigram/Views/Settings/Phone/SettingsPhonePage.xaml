@@ -48,14 +48,14 @@
                       MinWidth="280"
                       HorizontalAlignment="Stretch"
                       Grid.Row="2">
-                <!--<ComboBox.ItemTemplate>
-                     <DataTemplate x:DataType="models:Country">
-                     <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                     <Run Text="{x:Bind DisplayName}"/>
-                     <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-                     </TextBlock>
-                     </DataTemplate>
-                     </ComboBox.ItemTemplate>-->
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:Country">
+                        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+                            <Run Text="{x:Bind DisplayName}"/>
+                            <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
             </ComboBox>
 
             <Grid Margin="0,12,0,8" Grid.Row="3">
