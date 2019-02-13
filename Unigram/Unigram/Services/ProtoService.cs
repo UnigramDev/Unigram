@@ -261,6 +261,9 @@ namespace Unigram.Services
                 _client.Send(new SetOption("language_pack_id", new OptionValueString("en")));
 #endif
 
+                _client.Send(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"), 10 * 1024 * 1024)));
+                _client.Send(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
+
                 _client.Send(new SetOption("online", new OptionValueBoolean(online)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));

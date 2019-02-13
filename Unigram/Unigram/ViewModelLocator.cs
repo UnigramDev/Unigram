@@ -37,9 +37,6 @@ namespace Unigram
 
         public void Configure()
         {
-            Log.SetVerbosityLevel(SettingsService.Current.VerbosityLevel);
-            Log.SetFilePath(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
-
             var fail = true;
             var first = 0;
 
