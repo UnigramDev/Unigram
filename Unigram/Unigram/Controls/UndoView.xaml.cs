@@ -21,9 +21,9 @@ namespace Unigram.Controls
     public sealed partial class UndoView : UserControl
     {
         private readonly DispatcherTimer _timeout;
+        private readonly Queue<UndoOp> _queue;
 
         private int _remaining = 5;
-        private Queue<(Chat Chat, Action<Chat> Delete, Action<Chat> Undo)?> _queue = new Queue<(Chat Chat, Action<Chat> Delete, Action<Chat> Undo)?>();
 
         private Storyboard _storyboard;
 
@@ -34,6 +34,8 @@ namespace Unigram.Controls
             _timeout = new DispatcherTimer();
             _timeout.Interval = TimeSpan.FromSeconds(1);
             _timeout.Tick += Timeout_Tick;
+
+            _queue = new Queue<UndoOp>();
         }
 
         private void Timeout_Tick(object sender, object e)
@@ -55,7 +57,7 @@ namespace Unigram.Controls
             _storyboard?.Stop();
 
             _remaining = 5;
-            _queue.Enqueue((chat, action, undo));
+            _queue.Enqueue(new UndoOp(chat, action, undo));
 
             _timeout.Start();
 
@@ -112,21 +114,35 @@ namespace Unigram.Controls
                 var current = _queue.Dequeue();
                 if (undo)
                 {
-                    current?.Undo?.Invoke(current?.Chat);
+                    current.Undo.Invoke(current.Chat);
                 }
                 else
                 {
-                    //current?.Delete?.Invoke(current?.Chat);
+                    current.Delete.Invoke(current.Chat);
                 }
             }
 
             _remaining = 5;
-            _queue = null;
 
             _timeout.Stop();
             _storyboard?.Stop();
+            _storyboard = null;
 
             Grid.SetRow(LayoutRoot, 1);
+        }
+
+        private class UndoOp
+        {
+            public Chat Chat { get; private set; }
+            public Action<Chat> Delete { get; private set; }
+            public Action<Chat> Undo { get; private set; }
+
+            public UndoOp(Chat chat, Action<Chat> delete, Action<Chat> undo)
+            {
+                Chat = chat;
+                Delete = delete;
+                Undo = undo;
+            }
         }
     }
 }

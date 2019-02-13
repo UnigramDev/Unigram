@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="96"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    RequestedTheme="Dark">
 
     <Grid>
         <Grid.RowDefinitions>
