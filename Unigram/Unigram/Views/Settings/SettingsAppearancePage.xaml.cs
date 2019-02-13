@@ -180,6 +180,7 @@ namespace Unigram.Views.Settings
         {
             var current = App.Current as App;
             var theme = current.UISettings.GetColorValue(UIColorType.Background);
+            var value = ViewModel.GetElementTheme();
 
             if (extended)
             {
@@ -204,7 +205,6 @@ namespace Unigram.Views.Settings
 
                     if (window.Content is FrameworkElement element)
                     {
-                        var value = ViewModel.GetElementTheme();
                         if (value == element.RequestedTheme)
                         {
                             element.RequestedTheme = value == ElementTheme.Dark
