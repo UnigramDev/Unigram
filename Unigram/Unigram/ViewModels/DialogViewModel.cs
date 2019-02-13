@@ -150,8 +150,8 @@ namespace Unigram.ViewModels
             ReportSpamCommand = new RelayCommand(ReportSpamExecute);
             ReportCommand = new RelayCommand(ReportExecute);
             OpenStickersCommand = new RelayCommand(OpenStickersExecute);
-            DialogDeleteCommand = new RelayCommand(DialogDeleteExecute);
-            DialogClearCommand = new RelayCommand(DialogClearExecute);
+            ChatDeleteCommand = new RelayCommand(ChatDeleteExecute);
+            ChatClearCommand = new RelayCommand(ChatClearExecute);
             CallCommand = new RelayCommand(CallExecute);
             UnpinMessageCommand = new RelayCommand(UnpinMessageExecute);
             UnblockCommand = new RelayCommand(UnblockExecute);
@@ -2408,8 +2408,8 @@ namespace Unigram.ViewModels
 
         #region Delete and Exit
 
-        public RelayCommand DialogDeleteCommand { get; }
-        private async void DialogDeleteExecute()
+        public RelayCommand ChatDeleteCommand { get; }
+        private async void ChatDeleteExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -2447,8 +2447,8 @@ namespace Unigram.ViewModels
 
         #region Clear history
 
-        public RelayCommand DialogClearCommand { get; }
-        private async void DialogClearExecute()
+        public RelayCommand ChatClearCommand { get; }
+        private async void ChatClearExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -3093,7 +3093,7 @@ namespace Unigram.ViewModels
                     }
                     else if (group.Status is ChatMemberStatusBanned)
                     {
-                        DialogDeleteExecute();
+                        ChatDeleteExecute();
                     }
                 }
             }

@@ -1230,15 +1230,15 @@ namespace Unigram.Views
             }
             if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
             {
-                flyout.CreateFlyoutItem(ViewModel.DialogClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
+                flyout.CreateFlyoutItem(ViewModel.ChatClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
             }
             if (user != null)
             {
-                flyout.CreateFlyoutItem(ViewModel.DialogDeleteCommand, Strings.Resources.DeleteChatUser, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.Resources.DeleteChatUser, new FontIcon { Glyph = Icons.Delete });
             }
             if (basicGroup != null)
             {
-                flyout.CreateFlyoutItem(ViewModel.DialogDeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
             }
             if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
