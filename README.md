@@ -58,8 +58,8 @@ Changelogs are provided both in [Releases section of our GitHub project](https:/
 
 <a name="alternativedownload"></a>
 ## Download without the store
-If you don't want Microsoft Store you can install Unigram from [here](https://1drv.ms/f/s!Ag2j6e4vFa5YsGZAqGkDxSYdwpeb).
-Only major update will be posted here. If you care about minor updates you have to use Microsoft Store.
+If you don't want Microsoft Store you can install Unigram from [here](https://unigramdev.github.io/).
+Only major updates will be posted here. If you care about minor updates you should use Microsoft Store.
 
 <a name="wiki"></a>
 ## Wiki
