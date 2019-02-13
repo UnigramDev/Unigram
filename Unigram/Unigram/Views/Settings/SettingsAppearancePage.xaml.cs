@@ -38,8 +38,8 @@ namespace Unigram.Views.Settings
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
 
-            Message1.Mockup("Ahh you kids today with techno music! Enjoy the classics, like Hasselhoff!", "Lucio", "Reinhardt, we need to find you some new tunes.", false, DateTime.Now.AddSeconds(-25));
-            Message2.Mockup("I can't take you seriously right now. Sorry..", true, DateTime.Now);
+            Message1.Mockup(Strings.Resources.FontSizePreviewLine1, "Lucio", Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
+            Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
 
             //UpdatePreview(true);
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
