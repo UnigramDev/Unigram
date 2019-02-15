@@ -43,28 +43,12 @@ namespace Unigram.ViewModels
 
             ClearRecentChatsCommand = new RelayCommand(ClearRecentChatsExecute);
 
-            aggregator.Subscribe(this);
-            protoService.Send(new GetChats(long.MaxValue, 0, 20));
-
 #if MOCKUP
             Items.AddRange(protoService.GetChats(20));
 #endif
         }
 
-        private bool _isFirstPinned;
-        public bool IsFirstPinned
-        {
-            get
-            {
-                return _isFirstPinned;
-            }
-            set
-            {
-                Set(ref _isFirstPinned, value);
-            }
-        }
-
-        public SortedObservableCollection<Chat> Items { get; private set; }
+        public ItemsCollection Items { get; private set; }
 
         public bool IsLastSliceLoaded { get; set; }
 
@@ -227,26 +211,51 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatOrder update)
         {
+            if (update.Order != 0)
+            {
+                return;
+            }
+
             Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatLastMessage update)
         {
+            if (update.Order == 0)
+            {
+                return;
+            }
+
             Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatIsPinned update)
         {
+            if (update.Order == 0)
+            {
+                return;
+            }
+
             Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatIsSponsored update)
         {
+            if (update.Order == 0)
+            {
+                return;
+            }
+
             Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatDraftMessage update)
         {
+            if (update.Order == 0)
+            {
+                return;
+            }
+
             Handle(update.ChatId, update.Order);
         }
 
@@ -264,24 +273,37 @@ namespace Unigram.ViewModels
                 }
             }
 
+            var items = Items;
+
             var chat = GetChat(chatId);
             if (chat != null)
             {
-                BeginOnUIThread(() =>
+                if (items.Filter != null && !items.Filter.Intersects(chat))
                 {
-                    if (order == 0)
+                    BeginOnUIThread(() => items.Remove(chat));
+                    return;
+                }
+
+                BeginOnUIThread(async () =>
+                {
+                    if (order > items.LastOrder || (order == items.LastOrder && chatId >= items.LastChatId))
                     {
-                        Items.Remove(chat);
-                    }
-                    else
-                    {
-                        var index = Items.IndexOf(chat);
-                        var next = Items.NextIndexOf(chat);
+                        var index = items.IndexOf(chat);
+                        var next = items.NextIndexOf(chat);
 
                         if (next >= 0 && index != next)
                         {
-                            Items.Remove(chat);
-                            Items.Insert(next, chat);
+                            items.Remove(chat);
+                            items.Insert(next, chat);
+                        }
+                    }
+                    else
+                    {
+                        items.Remove(chat);
+
+                        if (!items.HasMoreItems)
+                        {
+                            await items.LoadMoreItemsAsync(0);
                         }
                     }
                 });
@@ -305,7 +327,13 @@ namespace Unigram.ViewModels
             return ProtoService.GetChat(chatId);
         }
 
-        class ItemsCollection : SortedObservableCollection<Chat>, IGroupSupportIncrementalLoading
+        public void SetFilter(IChatFilter filter)
+        {
+            Items = new ItemsCollection(ProtoService, Aggregator, this, filter);
+            RaisePropertyChanged(() => Items);
+        }
+
+        public class ItemsCollection : SortedObservableCollection<Chat>, IGroupSupportIncrementalLoading
         {
             class ChatComparer : IComparer<Chat>
             {
@@ -317,62 +345,138 @@ namespace Unigram.ViewModels
 
             private readonly IProtoService _protoService;
             private readonly IEventAggregator _aggregator;
-             
+
             private readonly ChatsViewModel _viewModel;
 
-            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel)
-                : base(new ChatComparer(), true)
+            private readonly IChatFilter _filter;
+
+            private bool _hasMoreItems = true;
+
+            private long _lastChatId;
+            private long _lastOrder;
+
+            private long _internalChatId = 0;
+            private long _internalOrder = long.MaxValue;
+
+            public long LastChatId => _lastChatId;
+            public long LastOrder => _lastOrder;
+
+            public IChatFilter Filter => _filter;
+
+            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, IChatFilter filter = null)
+                : base(new ChatComparer(), false)
             {
                 _protoService = protoService;
                 _aggregator = aggregator;
 
                 _viewModel = viewModel;
+
+                _filter = filter;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
                 return AsyncInfo.Run(async token =>
                 {
-                    var order = long.MaxValue;
-                    var offset = 0L;
-
-                    var last = this.LastOrDefault();
-                    if (last != null)
+                    var response = await _protoService.SendAsync(new GetChats(_internalOrder, _internalChatId, 20));
+                    if (response is Telegram.Td.Api.Chats chats)
                     {
-                        order = last.Order;
-                        offset = last.Id;
-
-                        if (order == 0)
+                        foreach (var id in chats.ChatIds)
                         {
-                            return new LoadMoreItemsResult();
+                            var chat = _protoService.GetChat(id);
+                            if (chat != null && chat.Order != 0)
+                            {
+                                _internalChatId = chat.Id;
+                                _internalOrder = chat.Order;
+
+                                if (_filter != null && !_filter.Intersects(chat))
+                                {
+                                    continue;
+                                }
+
+                                Add(chat);
+
+                                _lastChatId = chat.Id;
+                                _lastOrder = chat.Order;
+                            }
                         }
+
+                        _hasMoreItems = chats.ChatIds.Count > 0;
+                        _aggregator.Subscribe(_viewModel);
+
+                        return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                     }
 
-                    _aggregator.Subscribe(_viewModel);
-                    _protoService.Send(new GetChats(order, offset, 20));
-
-                    //var response = await _protoService.SendAsync(new GetChats(order, offset, 20));
-                    //if (response is Telegram.Td.Api.Chats chats)
-                    //{
-                    //    foreach (var id in chats.ChatIds)
-                    //    {
-                    //        var chat = _protoService.GetChat(id);
-                    //        if (chat != null && chat.Order != 0)
-                    //        {
-                    //            Add(chat);
-                    //        }
-                    //    }
-
-                    //    _aggregator.Subscribe(_viewModel);
-                    //    return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
-                    //}
-
-                    return new LoadMoreItemsResult { Count = 20 };
+                    return new LoadMoreItemsResult { Count = 0 };
                 });
             }
 
-            public bool HasMoreItems => true;
+            public bool HasMoreItems => _hasMoreItems;
         }
+    }
+
+    public interface IChatFilter
+    {
+        bool Intersects(Chat chat); 
+    }
+
+    public class ChatTypeFilter : IChatFilter
+    {
+        private readonly ICacheService _cacheService;
+        private readonly ChatTypeFilterMode _filter;
+
+        public ChatTypeFilter(ICacheService cacheService, ChatTypeFilterMode filter)
+        {
+            _cacheService = cacheService;
+            _filter = filter;
+        }
+
+        public bool Intersects(Chat chat)
+        {
+            switch (_filter)
+            {
+                case ChatTypeFilterMode.Unmuted:
+                    return chat.NotificationSettings.MuteFor > 0 ? false : true;
+                case ChatTypeFilterMode.Unread:
+                    return chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread;
+                case ChatTypeFilterMode.Users:
+                    var user = _cacheService.GetUser(chat);
+                    if (user != null)
+                    {
+                        return user.Type is UserTypeRegular;
+                    }
+
+                    return false;
+                case ChatTypeFilterMode.Bots:
+                    var bot = _cacheService.GetUser(chat);
+                    if (bot != null)
+                    {
+                        return bot.Type is UserTypeBot;
+                    }
+
+                    return false;
+                case ChatTypeFilterMode.Groups:
+                    return chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup super && !super.IsChannel;
+                case ChatTypeFilterMode.Channels:
+                    return chat.Type is ChatTypeSupergroup channel && channel.IsChannel;
+                default:
+                case ChatTypeFilterMode.None:
+                    return true;
+            }
+        }
+    }
+
+    public enum ChatTypeFilterMode
+    {
+        None,
+
+        Users,
+        Bots,
+        Groups,
+        Channels,
+
+        Unread,
+        Unmuted,
     }
 
     public class SearchResult

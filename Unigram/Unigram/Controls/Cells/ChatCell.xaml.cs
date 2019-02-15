@@ -65,7 +65,7 @@ namespace Unigram.Controls.Cells
             FromLabel.Text = UpdateFromLabel(chat, message);
             BriefLabel.Text = UpdateBriefLabel(chat, message, true, false);
             TimeLabel.Text = UpdateTimeLabel(message);
-            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, null, message, message.SendingState);
+            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
         }
 
         #region Updates
@@ -76,7 +76,7 @@ namespace Unigram.Controls.Cells
             FromLabel.Text = UpdateFromLabel(chat);
             BriefLabel.Text = UpdateBriefLabel(chat);
             TimeLabel.Text = UpdateTimeLabel(chat);
-            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
         }
 
         public void UpdateChatReadInbox(Chat chat)
@@ -88,7 +88,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatReadOutbox(Chat chat)
         {
-            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
         }
 
         public void UpdateChatIsMarkedAsUnread(Chat chat)
@@ -185,51 +185,10 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public static bool UpdateFilterMode(ICacheService cacheService, Chat chat, ChatFilterMode filter)
+        public void UpdateViewState(Chat chat, bool selected, bool compact)
         {
-            switch (filter)
-            {
-                case ChatFilterMode.Work:
-                    return chat.NotificationSettings.MuteFor > 0 ? false : true;
-                case ChatFilterMode.Users:
-                    var user = cacheService.GetUser(chat);
-                    if (user != null)
-                    {
-                        return user.Type is UserTypeRegular;
-                    }
-
-                    return false;
-                case ChatFilterMode.Bots:
-                    var bot = cacheService.GetUser(chat);
-                    if (bot != null)
-                    {
-                        return bot.Type is UserTypeBot;
-                    }
-
-                    return false;
-                case ChatFilterMode.Groups:
-                    return chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup super && !super.IsChannel;
-                case ChatFilterMode.Channels:
-                    return chat.Type is ChatTypeSupergroup channel && channel.IsChannel;
-                default:
-                case ChatFilterMode.None:
-                    return true;
-            }
-        }
-
-        public void UpdateViewState(Chat chat, ChatFilterMode filter, bool selected, bool compact)
-        {
-            var visible = UpdateFilterMode(_protoService, chat, filter);
-            if (visible)
-            {
-                Visibility = Visibility.Visible;
-                VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
-                VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
-            }
-            else
-            {
-                Visibility = Visibility.Collapsed;
-            }
+            VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
+            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
         }
 
         private Visibility UpdateIsPinned(bool isPinned, int unreadCount)
@@ -537,7 +496,7 @@ namespace Unigram.Controls.Cells
             return false;
         }
 
-        private string UpdateStateIcon(long maxId, DraftMessage draft, Message message, MessageSendingState state)
+        private string UpdateStateIcon(long maxId, Chat chat, DraftMessage draft, Message message, MessageSendingState state)
         {
             if (draft != null || message == null)
             {
@@ -546,26 +505,36 @@ namespace Unigram.Controls.Cells
 
             if (message.IsOutgoing /*&& IsOut(ViewModel)*/)
             {
-                //if (topMessage.Parent is TLUser user && user.IsSelf)
-                //{
-                //    return state == TLMessageState.Sending ? "\uE600" : string.Empty;
-                //}
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.Options.MyId)
+                {
+                    if (message.SendingState is MessageSendingStateFailed)
+                    {
+                        // TODO: 
+                        return "\uE611"; // Failed
+                    }
+                    else if (message.SendingState is MessageSendingStatePending)
+                    {
+                        return "\uE600"; // Pending
+                    }
+
+                    return string.Empty;
+                }
 
                 if (message.SendingState is MessageSendingStateFailed)
                 {
                     // TODO: 
-                    return "\uE611";
+                    return "\uE611"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
-                    return "\uE600";
+                    return "\uE600"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
-                    return "\uE601";
+                    return "\uE601"; // Read
                 }
 
-                return "\uE602";
+                return "\uE602"; // Unread
             }
 
             return string.Empty;
@@ -689,16 +658,5 @@ namespace Unigram.Controls.Cells
 
             base.OnDrop(e);
         }
-    }
-
-    public enum ChatFilterMode
-    {
-        None,
-        Work,
-
-        Users,
-        Bots,
-        Groups,
-        Channels
     }
 }

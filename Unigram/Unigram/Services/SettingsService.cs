@@ -24,9 +24,6 @@ namespace Unigram.Services
 
         int UserId { get; set; }
 
-        bool IsWorkModeVisible { get; set; }
-        bool IsWorkModeEnabled { get; set; }
-
         string FilesDirectory { get; set; }
 
         int VerbosityLevel { get; }
@@ -234,40 +231,6 @@ namespace Unigram.Services
             get
             {
                 return _passcodeLock = _passcodeLock ?? new PasscodeLockSettings();
-            }
-        }
-
-        private bool? _isWorkModeVisible;
-        public bool IsWorkModeVisible
-        {
-            get
-            {
-                if (_isWorkModeVisible == null)
-                    _isWorkModeVisible = GetValueOrDefault("IsWorkModeVisible", false);
-
-                return _isWorkModeVisible ?? false;
-            }
-            set
-            {
-                _isWorkModeVisible = value;
-                AddOrUpdateValue("IsWorkModeVisible", value);
-            }
-        }
-
-        private bool? _isWorkModeEnabled;
-        public bool IsWorkModeEnabled
-        {
-            get
-            {
-                if (_isWorkModeEnabled == null)
-                    _isWorkModeEnabled = GetValueOrDefault("IsWorkModeEnabled", false);
-
-                return _isWorkModeEnabled ?? false;
-            }
-            set
-            {
-                _isWorkModeEnabled = value;
-                AddOrUpdateValue("IsWorkModeEnabled", value);
             }
         }
 

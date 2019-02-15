@@ -68,7 +68,6 @@ namespace Unigram.Views
         //IHandle<UpdateMessageContent>,
         IHandle<UpdateSecretChat>,
         IHandle<UpdateChatNotificationSettings>,
-        IHandle<UpdateWorkMode>,
         IHandle<UpdatePasscodeLock>,
         IHandle<UpdateFile>,
         IHandle<UpdateConnectionState>,
@@ -239,23 +238,6 @@ namespace Unigram.Views
         public void Handle(UpdateChatNotificationSettings update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateNotificationSettings(chat));
-        }
-
-        public void Handle(UpdateWorkMode update)
-        {
-            this.BeginOnUIThread(() =>
-            {
-                if (update.IsVisible)
-                {
-                    WorkMode.Visibility = Visibility.Visible;
-                    WorkMode.IsChecked = update.IsEnabled;
-                }
-                else
-                {
-                    WorkMode.Visibility = Visibility.Collapsed;
-                    WorkMode.IsChecked = false;
-                }
-            });
         }
 
         public void Handle(UpdatePasscodeLock update)
@@ -591,17 +573,6 @@ namespace Unigram.Views
             ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
             ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
-
-            if (((TLViewModelBase)ViewModel).Settings.IsWorkModeVisible)
-            {
-                WorkMode.Visibility = Visibility.Visible;
-                WorkMode.IsChecked = ((TLViewModelBase)ViewModel).Settings.IsWorkModeEnabled;
-            }
-            else
-            {
-                WorkMode.Visibility = Visibility.Collapsed;
-                WorkMode.IsChecked = false;
-            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -909,12 +880,6 @@ namespace Unigram.Views
             }
         }
 
-        private void WorkMode_Click(object sender, RoutedEventArgs e)
-        {
-            var enabled = ((TLViewModelBase)ViewModel).Settings.IsWorkModeEnabled = WorkMode.IsChecked == true;
-            ChatsList.UpdateFilterMode(enabled ? ChatFilterMode.Work : ChatFilterMode.None);
-        }
-
         private void InitializeSearch()
         {
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
@@ -1167,10 +1132,11 @@ namespace Unigram.Views
 
             Root?.SetSelectedIndex(rpMasterTitlebar.SelectedIndex);
 
-            SearchField.Visibility = Visibility.Collapsed;
-            SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
+            DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex != 0 ? Visibility.Visible : Visibility.Collapsed;
+            ChatsFilters.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             ChatsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+            SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
 
             SearchField.Text = string.Empty;
             SearchField.Visibility = Visibility.Collapsed;
@@ -1725,12 +1691,31 @@ namespace Unigram.Views
             SettingsView.EditName_Click(sender, e);
         }
 
-        private void Filter_Click(object sender, RoutedEventArgs e)
+        private void ResetFilters_Click(object sender, RoutedEventArgs e)
         {
-            var radio = sender as RadioButton;
-            var filter = (ChatFilterMode)radio.CommandParameter;
+            ChatsFilters.SelectedIndex = 0;
+        }
 
-            ChatsList.UpdateFilterMode(filter);
+        private void Filters_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ResetFilters == null)
+            {
+                return;
+            }
+
+            var radio = e.AddedItems[0] as ComboBoxItem;
+            var filter = (ChatTypeFilterMode)radio?.Tag;
+
+            if (filter == ChatTypeFilterMode.None)
+            {
+                ResetFilters.Visibility = Visibility.Collapsed;
+                ViewModel.Chats.SetFilter(null);
+            }
+            else
+            {
+                ResetFilters.Visibility = Visibility.Visible;
+                ViewModel.Chats.SetFilter(new ChatTypeFilter(ViewModel.CacheService, filter));
+            }
         }
     }
 

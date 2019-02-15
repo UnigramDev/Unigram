@@ -16,7 +16,6 @@ namespace Unigram.Controls
         public TLViewModelBase ViewModel => DataContext as TLViewModelBase;
 
         public MasterDetailState _viewState;
-        public ChatFilterMode _filterMode;
 
         public ChatsListView()
         {
@@ -34,7 +33,7 @@ namespace Unigram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(args.Item as Chat, _filterMode, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                content.UpdateViewState(args.Item as Chat, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
                 content.UpdateChat(ViewModel.ProtoService, ViewModel.NavigationService, args.Item as Chat);
                 args.Handled = true;
             }
@@ -48,12 +47,6 @@ namespace Unigram.Controls
         public void UpdateViewState(MasterDetailState state)
         {
             _viewState = state;
-            UpdateVisibleChats();
-        }
-
-        public void UpdateFilterMode(ChatFilterMode filter)
-        {
-            _filterMode = filter;
             UpdateVisibleChats();
         }
 
@@ -76,7 +69,7 @@ namespace Unigram.Controls
                 var content = container.ContentTemplateRoot as ChatCell;
                 if (content != null)
                 {
-                    content.UpdateViewState(ItemFromContainer(container) as Chat, _filterMode, container.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                    content.UpdateViewState(ItemFromContainer(container) as Chat, container.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
                 }
             }
         }
@@ -107,7 +100,7 @@ namespace Unigram.Controls
             var content = ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._filterMode, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact);
+                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact);
             }
         }
     }

@@ -8,6 +8,7 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:cells="using:Unigram.Controls.Cells"
     xmlns:chats="using:Unigram.Controls.Chats"
+    xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -185,6 +186,53 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="54,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
 
+                        <ComboBox x:Name="ChatsFilters"
+                                  SelectedIndex="0"
+                                  SelectionChanged="Filters_SelectionChanged"
+                                  VerticalAlignment="Center"
+                                  Margin="42,0,0,0"
+                                  Background="Transparent"
+                                  Style="{StaticResource HeaderComboBoxStyle}">
+                            <ComboBoxItem Content="All chats">
+                                <ComboBoxItem.Tag>
+                                    <viewModels:ChatTypeFilterMode>None</viewModels:ChatTypeFilterMode>
+                                </ComboBoxItem.Tag>
+                            </ComboBoxItem>
+                            <ComboBoxItem Content="Users">
+                                <ComboBoxItem.Tag>
+                                    <viewModels:ChatTypeFilterMode>Users</viewModels:ChatTypeFilterMode>
+                                </ComboBoxItem.Tag>
+                            </ComboBoxItem>
+                            <ComboBoxItem Content="Bots">
+                                <ComboBoxItem.Tag>
+                                    <viewModels:ChatTypeFilterMode>Bots</viewModels:ChatTypeFilterMode>
+                                </ComboBoxItem.Tag>
+                            </ComboBoxItem>
+                            <ComboBoxItem Content="Groups">
+                                <ComboBoxItem.Tag>
+                                    <viewModels:ChatTypeFilterMode>Groups</viewModels:ChatTypeFilterMode>
+                                </ComboBoxItem.Tag>
+                            </ComboBoxItem>
+                            <ComboBoxItem Content="Channels">
+                                <ComboBoxItem.Tag>
+                                    <viewModels:ChatTypeFilterMode>Channels</viewModels:ChatTypeFilterMode>
+                                </ComboBoxItem.Tag>
+                            </ComboBoxItem>
+                            <ComboBoxItem IsEnabled="False" Padding="0">
+                                <MenuFlyoutSeparator Margin="-2,0"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem Content="Unread chats">
+                                <ComboBoxItem.Tag>
+                                    <viewModels:ChatTypeFilterMode>Unread</viewModels:ChatTypeFilterMode>
+                                </ComboBoxItem.Tag>
+                            </ComboBoxItem>
+                            <ComboBoxItem Content="Unmuted chats">
+                                <ComboBoxItem.Tag>
+                                    <viewModels:ChatTypeFilterMode>Unmuted</viewModels:ChatTypeFilterMode>
+                                </ComboBoxItem.Tag>
+                            </ComboBoxItem>
+                        </ComboBox>
+
                         <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
                             <Button Padding="{StaticResource EllipsisButtonPadding}"
                                     Style="{StaticResource EllipsisButton}">
@@ -306,7 +354,7 @@
                                               Style="{StaticResource HorizontalListViewStyle}">
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Margin="0,12">
+                                                <StackPanel Width="72" Margin="0,12">
                                                     <Grid Width="48" Height="48" Margin="12,0">
                                                         <controls:ProfilePicture IsHitTestVisible="False"/>
                                                         <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
@@ -443,13 +491,8 @@
                             </ListView.GroupStyle>
                         </ListView>
                         <Grid x:Name="DialogsPanel">
-                            <controls:ScrollViewerBackground
-                                Visibility="{x:Bind (Visibility)ViewModel.Chats.IsFirstPinned, Mode=OneWay}"
-                                Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
-                                ScrollingHost="{x:Bind ChatsList}"
-                                VerticalAlignment="Top"/>
                             <controls:ChatsListView x:Name="ChatsList"
-                                                    ItemsSource="{x:Bind ViewModel.Chats.Items}"
+                                                    ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                                     IsItemClickEnabled="True"
                                                     SelectionMode="None"
                                                     ItemClick="ListView_ItemClick"
@@ -481,45 +524,35 @@
                                 </ListView.ItemTemplate>
                                 <ListView.Header>
                                     <StackPanel>
-                                        <ToggleButton x:Name="WorkMode" Checked="WorkMode_Click" Unchecked="WorkMode_Click" Style="{StaticResource WorkModeButtonStyle}">
-                                            <Border Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"
-                                                    MinWidth="20"
-                                                    Height="20"
-                                                    CornerRadius="10"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalAlignment="Right">
-                                                <TextBlock Text="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
+                                        <HyperlinkButton x:Name="ResetFilters" Click="ResetFilters_Click" Visibility="Collapsed" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+                                            <Grid Margin="0,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="48"/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <FontIcon Glyph="&#xE751;" HorizontalAlignment="Center"/>
+
+                                                <TextBlock Text="All chats" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
+
+                                                <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                                        MinWidth="20"
+                                                        Height="20"
+                                                        CornerRadius="10"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Right"
+                                                        Margin="0,0,12,0"
+                                                        Grid.Column="2">
+                                                    <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
                                                            Style="{StaticResource CaptionTextBlockStyle}"
                                                            Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                            TextAlignment="Center"
                                                            Margin="4,2,4,0"/>
-                                            </Border>
-                                        </ToggleButton>
-                                        <!--<RadioButton Content="All" Checked="Filter_Click">
-                                            <RadioButton.CommandParameter>
-                                                <cells:ChatFilterMode>None</cells:ChatFilterMode>
-                                            </RadioButton.CommandParameter>
-                                        </RadioButton>
-                                        <RadioButton Content="Users" Checked="Filter_Click">
-                                            <RadioButton.CommandParameter>
-                                                <cells:ChatFilterMode>Users</cells:ChatFilterMode>
-                                            </RadioButton.CommandParameter>
-                                        </RadioButton>
-                                        <RadioButton Content="Bots" Checked="Filter_Click">
-                                            <RadioButton.CommandParameter>
-                                                <cells:ChatFilterMode>Bots</cells:ChatFilterMode>
-                                            </RadioButton.CommandParameter>
-                                        </RadioButton>
-                                        <RadioButton Content="Groups" Checked="Filter_Click">
-                                            <RadioButton.CommandParameter>
-                                                <cells:ChatFilterMode>Groups</cells:ChatFilterMode>
-                                            </RadioButton.CommandParameter>
-                                        </RadioButton>
-                                        <RadioButton Content="Channels" Checked="Filter_Click">
-                                            <RadioButton.CommandParameter>
-                                                <cells:ChatFilterMode>Channels</cells:ChatFilterMode>
-                                            </RadioButton.CommandParameter>
-                                        </RadioButton>-->
+                                                </Border>
+
+                                            </Grid>
+                                        </HyperlinkButton>
                                     </StackPanel>
                                 </ListView.Header>
                                 <ListView.Footer>

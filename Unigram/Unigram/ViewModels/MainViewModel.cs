@@ -83,6 +83,13 @@ namespace Unigram.ViewModels
             _liveLocationService.StopTracking();
         }
 
+        private int _unreadCount;
+        public int UnreadCount
+        {
+            get { return _unreadCount; }
+            set { Set(ref _unreadCount, value); }
+        }
+
         private int _unreadMutedCount;
         public int UnreadMutedCount
         {
@@ -124,6 +131,7 @@ namespace Unigram.ViewModels
         {
             BeginOnUIThread(() =>
             {
+                UnreadCount = update.UnreadCount;
                 UnreadUnmutedCount = update.UnreadUnmutedCount;
                 UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
             });
@@ -143,6 +151,7 @@ namespace Unigram.ViewModels
             //Dispatch(() => Contacts.getTLContacts());
             //Dispatch(() => Contacts.GetSelfAsync());
 
+            UnreadCount = CacheService.UnreadMessageCount.UnreadCount;
             UnreadMutedCount = CacheService.UnreadMessageCount.UnreadCount - CacheService.UnreadMessageCount.UnreadUnmutedCount;
 
             return base.OnNavigatedToAsync(parameter, mode, state);

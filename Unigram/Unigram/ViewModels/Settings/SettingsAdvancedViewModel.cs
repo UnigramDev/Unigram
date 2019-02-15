@@ -96,26 +96,6 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public bool IsWorkModeVisible
-        {
-            get
-            {
-                return Settings.IsWorkModeVisible;
-            }
-            set
-            {
-                Settings.IsWorkModeVisible = value;
-                RaisePropertyChanged();
-
-                if (!value)
-                {
-                    Settings.IsWorkModeEnabled = false;
-                }
-
-                Aggregator.Publish(new UpdateWorkMode(value, Settings.IsWorkModeEnabled));
-            }
-        }
-
         public bool PreferIpv6
         {
             get
