@@ -544,6 +544,33 @@ namespace Unigram.Views
             {
                 Application.Current.Exit();
             }
+            else if (args.VirtualKey >= Windows.System.VirtualKey.F1 && args.VirtualKey <= Windows.System.VirtualKey.F7 && !ctrl && !alt && !shift)
+            {
+                switch (args.VirtualKey)
+                {
+                    case Windows.System.VirtualKey.F1:
+                        SetFilter(ChatTypeFilterMode.None, "All chats");
+                        break;
+                    case Windows.System.VirtualKey.F2:
+                        SetFilter(ChatTypeFilterMode.Users, "Users");
+                        break;
+                    case Windows.System.VirtualKey.F3:
+                        SetFilter(ChatTypeFilterMode.Bots, "Bots");
+                        break;
+                    case Windows.System.VirtualKey.F4:
+                        SetFilter(ChatTypeFilterMode.Groups, "Groups");
+                        break;
+                    case Windows.System.VirtualKey.F5:
+                        SetFilter(ChatTypeFilterMode.Channels, "Channels");
+                        break;
+                    case Windows.System.VirtualKey.F6:
+                        SetFilter(ChatTypeFilterMode.Unread, "Unread chats");
+                        break;
+                    case Windows.System.VirtualKey.F7:
+                        SetFilter(ChatTypeFilterMode.Unmuted, "Unmuted chats");
+                        break;
+                }
+            }
         }
 
         public void Scroll(bool up, bool navigate)
