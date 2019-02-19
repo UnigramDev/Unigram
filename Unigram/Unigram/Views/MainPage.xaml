@@ -186,52 +186,106 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="54,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
 
-                        <ComboBox x:Name="ChatsFilters"
-                                  SelectedIndex="0"
-                                  SelectionChanged="Filters_SelectionChanged"
-                                  VerticalAlignment="Center"
-                                  Margin="42,0,0,0"
-                                  Background="Transparent"
-                                  Style="{StaticResource HeaderComboBoxStyle}">
-                            <ComboBoxItem Content="All chats">
-                                <ComboBoxItem.Tag>
-                                    <viewModels:ChatTypeFilterMode>None</viewModels:ChatTypeFilterMode>
-                                </ComboBoxItem.Tag>
-                            </ComboBoxItem>
-                            <ComboBoxItem Content="Users">
-                                <ComboBoxItem.Tag>
-                                    <viewModels:ChatTypeFilterMode>Users</viewModels:ChatTypeFilterMode>
-                                </ComboBoxItem.Tag>
-                            </ComboBoxItem>
-                            <ComboBoxItem Content="Bots">
-                                <ComboBoxItem.Tag>
-                                    <viewModels:ChatTypeFilterMode>Bots</viewModels:ChatTypeFilterMode>
-                                </ComboBoxItem.Tag>
-                            </ComboBoxItem>
-                            <ComboBoxItem Content="Groups">
-                                <ComboBoxItem.Tag>
-                                    <viewModels:ChatTypeFilterMode>Groups</viewModels:ChatTypeFilterMode>
-                                </ComboBoxItem.Tag>
-                            </ComboBoxItem>
-                            <ComboBoxItem Content="Channels">
-                                <ComboBoxItem.Tag>
-                                    <viewModels:ChatTypeFilterMode>Channels</viewModels:ChatTypeFilterMode>
-                                </ComboBoxItem.Tag>
-                            </ComboBoxItem>
-                            <ComboBoxItem IsEnabled="False" Padding="0">
-                                <MenuFlyoutSeparator Margin="-2,0"/>
-                            </ComboBoxItem>
-                            <ComboBoxItem Content="Unread chats">
-                                <ComboBoxItem.Tag>
-                                    <viewModels:ChatTypeFilterMode>Unread</viewModels:ChatTypeFilterMode>
-                                </ComboBoxItem.Tag>
-                            </ComboBoxItem>
-                            <ComboBoxItem Content="Unmuted chats">
-                                <ComboBoxItem.Tag>
-                                    <viewModels:ChatTypeFilterMode>Unmuted</viewModels:ChatTypeFilterMode>
-                                </ComboBoxItem.Tag>
-                            </ComboBoxItem>
-                        </ComboBox>
+                        <Button x:Name="ChatsFilters" Content="All chats" Margin="13,0,0,0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid x:Name="LayoutRoot" Background="Transparent">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="32" />
+                                        </Grid.ColumnDefinitions>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+                                                <VisualState x:Name="PointerOver">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Disabled">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxForegroundDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DropDownGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxDropDownGlyphForegroundDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <ContentPresenter x:Name="ContentPresenter"
+                                                          Grid.Column="1"
+                                                          FontWeight="SemiBold"
+                                                          Margin="41,4,0,4"
+                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                                        <FontIcon x:Name="DropDownGlyph"
+                                                  Grid.Column="2"
+                                                  IsHitTestVisible="False"
+                                                  Margin="0,12,10,8"
+                                                  Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
+                                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  FontSize="12"
+                                                  Glyph="&#xE0E5;"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Center"
+                                                  AutomationProperties.AccessibilityView="Raw" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <Button.Flyout>
+                                <MenuFlyout x:Name="FiltersFlyout">
+                                    <ToggleMenuFlyoutItem x:Name="FilterNone" Text="All chats" Click="ChatsFilter_Click" IsChecked="True">
+                                        <MenuFlyoutItem.CommandParameter>
+                                            <viewModels:ChatTypeFilterMode>None</viewModels:ChatTypeFilterMode>
+                                        </MenuFlyoutItem.CommandParameter>
+                                    </ToggleMenuFlyoutItem>
+                                    <ToggleMenuFlyoutItem x:Name="FilterUsers" Text="Users" Click="ChatsFilter_Click">
+                                        <MenuFlyoutItem.CommandParameter>
+                                            <viewModels:ChatTypeFilterMode>Users</viewModels:ChatTypeFilterMode>
+                                        </MenuFlyoutItem.CommandParameter>
+                                    </ToggleMenuFlyoutItem>
+                                    <ToggleMenuFlyoutItem x:Name="FilterBots" Text="Bots" Click="ChatsFilter_Click">
+                                        <MenuFlyoutItem.CommandParameter>
+                                            <viewModels:ChatTypeFilterMode>Bots</viewModels:ChatTypeFilterMode>
+                                        </MenuFlyoutItem.CommandParameter>
+                                    </ToggleMenuFlyoutItem>
+                                    <ToggleMenuFlyoutItem x:Name="FilterGroups" Text="Groups" Click="ChatsFilter_Click">
+                                        <MenuFlyoutItem.CommandParameter>
+                                            <viewModels:ChatTypeFilterMode>Groups</viewModels:ChatTypeFilterMode>
+                                        </MenuFlyoutItem.CommandParameter>
+                                    </ToggleMenuFlyoutItem>
+                                    <ToggleMenuFlyoutItem x:Name="FilterChannels" Text="Channels" Click="ChatsFilter_Click">
+                                        <MenuFlyoutItem.CommandParameter>
+                                            <viewModels:ChatTypeFilterMode>Channels</viewModels:ChatTypeFilterMode>
+                                        </MenuFlyoutItem.CommandParameter>
+                                    </ToggleMenuFlyoutItem>
+                                    <MenuFlyoutSeparator/>
+                                    <ToggleMenuFlyoutItem x:Name="FilterUnread" Text="Unread chats" Click="ChatsFilter_Click">
+                                        <MenuFlyoutItem.CommandParameter>
+                                            <viewModels:ChatTypeFilterMode>Unread</viewModels:ChatTypeFilterMode>
+                                        </MenuFlyoutItem.CommandParameter>
+                                    </ToggleMenuFlyoutItem>
+                                    <ToggleMenuFlyoutItem x:Name="FilterUnmuted" Text="Unmuted chats" Click="ChatsFilter_Click">
+                                        <MenuFlyoutItem.CommandParameter>
+                                            <viewModels:ChatTypeFilterMode>Unmuted</viewModels:ChatTypeFilterMode>
+                                        </MenuFlyoutItem.CommandParameter>
+                                    </ToggleMenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
 
                         <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
                             <Button Padding="{StaticResource EllipsisButtonPadding}"
@@ -525,7 +579,7 @@
                                 <ListView.Header>
                                     <StackPanel>
                                         <HyperlinkButton x:Name="ResetFilters" Click="ResetFilters_Click" Visibility="Collapsed" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
-                                            <Grid Margin="0,4">
+                                            <Grid Margin="0,3">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="48"/>
                                                     <ColumnDefinition/>
@@ -545,10 +599,10 @@
                                                         Margin="0,0,12,0"
                                                         Grid.Column="2">
                                                     <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
-                                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                                                           TextAlignment="Center"
-                                                           Margin="4,2,4,0"/>
+                                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                               TextAlignment="Center"
+                                                               Margin="4,2,4,0"/>
                                                 </Border>
 
                                             </Grid>

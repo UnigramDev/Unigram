@@ -157,6 +157,22 @@ namespace Unigram.Views
         private void InitializeLocalization()
         {
             TabChats.Header = Strings.Additional.Chats;
+
+            if (ApiInfo.CanUseAccelerators)
+            {
+                FilterNone.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F1, IsEnabled = false });
+                FilterUsers.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F2, IsEnabled = false });
+                FilterBots.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F3, IsEnabled = false });
+                FilterGroups.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F4, IsEnabled = false });
+                FilterChannels.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F5, IsEnabled = false });
+                FilterUnread.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F6, IsEnabled = false });
+                FilterUnmuted.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F7, IsEnabled = false });
+            }
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedLeft"))
+            {
+                ChatsFilters.Flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft;
+            }
         }
 
         private void InitializeLock()
@@ -1698,18 +1714,26 @@ namespace Unigram.Views
 
         private void ResetFilters_Click(object sender, RoutedEventArgs e)
         {
-            ChatsFilters.SelectedIndex = 0;
+            SetFilter(ChatTypeFilterMode.None, "All chats");
         }
 
-        private void Filters_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ChatsFilter_Click(object sender, RoutedEventArgs e)
         {
-            if (ResetFilters == null)
-            {
-                return;
-            }
+            var item = sender as MenuFlyoutItem;
+            var filter = (ChatTypeFilterMode)item.CommandParameter;
 
-            var radio = e.AddedItems[0] as ComboBoxItem;
-            var filter = (ChatTypeFilterMode)radio?.Tag;
+            SetFilter(filter, item.Text);
+        }
+
+        private void SetFilter(ChatTypeFilterMode filter, string text)
+        {
+            foreach (var item in FiltersFlyout.Items)
+            {
+                if (item is ToggleMenuFlyoutItem toggle)
+                {
+                    toggle.IsChecked = (ChatTypeFilterMode)toggle.CommandParameter == filter;
+                }
+            }
 
             if (filter == ChatTypeFilterMode.None)
             {
@@ -1721,6 +1745,8 @@ namespace Unigram.Views
                 ResetFilters.Visibility = Visibility.Visible;
                 ViewModel.Chats.SetFilter(new ChatTypeFilter(ViewModel.CacheService, filter));
             }
+
+            ChatsFilters.Content = text;
         }
     }
 
