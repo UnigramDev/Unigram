@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Services;
+using Windows.UI.Xaml.Controls;
+
+namespace Unigram.ViewModels
+{
+    public class LogOutViewModel : TLViewModelBase
+    {
+        private readonly INotificationsService _pushService;
+        private readonly IContactsService _contactsService;
+
+        public LogOutViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IContactsService contactsService)
+            : base(protoService, cacheService, settingsService, aggregator)
+        {
+            _pushService = notificationsService;
+            _contactsService = contactsService;
+
+            AskCommand = new RelayCommand(AskExecute);
+            LogoutCommand = new RelayCommand(LogoutExecute);
+        }
+
+        public RelayCommand AskCommand { get; }
+        private async void AskExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var response = await ProtoService.SendAsync(new GetSupportUser());
+                if (response is User user)
+                {
+                    response = await ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
+                    if (response is Chat chat)
+                    {
+                        NavigationService.NavigateToChat(chat);
+                    }
+                }
+            }
+        }
+
+        public RelayCommand LogoutCommand { get; }
+        private async void LogoutExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureLogout, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            Settings.Clear();
+            Settings.PasscodeLock.Clear();
+
+            await _pushService.UnregisterAsync();
+            await _contactsService.RemoveAsync();
+
+            var response = await ProtoService.SendAsync(new LogOut());
+            if (response is Error error)
+            {
+                // TODO:
+            }
+        }
+    }
+}

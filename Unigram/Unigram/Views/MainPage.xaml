@@ -251,7 +251,7 @@
                                             Glyph="&#xE104;"/>
                                         <controls:GlyphMenuFlyoutItem
                                             x:Name="LogoutItem"
-                                            Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
+                                            Click="LogOut_Click"
                                             Text="{CustomResource LogOut}"
                                             Glyph="&#xE10A;"/>
                                     </MenuFlyout>

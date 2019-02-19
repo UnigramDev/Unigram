@@ -36,7 +36,6 @@ namespace Unigram.ViewModels
             _contactsService = contactsService;
 
             AskCommand = new RelayCommand(AskExecute);
-            LogoutCommand = new RelayCommand(LogoutExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
         }
 
@@ -167,37 +166,6 @@ namespace Unigram.ViewModels
                     }
                 }
             }
-        }
-
-        public RelayCommand LogoutCommand { get; }
-        private async void LogoutExecute()
-        {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureLogout, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            Settings.Clear();
-            Settings.PasscodeLock.Clear();
-
-            await _pushService.UnregisterAsync();
-            await _contactsService.RemoveAsync();
-
-            var response = await ProtoService.SendAsync(new LogOut());
-            if (response is Error error)
-            {
-                // TODO:
-            }
-
-            //if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
-            //{
-            //    await CoreApplication.RequestRestartAsync(string.Empty);
-            //}
-            //else
-            //{
-            //    App.Current.Exit();
-            //}
         }
     }
 }

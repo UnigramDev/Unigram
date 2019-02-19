@@ -1,0 +1,72 @@
+﻿<Page
+    x:Class="Unigram.Views.LogOutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="{CustomResource LogOutTitle}"/>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel>
+                <TextBlock Text="{CustomResource AlternativeOptions}" Margin="12,16,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+
+                <controls:BadgeButton
+                    Content="{CustomResource AddAnotherAccountInfo}"
+                    Badge="{CustomResource AddAnotherAccount}"
+                    Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                    Glyph="&#xE8FA;"
+                    Click="AddAnotherAccount_Click"/>
+
+                <controls:BadgeButton
+                    Content="{CustomResource SetPasscodeInfo}"
+                    Badge="{CustomResource SetPasscode}"
+                    Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                    Glyph="&#xE192;"
+                    Click="SetPasscode_Click"/>
+                
+                <controls:BadgeButton
+                    Content="{CustomResource ClearCacheInfo}"
+                    Badge="{CustomResource ClearCache}"
+                    Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                    Glyph="&#xE107;"
+                    Click="ClearCache_Click"/>
+                
+                <controls:BadgeButton
+                    Content="{CustomResource ChangePhoneNumberInfo}"
+                    Badge="{CustomResource ChangePhoneNumber}"
+                    Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                    Glyph="&#xE717;"
+                    Click="ChangePhoneNumber_Click"/>
+                
+                <controls:BadgeButton
+                    Content="{CustomResource ContactSupportInfo}"
+                    Badge="{CustomResource ContactSupport}"
+                    Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                    Glyph="&#xED15;"
+                    Command="{x:Bind ViewModel.AskCommand}"/>
+
+                <StackPanel x:Name="DeletePanel" Margin="0,24">
+                    <controls:BadgeButton
+                        Content="{CustomResource LogOutTitle}"
+                        Foreground="Red"
+                        Command="{x:Bind ViewModel.LogoutCommand}"/>
+                    <TextBlock
+                        Text="{CustomResource LogOutInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -1686,6 +1686,11 @@ namespace Unigram.Views
             }
         }
 
+        private void LogOut_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(LogOutPage));
+        }
+
         private void EditName_Click(object sender, RoutedEventArgs e)
         {
             SettingsView.EditName_Click(sender, e);

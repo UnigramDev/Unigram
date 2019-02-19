@@ -91,6 +91,11 @@ namespace Unigram.Views.Host
             }
         }
 
+        public void Create()
+        {
+            Switch(_lifetime.Create());
+        }
+
         public void Switch(ISessionService session)
         {
             _lifetime.ActiveItem = session;
