@@ -461,6 +461,14 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
             }
+            else if (message.Content is MessagePoll)
+            {
+                Media.Margin = new Thickness(0);
+                Placeholder.Visibility = Visibility.Collapsed;
+                FooterToNormal();
+                Grid.SetRow(Footer, 3);
+                Grid.SetRow(Message, 2);
+            }
             else if (message.Content is MessageInvoice invoice)
             {
                 var caption = invoice.Photo == null;
@@ -576,6 +584,10 @@ namespace Unigram.Controls.Messages
                 else if (message.Content is MessagePhoto)
                 {
                     Media.Content = new PhotoContent(message);
+                }
+                else if (message.Content is MessagePoll)
+                {
+                    Media.Content = new PollContent(message);
                 }
                 else if (message.Content is MessageSticker)
                 {

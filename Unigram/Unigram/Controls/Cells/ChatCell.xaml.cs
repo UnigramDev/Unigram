@@ -456,6 +456,10 @@ namespace Unigram.Controls.Cells
 
                 return result + $"{Strings.Resources.AttachPhoto}, ";
             }
+            else if (message.Content is MessagePoll poll)
+            {
+                return result + Strings.Resources.Poll;
+            }
             else if (message.Content is MessageCall call)
             {
                 var outgoing = message.IsOutgoing;

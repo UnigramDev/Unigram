@@ -191,6 +191,8 @@ namespace Unigram.Controls.Messages
                     return SetLocationTemplate(message, location, title);
                 case MessagePhoto photo:
                     return SetPhotoTemplate(message, photo, title);
+                case MessagePoll poll:
+                    return SetPollTemplate(message, poll, title);
                 case MessageSticker sticker:
                     return SetStickerTemplate(message, sticker, title);
                 case MessageUnsupported unsupported:
@@ -487,6 +489,20 @@ namespace Unigram.Controls.Messages
                 ServiceLabel.Text += ", ";
                 MessageLabel.Text += audio.Caption.Text.Replace('\n', ' ');
             }
+
+            return true;
+        }
+
+        private bool SetPollTemplate(MessageViewModel message, MessagePoll poll, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = Strings.Resources.Poll;
+            MessageLabel.Text = string.Empty;
 
             return true;
         }
