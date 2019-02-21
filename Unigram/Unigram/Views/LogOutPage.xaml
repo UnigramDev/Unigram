@@ -31,6 +31,7 @@
                     Content="{CustomResource SetPasscodeInfo}"
                     Badge="{CustomResource SetPasscode}"
                     Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                    Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                     Glyph="&#xE192;"
                     Click="SetPasscode_Click"/>
                 

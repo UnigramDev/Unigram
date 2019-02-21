@@ -15,15 +15,22 @@ namespace Unigram.ViewModels
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
+        private readonly IPasscodeService _passcodeService;
 
-        public LogOutViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IContactsService contactsService)
+        public LogOutViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IContactsService contactsService, IPasscodeService passcodeService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = notificationsService;
             _contactsService = contactsService;
+            _passcodeService = passcodeService;
 
             AskCommand = new RelayCommand(AskExecute);
             LogoutCommand = new RelayCommand(LogoutExecute);
+        }
+
+        public bool IsPasscodeEnabled
+        {
+            get { return _passcodeService.IsEnabled; }
         }
 
         public RelayCommand AskCommand { get; }
