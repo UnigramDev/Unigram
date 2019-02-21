@@ -31,7 +31,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Data usage"/>
+        <controls:PageHeader Text="{CustomResource NetworkUsage}"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"

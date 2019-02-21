@@ -6730,7 +6730,7 @@ als 'Contacten Synchroniseren' is ingeschakeld worden je contacten opnieuw gesyn
     <value>Tik hier om opgeslagen GIF's te bekijken</value>
   </data>
   <data name="TapToChange" xml:space="preserve">
-    <value>Tik om te wijzen</value>
+    <value>Tik om te wijzigen</value>
   </data>
   <data name="TapToChangePhone" xml:space="preserve">
     <value>Tik om je nummer te wijzigen</value>

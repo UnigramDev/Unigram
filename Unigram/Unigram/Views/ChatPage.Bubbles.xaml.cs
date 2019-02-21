@@ -125,7 +125,7 @@ namespace Unigram.Views
 
             if (animations.Count > 0 && !intermediate)
             {
-                Play(animations, ViewModel.Settings.IsAutoPlayEnabled, false);
+                Play(animations, ViewModel.Settings.IsAutoPlayAnimationsEnabled, false);
             }
         }
 
@@ -238,7 +238,7 @@ namespace Unigram.Views
             var text = message.Content as MessageText;
 
             // If autoplay is enabled and the message contains a video note, then we want a different behavior
-            if (ViewModel.Settings.IsAutoPlayEnabled && (message.Content is MessageVideoNote || text?.WebPage != null && text.WebPage.Video != null))
+            if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageVideoNote || text?.WebPage != null && text.WebPage.Video != null))
             {
                 if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
                 {
@@ -282,7 +282,7 @@ namespace Unigram.Views
                     }
                 }
             }
-            else if (ViewModel.Settings.IsAutoPlayEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
+            else if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
             {
                 if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
                 {

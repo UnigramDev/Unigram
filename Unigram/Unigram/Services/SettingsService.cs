@@ -35,7 +35,8 @@ namespace Unigram.Services
         bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSyncRequested { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
-        bool IsAutoPlayEnabled { get; set; }
+        bool IsAutoPlayAnimationsEnabled { get; set; }
+        bool IsAutoPlayVideosEnabled { get; set; }
         bool IsSendGrouped { get; set; }
         bool IsAccountsSelectorExpanded { get; set; }
 
@@ -154,8 +155,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (2UL << 48) | (4UL << 32) | (2031UL << 16);
-        public const string CurrentChangelog = "- Replace media when editing messages with media content.\r\n- Profiles have been redesigned.";
+        public const ulong CurrentVersion = (2UL << 48) | (5UL << 32) | (2081UL << 16);
+        public const string CurrentChangelog = "- Filter chats by type, unread messages and unmuted state.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -446,7 +447,7 @@ namespace Unigram.Services
         }
 
         private bool? _isAutoPlayEnabled;
-        public bool IsAutoPlayEnabled
+        public bool IsAutoPlayAnimationsEnabled
         {
             get
             {
@@ -459,6 +460,23 @@ namespace Unigram.Services
             {
                 _isAutoPlayEnabled = value;
                 AddOrUpdateValue("IsAutoPlayEnabled", value);
+            }
+        }
+
+        private bool? _isAutoPlayVideosEnabled;
+        public bool IsAutoPlayVideosEnabled
+        {
+            get
+            {
+                if (_isAutoPlayVideosEnabled == null)
+                    _isAutoPlayVideosEnabled = GetValueOrDefault("IsAutoPlayVideosEnabled", true);
+
+                return _isAutoPlayVideosEnabled ?? true;
+            }
+            set
+            {
+                _isAutoPlayVideosEnabled = value;
+                AddOrUpdateValue("IsAutoPlayVideosEnabled", value);
             }
         }
 

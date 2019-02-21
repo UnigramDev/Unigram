@@ -301,6 +301,9 @@
   <data name="AddAnOptionInfoMax" xml:space="preserve">
     <value>لقد قمت بإضافة الحد الأقصى من الخيارات.</value>
   </data>
+  <data name="AddAnotherAccount" xml:space="preserve">
+    <value>إضافة حساب آخر</value>
+  </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>المعذرة، لا يمكنك حظر هذا المستخدم لأنه مشرف في هذه المجموعة ولا يمكنك تغيير ذلك.</value>
   </data>
@@ -417,6 +420,9 @@
   </data>
   <data name="AllowReadSms" xml:space="preserve">
     <value>فضلًا قم بالسماح لتيليجرام بتلقي رسائل SMS القصيرة ليتمكن من تفعيل حسابك تلقائيًا.</value>
+  </data>
+  <data name="AlternativeOptions" xml:space="preserve">
+    <value>خيارات بديلة</value>
   </data>
   <data name="AlwaysAllow" xml:space="preserve">
     <value>السماح دائمًا</value>
@@ -750,8 +756,50 @@
   <data name="August" xml:space="preserve">
     <value>أغسطس</value>
   </data>
+  <data name="AutoDownloadChannels" xml:space="preserve">
+    <value>القنوات</value>
+  </data>
+  <data name="AutoDownloadContacts" xml:space="preserve">
+    <value>جهات الاتصال</value>
+  </data>
+  <data name="AutoDownloadCustom" xml:space="preserve">
+    <value>مخصص</value>
+  </data>
+  <data name="AutoDownloadDataUsage" xml:space="preserve">
+    <value>استهلاك البيانات</value>
+  </data>
+  <data name="AutoDownloadFiles" xml:space="preserve">
+    <value>الملفات</value>
+  </data>
+  <data name="AutoDownloadGroups" xml:space="preserve">
+    <value>المجموعات</value>
+  </data>
+  <data name="AutoDownloadHigh" xml:space="preserve">
+    <value>عالٍ</value>
+  </data>
+  <data name="AutoDownloadLow" xml:space="preserve">
+    <value>منخفض</value>
+  </data>
+  <data name="AutoDownloadMaxFileSize" xml:space="preserve">
+    <value>الحجم الأقصى للملف</value>
+  </data>
   <data name="AutoDownloadMedia" xml:space="preserve">
     <value>تنزيل الوسائط تلقائيًا</value>
+  </data>
+  <data name="AutoDownloadMedium" xml:space="preserve">
+    <value>متوسط</value>
+  </data>
+  <data name="AutoDownloadPhotos" xml:space="preserve">
+    <value>الصور</value>
+  </data>
+  <data name="AutoDownloadPm" xml:space="preserve">
+    <value>الرسائل الخاصة</value>
+  </data>
+  <data name="AutoDownloadTypes" xml:space="preserve">
+    <value>أنواع الوسائط</value>
+  </data>
+  <data name="AutoDownloadVideos" xml:space="preserve">
+    <value>المقاطع المرئية</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>القفل التلقائي</value>
@@ -810,12 +858,6 @@
 الغروب: ⁨{0}⁩
 الشروق: ⁨{1}⁩⁩</value>
   </data>
-  <data name="AutodownloadChannels" xml:space="preserve">
-    <value>القنوات</value>
-  </data>
-  <data name="AutodownloadContacts" xml:space="preserve">
-    <value>جهات الاتصال</value>
-  </data>
   <data name="AutodownloadGroupChats" xml:space="preserve">
     <value>محادثات المجموعات</value>
   </data>
@@ -831,8 +873,17 @@
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>تنزيل الوسائط تلقائيًا</value>
   </data>
+  <data name="AutoplayGIF" xml:space="preserve">
+    <value>الصور المتحركة</value>
+  </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>تشغيل الصور المتحركة تلقائيًا</value>
+  </data>
+  <data name="AutoplayMedia" xml:space="preserve">
+    <value>تشغيل الوسائط تلقائيًا</value>
+  </data>
+  <data name="AutoplayVideo" xml:space="preserve">
+    <value>المقاطع المرئية</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>متاح</value>
@@ -1128,6 +1179,9 @@
   </data>
   <data name="ChangePhoneNewNumber" xml:space="preserve">
     <value>الرقم الجديد</value>
+  </data>
+  <data name="ChangePhoneNumber" xml:space="preserve">
+    <value>تغيير رقم الهاتف</value>
   </data>
   <data name="ChangePhoneNumberOccupied" xml:space="preserve">
     <value>⁧الرقم ⁨{0}⁩ مرتبط بالفعل بحساب آخَر على تيليجرام. يرجى حذف ذلك الحساب قبل محاولة تغيير رقمك.⁩</value>
@@ -1593,6 +1647,9 @@
   <data name="ClearButton" xml:space="preserve">
     <value>مسح</value>
   </data>
+  <data name="ClearCache" xml:space="preserve">
+    <value>مسح الذاكرة المؤقتة</value>
+  </data>
   <data name="ClearHistory" xml:space="preserve">
     <value>مسح محتوى المحادثة</value>
   </data>
@@ -1711,6 +1768,9 @@
   </data>
   <data name="ContactShare" xml:space="preserve">
     <value>مشاركة جهة الاتصال</value>
+  </data>
+  <data name="ContactSupport" xml:space="preserve">
+    <value>التواصل مع الدعم</value>
   </data>
   <data name="Contacts" xml:space="preserve">
     <value>جهات الاتصال</value>
@@ -1867,7 +1927,7 @@
     <value>البيانات والتخزين</value>
   </data>
   <data name="DataUsage" xml:space="preserve">
-    <value>استخدام الشبكة والتخزين</value>
+    <value>استخدام التخزين والشبكة</value>
   </data>
   <data name="DaysZero" xml:space="preserve">
     <value>⁧⁨{0}⁩ يوم⁩</value>
@@ -2313,6 +2373,9 @@
   <data name="ErrorSendRestrictedMediaAll" xml:space="preserve">
     <value>المعذرة، ليس من المسموح إرسال الوسائط إلى هذه المجموعة.</value>
   </data>
+  <data name="ErrorSendRestrictedPolls" xml:space="preserve">
+    <value>المعذرة، قام مشرفو هذه المجموعة بتقييدك من إرسال الاستفتاءات.</value>
+  </data>
   <data name="ErrorSendRestrictedPollsAll" xml:space="preserve">
     <value>المعذرة، ليس من المسموح إرسال الاستفتاءات إلى هذه المجموعة.</value>
   </data>
@@ -2734,6 +2797,9 @@
   </data>
   <data name="FontSizePreviewLine2" xml:space="preserve">
     <value>سنخبرهم بالطبع! هل تتذكر كيف انتهت آخر مفاجأة؟</value>
+  </data>
+  <data name="FontSizePreviewName" xml:space="preserve">
+    <value>أيمن</value>
   </data>
   <data name="FontSizePreviewReply" xml:space="preserve">
     <value>أحمد، هل أحضرت كافة الأشياء المطلوبة...</value>
@@ -3579,6 +3645,12 @@
   <data name="LogOut" xml:space="preserve">
     <value>تسجيل الخروج</value>
   </data>
+  <data name="LogOutInfo" xml:space="preserve">
+    <value>لا تنسَ أن تسجيل الخروج سيحذف كل محادثاتك السرية.</value>
+  </data>
+  <data name="LogOutTitle" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>محاولات تسجيل الدخول غير المكتملة</value>
   </data>
@@ -3832,7 +3904,7 @@
     <value>⁧**⁨{0}⁩** دقيقة⁩</value>
   </data>
   <data name="MobileUsage" xml:space="preserve">
-    <value>استخدام بيانات الجوال</value>
+    <value>استهلاك بيانات الجوال</value>
   </data>
   <data name="Mono" xml:space="preserve">
     <value>رمز</value>
@@ -3874,7 +3946,10 @@
     <value>أو اختر مكانًا</value>
   </data>
   <data name="NetworkUsageSince" xml:space="preserve">
-    <value>⁧إحصاءات الاستخدام منذ ⁨{0}⁩⁩</value>
+    <value>⁧إحصاءات الاستهلاك منذ ⁨{0}⁩⁩</value>
+  </data>
+  <data name="NetworkUsageWiFi" xml:space="preserve">
+    <value>WI-FI</value>
   </data>
   <data name="NeverAllow" xml:space="preserve">
     <value>عدم السماح أبدًا</value>
@@ -3946,7 +4021,7 @@
     <value>الأعضاء المحظورون هم أعضاء تمت إزالتهم من القناة، ولا يمكنهم العودة إليها إلا عبر إضافتهم من مشرف ما، روابط الدعوة لن تفيدهم.</value>
   </data>
   <data name="NoBlockedChannel2" xml:space="preserve">
-    <value>لن يتمكن المستخدمون الذين أزالهم المشرفون من القناة إعادة الإنضمام عبر روابط الدعوة.</value>
+    <value>لن يتمكن المستخدمون الذين أزالهم المشرفون من القناة من الانضمام إليها حتى عبر روابط الدعوة الخاصة.</value>
   </data>
   <data name="NoBlockedGroup" xml:space="preserve">
     <value>الأعضاء المحظورون هم أعضاء تمت إزالتهم من المجموعة، ولا يمكنهم العودة إليها إلا عبر إضافتهم من مشرف ما، روابط الدعوة لن تفيدهم.</value>
@@ -5995,7 +6070,7 @@
     <value>إعادة تعيين الإحصائيات</value>
   </data>
   <data name="ResetStatisticsAlert" xml:space="preserve">
-    <value>هل ترغب في مسح إحصائيات استخدامك؟</value>
+    <value>هل ترغب في إعادة تعيين إحصائيات استهلاكك؟</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
     <value>⁧لقد قمنا بإرسال رمز الاسترداد إلى بريدك الإلكتروني الذي اخترته مسبقًا:
@@ -6052,7 +6127,7 @@
 ستصبح القناة «**⁨{1}⁩**» خاصة.⁩</value>
   </data>
   <data name="RoamingUsage" xml:space="preserve">
-    <value>استخدام بيانات التجوال</value>
+    <value>استهلاك بيانات التجوال</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>قمر صناعي</value>
@@ -6379,6 +6454,9 @@
   <data name="SetColor" xml:space="preserve">
     <value>تعيين لون</value>
   </data>
+  <data name="SetPasscode" xml:space="preserve">
+    <value>تعيين رمز قفل</value>
+  </data>
   <data name="SetRecoveryEmail" xml:space="preserve">
     <value>تعيين بريد استرداد</value>
   </data>
@@ -6689,6 +6767,9 @@
     <value>إيقاف</value>
   </data>
   <data name="Support" xml:space="preserve">
+    <value>الدعم</value>
+  </data>
+  <data name="SupportStatus" xml:space="preserve">
     <value>الدعم</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
@@ -7491,7 +7572,7 @@
     <value>بإمكانك تخصيص من يمكنه الاتصال بك.</value>
   </data>
   <data name="WiFiUsage" xml:space="preserve">
-    <value>استخدام بيانات Wi-Fi</value>
+    <value>استهلاك بيانات Wi-Fi</value>
   </data>
   <data name="WillUnmuteIn" xml:space="preserve">
     <value>⁧خلال ⁨{0}⁩⁩</value>

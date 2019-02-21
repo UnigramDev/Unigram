@@ -70,19 +70,6 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public bool IsAutoPlayEnabled
-        {
-            get
-            {
-                return Settings.IsAutoPlayEnabled;
-            }
-            set
-            {
-                Settings.IsAutoPlayEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool IsAdaptiveWideEnabled
         {
             get

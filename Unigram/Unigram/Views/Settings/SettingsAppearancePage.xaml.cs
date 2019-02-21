@@ -38,7 +38,7 @@ namespace Unigram.Views.Settings
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
 
-            Message1.Mockup(Strings.Resources.FontSizePreviewLine1, "Lucio", Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
+            Message1.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
 
             //UpdatePreview(true);

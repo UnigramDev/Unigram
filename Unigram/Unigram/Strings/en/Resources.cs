@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 02/13/2019 11:14:44
+// 	Generated: 02/21/2019 09:41:59
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -944,6 +944,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Add another account"
+        /// </summary>
+        public static string AddAnotherAccount
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAnotherAccount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Connect other Telegram accounts and easily switch between them."
+        /// </summary>
+        public static string AddAnotherAccountInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAnotherAccountInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them."
         /// </summary>
         public static string AddBannedErrorAdmin
@@ -1369,6 +1391,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AllowReadSms");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Alternative options"
+        /// </summary>
+        public static string AlternativeOptions
+        {
+            get
+            {
+                return resourceLoader.GetString("AlternativeOptions");
             }
         }
         
@@ -2569,6 +2602,160 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "All media"
+        /// </summary>
+        public static string AutoDownloadAllMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadAllMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} and {1}"
+        /// </summary>
+        public static string AutoDownloadAnd
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadAnd");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Voice messages are tiny, so they're always downloaded automatically."
+        /// </summary>
+        public static string AutoDownloadAudioInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadAudioInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channels"
+        /// </summary>
+        public static string AutoDownloadChannels
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadChannels");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contacts"
+        /// </summary>
+        public static string AutoDownloadContacts
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadContacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Custom"
+        /// </summary>
+        public static string AutoDownloadCustom
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadCustom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Data usage"
+        /// </summary>
+        public static string AutoDownloadDataUsage
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadDataUsage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Files"
+        /// </summary>
+        public static string AutoDownloadFiles
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadFiles");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-download files and music"
+        /// </summary>
+        public static string AutoDownloadFilesTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadFilesTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Groups"
+        /// </summary>
+        public static string AutoDownloadGroups
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadGroups");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "High"
+        /// </summary>
+        public static string AutoDownloadHigh
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadHigh");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Low"
+        /// </summary>
+        public static string AutoDownloadLow
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadLow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Maximum file size"
+        /// </summary>
+        public static string AutoDownloadMaxFileSize
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadMaxFileSize");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Maximum video size"
+        /// </summary>
+        public static string AutoDownloadMaxVideoSize
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadMaxVideoSize");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Auto-Download Media"
         /// </summary>
         public static string AutoDownloadMedia
@@ -2576,6 +2763,248 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AutoDownloadMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Medium"
+        /// </summary>
+        public static string AutoDownloadMedium
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadMedium");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Off"
+        /// </summary>
+        public static string AutoDownloadOff
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "On in all chats"
+        /// </summary>
+        public static string AutoDownloadOnAllChats
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnAllChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "On for {0}"
+        /// </summary>
+        public static string AutoDownloadOnFor
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnFor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "On Mobile Data"
+        /// </summary>
+        public static string AutoDownloadOnMobileData
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnMobileData");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn this ON if you want media to be automatically downloaded on mobile data."
+        /// </summary>
+        public static string AutoDownloadOnMobileDataInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnMobileDataInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When Roaming"
+        /// </summary>
+        public static string AutoDownloadOnRoamingData
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnRoamingData");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn this ON if you want media to be automatically downloaded when roaming."
+        /// </summary>
+        public static string AutoDownloadOnRoamingDataInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnRoamingDataInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Up to {0} for {1}"
+        /// </summary>
+        public static string AutoDownloadOnUpToFor
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnUpToFor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "On Wi-Fi"
+        /// </summary>
+        public static string AutoDownloadOnWiFiData
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnWiFiData");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Turn this ON if you want media to be automatically downloaded on Wi-Fi."
+        /// </summary>
+        public static string AutoDownloadOnWiFiDataInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadOnWiFiDataInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photos"
+        /// </summary>
+        public static string AutoDownloadPhotos
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadPhotos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-download photos"
+        /// </summary>
+        public static string AutoDownloadPhotosTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadPhotosTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "PM"
+        /// </summary>
+        public static string AutoDownloadPm
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadPm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Preload next track"
+        /// </summary>
+        public static string AutoDownloadPreloadMusic
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadPreloadMusic");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start downloading the next track while you are listening to an audio file."
+        /// </summary>
+        public static string AutoDownloadPreloadMusicInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadPreloadMusicInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Preload larger videos"
+        /// </summary>
+        public static string AutoDownloadPreloadVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadPreloadVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Preload the first few seconds (1-2 MB) of videos larger than {0} for instant playback."
+        /// </summary>
+        public static string AutoDownloadPreloadVideoInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadPreloadVideoInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Types of media"
+        /// </summary>
+        public static string AutoDownloadTypes
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadTypes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Up to {0} in all chats"
+        /// </summary>
+        public static string AutoDownloadUpToOnAllChats
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadUpToOnAllChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Videos"
+        /// </summary>
+        public static string AutoDownloadVideos
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadVideos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-download videos and GIFs"
+        /// </summary>
+        public static string AutoDownloadVideosTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownloadVideosTitle");
             }
         }
         
@@ -2781,28 +3210,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Channels"
-        /// </summary>
-        public static string AutodownloadChannels
-        {
-            get
-            {
-                return resourceLoader.GetString("AutodownloadChannels");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Contacts"
-        /// </summary>
-        public static string AutodownloadContacts
-        {
-            get
-            {
-                return resourceLoader.GetString("AutodownloadContacts");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Group Chats"
         /// </summary>
         public static string AutodownloadGroupChats
@@ -2858,6 +3265,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "GIFs"
+        /// </summary>
+        public static string AutoplayGIF
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoplayGIF");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Autoplay GIFs"
         /// </summary>
         public static string AutoplayGifs
@@ -2865,6 +3283,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AutoplayGifs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auto-play media"
+        /// </summary>
+        public static string AutoplayMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoplayMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Videos"
+        /// </summary>
+        public static string AutoplayVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoplayVideo");
             }
         }
         
@@ -3936,6 +4376,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChangePhoneNewNumber");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change Phone Number"
+        /// </summary>
+        public static string ChangePhoneNumber
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangePhoneNumber");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Move your account, chats and media to a new number."
+        /// </summary>
+        public static string ChangePhoneNumberInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangePhoneNumberInfo");
             }
         }
         
@@ -5650,6 +6112,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Clear Cache"
+        /// </summary>
+        public static string ClearCache
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearCache");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Free up disk space on your device; your media will stay in the cloud."
+        /// </summary>
+        public static string ClearCacheInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearCacheInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Clear history"
         /// </summary>
         public static string ClearHistory
@@ -6077,6 +6561,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ContactShare");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contact Support"
+        /// </summary>
+        public static string ContactSupport
+        {
+            get
+            {
+                return resourceLoader.GetString("ContactSupport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tell us about any issues; logging out doesn't usually help."
+        /// </summary>
+        public static string ContactSupportInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ContactSupportInfo");
             }
         }
         
@@ -9739,6 +10245,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Lucio"
+        /// </summary>
+        public static string FontSizePreviewName
+        {
+            get
+            {
+                return resourceLoader.GetString("FontSizePreviewName");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Reinhardt, we need to find you some new tunes ??."
         /// </summary>
         public static string FontSizePreviewReply
@@ -12799,6 +13316,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Logging out deactivates all Secret Chats."
+        /// </summary>
+        public static string LogOutInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("LogOutInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Log Out"
+        /// </summary>
+        public static string LogOutTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LogOutTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Incomplete login attempts"
         /// </summary>
         public static string LoginAttempts
@@ -13880,6 +14419,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Data Usage"
+        /// </summary>
+        public static string NetworkUsage
+        {
+            get
+            {
+                return resourceLoader.GetString("NetworkUsage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "MOBILE"
+        /// </summary>
+        public static string NetworkUsageMobile
+        {
+            get
+            {
+                return resourceLoader.GetString("NetworkUsageMobile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "ROAMING"
+        /// </summary>
+        public static string NetworkUsageRoaming
+        {
+            get
+            {
+                return resourceLoader.GetString("NetworkUsageRoaming");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Network usage since {0}"
         /// </summary>
         public static string NetworkUsageSince
@@ -13887,6 +14459,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NetworkUsageSince");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "WI-FI"
+        /// </summary>
+        public static string NetworkUsageWiFi
+        {
+            get
+            {
+                return resourceLoader.GetString("NetworkUsageWiFi");
             }
         }
         
@@ -15642,6 +16225,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Add an Exception"
+        /// </summary>
+        public static string NotificationsAddAnException
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsAddAnException");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Notifications and Sounds"
         /// </summary>
         public static string NotificationsAndSounds
@@ -15858,6 +16452,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationsMuted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New Exception"
+        /// </summary>
+        public static string NotificationsNewException
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsNewException");
             }
         }
         
@@ -22916,6 +23521,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Set a Passcode"
+        /// </summary>
+        public static string SetPasscode
+        {
+            get
+            {
+                return resourceLoader.GetString("SetPasscode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Lock the app with a passcode so that others can't open it."
+        /// </summary>
+        public static string SetPasscodeInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("SetPasscodeInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Set Recovery Email"
         /// </summary>
         public static string SetRecoveryEmail
@@ -24056,6 +24683,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Support");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "support"
+        /// </summary>
+        public static string SupportStatus
+        {
+            get
+            {
+                return resourceLoader.GetString("SupportStatus");
             }
         }
         

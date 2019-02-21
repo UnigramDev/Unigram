@@ -6682,7 +6682,7 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
     <value>https://telegram.org/faq</value>
   </data>
   <data name="TelegramPassport" xml:space="preserve">
-    <value>Paspor Telegram</value>
+    <value>Telegram Passport</value>
   </data>
   <data name="TelegramPassportCreatePassword" xml:space="preserve">
     <value>Buat kata kunci</value>

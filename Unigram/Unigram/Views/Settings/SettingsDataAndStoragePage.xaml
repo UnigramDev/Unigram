@@ -106,7 +106,7 @@
                         Click="Storage_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                     <Button
-                        Tag="Network Usage"
+                        Tag="{CustomResource NetworkUsage}"
                         Click="Stats_Click"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                 </StackPanel>
@@ -186,6 +186,19 @@
                             Tag="{CustomResource ResetAutomaticMediaDownload}"
                             Style="{StaticResource HyperDetailButtonStyle}"
                             Foreground="Red"/>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource AutoplayMedia}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsAutoPlayAnimationsEnabled, Mode=TwoWay}"
+                        Header="{CustomResource AutoplayGIF}"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsAutoPlayVideosEnabled, Mode=TwoWay}"
+                        Header="{CustomResource AutoplayVideo}"
+                        Style="{StaticResource CheckButtonStyle}"
+                        IsEnabled="False"/>
                 </StackPanel>
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">

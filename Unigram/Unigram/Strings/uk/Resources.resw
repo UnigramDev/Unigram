@@ -83,7 +83,7 @@
     <value>Налаштування акаунта</value>
   </data>
   <data name="AccountSwitch" xml:space="preserve">
-    <value>Перемкнути</value>
+    <value>Перемкнутися</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>З точністю до {0}</value>
@@ -5600,7 +5600,7 @@
     <value>Спливні сповіщення</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
-    <value>Залишити відгук про цей попередній перегляд</value>
+    <value>Залишити відгук про цей перегляд</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Сповіщення з високим пріоритетом працюватимуть навіть якщо ваш пристрій знаходиться в режимі не турбувати.</value>

@@ -6927,7 +6927,7 @@ Però si no esteu a gust amb les modestes necessitats de Telegram, no ens serà 
     <value>El fitxer adjunt no és compatible</value>
   </data>
   <data name="UnsupportedMedia" xml:space="preserve">
-    <value>Aquest missatge no està suportat en la teva versió de Telegram. Actualitza l'aplicació per veure'l: https://telegram.org/update</value>
+    <value>Aquest missatge no és compatible amb la vostra versió del Telegram. Actualitzeu-lo: https://telegram.org/update</value>
   </data>
   <data name="Unvote" xml:space="preserve">
     <value>Retira el vot</value>

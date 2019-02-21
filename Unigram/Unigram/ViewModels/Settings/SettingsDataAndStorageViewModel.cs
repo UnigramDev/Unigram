@@ -68,6 +68,33 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+
+        public bool IsAutoPlayAnimationsEnabled
+        {
+            get
+            {
+                return Settings.IsAutoPlayAnimationsEnabled;
+            }
+            set
+            {
+                Settings.IsAutoPlayAnimationsEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsAutoPlayVideosEnabled
+        {
+            get
+            {
+                return Settings.IsAutoPlayVideosEnabled;
+            }
+            set
+            {
+                Settings.IsAutoPlayVideosEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public string FilesDirectory
         {
             get

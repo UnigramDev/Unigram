@@ -47,11 +47,6 @@
                         Style="{StaticResource CheckButtonStyle}"/>
 
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.IsAutoPlayEnabled, Mode=TwoWay}"
-                        Header="{CustomResource AutoplayGifs}"
-                        Style="{StaticResource CheckButtonStyle}"/>
-
-                    <ToggleSwitch
                         x:Name="AdaptiveWide"
                         IsOn="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
                         Header="Adaptive layout for wide screens"

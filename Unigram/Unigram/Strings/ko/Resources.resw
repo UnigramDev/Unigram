@@ -83,7 +83,7 @@
     <value>계정설정</value>
   </data>
   <data name="AccountSwitch" xml:space="preserve">
-    <value>바꾸기</value>
+    <value>교체</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>{0} 반경 내 정확함</value>
@@ -301,6 +301,9 @@
   <data name="AddAnOptionInfoMax" xml:space="preserve">
     <value>추가하신 보기 개수가 최대치입니다.</value>
   </data>
+  <data name="AddAnotherAccount" xml:space="preserve">
+    <value>다른 계정 추가</value>
+  </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>죄송합니다. 그룹 관리자인 이 사용자를 강등할 권한이 없으므로 차단하실 수 없습니다.</value>
   </data>
@@ -417,6 +420,9 @@
   </data>
   <data name="AllowReadSms" xml:space="preserve">
     <value>텔레그램이 SMS를 받을 수 있도록 허락해 주셔야 자동으로 코드를 입력해 드릴 수 있습니다.</value>
+  </data>
+  <data name="AlternativeOptions" xml:space="preserve">
+    <value>대체 옵션</value>
   </data>
   <data name="AlwaysAllow" xml:space="preserve">
     <value>항상 허용</value>
@@ -748,8 +754,116 @@
   <data name="August" xml:space="preserve">
     <value>8월</value>
   </data>
+  <data name="AutoDownloadAllMedia" xml:space="preserve">
+    <value>모든 미디어</value>
+  </data>
+  <data name="AutoDownloadAnd" xml:space="preserve">
+    <value>{0} 및 {1}</value>
+  </data>
+  <data name="AutoDownloadAudioInfo" xml:space="preserve">
+    <value>음성 메시지는 용량이 적어 항상 자동으로 다운로드됩니다.</value>
+  </data>
+  <data name="AutoDownloadChannels" xml:space="preserve">
+    <value>채널</value>
+  </data>
+  <data name="AutoDownloadContacts" xml:space="preserve">
+    <value>연락처</value>
+  </data>
+  <data name="AutoDownloadCustom" xml:space="preserve">
+    <value>보통</value>
+  </data>
+  <data name="AutoDownloadDataUsage" xml:space="preserve">
+    <value>데이터 사용량</value>
+  </data>
+  <data name="AutoDownloadFiles" xml:space="preserve">
+    <value>파일</value>
+  </data>
+  <data name="AutoDownloadFilesTitle" xml:space="preserve">
+    <value>파일과 음악 자동 다운로드</value>
+  </data>
+  <data name="AutoDownloadGroups" xml:space="preserve">
+    <value>그룹</value>
+  </data>
+  <data name="AutoDownloadHigh" xml:space="preserve">
+    <value>높음</value>
+  </data>
+  <data name="AutoDownloadLow" xml:space="preserve">
+    <value>낮음</value>
+  </data>
+  <data name="AutoDownloadMaxFileSize" xml:space="preserve">
+    <value>최대 파일 크기</value>
+  </data>
+  <data name="AutoDownloadMaxVideoSize" xml:space="preserve">
+    <value>최대 동영상 크기</value>
+  </data>
   <data name="AutoDownloadMedia" xml:space="preserve">
     <value>미디어 자동 다운로드</value>
+  </data>
+  <data name="AutoDownloadMedium" xml:space="preserve">
+    <value>중간</value>
+  </data>
+  <data name="AutoDownloadOff" xml:space="preserve">
+    <value>끔</value>
+  </data>
+  <data name="AutoDownloadOnAllChats" xml:space="preserve">
+    <value>모든 대화방에 켬</value>
+  </data>
+  <data name="AutoDownloadOnFor" xml:space="preserve">
+    <value>{0}에 켬</value>
+  </data>
+  <data name="AutoDownloadOnMobileData" xml:space="preserve">
+    <value>모바일 데이터 사용 시</value>
+  </data>
+  <data name="AutoDownloadOnMobileDataInfo" xml:space="preserve">
+    <value>모바일 데이터를 사용할 때 미디어를 자동으로 다운로드하려면 이 설정을 켜세요.</value>
+  </data>
+  <data name="AutoDownloadOnRoamingData" xml:space="preserve">
+    <value>로밍 시</value>
+  </data>
+  <data name="AutoDownloadOnRoamingDataInfo" xml:space="preserve">
+    <value>로밍했을 때 미디어를 자동으로 다운로드하려면 이 설정을 켜세요.</value>
+  </data>
+  <data name="AutoDownloadOnUpToFor" xml:space="preserve">
+    <value>{1}에 최대 {0}</value>
+  </data>
+  <data name="AutoDownloadOnWiFiData" xml:space="preserve">
+    <value>Wi-Fi 연결 시</value>
+  </data>
+  <data name="AutoDownloadOnWiFiDataInfo" xml:space="preserve">
+    <value>Wi-Fi에 연결했을 때 미디어를 자동으로 다운로드하려면 이 설정을 켜세요.</value>
+  </data>
+  <data name="AutoDownloadPhotos" xml:space="preserve">
+    <value>사진</value>
+  </data>
+  <data name="AutoDownloadPhotosTitle" xml:space="preserve">
+    <value>사진 자동 다운로드</value>
+  </data>
+  <data name="AutoDownloadPm" xml:space="preserve">
+    <value>개인</value>
+  </data>
+  <data name="AutoDownloadPreloadMusic" xml:space="preserve">
+    <value>다음 트랙 미리 불러오기</value>
+  </data>
+  <data name="AutoDownloadPreloadMusicInfo" xml:space="preserve">
+    <value>오디오 파일을 듣고 계시는 동안 그다음 트랙을 다운로드합니다.</value>
+  </data>
+  <data name="AutoDownloadPreloadVideo" xml:space="preserve">
+    <value>큰 동영상 미리 불러오기</value>
+  </data>
+  <data name="AutoDownloadPreloadVideoInfo" xml:space="preserve">
+    <value>{0}보다 큰 동영상은 바로 재생하기 위해 처음 몇 초를 미리 불러옵니다.</value>
+  </data>
+  <data name="AutoDownloadTypes" xml:space="preserve">
+    <value>미디어 종류</value>
+  </data>
+  <data name="AutoDownloadUpToOnAllChats" xml:space="preserve">
+    <value>모든 대화방에 최대 {0}</value>
+  </data>
+  <data name="AutoDownloadVideos" xml:space="preserve">
+    <value>동영상</value>
+  </data>
+  <data name="AutoDownloadVideosTitle" xml:space="preserve">
+    <value>동영상과 GIF 자동 다운로드</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>자동 잠금</value>
@@ -808,12 +922,6 @@
 일몰: {0}
 일출: {1}</value>
   </data>
-  <data name="AutodownloadChannels" xml:space="preserve">
-    <value>채널</value>
-  </data>
-  <data name="AutodownloadContacts" xml:space="preserve">
-    <value>연락 상대</value>
-  </data>
   <data name="AutodownloadGroupChats" xml:space="preserve">
     <value>그룹 대화</value>
   </data>
@@ -829,8 +937,17 @@
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>미디어 자동 다운로드</value>
   </data>
+  <data name="AutoplayGIF" xml:space="preserve">
+    <value>GIF</value>
+  </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>GIF 자동 재생</value>
+  </data>
+  <data name="AutoplayMedia" xml:space="preserve">
+    <value>미디어 자동 재생</value>
+  </data>
+  <data name="AutoplayVideo" xml:space="preserve">
+    <value>동영상</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>사용 가능</value>
@@ -863,7 +980,7 @@
     <value>경치가 장관이로구나!</value>
   </data>
   <data name="BackgroundHexColorCode" xml:space="preserve">
-    <value>Hex 색깔 코드</value>
+    <value>Hex 색 코드</value>
   </data>
   <data name="BackgroundIntensity" xml:space="preserve">
     <value>세기</value>
@@ -2735,6 +2852,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="FontSizePreviewLine2" xml:space="preserve">
     <value>이게 진심으로 하는 말이라니. 아으!</value>
   </data>
+  <data name="FontSizePreviewName" xml:space="preserve">
+    <value>루시우</value>
+  </data>
   <data name="FontSizePreviewReply" xml:space="preserve">
     <value>라인하르트, 새 음악도 좀 들어보시지 그래요🎶?</value>
   </data>
@@ -2976,7 +3096,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>{0}개의 대화로부터 받음</value>
   </data>
   <data name="FromFormatted" xml:space="preserve">
-    <value>{0} 님이 보냄</value>
+    <value>{0} 보냄</value>
   </data>
   <data name="FromGalley" xml:space="preserve">
     <value>갤러리</value>
@@ -3579,6 +3699,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="LogOut" xml:space="preserve">
     <value>로그아웃</value>
   </data>
+  <data name="LogOutTitle" xml:space="preserve">
+    <value>로그아웃</value>
+  </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>완료되지 않은 로그인 시도</value>
   </data>
@@ -3876,8 +3999,20 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="NearbyPlaces" xml:space="preserve">
     <value>아니면 장소 선택</value>
   </data>
+  <data name="NetworkUsage" xml:space="preserve">
+    <value>데이터 사용량</value>
+  </data>
+  <data name="NetworkUsageMobile" xml:space="preserve">
+    <value>모바일</value>
+  </data>
+  <data name="NetworkUsageRoaming" xml:space="preserve">
+    <value>로밍</value>
+  </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>{0}부터 사용된 네트워크</value>
+  </data>
+  <data name="NetworkUsageWiFi" xml:space="preserve">
+    <value>와이파이</value>
   </data>
   <data name="NeverAllow" xml:space="preserve">
     <value>항상 거부</value>
@@ -4373,6 +4508,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="Notifications" xml:space="preserve">
     <value>알림</value>
   </data>
+  <data name="NotificationsAddAnException" xml:space="preserve">
+    <value>예외 추가</value>
+  </data>
   <data name="NotificationsAndSounds" xml:space="preserve">
     <value>알림 및 소리</value>
   </data>
@@ -4432,6 +4570,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="NotificationsMuted" xml:space="preserve">
     <value>음소거됨</value>
+  </data>
+  <data name="NotificationsNewException" xml:space="preserve">
+    <value>새로운 예외</value>
   </data>
   <data name="NotificationsOff" xml:space="preserve">
     <value>끔</value>
@@ -6201,7 +6342,7 @@ FAQ를 방문하여 더 많은 정보를 얻으실 수 있습니다.</value>
     <value>대화방 선택</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
-    <value>색깔 선택</value>
+    <value>색 선택</value>
   </data>
   <data name="SelectColorTitle" xml:space="preserve">
     <value>색 선택</value>
@@ -6686,6 +6827,9 @@ FAQ를 방문하여 더 많은 정보를 얻으실 수 있습니다.</value>
     <value>사용 안 함</value>
   </data>
   <data name="Support" xml:space="preserve">
+    <value>지원</value>
+  </data>
+  <data name="SupportStatus" xml:space="preserve">
     <value>지원</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
@@ -7292,7 +7436,7 @@ FAQ를 방문하여 더 많은 정보를 얻으실 수 있습니다.</value>
     <value>받기</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>{0}(으)로서 수신 중</value>
+    <value>{0} 님으로 수신 중</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>블루투스</value>

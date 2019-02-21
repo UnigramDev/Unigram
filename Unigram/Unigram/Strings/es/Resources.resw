@@ -301,6 +301,12 @@
   <data name="AddAnOptionInfoMax" xml:space="preserve">
     <value>Has añadido el número máximo de opciones.</value>
   </data>
+  <data name="AddAnotherAccount" xml:space="preserve">
+    <value>Añadir otra cuenta</value>
+  </data>
+  <data name="AddAnotherAccountInfo" xml:space="preserve">
+    <value>Conecta otras cuentas de Telegram y cambia entre ellas fácilmente.</value>
+  </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>No puedes suspender a este usuario porque es un administrador del grupo y no tienes permitido degradarlo.</value>
   </data>
@@ -417,6 +423,9 @@
   </data>
   <data name="AllowReadSms" xml:space="preserve">
     <value>Por favor, permite a Telegram recibir SMS, para ingresar el código automáticamente.</value>
+  </data>
+  <data name="AlternativeOptions" xml:space="preserve">
+    <value>Opciones alternativas</value>
   </data>
   <data name="AlwaysAllow" xml:space="preserve">
     <value>Permitir</value>
@@ -750,8 +759,116 @@ Por favor, mira las <![CDATA[<a href="https://telegram.org/faq/es#general">Pregu
   <data name="August" xml:space="preserve">
     <value>Agosto</value>
   </data>
+  <data name="AutoDownloadAllMedia" xml:space="preserve">
+    <value>Toda la multimedia</value>
+  </data>
+  <data name="AutoDownloadAnd" xml:space="preserve">
+    <value>{0} y {1}</value>
+  </data>
+  <data name="AutoDownloadAudioInfo" xml:space="preserve">
+    <value>Los mensajes de voz son pequeños, siempre se descargan automáticamente.</value>
+  </data>
+  <data name="AutoDownloadChannels" xml:space="preserve">
+    <value>Canales</value>
+  </data>
+  <data name="AutoDownloadContacts" xml:space="preserve">
+    <value>Contactos</value>
+  </data>
+  <data name="AutoDownloadCustom" xml:space="preserve">
+    <value>Personalizado</value>
+  </data>
+  <data name="AutoDownloadDataUsage" xml:space="preserve">
+    <value>Uso de datos</value>
+  </data>
+  <data name="AutoDownloadFiles" xml:space="preserve">
+    <value>Archivos</value>
+  </data>
+  <data name="AutoDownloadFilesTitle" xml:space="preserve">
+    <value>Autodescarga de archivos y música</value>
+  </data>
+  <data name="AutoDownloadGroups" xml:space="preserve">
+    <value>Grupos</value>
+  </data>
+  <data name="AutoDownloadHigh" xml:space="preserve">
+    <value>Alto</value>
+  </data>
+  <data name="AutoDownloadLow" xml:space="preserve">
+    <value>Bajo</value>
+  </data>
+  <data name="AutoDownloadMaxFileSize" xml:space="preserve">
+    <value>Tamaño máximo de archivo</value>
+  </data>
+  <data name="AutoDownloadMaxVideoSize" xml:space="preserve">
+    <value>Tamaño máximo de video</value>
+  </data>
   <data name="AutoDownloadMedia" xml:space="preserve">
     <value>Autodescargar multimedia</value>
+  </data>
+  <data name="AutoDownloadMedium" xml:space="preserve">
+    <value>Medio</value>
+  </data>
+  <data name="AutoDownloadOff" xml:space="preserve">
+    <value>Desactivada</value>
+  </data>
+  <data name="AutoDownloadOnAllChats" xml:space="preserve">
+    <value>Activada en todos los chats</value>
+  </data>
+  <data name="AutoDownloadOnFor" xml:space="preserve">
+    <value>Activada para {0}</value>
+  </data>
+  <data name="AutoDownloadOnMobileData" xml:space="preserve">
+    <value>Con datos móviles</value>
+  </data>
+  <data name="AutoDownloadOnMobileDataInfo" xml:space="preserve">
+    <value>Actívalo si quieres que la multimedia sea descargada automáticamente con datos móviles.</value>
+  </data>
+  <data name="AutoDownloadOnRoamingData" xml:space="preserve">
+    <value>Con itinerancia de datos</value>
+  </data>
+  <data name="AutoDownloadOnRoamingDataInfo" xml:space="preserve">
+    <value>Actívalo si quieres que la multimedia sea descargada automáticamente con itinerancia de datos.</value>
+  </data>
+  <data name="AutoDownloadOnUpToFor" xml:space="preserve">
+    <value>Hasta {0} para {1}</value>
+  </data>
+  <data name="AutoDownloadOnWiFiData" xml:space="preserve">
+    <value>Con Wi-Fi</value>
+  </data>
+  <data name="AutoDownloadOnWiFiDataInfo" xml:space="preserve">
+    <value>Actívalo si quieres que la multimedia sea descargada automáticamente con Wi-Fi.</value>
+  </data>
+  <data name="AutoDownloadPhotos" xml:space="preserve">
+    <value>Fotos</value>
+  </data>
+  <data name="AutoDownloadPhotosTitle" xml:space="preserve">
+    <value>Autodescargar fotos</value>
+  </data>
+  <data name="AutoDownloadPm" xml:space="preserve">
+    <value>MP</value>
+  </data>
+  <data name="AutoDownloadPreloadMusic" xml:space="preserve">
+    <value>Precargar siguiente audio</value>
+  </data>
+  <data name="AutoDownloadPreloadMusicInfo" xml:space="preserve">
+    <value>Comienza a descargar el siguiente tema mientras estás escuchando un archivo de audio.</value>
+  </data>
+  <data name="AutoDownloadPreloadVideo" xml:space="preserve">
+    <value>Precargar videos grandes</value>
+  </data>
+  <data name="AutoDownloadPreloadVideoInfo" xml:space="preserve">
+    <value>Precarga los primeros segundos (1-2 MB) de videos que superan los {0} para su reproducción instantánea.</value>
+  </data>
+  <data name="AutoDownloadTypes" xml:space="preserve">
+    <value>Tipos de multimedia</value>
+  </data>
+  <data name="AutoDownloadUpToOnAllChats" xml:space="preserve">
+    <value>Hasta {0} para todos los chats</value>
+  </data>
+  <data name="AutoDownloadVideos" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="AutoDownloadVideosTitle" xml:space="preserve">
+    <value>Autodescarga de videos y GIF</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Autobloqueo</value>
@@ -810,12 +927,6 @@ Por favor, mira las <![CDATA[<a href="https://telegram.org/faq/es#general">Pregu
 Anochecer: {0}
 Amanecer: {1}</value>
   </data>
-  <data name="AutodownloadChannels" xml:space="preserve">
-    <value>Canales</value>
-  </data>
-  <data name="AutodownloadContacts" xml:space="preserve">
-    <value>Contactos</value>
-  </data>
   <data name="AutodownloadGroupChats" xml:space="preserve">
     <value>Grupos</value>
   </data>
@@ -831,8 +942,17 @@ Amanecer: {1}</value>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Descarga automática de multimedia</value>
   </data>
+  <data name="AutoplayGIF" xml:space="preserve">
+    <value>GIF</value>
+  </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>Autorreproducción de GIF</value>
+  </data>
+  <data name="AutoplayMedia" xml:space="preserve">
+    <value>Autorreproducir multimedia</value>
+  </data>
+  <data name="AutoplayVideo" xml:space="preserve">
+    <value>Videos</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>Disponible</value>
@@ -1128,6 +1248,12 @@ Nota: Si olvidas el código, tendrás que eliminar y reinstalar la aplicación. 
   </data>
   <data name="ChangePhoneNewNumber" xml:space="preserve">
     <value>Nuevo número</value>
+  </data>
+  <data name="ChangePhoneNumber" xml:space="preserve">
+    <value>Cambiar número de teléfono</value>
+  </data>
+  <data name="ChangePhoneNumberInfo" xml:space="preserve">
+    <value>Mueve tus cuenta, chats y multimedia a un nuevo número.</value>
   </data>
   <data name="ChangePhoneNumberOccupied" xml:space="preserve">
     <value>El número {0} ya está vinculado a una cuenta de Telegram. Por favor, elimina esa cuenta antes de migrar al nuevo número.</value>
@@ -1596,6 +1722,12 @@ La longitud mínima es de 5 caracteres.</value>
   <data name="ClearButton" xml:space="preserve">
     <value>Eliminar</value>
   </data>
+  <data name="ClearCache" xml:space="preserve">
+    <value>Eliminar caché</value>
+  </data>
+  <data name="ClearCacheInfo" xml:space="preserve">
+    <value>Libera espacio en tu dispositivo; tu multimedia permanecerá en la nube.</value>
+  </data>
   <data name="ClearHistory" xml:space="preserve">
     <value>Eliminar historial</value>
   </data>
@@ -1714,6 +1846,12 @@ Cuando {1} actualice Telegram, las fotos con autodestrucción de 1 minuto o meno
   </data>
   <data name="ContactShare" xml:space="preserve">
     <value>COMPARTIR CONTACTO</value>
+  </data>
+  <data name="ContactSupport" xml:space="preserve">
+    <value>Contactar al soporte</value>
+  </data>
+  <data name="ContactSupportInfo" xml:space="preserve">
+    <value>Dinos cualquier problema; cerrar sesión generalmente no ayuda.</value>
   </data>
   <data name="Contacts" xml:space="preserve">
     <value>Contactos</value>
@@ -2740,6 +2878,9 @@ Duración: {1}</value>
   <data name="FontSizePreviewLine2" xml:space="preserve">
     <value>Con eso ya no puedo tomarte en serio.</value>
   </data>
+  <data name="FontSizePreviewName" xml:space="preserve">
+    <value>Lúcio</value>
+  </data>
   <data name="FontSizePreviewReply" xml:space="preserve">
     <value>Reinhardt, necesitamos encontrarte algunas nuevas canciones 🎶.</value>
   </data>
@@ -3584,6 +3725,12 @@ Esto puede tomar unos minutos.</value>
   <data name="LogOut" xml:space="preserve">
     <value>Cerrar sesión</value>
   </data>
+  <data name="LogOutInfo" xml:space="preserve">
+    <value>Cerrar sesión desactiva los chats secretos.</value>
+  </data>
+  <data name="LogOutTitle" xml:space="preserve">
+    <value>Cerrar sesión</value>
+  </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>Intentos de acceso incompletos</value>
   </data>
@@ -3881,8 +4028,20 @@ La longitud mínima es de 5 caracteres.</value>
   <data name="NearbyPlaces" xml:space="preserve">
     <value>O elige un lugar</value>
   </data>
+  <data name="NetworkUsage" xml:space="preserve">
+    <value>Uso de datos</value>
+  </data>
+  <data name="NetworkUsageMobile" xml:space="preserve">
+    <value>MÓVIL</value>
+  </data>
+  <data name="NetworkUsageRoaming" xml:space="preserve">
+    <value>ITINERANCIA DE DATOS</value>
+  </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>Uso de la red desde el {0}</value>
+  </data>
+  <data name="NetworkUsageWiFi" xml:space="preserve">
+    <value>WI-FI</value>
   </data>
   <data name="NeverAllow" xml:space="preserve">
     <value>No permitir</value>
@@ -6387,6 +6546,12 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
   <data name="SetColor" xml:space="preserve">
     <value>Elegir un color</value>
   </data>
+  <data name="SetPasscode" xml:space="preserve">
+    <value>Poner un código de acceso</value>
+  </data>
+  <data name="SetPasscodeInfo" xml:space="preserve">
+    <value>Bloquea la app con un código para que otros no puedan abrirla.</value>
+  </data>
   <data name="SetRecoveryEmail" xml:space="preserve">
     <value>Poner correo de recuperación</value>
   </data>
@@ -6698,6 +6863,9 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
   </data>
   <data name="Support" xml:space="preserve">
     <value>Soporte</value>
+  </data>
+  <data name="SupportStatus" xml:space="preserve">
+    <value>soporte</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
     <value>Sincronizar contactos</value>
@@ -7471,7 +7639,7 @@ Puedes usar **a–z**, **0–9** y guiones bajos. La longitud mínima es de **5*
     <value>Con itinerancia de datos</value>
   </data>
   <data name="WhenUsingMobileData" xml:space="preserve">
-    <value>Con uso de datos móviles</value>
+    <value>Con datos móviles</value>
   </data>
   <data name="White" xml:space="preserve">
     <value>Blanco</value>
