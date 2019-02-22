@@ -53,6 +53,31 @@ namespace Unigram.Controls.Messages.Content
 
                 Answers.Children.Add(button);
             }
+
+            //for (int i = 0; i < Math.Max(poll.Poll.Answers.Count, Answers.Children.Count); i++)
+            //{
+            //    if (i < Answers.Children.Count)
+            //    {
+            //        var button = Answers.Children[i] as PollAnswerControl;
+
+            //        if (i < poll.Poll.Answers.Count)
+            //        {
+            //            button.UpdatePollAnswer(poll.Poll, poll.Poll.Answers[i]);
+            //        }
+            //        else
+            //        {
+            //            Answers.Children.Remove(button);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        var button = new PollAnswerControl();
+            //        button.Click += Answer_Click;
+            //        button.UpdatePollAnswer(poll.Poll, poll.Poll.Answers[i]);
+
+            //        Answers.Children.Add(button);
+            //    }
+            //}
         }
 
         public bool IsValid(MessageContent content, bool primary)

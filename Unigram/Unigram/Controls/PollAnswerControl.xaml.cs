@@ -27,6 +27,7 @@ namespace Unigram.Controls
         {
             var results = poll.IsClosed || poll.Answers.Any(x => x.IsChosen);
             var percent = ((double)answer.VoterCount / (double)poll.TotalVoterCount) * 100;
+            percent = double.IsNaN(percent) ? 0 : percent;
 
             this.IsEnabled = !results;
             this.Tag = answer;
@@ -40,9 +41,9 @@ namespace Unigram.Controls
 
             Zero.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
 
-            Votes.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
-            Votes.Maximum = poll.TotalVoterCount;
-            Votes.Value = answer.VoterCount;
+            //Votes.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
+            Votes.Maximum = 100;
+            Votes.Value = results ? percent : 0;
         }
     }
 }
