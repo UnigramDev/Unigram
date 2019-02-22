@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -45,11 +46,11 @@ namespace Unigram.Views.Settings
 
             if (proxy.Type is ProxyTypeMtproto || proxy.Type is ProxyTypeSocks5)
             {
-                flyout.CreateFlyoutItem(ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile);
+                flyout.CreateFlyoutItem(ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
             }
 
-            flyout.CreateFlyoutItem(ViewModel.EditCommand, proxy, Strings.Resources.Edit);
-            flyout.CreateFlyoutItem(ViewModel.RemoveCommand, proxy, Strings.Resources.Delete);
+            flyout.CreateFlyoutItem(ViewModel.EditCommand, proxy, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+            flyout.CreateFlyoutItem(ViewModel.RemoveCommand, proxy, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }
