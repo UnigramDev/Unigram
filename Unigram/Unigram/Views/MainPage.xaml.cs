@@ -540,7 +540,7 @@ namespace Unigram.Views
                 SearchField.Focus(FocusState.Keyboard);
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Q && ctrl && !alt && !shift)
+            else if ((args.VirtualKey == Windows.System.VirtualKey.Q || args.VirtualKey == Windows.System.VirtualKey.W) && ctrl && !alt && !shift)
             {
                 Application.Current.Exit();
             }
