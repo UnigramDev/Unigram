@@ -211,51 +211,26 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatOrder update)
         {
-            if (update.Order != 0)
-            {
-                return;
-            }
-
             Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatLastMessage update)
         {
-            if (update.Order == 0)
-            {
-                return;
-            }
-
             Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatIsPinned update)
         {
-            if (update.Order == 0)
-            {
-                return;
-            }
-
             Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatIsSponsored update)
         {
-            if (update.Order == 0)
-            {
-                return;
-            }
-
             Handle(update.ChatId, update.Order);
         }
 
         public void Handle(UpdateChatDraftMessage update)
         {
-            if (update.Order == 0)
-            {
-                return;
-            }
-
             Handle(update.ChatId, update.Order);
         }
 
@@ -364,7 +339,7 @@ namespace Unigram.ViewModels
             public IChatFilter Filter => _filter;
 
             public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, IChatFilter filter = null)
-                : base(new ChatComparer(), false)
+                : base(new ChatComparer(), true)
             {
                 _protoService = protoService;
                 _aggregator = aggregator;

@@ -361,7 +361,7 @@ namespace Unigram.Services
             _playlist.CurrentItemChanged += OnCurrentItemChanged;
             _playlist.Items.Add(item);
 
-            //_mediaPlayer.CommandManager.IsEnabled = !(message.Content is MessageVoiceNote);
+            _mediaPlayer.CommandManager.IsEnabled = !(message.Content is MessageVoiceNote);
             //_mediaPlayer.AudioDeviceType = message.Content is MessageVoiceNote ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
             //_mediaPlayer.AudioCategory = message.Content is MessageVoiceNote ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
 

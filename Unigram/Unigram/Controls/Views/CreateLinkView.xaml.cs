@@ -94,5 +94,19 @@ namespace Unigram.Controls.Views
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
         }
+
+        private void TextField_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                LinkField.Focus(FocusState.Keyboard);
+                e.Handled = true;
+            }
+        }
+
+        private void LinkField_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            // No idea about how to dismiss the dialog from code :D
+        }
     }
 }

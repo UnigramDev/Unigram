@@ -1318,6 +1318,12 @@ namespace Unigram.ViewModels
                 fileName = Path.GetFileName(file.Local.Path);
             }
 
+            var clean = ProtoService.Execute(new CleanFileName(fileName));
+            if (clean is Text text && !string.IsNullOrEmpty(text.TextValue))
+            {
+                fileName = text.TextValue;
+            }
+
             var extension = Path.GetExtension(fileName);
             if (string.IsNullOrEmpty(extension))
             {

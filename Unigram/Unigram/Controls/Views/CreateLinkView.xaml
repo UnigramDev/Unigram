@@ -17,11 +17,13 @@
         <TextBox
             x:Name="TextField"
             PlaceholderText="{CustomResource Text}"
-            Margin="12,12,12,12"/>
+            Margin="12,12,12,12"
+            KeyDown="TextField_KeyDown"/>
         <TextBox
             x:Name="LinkField"
             PlaceholderText="{CustomResource URL}"
             InputScope="Url"
-            Margin="12,0,12,12"/>
+            Margin="12,0,12,12"
+            KeyDown="LinkField_KeyDown"/>
     </StackPanel>
 </ContentDialog>

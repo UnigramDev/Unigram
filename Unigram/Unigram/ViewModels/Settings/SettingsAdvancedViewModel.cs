@@ -41,7 +41,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(UpdateChatIsPinned update)
         {
-            PinnedChats.ReplaceWith(CacheService.GetPinnedChats());
+            BeginOnUIThread(() => PinnedChats.ReplaceWith(CacheService.GetPinnedChats()));
         }
 
         public bool IsSendByEnterEnabled

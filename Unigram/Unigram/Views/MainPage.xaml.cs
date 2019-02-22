@@ -1230,8 +1230,6 @@ namespace Unigram.Views
             {
                 MainHeader.Visibility = Visibility.Visible;
                 SearchField.Visibility = Visibility.Collapsed;
-
-                rpMasterTitlebar.Focus(FocusState.Programmatic);
             }
 
             Search_TextChanged(null, null);

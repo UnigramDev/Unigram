@@ -58,7 +58,7 @@ namespace Unigram.Views.SignIn
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                ViewModel.SendCommand.Execute(sender);
+                ViewModel.SendCommand.Execute(null);
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(PrimaryInput.Text))

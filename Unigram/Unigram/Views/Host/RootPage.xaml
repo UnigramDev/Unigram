@@ -109,7 +109,7 @@
                         <controls:NavigationViewItem
                             x:Name="NavigationNewChat"
                             Text="{CustomResource NewGroup}"
-                            Glyph="&#xE125;" />
+                            Glyph="&#xE902;" />
                         <controls:NavigationViewItem
                             x:Name="NavigationNewSecretChat"
                             Text="{CustomResource NewSecretChat}"
