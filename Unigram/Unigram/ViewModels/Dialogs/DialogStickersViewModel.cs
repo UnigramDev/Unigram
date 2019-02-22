@@ -25,7 +25,7 @@ using Unigram.Native;
 
 namespace Unigram.ViewModels.Dialogs
 {
-    public class DialogStickersViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>, IHandle<UpdateFavoriteStickers>, IHandle<UpdateInstalledStickerSets>
+    public class DialogStickersViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>, IHandle<UpdateFavoriteStickers>, IHandle<UpdateInstalledStickerSets>, IHandle<UpdateSavedAnimations>
     {
         private StickerSetViewModel _recentSet;
         private StickerSetViewModel _favoriteSet;
@@ -155,6 +155,17 @@ namespace Unigram.ViewModels.Dialogs
             ProtoService.Send(new GetInstalledStickerSets(false), result =>
             {
 
+            });
+        }
+
+        public void Handle(UpdateSavedAnimations update)
+        {
+            ProtoService.Send(new GetSavedAnimations(), result =>
+            {
+                if (result is Animations animation)
+                {
+                    BeginOnUIThread(() => SavedGifs.ReplaceWith(MosaicMedia.Calculate(animation.AnimationsValue.ToList())));
+                }
             });
         }
 
