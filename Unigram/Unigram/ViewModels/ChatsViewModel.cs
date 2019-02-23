@@ -327,11 +327,13 @@ namespace Unigram.ViewModels
 
             private bool _hasMoreItems = true;
 
-            private long _lastChatId;
-            private long _lastOrder;
+            private DisposableMutex _loadMoreLock = new DisposableMutex();
 
             private long _internalChatId = 0;
             private long _internalOrder = long.MaxValue;
+
+            private long _lastChatId;
+            private long _lastOrder;
 
             public long LastChatId => _lastChatId;
             public long LastOrder => _lastOrder;
@@ -353,36 +355,39 @@ namespace Unigram.ViewModels
             {
                 return AsyncInfo.Run(async token =>
                 {
-                    var response = await _protoService.SendAsync(new GetChats(_internalOrder, _internalChatId, 20));
-                    if (response is Telegram.Td.Api.Chats chats)
+                    using (await _loadMoreLock.WaitAsync())
                     {
-                        foreach (var id in chats.ChatIds)
+                        var response = await _protoService.SendAsync(new GetChats(_internalOrder, _internalChatId, 20));
+                        if (response is Telegram.Td.Api.Chats chats)
                         {
-                            var chat = _protoService.GetChat(id);
-                            if (chat != null && chat.Order != 0)
+                            foreach (var id in chats.ChatIds)
                             {
-                                _internalChatId = chat.Id;
-                                _internalOrder = chat.Order;
-
-                                if (_filter != null && !_filter.Intersects(chat))
+                                var chat = _protoService.GetChat(id);
+                                if (chat != null && chat.Order != 0)
                                 {
-                                    continue;
+                                    _internalChatId = chat.Id;
+                                    _internalOrder = chat.Order;
+
+                                    if (_filter != null && !_filter.Intersects(chat))
+                                    {
+                                        continue;
+                                    }
+
+                                    Add(chat);
+
+                                    _lastChatId = chat.Id;
+                                    _lastOrder = chat.Order;
                                 }
-
-                                Add(chat);
-
-                                _lastChatId = chat.Id;
-                                _lastOrder = chat.Order;
                             }
+
+                            _hasMoreItems = chats.ChatIds.Count > 0;
+                            _aggregator.Subscribe(_viewModel);
+
+                            return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                         }
 
-                        _hasMoreItems = chats.ChatIds.Count > 0;
-                        _aggregator.Subscribe(_viewModel);
-
-                        return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
+                        return new LoadMoreItemsResult { Count = 0 };
                     }
-
-                    return new LoadMoreItemsResult { Count = 0 };
                 });
             }
 
