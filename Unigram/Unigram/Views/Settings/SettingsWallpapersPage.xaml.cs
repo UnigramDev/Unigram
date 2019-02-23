@@ -21,14 +21,14 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsWallpaperPage : Page, IHandle<UpdateFile>
+    public sealed partial class SettingsWallpapersPage : Page, IHandle<UpdateFile>
     {
-        public SettingsWallpaperViewModel ViewModel => DataContext as SettingsWallpaperViewModel;
+        public SettingsWallpapersViewModel ViewModel => DataContext as SettingsWallpapersViewModel;
 
-        public SettingsWallpaperPage()
+        public SettingsWallpapersPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsWallpaperViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsWallpapersViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

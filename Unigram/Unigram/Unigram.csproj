@@ -597,7 +597,7 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsWallpapersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
@@ -807,6 +807,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsStorageOptimizationPage.xaml.cs">
       <DependentUpon>SettingsStorageOptimizationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsWallpapersPage.xaml.cs">
+      <DependentUpon>SettingsWallpapersPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsWebSessionsPage.xaml.cs">
       <DependentUpon>SettingsWebSessionsPage.xaml</DependentUpon>
@@ -1354,9 +1357,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsWallPaperPage.xaml.cs">
-      <DependentUpon>SettingsWallPaperPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
       <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
@@ -2189,6 +2189,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsWallpapersPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\SettingsWebSessionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2274,10 +2278,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsUsernamePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsWallPaperPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

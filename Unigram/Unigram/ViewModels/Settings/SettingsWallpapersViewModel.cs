@@ -17,9 +17,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsWallpaperViewModel : TLViewModelBase
+    public class SettingsWallpapersViewModel : TLViewModelBase
     {
-        public SettingsWallpaperViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SettingsWallpapersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Wallpaper>();

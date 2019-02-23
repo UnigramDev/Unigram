@@ -232,7 +232,7 @@ namespace Unigram
                 builder.RegisterType<SettingsMasksViewModel>().SingleInstance();
                 builder.RegisterType<SettingsMasksArchivedViewModel>();
                 builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
-                builder.RegisterType<SettingsWallpaperViewModel>().SingleInstance();
+                builder.RegisterType<SettingsWallpapersViewModel>().SingleInstance();
                 builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsLanguageViewModel>().SingleInstance();
                 builder.RegisterType<AttachedStickersViewModel>();
