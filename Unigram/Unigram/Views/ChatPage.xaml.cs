@@ -84,9 +84,9 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContextChanged += (s, args) =>
-             {
-                 _viewModel = ViewModel;
-             };
+            {
+                _viewModel = ViewModel;
+            };
             DataContext = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
@@ -1363,6 +1363,10 @@ namespace Unigram.Views
             flyout.CreateFlyoutItem(MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle, new FontIcon { Glyph = Icons.Contact });
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Resources.SaveToDownloads);
 
+            // Polls
+            flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote);
+            flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll);
+
             //sender.ContextFlyout = menu;
 
             if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutSeparator)
@@ -1436,6 +1440,26 @@ namespace Unigram.Views
         private bool MessageForward_Loaded(MessageViewModel message)
         {
             return message.CanBeForwarded;
+        }
+
+        private bool MessageUnvotePoll_Loaded(MessageViewModel message)
+        {
+            if (message.Content is MessagePoll poll)
+            {
+                return poll.Poll.Options.Any(x => x.IsChosen) && !poll.Poll.IsClosed;
+            }
+
+            return false;
+        }
+
+        private bool MessageStopPoll_Loaded(MessageViewModel message)
+        {
+            if (message.Content is MessagePoll poll)
+            {
+                return !poll.Poll.IsClosed && message.SenderUserId == ViewModel.CacheService.Options.MyId;
+            }
+
+            return false;
         }
 
         private bool MessageReport_Loaded(MessageViewModel message)
@@ -2510,6 +2534,7 @@ namespace Unigram.Views
                 AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                 AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                 AttachLocation.Visibility = Visibility.Visible;
+                AttachPoll.Visibility = chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup ? Visibility.Visible : Visibility.Collapsed;
                 AttachContact.Visibility = Visibility.Visible;
                 AttachCurrent.Visibility = Visibility.Collapsed;
 
@@ -2557,6 +2582,7 @@ namespace Unigram.Views
                     AttachMedia.Visibility = Visibility.Visible;
                     AttachDocument.Visibility = Visibility.Visible;
                     AttachLocation.Visibility = Visibility.Collapsed;
+                    AttachPoll.Visibility = Visibility.Collapsed;
                     AttachContact.Visibility = Visibility.Collapsed;
                     AttachCurrent.Visibility = editing.Content is MessagePhoto || editing.Content is MessageVideo ? Visibility.Visible : Visibility.Collapsed;
 
@@ -2578,6 +2604,7 @@ namespace Unigram.Views
                     AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                     AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                     AttachLocation.Visibility = Visibility.Visible;
+                    AttachPoll.Visibility = chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup ? Visibility.Visible : Visibility.Collapsed;
                     AttachContact.Visibility = Visibility.Visible;
                     AttachCurrent.Visibility = Visibility.Collapsed;
 

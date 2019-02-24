@@ -842,6 +842,11 @@ namespace Unigram.ViewModels.Supergroups
             throw new NotImplementedException();
         }
 
+        public void VotePoll(MessageViewModel message, PollOption option)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

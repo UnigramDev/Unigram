@@ -36,6 +36,22 @@ namespace Unigram.Controls.Views
             Items.Add(new PollOptionViewModel(false, option => Remove_Click(option)));
         }
 
+        public string Question
+        {
+            get
+            {
+                return QuestionText.Text;
+            }
+        }
+
+        public IList<string> Options
+        {
+            get
+            {
+                return Items.Select(x => x.Text).ToList();
+            }
+        }
+
         private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (MAXIMUM_OPTIONS - Items.Count <= 0)

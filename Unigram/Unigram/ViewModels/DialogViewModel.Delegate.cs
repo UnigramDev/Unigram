@@ -292,6 +292,17 @@ namespace Unigram.ViewModels
             CallCommand.Execute();
         }
 
+        public void VotePoll(MessageViewModel message, PollOption option)
+        {
+            var poll = message.Content as MessagePoll;
+            if (poll == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new SetPollAnswer(message.ChatId, message.Id, new int[] { poll.Poll.Options.IndexOf(option) }));
+        }
+
 
         public async void OpenUsername(string username)
         {

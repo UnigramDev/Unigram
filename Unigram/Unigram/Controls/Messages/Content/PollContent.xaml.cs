@@ -43,15 +43,15 @@ namespace Unigram.Controls.Messages.Content
             Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : Strings.Resources.AnonymousPoll; // No public polls for now
             Votes.Text = poll.Poll.TotalVoterCount > 0 ? Locale.Declension("Vote", poll.Poll.TotalVoterCount) : Strings.Resources.NoVotes;
 
-            Answers.Children.Clear();
+            Options.Children.Clear();
 
-            foreach (var answer in poll.Poll.Answers)
+            foreach (var option in poll.Poll.Options)
             {
-                var button = new PollAnswerControl();
-                button.Click += Answer_Click;
-                button.UpdatePollAnswer(poll.Poll, answer);
+                var button = new PollOptionControl();
+                button.Click += Option_Click;
+                button.UpdatePollOption(poll.Poll, option);
 
-                Answers.Children.Add(button);
+                Options.Children.Add(button);
             }
 
             //for (int i = 0; i < Math.Max(poll.Poll.Answers.Count, Answers.Children.Count); i++)
@@ -85,12 +85,12 @@ namespace Unigram.Controls.Messages.Content
             return content is MessagePoll;
         }
 
-        private void Answer_Click(object sender, RoutedEventArgs e)
+        private void Option_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var answer = button.Tag as PollAnswer;
+            var option = button.Tag as PollOption;
 
-            if (answer == null)
+            if (option == null)
             {
                 return;
             }
@@ -101,7 +101,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            _message.Delegate.VotePoll(_message, answer);
+            _message.Delegate.VotePoll(_message, option);
         }
     }
 }

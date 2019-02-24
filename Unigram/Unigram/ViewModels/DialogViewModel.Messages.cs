@@ -1495,5 +1495,43 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Unvote poll
+
+        public RelayCommand<MessageViewModel> MessageUnvotePollCommand { get; }
+        private void MessageUnvotePollExecute(MessageViewModel message)
+        {
+            var poll = message.Content as MessagePoll;
+            if (poll == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new SetPollAnswer(message.ChatId, message.Id, new int[0]));
+        }
+
+        #endregion
+
+        #region Stop poll
+
+        public RelayCommand<MessageViewModel> MessageStopPollCommand { get; }
+        private async void MessageStopPollExecute(MessageViewModel message)
+        {
+            var poll = message.Content as MessagePoll;
+            if (poll == null)
+            {
+                return;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.StopPollAlertText, Strings.Resources.StopPollAlertTitle, Strings.Resources.Stop, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            ProtoService.Send(new StopPoll(message.ChatId, message.Id));
+        }
+
+        #endregion
     }
 }

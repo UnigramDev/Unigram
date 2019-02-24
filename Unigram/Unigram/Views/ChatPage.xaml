@@ -971,6 +971,12 @@
                                     Command="{x:Bind ViewModel.SendLocationCommand}"
                                     Glyph="&#xE1C4;"/>
                                 <controls:GlyphMenuFlyoutItem
+                                    x:Name="AttachPoll"
+                                    Text="{CustomResource Poll}"
+                                    IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                    Command="{x:Bind ViewModel.SendPollCommand}"
+                                    Glyph="&#xE9D2;"/>
+                                <controls:GlyphMenuFlyoutItem
                                     x:Name="AttachContact"
                                     Text="{CustomResource AttachContact}"
                                     IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"

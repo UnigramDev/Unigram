@@ -198,6 +198,8 @@ namespace Unigram.ViewModels
             MessageOpenFolderCommand = new RelayCommand<MessageViewModel>(MessageOpenFolderExecute);
             MessageAddContactCommand = new RelayCommand<MessageViewModel>(MessageAddContactExecute);
             MessageServiceCommand = new RelayCommand<MessageViewModel>(MessageServiceExecute);
+            MessageUnvotePollCommand = new RelayCommand<MessageViewModel>(MessageUnvotePollExecute);
+            MessageStopPollCommand = new RelayCommand<MessageViewModel>(MessageStopPollExecute);
 
             SendStickerCommand = new RelayCommand<Sticker>(SendStickerExecute);
             SendAnimationCommand = new RelayCommand<Animation>(SendAnimationExecute);
@@ -205,6 +207,7 @@ namespace Unigram.ViewModels
             SendMediaCommand = new RelayCommand(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
+            SendPollCommand = new RelayCommand(SendPollExecute);
 
             EditDocumentCommand = new RelayCommand(EditDocumentExecute);
             EditMediaCommand = new RelayCommand(EditMediaExecute);

@@ -146,7 +146,7 @@
                Style="{StaticResource CaptionTextBlockStyle}"
                Margin="0,0,0,4"/>
 
-    <StackPanel x:Name="Answers"
+    <StackPanel x:Name="Options"
                 Margin="-10,0"/>
 
     <TextBlock x:Name="Votes"

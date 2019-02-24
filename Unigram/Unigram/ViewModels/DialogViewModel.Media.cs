@@ -526,6 +526,23 @@ namespace Unigram.ViewModels
             //NavigationService.Navigate(typeof(DialogSendLocationPage));
         }
 
+        public RelayCommand SendPollCommand { get; }
+        private async void SendPollExecute()
+        {
+            var dialog = new CreatePollView();
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var reply = GetReply(true);
+            var input = new InputMessagePoll(dialog.Question, dialog.Options);
+
+            await SendMessageAsync(reply, input);
+        }
+
         //public Task<bool> SendGeoAsync(TLMessageMediaGeoLive media)
         //{
         //    var tsc = new TaskCompletionSource<bool>();

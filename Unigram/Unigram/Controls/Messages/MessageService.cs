@@ -726,6 +726,10 @@ namespace Unigram.Controls.Messages
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionPinnedPhoto, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
+                else if (reply.Content is MessagePoll)
+                {
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedPoll, "un1", sender ?? (BaseObject)chat, ref entities);
+                }
                 else if (reply.Content is MessageGame game)
                 {
                     content = ReplaceWithLink(string.Format(Strings.Resources.ActionPinnedGame, "\uD83C\uDFAE " + game.Game.Title), "un1", sender ?? (BaseObject)chat, ref entities);

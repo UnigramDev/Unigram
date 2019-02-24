@@ -16,28 +16,28 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
-    public sealed partial class PollAnswerControl : Button
+    public sealed partial class PollOptionControl : Button
     {
-        public PollAnswerControl()
+        public PollOptionControl()
         {
             InitializeComponent();
         }
 
-        public void UpdatePollAnswer(Poll poll, PollAnswer answer)
+        public void UpdatePollOption(Poll poll, PollOption option)
         {
-            var results = poll.IsClosed || poll.Answers.Any(x => x.IsChosen);
-            var percent = ((double)answer.VoterCount / (double)poll.TotalVoterCount) * 100;
+            var results = poll.IsClosed || poll.Options.Any(x => x.IsChosen);
+            var percent = ((double)option.VoterCount / (double)poll.TotalVoterCount) * 100;
             percent = double.IsNaN(percent) ? 0 : percent;
 
             this.IsEnabled = !results;
-            this.Tag = answer;
+            this.Tag = option;
 
             Ellipse.Opacity = results ? 0 : 1;
 
             Percentage.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
             Percentage.Text = ((int)percent).ToString() + "%";
 
-            Text.Text = answer.Text;
+            Text.Text = option.Text;
 
             Zero.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
 

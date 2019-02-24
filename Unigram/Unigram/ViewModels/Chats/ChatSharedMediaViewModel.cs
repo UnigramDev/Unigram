@@ -570,6 +570,11 @@ namespace Unigram.ViewModels.Chats
             throw new NotImplementedException();
         }
 
+        public void VotePoll(MessageViewModel message, PollOption option)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

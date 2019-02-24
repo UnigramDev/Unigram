@@ -15,13 +15,15 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <TextBlock Text="{CustomResource Question}"
+        <TextBlock x:Name="QuestionText"
+                   Text="{CustomResource Question}"
                    Style="{StaticResource SettingsGroupTextBlockStyle}"
                    Margin="12,8,12,0"/>
 
         <TextBox PlaceholderText="{CustomResource QuestionHint}"
                  AcceptsReturn="True"
                  TextWrapping="Wrap"
+                 MaxLength="255"
                  Margin="12,8,12,0"/>
 
         <TextBlock Text="{CustomResource PollOptions}"
@@ -97,6 +99,7 @@
                         </Grid.Resources>
                         <TextBox Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PlaceholderText="{CustomResource OptionHint}"
+                                 MaxLength="100"
                                  Loaded="Option_Loaded"
                                  KeyDown="Option_KeyDown"/>
 

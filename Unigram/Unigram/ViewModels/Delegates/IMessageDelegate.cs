@@ -23,7 +23,7 @@ namespace Unigram.ViewModels.Delegates
 
         void Call(MessageViewModel message);
 
-        void VotePoll(MessageViewModel message, PollAnswer answer);
+        void VotePoll(MessageViewModel message, PollOption option);
 
         void OpenUsername(string username);
         void OpenUser(int userId);
