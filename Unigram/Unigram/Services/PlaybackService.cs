@@ -416,7 +416,7 @@ namespace Unigram.Services
                 {
                     _inverse[args.MediaBinder.Token] = deferral;
                     _binders[args.MediaBinder.Token] = args;
-                    _protoService.Send(new DownloadFile(file.Id, 10, 0));
+                    _protoService.DownloadFile(file.Id, 10);
                 }
             }
         }

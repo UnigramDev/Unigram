@@ -177,7 +177,7 @@ namespace Unigram.ViewModels
 
         public void DownloadFile(MessageViewModel message, File file)
         {
-            ProtoService.Send(new DownloadFile(file.Id, 1, 0));
+            ProtoService.DownloadFile(file.Id, 1);
         }
 
         public bool TryGetMessagesForFileId(int fileId, out IList<MessageViewModel> items)

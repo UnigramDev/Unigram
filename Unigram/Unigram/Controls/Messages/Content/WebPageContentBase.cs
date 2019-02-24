@@ -79,7 +79,7 @@ namespace Unigram.Controls.Messages.Content
 
         protected void UpdateInstantView(WebPage webPage, Button button, Run run1, Run run2, Run run3)
         {
-            if (webPage.HasInstantView)
+            if (webPage.InstantViewVersion != 0)
             {
                 if (webPage.IsInstantGallery())
                 {

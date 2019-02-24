@@ -83,7 +83,7 @@ namespace Unigram.Controls.Views
         private void DownloadFile(int id, ViewModels.Dialogs.StickerViewModel sticker)
         {
             _stickers[id].Add(sticker);
-            ViewModel.ProtoService.Send(new DownloadFile(id, 1, 0));
+            ViewModel.ProtoService.DownloadFile(id, 1);
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)

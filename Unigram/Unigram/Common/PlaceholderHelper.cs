@@ -182,7 +182,7 @@ namespace Unigram.Common
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    protoService?.Send(new DownloadFile(file.Id, 1, 0));
+                    protoService?.DownloadFile(file.Id, 1);
                 }
             }
             else
@@ -204,7 +204,7 @@ namespace Unigram.Common
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    protoService?.Send(new DownloadFile(file.Id, 1, 0));
+                    protoService?.DownloadFile(file.Id, 1);
                 }
             }
             else
@@ -226,7 +226,7 @@ namespace Unigram.Common
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    protoService?.Send(new DownloadFile(file.Id, 1, 0));
+                    protoService?.DownloadFile(file.Id, 1);
                 }
             }
             else
@@ -245,7 +245,7 @@ namespace Unigram.Common
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                protoService.Send(new DownloadFile(file.Id, 1, 0));
+                protoService.DownloadFile(file.Id, 1);
             }
 
             return null;

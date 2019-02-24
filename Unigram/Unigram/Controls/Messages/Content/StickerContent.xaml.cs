@@ -80,7 +80,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
+                message.ProtoService.DownloadFile(file.Id, 1);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
+                message.ProtoService.DownloadFile(file.Id, 1);
             }
         }
 

@@ -102,7 +102,7 @@ namespace Unigram.Controls.Gallery
 
                 if (item.IsPhoto)
                 {
-                    item.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
+                    item.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
             else
@@ -130,7 +130,7 @@ namespace Unigram.Controls.Gallery
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                item.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
+                item.ProtoService.DownloadFile(file.Id, 1);
             }
         }
 
@@ -148,7 +148,7 @@ namespace Unigram.Controls.Gallery
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _item.ProtoService.Send(new DownloadFile(file.Id, 32, 0));
+                _item.ProtoService.DownloadFile(file.Id, 32);
             }
             else
             {

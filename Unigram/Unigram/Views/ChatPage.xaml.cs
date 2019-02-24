@@ -2336,7 +2336,7 @@ namespace Unigram.Views
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     //DownloadFile(file.Id, sticker);
-                    ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
             else

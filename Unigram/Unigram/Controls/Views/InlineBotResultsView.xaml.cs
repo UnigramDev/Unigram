@@ -299,7 +299,7 @@ namespace Unigram.Controls.Views
                     //    }
                     //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     //    {
-                    //        ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1));
+                    //        ViewModel.ProtoService.DownloadFile(file.Id, 1));
                     //    }
                     //}
                     //else
@@ -363,7 +363,7 @@ namespace Unigram.Controls.Views
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
-                        ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1, 0));
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
                     }
                 }
                 else if (result is InlineQueryResultLocation locationResult)
@@ -450,7 +450,7 @@ namespace Unigram.Controls.Views
                     //    }
                     //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     //    {
-                    //        ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1));
+                    //        ViewModel.ProtoService.DownloadFile(file.Id, 1));
                     //    }
                     //}
                     //else

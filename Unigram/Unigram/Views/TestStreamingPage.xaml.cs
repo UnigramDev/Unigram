@@ -103,19 +103,19 @@ namespace Unigram.Views
             _stream = new StreamingRandomAccessStream(_file);
             aggregator.Subscribe(this);
 
-            //Element.Source = MediaSource.CreateFromStream(_stream, "video/mp4");
+            Element.Source = MediaSource.CreateFromStream(_stream, "video/mp4");
 
-            _source = new MseStreamSource();
-            _source.Opened += (s, args) =>
-            {
-                _source.Duration = TimeSpan.FromSeconds(video.Video.Duration);
-                _buffer = _source.AddSourceBuffer("video/mp4");
-                _buffer.AppendWindowStart = TimeSpan.FromSeconds(10);
-                _buffer.AppendWindowEnd = TimeSpan.MaxValue;
-                _buffer.Mode = MseAppendMode.Sequence;
-            };
+            //_source = new MseStreamSource();
+            //_source.Opened += (s, args) =>
+            //{
+            //    _source.Duration = TimeSpan.FromSeconds(video.Video.Duration);
+            //    _buffer = _source.AddSourceBuffer("video/mp4");
+            //    _buffer.AppendWindowStart = TimeSpan.FromSeconds(10);
+            //    _buffer.AppendWindowEnd = TimeSpan.MaxValue;
+            //    _buffer.Mode = MseAppendMode.Sequence;
+            //};
 
-            Element.Source = MediaSource.CreateFromMseStreamSource(_source);
+            //Element.Source = MediaSource.CreateFromMseStreamSource(_source);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -127,7 +127,7 @@ namespace Unigram.Views
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             var service = TLContainer.Current.Resolve<IProtoService>();
-            service.Send(new DownloadFile(_file.Id, 32, 0));
+            service.DownloadFile(_file.Id, 32, 0);
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)

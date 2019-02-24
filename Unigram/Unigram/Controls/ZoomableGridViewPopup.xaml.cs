@@ -103,7 +103,7 @@ namespace Unigram.Controls
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 Texture.Source = null;
-                protoService.Send(new DownloadFile(file.Id, 1, 0));
+                protoService.DownloadFile(file.Id, 1);
             }
         }
 
@@ -116,7 +116,7 @@ namespace Unigram.Controls
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 Container.Background = null;
-                protoService.Send(new DownloadFile(file.Id, 1, 0));
+                protoService.DownloadFile(file.Id, 1);
             }
         }
     }

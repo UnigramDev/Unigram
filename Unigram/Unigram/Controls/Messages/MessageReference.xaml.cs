@@ -161,7 +161,7 @@ namespace Unigram.Controls.Messages
             else if (photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
             {
                 ThumbImage.ImageSource = null;
-                message.ProtoService.Send(new DownloadFile(photoSize.Photo.Id, 1, 0));
+                message.ProtoService.DownloadFile(photoSize.Photo.Id, 1);
             }
         }
 
