@@ -883,6 +883,13 @@ namespace Unigram.Services
                     _chatsMap[updateChatPhoto.Photo.Big.Id] = updateChatPhoto.ChatId;
                 }
             }
+            else if (update is UpdateChatPinnedMessage updateChatPinnedMessage)
+            {
+                if (_chats.TryGetValue(updateChatPinnedMessage.ChatId, out Chat value))
+                {
+                    value.PinnedMessageId = updateChatPinnedMessage.PinnedMessageId;
+                }
+            }
             else if (update is UpdateChatReadInbox updateChatReadInbox)
             {
                 if (_chats.TryGetValue(updateChatReadInbox.ChatId, out Chat value))

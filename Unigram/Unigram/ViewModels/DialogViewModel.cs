@@ -1650,6 +1650,7 @@ namespace Unigram.ViewModels
 
             ShowReplyMarkup(chat);
             ShowDraftMessage(chat);
+            ShowPinnedMessage(chat);
             ShowSwitchInline(state);
 
             ProtoService.Send(new GetChatReportSpamState(chat.Id), result =>
@@ -1777,16 +1778,16 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void ShowPinnedMessage(Chat chat, SupergroupFullInfo fullInfo)
+        public async void ShowPinnedMessage(Chat chat)
         {
-            if (fullInfo == null || fullInfo.PinnedMessageId == 0)
+            if (chat == null || chat.PinnedMessageId == 0)
             {
                 Delegate?.UpdatePinnedMessage(chat, null, false);
             }
             else
             {
                 var pinned = Settings.GetChatPinnedMessage(chat.Id);
-                if (pinned == fullInfo.PinnedMessageId)
+                if (pinned == chat.PinnedMessageId)
                 {
                     Delegate?.UpdatePinnedMessage(chat, null, false);
                     return;
@@ -1794,7 +1795,7 @@ namespace Unigram.ViewModels
 
                 Delegate?.UpdatePinnedMessage(chat, null, true);
 
-                var response = await ProtoService.SendAsync(new GetMessage(chat.Id, fullInfo.PinnedMessageId));
+                var response = await ProtoService.SendAsync(new GetMessage(chat.Id, chat.PinnedMessageId));
                 if (response is Message message)
                 {
                     Delegate?.UpdatePinnedMessage(chat, _messageFactory.Create(this, message), false);
@@ -2560,39 +2561,26 @@ namespace Unigram.ViewModels
             }
 
             var supergroupType = chat.Type as ChatTypeSupergroup;
-            if (supergroupType == null)
-            {
-                return;
-            }
+            var basicGroupType = chat.Type as ChatTypeBasicGroup;
 
-            var supergroup = ProtoService.GetSupergroup(supergroupType.SupergroupId);
-            if (supergroup == null)
-            {
-                return;
-            }
+            var supergroup = supergroupType != null ? CacheService.GetSupergroup(supergroupType.SupergroupId) : null;
+            var basicGroup = basicGroupType != null ? CacheService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
 
-            if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages))
+            if (supergroup != null && supergroup.CanPinMessages() ||
+                basicGroup != null && basicGroup.CanPinMessages() ||
+                chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
             {
                 var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Delegate?.UpdatePinnedMessage(chat, null, false);
-                    ProtoService.Send(new UnpinSupergroupMessage(supergroup.Id));
+                    ProtoService.Send(new UnpinChatMessage(supergroup.Id));
                 }
             }
             else
             {
-                var fullInfo = CacheService.GetSupergroupFull(supergroup.Id);
-                if (fullInfo == null)
-                {
-                    return;
-                }
-
-                Settings.SetChatPinnedMessage(chat.Id, fullInfo.PinnedMessageId);
+                Settings.SetChatPinnedMessage(chat.Id, chat.PinnedMessageId);
                 Delegate?.UpdatePinnedMessage(chat, null, false);
-
-                //var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
-                //appData.Values["Pinned" + supergroup.Id] = _pinnedMessage.Id;
             }
         }
 

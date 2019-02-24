@@ -22,6 +22,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatReadInbox>,
         IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatDefaultDisableNotification>,
+        IHandle<UpdateChatPinnedMessage>,
 
         IHandle<UpdateUserChatAction>,
 
@@ -205,6 +206,14 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(UpdateChatPinnedMessage update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => ShowPinnedMessage(_chat));
+            }
+        }
+
         #endregion
 
         public async void Handle(UpdateChatReplyMarkup update)
@@ -367,8 +376,6 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                var supergroup = CacheService.GetSupergroupFull(_chat);
-
                 Handle(update.MessageId, message =>
                 {
                     message.Content = update.NewContent;
@@ -383,7 +390,7 @@ namespace Unigram.ViewModels
                     {
                         bubble.UpdateMessageContent(message);
 
-                        if (supergroup != null && supergroup.PinnedMessageId == message.Id)
+                        if (_chat?.PinnedMessageId == message.Id)
                         {
                             Delegate?.UpdatePinnedMessage(_chat, message, false);
                         }

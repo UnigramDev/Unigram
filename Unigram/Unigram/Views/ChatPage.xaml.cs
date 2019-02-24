@@ -1320,18 +1320,7 @@ namespace Unigram.Views
             flyout.CreateFlyoutSeparator();
 
             // Manage
-            if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                var fullInfo = ViewModel.CacheService.GetSupergroupFull(supergroup.SupergroupId);
-                if (fullInfo != null)
-                {
-                    flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, fullInfo.PinnedMessageId == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = fullInfo.PinnedMessageId == message.Id ? Icons.Unpin : Icons.Pin });
-                }
-                else
-                {
-                    flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, Strings.Resources.PinMessage, new FontIcon { Glyph = Icons.Pin });
-                }
-            }
+            flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, chat.PinnedMessageId == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = chat.PinnedMessageId == message.Id ? Icons.Unpin : Icons.Pin });
 
             flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Forward });
             flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.Report });
@@ -1407,6 +1396,11 @@ namespace Unigram.Views
 
         private bool MessagePin_Loaded(MessageViewModel message)
         {
+            if (message.IsService())
+            {
+                return false;
+            }
+
             var chat = message.GetChat();
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
@@ -1416,12 +1410,21 @@ namespace Unigram.Views
                     return false;
                 }
 
-                if (message.IsService())
+                return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages));
+            }
+            else if (chat != null && chat.Type is ChatTypeBasicGroup basicGroupType)
+            {
+                var basicGroup = ViewModel.ProtoService.GetBasicGroup(basicGroupType.BasicGroupId);
+                if (basicGroup == null)
                 {
                     return false;
                 }
 
-                return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages));
+                return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator admin;
+            }
+            else if (chat != null && chat.Type is ChatTypePrivate privata)
+            {
+                return privata.UserId == ViewModel.CacheService.Options.MyId;
             }
 
             return false;
@@ -2639,8 +2642,6 @@ namespace Unigram.Views
                 ShowArea();
             }
 
-            ViewModel.ShowPinnedMessage(chat, null);
-
             TextField.PlaceholderText = Strings.Resources.TypeMessage;
             UpdateUserStatus(chat, user);
         }
@@ -2704,8 +2705,6 @@ namespace Unigram.Views
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            ViewModel.ShowPinnedMessage(chat, null);
-
             if (group.Status is ChatMemberStatusLeft)
             {
                 ShowAction(Strings.Resources.DeleteThisGroup, true);
@@ -2757,8 +2756,6 @@ namespace Unigram.Views
 
         public async void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            ViewModel.ShowPinnedMessage(chat, null);
-
             if (group.IsChannel)
             {
                 if ((group.Status is ChatMemberStatusLeft && group.Username.Length > 0) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
@@ -2842,8 +2839,6 @@ namespace Unigram.Views
 
         public async void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            ViewModel.ShowPinnedMessage(chat, fullInfo);
-
             if (group.IsChannel || fullInfo.MemberCount > 200)
             {
                 ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);

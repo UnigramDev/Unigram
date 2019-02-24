@@ -890,41 +890,37 @@ namespace Unigram.ViewModels
         private async void MessagePinExecute(MessageViewModel message)
         {
             var chat = message.GetChat();
-            if (chat.Type is ChatTypeSupergroup supergroup)
+
+            if (chat.PinnedMessageId == message.Id)
             {
-                var fullInfo = ProtoService.GetSupergroupFull(supergroup.SupergroupId);
-                if (fullInfo == null)
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    return;
+                    ProtoService.Send(new UnpinChatMessage(chat.Id));
+                }
+            }
+            else
+            {
+                var dialog = new TLMessageDialog();
+                dialog.Title = Strings.Resources.AppName;
+                dialog.Message = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+                    ? Strings.Resources.PinMessageAlertChannel
+                    : chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId
+                    ? Strings.Resources.PinMessageAlertChat
+                    : Strings.Resources.PinMessageAlert;
+                dialog.PrimaryButtonText = Strings.Resources.OK;
+                dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+                if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup super && !super.IsChannel)
+                {
+                    dialog.CheckBoxLabel = Strings.Resources.PinNotify;
+                    dialog.IsChecked = true;
                 }
 
-                if (fullInfo.PinnedMessageId == message.Id)
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        ProtoService.Send(new UnpinSupergroupMessage(supergroup.SupergroupId));
-                    }
-                }
-                else
-                {
-                    var dialog = new TLMessageDialog();
-                    dialog.Title = Strings.Resources.AppName;
-                    dialog.Message = supergroup.IsChannel ? Strings.Resources.PinMessageAlertChannel : Strings.Resources.PinMessageAlert;
-                    dialog.PrimaryButtonText = Strings.Resources.OK;
-                    dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-                    if (!supergroup.IsChannel)
-                    {
-                        dialog.CheckBoxLabel = Strings.Resources.PinNotify;
-                        dialog.IsChecked = true;
-                    }
-
-                    var confirm = await dialog.ShowQueuedAsync();
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        ProtoService.Send(new PinSupergroupMessage(supergroup.SupergroupId, message.Id, dialog.IsChecked == false));
-                    }
+                    ProtoService.Send(new PinChatMessage(chat.Id, message.Id, dialog.IsChecked == false));
                 }
             }
         }
