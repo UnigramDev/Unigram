@@ -17,6 +17,10 @@
         </TransitionCollection>
     </Page.Transitions>
 
+    <Page.Resources>
+        <CollectionViewSource x:Name="ItemsSource" Source="{x:Bind ViewModel.Items}" IsSourceGrouped="True"/>
+    </Page.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -24,15 +28,50 @@
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{CustomResource SessionsTitle}"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+        <ListView ItemsSource="{x:Bind ItemsSource.View}"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ContainerContentChanging="OnContainerContentChanging"
                   ItemClick="ListView_ItemClick"
                   Grid.Row="1">
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderContainerStyle>
+                        <Style TargetType="ListViewHeaderItem">
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewHeaderItem">
+                                        <ContentPresenter/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.HeaderContainerStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Key.Footer}"
+                                           Visibility="{Binding Key.Footer, Converter={StaticResource NullToVisibilityConverter}}"
+                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Margin="12,0,12,0"/>
+
+                                <TextBlock Text="{Binding Key.Title}"
+                                           Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           FontWeight="SemiBold"
+                                           Margin="12,24,12,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
             <ListView.Header>
                 <StackPanel>
-                    <StackPanel Margin="0,12,0,24">
+                    <StackPanel Margin="0,12,0,0">
                         <TextBlock Text="{CustomResource CurrentSession}"
                                    Foreground="{ThemeResource TelegramForegroundAccentBrush}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
@@ -76,12 +115,6 @@
                             Style="{StaticResource CaptionTextBlockStyle}"
                             Margin="12,8,12,0"/>
                     </StackPanel>
-
-                    <TextBlock Text="{CustomResource OtherSessions}"
-                               Foreground="{ThemeResource TelegramForegroundAccentBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               FontWeight="SemiBold"
-                               Margin="12,0,12,0"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -99,8 +132,13 @@
                     Text="{CustomResource TerminateSessionInfo}"
                     Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                     Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="12"/>
+                    Margin="12,0,12,12"/>
             </ListView.Footer>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
         </ListView>
     </Grid>
 </Page>

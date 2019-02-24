@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Settings
         public SettingsSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new SortedObservableCollection<Session>(new SessionComparer());
+            Items = new MvxObservableCollection<KeyedList<SessionsGroup, Session>>();
 
             TerminateCommand = new RelayCommand<Session>(TerminateExecute);
             TerminateOthersCommand = new RelayCommand(TerminateOtherExecute);
@@ -47,11 +47,17 @@ namespace Unigram.ViewModels.Settings
                     BeginOnUIThread(() =>
                     {
                         var results = new List<Session>();
+                        var pending = new List<Session>();
+
                         foreach (var item in sessions.SessionsValue)
                         {
                             if (item.IsCurrent)
                             {
                                 Current = item;
+                            }
+                            else if (item.IsPasswordPending)
+                            {
+                                pending.Add(item);
                             }
                             else
                             {
@@ -59,56 +65,31 @@ namespace Unigram.ViewModels.Settings
                             }
                         }
 
-                        Items.AddRange(results);
+                        if (pending.Count > 0)
+                        {
+                            Items.ReplaceWith(new[]
+                            {
+                                new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.LoginAttempts }, pending.OrderByDescending(x => x.LastActiveDate)),
+                                new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.OtherSessions, Footer = Strings.Resources.LoginAttemptsInfo }, results.OrderByDescending(x => x.LastActiveDate))
+                            });
+                        }
+                        else if (results.Count > 0)
+                        {
+                            Items.ReplaceWith(new[]
+                            {
+                                new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.Resources.OtherSessions }, results.OrderByDescending(x => x.LastActiveDate))
+                            });
+                        }
+                        else
+                        {
+                            Items.Clear();
+                        }
                     });
                 }
             });
-
-            //var response = await LegacyService.GetAuthorizationsAsync();
-            //if (response.IsSucceeded)
-            //{
-            //    foreach (var item in response.Result.Authorizations)
-            //    {
-            //        if (_cachedItems.ContainsKey(item.Hash))
-            //        {
-            //            if (item.IsCurrent)
-            //            {
-            //                var cached = _cachedItems[item.Hash];
-            //                cached.Update(item);
-            //                cached.RaisePropertyChanged(() => cached.AppName);
-            //                cached.RaisePropertyChanged(() => cached.AppVersion);
-            //                cached.RaisePropertyChanged(() => cached.DeviceModel);
-            //                cached.RaisePropertyChanged(() => cached.Platform);
-            //                cached.RaisePropertyChanged(() => cached.SystemVersion);
-            //                cached.RaisePropertyChanged(() => cached.Ip);
-            //                cached.RaisePropertyChanged(() => cached.Country);
-            //                cached.RaisePropertyChanged(() => cached.DateActive);
-            //            }
-            //            else
-            //            {
-            //                Items.Remove(_cachedItems[item.Hash]);
-            //                Items.Add(item);
-
-            //                _cachedItems[item.Hash] = item;
-            //            }
-            //        }
-            //        else
-            //        {
-            //            _cachedItems[item.Hash] = item;
-            //            if (item.IsCurrent)
-            //            {
-            //                Current = item;
-            //            }
-            //            else
-            //            {
-            //                Items.Add(item);
-            //            }
-            //        }
-            //    }
-            //}
         }
 
-        public ObservableCollection<Session> Items { get; private set; }
+        public MvxObservableCollection<KeyedList<SessionsGroup, Session>> Items { get; private set; }
 
         private Session _current;
         public Session Current
@@ -132,7 +113,10 @@ namespace Unigram.ViewModels.Settings
                 var response = await ProtoService.SendAsync(new TerminateSession(session.Id));
                 if (response is Ok)
                 {
-                    Items.Remove(session);
+                    foreach (var group in Items)
+                    {
+                        group.Remove(session);
+                    }
                 }
                 else if (response is Error error)
                 {
@@ -158,25 +142,11 @@ namespace Unigram.ViewModels.Settings
                 }
             }
         }
+    }
 
-        public class SessionComparer : IComparer<Session>
-        {
-            public int Compare(Session x, Session y)
-            {
-                var epoch = y.LastActiveDate.CompareTo(x.LastActiveDate);
-                if (epoch == 0)
-                {
-                    var appName = x.ApplicationName.CompareTo(y.ApplicationName);
-                    if (appName == 0)
-                    {
-                        return x.Id.CompareTo(y.Id);
-                    }
-
-                    return appName;
-                }
-
-                return epoch;
-            }
-        }
+    public class SessionsGroup
+    {
+        public string Title { get; set; }
+        public string Footer { get; set; }
     }
 }
