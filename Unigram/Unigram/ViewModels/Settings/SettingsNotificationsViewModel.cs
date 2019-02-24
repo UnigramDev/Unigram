@@ -9,6 +9,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.Views.Settings;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -30,7 +31,7 @@ namespace Unigram.ViewModels.Settings
             {
                 new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsForPrivateChats),
                 new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeGroupChats), Strings.Resources.NotificationsForGroups),
-                //new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeChannels), Strings.Resources.NotificationsForChannels),
+                new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopeChannelChats), Strings.Resources.NotificationsForChannels),
             };
 
             foreach (var scope in Scopes)
@@ -213,14 +214,12 @@ namespace Unigram.ViewModels.Settings
 
     public class SettingsNotificationsScope : TLViewModelBase
     {
-        private readonly IProtoService _protoService;
         private readonly Type _type;
         private readonly string _title;
 
         public SettingsNotificationsScope(IProtoService protoService, Type type, string title)
             : base(protoService, null, null, null)
         {
-            _protoService = protoService;
             _type = type;
             _title = title;
         }
@@ -248,6 +247,16 @@ namespace Unigram.ViewModels.Settings
             set { Set(ref _sound, value); }
         }
 
+        private string _exceptionsCount;
+        public string ExceptionsCount
+        {
+            get { return _exceptionsCount; }
+            set { Set(ref _exceptionsCount, value); }
+        }
+
+        private bool _disableMention;
+        private bool _disablePinnedMessage;
+
         public void Reset()
         {
             Alert = true;
@@ -264,6 +273,8 @@ namespace Unigram.ViewModels.Settings
                     Alert = update.NotificationSettings.MuteFor == 0;
                     Preview = update.NotificationSettings.ShowPreview;
                     Sound = string.Empty;
+                    _disablePinnedMessage = false;
+                    _disableMention = false;
                 });
             }
         }
@@ -279,6 +290,19 @@ namespace Unigram.ViewModels.Settings
                         Alert = settings.MuteFor == 0;
                         Preview = settings.ShowPreview;
                         Sound = string.Empty;
+                        _disablePinnedMessage = settings.DisablePinnedMessageNotifications;
+                        _disableMention = settings.DisableMentionNotifications;
+                    });
+                }
+            });
+
+            ProtoService.Send(new GetChatNotificationSettingsExceptions(GetScope(), false), result =>
+            {
+                if (result is Telegram.Td.Api.Chats chats)
+                {
+                    BeginOnUIThread(() =>
+                    {
+                        ExceptionsCount = Locale.Declension("Chats", chats.ChatIds.Count);
                     });
                 }
             });
@@ -287,7 +311,24 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         public async void SendExecute()
         {
-            await _protoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, string.Empty, _preview)));
+            await ProtoService.SendAsync(new SetScopeNotificationSettings(GetScope(), new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, string.Empty, _preview, _disablePinnedMessage, _disableMention)));
+        }
+
+        public RelayCommand ExceptionsCommand { get; }
+        public void ExceptionsExecute()
+        {
+            switch (GetScope())
+            {
+                case NotificationSettingsScopePrivateChats privateChats:
+                    NavigationService.Navigate(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.PrivateChats);
+                    break;
+                case NotificationSettingsScopeGroupChats groupChats:
+                    NavigationService.Navigate(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.GroupChats);
+                    break;
+                case NotificationSettingsScopeChannelChats channelChats:
+                    NavigationService.Navigate(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.ChannelChats);
+                    break;
+            }
         }
 
         private NotificationSettingsScope GetScope()

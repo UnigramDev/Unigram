@@ -211,6 +211,7 @@ namespace Unigram
                 builder.RegisterType<SettingsBlockedUsersViewModel>();
                 builder.RegisterType<SettingsBlockUserViewModel>();
                 builder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
+                builder.RegisterType<SettingsNotificationsExceptionsViewModel>();
                 builder.RegisterType<SettingsDataAndStorageViewModel>().SingleInstance();
                 builder.RegisterType<SettingsDataAutoViewModel>().SingleInstance();
                 builder.RegisterType<SettingsProxiesViewModel>().SingleInstance();

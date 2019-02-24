@@ -592,6 +592,7 @@
     <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNetworkViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNightModeViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsNotificationsExceptionsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPasscodeViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
@@ -792,6 +793,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsNightModePage.xaml.cs">
       <DependentUpon>SettingsNightModePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsNotificationsExceptionsPage.xaml.cs">
+      <DependentUpon>SettingsNotificationsExceptionsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsPasscodePage.xaml.cs">
       <DependentUpon>SettingsPasscodePage.xaml</DependentUpon>
@@ -2166,6 +2170,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsNightModePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsNotificationsExceptionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -54,6 +54,10 @@
                                     IsEnabled="False"
                                     Content="{CustomResource Sound}"
                                     Badge="{CustomResource SoundDefault}"/>
+                                <controls:BadgeButton
+                                    Click="{x:Bind ExceptionsExecute}"
+                                    Content="{CustomResource NotificationsExceptions}"
+                                    Badge="{x:Bind ExceptionsCount}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
