@@ -43,7 +43,7 @@ namespace Unigram.Controls.Messages.Content
             var latitude = location.Location.Latitude.ToString(CultureInfo.InvariantCulture);
             var longitude = location.Location.Longitude.ToString(CultureInfo.InvariantCulture);
 
-            Texture.Source = new BitmapImage(new Uri(string.Format("http://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "320,200")));
+            Texture.Source = new BitmapImage(new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "320,200")));
             Texture.Constraint = message;
 
             //VenueDot.Visibility = Visibility.Visible;
