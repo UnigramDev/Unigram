@@ -302,7 +302,7 @@ namespace Unigram.Views
 
             Call.Visibility = Visibility.Collapsed;
             Edit.Visibility = group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
-            Edit.Glyph = Icons.Settings;
+            Edit.Glyph = Icons.Edit;
 
             Verified.Visibility = group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
@@ -542,11 +542,11 @@ namespace Unigram.Views
                 {
                     if (supergroup.IsChannel)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Settings });
+                        flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
                     }
                     else
                     {
-                        flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageGroupMenu, new FontIcon { Glyph = Icons.Settings });
+                        flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageGroupMenu, new FontIcon { Glyph = Icons.Edit });
                     }
                 }
 
