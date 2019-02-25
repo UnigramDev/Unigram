@@ -23,9 +23,10 @@ namespace Unigram.ViewModels.Settings
 
         private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
+        private readonly SettingsPrivacyAllowP2PCallsViewModel _allowP2PCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowP2PCallsViewModel p2pCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
@@ -33,6 +34,7 @@ namespace Unigram.ViewModels.Settings
 
             _showStatusRules = statusTimestamp;
             _allowCallsRules = phoneCall;
+            _allowP2PCallsRules = p2pCall;
             _allowChatInvitesRules = chatInvite;
 
             PasscodeCommand = new RelayCommand(PasscodeExecute);
@@ -41,10 +43,10 @@ namespace Unigram.ViewModels.Settings
             ClearContactsCommand = new RelayCommand(ClearContactsExecute);
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
-            PeerToPeerCommand = new RelayCommand(PeerToPeerExecute);
 
             ChildViewModels.Add(_showStatusRules);
             ChildViewModels.Add(_allowCallsRules);
+            ChildViewModels.Add(_allowP2PCallsRules);
             ChildViewModels.Add(_allowChatInvitesRules);
 
             aggregator.Subscribe(this);
@@ -87,6 +89,7 @@ namespace Unigram.ViewModels.Settings
 
         public SettingsPrivacyShowStatusViewModel ShowStatusRules => _showStatusRules;
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
+        public SettingsPrivacyAllowP2PCallsViewModel AllowP2PCallsRules => _allowP2PCallsRules;
         public SettingsPrivacyAllowChatInvitesViewModel AllowChatInvitesRules => _allowChatInvitesRules;
 
         private int _accountTTL;
@@ -112,19 +115,6 @@ namespace Unigram.ViewModels.Settings
             set
             {
                 Set(ref _blockedUsers, value);
-            }
-        }
-
-        public int PeerToPeerMode
-        {
-            get
-            {
-                return Settings.PeerToPeerMode;
-            }
-            set
-            {
-                Settings.PeerToPeerMode = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -385,38 +375,6 @@ namespace Unigram.ViewModels.Settings
                 {
                     AccountTTL = days;
                 }
-            }
-        }
-
-        public RelayCommand PeerToPeerCommand { get; }
-        private async void PeerToPeerExecute()
-        {
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Resources.LastSeenEverybody, IsChecked = PeerToPeerMode == 0 });
-            stack.Children.Add(new RadioButton { Tag = 1, Content = Strings.Resources.LastSeenContacts, IsChecked = PeerToPeerMode == 1 });
-            stack.Children.Add(new RadioButton { Tag = 2, Content = Strings.Resources.LastSeenNobody, IsChecked = PeerToPeerMode == 2 });
-
-            dialog.Title = Strings.Resources.PrivacyCallsP2PTitle;
-            dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                var mode = 1;
-                foreach (RadioButton current in stack.Children)
-                {
-                    if (current.IsChecked == true)
-                    {
-                        mode = (int)current.Tag;
-                        break;
-                    }
-                }
-
-                PeerToPeerMode = mode;
             }
         }
 

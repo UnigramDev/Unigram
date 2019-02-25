@@ -575,10 +575,13 @@
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowChatInvitesViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowP2PCallsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysAllowP2PCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysAllowChatInvitesViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysShowStatusViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverAllowP2PCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverAllowChatInvitesViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverShowStatusViewModel.cs" />
@@ -755,6 +758,12 @@
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyAllowChatInvitesPage.xaml.cs">
       <DependentUpon>SettingsPrivacyAllowChatInvitesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyAllowP2PCallsPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyAllowP2PCallsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowP2PCallsPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyAlwaysAllowP2PCallsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowCallsPage.xaml.cs">
       <DependentUpon>SettingsPrivacyAlwaysAllowCallsPage.xaml</DependentUpon>
     </Compile>
@@ -763,6 +772,9 @@
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyAlwaysShowStatusPage.xaml.cs">
       <DependentUpon>SettingsPrivacyAlwaysShowStatusPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowP2PCallsPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyNeverAllowP2PCallsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowCallsPage.xaml.cs">
       <DependentUpon>SettingsPrivacyNeverAllowCallsPage.xaml</DependentUpon>
@@ -2121,6 +2133,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyAllowP2PCallsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowP2PCallsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowCallsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2132,6 +2152,10 @@
     <Page Include="Views\Settings\Privacy\SettingsPrivacyAlwaysShowStatusPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowP2PCallsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowCallsPage.xaml">
       <SubType>Designer</SubType>

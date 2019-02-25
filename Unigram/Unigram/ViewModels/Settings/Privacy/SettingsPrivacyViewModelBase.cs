@@ -196,6 +196,9 @@ namespace Unigram.ViewModels.Settings
                 case UserPrivacySettingAllowCalls allowCalls:
                     result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleAllowUsers>(typeof(SettingsPrivacyAlwaysAllowCallsPage), _rules);
                     break;
+                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
+                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleAllowUsers>(typeof(SettingsPrivacyAlwaysAllowP2PCallsPage), _rules);
+                    break;
                 case UserPrivacySettingAllowChatInvites allowChatInvites:
                     result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleAllowUsers>(typeof(SettingsPrivacyAlwaysAllowChatInvitesPage), _rules);
                     break;
@@ -218,6 +221,9 @@ namespace Unigram.ViewModels.Settings
             {
                 case UserPrivacySettingAllowCalls allowCalls:
                     result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleRestrictUsers>(typeof(SettingsPrivacyNeverAllowCallsPage), _rules);
+                    break;
+                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
+                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleRestrictUsers>(typeof(SettingsPrivacyNeverAllowP2PCallsPage), _rules);
                     break;
                 case UserPrivacySettingAllowChatInvites allowChatInvites:
                     result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleRestrictUsers>(typeof(SettingsPrivacyNeverAllowChatInvitesPage), _rules);

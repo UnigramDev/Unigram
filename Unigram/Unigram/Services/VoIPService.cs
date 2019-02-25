@@ -122,7 +122,6 @@ namespace Unigram.Services
                     Show(update.Call, _controller, _callStarted);
                 });
 
-                var p2p = base.Settings.PeerToPeerMode == 0 || (base.Settings.PeerToPeerMode == 1 && user.OutgoingLink is LinkStateIsContact);
                 var endpoints = new Endpoint[ready.Connections.Count];
 
                 for (int i = 0; i < endpoints.Length; i++)
@@ -131,7 +130,7 @@ namespace Unigram.Services
                 }
 
                 _controller.SetEncryptionKey(ready.EncryptionKey.ToArray(), update.Call.IsOutgoing);
-                _controller.SetPublicEndpoints(endpoints, ready.Protocol.UdpP2p && p2p, ready.Protocol.MaxLayer);
+                _controller.SetPublicEndpoints(endpoints, ready.Protocol.UdpP2p && ready.AllowP2p, ready.Protocol.MaxLayer);
                 _controller.Start();
                 _controller.Connect();
             }

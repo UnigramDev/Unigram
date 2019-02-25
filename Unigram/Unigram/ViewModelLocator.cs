@@ -217,12 +217,15 @@ namespace Unigram
                 builder.RegisterType<SettingsProxiesViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPrivacyAndSecurityViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPrivacyAllowCallsViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsPrivacyAllowP2PCallsViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyAllowChatInvitesViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowStatusViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyNeverAllowCallsViewModel>();
+                builder.RegisterType<SettingsPrivacyNeverAllowP2PCallsViewModel>();
                 builder.RegisterType<SettingsPrivacyNeverAllowChatInvitesViewModel>();
                 builder.RegisterType<SettingsPrivacyNeverShowStatusViewModel>();
                 builder.RegisterType<SettingsPrivacyAlwaysAllowCallsViewModel>();
+                builder.RegisterType<SettingsPrivacyAlwaysAllowP2PCallsViewModel>();
                 builder.RegisterType<SettingsPrivacyAlwaysAllowChatInvitesViewModel>();
                 builder.RegisterType<SettingsPrivacyAlwaysShowStatusViewModel>();
                 builder.RegisterType<SettingsPasswordViewModel>(); //.SingleInstance();

@@ -55,6 +55,11 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsPrivacyAllowCallsPage));
         }
 
+        private void P2PCall_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPrivacyAllowP2PCallsPage));
+        }
+
         private void ChatInvite_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));

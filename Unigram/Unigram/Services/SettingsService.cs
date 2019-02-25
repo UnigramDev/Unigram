@@ -48,7 +48,6 @@ namespace Unigram.Services
         int SelectedBackground { get; set; }
         int SelectedColor { get; set; }
 
-        int PeerToPeerMode { get; set; }
         libtgvoip.DataSavingMode UseLessData { get; set; }
 
         void SetChatPinnedMessage(long chatId, long messageId);
@@ -155,8 +154,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (2UL << 48) | (5UL << 32) | (2081UL << 16);
-        public const string CurrentChangelog = "- Filter chats by type, unread messages and unmuted state.";
+        public const ulong CurrentVersion = (2UL << 48) | (5UL << 32) | (2087UL << 16);
+        public const string CurrentChangelog = "• Filter chats by type, unread messages and unmuted state.\r\n• Logout alternatives. The logout menu now shows alternative options to logging out.\r\n• Undo deleting chats and clearing chat history within 5 seconds.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -623,23 +622,6 @@ namespace Unigram.Services
             {
                 _selectedColor = value;
                 AddOrUpdateValue("SelectedColor", value);
-            }
-        }
-
-        private int? _peerToPeerMode;
-        public int PeerToPeerMode
-        {
-            get
-            {
-                if (_peerToPeerMode == null)
-                    _peerToPeerMode = GetValueOrDefault("PeerToPeerMode", 1);
-
-                return _peerToPeerMode ?? 1;
-            }
-            set
-            {
-                _peerToPeerMode = value;
-                AddOrUpdateValue("PeerToPeerMode", value);
             }
         }
 
