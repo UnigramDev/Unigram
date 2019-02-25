@@ -1353,8 +1353,8 @@ namespace Unigram.Views
             //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Resources.SaveToDownloads);
 
             // Polls
-            flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote);
-            flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll);
+            flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote, new FontIcon { Glyph = Icons.Undo });
+            flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.Restricted });
 
             //sender.ContextFlyout = menu;
 
