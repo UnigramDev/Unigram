@@ -81,7 +81,7 @@
                 </messages:MessageService>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <controls:ProfilePicture Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                    <!--<controls:ProfilePicture Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>-->
                 </Border>
             </StackPanel>
         </DataTemplate>
