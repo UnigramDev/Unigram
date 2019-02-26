@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
@@ -49,9 +50,19 @@ namespace Unigram.Views.Settings
             }
 
             var wallpaper = args.Item as Wallpaper;
+            var root = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            var check = root.Children[1] as UIElement;
+            check.Visibility = wallpaper.Id == ViewModel.SelectedItem?.Id ? Visibility.Visible : Visibility.Collapsed;
+
             if (wallpaper.Id == 1000001)
             {
                 return;
+            }
+            else if (wallpaper.Id == Constants.WallpaperLocalId)
+            {
+                var content = root.Children[0] as Image;
+                content.Source = new BitmapImage(new Uri($"ms-appdata:///local/{ViewModel.SessionId}/{Constants.WallpaperLocalFileName}"));
             }
             else if (wallpaper.Sizes.Count > 0)
             {
@@ -61,44 +72,14 @@ namespace Unigram.Views.Settings
                     return;
                 }
 
-                var content = args.ItemContainer.ContentTemplateRoot as Image;
+                var content = root.Children[0] as Image;
                 content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 64, 64);                
             }
             else
             {
-                var content = args.ItemContainer.ContentTemplateRoot as Rectangle;
+                var content = root.Children[0] as Rectangle;
                 content.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)((wallpaper.Color >> 16) & 0xFF), (byte)((wallpaper.Color >> 8) & 0xFF), (byte)(wallpaper.Color & 0xFF)));
             }
-        }
-
-        private void Image_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            var wallpaper = args.NewValue as Wallpaper;
-            if (wallpaper == null)
-            {
-                return;
-            }
-
-            var big = wallpaper.GetBig();
-            if (big == null)
-            {
-                return;
-            }
-
-            var content = sender as Image;
-            content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.Photo, big.Width, big.Height);
-        }
-
-        private void Rectangle_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            var wallpaper = args.NewValue as Wallpaper;
-            if (wallpaper == null)
-            {
-                return;
-            }
-
-            var content = sender as Rectangle;
-            content.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)((wallpaper.Color >> 16) & 0xFF), (byte)((wallpaper.Color >> 8) & 0xFF), (byte)(wallpaper.Color & 0xFF)));
         }
 
         public void Handle(UpdateFile update)
@@ -115,10 +96,16 @@ namespace Unigram.Views.Settings
                             continue;
                         }
 
-                        var content = container.ContentTemplateRoot as Image;
-                        if (content == null)
+                        var root = container.ContentTemplateRoot as Grid;
+                        if (root == null)
                         {
                             continue;
+                        }
+
+                        var content = root.Children[0] as Image;
+                        if (content == null)
+                        {
+                            return;
                         }
 
                         var small = item.GetSmall();
@@ -130,19 +117,15 @@ namespace Unigram.Views.Settings
                         content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 64, 64);
                     }
                 }
-
-                if (Presenter.Content is Wallpaper wallpaper && wallpaper.UpdateFile(update.File))
-                {
-                    var big = wallpaper.GetBig();
-                    if (big == null)
-                    {
-                        return;
-                    }
-
-                    var content = Presenter.ContentTemplateRoot as Image;
-                    content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.Photo, big.Width, big.Height);
-                }
             });
+        }
+
+        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is Wallpaper wallpaper)
+            {
+                ViewModel.NavigationService.Navigate(typeof(WallpaperPage), wallpaper.Id);
+            }
         }
     }
 }

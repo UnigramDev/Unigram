@@ -227,6 +227,18 @@ namespace Unigram.Controls
                 height = photoSize.Height;
             }
 
+            if (constraint is PageBlockMap map)
+            {
+                width = map.Width;
+                height = map.Height;
+            }
+
+            if (constraint is Wallpaper wallpaper)
+            {
+                width = 900;
+                height = 1600;
+            }
+
 
 
         Calculate:

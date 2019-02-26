@@ -20,6 +20,7 @@ namespace Unigram.Services
         StickersSettings Stickers { get; }
         AutoDownloadSettings AutoDownload { get; set; }
         AppearanceSettings Appearance { get; }
+        WallpaperSettings Wallpaper { get; }
         PasscodeLockSettings PasscodeLock { get; }
 
         int UserId { get; set; }
@@ -44,9 +45,6 @@ namespace Unigram.Services
 
         string NotificationsToken { get; set; }
         int[] NotificationsIds { get; set; }
-
-        int SelectedBackground { get; set; }
-        int SelectedColor { get; set; }
 
         libtgvoip.DataSavingMode UseLessData { get; set; }
 
@@ -222,6 +220,15 @@ namespace Unigram.Services
             get
             {
                 return _appearance = _appearance ?? new AppearanceSettings();
+            }
+        }
+
+        private WallpaperSettings _wallpaper;
+        public WallpaperSettings Wallpaper
+        {
+            get
+            {
+                return _wallpaper = _wallpaper ?? new WallpaperSettings(_container);
             }
         }
 
@@ -591,40 +598,6 @@ namespace Unigram.Services
             }
         }
 
-        private int? _selectedBackground;
-        public int SelectedBackground
-        {
-            get
-            {
-                if (_selectedBackground == null)
-                    _selectedBackground = GetValueOrDefault("SelectedBackground", 1000001);
-
-                return _selectedBackground ?? 1000001;
-            }
-            set
-            {
-                _selectedBackground = value;
-                AddOrUpdateValue("SelectedBackground", value);
-            }
-        }
-
-        private int? _selectedColor;
-        public int SelectedColor
-        {
-            get
-            {
-                if (_selectedColor == null)
-                    _selectedColor = GetValueOrDefault("SelectedColor", 0);
-
-                return _selectedColor ?? 0;
-            }
-            set
-            {
-                _selectedColor = value;
-                AddOrUpdateValue("SelectedColor", value);
-            }
-        }
-
         private libtgvoip.DataSavingMode? _useLessData;
         public libtgvoip.DataSavingMode UseLessData
         {
@@ -657,7 +630,6 @@ namespace Unigram.Services
         public void CleanUp()
         {
             // Here should be cleaned up all the settings that are shared with background tasks.
-            _peerToPeerMode = null;
             _useLessData = null;
         }
 

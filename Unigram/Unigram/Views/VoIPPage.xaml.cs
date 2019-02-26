@@ -214,7 +214,7 @@ namespace Unigram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _blurVisual.Size = new Vector2((float)this.ActualWidth, (float)this.ActualHeight);
+            _blurVisual.Size = e.NewSize.ToVector2();
 
             if (_collapsed)
             {
@@ -224,7 +224,7 @@ namespace Unigram.Views
                 _descriptionVisual.Opacity = 0;
                 _largeVisual.Offset = new Vector3(position.ToVector2(), 0);
                 _largeVisual.Scale = new Vector3(0.5f);
-                _blurBrush.Properties.InsertScalar("Blur.Bluramount", 0);
+                _blurBrush.Properties.InsertScalar("Blur.BlurAmount", 0);
             }
         }
 
@@ -471,7 +471,7 @@ namespace Unigram.Views
             _descriptionVisual.Opacity = 0;
             _largeVisual.Offset = new Vector3(position.ToVector2(), 0);
             _largeVisual.Scale = new Vector3(0.5f);
-            _blurBrush.Properties.InsertScalar("Blur.Bluramount", 0);
+            _blurBrush.Properties.InsertScalar("Blur.BlurAmount", 0);
 
             var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             var opacityAnimation = _compositor.CreateScalarKeyFrameAnimation();

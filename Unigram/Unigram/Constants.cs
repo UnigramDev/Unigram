@@ -19,6 +19,8 @@ namespace Unigram
         public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };
 
         public const string WallpaperFileName = "wallpaper.jpg";
+        public const string WallpaperLocalFileName = "wallpaper.local.jpg";
+        public const int WallpaperLocalId = -1;
 
         public const string HockeyAppId = "7d36a4260af54125bbf6db407911ed3b"; // "e5a0f6f85ab944ebbc1650fa22b8ac44"; // "7d36a4260af54125bbf6db407911ed3b";
 
