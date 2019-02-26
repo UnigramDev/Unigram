@@ -127,11 +127,11 @@ namespace Unigram.Controls
             CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCut_Click, "Cut", new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
             CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCopy_Click, "Copy", new FontIcon { Glyph = Icons.Copy }, VirtualKey.C);
             CreateFlyoutItem(flyout.Items, Document.CanPaste(), ContextPaste_Click, "Paste", new FontIcon { Glyph = Icons.Paste }, VirtualKey.V);
-            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, "Delete");
+            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, "Delete", new FontIcon { Glyph = Icons.Delete });
             flyout.Items.Add(new MenuFlyoutSeparator());
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
+            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", new FontIcon { Glyph = Icons.SelectAll }, VirtualKey.A);
         }
 
         private void ContextBold_Click()
