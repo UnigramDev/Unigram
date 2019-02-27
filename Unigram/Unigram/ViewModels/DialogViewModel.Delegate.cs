@@ -238,7 +238,7 @@ namespace Unigram.ViewModels
 
         public void OpenWebPage(WebPage webPage)
         {
-            if (webPage.HasInstantView)
+            if (webPage.InstantViewVersion != 0)
             {
                 //if (NavigationService is UnigramNavigationService asdas)
                 //{

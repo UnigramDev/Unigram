@@ -187,7 +187,6 @@
             <converters:PrivacyRuleToUsersConverter x:Key="PrivacyRuleToUsersConverter"/>
             <converters:StickerToEmojiConverter x:Key="StickerToEmojiConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
-            <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <converters:InitialNameStringConverter x:Key="InitialNameStringConverter" />

@@ -40,7 +40,7 @@ namespace Unigram.Controls.Views
         {
             get
             {
-                return QuestionText.Text;
+                return QuestionText.Text.Format();
             }
         }
 
@@ -48,7 +48,7 @@ namespace Unigram.Controls.Views
         {
             get
             {
-                return Items.Select(x => x.Text).ToList();
+                return Items.Where(x => !string.IsNullOrWhiteSpace(x.Text)).Select(x => x.Text.Format()).ToList();
             }
         }
 

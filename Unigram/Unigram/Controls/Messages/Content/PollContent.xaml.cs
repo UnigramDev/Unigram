@@ -43,41 +43,41 @@ namespace Unigram.Controls.Messages.Content
             Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : Strings.Resources.AnonymousPoll; // No public polls for now
             Votes.Text = poll.Poll.TotalVoterCount > 0 ? Locale.Declension("Vote", poll.Poll.TotalVoterCount) : Strings.Resources.NoVotes;
 
-            Options.Children.Clear();
+            //Options.Children.Clear();
 
-            foreach (var option in poll.Poll.Options)
-            {
-                var button = new PollOptionControl();
-                button.Click += Option_Click;
-                button.UpdatePollOption(poll.Poll, option);
-
-                Options.Children.Add(button);
-            }
-
-            //for (int i = 0; i < Math.Max(poll.Poll.Answers.Count, Answers.Children.Count); i++)
+            //foreach (var option in poll.Poll.Options)
             //{
-            //    if (i < Answers.Children.Count)
-            //    {
-            //        var button = Answers.Children[i] as PollAnswerControl;
+            //    var button = new PollOptionControl();
+            //    button.Click += Option_Click;
+            //    button.UpdatePollOption(poll.Poll, option);
 
-            //        if (i < poll.Poll.Answers.Count)
-            //        {
-            //            button.UpdatePollAnswer(poll.Poll, poll.Poll.Answers[i]);
-            //        }
-            //        else
-            //        {
-            //            Answers.Children.Remove(button);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        var button = new PollAnswerControl();
-            //        button.Click += Answer_Click;
-            //        button.UpdatePollAnswer(poll.Poll, poll.Poll.Answers[i]);
-
-            //        Answers.Children.Add(button);
-            //    }
+            //    Options.Children.Add(button);
             //}
+
+            for (int i = 0; i < Math.Max(poll.Poll.Options.Count, Options.Children.Count); i++)
+            {
+                if (i < Options.Children.Count)
+                {
+                    var button = Options.Children[i] as PollOptionControl;
+
+                    if (i < poll.Poll.Options.Count)
+                    {
+                        button.UpdatePollOption(poll.Poll, poll.Poll.Options[i]);
+                    }
+                    else
+                    {
+                        Options.Children.Remove(button);
+                    }
+                }
+                else
+                {
+                    var button = new PollOptionControl();
+                    button.Click += Option_Click;
+                    button.UpdatePollOption(poll.Poll, poll.Poll.Options[i]);
+
+                    Options.Children.Add(button);
+                }
+            }
         }
 
         public bool IsValid(MessageContent content, bool primary)

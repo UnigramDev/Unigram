@@ -1432,6 +1432,11 @@ namespace Unigram.Views
 
         private bool MessageEdit_Loaded(MessageViewModel message)
         {
+            if (message.Content is MessagePoll || message.Content is MessageLocation)
+            {
+                return false;
+            }
+
             return message.CanBeEdited;
         }
 
@@ -1459,7 +1464,7 @@ namespace Unigram.Views
         {
             if (message.Content is MessagePoll poll)
             {
-                return !poll.Poll.IsClosed && message.SenderUserId == ViewModel.CacheService.Options.MyId;
+                return message.CanBeEdited;
             }
 
             return false;

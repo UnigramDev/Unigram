@@ -6,7 +6,8 @@
     xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="OnLoaded">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -257,6 +258,6 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
 
-        <Button Click="Start_Click" Content="{CustomResource StartMessaging}" Style="{StaticResource StartButtonStyle}"/>
+        <Button x:Name="Start" Click="Start_Click" Content="{CustomResource StartMessaging}" Style="{StaticResource StartButtonStyle}"/>
     </Grid>
 </Page>

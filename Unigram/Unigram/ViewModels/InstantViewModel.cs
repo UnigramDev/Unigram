@@ -12,6 +12,7 @@ using Unigram.Services.Factories;
 using Unigram.ViewModels.Delegates;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -29,6 +30,15 @@ namespace Unigram.ViewModels
             FeedbackCommand = new RelayCommand(FeedbackExecute);
             BrowserCommand = new RelayCommand(BrowserExecute);
             CopyCommand = new RelayCommand(CopyExecute);
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            var response = await ProtoService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, new TextEntity[0])));
+            if (response is WebPage webPage)
+            {
+                Title = webPage.SiteName;
+            }
         }
 
         public Uri ShareLink { get; set; }
@@ -50,6 +60,13 @@ namespace Unigram.ViewModels
             {
                 Set(ref _gallery, value);
             }
+        }
+
+        private string _title;
+        public string Title
+        {
+            get { return _title; }
+            set { Set(ref _title, value); }
         }
 
         public RelayCommand ShareCommand { get; }

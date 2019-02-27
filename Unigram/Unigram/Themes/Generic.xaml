@@ -727,18 +727,18 @@
                             </VisualStateGroup>
                             <!-- VolumeMute states -->
                             <!--<VisualStateGroup x:Name="VolumeMuteStates">
-                                 <VisualState x:Name="VolumeState" />
-                                 <VisualState x:Name="MuteState">
-                                 <Storyboard>
-                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AudioMuteSymbol" Storyboard.TargetProperty="Symbol">
-                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Mute" />
-                                 </ObjectAnimationUsingKeyFrames>
-                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VolumeMuteSymbol" Storyboard.TargetProperty="Symbol">
-                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Mute" />
-                                 </ObjectAnimationUsingKeyFrames>
-                                 </Storyboard>
-                                 </VisualState>
-                                 </VisualStateGroup>-->
+                                <VisualState x:Name="VolumeState" />
+                                <VisualState x:Name="MuteState">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AudioMuteSymbol" Storyboard.TargetProperty="Symbol">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Mute" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VolumeMuteSymbol" Storyboard.TargetProperty="Symbol">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Mute" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>-->
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter Content="{TemplateBinding Content}"
                                           HorizontalContentAlignment="Stretch"
@@ -793,6 +793,44 @@
                                                    TextWrapping="WrapWholeWords"
                                                    Margin="12" />
                                     </Border>
+                                    <!--<Border Grid.Column="2" Grid.Row="1">
+                                        <AppBarButton x:Name='VolumeMuteButton'
+                                                Style='{StaticResource AppBarButtonStyle}'
+                                                MediaTransportControlsHelper.DropoutOrder='19'>
+                                            <AppBarButton.Flyout>
+                                                <Flyout x:Name='VolumeFlyout' FlyoutPresenterStyle="{StaticResource FlyoutStyle}">
+                                                    <StackPanel Orientation="Horizontal" >
+                                                        <AppBarButton x:Name='AudioMuteButton'
+                                                                    Style='{StaticResource AppBarButtonStyle}'
+                                                                    VerticalAlignment='Center'
+                                                                    HorizontalAlignment='Center'
+                                                                    Margin='12'>
+                                                            <AppBarButton.Icon>
+                                                                <SymbolIcon x:Name='AudioMuteSymbol' Symbol='Volume' />
+                                                            </AppBarButton.Icon>
+                                                        </AppBarButton>
+                                                        <Slider x:Name='VolumeSlider'
+                                                          Value='50'
+                                                          IsThumbToolTipEnabled='False'
+                                                          Width='{ThemeResource MTCHorizontalVolumeSliderWidth}'
+                                                          VerticalAlignment='Center'
+                                                          HorizontalAlignment='Center'
+                                                          Margin='0'/>
+                                                        <TextBlock x:Name='VolumeValue'
+                                                            Style='{StaticResource MediaTextBlockStyle}'
+                                                            Text="{Binding ElementName=VolumeSlider,Path=Value}"
+                                                            HorizontalAlignment='Center'
+                                                            VerticalAlignment='Center'
+                                                            Width='24'
+                                                            Margin='12'/>
+                                                    </StackPanel>
+                                                </Flyout>
+                                            </AppBarButton.Flyout>
+                                            <AppBarButton.Icon>
+                                                <SymbolIcon x:Name='VolumeMuteSymbol' Symbol='Volume' />
+                                            </AppBarButton.Icon>
+                                        </AppBarButton>
+                                    </Border>-->
                                     <Border x:Name="MediaTransportControls_Timeline_Border" Grid.Column="1" Grid.Row="1">
                                         <Grid x:Name="MediaTransportControls_Timeline_Grid">
                                             <Grid.ColumnDefinitions>

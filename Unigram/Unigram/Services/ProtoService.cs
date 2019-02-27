@@ -267,6 +267,7 @@ namespace Unigram.Services
                 _client.Send(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
 
                 _client.Send(new SetOption("online", new OptionValueBoolean(online)));
+                _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Run();

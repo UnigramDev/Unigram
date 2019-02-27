@@ -15,12 +15,12 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <TextBlock x:Name="QuestionText"
-                   Text="{CustomResource Question}"
+        <TextBlock Text="{CustomResource Question}"
                    Style="{StaticResource SettingsGroupTextBlockStyle}"
                    Margin="12,8,12,0"/>
 
-        <TextBox PlaceholderText="{CustomResource QuestionHint}"
+        <TextBox x:Name="QuestionText"
+                 PlaceholderText="{CustomResource QuestionHint}"
                  AcceptsReturn="True"
                  TextWrapping="Wrap"
                  MaxLength="255"

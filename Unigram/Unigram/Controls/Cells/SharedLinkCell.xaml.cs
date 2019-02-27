@@ -66,7 +66,7 @@ namespace Unigram.Controls.Cells
 
                 description = string.IsNullOrEmpty(webPage.Description) ? null : webPage.Description;
                 webPageLink = webPage.Url;
-                webPageCached = webPage.HasInstantView;
+                webPageCached = webPage.InstantViewVersion != 0;
 
                 //hasThumb = webPage.HasPhoto && webPage.Photo is TLPhoto photo && photo.Thumb != null;
             }

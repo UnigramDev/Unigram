@@ -2314,7 +2314,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, unmute ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
+            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(
+                false,
+                unmute ? 0 : 632053052,
+                false,
+                chat.NotificationSettings.Sound,
+                false,
+                chat.NotificationSettings.ShowPreview,
+                false,
+                chat.NotificationSettings.DisablePinnedMessageNotifications,
+                false,
+                chat.NotificationSettings.DisableMentionNotifications)));
         }
 
         #endregion
@@ -2574,7 +2584,7 @@ namespace Unigram.ViewModels
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Delegate?.UpdatePinnedMessage(chat, null, false);
-                    ProtoService.Send(new UnpinChatMessage(supergroup.Id));
+                    ProtoService.Send(new UnpinChatMessage(chat.Id));
                 }
             }
             else

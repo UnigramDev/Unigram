@@ -39,9 +39,10 @@ namespace Unigram.Services
         IHandle<UpdateServiceNotification>,
         IHandle<UpdateTermsOfService>,
         IHandle<UpdateAuthorizationState>,
-        IHandle<UpdateFile>,
         IHandle<UpdateNotification>,
-        IHandle<UpdateNotificationGroup>
+        IHandle<UpdateNotificationGroup>,
+        IHandle<UpdateHavePendingNotifications>,
+        IHandle<UpdateActiveNotifications>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
@@ -206,16 +207,32 @@ namespace Unigram.Services
             }
         }
 
+        public void Handle(UpdateActiveNotifications update)
+        {
+            //foreach (var group in update.Groups)
+            //{
+            //    foreach (var notification in group.Notifications)
+            //    {
+            //        ProcessNotification(group.Id, notification);
+            //    }
+            //}
+        }
+
+        public void Handle(UpdateHavePendingNotifications update)
+        {
+
+        }
+
         public void Handle(UpdateNotificationGroup update)
         {
+            foreach (var removed in update.RemovedNotificationIds)
+            {
+                ToastNotificationManager.History.Remove($"{removed}", $"{update.NotificationGroupId}");
+            }
+
             foreach (var notification in update.AddedNotifications)
             {
                 ProcessNotification(update.NotificationGroupId, notification);
-            }
-
-            foreach (var removed in update.RemovedNotificationIds)
-            {
-                ToastNotificationManager.History.Remove(removed.ToString(), update.NotificationGroupId.ToString());
             }
         }
 
@@ -231,14 +248,14 @@ namespace Unigram.Services
                 case NotificationTypeNewCall newCall:
                     break;
                 case NotificationTypeNewMessage newMessage:
-                    ProcessNewMessage(newMessage.Message);
+                    ProcessNewMessage(group, notification.Id, newMessage.Message);
                     break;
                 case NotificationTypeNewSecretChat newSecretChat:
                     break;
             }
         }
 
-        private void ProcessNewMessage(Message message)
+        private void ProcessNewMessage(int gId, int id, Message message)
         {
             var chat = _protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -250,62 +267,10 @@ namespace Unigram.Services
             var content = GetContent(chat, message);
             var sound = "";
             var launch = GetLaunch(chat, message);
-            var tag = GetTag(message);
-            var group = GetGroup(chat);
+            var tag = $"{id}";
+            var group = $"{gId}";
             var picture = GetPhoto(chat);
             var date = BindConvert.Current.DateTime(message.Date).ToUniversalTime().ToString("s") + "Z";
-            var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
-
-            var user = _protoService.GetUser(_protoService.Options.MyId);
-
-            Update(chat, () =>
-            {
-                NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, string.Empty, date, loc_key);
-
-                if (_sessionService.IsActive)
-                {
-                    NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
-                }
-            });
-        }
-
-        public void Handle(UpdateNewMessage update)
-        {
-            if (/*update.DisableNotification ||*/ !_settings.Notifications.InAppPreview)
-            {
-                return;
-            }
-
-            var connectionState = _protoService.GetConnectionState();
-            if (connectionState is ConnectionStateUpdating)
-            {
-                // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
-                return;
-            }
-
-            var chat = _protoService.GetChat(update.Message.ChatId);
-            if (chat == null || chat.LastReadInboxMessageId >= update.Message.Id)
-            {
-                return;
-            }
-
-            if (update.Message.Content is MessageContactRegistered && !_settings.Notifications.IsContactEnabled)
-            {
-                return;
-            }
-            else if (update.Message.Content is MessagePinMessage && !_settings.Notifications.IsPinnedEnabled)
-            {
-                return;
-            }
-
-            var caption = GetCaption(chat);
-            var content = GetContent(chat, update.Message);
-            var sound = "";
-            var launch = GetLaunch(chat, update.Message);
-            var tag = GetTag(update.Message);
-            var group = GetGroup(chat);
-            var picture = GetPhoto(chat);
-            var date = BindConvert.Current.DateTime(update.Message.Date).ToUniversalTime().ToString("s") + "Z";
             var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
@@ -327,7 +292,7 @@ namespace Unigram.Services
             {
                 if (_sessionService.IsActive)
                 {
-                    var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + _protoService.SessionId);
+                    var service = WindowContext.GetForCurrentView()?.NavigationServices?.GetByFrameId("Main" + _protoService.SessionId);
                     if (service == null)
                     {
                         return;
@@ -353,7 +318,7 @@ namespace Unigram.Services
                 if (small == null || !small.Photo.Local.IsDownloadingCompleted)
                 {
                     _files[small.Photo.Id] = message;
-                    _protoService.Send(new DownloadFile(small.Photo.Id, 1, 0));
+                    _protoService.DownloadFile(small.Photo.Id, 1, 0);
                     return string.Empty;
                 }
 
@@ -369,40 +334,6 @@ namespace Unigram.Services
             }
 
             return string.Empty;
-        }
-
-        public void Handle(UpdateFile update)
-        {
-            if (update.File.Local.IsDownloadingCompleted && _files.TryGetValue(update.File.Id, out Message message))
-            {
-                message.UpdateFile(update.File);
-
-                var chat = _protoService.GetChat(message.ChatId);
-
-                var caption = GetCaption(chat);
-                var content = GetContent(chat, message);
-                var sound = "";
-                var launch = GetLaunch(chat, message);
-                var tag = GetTag(message);
-                var group = GetGroup(chat);
-                var picture = GetPhoto(chat);
-                var date = BindConvert.Current.DateTime(message.Date).ToUniversalTime().ToString("s") + "Z";
-                var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
-
-                var hero = GetPhoto(message);
-
-                var user = _protoService.GetUser(_protoService.Options.MyId);
-
-                Update(chat, () =>
-                {
-                    NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, hero, date, loc_key);
-
-                    if (_sessionService.IsActive)
-                    {
-                        NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
-                    }
-                });
-            }
         }
 
         private string GetTag(Message message)
@@ -802,6 +733,10 @@ namespace Unigram.Services
                 }
 
                 return result + $"{Strings.Resources.AttachPhoto}, ";
+            }
+            else if (message.Content is MessagePoll poll)
+            {
+                return result + "\uD83D\uDCCA " + poll.Poll.Question;
             }
             else if (message.Content is MessageCall call)
             {

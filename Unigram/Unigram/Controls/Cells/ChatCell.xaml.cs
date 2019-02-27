@@ -458,7 +458,7 @@ namespace Unigram.Controls.Cells
             }
             else if (message.Content is MessagePoll poll)
             {
-                return result + Strings.Resources.Poll;
+                return result + "\uD83D\uDCCA " + poll.Poll.Question;
             }
             else if (message.Content is MessageCall call)
             {

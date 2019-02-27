@@ -51,6 +51,7 @@ using Windows.Foundation.Metadata;
 using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Media.SpeechRecognition;
+using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
@@ -143,6 +144,15 @@ namespace Unigram
                                  WindowsCollectors.Session |
                                  WindowsCollectors.UnhandledException
                 });
+
+            string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
+            ulong version = ulong.Parse(deviceFamilyVersion);
+            ulong major = (version & 0xFFFF000000000000L) >> 48;
+            ulong minor = (version & 0x0000FFFF00000000L) >> 32;
+            ulong build = (version & 0x00000000FFFF0000L) >> 16;
+
+            HockeyClient.Current.TrackEvent($"{major}.{minor}.{build}");
+            HockeyClient.Current.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
 
 #endif
         }

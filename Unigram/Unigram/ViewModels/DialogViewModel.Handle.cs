@@ -374,7 +374,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateMessageContent update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id || update.ChatId == _migratedChat?.Id)
             {
                 Handle(update.MessageId, message =>
                 {

@@ -782,7 +782,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, unmute ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
+            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(
+                false,
+                chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052,
+                false,
+                chat.NotificationSettings.Sound,
+                false,
+                chat.NotificationSettings.ShowPreview,
+                false,
+                chat.NotificationSettings.DisablePinnedMessageNotifications,
+                false,
+                chat.NotificationSettings.DisableMentionNotifications)));
         }
 
         #region Call

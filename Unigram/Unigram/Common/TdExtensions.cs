@@ -266,7 +266,7 @@ namespace Unigram.Common
 
         public static bool IsInstantGallery(this WebPage webPage)
         {
-            return webPage.HasInstantView && 
+            return webPage.InstantViewVersion != 0 && 
                 (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || 
                  string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
@@ -327,6 +327,11 @@ namespace Unigram.Common
             }
 
             return new FormattedText(message, sub);
+        }
+
+        public static string ToPlainText(this PageBlockCaption caption)
+        {
+            return caption.Text.ToPlainText();
         }
 
         public static string ToPlainText(this RichText text)
@@ -679,7 +684,7 @@ namespace Unigram.Common
                     var photo = webPage.Photo;
                     var big = photo.GetBig();
 
-                    return big != null && big.Width > 400 && webPage.HasInstantView;
+                    return big != null && big.Width > 400 && webPage.InstantViewVersion != 0;
                 }
             }
 
@@ -1292,6 +1297,26 @@ namespace Unigram.Common
                 supergroup.Status is ChatMemberStatusAdministrator ||
                 supergroup.Status is ChatMemberStatusMember ||
                 supergroup.Status is ChatMemberStatusRestricted;
+        }
+
+        public static bool CanPinMessages(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages;
+        }
+
+        public static bool CanPinMessages(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
+
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages;
         }
 
         public static bool CanChangeInfo(this Supergroup supergroup)

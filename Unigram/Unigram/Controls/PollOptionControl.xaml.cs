@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -36,6 +37,8 @@ namespace Unigram.Controls
 
             Percentage.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
             Percentage.Text = ((int)percent).ToString() + "%";
+
+            ToolTipService.SetToolTip(Percentage, Locale.Declension("Vote", option.VoterCount));
 
             Text.Text = option.Text;
 

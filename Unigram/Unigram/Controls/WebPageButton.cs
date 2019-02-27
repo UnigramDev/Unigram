@@ -49,7 +49,7 @@ namespace Unigram.Controls
             var run2 = ContentPresenter?.Inlines[1] as Run;
             var run3 = ContentPresenter?.Inlines[2] as Run;
 
-            if (webPage.HasInstantView)
+            if (webPage.InstantViewVersion != 0)
             {
                 //if (webPage.IsInstantGallery())
                 //{

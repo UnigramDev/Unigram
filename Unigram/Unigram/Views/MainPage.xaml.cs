@@ -139,7 +139,6 @@ namespace Unigram.Views
             //PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
             MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
 
-            sender.ExtendViewIntoTitleBar = true;
             sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
             sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
         }
@@ -435,7 +434,7 @@ namespace Unigram.Views
         }
 
         #endregion
-        
+
         public void DeleteChat(Chat chat, bool clear, Action<Chat> action, Action<Chat> undo)
         {
             Undo.Show(chat, clear, action, undo);
@@ -1667,6 +1666,7 @@ namespace Unigram.Views
             if (destination == RootDestination.NewChat)
             {
                 MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
+                //MasterDetail.NavigationService.Navigate(typeof(TestStreamingPage));
             }
             else if (destination == RootDestination.NewSecretChat)
             {
