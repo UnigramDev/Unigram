@@ -235,10 +235,11 @@ namespace Unigram
                 builder.RegisterType<SettingsStickersArchivedViewModel>();
                 builder.RegisterType<SettingsMasksViewModel>().SingleInstance();
                 builder.RegisterType<SettingsMasksArchivedViewModel>();
-                builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
-                builder.RegisterType<SettingsWallpapersViewModel>().SingleInstance();
-                builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsLanguageViewModel>().SingleInstance();
+                builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
+                builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
+                builder.RegisterType<SettingsWallpapersViewModel>();//.SingleInstance();
+                builder.RegisterType<WallpaperViewModel>();
                 builder.RegisterType<AttachedStickersViewModel>();
                 builder.RegisterType<ViewModels.StickerSetViewModel>();
                 builder.RegisterType<PaymentFormStep1ViewModel>();

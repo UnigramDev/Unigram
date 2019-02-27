@@ -368,7 +368,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
-        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.RowSpan="5"/>
+        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" Grid.RowSpan="5"/>
 
         <Grid Padding="0,0,0,4" VerticalAlignment="Bottom" Grid.RowSpan="4">
             <Grid.ColumnDefinitions>
