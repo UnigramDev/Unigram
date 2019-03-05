@@ -975,7 +975,7 @@ namespace Unigram.Views
             var chat = element.Tag as Chat;
 
             flyout.CreateFlyoutItem(DialogPin_Loaded, ViewModel.Chats.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = chat.IsPinned ? Icons.Unpin : Icons.Pin });
-            flyout.CreateFlyoutItem(DialogNotify_Loaded, ViewModel.Chats.ChatNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = chat.NotificationSettings.MuteFor == 0 ? Icons.Unmute : Icons.Mute });
+            flyout.CreateFlyoutItem(DialogNotify_Loaded, ViewModel.Chats.ChatNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = chat.NotificationSettings.MuteFor > 0 ? Icons.Unmute : Icons.Mute });
             flyout.CreateFlyoutItem(DialogMark_Loaded, ViewModel.Chats.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
             flyout.CreateFlyoutItem(DialogClear_Loaded, ViewModel.Chats.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
             flyout.CreateFlyoutItem(DialogDelete_Loaded, ViewModel.Chats.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
