@@ -36,13 +36,16 @@ Furthermore, the project is open-source, built by the community for the communit
 ## Features
 - Based on [TDlib](https://github.com/tdlib/td);
 - Secret chats;
-- Instant view;
+- Instant view (now updated with the most recent 2.0);
 - Multi-account;
-- Work mode (hide your muted chat to focus on what's more important);
+- Filter chats (users, bots, groups, channels, unread chats and unmuted chats);
 - Calls;
 - Videos and photos editor (easily crop photos, set video resultion or remove some parts of the videos before sending them);
 - Drag&drop files to chats to send them quickly;
 - Open chats in separated windows (Shift+click);
+- Replace sent media content;
+- Polls;
+- Backgrounds 2.0 (blurred and motion options available);
 - Built-in app lock (fingerprint and Windows Hello authentication available);
 - Windows My People integration;
 - Full support of Windows 10 Action Centre (reply from notification or mark as read).
