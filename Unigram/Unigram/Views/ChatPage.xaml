@@ -410,9 +410,10 @@
                                         <TextBlock x:Name="Subtitle"
                                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"
                                                    TextWrapping="NoWrap"
-                                                   TextTrimming="CharacterEllipsis"/>
+                                                   TextTrimming="CharacterEllipsis">
+                                            <Run Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"/><Run Text="{x:Bind ViewModel.OnlineCount,Mode=OneWay}"/>
+                                        </TextBlock>
                                         <StackPanel x:Name="ChatActionPanel" Orientation="Horizontal" Visibility="Collapsed">
                                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                                        Fill="{ThemeResource SystemAccentColor}"

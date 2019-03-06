@@ -311,6 +311,13 @@ namespace Unigram.ViewModels
             }
         }
 
+        private string _onlineCount;
+        public string OnlineCount
+        {
+            get { return _onlineCount; }
+            set { Set(ref _onlineCount, value); }
+        }
+
         private ChatSearchViewModel _search;
         public ChatSearchViewModel Search
         {

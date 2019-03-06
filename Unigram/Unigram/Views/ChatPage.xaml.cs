@@ -2467,6 +2467,18 @@ namespace Unigram.Views
             }
         }
 
+        public void UpdateChatOnlineMemberCount(Chat chat, int count)
+        {
+            if (count > 1)
+            {
+                ViewModel.OnlineCount = string.Format(", {0}", Locale.Declension("OnlineCount", count));
+            }
+            else
+            {
+                ViewModel.OnlineCount = null;
+            }
+        }
+
 
 
         public void UpdateChatUnreadMentionCount(Chat chat, int count)
@@ -2721,36 +2733,23 @@ namespace Unigram.Views
                 ShowArea();
 
                 TextField.PlaceholderText = Strings.Resources.TypeMessage;
+
                 ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
             }
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
-            var count = 0;
+            ViewModel.LastSeen = Locale.Declension("Members", fullInfo.Members.Count);
+
             var commands = new List<UserCommand>();
 
             foreach (var member in fullInfo.Members)
             {
-                var user = ViewModel.ProtoService.GetUser(member.UserId);
-                if (user != null && user.Type is UserTypeRegular && user.Status is UserStatusOnline)
-                {
-                    count++;
-                }
-
                 if (member.BotInfo != null)
                 {
                     commands.AddRange(member.BotInfo.Commands.Select(x => new UserCommand(member.UserId, x)).ToList());
                 }
-            }
-
-            if (count > 1)
-            {
-                ViewModel.LastSeen = string.Format("{0}, {1}", Locale.Declension("Members", fullInfo.Members.Count), Locale.Declension("OnlineCount", count));
-            }
-            else
-            {
-                ViewModel.LastSeen = Locale.Declension("Members", fullInfo.Members.Count);
             }
 
             ViewModel.BotCommands = commands;
@@ -2842,41 +2841,9 @@ namespace Unigram.Views
             UpdateComposerHeader(chat, ViewModel.ComposerHeader);
         }
 
-        public async void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
+        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            if (group.IsChannel || fullInfo.MemberCount > 200)
-            {
-                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
-            }
-            else
-            {
-                var response = await ViewModel.ProtoService.SendAsync(new GetSupergroupMembers(group.Id, new SupergroupMembersFilterRecent(), 0, 200));
-                if (response is ChatMembers members && StillValid(chat))
-                {
-                    var count = 0;
-                    foreach (var member in members.Members)
-                    {
-                        var user = ViewModel.ProtoService.GetUser(member.UserId);
-                        if (user != null && user.Type is UserTypeRegular && user.Status is UserStatusOnline)
-                        {
-                            count++;
-                        }
-                    }
-
-                    if (count > 1)
-                    {
-                        ViewModel.LastSeen = string.Format("{0}, {1}", Locale.Declension("Members", fullInfo.MemberCount), Locale.Declension("OnlineCount", count));
-                    }
-                    else
-                    {
-                        ViewModel.LastSeen = Locale.Declension("Members", fullInfo.MemberCount);
-                    }
-                }
-                else if (StillValid(chat))
-                {
-                    ViewModel.LastSeen = Locale.Declension("Members", fullInfo.MemberCount);
-                }
-            }
+            ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
         }
 
 
