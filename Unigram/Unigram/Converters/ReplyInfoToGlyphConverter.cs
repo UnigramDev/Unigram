@@ -84,5 +84,7 @@ namespace Unigram.Converters
 
         public const string Camera = "\uE722";
         public const string Photo = "\uEB9F";
+
+        public const string Statistics = "\uEB05";
     }
 }

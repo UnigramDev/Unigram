@@ -81,6 +81,7 @@ namespace Unigram.ViewModels
             InviteCommand = new RelayCommand(InviteExecute);
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
             SetAdminsCommand = new RelayCommand(SetAdminsExecute);
+            StatisticsCommand = new RelayCommand(StatisticsExecute);
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
             MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
@@ -426,6 +427,30 @@ namespace Unigram.ViewModels
             }
 
             NavigationService.Navigate(typeof(BasicGroupEditAdministratorsPage), chat.Id);
+        }
+
+        public RelayCommand StatisticsCommand { get; }
+        private void StatisticsExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChatStatisticsPage), chat.Id);
+
+            //var fullInfo = CacheService.GetSupergroupFull(chat);
+            //if (fullInfo == null || !fullInfo.CanViewStatistics)
+            //{
+            //    return;
+            //}
+
+            //var response = await ProtoService.SendAsync(new GetChatStatisticsUrl(chat.Id, string.Empty));
+            //if (response is ChatStatisticsUrl url)
+            //{
+            //    await Launcher.LaunchUriAsync(new Uri(url.Url));
+            //}
         }
 
         public RelayCommand SystemCallCommand { get; }
