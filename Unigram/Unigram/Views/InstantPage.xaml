@@ -121,7 +121,14 @@
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             <Setter Property="BorderThickness" Value="2,0,0,0"/>
         </Style>
-        
+
+        <Style x:Key="BlockRelatedArticlesHeaderPanelStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+            <Setter Property="Margin" Value="-12,0"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+        <Style x:Key="BlockRelatedArticlesHeaderStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BaseRichTextBlockStyle}"/>
+
         <!--<DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
              <Grid>
              <Grid.ColumnDefinitions>

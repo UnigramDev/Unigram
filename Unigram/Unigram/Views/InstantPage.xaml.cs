@@ -405,7 +405,10 @@ namespace Unigram.Views
             var header = ProcessText(relatedArticles, false);
             if (header != null)
             {
-                panel.Children.Add(header);
+                var border = new Border { Style = Resources["BlockRelatedArticlesHeaderPanelStyle"] as Style };
+                border.Child = header;
+
+                panel.Children.Add(border);
             }
 
             foreach (var article in relatedArticles.Articles)
@@ -417,11 +420,25 @@ namespace Unigram.Views
                 grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
 
                 var title = new TextBlock { Text = article.Title };
-                var description = new TextBlock { Text = article.Description };
+                var description = new TextBlock { TextWrapping = TextWrapping.Wrap, TextTrimming = TextTrimming.CharacterEllipsis, MaxLines = 2, Style = Resources["BlockAuthorDateTextBlockStyle"] as Style };
+
+                if (string.IsNullOrEmpty(article.Author))
+                {
+                    description.Text = article.Description;
+                }
+                else
+                {
+                    description.Text = article.Author;
+
+                    if (article.PublishDate > 0)
+                    {
+                        description.Text += " — " + BindConvert.Current.DayMonthFullYear.Format(BindConvert.Current.DateTime(article.PublishDate));
+                    }
+                }
 
                 if (article.Photo != null)
                 {
-                    var photo = new Image { Width = 48, Height = 48, VerticalAlignment = VerticalAlignment.Top };
+                    var photo = new Image { Width = 36, Height = 36, Stretch = Stretch.UniformToFill, VerticalAlignment = VerticalAlignment.Top };
 
                     var file = article.Photo.GetSmall()?.Photo;
                     if (file.Local.IsDownloadingCompleted)
@@ -440,18 +457,14 @@ namespace Unigram.Views
                     grid.Children.Add(photo);
                 }
 
-                var separator = new Rectangle { Height = 1, Fill = App.Current.Resources["TelegramSeparatorMediumBrush"] as Brush, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(12, 0, 0, 0) };
-
                 Grid.SetRow(description, 1);
-                Grid.SetRow(separator, 1);
-                Grid.SetColumnSpan(separator, 2);
 
                 grid.Children.Add(title);
                 grid.Children.Add(description);
-                grid.Children.Add(separator);
 
-                var button = new Button { Style = App.Current.Resources["EmptyButtonStyle"] as Style };
+                var button = new BadgeButton { HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Stretch, Margin = new Thickness(-12, 0, -12, 0) };
                 button.Content = grid;
+                button.Click += (s, args) => Hyperlink_Click(new RichTextUrl(null, article.Url));
 
                 panel.Children.Add(button);
             }
@@ -521,7 +534,7 @@ namespace Unigram.Views
                     }
 
                     //textBlock.Margin = new Thickness(12, 0, 12, 12);
-                    ProcessRichText(cell.Text, span);
+                    ProcessRichText(cell.Text, span, textBlock);
 
                     var border = new Border();
                     border.Background = cell.IsHeader || (table.IsStriped && row % 2 == 0) ? new SolidColorBrush(Colors.LightGray) : null;
@@ -578,8 +591,8 @@ namespace Unigram.Views
         {
             var panel = new StackPanel();
 
-            var header = new Button { Content = ProcessText(details, false) };
-            var inner = new StackPanel { Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
+            var header = new BadgeButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? "\uE098" : "\uE099", Style = App.Current.Resources["GlyphBadgeButtonStyle"] as Style, Margin = new Thickness(-12, 0, -12, 0) };
+            var inner = new StackPanel { Padding = new Thickness(0, 12, 0, 12), Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
 
             panel.Children.Add(header);
             panel.Children.Add(inner);
@@ -592,6 +605,7 @@ namespace Unigram.Views
             header.Click += (s, args) =>
             {
                 inner.Visibility = inner.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                header.Glyph = inner.Visibility == Visibility.Visible ? "\uE098" : "\uE099";
             };
 
             return panel;
@@ -641,7 +655,7 @@ namespace Unigram.Views
                 var span = new Span();
                 textBlock.Inlines.Add(new Run { Text = string.Format(Strings.Resources.ArticleByAuthor, string.Empty) });
                 textBlock.Inlines.Add(span);
-                ProcessRichText(block.Author, span);
+                ProcessRichText(block.Author, span, null);
             }
 
             //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
@@ -714,7 +728,7 @@ namespace Unigram.Views
             textBlock.TextWrapping = TextWrapping.Wrap;
 
             //textBlock.Margin = new Thickness(12, 0, 12, 12);
-            ProcessRichText(text, span);
+            ProcessRichText(text, span, textBlock);
 
             switch (block)
             {
@@ -782,6 +796,9 @@ namespace Unigram.Views
                 case PageBlockDetails details:
                     textBlock.IsTextSelectionEnabled = false;
                     break;
+                case PageBlockRelatedArticles relatedArticles:
+                    textBlock.Style = Resources["BlockRelatedArticlesHeaderStyle"] as Style;
+                    break;
             }
 
             return textBlock;
@@ -806,7 +823,7 @@ namespace Unigram.Views
 
             if (!textEmpty)
             {
-                ProcessRichText(caption.Text, span);
+                ProcessRichText(caption.Text, span, textBlock);
             }
 
             if (!citeEmpty)
@@ -816,7 +833,7 @@ namespace Unigram.Views
                     span.Inlines.Add(new LineBreak());
                 }
 
-                ProcessRichText(caption.Credit, span);
+                ProcessRichText(caption.Credit, span, textBlock);
             }
 
             return textBlock;
@@ -1281,58 +1298,75 @@ namespace Unigram.Views
             return element;
         }
 
-        private void ProcessRichText(RichText text, Span span)
+        private void ProcessRichText(RichText text, Span span, RichTextBlock textBlock)
+        {
+            int offset = 0;
+            ProcessRichText(text, span, textBlock, TextEffects.None, ref offset);
+        }
+
+        private void ProcessRichText(RichText text, Span span, RichTextBlock textBlock, TextEffects effects, ref int offset)
         {
             switch (text)
             {
                 case RichTextPlain plainText:
                     span.Inlines.Add(new Run { Text = plainText.Text });
+
+                    if (effects.HasFlag(TextEffects.Marked))
+                    {
+                        var highlight = new TextHighlighter();
+                        highlight.Background = new SolidColorBrush(Colors.PaleGoldenrod);
+                        highlight.Ranges.Add(new TextRange { StartIndex = offset, Length = plainText.Text.Length });
+
+                        textBlock.TextHighlighters.Add(highlight);
+                    }
+
+                    offset += plainText.Text.Length;
                     break;
                 case RichTexts concatText:
                     foreach (var concat in concatText.Texts)
                     {
                         var concatRun = new Span();
                         span.Inlines.Add(concatRun);
-                        ProcessRichText(concat, concatRun);
+                        ProcessRichText(concat, concatRun, textBlock, effects, ref offset);
                     }
                     break;
                 case RichTextBold boldText:
                     span.FontWeight = FontWeights.SemiBold;
-                    ProcessRichText(boldText.Text, span);
+                    ProcessRichText(boldText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextEmailAddress emailText:
-                    ProcessRichText(emailText.Text, span);
+                    ProcessRichText(emailText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextFixed fixedText:
                     span.FontFamily = new FontFamily("Consolas");
-                    ProcessRichText(fixedText.Text, span);
+                    ProcessRichText(fixedText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextItalic italicText:
                     span.FontStyle |= FontStyle.Italic;
-                    ProcessRichText(italicText.Text, span);
+                    ProcessRichText(italicText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextStrikethrough strikeText:
                     if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
                     {
                         span.TextDecorations |= TextDecorations.Strikethrough;
-                        ProcessRichText(strikeText.Text, span);
+                        ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
                     }
                     else
                     {
-                        ProcessRichText(strikeText.Text, span);
+                        ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
                     }
                     break;
                 case RichTextUnderline underlineText:
                     if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
                     {
                         span.TextDecorations |= TextDecorations.Underline;
-                        ProcessRichText(underlineText.Text, span);
+                        ProcessRichText(underlineText.Text, span, textBlock, effects, ref offset);
                     }
                     else
                     {
                         var underline = new Underline();
                         span.Inlines.Add(underline);
-                        ProcessRichText(underlineText.Text, underline);
+                        ProcessRichText(underlineText.Text, underline, textBlock, effects, ref offset);
                     }
                     break;
                 case RichTextUrl urlText:
@@ -1341,17 +1375,17 @@ namespace Unigram.Views
                         var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
                         span.Inlines.Add(hyperlink);
                         hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                        ProcessRichText(urlText.Text, hyperlink);
+                        ProcessRichText(urlText.Text, hyperlink, textBlock, effects, ref offset);
                     }
                     catch
                     {
-                        ProcessRichText(urlText.Text, span);
+                        ProcessRichText(urlText.Text, span, textBlock, effects, ref offset);
                         Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
                     }
                     break;
                 case RichTextAnchor anchor:
                     // ???
-                    ProcessRichText(anchor.Text, span);
+                    ProcessRichText(anchor.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextIcon icon:
                     var photo = new Image { Width = icon.Width, Height = icon.Height };
@@ -1372,7 +1406,7 @@ namespace Unigram.Views
                     break;
                 case RichTextMarked marked:
                     // ???
-                    ProcessRichText(marked.Text, span);
+                    ProcessRichText(marked.Text, span, textBlock, effects | TextEffects.Marked, ref offset);
                     break;
                 case RichTextPhoneNumber phoneNumber:
                     try
@@ -1380,28 +1414,41 @@ namespace Unigram.Views
                         var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
                         span.Inlines.Add(hyperlink);
                         hyperlink.Click += (s, args) => Hyperlink_Click(phoneNumber);
-                        ProcessRichText(phoneNumber.Text, hyperlink);
+                        ProcessRichText(phoneNumber.Text, hyperlink, textBlock, effects, ref offset);
                     }
                     catch
                     {
-                        ProcessRichText(phoneNumber.Text, span);
+                        ProcessRichText(phoneNumber.Text, span, textBlock, effects, ref offset);
                         Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
                     }
                     break;
                 case RichTextSubscript subscript:
                     Typography.SetVariants(span, FontVariants.Subscript);
-                    ProcessRichText(subscript.Text, span);
+                    ProcessRichText(subscript.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextSuperscript superscript:
                     Typography.SetVariants(span, FontVariants.Superscript);
-                    ProcessRichText(superscript.Text, span);
+                    ProcessRichText(superscript.Text, span, textBlock, effects, ref offset);
                     break;
             }
+        }
+
+        [Flags]
+        private enum TextEffects
+        {
+            None,
+            Link,
+            Marked
         }
 
         private double SpacingBetweenBlocks(PageBlock upper, PageBlock lower)
         {
             if (lower is PageBlockCover || lower is PageBlockChatLink)
+            {
+                return 0;
+            }
+
+            if (upper is PageBlockDetails && lower is PageBlockDetails)
             {
                 return 0;
             }
