@@ -209,13 +209,10 @@ namespace Unigram.Services
 
         public void Handle(UpdateActiveNotifications update)
         {
-            //foreach (var group in update.Groups)
-            //{
-            //    foreach (var notification in group.Notifications)
-            //    {
-            //        ProcessNotification(group.Id, notification);
-            //    }
-            //}
+            foreach (var group in update.Groups)
+            {
+                _protoService.Send(new RemoveNotificationGroup(group.Id, group.Notifications.Max(x => x.Id)));
+            }
         }
 
         public void Handle(UpdateHavePendingNotifications update)
@@ -225,6 +222,13 @@ namespace Unigram.Services
 
         public void Handle(UpdateNotificationGroup update)
         {
+            var connectionState = _protoService.GetConnectionState();
+            if (connectionState is ConnectionStateUpdating)
+            {
+                // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
+                return;
+            }
+
             foreach (var removed in update.RemovedNotificationIds)
             {
                 ToastNotificationManager.History.Remove($"{removed}", $"{update.NotificationGroupId}");
@@ -238,6 +242,13 @@ namespace Unigram.Services
 
         public void Handle(UpdateNotification update)
         {
+            var connectionState = _protoService.GetConnectionState();
+            if (connectionState is ConnectionStateUpdating)
+            {
+                // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
+                return;
+            }
+
             ProcessNotification(update.NotificationGroupId, update.Notification);
         }
 
