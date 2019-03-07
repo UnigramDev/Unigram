@@ -5,6 +5,7 @@ using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
+using Unigram.Converters;
 using Unigram.Selectors;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -431,7 +432,7 @@ namespace Unigram.Controls.Messages
                     FooterToNormal();
                     bottom = 4;
                 }
-                else if (message.Content is MessageCall || (message.Content is MessageLocation location && location.LivePeriod > 0))
+                else if (message.Content is MessageCall || (message.Content is MessageLocation location && location.LivePeriod > 0 && BindConvert.Current.DateTime(message.Date + location.LivePeriod) > DateTime.Now))
                 {
                     FooterToHidden();
                 }
