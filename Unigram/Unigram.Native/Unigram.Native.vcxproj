@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\FFmpeg.UWP.4.1.32\build\native\FFmpeg.UWP.props" Condition="Exists('..\packages\FFmpeg.UWP.4.1.32\build\native\FFmpeg.UWP.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM">
       <Configuration>Debug</Configuration>
@@ -266,6 +267,36 @@
     <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="Proxies\TelegramGameProxy.h" />
     <ClInclude Include="Proxies\TelegramPaymentProxy.h" />
+    <ClInclude Include="Streaming\AbstractEffectFactory.h" />
+    <ClInclude Include="Streaming\AudioEffectFactory.h" />
+    <ClInclude Include="Streaming\AudioFilter.h" />
+    <ClInclude Include="Streaming\AvEffectDefinition.h" />
+    <ClInclude Include="Streaming\CompressedSampleProvider.h" />
+    <ClInclude Include="Streaming\CritSec.h" />
+    <ClInclude Include="Streaming\FFmpegInteropConfig.h" />
+    <ClInclude Include="Streaming\FFmpegInteropLogging.h" />
+    <ClInclude Include="Streaming\FFmpegInteropMSS.h" />
+    <ClInclude Include="Streaming\FFmpegReader.h" />
+    <ClInclude Include="Streaming\H264AVCSampleProvider.h" />
+    <ClInclude Include="Streaming\HEVCSampleProvider.h" />
+    <ClInclude Include="Streaming\IAvEffect.h" />
+    <ClInclude Include="Streaming\ILogProvider.h" />
+    <ClInclude Include="Streaming\LanguageTagConverter.h" />
+    <ClInclude Include="Streaming\MediaSampleProvider.h" />
+    <ClInclude Include="Streaming\MediaThumbnailData.h" />
+    <ClInclude Include="Streaming\NALPacketSampleProvider.h" />
+    <ClInclude Include="Streaming\NativeBuffer.h" />
+    <ClInclude Include="Streaming\NativeBufferFactory.h" />
+    <ClInclude Include="Streaming\StreamInfo.h" />
+    <ClInclude Include="Streaming\SubtitleProvider.h" />
+    <ClInclude Include="Streaming\SubtitleProviderBitmap.h" />
+    <ClInclude Include="Streaming\SubtitleProviderSsaAss.h" />
+    <ClInclude Include="Streaming\UncompressedAudioSampleProvider.h" />
+    <ClInclude Include="Streaming\UncompressedFrameProvider.h" />
+    <ClInclude Include="Streaming\UncompressedSampleProvider.h" />
+    <ClInclude Include="Streaming\UncompressedVideoSampleProvider.h" />
+    <ClInclude Include="Streaming\VideoEffectFactory.h" />
+    <ClInclude Include="Streaming\VideoFrame.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="GIF\GIFByteStreamHandler.h" />
     <ClInclude Include="GIF\GIFMediaSource.h" />
@@ -321,6 +352,18 @@
     <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="Proxies\TelegramGameProxy.cpp" />
     <ClCompile Include="Proxies\TelegramPaymentProxy.cpp" />
+    <ClCompile Include="Streaming\CompressedSampleProvider.cpp" />
+    <ClCompile Include="Streaming\FFmpegInteropLogging.cpp" />
+    <ClCompile Include="Streaming\FFmpegInteropMSS.cpp" />
+    <ClCompile Include="Streaming\FFmpegReader.cpp" />
+    <ClCompile Include="Streaming\H264AVCSampleProvider.cpp" />
+    <ClCompile Include="Streaming\HEVCSampleProvider.cpp" />
+    <ClCompile Include="Streaming\MediaSampleProvider.cpp" />
+    <ClCompile Include="Streaming\NALPacketSampleProvider.cpp" />
+    <ClCompile Include="Streaming\NativeBufferFactory.cpp" />
+    <ClCompile Include="Streaming\UncompressedAudioSampleProvider.cpp" />
+    <ClCompile Include="Streaming\UncompressedSampleProvider.cpp" />
+    <ClCompile Include="Streaming\UncompressedVideoSampleProvider.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>
@@ -338,6 +381,18 @@
       <Project>{7789c8b7-887c-46b6-bd76-952c590b1853}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Telegram.Td.UWP, Version=1.0" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\FFmpeg.UWP.4.1.32\build\native\FFmpeg.UWP.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FFmpeg.UWP.4.1.32\build\native\FFmpeg.UWP.props'))" />
+  </Target>
 </Project>
