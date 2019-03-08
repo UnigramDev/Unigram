@@ -28,5 +28,89 @@ namespace Unigram.Converters
                     return LastSeenConverter.GetLabel(protoService.GetUser(member.UserId), false);
             }
         }
+
+        private static string formatUserPermissions(ChatMemberStatusRestricted rights, ChatMemberStatusRestricted defaultBannedRights)
+        {
+            if (rights == null)
+            {
+                return "";
+            }
+            StringBuilder builder = new StringBuilder();
+            //if (rights.view_messages && defaultBannedRights.view_messages != rights.view_messages)
+            //{
+            //    builder.append(Strings.Resources.UserRestrictionsNoRead);
+            //}
+            if (rights.CanSendMessages && defaultBannedRights.CanSendMessages != rights.CanSendMessages)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(Strings.Resources.UserRestrictionsNoSend);
+            }
+            if (rights.CanSendMediaMessages && defaultBannedRights.CanSendMediaMessages != rights.CanSendMediaMessages)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(Strings.Resources.UserRestrictionsNoSendMedia);
+            }
+            if (rights.CanSendOtherMessages && defaultBannedRights.CanSendOtherMessages != rights.CanSendOtherMessages)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(Strings.Resources.UserRestrictionsNoSendStickers);
+            }
+            //if (rights.send_polls && defaultBannedRights.send_polls != rights.send_polls)
+            //{
+            //    if (builder.Length > 0)
+            //    {
+            //        builder.Append(", ");
+            //    }
+            //    builder.Append(Strings.Resources.UserRestrictionsNoSendPolls);
+            //}
+            if (rights.CanAddWebPagePreviews && defaultBannedRights.CanAddWebPagePreviews != rights.CanAddWebPagePreviews)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(Strings.Resources.UserRestrictionsNoEmbedLinks);
+            }
+            //if (rights.invite_users && defaultBannedRights.invite_users != rights.invite_users)
+            //{
+            //    if (builder.Length > 0)
+            //    {
+            //        builder.Append(", ");
+            //    }
+            //    builder.Append(Strings.Resources.UserRestrictionsNoInviteUsers);
+            //}
+            //if (rights.pin_messages && defaultBannedRights.pin_messages != rights.pin_messages)
+            //{
+            //    if (builder.Length > 0)
+            //    {
+            //        builder.Append(", ");
+            //    }
+            //    builder.Append(Strings.Resources.UserRestrictionsNoPinMessages);
+            //}
+            //if (rights.change_info && defaultBannedRights.change_info != rights.change_info)
+            //{
+            //    if (builder.Length > 0)
+            //    {
+            //        builder.Append(", ");
+            //    }
+            //    builder.Append(Strings.Resources.UserRestrictionsNoChangeInfo);
+            //}
+            if (builder.Length > 0)
+            {
+                //builder.Replace(0, 1, builder.ToString().Substring(0, 1).ToUpper());
+                //builder.Append('.');
+            }
+
+            return builder.ToString();
+        }
     }
 }

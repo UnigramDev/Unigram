@@ -95,7 +95,8 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Header.Text = group.IsChannel ? Strings.Resources.ChannelType : Strings.Resources.GroupType;
+            Header.Text = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
+            Subheader.Text = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
 
             Public.Content = group.IsChannel ? Strings.Resources.ChannelPublic : Strings.Resources.MegaPublic;
             PublicInfo.Text = group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo;

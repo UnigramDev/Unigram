@@ -124,24 +124,24 @@
                         Margin="12,8,12,0"/>
                 </StackPanel>
                 
-                <StackPanel x:Name="GroupMembersPanel" Visibility="Collapsed" Margin="0,24,0,0">
-                    <controls:BadgeButton x:Name="Members"
-                                          Content="{CustomResource ChannelMembers}"
-                                          Command="{x:Bind ViewModel.MembersCommand}"
+                <StackPanel x:Name="GroupMembersPanel" Margin="0,24,0,0">
+                    <controls:BadgeButton x:Name="Permissions"
+                                          Content="{CustomResource ChannelPermissions}"
+                                          Command="{x:Bind ViewModel.KickedCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE902;"/>
+                                          Glyph="&#xE192;"/>
                     <controls:BadgeButton x:Name="Admins"
                                           Content="{CustomResource ChannelAdministrators}"
                                           Command="{x:Bind ViewModel.AdminsCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE734;"/>
-                    <controls:BadgeButton x:Name="Restricted"
-                                          Content="{CustomResource ChannelRestrictedUsers}"
-                                          Command="{x:Bind ViewModel.KickedCommand}"
+                    <controls:BadgeButton x:Name="Members"
+                                          Content="{CustomResource ChannelMembers}"
+                                          Command="{x:Bind ViewModel.MembersCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE72E;"/>
-                    <controls:BadgeButton x:Name="Banned"
-                                          Content="{CustomResource ChannelBlockedUsers}"
+                                          Glyph="&#xE902;"/>
+                    <controls:BadgeButton x:Name="Blacklist"
+                                          Content="{CustomResource ChannelBlacklist}"
                                           Command="{x:Bind ViewModel.BannedCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xF140;"/>

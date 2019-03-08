@@ -513,8 +513,6 @@
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep2ViewModel.cs" />
-    <Compile Include="ViewModels\BasicGroups\BasicGroupEditAdministratorsViewModel.cs" />
-    <Compile Include="ViewModels\BasicGroups\BasicGroupEditViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
@@ -532,6 +530,7 @@
     <Compile Include="ViewModels\Delegates\IGalleryDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\ISupergroupEditDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWallpaperDelegate.cs" />
     <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
@@ -633,7 +632,7 @@
     <Compile Include="ViewModels\Supergroups\SupergroupEventLogViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
-    <Compile Include="ViewModels\Supergroups\SupergroupRestrictedViewModel.cs" />
+    <Compile Include="ViewModels\Supergroups\SupergroupPermissionsViewModel.cs" />
     <Compile Include="ViewModels\TLMultipleViewModelBase.cs" />
     <Compile Include="ViewModels\TLViewModelBase.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
@@ -645,12 +644,6 @@
     </Compile>
     <Compile Include="Views\BasicGroups\BasicGroupCreateStep2Page.xaml.cs">
       <DependentUpon>BasicGroupCreateStep2Page.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\BasicGroups\BasicGroupEditAdministratorsPage.xaml.cs">
-      <DependentUpon>BasicGroupEditAdministratorsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\BasicGroups\BasicGroupEditPage.xaml.cs">
-      <DependentUpon>BasicGroupEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelCreateStep1Page.xaml.cs">
       <DependentUpon>ChannelCreateStep1Page.xaml</DependentUpon>
@@ -893,8 +886,8 @@
     <Compile Include="Views\Supergroups\SupergroupMembersPage.xaml.cs">
       <DependentUpon>SupergroupMembersPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Supergroups\SupergroupRestrictedPage.xaml.cs">
-      <DependentUpon>SupergroupRestrictedPage.xaml</DependentUpon>
+    <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
+      <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TestStreamingPage.xaml.cs">
       <DependentUpon>TestStreamingPage.xaml</DependentUpon>
@@ -1981,14 +1974,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\BasicGroups\BasicGroupEditAdministratorsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\BasicGroups\BasicGroupEditPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Channels\ChannelCreateStep1Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2369,7 +2354,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Supergroups\SupergroupRestrictedPage.xaml">
+    <Page Include="Views\Supergroups\SupergroupPermissionsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

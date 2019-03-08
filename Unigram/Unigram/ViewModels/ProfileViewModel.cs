@@ -80,7 +80,6 @@ namespace Unigram.ViewModels
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
-            SetAdminsCommand = new RelayCommand(SetAdminsExecute);
             StatisticsCommand = new RelayCommand(StatisticsExecute);
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
             MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
@@ -415,18 +414,6 @@ namespace Unigram.ViewModels
             {
                 NavigationService.Navigate(typeof(UserCommonChatsPage), secret.UserId);
             }
-        }
-
-        public RelayCommand SetAdminsCommand { get; }
-        private void SetAdminsExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            NavigationService.Navigate(typeof(BasicGroupEditAdministratorsPage), chat.Id);
         }
 
         public RelayCommand StatisticsCommand { get; }
@@ -916,13 +903,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup)
+            if (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup)
             {
                 NavigationService.Navigate(typeof(SupergroupEditPage), chat.Id);
-            }
-            else if (chat.Type is ChatTypeBasicGroup)
-            {
-                NavigationService.Navigate(typeof(BasicGroupEditPage), chat.Id);
             }
             else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
@@ -1094,7 +1077,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupRestrictedPage), chat.Id);
+            NavigationService.Navigate(typeof(SupergroupPermissionsPage), chat.Id);
         }
 
         public RelayCommand MembersCommand { get; }

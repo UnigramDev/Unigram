@@ -29,14 +29,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditPage : Page, ISupergroupDelegate
+    public sealed partial class SupergroupEditPage : Page, ISupergroupEditDelegate
     {
         public SupergroupEditViewModel ViewModel => DataContext as SupergroupEditViewModel;
 
         public SupergroupEditPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(this);
         }
 
         private void Photo_Click(object sender, RoutedEventArgs e)
@@ -129,6 +129,7 @@ namespace Unigram.Views.Supergroups
             Delete.Content = group.IsChannel ? Strings.Resources.ChannelDelete : Strings.Resources.DeleteMega;
             DeleteInfo.Text = group.IsChannel ? Strings.Resources.ChannelDeleteInfo : Strings.Resources.MegaDeleteInfo;
 
+            Members.Content = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
 
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = group.SignMessages;
@@ -151,9 +152,11 @@ namespace Unigram.Views.Supergroups
             ChatHistory.Visibility = group.CanChangeInfo() && string.IsNullOrEmpty(group.Username) && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
-            GroupMembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             ChannelSignMessagesPanel.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
+
+            Permissions.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+            Blacklist.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -170,16 +173,8 @@ namespace Unigram.Views.Supergroups
 
 
             Admins.Badge = fullInfo.AdministratorCount;
-            //Admins.Visibility = fullInfo.AdministratorCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-
-            Banned.Badge = fullInfo.BannedCount;
-            //Banned.Visibility = fullInfo.BannedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-
-            Restricted.Badge = fullInfo.RestrictedCount;
-            //Restricted.Visibility = fullInfo.RestrictedCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-
             Members.Badge = fullInfo.MemberCount;
-            //Members.Visibility = fullInfo.MemberCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            Blacklist.Badge = fullInfo.BannedCount;
 
             if (group.CanInviteUsers())
             {
@@ -221,6 +216,60 @@ namespace Unigram.Views.Supergroups
                     }
                 });
             });
+        }
+
+
+
+        public void UpdateBasicGroup(Chat chat, BasicGroup group)
+        {
+            Title.PlaceholderText = Strings.Resources.GroupName;
+
+            Delete.Content = Strings.Resources.DeleteMega;
+            DeleteInfo.Text = Strings.Resources.MegaDeleteInfo;
+
+            Members.Content = Strings.Resources.ChannelMembers;
+
+            ViewModel.Title = chat.Title;
+            ViewModel.IsSignatures = false;
+
+
+            //Photo.IsEnabled = group.CanChangeInfo();
+            //Title.IsReadOnly = !group.CanChangeInfo();
+            //About.IsReadOnly = !group.CanChangeInfo();
+
+            ChatType.Content = Strings.Resources.GroupType;
+            ChatType.Badge = Strings.Resources.TypePrivateGroup;
+            ChatType.Visibility = Visibility.Collapsed;
+
+            //ChatDemocracy.Badge = group.AnyoneCanInvite ? Strings.Resources.WhoCanAddMembersAllMembers : Strings.Resources.WhoCanAddMembersAdmins;
+            //ChatDemocracy.Visibility = group.CanChangeInfo() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+
+            ChatHistory.Badge = Strings.Resources.ChatHistoryHidden;
+            ChatHistory.Visibility = Visibility.Visible;
+
+            InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            ChannelSignMessagesPanel.Visibility = Visibility.Collapsed;
+            GroupStickersPanel.Visibility = Visibility.Collapsed;
+
+            Permissions.Visibility = Visibility.Visible;
+            Blacklist.Visibility = Visibility.Collapsed;
+
+            DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
+        {
+            GroupStickersPanel.Visibility = Visibility.Collapsed;
+
+            //ViewModel.About = fullInfo.Description;
+
+            //ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
+            ChatType.Visibility = Visibility.Visible;
+
+
+            Admins.Badge = fullInfo.Members.Count(x => x.Status is ChatMemberStatusCreator || x.Status is ChatMemberStatusAdministrator);
+            Members.Badge = fullInfo.Members.Count;
+            Blacklist.Badge = 0;
         }
 
         #endregion

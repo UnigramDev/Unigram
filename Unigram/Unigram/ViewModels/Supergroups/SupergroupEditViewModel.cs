@@ -22,11 +22,11 @@ using Windows.UI.Xaml.Navigation;
 namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditViewModel : TLViewModelBase,
-        IDelegable<ISupergroupDelegate>,
+        IDelegable<ISupergroupEditDelegate>,
         IHandle<UpdateSupergroup>,
         IHandle<UpdateSupergroupFullInfo>
     {
-        public ISupergroupDelegate Delegate { get; set; }
+        public ISupergroupEditDelegate Delegate { get; set; }
 
         public SupergroupEditViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -135,6 +135,22 @@ namespace Unigram.ViewModels.Supergroups
                 else
                 {
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
+                }
+            }
+            else if (chat.Type is ChatTypeBasicGroup basic)
+            {
+                var item = ProtoService.GetBasicGroup(basic.BasicGroupId);
+                var cache = ProtoService.GetBasicGroupFull(basic.BasicGroupId);
+
+                Delegate?.UpdateBasicGroup(chat, item);
+
+                if (cache == null)
+                {
+                    ProtoService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
+                }
+                else
+                {
+                    Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
                 }
             }
 
@@ -466,7 +482,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupRestrictedPage), chat.Id);
+            NavigationService.Navigate(typeof(SupergroupPermissionsPage), chat.Id);
         }
 
         public RelayCommand MembersCommand { get; }

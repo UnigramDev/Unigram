@@ -28,14 +28,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupRestrictedPage : Page, ISupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupPermissionsPage : Page, ISupergroupDelegate, INavigablePage
     {
-        public SupergroupRestrictedViewModel ViewModel => DataContext as SupergroupRestrictedViewModel;
+        public SupergroupPermissionsViewModel ViewModel => DataContext as SupergroupPermissionsViewModel;
 
-        public SupergroupRestrictedPage()
+        public SupergroupPermissionsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupRestrictedViewModel, ISupergroupDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>

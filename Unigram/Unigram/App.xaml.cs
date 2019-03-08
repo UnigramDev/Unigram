@@ -164,8 +164,6 @@ namespace Unigram
 
             switch (page)
             {
-                case BasicGroupEditPage basicGroupEdit:
-                    return container.Resolve<BasicGroupEditViewModel, IBasicGroupDelegate>(basicGroupEdit, id);
                 case ChannelCreateStep1Page channelCreateStep1:
                     return container.Resolve<ChannelCreateStep1ViewModel>(id);
                 case ChannelCreateStep2Page channelCreateStep2:
@@ -293,7 +291,7 @@ namespace Unigram
                 case SupergroupEditAdministratorPage supergroupEditAdministrator:
                     return container.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(supergroupEditAdministrator, id);
                 case SupergroupEditPage supergroupEdit:
-                    return container.Resolve<SupergroupEditViewModel, ISupergroupDelegate>(supergroupEdit, id);
+                    return container.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(supergroupEdit, id);
                 case SupergroupEditRestrictedPage supergroupEditRestricted:
                     return container.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(supergroupEditRestricted, id);
                 case SupergroupEditStickerSetPage supergroupEditStickerSet:
@@ -302,8 +300,8 @@ namespace Unigram
                     return container.Resolve<SupergroupEventLogViewModel>(id);
                 case SupergroupMembersPage supergroupMembers:
                     return container.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(supergroupMembers, id);
-                case SupergroupRestrictedPage supergroupRestricted:
-                    return container.Resolve<SupergroupRestrictedViewModel, ISupergroupDelegate>(supergroupRestricted, id);
+                case SupergroupPermissionsPage supergroupRestricted:
+                    return container.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(supergroupRestricted, id);
                 case UserCommonChatsPage userCommonChats:
                     return container.Resolve<UserCommonChatsViewModel>(id);
                 case UserCreatePage userCreate:

@@ -584,15 +584,6 @@ namespace Unigram.Views
                     return;
                 }
 
-                //if (!chat.admins_enabled || chat.creator || chat.admin)
-                //{
-                //    editItem = menu.addItem(edit_name, R.drawable.group_edit_profile);
-                //}
-                //item = menu.addItem(10, R.drawable.ic_ab_other);
-                if (basicGroup.Status is ChatMemberStatusCreator)
-                {
-                    flyout.CreateFlyoutItem(ViewModel.SetAdminsCommand, Strings.Resources.SetAdmins, new FontIcon { Glyph = Icons.Admin });
-                }
                 if (basicGroup.EveryoneIsAdministrator || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)
                 {
                     flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ChannelEdit, new FontIcon { Glyph = Icons.Edit });
@@ -606,11 +597,6 @@ namespace Unigram.Views
                     };
 
                 }), Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
-
-                if (basicGroup.Status is ChatMemberStatusCreator && basicGroup.MemberCount > 0)
-                {
-                    flyout.CreateFlyoutItem(ViewModel.MigrateCommand, Strings.Resources.ConvertGroupMenu, new FontIcon { Glyph = Icons.Group });
-                }
 
                 flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
             }

@@ -179,13 +179,12 @@ namespace Unigram
                 builder.RegisterType<SupergroupEditRestrictedViewModel>();
                 builder.RegisterType<SupergroupAddAdministratorViewModel>();
                 builder.RegisterType<SupergroupAddRestrictedViewModel>();
-                builder.RegisterType<BasicGroupEditViewModel>();// .SingleInstance();
                 builder.RegisterType<LiveLocationViewModel>();
                 builder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
                 builder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupAdministratorsViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupBannedViewModel>();// .SingleInstance();
-                builder.RegisterType<SupergroupRestrictedViewModel>();// .SingleInstance();
+                builder.RegisterType<SupergroupPermissionsViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupMembersViewModel>();// .SingleInstance();
                 builder.RegisterType<ChatSharedMediaViewModel>(); // .SingleInstance();
                 builder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
@@ -194,7 +193,6 @@ namespace Unigram
                 builder.RegisterType<ChannelCreateStep3ViewModel>(); //.SingleInstance();
                 builder.RegisterType<BasicGroupCreateStep1ViewModel>(); //.SingleInstance();
                 builder.RegisterType<BasicGroupCreateStep2ViewModel>(); //.SingleInstance();
-                builder.RegisterType<BasicGroupEditAdministratorsViewModel>();
                 builder.RegisterType<SecretChatCreateViewModel>();
                 builder.RegisterType<InstantViewModel>(); //.SingleInstance();
                 builder.RegisterType<LogOutViewModel>().SingleInstance();
