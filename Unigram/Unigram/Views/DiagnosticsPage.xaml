@@ -65,6 +65,15 @@
                 </StackPanel>
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="Experimental" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        x:Name="Streaming"
+                        Toggled="Streaming_Toggled"
+                        Header="Is streaming enabled"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                </StackPanel>
+                
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="Options" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <ItemsControl x:Name="Options">
                         <ItemsControl.ItemContainerStyle>

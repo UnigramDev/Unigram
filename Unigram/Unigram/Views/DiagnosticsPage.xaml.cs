@@ -49,6 +49,7 @@ namespace Unigram.Views
             catch { }
 
             UseTestDC.IsOn = SettingsService.Current.UseTestDC;
+            Streaming.IsOn = SettingsService.Current.IsStreamingEnabled;
 
 
 
@@ -104,7 +105,7 @@ namespace Unigram.Views
                 }
 
                 SettingsService.Current.VerbosityLevel = newLevel;
-                Telegram.Td.Log.SetVerbosityLevel(newLevel);
+                TLContainer.Current.Resolve<IProtoService>().Send(new SetLogVerbosityLevel(newLevel));
 
                 Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)SettingsService.Current.VerbosityLevel);
             }
@@ -126,6 +127,11 @@ namespace Unigram.Views
         private void UseTestDC_Toggled(object sender, RoutedEventArgs e)
         {
             SettingsService.Current.UseTestDC = SettingsService.Current.UseTestDC;
+        }
+
+        private void Streaming_Toggled(object sender, RoutedEventArgs e)
+        {
+            SettingsService.Current.IsStreamingEnabled = Streaming.IsOn;
         }
     }
 }

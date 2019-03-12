@@ -27,6 +27,8 @@ namespace Unigram.Services
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0);
 
         int SessionId { get; }
+
+        Client Client { get; }
     }
 
     public interface ICacheService
@@ -387,6 +389,8 @@ namespace Unigram.Services
 
 
         public int SessionId => _session;
+
+        public Client Client => _client;
 
         private int? _userId;
         public int UserId

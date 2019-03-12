@@ -273,9 +273,6 @@ HRESULT FFmpegInteropMSS::CreateMediaStreamSource(Client^ client, File^ file, Me
 	m_file = file;
 	m_event = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-	void* something;
-	something = (void*)this;
-
 	if (SUCCEEDED(hr))
 	{
 		// Setup FFmpeg custom IO to access file as stream. This is necessary when accessing any file outside of app installation directory and appdata folder.
@@ -318,6 +315,9 @@ HRESULT FFmpegInteropMSS::CreateMediaStreamSource(Client^ client, File^ file, Me
 
 		// Open media file using custom IO setup above instead of using file name. Opening a file using file name will invoke fopen C API call that only have
 		// access within the app installation directory and appdata folder. Custom IO allows access to file selected using FilePicker dialog.
+		//auto error = avformat_open_input(&avFormatCtx, "", NULL, &avDict);
+		//char errbuf[1024];
+		//av_strerror(error, errbuf, 1024);
 		if (avformat_open_input(&avFormatCtx, "", NULL, &avDict) < 0)
 		{
 			hr = E_FAIL; // Error opening file
@@ -1092,7 +1092,8 @@ static int FileStreamRead(void* ptr, uint8_t* buf, int bufSize)
 	else
 	{
 		pStream->m_size = bufSize;
-		pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, bufSize), nullptr);
+		//pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, bufSize), nullptr);
+		pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, 2 * 1024 * 1024), nullptr);
 		WaitForSingleObject(pStream->m_event, INFINITE);
 	}
 
