@@ -30,7 +30,7 @@ namespace Unigram
 					MaxAudioThreads = 2;
 
 					MaxSupportedPlaybackRate = 1.0;
-					StreamBufferSize = 2048;
+					StreamBufferSize = 4096;
 
 					FFmpegOptions = ref new PropertySet();
 

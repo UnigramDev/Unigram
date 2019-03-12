@@ -267,3 +267,4 @@ _Pvt_Extensions
 /Unigram/Unigram/Constants.Secret.cs
 /Unigram/Unigram.Infrastructure
 /Unigram/Libraries/fluent-xaml-theme-editor/FluentEditorShared
+/Unigram/Libraries/ffmpeg/runtimes/ARM

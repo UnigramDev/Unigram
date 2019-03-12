@@ -2409,11 +2409,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <NativeLibs Include="..\Libraries\ffmpeg\runtimes\$(Platform)\*.dll" />
+    <Content Include="@(NativeLibs)">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Autofac">
       <Version>4.8.1</Version>
-    </PackageReference>
-    <PackageReference Include="FFmpeg.UWP">
-      <Version>4.1.32</Version>
     </PackageReference>
     <PackageReference Include="HockeySDK.UWP">
       <Version>4.1.6</Version>

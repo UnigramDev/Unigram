@@ -255,12 +255,6 @@
     <ClInclude Include="Proxies\TelegramPaymentProxy.h">
       <Filter>Proxies</Filter>
     </ClInclude>
-    <ClInclude Include="Streaming\AbstractEffectFactory.h">
-      <Filter>Streaming</Filter>
-    </ClInclude>
-    <ClInclude Include="Streaming\AudioEffectFactory.h">
-      <Filter>Streaming</Filter>
-    </ClInclude>
     <ClInclude Include="Streaming\AudioFilter.h">
       <Filter>Streaming</Filter>
     </ClInclude>
@@ -339,14 +333,8 @@
     <ClInclude Include="Streaming\UncompressedVideoSampleProvider.h">
       <Filter>Streaming</Filter>
     </ClInclude>
-    <ClInclude Include="Streaming\VideoEffectFactory.h">
-      <Filter>Streaming</Filter>
-    </ClInclude>
     <ClInclude Include="Streaming\VideoFrame.h">
       <Filter>Streaming</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>
