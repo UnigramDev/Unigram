@@ -56,6 +56,7 @@ namespace Unigram.Controls.Cells
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
             UpdateChatType(chat);
+            UpdateNotificationSettings(chat);
 
             PinnedIcon.Visibility = Visibility.Collapsed;
             UnreadBadge.Visibility = Visibility.Collapsed;

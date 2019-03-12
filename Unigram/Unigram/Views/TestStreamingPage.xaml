@@ -16,12 +16,16 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <MediaPlayerElement x:Name="Element" AutoPlay="True" AreTransportControlsEnabled="True"/>
         <Button Content="Play" Click="Button_Click" Grid.Row="1"/>
         <Button Content="Pause" Click="Button_Click_1" Grid.Row="2"/>
         <Button Content="Resume" Click="Button_Click_2" Grid.Row="3"/>
         <Button Content="Delete" Click="Button_Click_3" Grid.Row="4"/>
-        <ProgressBar x:Name="Progress" Grid.Row="5"/>
+        <Button x:Name="Get" Content="Get" Click="Button_Click_4" Grid.Row="5"/>
+        <ProgressBar x:Name="Progress" Grid.Row="6"/>
+
+        <TextBlock x:Name="OutputLog" IsTextSelectionEnabled="True" Padding="12" IsHitTestVisible="False" VerticalAlignment="Top"/>
     </Grid>
 </Page>

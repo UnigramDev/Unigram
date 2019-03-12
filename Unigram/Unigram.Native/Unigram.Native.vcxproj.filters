@@ -25,6 +25,9 @@
     <Filter Include="Proxies">
       <UniqueIdentifier>{4fa8da03-5bd0-46c1-8618-868e68b3a60c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Streaming">
+      <UniqueIdentifier>{b87b8581-6f96-4bfa-bff1-3af9ba077378}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -112,6 +115,42 @@
     </ClCompile>
     <ClCompile Include="Proxies\TelegramPaymentProxy.cpp">
       <Filter>Proxies</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\CompressedSampleProvider.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\FFmpegInteropLogging.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\FFmpegInteropMSS.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\FFmpegReader.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\H264AVCSampleProvider.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\HEVCSampleProvider.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\MediaSampleProvider.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\NALPacketSampleProvider.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\NativeBufferFactory.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\UncompressedAudioSampleProvider.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\UncompressedSampleProvider.cpp">
+      <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="Streaming\UncompressedVideoSampleProvider.cpp">
+      <Filter>Streaming</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +254,87 @@
     </ClInclude>
     <ClInclude Include="Proxies\TelegramPaymentProxy.h">
       <Filter>Proxies</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\AudioFilter.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\AvEffectDefinition.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\CompressedSampleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\CritSec.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\FFmpegInteropConfig.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\FFmpegInteropLogging.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\FFmpegInteropMSS.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\FFmpegReader.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\H264AVCSampleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\HEVCSampleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\IAvEffect.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\ILogProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\LanguageTagConverter.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\MediaSampleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\MediaThumbnailData.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\NALPacketSampleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\NativeBuffer.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\NativeBufferFactory.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\StreamInfo.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\SubtitleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\SubtitleProviderBitmap.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\SubtitleProviderSsaAss.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\UncompressedAudioSampleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\UncompressedFrameProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\UncompressedSampleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\UncompressedVideoSampleProvider.h">
+      <Filter>Streaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Streaming\VideoFrame.h">
+      <Filter>Streaming</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

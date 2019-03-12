@@ -41,6 +41,8 @@ namespace Unigram.Services
         bool IsSendGrouped { get; set; }
         bool IsAccountsSelectorExpanded { get; set; }
 
+        bool IsStreamingEnabled { get; set; }
+
         int LastMessageTtl { get; set; }
 
         string NotificationsToken { get; set; }
@@ -238,6 +240,15 @@ namespace Unigram.Services
             get
             {
                 return _passcodeLock = _passcodeLock ?? new PasscodeLockSettings();
+            }
+        }
+
+        private static VoIPSettings _voip;
+        public VoIPSettings VoIP
+        {
+            get
+            {
+                return _voip = _voip ?? new VoIPSettings();
             }
         }
 
@@ -500,6 +511,23 @@ namespace Unigram.Services
             {
                 _isSendGrouped = value;
                 AddOrUpdateValue("IsSendGrouped", value);
+            }
+        }
+
+        private bool? _isStreamingEnabled;
+        public bool IsStreamingEnabled
+        {
+            get
+            {
+                if (_isStreamingEnabled == null)
+                    _isStreamingEnabled = GetValueOrDefault("IsStreamingEnabled", false);
+
+                return _isStreamingEnabled ?? false;
+            }
+            set
+            {
+                _isStreamingEnabled = value;
+                AddOrUpdateValue("IsStreamingEnabled", value);
             }
         }
 

@@ -26,6 +26,12 @@ namespace Unigram.Services
 {
     public interface IVoIPService : IHandle<UpdateCall>
     {
+        string CurrentAudioInput { get; set; }
+        float CurrentVolumeInput { get; set; }
+
+        string CurrentAudioOutput { get; set; }
+        float CurrentVolumeOutput { get; set; }
+
         Call ActiveCall { get; }
 
         void Show();
@@ -56,6 +62,74 @@ namespace Unigram.Services
             _mediaPlayer.AudioCategory = MediaPlayerAudioCategory.Communications;
 
             aggregator.Subscribe(this);
+        }
+
+        public string CurrentAudioInput
+        {
+            get
+            {
+                return _controller?.CurrentAudioInput ?? SettingsService.Current.VoIP.InputDevice;
+            }
+            set
+            {
+                SettingsService.Current.VoIP.InputDevice = value;
+
+                if (_controller != null)
+                {
+                    _controller.CurrentAudioInput = value;
+                }
+            }
+        }
+
+        public float CurrentVolumeInput
+        {
+            get
+            {
+                return SettingsService.Current.VoIP.InputVolume;
+            }
+            set
+            {
+                SettingsService.Current.VoIP.InputVolume = value;
+
+                if (_controller != null)
+                {
+                    _controller.SetInputVolume(value);
+                }
+            }
+        }
+
+        public string CurrentAudioOutput
+        {
+            get
+            {
+                return _controller?.CurrentAudioOutput ?? SettingsService.Current.VoIP.OutputDevice;
+            }
+            set
+            {
+                SettingsService.Current.VoIP.OutputDevice = value;
+
+                if (_controller != null)
+                {
+                    _controller.CurrentAudioOutput = value;
+                }
+            }
+        }
+
+        public float CurrentVolumeOutput
+        {
+            get
+            {
+                return SettingsService.Current.VoIP.OutputVolume;
+            }
+            set
+            {
+                SettingsService.Current.VoIP.OutputVolume = value;
+
+                if (_controller != null)
+                {
+                    _controller.SetOutputVolume(value);
+                }
+            }
         }
 
         public async void Handle(UpdateCall update)
@@ -96,8 +170,27 @@ namespace Unigram.Services
                     _controller = null;
                 }
 
+                var config = new VoIPConfig
+                {
+                    initTimeout = call_packet_timeout_ms / 1000.0,
+                    recvTimeout = call_connect_timeout_ms / 1000.0,
+                    dataSaving = base.Settings.UseLessData,
+                    enableAEC = true,
+                    enableNS = true,
+                    enableAGC = true,
+
+                    enableVolumeControl = true,
+
+                    logFilePath = logFile,
+                    statsDumpFilePath = statsDumpFile
+                };
+
                 _controller = new VoIPControllerWrapper();
-                _controller.SetConfig(call_packet_timeout_ms / 1000.0, call_connect_timeout_ms / 1000.0, base.Settings.UseLessData, true, true, true, logFile, statsDumpFile);
+                _controller.SetConfig(config);
+                _controller.CurrentAudioInput = SettingsService.Current.VoIP.InputDevice;
+                _controller.CurrentAudioOutput = SettingsService.Current.VoIP.OutputDevice;
+                _controller.SetInputVolume(SettingsService.Current.VoIP.InputVolume);
+                _controller.SetOutputVolume(SettingsService.Current.VoIP.OutputVolume);
 
                 _controller.CallStateChanged += (s, args) =>
                 {
@@ -126,7 +219,7 @@ namespace Unigram.Services
 
                 for (int i = 0; i < endpoints.Length; i++)
                 {
-                    endpoints[i] = new Endpoint { id = ready.Connections[i].Id, ipv4 = ready.Connections[i].Ip, ipv6 = ready.Connections[i].Ipv6, peerTag = ready.Connections[i].PeerTag.ToArray(), port = (ushort)ready.Connections[i].Port };
+                    endpoints[i] = ready.Connections[i].ToEndpoint();
                 }
 
                 _controller.SetEncryptionKey(ready.EncryptionKey.ToArray(), update.Call.IsOutgoing);

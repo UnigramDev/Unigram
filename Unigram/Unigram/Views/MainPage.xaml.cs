@@ -1196,14 +1196,11 @@ namespace Unigram.Views
             }
             catch { }
 
-            if (rpMasterTitlebar.SelectedIndex > 0)
+            //if (rpMasterTitlebar.SelectedIndex > 0)
             {
-                if (Window.Current.Bounds.Width >= 501 && Window.Current.Bounds.Width < 820)
+                //if (Window.Current.Bounds.Width >= 501 && Window.Current.Bounds.Width < 820)
                 {
-                    while (MasterDetail.NavigationService.Frame.CanGoBack)
-                    {
-                        MasterDetail.NavigationService.Frame.GoBack();
-                    }
+                    MasterDetail.NavigationService.GoBackAt(0);
                 }
             }
         }

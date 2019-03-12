@@ -480,6 +480,7 @@
     <Compile Include="Services\SessionService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\Settings\StickersSettings.cs" />
+    <Compile Include="Services\Settings\VoIPSettings.cs" />
     <Compile Include="Services\Settings\WallpaperSettings.cs" />
     <Compile Include="Services\Stripe\Card.cs" />
     <Compile Include="Services\Stripe\CardUtils.cs" />
@@ -602,6 +603,7 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsVoIPViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWallpapersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
@@ -822,6 +824,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsStorageOptimizationPage.xaml.cs">
       <DependentUpon>SettingsStorageOptimizationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsVoIPPage.xaml.cs">
+      <DependentUpon>SettingsVoIPPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsWallpapersPage.xaml.cs">
       <DependentUpon>SettingsWallpapersPage.xaml</DependentUpon>
@@ -1483,6 +1488,11 @@
     <Content Include="Assets\Images\Reply.scale-150.png" />
     <Content Include="Assets\Images\Reply.scale-200.png" />
     <Content Include="Assets\Images\Reply.scale-400.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16_altform-lightunplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24_altform-lightunplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256_altform-lightunplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-32_altform-lightunplated.png" />
+    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-48_altform-lightunplated.png" />
     <Content Include="Assets\Mockup\sticker0.webp" />
     <Content Include="Assets\Mockup\sticker1.webp" />
     <PRIResource Include="Strings\zh-CN\Resources.resw">
@@ -2218,6 +2228,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsVoIPPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsWallpapersPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2378,6 +2392,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <NativeLibs Include="..\Libraries\ffmpeg\runtimes\$(Platform)\*.dll" />
+    <Content Include="@(NativeLibs)">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac">

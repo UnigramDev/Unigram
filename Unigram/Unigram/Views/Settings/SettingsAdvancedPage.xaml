@@ -36,6 +36,9 @@
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                             BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                             Margin="0,0,0,0">
+                    <controls:BadgeButton Content="Call Settings"
+                                          Click="VoIP_Click"/>
+
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                         Header="{CustomResource SendByEnter}"

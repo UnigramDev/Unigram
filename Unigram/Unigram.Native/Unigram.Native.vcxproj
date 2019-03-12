@@ -143,13 +143,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..Libraries\ffmpeg\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Libraries\ffmpeg\link\$(Platform)\;..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -160,13 +160,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\ffmpeg\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Libraries\ffmpeg\link\$(Platform)\;..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -177,13 +177,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\ffmpeg\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Libraries\ffmpeg\link\$(Platform)\;..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -194,13 +194,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\ffmpeg\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Libraries\ffmpeg\link\$(Platform)\;..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -211,13 +211,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\ffmpeg\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Libraries\ffmpeg\link\$(Platform)\;..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -228,13 +228,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\ffmpeg\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Libraries\ffmpeg\link\$(Platform)\;..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -266,6 +266,33 @@
     <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="Proxies\TelegramGameProxy.h" />
     <ClInclude Include="Proxies\TelegramPaymentProxy.h" />
+    <ClInclude Include="Streaming\AudioFilter.h" />
+    <ClInclude Include="Streaming\AvEffectDefinition.h" />
+    <ClInclude Include="Streaming\CompressedSampleProvider.h" />
+    <ClInclude Include="Streaming\CritSec.h" />
+    <ClInclude Include="Streaming\FFmpegInteropConfig.h" />
+    <ClInclude Include="Streaming\FFmpegInteropLogging.h" />
+    <ClInclude Include="Streaming\FFmpegInteropMSS.h" />
+    <ClInclude Include="Streaming\FFmpegReader.h" />
+    <ClInclude Include="Streaming\H264AVCSampleProvider.h" />
+    <ClInclude Include="Streaming\HEVCSampleProvider.h" />
+    <ClInclude Include="Streaming\IAvEffect.h" />
+    <ClInclude Include="Streaming\ILogProvider.h" />
+    <ClInclude Include="Streaming\LanguageTagConverter.h" />
+    <ClInclude Include="Streaming\MediaSampleProvider.h" />
+    <ClInclude Include="Streaming\MediaThumbnailData.h" />
+    <ClInclude Include="Streaming\NALPacketSampleProvider.h" />
+    <ClInclude Include="Streaming\NativeBuffer.h" />
+    <ClInclude Include="Streaming\NativeBufferFactory.h" />
+    <ClInclude Include="Streaming\StreamInfo.h" />
+    <ClInclude Include="Streaming\SubtitleProvider.h" />
+    <ClInclude Include="Streaming\SubtitleProviderBitmap.h" />
+    <ClInclude Include="Streaming\SubtitleProviderSsaAss.h" />
+    <ClInclude Include="Streaming\UncompressedAudioSampleProvider.h" />
+    <ClInclude Include="Streaming\UncompressedFrameProvider.h" />
+    <ClInclude Include="Streaming\UncompressedSampleProvider.h" />
+    <ClInclude Include="Streaming\UncompressedVideoSampleProvider.h" />
+    <ClInclude Include="Streaming\VideoFrame.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="GIF\GIFByteStreamHandler.h" />
     <ClInclude Include="GIF\GIFMediaSource.h" />
@@ -321,6 +348,18 @@
     <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="Proxies\TelegramGameProxy.cpp" />
     <ClCompile Include="Proxies\TelegramPaymentProxy.cpp" />
+    <ClCompile Include="Streaming\CompressedSampleProvider.cpp" />
+    <ClCompile Include="Streaming\FFmpegInteropLogging.cpp" />
+    <ClCompile Include="Streaming\FFmpegInteropMSS.cpp" />
+    <ClCompile Include="Streaming\FFmpegReader.cpp" />
+    <ClCompile Include="Streaming\H264AVCSampleProvider.cpp" />
+    <ClCompile Include="Streaming\HEVCSampleProvider.cpp" />
+    <ClCompile Include="Streaming\MediaSampleProvider.cpp" />
+    <ClCompile Include="Streaming\NALPacketSampleProvider.cpp" />
+    <ClCompile Include="Streaming\NativeBufferFactory.cpp" />
+    <ClCompile Include="Streaming\UncompressedAudioSampleProvider.cpp" />
+    <ClCompile Include="Streaming\UncompressedSampleProvider.cpp" />
+    <ClCompile Include="Streaming\UncompressedVideoSampleProvider.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>
@@ -337,6 +376,9 @@
     <ProjectReference Include="..\Libraries\libwebp\libwebp.vcxproj">
       <Project>{7789c8b7-887c-46b6-bd76-952c590b1853}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Telegram.Td.UWP, Version=1.0" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
