@@ -1,4 +1,5 @@
-﻿using System;
+﻿using libtgvoip;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -263,6 +264,18 @@ namespace Unigram.Common
         }
 
         #endregion
+
+        public static Endpoint ToEndpoint(this CallConnection connection)
+        {
+            return new Endpoint
+            {
+                id = connection.Id,
+                ipv4 = connection.Ip,
+                ipv6 = connection.Ipv6,
+                peerTag = connection.PeerTag.ToArray(),
+                port = (ushort)connection.Port
+            };
+        }
 
         public static bool IsInstantGallery(this WebPage webPage)
         {

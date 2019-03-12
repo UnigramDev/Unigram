@@ -241,6 +241,15 @@ namespace Unigram.Services
             }
         }
 
+        private static VoIPSettings _voip;
+        public VoIPSettings VoIP
+        {
+            get
+            {
+                return _voip = _voip ?? new VoIPSettings();
+            }
+        }
+
         private string _filesDirectory;
         public string FilesDirectory
         {
