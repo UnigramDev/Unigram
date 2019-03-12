@@ -32,7 +32,6 @@ namespace Unigram.ViewModels.Supergroups
             : base(protoService, cacheService, settingsService, aggregator)
         {
             EditTypeCommand = new RelayCommand(EditTypeExecute);
-            EditDemocracyCommand = new RelayCommand(EditDemocracyExecute);
             EditHistoryCommand = new RelayCommand(EditHistoryExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
@@ -287,52 +286,6 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             NavigationService.Navigate(typeof(SupergroupEditTypePage), chat.Id);
-        }
-
-        public RelayCommand EditDemocracyCommand { get; }
-        private async void EditDemocracyExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var group = CacheService.GetSupergroup(chat);
-            if (group == null)
-            {
-                return;
-            }
-
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = true,  Content = Strings.Resources.WhoCanAddMembersAllMembers, IsChecked = group.AnyoneCanInvite });
-            stack.Children.Add(new RadioButton { Tag = false, Content = Strings.Resources.WhoCanAddMembersAdmins, IsChecked = !group.AnyoneCanInvite });
-
-            dialog.Title = Strings.Resources.WhoCanAddMembers;
-            dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
-            {
-                var anyoneCanInvite = true;
-                foreach (RadioButton current in stack.Children)
-                {
-                    if (current.IsChecked == true)
-                    {
-                        anyoneCanInvite = (bool)current.Tag;
-                        break;
-                    }
-                }
-
-                if (anyoneCanInvite != group.AnyoneCanInvite)
-                {
-                    ProtoService.Send(new ToggleSupergroupInvites(group.Id, anyoneCanInvite));
-                }
-            }
         }
 
         public RelayCommand EditHistoryCommand { get; }

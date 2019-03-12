@@ -88,11 +88,6 @@
                                           Command="{x:Bind ViewModel.EditTypeCommand}"
                                           Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
-                    <controls:BadgeButton x:Name="ChatDemocracy"
-                                          Content="{CustomResource WhoCanAddMembers}"
-                                          Command="{x:Bind ViewModel.EditDemocracyCommand}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}"/>
-
                     <controls:BadgeButton x:Name="ChatHistory"
                                           Content="{CustomResource ChatHistory}"
                                           Command="{x:Bind ViewModel.EditHistoryCommand}"

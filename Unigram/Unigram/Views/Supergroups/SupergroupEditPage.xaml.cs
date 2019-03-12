@@ -145,9 +145,6 @@ namespace Unigram.Views.Supergroups
                 : group.IsChannel ? Strings.Resources.TypePrivate : Strings.Resources.TypePrivateGroup;
             ChatType.Visibility = Visibility.Collapsed;
 
-            ChatDemocracy.Badge = group.AnyoneCanInvite ? Strings.Resources.WhoCanAddMembersAllMembers : Strings.Resources.WhoCanAddMembersAdmins;
-            ChatDemocracy.Visibility = group.CanChangeInfo() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-
             ChatHistory.Badge = null;
             ChatHistory.Visibility = group.CanChangeInfo() && string.IsNullOrEmpty(group.Username) && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
@@ -240,9 +237,6 @@ namespace Unigram.Views.Supergroups
             ChatType.Content = Strings.Resources.GroupType;
             ChatType.Badge = Strings.Resources.TypePrivateGroup;
             ChatType.Visibility = Visibility.Collapsed;
-
-            //ChatDemocracy.Badge = group.AnyoneCanInvite ? Strings.Resources.WhoCanAddMembersAllMembers : Strings.Resources.WhoCanAddMembersAdmins;
-            //ChatDemocracy.Visibility = group.CanChangeInfo() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             ChatHistory.Badge = Strings.Resources.ChatHistoryHidden;
             ChatHistory.Visibility = Visibility.Visible;
