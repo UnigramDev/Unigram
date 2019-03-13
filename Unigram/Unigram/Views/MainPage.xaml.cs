@@ -493,7 +493,7 @@ namespace Unigram.Views
             _unloaded = true;
         }
 
-        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private async void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
             if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
             {
@@ -568,6 +568,14 @@ namespace Unigram.Views
                     case Windows.System.VirtualKey.F7:
                         SetFilter(ChatTypeFilterMode.Unmuted, "Unmuted chats");
                         break;
+                }
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Number0 && ctrl && !alt && !shift)
+            {
+                var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));
+                if (response is Chat chat)
+                {
+                    MasterDetail.NavigationService.NavigateToChat(chat);
                 }
             }
         }
