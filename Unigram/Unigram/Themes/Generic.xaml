@@ -182,10 +182,10 @@
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="IsTextScaleFactorEnabled" Value="False" />
         <Setter Property="Padding" Value="0,0,48,0" />
-        <Setter Property="IsVolumeButtonVisible" Value="False" />
-        <Setter Property="IsFullWindowButtonVisible" Value="False" />
-        <Setter Property="IsZoomButtonVisible" Value="False" />
-        <Setter Property="IsCompact" Value="True" />
+        <Setter Property="IsSkipBackwardEnabled" Value="True" />
+        <Setter Property="IsSkipForwardEnabled" Value="True" />
+        <Setter Property="IsSkipBackwardButtonVisible" Value="True" />
+        <Setter Property="IsSkipForwardButtonVisible" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="gallery:GalleryTransportControls">
@@ -678,6 +678,10 @@
                                                          Storyboard.TargetProperty="Opacity"
                                                          To="0"
                                                          Duration="0" />
+                                        <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Error">
@@ -694,6 +698,38 @@
                                 <VisualState x:Name="Disabled">
                                     <Storyboard />
                                 </VisualState>
+                            </VisualStateGroup>
+                            <!-- Media state visual states -->
+                            <!-- Audio Selection Button visibility states -->
+                            <VisualStateGroup x:Name="AudioSelectionAvailablityStates">
+                                <VisualState x:Name="AudioSelectionAvailable">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="AudioTracksSelectionButton">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Visible</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="AudioSelectionUnavailable" />
+                            </VisualStateGroup>
+                            <!-- Video volume visibility states -->
+                            <!-- Closed Captioning Selection Button visibility states -->
+                            <VisualStateGroup x:Name="CCSelectionAvailablityStates">
+                                <VisualState x:Name="CCSelectionAvailable">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CCSelectionButton">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Visible</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CCSelectionUnavailable" />
                             </VisualStateGroup>
                             <!-- Closed Captioning  visibility states -->
                             <!-- Focus states -->
@@ -714,6 +750,35 @@
                                 <VisualState x:Name="PointerFocused" />
                             </VisualStateGroup>
                             <!-- Focus states -->
+                            <VisualStateGroup x:Name="MediaTransportControlMode">
+                                <VisualState x:Name="NormalMode" />
+                                <VisualState x:Name="CompactMode">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LeftSidePlayBorder" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TimeTextGrid" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MediaTransportControls_Command_Border" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="2" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MediaTransportControls_Command_Border" Storyboard.TargetProperty="(Grid.Row)">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MediaControlsCommandBar" Storyboard.TargetProperty="Margin">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayPauseButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Collapsed</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
                             <!-- PlayPause states -->
                             <VisualStateGroup x:Name="PlayPauseStates">
                                 <VisualState x:Name="PlayState" />
@@ -722,11 +787,14 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayPauseSymbolLeft" Storyboard.TargetProperty="Symbol">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Pause" />
                                         </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayPauseSymbol" Storyboard.TargetProperty="Symbol">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Pause" />
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                             <!-- VolumeMute states -->
-                            <!--<VisualStateGroup x:Name="VolumeMuteStates">
+                            <VisualStateGroup x:Name="VolumeMuteStates">
                                 <VisualState x:Name="VolumeState" />
                                 <VisualState x:Name="MuteState">
                                     <Storyboard>
@@ -738,7 +806,18 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                            </VisualStateGroup>-->
+                            </VisualStateGroup>
+                            <!-- FullWindow states -->
+                            <VisualStateGroup x:Name="FullWindowStates">
+                                <VisualState x:Name="NonFullWindowState" />
+                                <VisualState x:Name="FullWindowState">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FullWindowSymbol" Storyboard.TargetProperty="Symbol">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="BackToWindow" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter Content="{TemplateBinding Content}"
                                           HorizontalContentAlignment="Stretch"
@@ -793,44 +872,6 @@
                                                    TextWrapping="WrapWholeWords"
                                                    Margin="12" />
                                     </Border>
-                                    <!--<Border Grid.Column="2" Grid.Row="1">
-                                        <AppBarButton x:Name='VolumeMuteButton'
-                                                Style='{StaticResource AppBarButtonStyle}'
-                                                MediaTransportControlsHelper.DropoutOrder='19'>
-                                            <AppBarButton.Flyout>
-                                                <Flyout x:Name='VolumeFlyout' FlyoutPresenterStyle="{StaticResource FlyoutStyle}">
-                                                    <StackPanel Orientation="Horizontal" >
-                                                        <AppBarButton x:Name='AudioMuteButton'
-                                                                    Style='{StaticResource AppBarButtonStyle}'
-                                                                    VerticalAlignment='Center'
-                                                                    HorizontalAlignment='Center'
-                                                                    Margin='12'>
-                                                            <AppBarButton.Icon>
-                                                                <SymbolIcon x:Name='AudioMuteSymbol' Symbol='Volume' />
-                                                            </AppBarButton.Icon>
-                                                        </AppBarButton>
-                                                        <Slider x:Name='VolumeSlider'
-                                                          Value='50'
-                                                          IsThumbToolTipEnabled='False'
-                                                          Width='{ThemeResource MTCHorizontalVolumeSliderWidth}'
-                                                          VerticalAlignment='Center'
-                                                          HorizontalAlignment='Center'
-                                                          Margin='0'/>
-                                                        <TextBlock x:Name='VolumeValue'
-                                                            Style='{StaticResource MediaTextBlockStyle}'
-                                                            Text="{Binding ElementName=VolumeSlider,Path=Value}"
-                                                            HorizontalAlignment='Center'
-                                                            VerticalAlignment='Center'
-                                                            Width='24'
-                                                            Margin='12'/>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </AppBarButton.Flyout>
-                                            <AppBarButton.Icon>
-                                                <SymbolIcon x:Name='VolumeMuteSymbol' Symbol='Volume' />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                    </Border>-->
                                     <Border x:Name="MediaTransportControls_Timeline_Border" Grid.Column="1" Grid.Row="1">
                                         <Grid x:Name="MediaTransportControls_Timeline_Grid">
                                             <Grid.ColumnDefinitions>
@@ -842,7 +883,7 @@
                                             </Grid.RowDefinitions>
                                             <Slider x:Name="ProgressSlider"
                                                     Style="{StaticResource MediaSliderStyle}"
-                                                    Margin="12,0,12,8"
+                                                    Margin="12,0"
                                                     MinWidth="80"
                                                     Height="33"
                                                     VerticalAlignment="Center"
@@ -854,11 +895,28 @@
                                                          VerticalAlignment="Top"
                                                          Margin="0,2,0,0"
                                                          Visibility="Collapsed" />
+                                            <Grid x:Name="TimeTextGrid"
+                                                  Margin="12,0"
+                                                  Grid.Row="1"
+                                                  Height="15">
+                                                <TextBlock x:Name="TimeElapsedElement"
+                                                           Style="{StaticResource MediaTextBlockStyle}"
+                                                           Margin="0"
+                                                           Text="00:00"
+                                                           HorizontalAlignment="Left" 
+                                                           VerticalAlignment="Bottom"/>
+                                                <TextBlock x:Name="TimeRemainingElement"
+                                                           Style="{StaticResource MediaTextBlockStyle}"
+                                                           Text="00:00"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Bottom" />
+                                            </Grid>
                                         </Grid>
                                     </Border>
                                     <Border x:Name="LeftSidePlayBorder"
                                             Grid.Column="0"
-                                            Grid.Row="1">
+                                            Grid.Row="1"
+                                            Visibility="Collapsed">
                                         <AppBarButton x:Name="PlayPauseButtonOnLeft"
                                                       Margin="0"
                                                       VerticalAlignment="Center"
@@ -867,6 +925,168 @@
                                                 <SymbolIcon x:Name="PlayPauseSymbolLeft" Symbol="Play" />
                                             </AppBarButton.Icon>
                                         </AppBarButton>
+                                    </Border>
+                                    <Border x:Name="MediaTransportControls_Command_Border"
+                                            Grid.Column="1"
+                                            Grid.Row="2">
+                                        <Grid x:Name="MediaControlsCommandBar" Margin="0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <AppBarButton x:Name="VolumeMuteButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="19">
+                                                <AppBarButton.Flyout>
+                                                    <Flyout x:Name="VolumeFlyout" FlyoutPresenterStyle="{StaticResource FlyoutStyle}">
+                                                        <StackPanel Orientation="Horizontal" >
+                                                            <AppBarButton x:Name="AudioMuteButton"
+                                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                                            VerticalAlignment="Center"
+                                                                            HorizontalAlignment="Center"
+                                                                            Margin="12">
+                                                                <AppBarButton.Icon>
+                                                                    <SymbolIcon x:Name="AudioMuteSymbol" Symbol="Volume" />
+                                                                </AppBarButton.Icon>
+                                                            </AppBarButton>
+                                                            <Slider x:Name="VolumeSlider"
+                                                                    Value="50"
+                                                                    IsThumbToolTipEnabled="False"
+                                                                    Width="{ThemeResource MTCHorizontalVolumeSliderWidth}"
+                                                                    VerticalAlignment="Center"
+                                                                    HorizontalAlignment="Center"
+                                                                    Margin="0"/>
+                                                            <TextBlock x:Name="VolumeValue"
+                                                                        Style="{StaticResource MediaTextBlockStyle}"
+                                                                        Text="{Binding ElementName=VolumeSlider,Path=Value}"
+                                                                        HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center"
+                                                                        Width="24"
+                                                                        Margin="12"/>
+                                                        </StackPanel>
+                                                    </Flyout>
+                                                </AppBarButton.Flyout>
+                                                <AppBarButton.Icon>
+                                                    <SymbolIcon x:Name="VolumeMuteSymbol" Symbol="Volume" />
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <!--<AppBarButton x:Name="CCSelectionButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="15"
+                                                            Visibility="Collapsed">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xED1E;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <AppBarButton x:Name="AudioTracksSelectionButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="13"
+                                                            Visibility="Collapsed">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xED1F;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <AppBarSeparator x:Name="LeftSeparator"
+                                                                Height="0"
+                                                                Width ="0"
+                                                                Margin="0,0" />
+                                            <AppBarButton x:Name="StopButton"
+                                                            Icon="Stop"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="7"
+                                                            Visibility="Collapsed"/>-->
+                                            <AppBarButton x:Name="SkipBackwardButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="5"
+                                                            Visibility="Visible"
+                                                          Grid.Column="2">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xED3C;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <!--<AppBarButton x:Name="PreviousTrackButton"
+                                                            Icon="Previous"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="3"
+                                                            Visibility="Collapsed"/>
+                                            <AppBarButton x:Name="RewindButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="1"
+                                                            Visibility="Collapsed">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xEB9E;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>-->
+                                            <AppBarButton x:Name="PlayPauseButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="23"
+                                                          Grid.Column="3">
+                                                <AppBarButton.Icon>
+                                                    <SymbolIcon x:Name="PlayPauseSymbol" Symbol="Play" />
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <!--<AppBarButton x:Name="FastForwardButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="1"
+                                                            Visibility="Collapsed">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xEB9D;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <AppBarButton x:Name="NextTrackButton"
+                                                            Icon="Next"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="3"
+                                                            Visibility="Collapsed"/>-->
+                                            <AppBarButton x:Name="SkipForwardButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="5"
+                                                            Visibility="Visible"
+                                                          Grid.Column="4">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xED3D;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <!--<AppBarButton x:Name="PlaybackRateButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="10"
+                                                            Visibility="Collapsed">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xEC57;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <AppBarSeparator x:Name="RightSeparator"
+                                                                Height="0"
+                                                                Width ="0"
+                                                                Margin="0,0" />
+                                            <AppBarButton x:Name="ZoomButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="9">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xE799;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                            <AppBarButton x:Name="CastButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="11">
+                                                <AppBarButton.Icon>
+                                                    <FontIcon Glyph="&#xEC15;"/>
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>-->
+                                            <AppBarButton x:Name="FullWindowButton"
+                                                            Style="{StaticResource AppBarButtonStyle}"
+                                                            MediaTransportControlsHelper.DropoutOrder="17"
+                                                          Grid.Column="6">
+                                                <AppBarButton.Icon>
+                                                    <SymbolIcon x:Name="FullWindowSymbol" Symbol="FullScreen" />
+                                                </AppBarButton.Icon>
+                                            </AppBarButton>
+                                        </Grid>
                                     </Border>
                                 </Grid>
                             </Grid>
@@ -895,7 +1115,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+    
     <Style TargetType="local:OrientableListView" BasedOn="{StaticResource ZoomableListViewStyle}"/>
 
     <Style TargetType="local:SelfDestructTimer">

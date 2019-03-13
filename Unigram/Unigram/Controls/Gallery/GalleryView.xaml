@@ -127,7 +127,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
+                <TextBlock x:Name="Caption"
+                           Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            TextTrimming="CharacterEllipsis"
