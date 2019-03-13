@@ -104,6 +104,15 @@ namespace Unigram.Views.Supergroups
             }
         }
 
+        #region Binding
+
+        private string ConvertHistory(bool available)
+        {
+            return available ? Strings.Resources.ChatHistoryVisible : Strings.Resources.ChatHistoryHidden;
+        }
+
+        #endregion
+
         #region Delegate
 
         public void UpdateChat(Chat chat)
@@ -164,6 +173,7 @@ namespace Unigram.Views.Supergroups
 
 
             ViewModel.About = fullInfo.Description;
+            ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable;
 
             ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
             ChatHistory.Badge = fullInfo.IsAllHistoryAvailable ? Strings.Resources.ChatHistoryVisible : Strings.Resources.ChatHistoryHidden;
@@ -228,6 +238,7 @@ namespace Unigram.Views.Supergroups
 
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = false;
+            ViewModel.IsAllHistoryAvailable = false;
 
 
             //Photo.IsEnabled = group.CanChangeInfo();
@@ -264,6 +275,25 @@ namespace Unigram.Views.Supergroups
             Admins.Badge = fullInfo.Members.Count(x => x.Status is ChatMemberStatusCreator || x.Status is ChatMemberStatusAdministrator);
             Members.Badge = fullInfo.Members.Count;
             Blacklist.Badge = 0;
+
+            if (group.CanInviteUsers())
+            {
+                if (string.IsNullOrEmpty(fullInfo.InviteLink))
+                {
+                    InviteLinkPanel.Visibility = Visibility.Collapsed;
+                    ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+                }
+                else
+                {
+                    InviteLink.Text = fullInfo.InviteLink;
+                    RevokeLink.Visibility = Visibility.Visible;
+                    InviteLinkPanel.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                InviteLinkPanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         #endregion

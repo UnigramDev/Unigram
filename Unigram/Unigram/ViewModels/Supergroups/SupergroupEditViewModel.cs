@@ -24,7 +24,9 @@ namespace Unigram.ViewModels.Supergroups
     public class SupergroupEditViewModel : TLViewModelBase,
         IDelegable<ISupergroupEditDelegate>,
         IHandle<UpdateSupergroup>,
-        IHandle<UpdateSupergroupFullInfo>
+        IHandle<UpdateSupergroupFullInfo>,
+        IHandle<UpdateBasicGroup>,
+        IHandle<UpdateBasicGroupFullInfo>
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 
@@ -51,14 +53,8 @@ namespace Unigram.ViewModels.Supergroups
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get { return _chat; }
+            set { Set(ref _chat, value); }
         }
 
         private StorageFile _photo;
@@ -67,40 +63,29 @@ namespace Unigram.ViewModels.Supergroups
         private string _title;
         public string Title
         {
-            get
-            {
-                return _title;
-            }
-            set
-            {
-                Set(ref _title, value);
-            }
+            get { return _title; }
+            set { Set(ref _title, value); }
         }
 
         private string _about;
         public string About
         {
-            get
-            {
-                return _about;
-            }
-            set
-            {
-                Set(ref _about, value);
-            }
+            get { return _about; }
+            set { Set(ref _about, value); }
         }
 
         private bool _isSignatures;
         public bool IsSignatures
         {
-            get
-            {
-                return _isSignatures;
-            }
-            set
-            {
-                Set(ref _isSignatures, value);
-            }
+            get { return _isSignatures; }
+            set { Set(ref _isSignatures, value); }
+        }
+
+        private bool _isAllHistoryAvailable;
+        public bool IsAllHistoryAvailable
+        {
+            get { return _isAllHistoryAvailable; }
+            set { Set(ref _isAllHistoryAvailable, value); }
         }
 
         #region Initialize
@@ -190,6 +175,34 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
+        public void Handle(UpdateBasicGroup update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeBasicGroup basic && basic.BasicGroupId == update.BasicGroup.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateBasicGroup(chat, update.BasicGroup));
+            }
+        }
+
+        public void Handle(UpdateBasicGroupFullInfo update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeBasicGroup basic && basic.BasicGroupId == update.BasicGroupId)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateBasicGroupFullInfo(chat, ProtoService.GetBasicGroup(update.BasicGroupId), update.BasicGroupFullInfo));
+            }
+        }
+
         #endregion
 
         public RelayCommand SendCommand { get; }
@@ -258,6 +271,29 @@ namespace Unigram.ViewModels.Supergroups
                     }
                 }
 
+                if (_isAllHistoryAvailable && chat.Type is ChatTypeBasicGroup)
+                {
+                    var response = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
+                    if (response is Chat result && result.Type is ChatTypeSupergroup super)
+                    {
+                        chat = result;
+                        cache = await ProtoService.SendAsync(new GetSupergroupFullInfo(super.SupergroupId)) as SupergroupFullInfo;
+                    }
+                    else if (response is Error)
+                    {
+                        // TODO:
+                    }
+                }
+
+                if (_isAllHistoryAvailable != cache.IsAllHistoryAvailable)
+                {
+                    var response = await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(item.Id, _isAllHistoryAvailable));
+                    if (response is Error)
+                    {
+                        // TODO:
+                    }
+                }
+
                 NavigationService.GoBack();
             }
         }
@@ -297,8 +333,8 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var group = CacheService.GetSupergroup(chat);
-            if (group == null)
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup == null)
             {
                 return;
             }
@@ -335,10 +371,7 @@ namespace Unigram.ViewModels.Supergroups
                     }
                 }
 
-                if (isAllHistoryAvailable != full.IsAllHistoryAvailable)
-                {
-                    ProtoService.Send(new ToggleSupergroupIsAllHistoryAvailable(group.Id, isAllHistoryAvailable));
-                }
+                IsAllHistoryAvailable = isAllHistoryAvailable;
             }
         }
 

@@ -20,9 +20,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
-    public class SupergroupEditViewModelBase : TLViewModelBase, IDelegable<ISupergroupDelegate>
+    public abstract class SupergroupEditViewModelBase : TLViewModelBase,
+        IDelegable<ISupergroupEditDelegate>,
+        IHandle<UpdateSupergroup>,
+        IHandle<UpdateSupergroupFullInfo>,
+        IHandle<UpdateBasicGroup>,
+        IHandle<UpdateBasicGroupFullInfo>
     {
-        public ISupergroupDelegate Delegate { get; set; }
+        public ISupergroupEditDelegate Delegate { get; set; }
 
         public SupergroupEditViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -136,6 +141,24 @@ namespace Unigram.ViewModels.Supergroups
                     LoadUsername(chat.Id);
                 }
             }
+            else if (chat.Type is ChatTypeBasicGroup basic)
+            {
+                var item = ProtoService.GetBasicGroup(basic.BasicGroupId);
+                var cache = ProtoService.GetBasicGroupFull(basic.BasicGroupId);
+
+                Delegate?.UpdateBasicGroup(chat, item);
+
+                if (cache == null)
+                {
+                    ProtoService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
+                }
+                else
+                {
+                    Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
+                }
+
+                LoadUsername(chat.Id);
+            }
 
             return Task.CompletedTask;
         }
@@ -171,6 +194,34 @@ namespace Unigram.ViewModels.Supergroups
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.SupergroupId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateSupergroupFullInfo(chat, ProtoService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
+            }
+        }
+
+        public void Handle(UpdateBasicGroup update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeBasicGroup basic && basic.BasicGroupId == update.BasicGroup.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateBasicGroup(chat, update.BasicGroup));
+            }
+        }
+
+        public void Handle(UpdateBasicGroupFullInfo update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeBasicGroup basic && basic.BasicGroupId == update.BasicGroupId)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateBasicGroupFullInfo(chat, ProtoService.GetBasicGroup(update.BasicGroupId), update.BasicGroupFullInfo));
             }
         }
 
@@ -238,45 +289,7 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         public RelayCommand SendCommand { get; }
-        protected virtual async void SendExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                var item = ProtoService.GetSupergroup(supergroup.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(supergroup.SupergroupId);
-
-                if (item == null || cache == null)
-                {
-                    return;
-                }
-
-                var username = _isPublic ? _username?.Trim() ?? string.Empty : string.Empty;
-
-                if (!string.Equals(username, item.Username))
-                {
-                    var response = await ProtoService.SendAsync(new SetSupergroupUsername(item.Id, username));
-                    if (response is Error error)
-                    {
-                        if (error.TypeEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
-                        {
-                            HasTooMuchUsernames = true;
-                            LoadAdminedPublicChannels();
-                        }
-                        // TODO:
-
-                        return;
-                    }
-                }
-
-                NavigationService.GoBack();
-            }
-        }
+        protected abstract void SendExecute();
 
         public RelayCommand<Chat> RevokeLinkCommand { get; }
         private async void RevokeLinkExecute(Chat chat)
@@ -358,12 +371,7 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             var supergroup = CacheService.GetSupergroup(chat);
-            if (supergroup == null)
-            {
-                return;
-            }
-
-            if (string.Equals(text, supergroup.Username))
+            if (supergroup != null && string.Equals(text, supergroup.Username))
             {
                 IsLoading = false;
                 IsAvailable = false;

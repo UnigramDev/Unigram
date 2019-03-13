@@ -23,17 +23,28 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            var username = _isPublic ? (_username?.Trim() ?? string.Empty) : string.Empty;
+
+            // If we're editing a basic group and the user wants to set an username to it,
+            // then we need to upgrade it first to a supergroup.
+            if (chat.Type is ChatTypeBasicGroup && !string.IsNullOrEmpty(username))
             {
-                var item = ProtoService.GetSupergroup(supergroup.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(supergroup.SupergroupId);
+                var response = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
+                if (response is Chat result && result.Type is ChatTypeSupergroup supergroup)
+                {
+                    await ProtoService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId));
+                }
+            }
+
+            if (chat.Type is ChatTypeSupergroup)
+            {
+                var item = ProtoService.GetSupergroup(chat);
+                var cache = ProtoService.GetSupergroupFull(chat);
 
                 if (item == null || cache == null)
                 {
                     return;
                 }
-
-                var username = _isPublic ? _username?.Trim() ?? string.Empty : string.Empty;
 
                 if (!string.Equals(username, item.Username))
                 {

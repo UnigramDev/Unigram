@@ -90,6 +90,7 @@
 
                     <controls:BadgeButton x:Name="ChatHistory"
                                           Content="{CustomResource ChatHistory}"
+                                          Badge="{x:Bind ConvertHistory(ViewModel.IsAllHistoryAvailable), Mode=OneWay}"
                                           Command="{x:Bind ViewModel.EditHistoryCommand}"
                                           Style="{StaticResource SubtitleBadgeButtonStyle}"/>
                 </StackPanel>

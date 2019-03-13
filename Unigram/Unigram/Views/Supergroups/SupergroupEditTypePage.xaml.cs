@@ -22,14 +22,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditTypePage : Page, ISupergroupDelegate
+    public sealed partial class SupergroupEditTypePage : Page, ISupergroupEditDelegate
     {
         public SupergroupEditTypeViewModel ViewModel => DataContext as SupergroupEditTypeViewModel;
 
         public SupergroupEditTypePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SupergroupEditTypeViewModel, ISupergroupDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SupergroupEditTypeViewModel, ISupergroupEditDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
@@ -118,6 +118,36 @@ namespace Unigram.Views.Supergroups
             ViewModel.InviteLink = fullInfo.InviteLink;
 
             if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))
+            {
+                ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+            }
+        }
+
+        public void UpdateBasicGroup(Chat chat, BasicGroup group)
+        {
+            Header.Text = Strings.Resources.GroupSettingsTitle;
+            Subheader.Text = Strings.Resources.GroupTypeHeader;
+
+            Public.Content = Strings.Resources.MegaPublic;
+            PublicInfo.Text = Strings.Resources.MegaPublicInfo;
+
+            Private.Content = Strings.Resources.MegaPrivate;
+            PrivateInfo.Text = Strings.Resources.MegaPrivateInfo;
+
+            UsernameHelp.Text = Strings.Resources.MegaUsernameHelp;
+            PrivateLinkHelp.Text = Strings.Resources.MegaPrivateLinkHelp;
+
+
+
+            ViewModel.Username = string.Empty;
+            ViewModel.IsPublic = false;
+        }
+
+        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
+        {
+            ViewModel.InviteLink = fullInfo.InviteLink;
+
+            if (string.IsNullOrEmpty(fullInfo.InviteLink))
             {
                 ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
             }
