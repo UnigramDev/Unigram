@@ -256,6 +256,14 @@ namespace Unigram.Common
             service.Navigate(typeof(MainPage));
         }
 
+        public static void NavigateToPasscode(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToPasscode();
+            }
+        }
+
         #region Payments
 
         public static void NavigateToPaymentFormStep1(this INavigationService service, MessageViewModel message, PaymentForm paymentForm)

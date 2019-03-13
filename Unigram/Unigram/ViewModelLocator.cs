@@ -99,6 +99,9 @@ namespace Unigram
                     .WithParameter("session", session)
                     .As<ISettingsService>()
                     .SingleInstance();
+                builder.RegisterType<SettingsSearchService>()
+                    .As<ISettingsSearchService>()
+                    .SingleInstance();
                 builder.RegisterType<NotificationsService>()
                     .As<INotificationsService>()
                     .SingleInstance()

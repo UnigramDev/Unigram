@@ -154,8 +154,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (0UL << 32) | (2095UL << 16);
-        public const string CurrentChangelog = "• Create polls in groups and channels – right from the attachment menu.\r\n• Apply blur and motion effects to chat backgrounds.\r\n• Instant View 2.0. View web pages instantly with improved support for more types of content.\r\n• Pinned messages in small groups and Saved Messages.";
+        public const ulong CurrentVersion = (3UL << 48) | (1UL << 32) | (2095UL << 16);
+        public const string CurrentChangelog = "• Choose input and output devices for Telegram Calls in Settings > Advanced > Call Settings.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;

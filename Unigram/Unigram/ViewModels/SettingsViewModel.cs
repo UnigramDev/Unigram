@@ -15,28 +15,38 @@ using Telegram.Td.Api;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation.Metadata;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Settings;
+using Unigram.Collections;
+using System.Text.RegularExpressions;
+using Unigram.Views.Settings.Privacy;
+using System.Diagnostics;
 
 namespace Unigram.ViewModels
 {
-   public class SettingsViewModel : TLViewModelBase,
-        IDelegable<ISettingsDelegate>,
-        IHandle<UpdateUser>,
-        IHandle<UpdateUserFullInfo>,
-        IHandle<UpdateFile>
+    public class SettingsViewModel : TLViewModelBase,
+         IDelegable<ISettingsDelegate>,
+         IHandle<UpdateUser>,
+         IHandle<UpdateUserFullInfo>,
+         IHandle<UpdateFile>
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
+        private readonly ISettingsSearchService _searchService;
 
         public ISettingsDelegate Delegate { get; set; }
 
-        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService) 
+        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, ISettingsSearchService searchService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
             _contactsService = contactsService;
+            _searchService = searchService;
 
             AskCommand = new RelayCommand(AskExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            NavigateCommand = new RelayCommand<SettingsSearchEntry>(NavigateExecute);
+
+            Results = new MvxObservableCollection<SettingsSearchEntry>();
         }
 
         private Chat _chat;
@@ -52,6 +62,8 @@ namespace Unigram.ViewModels
             get { return _hasPassportData; }
             set { Set(ref _hasPassportData, value); }
         }
+
+        public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
@@ -165,6 +177,31 @@ namespace Unigram.ViewModels
                         NavigationService.NavigateToChat(chat);
                     }
                 }
+            }
+        }
+
+        public void Search(string query)
+        {
+            Results.ReplaceWith(_searchService.Search(query));
+        }
+
+        public RelayCommand<SettingsSearchEntry> NavigateCommand { get; }
+        private void NavigateExecute(SettingsSearchEntry entry)
+        {
+            if (entry is SettingsSearchPage page && page.Page != null)
+            {
+                if (page.Page == typeof(SettingsPasscodePage))
+                {
+                    NavigationService.NavigateToPasscode();
+                }
+                else
+                {
+                    NavigationService.Navigate(page.Page);
+                }
+            }
+            else if (entry is SettingsSearchAction action)
+            {
+                action.Action();
             }
         }
     }
