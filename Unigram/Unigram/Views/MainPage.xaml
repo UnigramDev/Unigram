@@ -288,6 +288,10 @@
                         </Button>
 
                         <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
+                            <controls:GlyphButton
+                                Glyph="&#xE11A;"
+                                Click="Search_Click"
+                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
                             <Button Padding="{StaticResource EllipsisButtonPadding}"
                                     Style="{StaticResource EllipsisButton}">
                                 <FontIcon x:Name="EllipsisIcon"
@@ -796,7 +800,26 @@
                     </ListView>
                 </PivotItem>
                 <PivotItem Header="{CustomResource Settings}">
-                    <local:SettingsPage x:Name="SettingsView" MasterDetail="{x:Bind MasterDetail}"/>
+                    <Grid>
+                        <ListView ItemsSource="{x:Bind ViewModel.Settings.Results}"
+                                  SelectionMode="None"
+                                  ContainerContentChanging="Settings_ContainerContentChanging"
+                                  Grid.Row="1">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <controls:BadgeButton Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                        <local:SettingsPage x:Name="SettingsView" MasterDetail="{x:Bind MasterDetail}"/>
+                    </Grid>
                 </PivotItem>
             </Pivot>
 

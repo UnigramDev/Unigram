@@ -49,7 +49,8 @@ namespace Unigram.Services
         {
             var results = new List<SettingsSearchEntry>();
 
-            var sane = "\\b" + Regex.Escape(query).Replace(' ', '.');
+            //var sane = "\\b" + Regex.Escape(query).Replace(' ', '.');
+            var sane = "\\b" + query.Replace(' ', '.');
             if (entry.IsValid && Regex.IsMatch(entry.Text, sane, RegexOptions.IgnoreCase))
             {
                 var clone = entry.Clone();
@@ -104,9 +105,9 @@ namespace Unigram.Services
 
                         foreach (var item in list.Items)
                         {
-                            if (item.PageBlocks.Count == 1 && item.PageBlocks[0] is PageBlockParagraph paragraph)
+                            if (item.PageBlocks.Count == 1 && item.PageBlocks[0] is PageBlockParagraph paragraph && paragraph.Text is RichTextUrl url)
                             {
-                                items.Add(new SettingsSearchPage(typeof(SettingsNotificationsPage), paragraph.Text.ToPlainText()));
+                                items.Add(new SettingsSearchFaq(url.Url, url.ToPlainText()));
                             }
                         }
 
@@ -125,7 +126,7 @@ namespace Unigram.Services
                     }
                 }
 
-                _searchIndex.Add(new SettingsSearchPage(null, Strings.Resources.TelegramFaq, "\uE783", cicci.ToArray()));
+                _searchIndex.Add(new SettingsSearchPage(typeof(InstantPage), Strings.Resources.TelegramFaq, "\uE783", cicci.ToArray()));
             }
         }
 
@@ -245,13 +246,13 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildStickersAndMasks()
         {
-            return new SettingsSearchPage(typeof(SettingsStickersPage), Strings.Resources.StickersAndMasks, "\uE606", new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsStickersPage), Strings.Resources.StickersAndMasks, "\uF4AA", new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsStickersPage), Strings.Resources.SuggestStickers),
                 new SettingsSearchPage(typeof(SettingsStickersFeaturedPage), Strings.Resources.FeaturedStickers),
 
                 // Masks
-                new SettingsSearchPage(typeof(SettingsMasksPage), Strings.Resources.Masks, "\uE606", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsMasksPage), Strings.Resources.Masks, "\uF4AA", new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsMasksArchivedPage), Strings.Resources.ArchivedMasks)
                 }),
@@ -329,6 +330,24 @@ namespace Unigram.Services
         public override SettingsSearchEntry Clone()
         {
             return new SettingsSearchAction(Action, Text) { Glyph = Glyph, Parent = Parent };
+        }
+
+        public override bool IsValid => true;
+    }
+
+    public class SettingsSearchFaq : SettingsSearchEntry
+    {
+        public SettingsSearchFaq(string url, string text, string glyph = null)
+            : base(text, glyph)
+        {
+            Url = url;
+        }
+
+        public string Url { get; set; }
+
+        public override SettingsSearchEntry Clone()
+        {
+            return new SettingsSearchFaq(Url, Text, Glyph) { Parent = Parent };
         }
 
         public override bool IsValid => true;

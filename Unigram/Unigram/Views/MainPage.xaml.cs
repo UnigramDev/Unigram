@@ -442,19 +442,29 @@ namespace Unigram.Views
 
         public void OnBackRequested(HandledEventArgs args)
         {
-            if (rpMasterTitlebar.SelectedIndex > 0)
-            {
-                rpMasterTitlebar.SelectedIndex = 0;
-                args.Handled = true;
-            }
-            else if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
+            if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
             {
                 SearchField.Text = string.Empty;
                 args.Handled = true;
             }
             else if (SearchField.FocusState != FocusState.Unfocused)
             {
-                DialogsSearchListView.Focus(FocusState.Programmatic);
+                rpMasterTitlebar.Focus(FocusState.Programmatic);
+                args.Handled = true;
+            }
+            else if (SearchField.Visibility == Visibility.Visible)
+            {
+                MainHeader.Visibility = Visibility.Visible;
+                SearchField.Visibility = Visibility.Collapsed;
+
+                SearchField.Text = string.Empty;
+                Search_TextChanged(null, null);
+
+                args.Handled = true;
+            }
+            else if (rpMasterTitlebar.SelectedIndex > 0)
+            {
+                rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
         }
@@ -945,7 +955,16 @@ namespace Unigram.Views
                         await items.LoadMoreItemsAsync(4);
                     }
                 }
-                else
+                else if (rpMasterTitlebar.SelectedIndex == 1)
+                {
+                    var items = ViewModel.Contacts.Search;
+                    if (items != null && string.Equals(SearchField.Text, items.Query))
+                    {
+                        await items.LoadMoreItemsAsync(1);
+                        await items.LoadMoreItemsAsync(2);
+                    }
+                }
+                else if (rpMasterTitlebar.SelectedIndex == 3)
                 {
                     var items = ViewModel.Contacts.Search;
                     if (items != null && string.Equals(SearchField.Text, items.Query))
@@ -1191,16 +1210,10 @@ namespace Unigram.Views
             SearchField.Text = string.Empty;
             SearchField.Visibility = Visibility.Collapsed;
 
-            DialogsPanel.Visibility = Visibility.Visible;
-            MainHeader.Visibility = Visibility.Visible;
-
             try
             {
+                SearchReset();
                 rpMasterTitlebar.IsLocked = false;
-
-                ViewModel.Chats.TopChats = null;
-                ViewModel.Chats.Search = null;
-                ViewModel.Contacts.Search = null;
             }
             catch { }
 
@@ -1241,24 +1254,12 @@ namespace Unigram.Views
 
         private async void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
+            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrWhiteSpace(SearchField.Text))
             {
                 rpMasterTitlebar.IsLocked = false;
                 MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
 
-                if (rpMasterTitlebar.SelectedIndex == 0)
-                {
-                    DialogsPanel.Visibility = Visibility.Visible;
-
-                    ViewModel.Chats.TopChats = null;
-                    ViewModel.Chats.Search = null;
-                }
-                else
-                {
-                    ContactsPanel.Visibility = Visibility.Visible;
-
-                    ViewModel.Contacts.Search = null;
-                }
+                SearchReset();
             }
             else if (SearchField.FocusState != FocusState.Unfocused)
             {
@@ -1283,14 +1284,46 @@ namespace Unigram.Views
                     await items.LoadMoreItemsAsync(0);
                     await items.LoadMoreItemsAsync(1);
                 }
-                else
+                else if (rpMasterTitlebar.SelectedIndex == 1)
                 {
-                    ContactsPanel.Visibility = Visibility.Collapsed;
+                    if (string.IsNullOrWhiteSpace(SearchField.Text))
+                    {
+                        SearchReset();
+                    }
+                    else
+                    {
+                        ContactsPanel.Visibility = Visibility.Collapsed;
 
-                    var items = ViewModel.Contacts.Search = new SearchUsersCollection(ViewModel.ProtoService, SearchField.Text);
-                    await items.LoadMoreItemsAsync(0);
+                        var items = ViewModel.Contacts.Search = new SearchUsersCollection(ViewModel.ProtoService, SearchField.Text);
+                        await items.LoadMoreItemsAsync(0);
+                    }
+                }
+                else if (rpMasterTitlebar.SelectedIndex == 3)
+                {
+                    if (string.IsNullOrWhiteSpace(SearchField.Text))
+                    {
+                        SearchReset();
+                    }
+                    else
+                    {
+                        SettingsView.Visibility = Visibility.Collapsed;
+
+                        ViewModel.Settings.Search(SearchField.Text);
+                    }
                 }
             }
+        }
+
+        private void SearchReset()
+        {
+            DialogsPanel.Visibility = Visibility.Visible;
+            ContactsPanel.Visibility = Visibility.Visible;
+            SettingsView.Visibility = Visibility.Visible;
+
+            ViewModel.Chats.TopChats = null;
+            ViewModel.Chats.Search = null;
+            ViewModel.Contacts.Search = null;
+            ViewModel.Settings.Results.Clear();
         }
 
         private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -1523,6 +1556,45 @@ namespace Unigram.Views
             if (args.Phase < 2)
             {
                 args.RegisterUpdateCallback(UsersListView_ContainerContentChanging);
+            }
+
+            args.Handled = true;
+        }
+
+        private void Settings_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            string GetPath(SettingsSearchEntry item)
+            {
+                if (item.Parent != null)
+                {
+                    return GetPath(item.Parent) + " > " + item.Text;
+                }
+
+                return item.Text;
+            }
+
+            var entry = args.Item as SettingsSearchEntry;
+            var button = args.ItemContainer.ContentTemplateRoot as BadgeButton;
+            button.Command = ViewModel.Settings.NavigateCommand;
+            button.CommandParameter = entry;
+
+            button.Badge = entry.Text;
+            button.Glyph = entry.Glyph ?? string.Empty;
+
+            if (entry.Parent == null)
+            {
+                button.Content = null;
+                button.BadgeVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                button.Content = GetPath(entry.Parent);
+                button.BadgeVisibility = Visibility.Visible;
             }
 
             args.Handled = true;

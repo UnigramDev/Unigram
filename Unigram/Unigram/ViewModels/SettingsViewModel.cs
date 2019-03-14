@@ -182,7 +182,14 @@ namespace Unigram.ViewModels
 
         public void Search(string query)
         {
-            Results.ReplaceWith(_searchService.Search(query));
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                Results.Clear();
+            }
+            else
+            {
+                Results.ReplaceWith(_searchService.Search(query));
+            }
         }
 
         public RelayCommand<SettingsSearchEntry> NavigateCommand { get; }
@@ -194,10 +201,18 @@ namespace Unigram.ViewModels
                 {
                     NavigationService.NavigateToPasscode();
                 }
+                else if (page.Page == typeof(InstantPage))
+                {
+                    NavigationService.Navigate(typeof(InstantPage), Strings.Resources.TelegramFaqUrl);
+                }
                 else
                 {
                     NavigationService.Navigate(page.Page);
                 }
+            }
+            else if (entry is SettingsSearchFaq faq)
+            {
+                NavigationService.Navigate(typeof(InstantPage), faq.Url);
             }
             else if (entry is SettingsSearchAction action)
             {
