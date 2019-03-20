@@ -580,12 +580,48 @@ namespace Unigram.Views
                         break;
                 }
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Number0 && ctrl && !alt && !shift)
+            else if ((args.VirtualKey == Windows.System.VirtualKey.Number0 || args.VirtualKey == Windows.System.VirtualKey.NumberPad0) && ctrl && !alt && !shift)
             {
                 var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));
                 if (response is Chat chat)
                 {
                     MasterDetail.NavigationService.NavigateToChat(chat);
+                    MasterDetail.NavigationService.GoBackAt(0, false);
+                }
+            }
+            else if (((args.VirtualKey >= Windows.System.VirtualKey.Number1 && args.VirtualKey <= Windows.System.VirtualKey.Number5) ||
+                     (args.VirtualKey >= Windows.System.VirtualKey.NumberPad1 && args.VirtualKey <= Windows.System.VirtualKey.NumberPad5)) && ctrl && !alt && !shift)
+            {
+                var index = -1;
+                switch (args.VirtualKey)
+                {
+                    case Windows.System.VirtualKey.Number1:
+                    case Windows.System.VirtualKey.NumberPad1:
+                        index = 0;
+                        break;
+                    case Windows.System.VirtualKey.Number2:
+                    case Windows.System.VirtualKey.NumberPad2:
+                        index = 1;
+                        break;
+                    case Windows.System.VirtualKey.Number3:
+                    case Windows.System.VirtualKey.NumberPad3:
+                        index = 2;
+                        break;
+                    case Windows.System.VirtualKey.Number4:
+                    case Windows.System.VirtualKey.NumberPad4:
+                        index = 3;
+                        break;
+                    case Windows.System.VirtualKey.Number5:
+                    case Windows.System.VirtualKey.NumberPad5:
+                        index = 4;
+                        break;
+                }
+
+                var response = await ViewModel.ProtoService.SendAsync(new GetChats(long.MaxValue, 0, 5));
+                if (response is Telegram.Td.Api.Chats chats && index >= 0 && index < chats.ChatIds.Count)
+                {
+                    MasterDetail.NavigationService.NavigateToChat(chats.ChatIds[index]);
+                    MasterDetail.NavigationService.GoBackAt(0, false);
                 }
             }
         }
@@ -1742,8 +1778,8 @@ namespace Unigram.Views
         {
             if (destination == RootDestination.NewChat)
             {
-                MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
-                //MasterDetail.NavigationService.Navigate(typeof(TestStreamingPage));
+                //MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
+                MasterDetail.NavigationService.Navigate(typeof(TestStreamingPage));
             }
             else if (destination == RootDestination.NewSecretChat)
             {
