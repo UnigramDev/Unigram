@@ -301,6 +301,41 @@ namespace Unigram.Common
             return "LOC_ERR";
         }
 
+        public static string FormatDateAudio(long date)
+        {
+            try
+            {
+                var rightNow = DateTime.Now;
+                int day = rightNow.DayOfYear;
+                int year = rightNow.Year;
+
+                var online = Utils.UnixTimestampToDateTime(date);
+                int dateDay = online.DayOfYear;
+                int dateYear = online.Year;
+                if (dateDay == day && year == dateYear)
+                {
+                    return string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(online));
+                }
+                else if (dateDay + 1 == day && year == dateYear)
+                {
+                    return string.Format(Strings.Resources.YesterdayAtFormatted, BindConvert.Current.ShortTime.Format(online));
+                }
+                else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
+                {
+                    return string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
+                }
+                else
+                {
+                    return string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
+                }
+            }
+            catch (Exception e)
+            {
+                //FileLog.m27e(e);
+            }
+            return "LOC_ERR";
+        }
+
         public static string FormatAutoLock(int timeout)
         {
             if (timeout == 0)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
@@ -15,6 +16,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -67,6 +69,97 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat, message, true, false);
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
+
+            UpdateAutomation(_protoService, chat, message);
+        }
+
+        private void UpdateAutomation(IProtoService protoService, Chat chat, Message message)
+        {
+            var builder = new StringBuilder();
+            if (chat.Type is ChatTypeSecret)
+            {
+                builder.Append(Strings.Resources.AccDescrSecretChat);
+                builder.Append(". ");
+            }
+
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                var user = protoService.GetUser(chat);
+                if (user != null)
+                {
+                    if (user.Type is UserTypeBot)
+                    {
+                        builder.Append(Strings.Resources.Bot);
+                        builder.Append(". ");
+                    }
+                    if (user.Id == protoService.Options.MyId)
+                    {
+                        builder.Append(Strings.Resources.SavedMessages);
+                    }
+                    else
+                    {
+                        builder.Append(user.GetFullName());
+                    }
+
+                    builder.Append(". ");
+                }
+            }
+            else
+            {
+                if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+                {
+                    builder.Append(Strings.Resources.AccDescrChannel);
+                }
+                else
+                {
+                    builder.Append(Strings.Resources.AccDescrGroup);
+                }
+
+                builder.Append(". ");
+                builder.Append(protoService.GetTitle(chat));
+                builder.Append(". ");
+            }
+
+            if (chat.UnreadCount > 0)
+            {
+                builder.Append(Locale.Declension("NewMessages", chat.UnreadCount));
+                builder.Append(". ");
+            }
+
+            if (message == null)
+            {
+                AutomationProperties.SetName(this, builder.ToString());
+                return;
+            }
+
+            var date = Locale.FormatDateAudio(message.Date);
+            if (chat.LastMessage.IsOutgoing)
+            {
+                builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
+            }
+            else
+            {
+                builder.Append(string.Format(Strings.Resources.AccDescrReceivedDate, date));
+            }
+
+            builder.Append(". ");
+
+            if (chat != null && !message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
+            {
+                var fromUser = protoService.GetUser(message.SenderUserId);
+                if (fromUser != null)
+                {
+                    builder.Append(fromUser.GetFullName());
+                    builder.Append(". ");
+                }
+            }
+
+            if (chat.Type is ChatTypeSecret == false)
+            {
+                builder.Append(Automation.GetSummary(message));
+            }
+
+            AutomationProperties.SetName(this, builder.ToString());
         }
 
         #region Updates
@@ -78,6 +171,8 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat);
             TimeLabel.Text = UpdateTimeLabel(chat);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+
+            UpdateAutomation(_protoService, chat, chat.LastMessage);
         }
 
         public void UpdateChatReadInbox(Chat chat)
@@ -515,7 +610,7 @@ namespace Unigram.Controls.Cells
                     if (message.SendingState is MessageSendingStateFailed)
                     {
                         // TODO: 
-                        return "\uE611"; // Failed
+                        return "\uE599"; // Failed
                     }
                     else if (message.SendingState is MessageSendingStatePending)
                     {
@@ -528,7 +623,7 @@ namespace Unigram.Controls.Cells
                 if (message.SendingState is MessageSendingStateFailed)
                 {
                     // TODO: 
-                    return "\uE611"; // Failed
+                    return "\uE599"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {

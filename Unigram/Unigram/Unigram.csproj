@@ -117,6 +117,7 @@
     <Compile Include="Collections\SearchUsersCollection.cs" />
     <Compile Include="Collections\TopChatsCollection.cs" />
     <Compile Include="Common\ApiInfo.cs" />
+    <Compile Include="Common\Automation.cs" />
     <Compile Include="Common\Chats\InputChatActionManager.cs" />
     <Compile Include="Common\Chats\OutputChatActionManager.cs" />
     <Compile Include="Common\ColorsHelper.cs" />
