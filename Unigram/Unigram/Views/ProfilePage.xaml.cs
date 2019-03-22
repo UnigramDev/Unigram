@@ -329,7 +329,7 @@ namespace Unigram.Views
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
 
-            if (!group.IsChannel)
+            if (!group.IsChannel && (ViewModel.Members == null || group.MemberCount < 200 && group.MemberCount != ViewModel.Members.Count))
             {
                 ViewModel.Members = ViewModel.CreateMembers(group.Id);
             }
