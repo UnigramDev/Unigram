@@ -36,6 +36,7 @@ using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -692,7 +693,7 @@ namespace Unigram.Views
         {
             if (ViewModel.Search != null)
             {
-                args.Handled = SearchMask.OnBackRequested();
+                args.Handled = SearchMask.OnBackRequested(true);
             }
 
             if (StickersPanel.Visibility == Visibility.Visible)
@@ -1355,6 +1356,23 @@ namespace Unigram.Views
             // Polls
             flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote, new FontIcon { Glyph = Icons.Undo });
             flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.Restricted });
+
+            if (Services.SettingsService.Current.IsStreamingEnabled)
+            {
+                flyout.CreateFlyoutItem(x => true, new RelayCommand<MessageViewModel>(x =>
+                {
+                    var result = x.Get().GetFile();
+
+                    var file = result;
+                    if (file == null)
+                    {
+                        return;
+                    }
+
+                    ViewModel.ProtoService.Send(new DeleteFileW(file.Id));
+
+                }), message, "Delete from disk", new FontIcon { Glyph = Icons.Delete });
+            }
 
             //sender.ContextFlyout = menu;
 
@@ -2384,6 +2402,7 @@ namespace Unigram.Views
             UpdateChatPhoto(chat);
 
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
+            UpdateChatDefaultDisableNotification(chat, chat.DefaultDisableNotification);
 
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
             ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Resources.ReportSpam : Strings.Resources.ReportSpamAndLeave;
@@ -2411,6 +2430,7 @@ namespace Unigram.Views
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
                 ButtonSilent.IsChecked = defaultDisableNotification;
+                Automation.SetToolTip(ButtonSilent, defaultDisableNotification ? Strings.Resources.AccDescrChanSilentOn : Strings.Resources.AccDescrChanSilentOff);
 
                 TextField.PlaceholderText = chat.DefaultDisableNotification
                     ? Strings.Resources.ChannelSilentBroadcast
@@ -2608,6 +2628,8 @@ namespace Unigram.Views
 
                     ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.EditGlyph;
 
+                    Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelEdit);
+
                     ButtonsPanel.Visibility = Visibility.Collapsed;
                     btnEdit.Visibility = Visibility.Visible;
                 }
@@ -2643,6 +2665,8 @@ namespace Unigram.Views
                     {
                         ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.LoadingGlyph;
                     }
+
+                    Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelReply);
 
                     ButtonsPanel.Visibility = Visibility.Visible;
                     btnEdit.Visibility = Visibility.Collapsed;
