@@ -11,14 +11,137 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
+        <Style x:Name="DeleteButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="ButtonLayoutGrid"
+                              BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              Background="{ThemeResource TextControlButtonBackground}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0"
+                                                             Duration="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBlock x:Name="GlyphElement"
+                                       Foreground="{ThemeResource TextControlButtonForeground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontStyle="Normal"
+                                       FontSize="12"
+                                       Text="&#xE10A;"
+                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Name="QueryButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="ButtonLayoutGrid"
+                              BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              Background="{ThemeResource TextControlButtonBackground}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0"
+                                                             Duration="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBlock x:Name="GlyphElement"
+                                       Foreground="{ThemeResource TextControlButtonForeground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontStyle="Normal"
+                                       FontSize="12"
+                                       Text="&#xE11A;"
+                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="Test" TargetType="TextBox">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
             <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}" />
-            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Background" Value="{ThemeResource TextControlBackground}" />
             <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}" />
             <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}" />
-            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
             <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto" />
@@ -26,15 +149,20 @@
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
-            <Setter Property="Padding" Value="48,3,48,5" />
+            <Setter Property="Padding" Value="0,4,6,5" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
                         <Grid>
+                            <Grid.Resources>
+                            </Grid.Resources>
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Disabled">
                                         <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBorderBrushDisabled}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -52,39 +180,59 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBorderBrushPointerOver}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>-->
-                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlForegroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>-->
+                                            </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Focused">
                                         <Storyboard>
-                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundFocused}" />
-                                            </ObjectAnimationUsingKeyFrames>-->
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundFocused}" />
+                                            </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBorderBrushFocused}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlForegroundFocused}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="RequestedTheme">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Light" />
-                                            </ObjectAnimationUsingKeyFrames>-->
+                                            </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
+                                <!--<VisualStateGroup x:Name="ButtonStates">
+                                     <VisualState x:Name="ButtonVisible">
+                                     <Storyboard>
+                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton" Storyboard.TargetProperty="Visibility">
+                                     <DiscreteObjectKeyFrame KeyTime="0">
+                                     <DiscreteObjectKeyFrame.Value>
+                                     <Visibility>Visible</Visibility>
+                                     </DiscreteObjectKeyFrame.Value>
+                                     </DiscreteObjectKeyFrame>
+                                     </ObjectAnimationUsingKeyFrames>
+                                     </Storyboard>
+                                     </VisualState>
+                                     <VisualState x:Name="ButtonCollapsed" />
+                                     </VisualStateGroup>-->
                                 <VisualStateGroup x:Name="SearchStates">
                                     <VisualState x:Name="Text"/>
                                     <VisualState x:Name="Members">
                                         <VisualState.Setters>
                                             <Setter Target="FromElement.Visibility" Value="Visible"/>
                                             <Setter Target="PlaceholderTextContentPresenter.Content" Value="{CustomResource SearchMembers}"/>
-                                            <Setter Target="ContentElement.Padding" Value="6,3,6,5"/>
-                                            <Setter Target="PlaceholderTextContentPresenter.Padding" Value="6,3,6,5"/>
+                                            <Setter Target="ContentElement.Padding" Value="0,4,6,5"/>
+                                            <Setter Target="PlaceholderTextContentPresenter.Padding" Value="0,4,6,5"/>
                                         </VisualState.Setters>
                                     </VisualState>
                                     <VisualState x:Name="TextByMember">
@@ -92,42 +240,45 @@
                                             <Setter Target="FromElement.Visibility" Value="Visible"/>
                                             <Setter Target="MemberElement.Visibility" Value="Visible"/>
                                             <Setter Target="PlaceholderTextContentPresenter.Content" Value="{CustomResource Search}"/>
-                                            <Setter Target="ContentElement.Padding" Value="6,3,6,5"/>
-                                            <Setter Target="PlaceholderTextContentPresenter.Padding" Value="6,3,6,5"/>
+                                            <Setter Target="ContentElement.Padding" Value="4,4,6,5"/>
+                                            <Setter Target="PlaceholderTextContentPresenter.Padding" Value="4,4,6,5"/>
                                         </VisualState.Setters>
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="34" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="34" />
                             </Grid.ColumnDefinitions>
                             <Border x:Name="BorderElement"
                                     Grid.Row="1"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    Grid.ColumnSpan="4"
+                                    Grid.ColumnSpan="5"
                                     Grid.RowSpan="1" />
                             <ContentControl x:Name="FromElement"
+                                            Grid.Column="1"
                                             Visibility="Collapsed"
                                             Content="{CustomResource SearchFrom}"
                                             Margin="{TemplateBinding BorderThickness}"
                                             VerticalAlignment="Center"
-                                            Padding="48,3,0,5"/>
+                                            Padding="0,4,0,5"/>
                             <ContentControl x:Name="MemberElement"
-                                            Grid.Column="1"
+                                            Grid.Column="2"
                                             Visibility="Collapsed"
                                             Content="{TemplateBinding Header}"
                                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                                             Margin="{TemplateBinding BorderThickness}"
                                             VerticalAlignment="Center"
-                                            Padding="6,3,0,5"/>
+                                            Padding="0,4,0,5"/>
+
                             <ScrollViewer x:Name="ContentElement"
-                                          Grid.Column="2"
-                                          VerticalAlignment="Center"
+                                          Grid.Row="1"
+                                          Grid.Column="3"
                                           HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
                                           HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                           VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
@@ -141,8 +292,8 @@
                                           AutomationProperties.AccessibilityView="Raw"
                                           ZoomMode="Disabled" />
                             <ContentControl x:Name="PlaceholderTextContentPresenter"
-                                            Grid.Column="2"
-                                            VerticalAlignment="Center"
+                                            Grid.Row="1"
+                                            Grid.Column="3"
                                             Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                             Margin="{TemplateBinding BorderThickness}"
                                             Padding="{TemplateBinding Padding}"
@@ -164,35 +315,44 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <local:ChatSearchTextBox
-                x:Name="Field"
-                Text="{x:Bind ViewModel.Query, Mode=OneWay}"
-                InputScope="Search"
-                SelectionChanged="OnSelectionChanged"
-                Style="{StaticResource Test}"
-                Grid.ColumnSpan="3"/>
+            <Grid Margin="12,0,12,8" VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <local:ChatSearchTextBox
+                    x:Name="Field"
+                    Text="{x:Bind ViewModel.Query, Mode=OneWay}"
+                    InputScope="Search"
+                    SelectionChanged="OnSelectionChanged"
+                    Style="{StaticResource Test}"
+                    Grid.ColumnSpan="3"/>
 
-            <controls:GlyphButton
-                Glyph="&#xE10A;"
-                Click="Delete_Click"
-                IsTabStop="False"
-                Grid.Column="2"
-                FontSize="16"
-                Height="{ThemeResource AppBarThemeCompactHeight}"
-                AutomationProperties.AccessibilityView="Raw"
-                MinWidth="48"
-                VerticalAlignment="Stretch" />
-
-            <controls:GlyphButton
-                Glyph="&#xE11A;"
-                Click="Search_Click"
-                AllowFocusOnInteraction="False"
-                Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                <Button x:Name="ClearButton"
+                        Click="Delete_Click"
+                        Grid.Row="1"
+                        Style="{StaticResource DeleteButtonStyle}"
+                        BorderThickness="{ThemeResource TextControlBorderThemeThickness}"
+                        Margin="{ThemeResource HelperButtonThemePadding}"
+                        IsTabStop="False"
+                        Grid.Column="4"
+                        Visibility="Visible"
+                        MinWidth="34"
+                        AutomationProperties.AccessibilityView="Raw"
+                        VerticalAlignment="Stretch" />
+                <Button x:Name="QueryButton"
+                        Click="Search_Click"
+                        Grid.Row="1"
+                        Style="{StaticResource QueryButtonStyle}"
+                        BorderThickness="{ThemeResource TextControlBorderThemeThickness}"
+                        Margin="{ThemeResource HelperButtonThemePadding}"
+                        IsTabStop="False"
+                        Visibility="Visible"
+                        MinWidth="34"
+                        AutomationProperties.AccessibilityView="Raw"
+                        VerticalAlignment="Stretch" />
+            </Grid>
         </Grid>
 
         <ListView x:Name="ListAutocomplete"

@@ -136,7 +136,7 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(Field.Text))
             {
-                OnBackRequested();
+                OnBackRequested(false);
                 e.Handled = true;
             }
         }
@@ -148,7 +148,7 @@ namespace Unigram.Controls.Chats
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            OnBackRequested();
+            OnBackRequested(true);
         }
 
         private void Filter_Click(object sender, RoutedEventArgs e)
@@ -188,7 +188,7 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        public bool OnBackRequested()
+        public bool OnBackRequested(bool allowDispose)
         {
             if (!string.IsNullOrEmpty(Field.Text))
             {
@@ -202,7 +202,7 @@ namespace Unigram.Controls.Chats
             {
                 SetState(ChatSearchState.Text);
             }
-            else if (ViewModel?.Dialog?.Search != null)
+            else if (ViewModel?.Dialog?.Search != null && allowDispose)
             {
                 ViewModel.Dialog.DisposeSearch();
             }
