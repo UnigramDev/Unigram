@@ -25,88 +25,97 @@ namespace Unigram.Common
 
             if (message.Content is MessagePhoto photo)
             {
-                builder.Append($"{Strings.Resources.AttachPhoto}. ");
+                builder.Append($"{Strings.Resources.AttachPhoto}");
 
                 if (photo.Caption != null && !string.IsNullOrEmpty(photo.Caption.Text))
                 {
-                    builder.AppendLine($"{photo.Caption.Text}. ");
+                    builder.Append($". {photo.Caption.Text}");
                 }
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {
-                builder.Append($"{Strings.Resources.AttachAudio}. ");
+                builder.Append($"{Strings.Resources.AttachAudio}");
 
                 if (voiceNote.Caption != null && !string.IsNullOrEmpty(voiceNote.Caption.Text))
                 {
-                    builder.AppendLine($"{voiceNote.Caption.Text}. ");
+                    builder.Append($". {voiceNote.Caption.Text}");
                 }
             }
             else if (message.Content is MessageVideo video)
             {
-                builder.Append($"{Strings.Resources.AttachVideo}. ");
+                builder.Append($"{Strings.Resources.AttachVideo}");
 
                 if (video.Caption != null && !string.IsNullOrEmpty(video.Caption.Text))
                 {
-                    builder.AppendLine($"{video.Caption.Text}. ");
+                    builder.Append($". {video.Caption.Text}");
                 }
             }
             else if (message.Content is MessageVideoNote)
             {
-                builder.Append($"{Strings.Resources.AttachRound}. ");
+                builder.Append($"{Strings.Resources.AttachRound}");
             }
             else if (message.Content is MessageAnimation animation)
             {
-                builder.Append($"{Strings.Resources.AttachGif}. ");
+                builder.Append($". {Strings.Resources.AttachGif}");
 
                 if (animation.Caption != null && !string.IsNullOrEmpty(animation.Caption.Text))
                 {
-                    builder.AppendLine($"{animation.Caption.Text}. ");
+                    builder.Append($". {animation.Caption.Text}");
                 }
             }
             else if (message.Content is MessageSticker sticker)
             {
                 if (!string.IsNullOrEmpty(sticker.Sticker.Emoji))
                 {
-                    builder.AppendLine($"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}. ");
+                    builder.Append($"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}");
                 }
                 else
                 {
-                    builder.AppendLine($"{Strings.Resources.AttachSticker}. ");
+                    builder.Append($"{Strings.Resources.AttachSticker}");
                 }
             }
             else if (message.Content is MessageAudio audio)
             {
-                builder.Append($"{Strings.Resources.AttachMusic}. ");
+                builder.Append($"{Strings.Resources.AttachMusic}");
 
                 if (audio.Caption != null && !string.IsNullOrEmpty(audio.Caption.Text))
                 {
-                    builder.AppendLine($"{audio.Caption.Text}. ");
+                    builder.Append($". {audio.Caption.Text}");
                 }
             }
             else if (message.Content is MessageLocation location)
             {
-                builder.AppendLine($"{Strings.Resources.AttachLocation}. ");
+                builder.Append($"{Strings.Resources.AttachLocation}");
             }
             else if (message.Content is MessageVenue venue)
             {
-                builder.AppendLine($"{Strings.Resources.AttachLocation}. ");
-                builder.AppendLine(venue.Venue.Title);
-                builder.AppendLine(venue.Venue.Address);
+                builder.Append($"{Strings.Resources.AttachLocation}");
+                builder.Append(venue.Venue.Title);
+                builder.Append(venue.Venue.Address);
             }
             else if (message.Content is MessageContact contact)
             {
-                builder.AppendLine($"{Strings.Resources.AttachContact}. ");
-                builder.AppendLine(contact.Contact.GetFullName());
-                builder.AppendLine(PhoneNumber.Format(contact.Contact.PhoneNumber));
+                builder.Append($"{Strings.Resources.AttachContact}");
+                builder.Append(contact.Contact.GetFullName());
+                builder.Append(PhoneNumber.Format(contact.Contact.PhoneNumber));
             }
             else if (message.Content is MessagePoll poll)
             {
-                builder.AppendLine($"{Strings.Resources.Poll}. ");
-                builder.AppendLine($"{poll.Poll.Question}");
+                builder.Append($"{Strings.Resources.Poll}. ");
+                builder.Append($"{poll.Poll.Question}");
             }
             else if (message.Content is MessageText text)
             {
                 builder.Append(text.Text.Text);
+            }
+
+            if (builder.Length > 0 && builder[builder.Length - 1] != '.')
+            {
+                builder.Append(". ");
+            }
+            else
+            {
+                builder.Append(" ");
             }
 
             return builder.ToString();

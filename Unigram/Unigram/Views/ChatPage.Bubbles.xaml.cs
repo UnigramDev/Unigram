@@ -621,11 +621,15 @@ namespace Unigram.Views
                     {
                         button.Glyph = "\uE72A";
                         action.Visibility = Visibility.Visible;
+
+                        Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
                     }
                     else if (message.IsShareable())
                     {
                         button.Glyph = "\uE72D";
                         action.Visibility = Visibility.Visible;
+
+                        Automation.SetToolTip(button, Strings.Resources.ShareFile);
                     }
                     else
                     {

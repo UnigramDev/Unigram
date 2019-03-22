@@ -15,6 +15,7 @@ using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
@@ -62,6 +63,67 @@ namespace Unigram.Controls.Messages
 
             Footer.UpdateMessage(message);
             Markup.Update(message, message.ReplyMarkup);
+        }
+
+        public void UpdateAutomation(MessageViewModel message)
+        {
+            var chat = message.GetChat();
+
+            var sticker = message.Content is MessageSticker;
+            var light = sticker || message.Content is MessageVideoNote;
+            var shown = false;
+
+            var title = string.Empty;
+
+            if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
+            {
+                var sender = message.GetSenderUser();
+                title = sender?.GetFullName();
+            }
+            else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup)
+            {
+                title = message.ProtoService.GetTitle(chat);
+            }
+            else if (!light && message.IsFirst && message.IsSaved())
+            {
+                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                {
+                    title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                }
+                else if (message.ForwardInfo is MessageForwardedPost post)
+                {
+                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
+                }
+            }
+
+            var builder = new StringBuilder();
+            if (title?.Length > 0)
+            {
+                builder.AppendLine($"{title}. ");
+            }
+
+            builder.Append(Automation.GetSummary(message.Get()));
+
+            var date = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            if (message.IsOutgoing)
+            {
+                builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
+            }
+            else
+            {
+                builder.Append(string.Format(Strings.Resources.AccDescrReceivedDate, date));
+            }
+
+            builder.Append(". ");
+
+            if (Parent is Grid parent)
+            {
+                AutomationProperties.SetName(parent, builder.ToString());
+            }
+            else
+            {
+                AutomationProperties.SetName(this, builder.ToString());
+            }
         }
 
         public void UpdateAttach(MessageViewModel message, bool wide = false)
@@ -450,7 +512,7 @@ namespace Unigram.Controls.Messages
             {
                 Media.Margin = new Thickness(-10, -4, -10, -6);
                 Placeholder.Visibility = Visibility.Collapsed;
-                FooterToLightMedia(message.IsOutgoing);
+                FooterToLightMedia(message.IsOutgoing && !message.IsChannelPost);
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
             }
@@ -615,6 +677,8 @@ namespace Unigram.Controls.Messages
                     Media.Content = null;
                 }
             }
+
+            UpdateAutomation(message);
         }
 
         public void UpdateFile(MessageViewModel message, File file)
