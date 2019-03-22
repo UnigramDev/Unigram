@@ -800,7 +800,11 @@ namespace Unigram.Controls.Messages
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
             }
 
-            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
+            if (AdjustEmojis(span, text))
+            {
+                adjust = true;
+            }
+            else if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
@@ -819,6 +823,32 @@ namespace Unigram.Controls.Messages
             }
 
             return true;
+        }
+
+        private bool AdjustEmojis(Span span, string text)
+        {
+            if (Emoji.TryCountEmojis(text, out int count, 3))
+            {
+                switch (count)
+                {
+                    case 1:
+                        Message.TextAlignment = TextAlignment.Center;
+                        span.FontSize = 32;
+                        return true;
+                    case 2:
+                        Message.TextAlignment = TextAlignment.Center;
+                        span.FontSize = 28;
+                        return true;
+                    case 3:
+                        Message.TextAlignment = TextAlignment.Center;
+                        span.FontSize = 24;
+                        return true;
+                }
+            }
+
+            Message.TextAlignment = TextAlignment.DetectFromContent;
+            span.FontSize = (double)App.Current.Resources["MessageFontSize"];
+            return false;
         }
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, string data)

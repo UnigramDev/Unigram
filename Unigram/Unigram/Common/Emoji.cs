@@ -76,6 +76,41 @@ namespace Unigram.Common
             return result;
         }
 
+        public static bool TryCountEmojis(string text, out int count, int max = int.MaxValue)
+        {
+            count = 0;
+            text = text.Trim();
+
+            if (text.Contains(" "))
+            {
+                return false;
+            }
+
+            var result = false;
+
+            foreach (var last in EnumerateByComposedCharacterSequence(text))
+            {
+                if (_rawEmojis.Contains(last))
+                {
+                    count++;
+                    result = count <= max;
+
+                    if (count > max)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    count = 0;
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         public static void Verify()
         {
             foreach (var emoji in _rawEmojis)
@@ -138,6 +173,19 @@ namespace Unigram.Common
                 {
                     last += text[i];
                     joiner = true;
+                }
+                else if (text[i] == 0xFE0F) // variation selector
+                {
+                    last += text[i];
+
+                    if (i + 1 < text.Length && text[i + 1] == 0x200D)
+                    {
+                        joiner = true;
+                    }
+                }
+                else if (text[i] == 0x20E3)
+                {
+                    last += text[i];
                 }
                 else
                 {
