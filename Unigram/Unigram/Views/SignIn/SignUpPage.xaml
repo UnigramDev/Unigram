@@ -16,6 +16,7 @@
         <controls:ButtonPageHeader
             x:Name="Header"
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Next}"
             Text="{CustomResource YourName}"
             Glyph="&#xE10B;"/>
 
