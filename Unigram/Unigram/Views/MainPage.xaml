@@ -291,9 +291,13 @@
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.Name="{CustomResource Search}"
+                                ToolTipService.ToolTip="{CustomResource Search}"/>
                             <Button Padding="{StaticResource EllipsisButtonPadding}"
-                                    Style="{StaticResource EllipsisButton}">
+                                    Style="{StaticResource EllipsisButton}"
+                                    AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                                    ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}">
                                 <FontIcon x:Name="EllipsisIcon"
                                           VerticalAlignment="Center"
                                           FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -320,11 +324,15 @@
                             <controls:GlyphButton
                                 Glyph="&#xE109;"
                                 Click="NewContact_Click"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.Name="{CustomResource CreateNewContact}"
+                                ToolTipService.ToolTip="{CustomResource CreateNewContact}"/>
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.Name="{CustomResource Search}"
+                                ToolTipService.ToolTip="{CustomResource Search}"/>
                         </StackPanel>
                         <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
                             <controls:GlyphButton
@@ -333,18 +341,24 @@
                                 Click="Proxy_Click"
                                 Visibility="Collapsed"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.Name="{CustomResource ProxySettings}"
+                                ToolTipService.ToolTip="{CustomResource ProxySettings}"/>
                             <controls:GlyphToggleButton
                                 x:Name="Lock"
                                 Visibility="Collapsed"
                                 UncheckedGlyph="&#xE1F7;"
                                 CheckedGlyph="&#xE1F6;"
                                 Click="Lock_Click"
-                                Style="{StaticResource HeaderGlyphToggleButtonStyle}"/>
+                                Style="{StaticResource HeaderGlyphToggleButtonStyle}"
+                                AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"/>
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.Name="{CustomResource Search}"
+                                ToolTipService.ToolTip="{CustomResource Search}"/>
                         </StackPanel>
                     </Grid>
 

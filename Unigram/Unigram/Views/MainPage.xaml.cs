@@ -1414,6 +1414,12 @@ namespace Unigram.Views
                 {
                     App.ShowPasscode();
                 }
+
+                Automation.SetToolTip(Lock, Strings.Resources.AccDescrPasscodeUnlock);
+            }
+            else
+            {
+                Automation.SetToolTip(Lock, Strings.Resources.AccDescrPasscodeLock);
             }
         }
 
@@ -1778,8 +1784,8 @@ namespace Unigram.Views
         {
             if (destination == RootDestination.NewChat)
             {
-                //MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
-                MasterDetail.NavigationService.Navigate(typeof(TestStreamingPage));
+                MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
+                //MasterDetail.NavigationService.Navigate(typeof(TestStreamingPage));
             }
             else if (destination == RootDestination.NewSecretChat)
             {
