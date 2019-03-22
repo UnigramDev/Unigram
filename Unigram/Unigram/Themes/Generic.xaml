@@ -21,7 +21,12 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid x:Name="TogglePaneTopPadding" Padding="{TemplateBinding Padding}" />
-                            <local:GlyphButton x:Name="TogglePaneButton" Grid.Row="1" Height="{ThemeResource AppBarThemeCompactHeight}" AutomationProperties.LandmarkType="Navigation"/>
+                            <local:GlyphButton x:Name="TogglePaneButton"
+                                               Grid.Row="1"
+                                               Height="{ThemeResource AppBarThemeCompactHeight}"
+                                               AutomationProperties.LandmarkType="Navigation"
+                                               AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
+                                               ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"/>
                         </Grid>
                         <SplitView x:Name="RootSplitView" PaneBackground="Transparent" OpenPaneLength="240" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <SplitView.Pane>
@@ -181,7 +186,7 @@
         <Setter Property="FlowDirection" Value="LeftToRight" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="IsTextScaleFactorEnabled" Value="False" />
-        <Setter Property="Padding" Value="0,0,48,0" />
+        <Setter Property="Padding" Value="0,0,0,0" />
         <Setter Property="IsSkipBackwardEnabled" Value="True" />
         <Setter Property="IsSkipForwardEnabled" Value="True" />
         <Setter Property="IsSkipBackwardButtonVisible" Value="True" />
@@ -1315,7 +1320,14 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-                            <local:GlyphButton Glyph="{TemplateBinding Glyph}" Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}" Visibility="{TemplateBinding CommandVisibility}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
+                            <local:GlyphButton Glyph="{TemplateBinding Glyph}"
+                                               Command="{TemplateBinding Command}"
+                                               CommandParameter="{TemplateBinding CommandParameter}"
+                                               Visibility="{TemplateBinding CommandVisibility}"
+                                               Style="{StaticResource HeaderGlyphButtonStyle}"
+                                               AutomationProperties.Name="{TemplateBinding CommandToolTip}"
+                                               ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
+                                               Grid.Column="1"/>
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
