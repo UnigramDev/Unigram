@@ -27,16 +27,14 @@ namespace Unigram.Controls
         public void UpdatePollOption(Poll poll, PollOption option)
         {
             var results = poll.IsClosed || poll.Options.Any(x => x.IsChosen);
-            var percent = ((double)option.VoterCount / (double)poll.TotalVoterCount) * 100;
-            percent = double.IsNaN(percent) ? 0 : percent;
 
             this.IsEnabled = !results;
             this.Tag = option;
 
-            Ellipse.Opacity = results ? 0 : 1;
+            Ellipse.Opacity = results || option.IsBeingChosen ? 0 : 1;
 
             Percentage.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
-            Percentage.Text = ((int)percent).ToString() + "%";
+            Percentage.Text = $"{option.VotePercentage}%";
 
             ToolTipService.SetToolTip(Percentage, Locale.Declension("Vote", option.VoterCount));
 
@@ -44,9 +42,10 @@ namespace Unigram.Controls
 
             Zero.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
 
-            //Votes.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
             Votes.Maximum = 100;
-            Votes.Value = results ? percent : 0;
+            Votes.Value = results ? option.VotePercentage : 0;
+            
+            Loading.IsActive = option.IsBeingChosen;
         }
     }
 }
