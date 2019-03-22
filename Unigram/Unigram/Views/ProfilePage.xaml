@@ -168,18 +168,14 @@
                     </Button>
                 </Grid>
 
-                <controls:SearchTextBox x:Name="SearchField"
-                                        Padding="12,4,6,4"
-                                        Background="{x:Null}"
-                                        BorderBrush="{x:Null}"
-                                        Style="{StaticResource SearchTextBoxStyle}"
-                                        PlaceholderText="{CustomResource Search}"
-                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                        Clean="Search_LostFocus"
-                                        LostFocus="Search_LostFocus"
-                                        TextChanged="Search_TextChanged"
-                                        Visibility="Collapsed"
-                                        Canvas.ZIndex="1"/>
+                <TextBox x:Name="SearchField"
+                         Style="{StaticResource QueryTextBoxStyle}"
+                         PlaceholderText="{CustomResource Search}"
+                         PreventKeyboardDisplayOnProgrammaticFocus="True"
+                         LostFocus="Search_LostFocus"
+                         TextChanged="Search_TextChanged"
+                         Visibility="Collapsed"
+                         Canvas.ZIndex="1"/>
             </Grid>
         </controls:ContentPageHeader>
 
@@ -223,7 +219,13 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     Click="Photo_Click"
+                                                     AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                                     Height="64"
+                                                     Width="64"
+                                                     Margin="12,6"
+                                                     Grid.RowSpan="2"/>
 
                             <Grid x:Name="LabelTitle" VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
                                 <Grid.ColumnDefinitions>
@@ -442,8 +444,8 @@
 
                         <StackPanel x:Name="MiscPanel" Margin="0,24,0,0">
                             <!--<controls:BadgeButton Content="{CustomResource SharedMedia}"
-                                                  Command="{x:Bind ViewModel.MediaCommand}"
-                                                  Badge="{x:Bind ViewModel.SharedMedia, Mode=OneWay}"/>-->
+                                 Command="{x:Bind ViewModel.MediaCommand}"
+                                 Badge="{x:Bind ViewModel.SharedMedia, Mode=OneWay}"/>-->
 
                             <controls:BadgeButton x:Name="SecretLifetime"
                                                   Visibility="Collapsed"

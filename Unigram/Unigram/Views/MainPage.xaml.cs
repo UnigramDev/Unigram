@@ -456,6 +456,7 @@ namespace Unigram.Views
             {
                 MainHeader.Visibility = Visibility.Visible;
                 SearchField.Visibility = Visibility.Collapsed;
+                UpdatePaneToggleButtonVisibility();
 
                 SearchField.Text = string.Empty;
                 Search_TextChanged(null, null);
@@ -545,6 +546,7 @@ namespace Unigram.Views
                 Header.Visibility = Visibility.Visible;
                 MainHeader.Visibility = Visibility.Collapsed;
                 SearchField.Visibility = Visibility.Visible;
+                Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
 
                 SearchField.Focus(FocusState.Keyboard);
                 args.Handled = true;
@@ -833,6 +835,18 @@ namespace Unigram.Views
             }
 
             ChatsList.UpdateViewState(MasterDetail.CurrentState);
+        }
+
+        private void UpdatePaneToggleButtonVisibility()
+        {
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            {
+                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
+            }
+            else
+            {
+                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
+            }
         }
 
         private void UpdateListViewsSelectedItem(long chatId)
@@ -1245,6 +1259,7 @@ namespace Unigram.Views
 
             SearchField.Text = string.Empty;
             SearchField.Visibility = Visibility.Collapsed;
+            UpdatePaneToggleButtonVisibility();
 
             try
             {
@@ -1268,6 +1283,7 @@ namespace Unigram.Views
         {
             MainHeader.Visibility = Visibility.Collapsed;
             SearchField.Visibility = Visibility.Visible;
+            Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
 
             SearchField.Focus(FocusState.Keyboard);
         }
@@ -1283,6 +1299,7 @@ namespace Unigram.Views
             {
                 MainHeader.Visibility = Visibility.Visible;
                 SearchField.Visibility = Visibility.Collapsed;
+                UpdatePaneToggleButtonVisibility();
             }
 
             Search_TextChanged(null, null);
