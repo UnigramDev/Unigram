@@ -223,6 +223,7 @@ namespace Unigram.Views.Host
             PhoneLabel.Text = PhoneNumber.Format(user.PhoneNumber);
 #endif
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
+            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);
         }
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
@@ -289,6 +290,8 @@ namespace Unigram.Views.Host
             {
                 var title = content.Children[2] as TextBlock;
                 title.Text = user.GetFullName();
+
+                Automation.SetToolTip(content, user.GetFullName());
             }
             else if (args.Phase == 2)
             {
@@ -310,6 +313,8 @@ namespace Unigram.Views.Host
 
             InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
+
+            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)

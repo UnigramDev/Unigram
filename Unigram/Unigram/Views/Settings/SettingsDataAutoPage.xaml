@@ -36,6 +36,7 @@
         <controls:ButtonPageHeader
             Text="{x:Bind ViewModel.Title, Mode=OneWay}"
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Done}"
             Glyph="&#xE10B;"/>
 
         <ScrollViewer x:Name="ScrollingHost"
