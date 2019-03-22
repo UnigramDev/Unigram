@@ -123,6 +123,7 @@
                     <controls:GlyphButton
                         x:Name="Call"
                         Glyph="&#xE13A;"
+                        AutomationProperties.Name="{CustomResource Call}"
                         ToolTipService.ToolTip="{CustomResource Call}"
                         Visibility="Collapsed"
                         Command="{x:Bind ViewModel.CallCommand}"
@@ -132,6 +133,7 @@
                     <controls:GlyphButton
                         x:Name="GroupInvite"
                         Glyph="&#xE8FA;"
+                        AutomationProperties.Name="{CustomResource AddMember}"
                         ToolTipService.ToolTip="{CustomResource AddMember}"
                         Visibility="Collapsed"
                         Command="{x:Bind ViewModel.InviteCommand}"
@@ -151,7 +153,12 @@
                          Command="{x:Bind ViewModel.SendMessageCommand}"
                          Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                          Grid.Column="2"/>-->
-                    <Button Click="Menu_ContextRequested" Padding="{StaticResource EllipsisButtonPadding}" Style="{StaticResource EllipsisButton}" Grid.Column="3">
+                    <Button Click="Menu_ContextRequested"
+                            Padding="{StaticResource EllipsisButtonPadding}"
+                            Style="{StaticResource EllipsisButton}"
+                            AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                            ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                            Grid.Column="3">
                         <FontIcon x:Name="EllipsisIcon"
                                   VerticalAlignment="Center"
                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -235,7 +242,16 @@
                                 <Border.Background>
                                     <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
                                 </Border.Background>
-                                <controls:GlyphButton Glyph="&#xE8BD;" Command="{x:Bind ViewModel.SendMessageCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Width="36" Height="36" CornerRadius="18" Padding="0,0,0,-2" FontSize="16"/>
+                                <controls:GlyphButton Glyph="&#xE8BD;"
+                                                      Command="{x:Bind ViewModel.SendMessageCommand}"
+                                                      Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                      AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
+                                                      ToolTipService.ToolTip="{CustomResource AccDescrOpenChat}"
+                                                      Width="36"
+                                                      Height="36"
+                                                      CornerRadius="18"
+                                                      Padding="0,0,0,-2"
+                                                      FontSize="16"/>
                             </Border>
                         </Grid>
 

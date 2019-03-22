@@ -298,7 +298,7 @@ namespace Unigram.Views
 
             DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
 
-            ToolTipService.SetToolTip(Edit, group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu);
+            Automation.SetToolTip(Edit, group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu);
 
             Call.Visibility = Visibility.Collapsed;
             Edit.Visibility = group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
