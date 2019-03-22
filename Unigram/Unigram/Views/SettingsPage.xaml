@@ -30,7 +30,13 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Click="Photo_Click"
+                                             AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                             Height="64"
+                                             Width="64"
+                                             Margin="12,6"
+                                             Grid.RowSpan="2"/>
 
                     <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
                         <Grid.ColumnDefinitions>
@@ -55,7 +61,15 @@
                         <Border.Background>
                             <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
                         </Border.Background>
-                        <controls:GlyphButton Glyph="&#xE114;" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Width="36" Height="36" CornerRadius="18" Padding="0,0,0,0" FontSize="16">
+                        <controls:GlyphButton Glyph="&#xE114;"
+                                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                              AutomationProperties.Name="{CustomResource AccDescrChangeProfilePicture}"
+                                              ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
+                                              Width="36"
+                                              Height="36"
+                                              CornerRadius="18"
+                                              Padding="0,0,0,0"
+                                              FontSize="16">
                             <Button.Flyout>
                                 <MenuFlyout x:Name="PhotoFlyout">
                                     <MenuFlyoutItem x:Name="EditCamera" Click="EditCamera_Click" Text="{CustomResource FromCamera}"/>

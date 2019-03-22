@@ -20,6 +20,8 @@
                 Click="Menu_ContextRequested"
                 Padding="{StaticResource EllipsisButtonPadding}"
                 Style="{StaticResource EllipsisButton}"
+                AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
                 HorizontalAlignment="Right"
                 Opacity="0">
             <FontIcon x:Name="EllipsisIcon"
@@ -37,6 +39,7 @@
             <StackPanel Margin="0,0,0,48">
                 <TextBlock Text="{CustomResource TextSizeHeader}" Margin="12,12,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                 <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                        AutomationProperties.Name="{CustomResource TextSizeHeader}"
                         Minimum="0"
                         Maximum="6"
                         SmallChange="1"

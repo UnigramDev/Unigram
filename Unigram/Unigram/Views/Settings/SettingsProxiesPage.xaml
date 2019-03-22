@@ -33,10 +33,9 @@
                   Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <Button
-                        Tag="{CustomResource AddProxy}"
+                    <controls:BadgeButton
+                        Content="{CustomResource AddProxy}"
                         Command="{x:Bind ViewModel.AddCommand}"
-                        Style="{StaticResource HyperDetailButtonStyle}"
                         Margin="0,0,0,16"/>
 
                     <TextBlock Text="{CustomResource ProxyConnections}"

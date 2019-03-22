@@ -46,11 +46,10 @@
                               Command="{x:Bind ViewModel.ToggleCommand}"
                               Content="{CustomResource Passcode}"
                               Margin="12,2,12,6"/>
-                    <Button
+                    <controls:BadgeButton
                         Command="{x:Bind ViewModel.EditCommand}"
                         IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
-                        Tag="{CustomResource ChangePasscode}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                        Content="{CustomResource ChangePasscode}"/>
 
                     <TextBlock
                         Text="{CustomResource ChangePasscodeInfo}"

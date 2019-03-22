@@ -65,18 +65,15 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource SecurityTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <Button
-                        Tag="{CustomResource Passcode}"
-                        Command="{x:Bind ViewModel.PasscodeCommand}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Tag="{CustomResource TwoStepVerification}"
-                        Click="Password_Click"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Tag="{CustomResource SessionsTitle}" 
-                        Click="Sessions_Click"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource Passcode}"
+                        Command="{x:Bind ViewModel.PasscodeCommand}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource TwoStepVerification}"
+                        Click="Password_Click"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource SessionsTitle}" 
+                        Click="Sessions_Click"/>
 
                     <TextBlock
                         Text="{CustomResource SessionsInfo}"
@@ -87,10 +84,9 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource PrivacyAdvanced}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <Button
-                        Tag="{CustomResource PrivacyDeleteCloudDrafts}"
-                        Command="{x:Bind ViewModel.ClearDraftsCommand}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource PrivacyDeleteCloudDrafts}"
+                        Command="{x:Bind ViewModel.ClearDraftsCommand}"/>
                     <controls:BadgeButton
                         Content="{CustomResource DeleteAccountIfAwayFor2}"
                         Badge="{x:Bind ConvertTtl(ViewModel.AccountTTL), Mode=OneWay}"
@@ -105,14 +101,12 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource PrivacyBots}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <Button
+                    <controls:BadgeButton
                         Command="{x:Bind ViewModel.ClearPaymentsCommand}"
-                        Tag="{CustomResource PrivacyPaymentsClear}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
+                        Content="{CustomResource PrivacyPaymentsClear}"/>
+                    <controls:BadgeButton
                         Click="WebSessions_Click"
-                        Tag="{CustomResource WebSessionsTitle}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                        Content="{CustomResource WebSessionsTitle}"/>
 
                     <TextBlock
                         Text="{CustomResource PrivacyBotsInfo}"
@@ -123,10 +117,9 @@
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Contacts}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <Button
+                    <controls:BadgeButton
                         Command="{x:Bind ViewModel.ClearContactsCommand}"
-                        Tag="{CustomResource SyncContactsDelete}"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                        Content="{CustomResource SyncContactsDelete}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="{CustomResource SyncContacts}"
