@@ -1625,17 +1625,17 @@ namespace Unigram.Views
             button.Command = ViewModel.Settings.NavigateCommand;
             button.CommandParameter = entry;
 
-            button.Badge = entry.Text;
+            button.Content = entry.Text;
             button.Glyph = entry.Glyph ?? string.Empty;
 
             if (entry.Parent == null)
             {
-                button.Content = null;
+                button.Badge = null;
                 button.BadgeVisibility = Visibility.Collapsed;
             }
             else
             {
-                button.Content = GetPath(entry.Parent);
+                button.Badge = GetPath(entry.Parent);
                 button.BadgeVisibility = Visibility.Visible;
             }
 

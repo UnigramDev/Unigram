@@ -827,7 +827,7 @@
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <controls:BadgeButton Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"/>
+                                    <controls:BadgeButton Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"/>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>

@@ -117,9 +117,8 @@
                                           Click="Data_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource StickersName}"
-                                          Glyph="&#xE606;"
+                                          Glyph="&#xF4AA;"
                                           Click="Stickers_Click"
-                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource Appearance}"
                                           Glyph="&#xE2B1;"

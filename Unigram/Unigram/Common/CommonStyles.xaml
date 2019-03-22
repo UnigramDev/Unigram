@@ -1657,7 +1657,85 @@
                                 FontFamily="{TemplateBinding FontFamily}"/>
 
                             <ContentPresenter x:Name="ContentPresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Badge}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
-                            <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Content}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" Grid.Column="1" Grid.Row="1">
+                            <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Content}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" Grid.Column="1" Grid.Row="1">
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
+                        </Grid>
+                        <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GlyphSubbadgeBadgeButtonStyle" TargetType="controls:BadgeButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>-->
+        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="12,0,0,0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:BadgeButton">
+                    <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="48"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                FontSize="{TemplateBinding FontSize}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding Glyph}"
+                                FontFamily="{TemplateBinding FontFamily}"/>
+
+                            <ContentPresenter x:Name="ContentPresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                            <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" Grid.Column="1" Grid.Row="1">
                                 <ContentControl.ContentTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
