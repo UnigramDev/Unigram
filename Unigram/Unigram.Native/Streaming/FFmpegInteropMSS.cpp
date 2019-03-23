@@ -271,7 +271,7 @@ HRESULT FFmpegInteropMSS::CreateMediaStreamSource(Client^ client, File^ file, Me
 
 	m_client = client;
 	m_file = file;
-	m_event = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_event = CreateEvent(NULL, TRUE, TRUE, NULL);
 
 	if (SUCCEEDED(hr))
 	{
@@ -526,7 +526,7 @@ HRESULT FFmpegInteropMSS::InitFFmpegContext()
 
 		TimeSpan buffer = { 0 };
 		//TimeSpan buffer = { 60 * 10000000L };
-		mss->BufferTime = buffer;
+		//mss->BufferTime = buffer;
 
 		if (Windows::Foundation::Metadata::ApiInformation::IsPropertyPresent("Windows.Media.Core.MediaStreamSource", "MaxSupportedPlaybackRate"))
 		{
@@ -980,6 +980,15 @@ void FFmpegInteropMSS::OnSampleRequested(Windows::Media::Core::MediaStreamSource
 	mutexGuard.lock();
 	if (mss != nullptr)
 	{
+		MediaStreamSourceSampleRequestDeferral^ deferral;
+		if (WaitForSingleObject(m_event, 0) != WAIT_OBJECT_0)
+		{
+			deferral = args->Request->GetDeferral();
+			args->Request->ReportSampleProgress(1);
+
+			WaitForSingleObject(m_event, INFINITE);
+		}
+
 		if (currentAudioStream && args->Request->StreamDescriptor == currentAudioStream->StreamDescriptor)
 		{
 			args->Request->Sample = currentAudioStream->GetNextSample();
@@ -991,6 +1000,11 @@ void FFmpegInteropMSS::OnSampleRequested(Windows::Media::Core::MediaStreamSource
 		else
 		{
 			args->Request->Sample = nullptr;
+		}
+
+		if (deferral != nullptr)
+		{
+			deferral->Complete();
 		}
 	}
 	mutexGuard.unlock();
@@ -1084,16 +1098,21 @@ static int FileStreamRead(void* ptr, uint8_t* buf, int bufSize)
 
 	auto inBegin = pStream->m_offset >= begin;
 	auto inEnd = end >= pStream->m_offset + bufSize || end == pStream->m_file->Size;
+	auto difference = end - pStream->m_offset;
 
 	if (local->Path && (inBegin && inEnd) || local->IsDownloadingCompleted)
 	{
-		auto a = 0;
+		// Media has enough buffer to play already
+		// TODO: buffer more just to make sure that the video can play without stops
 	}
 	else
 	{
 		pStream->m_size = bufSize;
 		//pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, bufSize), nullptr);
-		pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, 2 * 1024 * 1024), nullptr);
+		pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, 4 * 1024 * 1024), nullptr);
+		//pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, 0), nullptr);
+
+		ResetEvent(pStream->m_event);
 		WaitForSingleObject(pStream->m_event, INFINITE);
 	}
 
