@@ -1100,7 +1100,7 @@
                                           FontSize="20"
                                           FontFamily="{StaticResource TelegramThemeFontFamily}"
                                           Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                          Padding="4,2,0,0"
+                                          Padding="4,0,0,0"
                                           Grid.Column="3"
                                           Canvas.ZIndex="1001"
                                           AutomationProperties.Name="{CustomResource Send}"

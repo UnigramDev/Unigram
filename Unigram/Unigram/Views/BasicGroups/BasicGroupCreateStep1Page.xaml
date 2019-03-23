@@ -23,6 +23,7 @@
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Next}"
             Text="{CustomResource NewGroup}"
             Glyph="&#xE10B;"/>
 
