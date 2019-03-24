@@ -301,6 +301,12 @@
   <data name="AddAnOptionInfoMax" xml:space="preserve">
     <value>Heu afegit el nombre d’opcions màxim.</value>
   </data>
+  <data name="AddAnotherAccount" xml:space="preserve">
+    <value>Afegeix un altre compte</value>
+  </data>
+  <data name="AddAnotherAccountInfo" xml:space="preserve">
+    <value>Connecteu altres comptes del Telegram i alterneu entre ells fàcilment.</value>
+  </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>No podeu bandejar aquest usuari perquè és un administrador del grup i no teniu permisos per a demetre'l.</value>
   </data>
@@ -414,6 +420,9 @@
   </data>
   <data name="AllowReadSms" xml:space="preserve">
     <value>Permeteu que el Telegram rebi SMS perquè puguem introduir el codi automàticament.</value>
+  </data>
+  <data name="AlternativeOptions" xml:space="preserve">
+    <value>Opcions alternatives</value>
   </data>
   <data name="AlwaysAllow" xml:space="preserve">
     <value>Permet-ho sempre</value>
@@ -612,11 +621,11 @@ Els que no useu s'arxivaran quan n'afegiu més.</value>
     <value>Segur que voleu eliminar aquest vídeo?</value>
   </data>
   <data name="AreYouSureLogout" xml:space="preserve">
-    <value>Segur que voleu sortir?
+    <value>Segur que voleu tancar la sessió?
 
-Podeu utilitzar igualment el Telegram en tots els vostres dispositius alhora.
+Teniu present que podeu usar el Telegram en tots els vostres dispositius alhora.
 
-Recordeu que en tancar la sessió s'eliminen els xats secrets.</value>
+Recordeu, en tancar la sessió perdreu els xats secrets.</value>
   </data>
   <data name="AreYouSureRegistration" xml:space="preserve">
     <value>Segur que voleu cancel·lar el registre?</value>
@@ -652,7 +661,7 @@ Recordeu que en tancar la sessió s'eliminen els xats secrets.</value>
     <value>Cap dubte?</value>
   </data>
   <data name="AskAQuestionInfo" xml:space="preserve">
-    <value>Tingueu en compte que l'assistència del Telegram es basa en voluntariat. Intentem respondre el més aviat possible, però podem trigar una mica.
+    <value>Teniu present que l'assistència del Telegram es basa en voluntariat. Intentem respondre el més aviat possible, però podem trigar una mica.
 
 Vegeu les <![CDATA[<a href="https://telegram.org/faq#general-questions">PMF del Telegram</a>]]>: hi trobareu consells importants i respostes a la majoria de preguntes per a <![CDATA[<a href="https://telegram.org/faq#troubleshooting">solucionar problemes</a>]]>.</value>
   </data>
@@ -746,8 +755,110 @@ Vegeu les <![CDATA[<a href="https://telegram.org/faq#general-questions">PMF del 
   <data name="August" xml:space="preserve">
     <value>Agost</value>
   </data>
+  <data name="AutoDownloadAudioInfo" xml:space="preserve">
+    <value>Els missatges de veu són menuts, sempre es baixen automàticament.</value>
+  </data>
+  <data name="AutoDownloadChannels" xml:space="preserve">
+    <value>Canals</value>
+  </data>
+  <data name="AutoDownloadContacts" xml:space="preserve">
+    <value>Contactes</value>
+  </data>
+  <data name="AutoDownloadCustom" xml:space="preserve">
+    <value>Personalitzat</value>
+  </data>
+  <data name="AutoDownloadDataUsage" xml:space="preserve">
+    <value>Ús de dades</value>
+  </data>
+  <data name="AutoDownloadFiles" xml:space="preserve">
+    <value>Fitxers</value>
+  </data>
+  <data name="AutoDownloadFilesTitle" xml:space="preserve">
+    <value>Baixada automàtica de fitxers i música</value>
+  </data>
+  <data name="AutoDownloadGroups" xml:space="preserve">
+    <value>Grups</value>
+  </data>
+  <data name="AutoDownloadHigh" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="AutoDownloadLow" xml:space="preserve">
+    <value>Baix</value>
+  </data>
+  <data name="AutoDownloadMaxFileSize" xml:space="preserve">
+    <value>Mida màxima dels fitxers</value>
+  </data>
+  <data name="AutoDownloadMaxVideoSize" xml:space="preserve">
+    <value>Mida màxima dels vídeos</value>
+  </data>
   <data name="AutoDownloadMedia" xml:space="preserve">
     <value>Baixada automàtica de fitxers</value>
+  </data>
+  <data name="AutoDownloadMedium" xml:space="preserve">
+    <value>Mitjà</value>
+  </data>
+  <data name="AutoDownloadOff" xml:space="preserve">
+    <value>Desactivada</value>
+  </data>
+  <data name="AutoDownloadOnAllChats" xml:space="preserve">
+    <value>Activada en tots els xats</value>
+  </data>
+  <data name="AutoDownloadOnFor" xml:space="preserve">
+    <value>Activat per a {0}</value>
+  </data>
+  <data name="AutoDownloadOnMobileData" xml:space="preserve">
+    <value>Amb dades mòbils</value>
+  </data>
+  <data name="AutoDownloadOnMobileDataInfo" xml:space="preserve">
+    <value>Activeu-ho si voleu que els fitxers es baixin automàticament amb dades mòbils.</value>
+  </data>
+  <data name="AutoDownloadOnRoamingData" xml:space="preserve">
+    <value>En itinerància</value>
+  </data>
+  <data name="AutoDownloadOnRoamingDataInfo" xml:space="preserve">
+    <value>Activeu-ho si voleu que els fitxers es baixin automàticament amb itinerància.</value>
+  </data>
+  <data name="AutoDownloadOnUpToFor" xml:space="preserve">
+    <value>Fins a {0} per a {1}</value>
+  </data>
+  <data name="AutoDownloadOnWiFiData" xml:space="preserve">
+    <value>Amb Wi-Fi</value>
+  </data>
+  <data name="AutoDownloadOnWiFiDataInfo" xml:space="preserve">
+    <value>Activeu-ho si voleu que els fitxers es baixin automàticament amb Wi-Fi.</value>
+  </data>
+  <data name="AutoDownloadPhotos" xml:space="preserve">
+    <value>Fotos</value>
+  </data>
+  <data name="AutoDownloadPhotosTitle" xml:space="preserve">
+    <value>Baixada automàtica de fotos</value>
+  </data>
+  <data name="AutoDownloadPm" xml:space="preserve">
+    <value>MP</value>
+  </data>
+  <data name="AutoDownloadPreloadMusic" xml:space="preserve">
+    <value>Precarrega la pista següent</value>
+  </data>
+  <data name="AutoDownloadPreloadMusicInfo" xml:space="preserve">
+    <value>Comença a baixar la pista següent mentre esteu escoltant un fitxer d'àudio.</value>
+  </data>
+  <data name="AutoDownloadPreloadVideo" xml:space="preserve">
+    <value>Precarrega els vídeos més grans</value>
+  </data>
+  <data name="AutoDownloadPreloadVideoInfo" xml:space="preserve">
+    <value>Precarrega els primers segons (1-2 MB) dels vídeos majors de {0} per a un accés immediat.</value>
+  </data>
+  <data name="AutoDownloadTypes" xml:space="preserve">
+    <value>Tipus de fitxers</value>
+  </data>
+  <data name="AutoDownloadUpToOnAllChats" xml:space="preserve">
+    <value>Fins a {0} en tots els xats</value>
+  </data>
+  <data name="AutoDownloadVideos" xml:space="preserve">
+    <value>Vídeos</value>
+  </data>
+  <data name="AutoDownloadVideosTitle" xml:space="preserve">
+    <value>Baixada automàtica de vídeos i GIF</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Autoblocatge</value>
@@ -801,16 +912,10 @@ Vegeu les <![CDATA[<a href="https://telegram.org/faq#general-questions">PMF del 
     <value>Actualitza la ubicació</value>
   </data>
   <data name="AutoNightUpdateLocationInfo" xml:space="preserve">
-    <value>Per a calcular la sortida i la posta del sol, cal fer una comprovació puntual de la vostra ubicació aproximada. Aquesta s'emmagatzema localment al vostre dispositiu.
+    <value>Per a calcular l'alba i l'ocàs, cal fer una comprovació puntual de la vostra ubicació aproximada. Aquesta només s'emmagatzema al vostre dispositiu.
 
-Posta del sol: {0}
-Sortida del sol: {1}</value>
-  </data>
-  <data name="AutodownloadChannels" xml:space="preserve">
-    <value>Canals</value>
-  </data>
-  <data name="AutodownloadContacts" xml:space="preserve">
-    <value>Contactes</value>
+Alba: {0}
+Ocàs: {1}</value>
   </data>
   <data name="AutodownloadGroupChats" xml:space="preserve">
     <value>Grups</value>
@@ -827,8 +932,20 @@ Sortida del sol: {1}</value>
   <data name="AutomaticMediaDownload" xml:space="preserve">
     <value>Baixada automàtica de fitxers</value>
   </data>
+  <data name="AutoplayGIF" xml:space="preserve">
+    <value>GIF</value>
+  </data>
   <data name="AutoplayGifs" xml:space="preserve">
     <value>Reprodueix els GIF</value>
+  </data>
+  <data name="AutoplayMedia" xml:space="preserve">
+    <value>Reproducció automàtica</value>
+  </data>
+  <data name="AutoplayVideo" xml:space="preserve">
+    <value>Vídeos</value>
+  </data>
+  <data name="AutoplayVideoInfo" xml:space="preserve">
+    <value>Premeu els botons de volum per a activar el so.</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>Disponible</value>
@@ -1124,6 +1241,12 @@ Nota: Si oblideu el codi d'accés haureu d'eliminar i reinstal·lar l'aplicació
   </data>
   <data name="ChangePhoneNewNumber" xml:space="preserve">
     <value>Número nou</value>
+  </data>
+  <data name="ChangePhoneNumber" xml:space="preserve">
+    <value>Canvia el número de telèfon</value>
+  </data>
+  <data name="ChangePhoneNumberInfo" xml:space="preserve">
+    <value>Moveu el compte, xats i fitxers a un altre número.</value>
   </data>
   <data name="ChangePhoneNumberOccupied" xml:space="preserve">
     <value>El número {0} ja està connectat a un compte del Telegram. Elimineu aquest compte abans de canviar de número.</value>
@@ -1592,6 +1715,12 @@ Longitud mínima: 5 caràcters.</value>
   <data name="ClearButton" xml:space="preserve">
     <value>Esborra</value>
   </data>
+  <data name="ClearCache" xml:space="preserve">
+    <value>Esborra la memòria cau</value>
+  </data>
+  <data name="ClearCacheInfo" xml:space="preserve">
+    <value>Allibereu espai intern al dispositiu; els fitxers romandran al núvol.</value>
+  </data>
   <data name="ClearHistory" xml:space="preserve">
     <value>Esborra l'historial</value>
   </data>
@@ -1710,6 +1839,12 @@ Quan {1} actualitzi el Telegram, les fotos amb autodestrucció d'1 minut o menys
   </data>
   <data name="ContactShare" xml:space="preserve">
     <value>COMPARTEIX EL CONTACTE</value>
+  </data>
+  <data name="ContactSupport" xml:space="preserve">
+    <value>Contacta amb l'assistència</value>
+  </data>
+  <data name="ContactSupportInfo" xml:space="preserve">
+    <value>Aviseu-nos de qualsevol errada; tancar la sessió no sol ajudar.</value>
   </data>
   <data name="Contacts" xml:space="preserve">
     <value>Contactes</value>
@@ -2683,6 +2818,9 @@ Durada: {1}</value>
   <data name="FontSizePreviewLine2" xml:space="preserve">
     <value>No pot ser que ho digues seriosament, això...</value>
   </data>
+  <data name="FontSizePreviewName" xml:space="preserve">
+    <value>Dídac</value>
+  </data>
   <data name="FontSizePreviewReply" xml:space="preserve">
     <value>Vicent, hauràs de provar una paella de veres 🥘</value>
   </data>
@@ -3524,6 +3662,12 @@ Això pot trigar uns minuts.</value>
   <data name="LogOut" xml:space="preserve">
     <value>Tanca la sessió</value>
   </data>
+  <data name="LogOutInfo" xml:space="preserve">
+    <value>En tancar la sessió perdreu tots els xats secrets.</value>
+  </data>
+  <data name="LogOutTitle" xml:space="preserve">
+    <value>Desconnexió</value>
+  </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>Intents d'inici de sessió incomplets</value>
   </data>
@@ -3821,8 +3965,20 @@ Longitud mínima: 5 caràcters.</value>
   <data name="NearbyPlaces" xml:space="preserve">
     <value>O trieu un lloc</value>
   </data>
+  <data name="NetworkUsage" xml:space="preserve">
+    <value>Ús de dades</value>
+  </data>
+  <data name="NetworkUsageMobile" xml:space="preserve">
+    <value>MÒBIL</value>
+  </data>
+  <data name="NetworkUsageRoaming" xml:space="preserve">
+    <value>ITINERÀNCIA</value>
+  </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>Ús de xarxa des de {0}</value>
+  </data>
+  <data name="NetworkUsageWiFi" xml:space="preserve">
+    <value>WI-FI</value>
   </data>
   <data name="NeverAllow" xml:space="preserve">
     <value>No ho permetis mai a...</value>
@@ -4339,10 +4495,10 @@ L'equip del Telegram</value>
     <value>Excepcions</value>
   </data>
   <data name="NotificationsExceptionsAlert" xml:space="preserve">
-    <value>Tingueu en compte que **{0}** són a la llista d'excepcions, i no els afectarà aquest canvi.</value>
+    <value>Teniu present que **{0}** són a la llista d'excepcions, i no els afectarà aquest canvi.</value>
   </data>
   <data name="NotificationsExceptionsSingleAlert" xml:space="preserve">
-    <value>Tingueu en compte que **{0}** és a la llista d'excepcions, i no li afectarà aquest canvi.</value>
+    <value>Teniu present que **{0}** és a la llista d'excepcions, i no li afectarà aquest canvi.</value>
   </data>
   <data name="NotificationsForChannels" xml:space="preserve">
     <value>Notificacions dels canals</value>
@@ -5623,7 +5779,7 @@ Els pagaments van directament al creador del {0}. Telegram no pot proporcionar c
     <value>Informació d'enviament</value>
   </data>
   <data name="PrivacyDeleteCloudDrafts" xml:space="preserve">
-    <value>Elimina tots els esborranys del núvol</value>
+    <value>Elimina tots els esborranys</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>Heu fet massa sol·licituds. Espereu fins que sigui possible canviar els paràmetres de privadesa.</value>
@@ -5641,7 +5797,7 @@ Els pagaments van directament al creador del {0}. Telegram no pot proporcionar c
     <value>Esborra la informació d'enviament i pagament</value>
   </data>
   <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
-    <value>Voleu eliminar la informació d'enviament i ordenar als proveïdors del pagament que eliminin les dades de les vostres targetes? Tingueu en compte que Telegram mai no emmagatzema les dades de les targetes.</value>
+    <value>Voleu eliminar la informació d'enviament i ordenar als proveïdors del pagament que eliminin les dades de les vostres targetes? Teniu present que Telegram mai no emmagatzema les dades de les targetes.</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>Podeu eliminar la informació d'enviament i ordenar als proveïdors del pagament que eliminin les dades de les vostres targetes. Telegram mai no les emmagatzema.</value>
@@ -5933,7 +6089,7 @@ Si restabliu el compte, tots els vostres missatges i xats s'eliminaran.</value>
     <value>Segur que voleu restablir totes les notificacions als valors predeterminats?</value>
   </data>
   <data name="ResetNotificationsText" xml:space="preserve">
-    <value>S'han restablit els valors predeterminats.</value>
+    <value>S'han restablert els valors predeterminats.</value>
   </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>Restableix les estadístiques</value>
@@ -6032,7 +6188,7 @@ El canal «**{1}**» es convertirà en privat.</value>
     <value>Reenvieu aquí per a desar.</value>
   </data>
   <data name="ScreenCapture" xml:space="preserve">
-    <value>Permet capturar la pantalla</value>
+    <value>Mostra contingut en el commutador</value>
   </data>
   <data name="ScreenCaptureAlert" xml:space="preserve">
     <value>Això amagarà la llista de xats o els seus continguts del commutador de tasques, però no podreu fer captures de pantalla al Telegram.
@@ -6124,13 +6280,13 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
     <value>Xats secrets</value>
   </data>
   <data name="SecretChatContextBotAlert" xml:space="preserve">
-    <value>Tingueu en compte que els bots en línia són propietat de tercers. Perquè el bot funcioni, tot allò que escriviu després del seu nom d'usuari s'enviarà al seu desenvolupador.</value>
+    <value>Teniu present que els bots en línia són propietat de tercers. Perquè el bot funcioni, tot allò que escriviu després del seu nom d'usuari s'enviarà al seu desenvolupador.</value>
   </data>
   <data name="SecretChatName" xml:space="preserve">
     <value>Telegram</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
-    <value>Voleu activar la vista prèvia ampliada d'enllaços als xats secrets? Tingueu en compte que es genera als servidors de Telegram.</value>
+    <value>Voleu activar la vista prèvia ampliada d'enllaços als xats secrets? Teniu present que es genera als servidors de Telegram.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Vista prèvia d'enllaços</value>
@@ -6322,6 +6478,12 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Establiu un color</value>
+  </data>
+  <data name="SetPasscode" xml:space="preserve">
+    <value>Estableix un codi d’accés</value>
+  </data>
+  <data name="SetPasscodeInfo" xml:space="preserve">
+    <value>Bloqueu l'aplicació amb un codi d'accés perquè ningú no hi pugui accedir.</value>
   </data>
   <data name="SetRecoveryEmail" xml:space="preserve">
     <value>Estableix una adreça de recuperació</value>
@@ -6634,6 +6796,9 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   </data>
   <data name="Support" xml:space="preserve">
     <value>Ajuda</value>
+  </data>
+  <data name="SupportStatus" xml:space="preserve">
+    <value>assistència</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
     <value>Sincronitza els contactes</value>
@@ -6995,6 +7160,9 @@ Però si no esteu a gust amb les modestes necessitats de Telegram, no ens serà 
   <data name="UseLessDataOnMobile" xml:space="preserve">
     <value>Només amb connexió de dades mòbils</value>
   </data>
+  <data name="UseLessDataOnRoaming" xml:space="preserve">
+    <value>Només amb itinerància</value>
+  </data>
   <data name="UseProxyAddress" xml:space="preserve">
     <value>Servidor</value>
   </data>
@@ -7083,7 +7251,7 @@ Però si no esteu a gust amb les modestes necessitats de Telegram, no ens serà 
     <value>Canviar la informació del xat</value>
   </data>
   <data name="UserRestrictionsDisabled" xml:space="preserve">
-    <value>L'opció està desactivada per a tots els membres als permisos del grup</value>
+    <value>Aquesta opció està desactivada per a tothom als permisos del grup</value>
   </data>
   <data name="UserRestrictionsDuration" xml:space="preserve">
     <value>Durada</value>
