@@ -40,6 +40,7 @@ namespace Unigram.Services
         bool IsAutoPlayVideosEnabled { get; set; }
         bool IsSendGrouped { get; set; }
         bool IsAccountsSelectorExpanded { get; set; }
+        bool IsAllAccountsNotifications { get; set; }
 
         bool IsStreamingEnabled { get; set; }
 
@@ -375,6 +376,23 @@ namespace Unigram.Services
             {
                 _isAccountsSelectorExpanded = value;
                 AddOrUpdateValue(_local, "IsAccountsSelectorExpanded", value);
+            }
+        }
+
+        private static bool? _isAllAccountsNotifications;
+        public bool IsAllAccountsNotifications
+        {
+            get
+            {
+                if (_isAllAccountsNotifications == null)
+                    _isAllAccountsNotifications = GetValueOrDefault(_local, "IsAllAccountsNotifications", true);
+
+                return _isAllAccountsNotifications ?? true;
+            }
+            set
+            {
+                _isAllAccountsNotifications = value;
+                AddOrUpdateValue(_local, "IsAllAccountsNotifications", value);
             }
         }
 
