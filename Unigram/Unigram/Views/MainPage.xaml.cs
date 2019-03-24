@@ -1257,6 +1257,7 @@ namespace Unigram.Views
             ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
             SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
 
+            SearchField.PlaceholderText = rpMasterTitlebar.SelectedIndex == 3 ? Strings.Resources.SearchInSettings : Strings.Resources.Search;
             SearchField.Text = string.Empty;
             SearchField.Visibility = Visibility.Collapsed;
             UpdatePaneToggleButtonVisibility();

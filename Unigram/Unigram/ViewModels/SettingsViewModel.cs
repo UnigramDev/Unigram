@@ -182,14 +182,7 @@ namespace Unigram.ViewModels
 
         public void Search(string query)
         {
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                Results.Clear();
-            }
-            else
-            {
-                Results.ReplaceWith(_searchService.Search(query));
-            }
+            Results.ReplaceWith(_searchService.Search(query));
         }
 
         public RelayCommand<SettingsSearchEntry> NavigateCommand { get; }

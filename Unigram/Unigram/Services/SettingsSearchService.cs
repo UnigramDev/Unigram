@@ -36,6 +36,11 @@ namespace Unigram.Services
             }
 
             var results = new List<SettingsSearchEntry>();
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return results;
+            }
+
             foreach (var item in _searchIndex)
             {
                 var first = true;
@@ -91,7 +96,7 @@ namespace Unigram.Services
             };
 
             // FAQ indexing is done asyncronously
-            var response = await _protoService.SendAsync(new GetWebPageInstantView("https://telegram.org/faq", true));
+            var response = await _protoService.SendAsync(new GetWebPageInstantView(Strings.Resources.TelegramFaqUrl, true));
             if (response is WebPageInstantView webPage)
             {
                 var title = string.Empty;
@@ -126,7 +131,7 @@ namespace Unigram.Services
                     }
                 }
 
-                _searchIndex.Add(new SettingsSearchPage(typeof(InstantPage), Strings.Resources.TelegramFaq, "\uE783", cicci.ToArray()));
+                _searchIndex.Add(new SettingsSearchPage(typeof(InstantPage), Strings.Resources.SettingsSearchFaq, "\uE783", cicci.ToArray()));
             }
         }
 
