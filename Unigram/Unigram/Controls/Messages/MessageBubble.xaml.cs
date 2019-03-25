@@ -1089,6 +1089,8 @@ namespace Unigram.Controls.Messages
 
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
+
+            UpdateMockup();
         }
 
         public void Mockup(string message, string sender, string reply, bool outgoing, DateTime date)
@@ -1115,9 +1117,14 @@ namespace Unigram.Controls.Messages
 
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
+
+            UpdateMockup();
         }
 
-
+        public void UpdateMockup()
+        {
+            Span.FontSize = (double)App.Current.Resources["MessageFontSize"];
+        }
 
 
 

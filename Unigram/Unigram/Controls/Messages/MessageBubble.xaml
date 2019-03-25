@@ -39,7 +39,7 @@
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
-                            <Setter Target="Header.Margin" Value="-12,-4,12,0"/>
+                            <Setter Target="Header.Margin" Value="-14,-4,14,0"/>
                             <Setter Target="Header.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Message.(Grid.Column)" Value="2"/>
@@ -128,7 +128,6 @@
             <RichTextBlock
                 x:Name="Message"
                 Style="{StaticResource BodyRichTextBlockStyle}"
-                FontSize="{ThemeResource MessageFontSize}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 ContextMenuOpening="Message_ContextMenuOpening"
                 TextAlignment="DetectFromContent"
@@ -138,7 +137,7 @@
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
                 </RichTextBlock.Resources>
                 <Paragraph>
-                    <Span x:Name="Span"/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
+                    <Span x:Name="Span"/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" Style="{StaticResource CaptionTextBlockStyle}"/></InlineUIContainer>
                 </Paragraph>
             </RichTextBlock>
 
