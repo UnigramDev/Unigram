@@ -22,34 +22,17 @@
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
 {
-    using Windows.ApplicationModel.Resources;
-    
-    
+    using Unigram.Services;
+
+
     public sealed partial class Resources
     {
-        
-        private static ResourceLoader resourceLoader;
-        
+
+        private static ILocaleService resourceLoader;
+
         static Resources()
         {
-            string executingAssemblyName;
-            executingAssemblyName = Windows.UI.Xaml.Application.Current.GetType().AssemblyQualifiedName;
-            string[] executingAssemblySplit;
-            executingAssemblySplit = executingAssemblyName.Split(',');
-            executingAssemblyName = executingAssemblySplit[1];
-            string currentAssemblyName;
-            currentAssemblyName = typeof(Resources).AssemblyQualifiedName;
-            string[] currentAssemblySplit;
-            currentAssemblySplit = currentAssemblyName.Split(',');
-            currentAssemblyName = currentAssemblySplit[1];
-            if (executingAssemblyName.Equals(currentAssemblyName))
-            {
-                resourceLoader = ResourceLoader.GetForViewIndependentUse("Resources");
-            }
-            else
-            {
-                resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Resources");
-            }
+            resourceLoader = LocaleService.Current;
         }
 
         /// <summary>

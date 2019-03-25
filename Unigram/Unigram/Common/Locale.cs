@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Converters;
+using Unigram.Services;
 using Windows.ApplicationModel.Resources;
 using Windows.Globalization.NumberFormatting;
 using Windows.System.UserProfile;
@@ -63,6 +64,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void SetRules(string code)
+        {
+            if (_allRules.TryGetValue(code, out PluralRules rules))
+            {
+                _currentRules = rules;
+            }
+        }
+
         public static string GetString(string key)
         {
             return _loader.GetString(key);
@@ -75,7 +84,7 @@ namespace Unigram.Common
                 _currentRules = _allRules["en"];
             }
 
-            return string.Format(_loader.GetString(key + StringForQuantity(_currentRules.QuantityForNumber(count))), count.ToString("N0"));
+            return string.Format(LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count)), count.ToString("N0"));
         }
 
         private static string StringForQuantity(int quantity)
