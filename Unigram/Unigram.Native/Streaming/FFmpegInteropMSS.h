@@ -163,7 +163,10 @@ namespace Unigram
 				HANDLE m_handle;
 				HANDLE m_event;
 				int64_t m_offset;
-				int32_t m_size;
+				int32_t m_chunk;
+				int32_t m_next;
+				TimeSpan m_seek;
+				TimeSpan m_last;
 
 			private:
 
