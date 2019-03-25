@@ -359,6 +359,10 @@ namespace Unigram.ViewModels
                 _viewModel = viewModel;
 
                 _filter = filter;
+
+#if MOCKUP
+                _hasMoreItems = false;
+#endif
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
