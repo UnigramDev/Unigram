@@ -93,6 +93,7 @@ namespace Unigram.Services
         private readonly IDeviceInfoService _deviceInfoService;
         private readonly ISettingsService _settings;
         private readonly IOptionsService _options;
+        private readonly ILocaleService _locale;
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
@@ -119,11 +120,12 @@ namespace Unigram.Services
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
-        public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, IEventAggregator aggregator)
+        public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
             _session = session;
             _deviceInfoService = deviceInfoService;
             _settings = settings;
+            _locale = locale;
             _options = new OptionsService(this);
             _aggregator = aggregator;
 
@@ -259,15 +261,13 @@ namespace Unigram.Services
 
             Task.Run(() =>
             {
-#if DEBUG
-                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
-                _client.Send(new SetOption("localization_target", new OptionValueString("android")));
-                _client.Send(new SetOption("language_pack_id", new OptionValueString("en")));
-#endif
 
                 _client.Send(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"), 10 * 1024 * 1024)));
                 _client.Send(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
 
+                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
+                _client.Send(new SetOption("localization_target", new OptionValueString("android")));
+                _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
                 _client.Send(new SetOption("online", new OptionValueBoolean(online)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
@@ -993,12 +993,14 @@ namespace Unigram.Services
                     _installedStickerSets = updateInstalledStickerSets.StickerSetIds;
                 }
             }
-#if DEBUG
             else if (update is UpdateLanguagePackStrings updateLanguagePackStrings)
             {
+                _locale.Handle(updateLanguagePackStrings);
+
+#if DEBUG
                 UpdateLanguagePackStrings(updateLanguagePackStrings);
-            }
 #endif
+            }
             else if (update is UpdateMessageContent updateMessageContent)
             {
 

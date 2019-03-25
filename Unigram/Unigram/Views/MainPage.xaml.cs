@@ -128,6 +128,15 @@ namespace Unigram.Views
             Debug.WriteLine("Released mainpage");
         }
 
+        public void Dispose()
+        {
+            MasterDetail.Dispose();
+            SettingsView.Dispose();
+            //DataContext = null;
+            //Bindings?.Update();
+            Bindings?.StopTracking();
+        }
+
         private void InitializeTitleBar()
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
@@ -783,16 +792,16 @@ namespace Unigram.Views
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
-                Root?.SetPaneToggleButtonVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
                 SetTitleBarVisibility(Visibility.Visible);
                 MasterDetail.AllowCompact = true;
             }
             else
             {
-                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
                 SetTitleBarVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 MasterDetail.AllowCompact = e.SourcePageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
             }
+
+            UpdatePaneToggleButtonVisibility();
 
             if (e.SourcePageType == typeof(ChatPage))
             {
@@ -815,7 +824,6 @@ namespace Unigram.Views
                 Separator.BorderThickness = new Thickness(0);
                 Separator.Visibility = Visibility.Collapsed;
 
-                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
                 SetTitleBarVisibility(Visibility.Visible);
                 Header.Visibility = Visibility.Visible;
                 StatusLabel.Visibility = Visibility.Visible;
@@ -828,18 +836,23 @@ namespace Unigram.Views
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
                 Separator.Visibility = Visibility.Visible;
 
-                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
                 SetTitleBarVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
                 StatusLabel.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
             }
+
+            UpdatePaneToggleButtonVisibility();
 
             ChatsList.UpdateViewState(MasterDetail.CurrentState);
         }
 
         private void UpdatePaneToggleButtonVisibility()
         {
-            if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            if (SearchField.Visibility == Visibility.Visible)
+            {
+                Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
+            }
+            else if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
             }

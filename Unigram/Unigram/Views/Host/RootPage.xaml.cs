@@ -57,6 +57,19 @@ namespace Unigram.Views.Host
             Navigation.Content = _navigationService.Frame;
         }
 
+        public void UpdateComponent()
+        {
+            _contentLoaded = false;
+            Resources.Clear();
+            InitializeComponent();
+
+            InitializeTitleBar();
+            InitializeNavigation(_navigationService.Frame);
+            InitializeLocalization();
+
+            Switch(_lifetime.ActiveItem);
+        }
+
         private void InitializeTitleBar()
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
@@ -147,6 +160,7 @@ namespace Unigram.Views.Host
             if (service.Frame.Content is IRootContentPage content)
             {
                 content.Root = null;
+                content.Dispose();
             }
 
             service.Frame.Navigating -= OnNavigating;
@@ -412,6 +426,8 @@ namespace Unigram.Views.Host
         //Visibility PaneToggleButtonVisibility { get; }
 
         Visibility EvalutatePaneToggleButtonVisibility();
+
+        void Dispose();
     }
 
     public enum RootDestination

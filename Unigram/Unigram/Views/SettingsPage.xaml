@@ -124,10 +124,10 @@
                                           Glyph="&#xE2B1;"
                                           Click="Appearance_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <!--<controls:GlyphButton Content="{CustomResource Language}"
-                         Glyph="&#xE164;"
-                         Click="Language_Click"
-                         Style="{StaticResource TextGlyphButtonStyle}"/>-->
+                    <controls:GlyphButton Content="{CustomResource Language}"
+                                          Glyph="&#xE164;"
+                                          Click="Language_Click"
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource PrivacyAdvanced}"
                                           Glyph="&#xEC7A;"
                                           Click="Advanced_Click"

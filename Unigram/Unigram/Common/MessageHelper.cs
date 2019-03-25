@@ -37,6 +37,8 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Views.Passport;
 using Windows.ApplicationModel;
 using Unigram.Views.Settings;
+using Windows.ApplicationModel.Resources.Core;
+using Unigram.Views.Host;
 
 namespace Unigram.Common
 {
@@ -573,7 +575,33 @@ namespace Unigram.Common
                         return;
                     }
 
-                    await LocaleService.Current.SetLanguageAsync(info, true);
+                    var set = await LocaleService.Current.SetLanguageAsync(info, true);
+                    if (set is Ok)
+                    {
+                        //ApplicationLanguages.PrimaryLanguageOverride = info.Id;
+                        //ResourceContext.GetForCurrentView().Reset();
+                        //ResourceContext.GetForViewIndependentUse().Reset();
+
+                        //TLWindowContext.GetForCurrentView().NavigationServices.Remove(NavigationService);
+                        //BootStrapper.Current.NavigationService.Reset();
+
+                        foreach (var window in WindowContext.ActiveWrappers)
+                        {
+                            window.Dispatcher.Dispatch(() =>
+                            {
+                                ResourceContext.GetForCurrentView().Reset();
+                                ResourceContext.GetForViewIndependentUse().Reset();
+
+                                if (window.Content is RootPage root)
+                                {
+                                    window.Dispatcher.Dispatch(() =>
+                                    {
+                                        root.UpdateComponent();
+                                    });
+                                }
+                            });
+                        }
+                    }
                 }
             }
         }
