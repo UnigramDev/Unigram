@@ -1803,7 +1803,6 @@ namespace Unigram.Views
             if (destination == RootDestination.NewChat)
             {
                 MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
-                //MasterDetail.NavigationService.Navigate(typeof(TestStreamingPage));
             }
             else if (destination == RootDestination.NewSecretChat)
             {

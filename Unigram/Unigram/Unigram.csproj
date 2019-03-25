@@ -900,9 +900,6 @@
     <Compile Include="Views\Supergroups\SupergroupRestrictedPage.xaml.cs">
       <DependentUpon>SupergroupRestrictedPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TestStreamingPage.xaml.cs">
-      <DependentUpon>TestStreamingPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
     </Compile>
@@ -2381,10 +2378,6 @@
     <Page Include="Views\Supergroups\SupergroupRestrictedPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\TestStreamingPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
