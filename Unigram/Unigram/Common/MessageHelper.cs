@@ -36,6 +36,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Views.Passport;
 using Windows.ApplicationModel;
+using Unigram.Views.Settings;
 
 namespace Unigram.Common
 {
@@ -243,6 +244,7 @@ namespace Unigram.Common
             string pass = null;
             string secret = null;
             string phoneCode = null;
+            string lang = null;
             bool hasUrl = false;
 
             var query = scheme.Query.ParseQueryString();
@@ -346,6 +348,11 @@ namespace Unigram.Common
             {
                 phoneCode = query.GetParameter("code");
             }
+            //tg://setlanguage?lang=he-beta
+            else if (scheme.AbsoluteUri.StartsWith("tg:setlanguage") || scheme.AbsoluteUri.StartsWith("tg://setlanguage"))
+            {
+                lang = query.GetParameter("lang");
+            }
 
             if (message != null && message.StartsWith("@"))
             {
@@ -383,6 +390,10 @@ namespace Unigram.Common
             else if (auth != null)
             {
                 navigation.Navigate(typeof(PassportPage), state: auth);
+            }
+            else if (lang != null)
+            {
+                NavigateToLanguage(protoService, navigation, lang);
             }
             else
             {
@@ -510,12 +521,59 @@ namespace Unigram.Common
 
                                 NavigateToShare(text, hasUrl);
                             }
+                            else if (username.Equals("setlanguage", StringComparison.OrdinalIgnoreCase))
+                            {
+                                NavigateToLanguage(protoService, navigation, post);
+                            }
                             else
                             {
                                 NavigateToUsername(protoService, navigation, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game, pageKind);
                             }
                         }
                     }
+                }
+            }
+        }
+
+        public static async void NavigateToLanguage(IProtoService protoService, INavigationService navigation, string languagePackId)
+        {
+            var response = await protoService.SendAsync(new GetLanguagePackInfo(languagePackId));
+            if (response is LanguagePackInfo info)
+            {
+                if (info.Id == SettingsService.Current.LanguagePackId)
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.LanguageSame, info.Name), Strings.Resources.Language, Strings.Resources.OK, Strings.Resources.Settings);
+                    if (confirm != ContentDialogResult.Secondary)
+                    {
+                        return;
+                    }
+
+                    navigation.Navigate(typeof(SettingsLanguagePage));
+                }
+                else if (info.TotalStringCount == 0)
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.LanguageUnknownCustomAlert, info.Name), Strings.Resources.LanguageUnknownTitle, Strings.Resources.OK);
+                }
+                else
+                {
+                    var message = info.IsOfficial
+                        ? Strings.Resources.LanguageAlert
+                        : Strings.Resources.LanguageCustomAlert;
+
+                    var start = message.IndexOf('[');
+                    var end = message.IndexOf(']');
+                    if (start != -1 && end != -1)
+                    {
+                        message = message.Insert(end + 1, $"({info.TranslationUrl})");
+                    }
+
+                    var confirm = await TLMessageDialog.ShowAsync(string.Format(message, info.Name, (int)Math.Ceiling(info.TranslatedStringCount / (float)info.TotalStringCount * 100)), Strings.Resources.LanguageTitle, Strings.Resources.Change, Strings.Resources.Cancel);
+                    if (confirm != ContentDialogResult.Primary)
+                    {
+                        return;
+                    }
+
+                    await LocaleService.Current.SetLanguageAsync(info, true);
                 }
             }
         }
