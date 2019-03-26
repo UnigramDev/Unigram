@@ -241,7 +241,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageUnreadTemplate">
-            <Grid Margin="-12,4,-12,4" Background="{ThemeResource MessageBackgroundBrush}">
+            <Grid AutomationProperties.Name="{CustomResource UnreadMessages}" Margin="-12,4,-12,4" Background="{ThemeResource MessageBackgroundBrush}">
                 <TextBlock Text="{CustomResource UnreadMessages}" Padding="0" Margin="0,4" TextAlignment="Center" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
 
                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -399,7 +399,7 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture x:Name="Photo" Width="{ThemeResource ChatPhotoSize}" Height="{ThemeResource ChatPhotoSize}" Margin="12,0" IsHitTestVisible="False"/>
+                                <controls:ProfilePicture x:Name="Photo" Width="{ThemeResource ChatPhotoSize}" Height="{ThemeResource ChatPhotoSize}" Margin="12,0" IsEnabled="False"/>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
                                     <TextBlock x:Name="Title"
@@ -893,6 +893,7 @@
         <Border x:Name="Separator" Visibility="{x:Bind ConvertShadowVisibility(ViewModel.InlineBotResultsVisibility, ViewModel.StickerPack, ViewModel.Autocomplete), Mode=OneWay}" Grid.Row="3"/>
 
         <ContentControl x:Name="TextArea"
+                        IsTabStop="False"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         Grid.Row="3">

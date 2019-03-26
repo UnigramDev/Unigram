@@ -143,6 +143,7 @@
 
             <ContentControl
                 x:Name="Media"
+                IsTabStop="False"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch"
                 Grid.Column="1"

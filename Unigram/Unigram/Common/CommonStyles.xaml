@@ -1695,7 +1695,8 @@
                                         <ContentControl x:Name="HeaderClipper"
                                                         Grid.Column="1"
                                                         UseSystemFocusVisuals="True"
-                                                        HorizontalContentAlignment="Stretch">
+                                                        HorizontalContentAlignment="Stretch"
+                                                        IsTabStop="False">
                                             <ContentControl.Clip>
                                                 <RectangleGeometry x:Name="HeaderClipperGeometry" />
                                             </ContentControl.Clip>
@@ -1895,7 +1896,7 @@
                                 FontFamily="{TemplateBinding FontFamily}"/>
 
                             <ContentPresenter x:Name="ContentPresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Badge}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
-                            <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Content}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" Grid.Column="1" Grid.Row="1">
+                            <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Content}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" IsTabStop="False" Grid.Column="1" Grid.Row="1">
                                 <ContentControl.ContentTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
@@ -1973,7 +1974,7 @@
                                 FontFamily="{TemplateBinding FontFamily}"/>
 
                             <ContentPresenter x:Name="ContentPresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
-                            <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" Grid.Column="1" Grid.Row="1">
+                            <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" IsTabStop="False" Grid.Column="1" Grid.Row="1">
                                 <ContentControl.ContentTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
@@ -2113,7 +2114,7 @@
                                 FontFamily="{TemplateBinding FontFamily}"/>
 
                             <ContentPresenter x:Name="ContentPresenter" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
-                            <ContentControl x:Name="BadgePresenter" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Height="44" Padding="12,11,12,12" HorizontalContentAlignment="Right" Grid.Column="1">
+                            <ContentControl x:Name="BadgePresenter" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Height="44" Padding="12,11,12,12" HorizontalContentAlignment="Right" IsTabStop="False" Grid.Column="1">
                                 <ContentControl.ContentTransitions>
                                     <TransitionCollection>
                                         <EntranceThemeTransition/>

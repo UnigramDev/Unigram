@@ -6,6 +6,7 @@
     xmlns:local="using:Unigram.Controls">
 
     <Style TargetType="local:NavigationView">
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationView">
@@ -28,7 +29,7 @@
                                                AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
                                                ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"/>
                         </Grid>
-                        <SplitView x:Name="RootSplitView" PaneBackground="Transparent" OpenPaneLength="240" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                        <SplitView x:Name="RootSplitView" PaneBackground="Transparent" OpenPaneLength="240" IsTabStop="False" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <SplitView.Pane>
                                 <Grid x:Name="PaneContentGrid">
                                     <Grid.RowDefinitions>
@@ -51,7 +52,7 @@
                                     </Grid.Children>
                                 </Grid>
                             </SplitView.Pane>
-                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                            <ContentPresenter Content="{TemplateBinding Content}" AutomationProperties.LandmarkType="Main" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                         </SplitView>
                     </Grid>
                 </ControlTemplate>
@@ -1351,6 +1352,7 @@
     <Style TargetType="local:ContentPageHeader">
         <Setter Property="Background" Value="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
@@ -1476,7 +1478,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            <ContentControl x:Name="BadgePresenter" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Height="44" Padding="12,11,12,12" HorizontalContentAlignment="Right">
+                            <ContentControl x:Name="BadgePresenter" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Height="44" Padding="12,11,12,12" HorizontalContentAlignment="Right" IsTabStop="False">
                                 <ContentControl.ContentTransitions>
                                     <TransitionCollection>
                                         <EntranceThemeTransition/>

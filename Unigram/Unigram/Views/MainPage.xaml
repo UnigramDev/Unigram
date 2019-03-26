@@ -30,6 +30,7 @@
         <CollectionViewSource x:Name="ContactsResults" Source="{x:Bind ViewModel.Contacts.Search, Mode=OneWay}" IsSourceGrouped="True"/>
 
         <Style TargetType="controls:MasterDetailView">
+            <Setter Property="IsTabStop" Value="False"/>
             <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
             <Setter Property="Template">
                 <Setter.Value>
