@@ -111,19 +111,13 @@ namespace Unigram.Common
             return result;
         }
 
-        public static void Verify()
+        public static void Assert()
         {
-            foreach (var emoji in _rawEmojis)
-            {
-                if (IsEmoji(emoji))
-                {
+            var stringify = String.Join(string.Empty, _rawEmojis);
+            var success = TryCountEmojis(stringify, out int count);
 
-                }
-                else
-                {
-                    Debugger.Break();
-                }
-            }
+            Debug.Assert(success);
+            Debug.Assert(count == _rawEmojis.Length);
         }
 
         public static bool IsEmoji(string text)
@@ -156,20 +150,24 @@ namespace Unigram.Common
                 if (char.IsSurrogatePair(text, i) || IsKeyCapCharacter(text, i) || IsModifierCharacter(text, i))
                 {
                     // skin modifier for emoji diversity acts as a joiner
-                    if (!joiner && !IsSkinModifierCharacter(text, i))
+                    var skin = IsSkinModifierCharacter(text, i);
+                    if (!joiner && !skin)
                     {
                         yield return last;
                         last = string.Empty;
                         joiner = true;
                     }
 
-                    last += text[i + 0];
-                    last += text[i + 1];
+                    if (!skin)
+                    {
+                        last += text[i + 0];
+                        last += text[i + 1];
+                    }
+
                     joiner = IsRegionalIndicator(text, i);
                     i++;
                 }
                 else if (text[i] == 0x200D) // zero width joiner
-                //else if (char.IsControl(text, i))
                 {
                     last += text[i];
                     joiner = true;
