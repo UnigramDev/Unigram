@@ -1314,6 +1314,7 @@
     </Style>
 
     <Style TargetType="local:ButtonPageHeader">
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Background" Value="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -1376,6 +1377,7 @@
     </Style>
 
     <Style TargetType="local:PageHeader">
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Background" Value="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
