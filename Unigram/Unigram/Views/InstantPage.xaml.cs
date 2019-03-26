@@ -1657,7 +1657,7 @@ namespace Unigram.Views
             if (Uri.TryCreate(bae, UriKind.Absolute, out Uri current) && Uri.TryCreate(url, UriKind.Absolute, out Uri result))
             {
                 fragment = result.Fragment.Length > 0 ? result.Fragment?.Substring(1) : null;
-                return Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
+                return fragment != null && Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
             }
 
             fragment = null;

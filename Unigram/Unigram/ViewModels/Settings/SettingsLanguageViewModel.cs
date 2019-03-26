@@ -41,7 +41,12 @@ namespace Unigram.ViewModels.Settings
                 var results = new List<object>();
 
                 results.AddRange(pack.LanguagePacks.Where(x => x.IsInstalled).OrderBy(k => k.Name));
-                results.Add(_separator = new object());
+
+                if (results.Count > 0)
+                {
+                    results.Add(_separator = new object());
+                }
+
                 results.AddRange(pack.LanguagePacks.Where(x => !x.IsInstalled).OrderBy(k => k.Name));
 
                 Items.ReplaceWith(results);
