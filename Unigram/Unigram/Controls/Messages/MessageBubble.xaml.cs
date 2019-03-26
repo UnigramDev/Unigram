@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageBubble : StackPanel
+    public sealed partial class MessageBubble : UserControl
     {
         private MessageViewModel _message;
 
@@ -71,7 +71,6 @@ namespace Unigram.Controls.Messages
 
             var sticker = message.Content is MessageSticker;
             var light = sticker || message.Content is MessageVideoNote;
-            var shown = false;
 
             var title = string.Empty;
 
@@ -116,14 +115,7 @@ namespace Unigram.Controls.Messages
 
             builder.Append(". ");
 
-            if (Parent is Grid parent)
-            {
-                AutomationProperties.SetName(parent, builder.ToString());
-            }
-            else
-            {
-                AutomationProperties.SetName(this, builder.ToString());
-            }
+            AutomationProperties.SetName(this, builder.ToString());
         }
 
         public void UpdateAttach(MessageViewModel message, bool wide = false)

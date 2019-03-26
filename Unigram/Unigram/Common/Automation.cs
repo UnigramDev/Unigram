@@ -104,6 +104,13 @@ namespace Unigram.Common
                 builder.Append($"{Strings.Resources.Poll}. ");
                 builder.Append($"{poll.Poll.Question}");
             }
+            else if (message.Content is MessageCall call)
+            {
+                var outgoing = message.IsOutgoing;
+                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+
+                builder.Append(missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
+            }
             else if (message.Content is MessageText text)
             {
                 builder.Append(text.Text.Text);

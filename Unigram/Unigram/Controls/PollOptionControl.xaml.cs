@@ -42,7 +42,7 @@ namespace Unigram.Controls
 
             Zero.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
 
-            Votes.Maximum = 100;
+            Votes.Maximum = results ? poll.Options.Max(x => x.VotePercentage) : 100;
             Votes.Value = results ? option.VotePercentage : 0;
             
             Loading.IsActive = option.IsBeingChosen;

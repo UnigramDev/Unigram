@@ -23,7 +23,7 @@ using Unigram.Common;
 
 namespace Unigram.Controls
 {
-    public sealed class MasterDetailView : ContentControl
+    public sealed class MasterDetailView : ContentControl, IDisposable
     {
         private MasterDetailPanel AdaptivePanel;
         private Frame DetailFrame;
@@ -60,6 +60,30 @@ namespace Unigram.Controls
             NavigationService = service;
             DetailFrame = NavigationService.Frame;
             ParentFrame = parent;
+        }
+
+        public void Dispose()
+        {
+            Loaded -= OnLoaded;
+            SizeChanged -= OnSizeChanged;
+
+            var service = NavigationService;
+            if (service != null)
+            {
+                service.FrameFacade.BackRequested -= OnBackRequested;
+            }
+
+            var panel = AdaptivePanel;
+            if (panel != null)
+            {
+                panel.ViewStateChanged -= OnViewStateChanged;
+            }
+
+            var frame = DetailFrame;
+            if (frame != null)
+            {
+                frame.Navigated -= OnNavigated;
+            }
         }
 
         private void OnBackRequested(object sender, HandledEventArgs args)

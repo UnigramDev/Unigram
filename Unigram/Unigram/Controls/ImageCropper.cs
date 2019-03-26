@@ -460,13 +460,15 @@ namespace Unigram.Controls
             return croppedFile;
         }
 
-        public async Task SetSourceAsync(StorageFile file)
+        public async Task SetSourceAsync(StorageFile file, BitmapRotation rotation = BitmapRotation.None)
         {
             SoftwareBitmapSource source;
             using (var fileStream = await ImageHelper.OpenReadAsync(file))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
                 var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+
+                transform.Rotation = rotation;
 
                 var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
                 source = new SoftwareBitmapSource();

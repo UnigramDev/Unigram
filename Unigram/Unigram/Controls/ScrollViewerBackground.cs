@@ -26,6 +26,8 @@ namespace Unigram.Controls
                 return;
             }
 
+            IsTabStop = false;
+
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             _visual = _compositor.CreateSpriteVisual();
 
