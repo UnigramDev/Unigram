@@ -137,7 +137,7 @@
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
                 </RichTextBlock.Resources>
                 <Paragraph>
-                    <Span x:Name="Span"/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" Style="{StaticResource CaptionTextBlockStyle}"/></InlineUIContainer>
+                    <Span x:Name="Span"/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
                 </Paragraph>
             </RichTextBlock>
 

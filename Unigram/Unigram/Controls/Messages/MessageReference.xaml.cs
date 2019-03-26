@@ -439,7 +439,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = $"🎮 {game.Game.Title}";
+            ServiceLabel.Text = $"\uD83C\uDFAE {game.Game.Title}";
             MessageLabel.Text = string.Empty;
 
             ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
@@ -501,7 +501,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Resources.Poll;
+            ServiceLabel.Text = $"\uD83D\uDCCA {poll.Poll.Question}";
             MessageLabel.Text = string.Empty;
 
             return true;

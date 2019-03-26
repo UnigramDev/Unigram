@@ -827,6 +827,7 @@ namespace Unigram.Controls.Messages
 
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                     hyperlink.Inlines.Add(new Run { Text = data });
+                    hyperlink.Foreground = GetLinksBrush();
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
 
@@ -852,6 +853,7 @@ namespace Unigram.Controls.Messages
 
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyperlink.Foreground = GetLinksBrush();
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
                 }
@@ -913,6 +915,16 @@ namespace Unigram.Controls.Messages
             Message.TextAlignment = TextAlignment.DetectFromContent;
             span.FontSize = (double)App.Current.Resources["MessageFontSize"];
             return false;
+        }
+
+        private Brush GetLinksBrush()
+        {
+            if (Resources.TryGetValue("MessageForegroundLinkBrush", out object value))
+            {
+                return value as SolidColorBrush;
+            }
+
+            return App.Current.Resources["MessageForegroundLinkBrush"] as SolidColorBrush;
         }
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, string data)
