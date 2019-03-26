@@ -115,6 +115,11 @@ namespace Unigram.Controls.Messages
 
             builder.Append(". ");
 
+            if (Parent is Grid parent)
+            {
+                AutomationProperties.SetName(parent, builder.ToString());
+            }
+
             AutomationProperties.SetName(this, builder.ToString());
         }
 

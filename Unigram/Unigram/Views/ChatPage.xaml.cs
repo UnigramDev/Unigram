@@ -125,6 +125,7 @@ namespace Unigram.Views
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
+            InitializeAutomation();
             InitializeStickers();
 
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
@@ -289,6 +290,28 @@ namespace Unigram.Views
                     }
                 };
             }
+        }
+
+        private void InitializeAutomation()
+        {
+            Title.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
+            Subtitle.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
+            ChatActionLabel.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
+        }
+
+        private void OnHeaderContentChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var result = Title.Text.TrimEnd('.', ',');
+            if (ChatActionLabel.Text.Length > 0)
+            {
+                result += ", " + ChatActionLabel.Text;
+            }
+            else if (Subtitle.Text.Length > 0)
+            {
+                result += ", " + Subtitle.Text;
+            }
+
+            AutomationProperties.SetName(Profile, result);
         }
 
         private void InitializeStickers()
@@ -2495,7 +2518,7 @@ namespace Unigram.Views
         {
             if (count > 1)
             {
-                ViewModel.OnlineCount = string.Format(", {0}", Locale.Declension("OnlineCount", count));
+                ViewModel.OnlineCount = Locale.Declension("OnlineCount", count);
             }
             else
             {

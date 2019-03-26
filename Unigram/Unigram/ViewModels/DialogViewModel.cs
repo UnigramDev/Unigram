@@ -284,38 +284,36 @@ namespace Unigram.ViewModels
             }
         }
 
-        private object _full;
-        public object Full
-        {
-            get
-            {
-                return _full;
-            }
-            set
-            {
-                Set(ref _full, value);
-                RaisePropertyChanged(() => IsSilentVisible);
-            }
-        }
-
         private string _lastSeen;
         public string LastSeen
         {
-            get
-            {
-                return _lastSeen;
-            }
-            set
-            {
-                Set(ref _lastSeen, value);
-            }
+            get { return _lastSeen; }
+            set { Set(ref _lastSeen, value); RaisePropertyChanged(() => Subtitle); }
         }
 
         private string _onlineCount;
         public string OnlineCount
         {
             get { return _onlineCount; }
-            set { Set(ref _onlineCount, value); }
+            set { Set(ref _onlineCount, value); RaisePropertyChanged(() => Subtitle); }
+        }
+
+        public string Subtitle
+        {
+            get
+            {
+                if (_chat.Type is ChatTypePrivate || _chat.Type is ChatTypeSecret)
+                {
+                    return _lastSeen;
+                }
+
+                if (!string.IsNullOrEmpty(_onlineCount) && !string.IsNullOrEmpty(_lastSeen))
+                {
+                    return string.Format("{0}, {1}", _lastSeen, _onlineCount);
+                }
+
+                return _lastSeen;
+            }
         }
 
         private ChatSearchViewModel _search;
@@ -1077,19 +1075,38 @@ namespace Unigram.ViewModels
                     // then we want to skip it to align first unread message at top
                     if (chat.LastReadInboxMessageId != chat.LastMessage?.Id)
                     {
+                        var target = default(MessageViewModel);
+                        var index = -1;
+
                         for (int i = 0; i < replied.Count; i++)
                         {
-                            var previous = replied[i];
-                            if (previous.Id > chat.LastReadInboxMessageId && !previous.IsOutgoing)
+                            var current = replied[i];
+                            if (current.Id > chat.LastReadInboxMessageId)
                             {
-                                if (maxId == chat.LastReadInboxMessageId)
+                                if (target == null && !current.IsOutgoing)
                                 {
-                                    maxId = previous.Id;
-                                    pixel = 28 + 48 + 4;
+                                    target = current;
+                                    index = i;
+                                } 
+                                else if (current.IsOutgoing)
+                                {
+                                    target = current;
+                                    index = -1;
                                 }
+                            }
+                        }
 
-                                replied.Insert(i, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
-                                break;
+                        if (target != null)
+                        {
+                            if (maxId == chat.LastReadInboxMessageId)
+                            {
+                                maxId = target.Id;
+                                pixel = 28 + 48 + 4;
+                            }
+
+                            if (index != -1)
+                            {
+                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.ChatId, null, target.IsOutgoing, false, false, true, false, target.IsChannelPost, false, target.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
                             }
                         }
                     }

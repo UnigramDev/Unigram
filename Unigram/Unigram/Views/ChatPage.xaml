@@ -410,12 +410,11 @@
                                                MaxLines="1"/>
                                     <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                                         <TextBlock x:Name="Subtitle"
+                                                   Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
                                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                    Style="{StaticResource CaptionTextBlockStyle}"
                                                    TextWrapping="NoWrap"
-                                                   TextTrimming="CharacterEllipsis">
-                                            <Run Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}"/><Run Text="{x:Bind ViewModel.OnlineCount,Mode=OneWay}"/>
-                                        </TextBlock>
+                                                   TextTrimming="CharacterEllipsis"/>
                                         <StackPanel x:Name="ChatActionPanel" Orientation="Horizontal" Visibility="Collapsed">
                                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                                        Fill="{ThemeResource SystemAccentColor}"
