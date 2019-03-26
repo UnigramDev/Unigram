@@ -837,6 +837,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var full = CacheService.GetUserFull(chat);
+            if (full == null || !full.CanBeCalled)
+            {
+                return;
+            }
+
             var call = _voipService.ActiveCall;
             if (call != null)
             {
