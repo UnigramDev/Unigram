@@ -464,7 +464,7 @@ namespace Unigram.ViewModels
                         if (photo.Caption != null && !string.IsNullOrEmpty(photo.Caption.Text))
                         {
                             builder.AppendLine();
-                            builder.Append(photo.Caption);
+                            builder.AppendLine(photo.Caption.Text);
                         }
                     }
                     else if (message.Content is MessageVoiceNote voiceNote)
@@ -474,7 +474,7 @@ namespace Unigram.ViewModels
                         if (voiceNote.Caption != null && !string.IsNullOrEmpty(voiceNote.Caption.Text))
                         {
                             builder.AppendLine();
-                            builder.Append(voiceNote.Caption);
+                            builder.AppendLine(voiceNote.Caption.Text);
                         }
                     }
                     else if (message.Content is MessageVideo video)
@@ -484,7 +484,7 @@ namespace Unigram.ViewModels
                         if (video.Caption != null && !string.IsNullOrEmpty(video.Caption.Text))
                         {
                             builder.AppendLine();
-                            builder.Append(video.Caption);
+                            builder.AppendLine(video.Caption.Text);
                         }
                     }
                     else if (message.Content is MessageVideoNote)
@@ -498,18 +498,18 @@ namespace Unigram.ViewModels
                         if (animation.Caption != null && !string.IsNullOrEmpty(animation.Caption.Text))
                         {
                             builder.AppendLine();
-                            builder.Append(animation.Caption);
+                            builder.AppendLine(animation.Caption.Text);
                         }
                     }
                     else if (message.Content is MessageSticker sticker)
                     {
                         if (!string.IsNullOrEmpty(sticker.Sticker.Emoji))
                         {
-                            builder.Append($"[{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}]");
+                            builder.AppendLine($"[{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}]");
                         }
                         else
                         {
-                            builder.Append($"[{Strings.Resources.AttachSticker}]");
+                            builder.AppendLine($"[{Strings.Resources.AttachSticker}]");
                         }
                     }
                     else if (message.Content is MessageAudio audio)
@@ -519,20 +519,20 @@ namespace Unigram.ViewModels
                         if (audio.Caption != null && !string.IsNullOrEmpty(audio.Caption.Text))
                         {
                             builder.AppendLine();
-                            builder.Append(audio.Caption);
+                            builder.AppendLine(audio.Caption.Text);
                         }
                     }
                     else if (message.Content is MessageLocation location)
                     {
                         builder.AppendLine($"[{Strings.Resources.AttachLocation}]");
-                        builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", location.Location.Latitude, location.Location.Longitude));
+                        builder.AppendLine(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", location.Location.Latitude, location.Location.Longitude));
                     }
                     else if (message.Content is MessageVenue venue)
                     {
                         builder.AppendLine($"[{Strings.Resources.AttachLocation}]");
                         builder.AppendLine(venue.Venue.Title);
                         builder.AppendLine(venue.Venue.Address);
-                        builder.Append(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", venue.Venue.Location.Latitude, venue.Venue.Location.Longitude));
+                        builder.AppendLine(string.Format(CultureInfo.InvariantCulture, "https://www.bing.com/maps/?pc=W8AP&FORM=MAPXSH&where1=44.312783,9.33426&locsearch=1", venue.Venue.Location.Latitude, venue.Venue.Location.Longitude));
                     }
                     else if (message.Content is MessageContact contact)
                     {
@@ -540,14 +540,22 @@ namespace Unigram.ViewModels
                         builder.AppendLine(contact.Contact.GetFullName());
                         builder.AppendLine(PhoneNumber.Format(contact.Contact.PhoneNumber));
                     }
+                    else if (message.Content is MessagePoll poll)
+                    {
+                        builder.AppendLine($"[{Strings.Resources.Poll}: {poll.Poll.Question}");
+
+                        foreach (var option in poll.Poll.Options)
+                        {
+                            builder.AppendLine($"- {option.Text}");
+                        }
+                    }
                     else if (message.Content is MessageText text)
                     {
-                        builder.Append(text.Text.Text);
+                        builder.AppendLine(text.Text.Text);
                     }
 
                     if (message != messages.Last())
                     {
-                        builder.AppendLine();
                         builder.AppendLine();
                     }
                 }

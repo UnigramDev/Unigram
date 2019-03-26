@@ -36,6 +36,7 @@ using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -124,6 +125,7 @@ namespace Unigram.Views
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
+            InitializeAutomation();
             InitializeStickers();
 
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
@@ -288,6 +290,28 @@ namespace Unigram.Views
                     }
                 };
             }
+        }
+
+        private void InitializeAutomation()
+        {
+            Title.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
+            Subtitle.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
+            ChatActionLabel.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
+        }
+
+        private void OnHeaderContentChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            var result = Title.Text.TrimEnd('.', ',');
+            if (ChatActionLabel.Text.Length > 0)
+            {
+                result += ", " + ChatActionLabel.Text;
+            }
+            else if (Subtitle.Text.Length > 0)
+            {
+                result += ", " + Subtitle.Text;
+            }
+
+            AutomationProperties.SetName(Profile, result);
         }
 
         private void InitializeStickers()
@@ -692,7 +716,7 @@ namespace Unigram.Views
         {
             if (ViewModel.Search != null)
             {
-                args.Handled = SearchMask.OnBackRequested();
+                args.Handled = SearchMask.OnBackRequested(true);
             }
 
             if (StickersPanel.Visibility == Visibility.Visible)
@@ -1242,7 +1266,11 @@ namespace Unigram.Views
             }
             if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                flyout.CreateFlyoutItem(chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.MuteNotifications : Strings.Resources.UnmuteNotifications, new FontIcon { Glyph = chat.NotificationSettings.MuteFor == 0 ? Icons.Mute : Icons.Unmute });
+                var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
+                flyout.CreateFlyoutItem(
+                    muted ? ViewModel.UnmuteCommand : ViewModel.MuteCommand,
+                    muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
+                    new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
             }
 
             //if (currentUser == null || !currentUser.IsSelf)
@@ -1355,6 +1383,23 @@ namespace Unigram.Views
             // Polls
             flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote, new FontIcon { Glyph = Icons.Undo });
             flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.Restricted });
+
+            if (Services.SettingsService.Current.IsStreamingEnabled)
+            {
+                flyout.CreateFlyoutItem(x => true, new RelayCommand<MessageViewModel>(x =>
+                {
+                    var result = x.Get().GetFile();
+
+                    var file = result;
+                    if (file == null)
+                    {
+                        return;
+                    }
+
+                    ViewModel.ProtoService.Send(new DeleteFileW(file.Id));
+
+                }), message, "Delete from disk", new FontIcon { Glyph = Icons.Delete });
+            }
 
             //sender.ContextFlyout = menu;
 
@@ -2384,6 +2429,7 @@ namespace Unigram.Views
             UpdateChatPhoto(chat);
 
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
+            UpdateChatDefaultDisableNotification(chat, chat.DefaultDisableNotification);
 
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
             ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Resources.ReportSpam : Strings.Resources.ReportSpamAndLeave;
@@ -2411,6 +2457,7 @@ namespace Unigram.Views
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
                 ButtonSilent.IsChecked = defaultDisableNotification;
+                Automation.SetToolTip(ButtonSilent, defaultDisableNotification ? Strings.Resources.AccDescrChanSilentOn : Strings.Resources.AccDescrChanSilentOff);
 
                 TextField.PlaceholderText = chat.DefaultDisableNotification
                     ? Strings.Resources.ChannelSilentBroadcast
@@ -2462,7 +2509,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.ChannelMute : Strings.Resources.ChannelUnmute, true);
+                    ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
             }
         }
@@ -2471,7 +2518,7 @@ namespace Unigram.Views
         {
             if (count > 1)
             {
-                ViewModel.OnlineCount = string.Format(", {0}", Locale.Declension("OnlineCount", count));
+                ViewModel.OnlineCount = Locale.Declension("OnlineCount", count);
             }
             else
             {
@@ -2608,6 +2655,8 @@ namespace Unigram.Views
 
                     ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.EditGlyph;
 
+                    Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelEdit);
+
                     ButtonsPanel.Visibility = Visibility.Collapsed;
                     btnEdit.Visibility = Visibility.Visible;
                 }
@@ -2643,6 +2692,8 @@ namespace Unigram.Views
                     {
                         ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.LoadingGlyph;
                     }
+
+                    Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelReply);
 
                     ButtonsPanel.Visibility = Visibility.Visible;
                     btnEdit.Visibility = Visibility.Collapsed;
@@ -2776,7 +2827,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.ChannelMute : Strings.Resources.ChannelUnmute, true);
+                    ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
             }
             else

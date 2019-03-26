@@ -152,9 +152,6 @@ namespace Unigram.Views
             var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(url, true));
             if (response is WebPageInstantView instantView)
             {
-                UpdateView(instantView);
-                ViewModel.IsLoading = false;
-
                 if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                 {
                     ViewModel.ShareLink = uri;
@@ -165,6 +162,9 @@ namespace Unigram.Views
                     //    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
                     //}
                 }
+
+                UpdateView(instantView);
+                ViewModel.IsLoading = false;
             }
 
             //if (url.StartsWith("http") == false)
@@ -272,11 +272,16 @@ namespace Unigram.Views
             base.OnNavigatedTo(e);
         }
 
+        private WebPageInstantView _instantView;
+
         private void UpdateView(WebPageInstantView instantView)
         {
+            _instantView = instantView;
+
             var processed = 0;
             PageBlock previousBlock = null;
             FrameworkElement previousElement = null;
+            FrameworkElement firstElement = null;
             foreach (var block in instantView.PageBlocks)
             {
                 var element = ProcessBlock(block);
@@ -301,9 +306,25 @@ namespace Unigram.Views
                     }
                 }
 
+                if (firstElement == null)
+                {
+                    firstElement = element;
+                }
+
                 previousBlock = block;
                 previousElement = element;
                 processed++;
+            }
+
+            if (firstElement != null)
+            {
+                firstElement.Loaded += (s, args) =>
+                {
+                    if (ViewModel.ShareLink?.Fragment?.Length > 0)
+                    {
+                        Hyperlink_Click(new RichTextUrl { Url = ViewModel.ShareLink.ToString() });
+                    }
+                };
             }
         }
 
@@ -1593,7 +1614,7 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(RichTextUrl urlText)
         {
-            if (IsCurrentPage(ViewModel.ShareLink, urlText.Url, out string fragment))
+            if (_instantView != null && IsCurrentPage(_instantView.Url, urlText.Url, out string fragment))
             {
                 if (_anchors.TryGetValue(fragment, out Border anchor))
                 {
@@ -1631,12 +1652,12 @@ namespace Unigram.Views
 
         }
 
-        private bool IsCurrentPage(Uri current, string url, out string fragment)
+        private bool IsCurrentPage(string bae, string url, out string fragment)
         {
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri result))
+            if (Uri.TryCreate(bae, UriKind.Absolute, out Uri current) && Uri.TryCreate(url, UriKind.Absolute, out Uri result))
             {
                 fragment = result.Fragment.Length > 0 ? result.Fragment?.Substring(1) : null;
-                return Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
+                return fragment != null && Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
             }
 
             fragment = null;

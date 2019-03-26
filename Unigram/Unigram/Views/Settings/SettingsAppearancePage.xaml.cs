@@ -166,7 +166,12 @@ namespace Unigram.Views.Settings
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("FontSize") || e.PropertyName.Equals("RequestedTheme"))
+            if (e.PropertyName.Equals("FontSize"))
+            {
+                Message1.UpdateMockup();
+                Message2.UpdateMockup();
+            }
+            else if (e.PropertyName.Equals("RequestedTheme"))
             {
                 //UpdatePreview(false);
             }

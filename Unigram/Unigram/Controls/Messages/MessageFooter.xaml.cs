@@ -126,7 +126,7 @@ namespace Unigram.Controls.Messages
 
                 if (message.SendingState is MessageSendingStateFailed)
                 {
-                    StateLabel.Text = "\u00A0\u00A0\uE611";
+                    StateLabel.Text = "\u00A0\u00A0failed";
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {

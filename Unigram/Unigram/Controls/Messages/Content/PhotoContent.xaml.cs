@@ -139,7 +139,15 @@ namespace Unigram.Controls.Messages.Content
                     Button.Glyph = "\uE102";
                     Button.Progress = 1;
 
-                    Button.Opacity = 0;
+                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0)
+                    {
+                        Button.Opacity = 1;
+                    }
+                    else
+                    {
+                        Button.Opacity = 0;
+                    }
+
                     Overlay.Opacity = 0;
 
                     Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
@@ -225,7 +233,14 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                _message.Delegate.OpenMedia(_message, this);
+                if (_message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0)
+                {
+                    _message.Delegate.OpenUrl(text.WebPage.Url, false);
+                }
+                else
+                {
+                    _message.Delegate.OpenMedia(_message, this);
+                }
             }
         }
     }

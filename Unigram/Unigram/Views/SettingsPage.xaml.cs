@@ -32,7 +32,7 @@ using Unigram.Converters;
 
 namespace Unigram.Views
 {
-    public sealed partial class SettingsPage : Page, ISettingsDelegate
+    public sealed partial class SettingsPage : Page, ISettingsDelegate, IDisposable
     {
         public SettingsViewModel ViewModel => DataContext as SettingsViewModel;
 
@@ -55,6 +55,13 @@ namespace Unigram.Views
             {
                 PhotoFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
             }
+        }
+
+        public void Dispose()
+        {
+            //DataContext = null;
+            //Bindings?.Update();
+            Bindings?.StopTracking();
         }
 
         private string GetVersion()

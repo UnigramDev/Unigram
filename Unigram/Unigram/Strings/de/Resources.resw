@@ -67,6 +67,225 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Einrichtung abbrechen</value>
   </data>
+  <data name="AccActionCancelDownload" xml:space="preserve">
+    <value>Download abbrechen</value>
+  </data>
+  <data name="AccActionDownload" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="AccActionEnterSelectionMode" xml:space="preserve">
+    <value>Auswahlmodus aufrufen</value>
+  </data>
+  <data name="AccActionMessageOptions" xml:space="preserve">
+    <value>Nachrichtenoptonen</value>
+  </data>
+  <data name="AccActionOpenFile" xml:space="preserve">
+    <value>Datei öffnen</value>
+  </data>
+  <data name="AccActionPause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="AccActionPlay" xml:space="preserve">
+    <value>Abspielen</value>
+  </data>
+  <data name="AccDescrAspectRatio" xml:space="preserve">
+    <value>Seitenverhältnis</value>
+  </data>
+  <data name="AccDescrAttachButton" xml:space="preserve">
+    <value>Medien anhängen</value>
+  </data>
+  <data name="AccDescrBackspace" xml:space="preserve">
+    <value>Rücktaste</value>
+  </data>
+  <data name="AccDescrBotCommands" xml:space="preserve">
+    <value>Bot-Befehle</value>
+  </data>
+  <data name="AccDescrBotKeyboard" xml:space="preserve">
+    <value>Bot-Tastatur</value>
+  </data>
+  <data name="AccDescrCameraFlashAuto" xml:space="preserve">
+    <value>Blitz, automatisch</value>
+  </data>
+  <data name="AccDescrCameraFlashOff" xml:space="preserve">
+    <value>Blitz, ausgeschaltet</value>
+  </data>
+  <data name="AccDescrCameraFlashOn" xml:space="preserve">
+    <value>Blitz, eingeschaltet</value>
+  </data>
+  <data name="AccDescrCancelEdit" xml:space="preserve">
+    <value>Bearbeitung abbrechen</value>
+  </data>
+  <data name="AccDescrCancelForward" xml:space="preserve">
+    <value>Weiterleitung abbrechen</value>
+  </data>
+  <data name="AccDescrCancelReply" xml:space="preserve">
+    <value>Antwort abbrechen</value>
+  </data>
+  <data name="AccDescrChanSilentOff" xml:space="preserve">
+    <value>Benachrichtigungen senden</value>
+  </data>
+  <data name="AccDescrChanSilentOn" xml:space="preserve">
+    <value>Ohne Benachrichtigung senden</value>
+  </data>
+  <data name="AccDescrChangeProfilePicture" xml:space="preserve">
+    <value>Profilbild ändern</value>
+  </data>
+  <data name="AccDescrChannel" xml:space="preserve">
+    <value>Kanal</value>
+  </data>
+  <data name="AccDescrClosePlayer" xml:space="preserve">
+    <value>Audioplayer schliessen</value>
+  </data>
+  <data name="AccDescrCollapsePanel" xml:space="preserve">
+    <value>Panel einklappen</value>
+  </data>
+  <data name="AccDescrContactSorting" xml:space="preserve">
+    <value>Sortierung ändern</value>
+  </data>
+  <data name="AccDescrEditing" xml:space="preserve">
+    <value>Bearbeitung</value>
+  </data>
+  <data name="AccDescrEmojiButton" xml:space="preserve">
+    <value>Emoji, Sticker und GIFs</value>
+  </data>
+  <data name="AccDescrExpandPanel" xml:space="preserve">
+    <value>Panel erweitern</value>
+  </data>
+  <data name="AccDescrForwarding" xml:space="preserve">
+    <value>Weitergeleitet von</value>
+  </data>
+  <data name="AccDescrGIFs" xml:space="preserve">
+    <value>GIFs</value>
+  </data>
+  <data name="AccDescrGoBack" xml:space="preserve">
+    <value>Zurückgehen</value>
+  </data>
+  <data name="AccDescrGoToMessage" xml:space="preserve">
+    <value>Zur Nachricht wechseln</value>
+  </data>
+  <data name="AccDescrGroup" xml:space="preserve">
+    <value>Gruppe</value>
+  </data>
+  <data name="AccDescrHideAccounts" xml:space="preserve">
+    <value>Konten verstecken</value>
+  </data>
+  <data name="AccDescrIVHeading" xml:space="preserve">
+    <value>Überschrift</value>
+  </data>
+  <data name="AccDescrIVTitle" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="AccDescrInstantCamera" xml:space="preserve">
+    <value>Sofortkamera</value>
+  </data>
+  <data name="AccDescrMentionDown" xml:space="preserve">
+    <value>Gehe zur nächsten Erwähnung</value>
+  </data>
+  <data name="AccDescrMoreOptions" xml:space="preserve">
+    <value>Weitere Optionen</value>
+  </data>
+  <data name="AccDescrMusicInfo" xml:space="preserve">
+    <value>{1} von {0}</value>
+  </data>
+  <data name="AccDescrMuteMic" xml:space="preserve">
+    <value>Mikrofon stumm schalten</value>
+  </data>
+  <data name="AccDescrMyLocation" xml:space="preserve">
+    <value>Mein Standort</value>
+  </data>
+  <data name="AccDescrOpenChat" xml:space="preserve">
+    <value>Chat öffnen</value>
+  </data>
+  <data name="AccDescrOpenMenu" xml:space="preserve">
+    <value>Navigationsmenü öffnen</value>
+  </data>
+  <data name="AccDescrPageDown" xml:space="preserve">
+    <value>Zum Ende wechseln</value>
+  </data>
+  <data name="AccDescrPasscodeLock" xml:space="preserve">
+    <value>App sperren</value>
+  </data>
+  <data name="AccDescrPasscodeUnlock" xml:space="preserve">
+    <value>App freigeben</value>
+  </data>
+  <data name="AccDescrPhotoAdjust" xml:space="preserve">
+    <value>Anpassungen</value>
+  </data>
+  <data name="AccDescrPhotoEditor" xml:space="preserve">
+    <value>Bildbearbeitung</value>
+  </data>
+  <data name="AccDescrPhotoViewer" xml:space="preserve">
+    <value>Bildbetrachter</value>
+  </data>
+  <data name="AccDescrPlayerSpeed" xml:space="preserve">
+    <value>Doppelte Wiedergabegeschwindigkeit</value>
+  </data>
+  <data name="AccDescrPrevious" xml:space="preserve">
+    <value>Vorherige</value>
+  </data>
+  <data name="AccDescrProfilePicture" xml:space="preserve">
+    <value>Profilbild</value>
+  </data>
+  <data name="AccDescrReceivedDate" xml:space="preserve">
+    <value>Empfangen {0}</value>
+  </data>
+  <data name="AccDescrRepeatList" xml:space="preserve">
+    <value>Playlist wiederholen</value>
+  </data>
+  <data name="AccDescrRepeatOff" xml:space="preserve">
+    <value>Nicht mehr wiederholen</value>
+  </data>
+  <data name="AccDescrRepeatOne" xml:space="preserve">
+    <value>1x wiederholen</value>
+  </data>
+  <data name="AccDescrReplying" xml:space="preserve">
+    <value>Antworten auf</value>
+  </data>
+  <data name="AccDescrRotate" xml:space="preserve">
+    <value>Drehen</value>
+  </data>
+  <data name="AccDescrSecretChat" xml:space="preserve">
+    <value>Geheimer Chat</value>
+  </data>
+  <data name="AccDescrSentDate" xml:space="preserve">
+    <value>Gesendet {0}</value>
+  </data>
+  <data name="AccDescrShowAccounts" xml:space="preserve">
+    <value>Konten zeigen</value>
+  </data>
+  <data name="AccDescrShowKeyboard" xml:space="preserve">
+    <value>Tastatur anzeigen</value>
+  </data>
+  <data name="AccDescrShutter" xml:space="preserve">
+    <value>Verschluss</value>
+  </data>
+  <data name="AccDescrStickerSet" xml:space="preserve">
+    <value>Sticker-Paket</value>
+  </data>
+  <data name="AccDescrStickers" xml:space="preserve">
+    <value>Sticker</value>
+  </data>
+  <data name="AccDescrStopLiveLocation" xml:space="preserve">
+    <value>Live Standort nicht mehr teilen</value>
+  </data>
+  <data name="AccDescrSwitchCamera" xml:space="preserve">
+    <value>Kamera wechseln</value>
+  </data>
+  <data name="AccDescrTakeMorePics" xml:space="preserve">
+    <value>Nimm ein weiteres Bild auf</value>
+  </data>
+  <data name="AccDescrUserOptions" xml:space="preserve">
+    <value>Benutzeroptionen</value>
+  </data>
+  <data name="AccDescrVideoMessage" xml:space="preserve">
+    <value>Videonachricht aufnehmen</value>
+  </data>
+  <data name="AccDescrVideoQuality" xml:space="preserve">
+    <value>Videoqualität</value>
+  </data>
+  <data name="AccDescrVoiceMessage" xml:space="preserve">
+    <value>Sprachnachricht aufnehmen</value>
+  </data>
   <data name="Accept" xml:space="preserve">
     <value>Akzeptieren</value>
   </data>
@@ -397,6 +616,9 @@
   <data name="Alert" xml:space="preserve">
     <value>Benachrichtigungen anzeigen</value>
   </data>
+  <data name="AllAccounts" xml:space="preserve">
+    <value>Allen Konten</value>
+  </data>
   <data name="AllMedia" xml:space="preserve">
     <value>Alle Medien</value>
   </data>
@@ -581,6 +803,9 @@ Alle folgenden werden archiviert.</value>
   <data name="AreYouSureClearHistoryGroup" xml:space="preserve">
     <value>Cache der Gruppe wirklich löschen?</value>
   </data>
+  <data name="AreYouSureClearHistorySavedMessages" xml:space="preserve">
+    <value>Wirklich den Chat **Gespeichertes** leeren?</value>
+  </data>
   <data name="AreYouSureClearHistoryWithChat" xml:space="preserve">
     <value>Wirklich den Verlauf mit **{0}** leeren?</value>
   </data>
@@ -599,6 +824,12 @@ Alle folgenden werden archiviert.</value>
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Diesen Kontakt wirklich löschen?</value>
   </data>
+  <data name="AreYouSureDeleteFewMessages" xml:space="preserve">
+    <value>Wirklich diese Nachrichten löschen?</value>
+  </data>
+  <data name="AreYouSureDeleteFewMessagesMega" xml:space="preserve">
+    <value>Wirklich diese Nachrichten bei allen löschen?</value>
+  </data>
   <data name="AreYouSureDeleteGIF" xml:space="preserve">
     <value>Sicher, dass du dieses GIF wirklich löschen willst?</value>
   </data>
@@ -608,8 +839,17 @@ Alle folgenden werden archiviert.</value>
   <data name="AreYouSureDeletePhoto" xml:space="preserve">
     <value>Möchtest du wirklich dieses Bild löschen?</value>
   </data>
+  <data name="AreYouSureDeleteSingleMessage" xml:space="preserve">
+    <value>Wirklich diese Nachricht löschen?</value>
+  </data>
+  <data name="AreYouSureDeleteSingleMessageMega" xml:space="preserve">
+    <value>Wirklich diese Nachricht bei allen löschen?</value>
+  </data>
   <data name="AreYouSureDeleteThisChat" xml:space="preserve">
     <value>Möchtest du wirklich diesen Chat löschen?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
+    <value>Wirklich den Chat **Gespeichertes** löschen?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>Wirklich den Chat **{0}** löschen?</value>
@@ -695,6 +935,12 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
   <data name="AttachGif" xml:space="preserve">
     <value>GIF</value>
   </data>
+  <data name="AttachGifRestricted" xml:space="preserve">
+    <value>Die Admins dieser Gruppe haben dir die Berechtigung entzogen, GIFs bis {0} zu senden</value>
+  </data>
+  <data name="AttachGifRestrictedForever" xml:space="preserve">
+    <value>Die Admins dieser Gruppe haben dir die Berechtigung entzogen, GIFs zu senden.</value>
+  </data>
   <data name="AttachInlineRestricted" xml:space="preserve">
     <value>Die Admins dieser Gruppe haben dir die Berechtigung entzogen, Sticker bis {0} zu senden</value>
   </data>
@@ -757,12 +1003,6 @@ Bitte schau auch in den  <![CDATA[<a href="https://telegram.org/faq/de#allgemein
   </data>
   <data name="August" xml:space="preserve">
     <value>August</value>
-  </data>
-  <data name="AutoDownloadAllMedia" xml:space="preserve">
-    <value>Alle Medien</value>
-  </data>
-  <data name="AutoDownloadAnd" xml:space="preserve">
-    <value>{0} und {1}</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Sprachnachrichten sind winzig, sie werden immer automatisch heruntergeladen.</value>
@@ -952,6 +1192,10 @@ Sonnenaufgang: {1}</value>
   </data>
   <data name="AutoplayVideo" xml:space="preserve">
     <value>Videos</value>
+  </data>
+  <data name="AutoplayVideoInfo" xml:space="preserve">
+    <value>Lautstärketasten drücken,
+um Ton einzuschalten.</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>Verfügbar</value>
@@ -1731,6 +1975,9 @@ Die Mindestlänge beträgt 5 Zeichen.</value>
   <data name="ClearHistoryCache" xml:space="preserve">
     <value>Cache leeren</value>
   </data>
+  <data name="ClearHistoryOptionAlso" xml:space="preserve">
+    <value>Verlauf auch bei {0} leeren</value>
+  </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Cache leeren</value>
   </data>
@@ -2121,6 +2368,9 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Löschen und Gruppe verlassen</value>
   </data>
+  <data name="DeleteAndExitButton" xml:space="preserve">
+    <value>Löschen und Gruppe verlassen</value>
+  </data>
   <data name="DeleteAndStop" xml:space="preserve">
     <value>Löschen und anhalten</value>
   </data>
@@ -2160,6 +2410,24 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   <data name="DeleteMegaMenu" xml:space="preserve">
     <value>Gruppe löschen</value>
   </data>
+  <data name="DeleteMessagesOption" xml:space="preserve">
+    <value>Widerrufe meine Nachrichten</value>
+  </data>
+  <data name="DeleteMessagesOptionAlso" xml:space="preserve">
+    <value>Auch bei {0} löschen</value>
+  </data>
+  <data name="DeleteMessagesText" xml:space="preserve">
+    <value>Du kannst auch {0} bei **{1}** im Chat löschen, wenn du "Widerrufe meine Nachrichten" aktivierst.</value>
+  </data>
+  <data name="DeleteMessagesTextGroup" xml:space="preserve">
+    <value>Du kannst auch {0} in den Chats der anderen Gruppenmitglieder löschen, wenn du "Widerrufe meine Nachrichten" aktivierst.</value>
+  </data>
+  <data name="DeleteMessagesTextGroupPart" xml:space="preserve">
+    <value>Du kannst auch {0} in den Chats der anderen Gruppenmitglieder löschen, wenn du "Bei allen Mitgliedern löschen" aktivierst.</value>
+  </data>
+  <data name="DeleteMessagesTitle" xml:space="preserve">
+    <value>{0} löschen</value>
+  </data>
   <data name="DeletePhoto" xml:space="preserve">
     <value>Bild entfernen</value>
   </data>
@@ -2168,6 +2436,9 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Spam melden</value>
+  </data>
+  <data name="DeleteSingleMessagesTitle" xml:space="preserve">
+    <value>Nachricht löschen</value>
   </data>
   <data name="DeleteThemeAlert" xml:space="preserve">
     <value>Möchtest du wirklich dieses Thema löschen?</value>
@@ -2336,8 +2607,41 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
   </data>
+  <data name="Emoji1" xml:space="preserve">
+    <value>Smileys und Leute</value>
+  </data>
+  <data name="Emoji2" xml:space="preserve">
+    <value>Tiere und Natur</value>
+  </data>
+  <data name="Emoji3" xml:space="preserve">
+    <value>Essen und Trinken</value>
+  </data>
+  <data name="Emoji4" xml:space="preserve">
+    <value>Aktivität</value>
+  </data>
+  <data name="Emoji5" xml:space="preserve">
+    <value>Reisen und Orte</value>
+  </data>
+  <data name="Emoji6" xml:space="preserve">
+    <value>Objekte</value>
+  </data>
+  <data name="Emoji7" xml:space="preserve">
+    <value>Symbole</value>
+  </data>
+  <data name="Emoji8" xml:space="preserve">
+    <value>Flaggen</value>
+  </data>
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Draw single big emoji</value>
+  </data>
+  <data name="EmojiSuggestions" xml:space="preserve">
+    <value>Emoji-Vorschläge</value>
+  </data>
+  <data name="EmojiSuggestionsInfo" xml:space="preserve">
+    <value>**Telegram** ermöglicht dir die Suche nach tausenden Emoji anhand von Wörtern. Hier und da fehlen jedoch einige. Wenn du Emoji-Ersetzungen vorschlagen möchtest, besuche bitte diese Seite: </value>
+  </data>
+  <data name="EmojiSuggestionsUrl" xml:space="preserve">
+    <value>https://translations.telegram.org/{0}/emoji</value>
   </data>
   <data name="EmojiUseDefault" xml:space="preserve">
     <value>Benutze System-Emoji</value>
@@ -3147,6 +3451,9 @@ Dauer: {1}</value>
   <data name="GifCaption" xml:space="preserve">
     <value>GIF Beschriftung</value>
   </data>
+  <data name="GlobalAttachGifRestricted" xml:space="preserve">
+    <value>GIFs sind in dieser Gruppe nicht erlaubt.</value>
+  </data>
   <data name="GlobalAttachInlineRestricted" xml:space="preserve">
     <value>Inline-Bots sind in dieser Gruppe nicht erlaubt.</value>
   </data>
@@ -3276,6 +3583,9 @@ zu Telegram?</value>
   </data>
   <data name="Hashtags" xml:space="preserve">
     <value>HASHTAGS</value>
+  </data>
+  <data name="HidAccount" xml:space="preserve">
+    <value>Das Konto wurde vom Nutzer ausgeblendet</value>
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>Gelöschtes Konto</value>
@@ -4142,10 +4452,16 @@ für deine erste Chatnachricht.</value>
   <data name="NoContacts" xml:space="preserve">
     <value>Noch keine Kontakte</value>
   </data>
+  <data name="NoEmojiFound" xml:space="preserve">
+    <value>Kein Emoji gefunden</value>
+  </data>
   <data name="NoExceptions" xml:space="preserve">
     <value>Deine angepassten Benachrichtigungen werden in diesem Bereich angezeigt.
 
 Um Benachrichtigungen anzupassen, Chat mit dem Gesprächspartner öffnen, Profilbild antippen, dann 'Mitteilungen' und 'Anpassen'.</value>
+  </data>
+  <data name="NoGIFsFound" xml:space="preserve">
+    <value>Kein GIF gefunden</value>
   </data>
   <data name="NoGroupsInCommon" xml:space="preserve">
     <value>Noch keine gemeinsamen Gruppen</value>
@@ -5854,6 +6170,30 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>Du hast zu oft probiert, deine Einstellungen zu ändern; bitte warte kurz.</value>
   </data>
+  <data name="PrivacyForwards" xml:space="preserve">
+    <value>Weiterleitungen</value>
+  </data>
+  <data name="PrivacyForwardsContacts" xml:space="preserve">
+    <value>Verknüpfung, laut Einstellungen unten</value>
+  </data>
+  <data name="PrivacyForwardsEverybody" xml:space="preserve">
+    <value>Verknüpfung mit deinem Konto</value>
+  </data>
+  <data name="PrivacyForwardsInfo" xml:space="preserve">
+    <value>Leitet man deine Nachrichten an andere Chats weiter, werden sie nicht mit deinem Konto verknüpft.</value>
+  </data>
+  <data name="PrivacyForwardsInfo2" xml:space="preserve">
+    <value>Das überschreibt die Einstellungen oben.</value>
+  </data>
+  <data name="PrivacyForwardsMessageLine" xml:space="preserve">
+    <value>Reinhardt, wir brauchen neue Musik für dich 🎶.</value>
+  </data>
+  <data name="PrivacyForwardsNobody" xml:space="preserve">
+    <value>Keine Verknüpfung mit deinem Konto</value>
+  </data>
+  <data name="PrivacyForwardsTitle" xml:space="preserve">
+    <value>Wer darf beim Weiterleiten meiner Nachrichten eine Verknüpfung zu meinem Konto hinzufügen?</value>
+  </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>Zuletzt gesehen</value>
   </data>
@@ -5881,8 +6221,23 @@ Zahlungen gehen direkt an den Entwickler von {0}. Telegram kann keine Haftung ü
   <data name="PrivacyPolicyUrl" xml:space="preserve">
     <value>https://telegram.org/privacy</value>
   </data>
+  <data name="PrivacyProfilePhoto" xml:space="preserve">
+    <value>Profilbild</value>
+  </data>
+  <data name="PrivacyProfilePhotoInfo" xml:space="preserve">
+    <value>Hier kannst du per Feineinstellung bestimmen, wer dein Profilbild sehen darf.</value>
+  </data>
+  <data name="PrivacyProfilePhotoInfo2" xml:space="preserve">
+    <value>Das überschreibt die Einstellungen oben.</value>
+  </data>
+  <data name="PrivacyProfilePhotoTitle" xml:space="preserve">
+    <value>Wer darf mein Profilbild sehen?</value>
+  </data>
   <data name="PrivacySettings" xml:space="preserve">
     <value>Privatsphäre und Sicherheit</value>
+  </data>
+  <data name="PrivacySettingsChangedAlert" xml:space="preserve">
+    <value>Du hast einige Änderungen im Bereich Privatsphäre durchgeführt. Möchtest du die Änderungen anwenden?</value>
   </data>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Privatsphäre</value>
@@ -6280,6 +6635,9 @@ Du wirst die App nach der Änderung neu starten müssen.</value>
   <data name="SearchByColor" xml:space="preserve">
     <value>Nach Farbe suchen</value>
   </data>
+  <data name="SearchEmojiHint" xml:space="preserve">
+    <value>Emoji suchen</value>
+  </data>
   <data name="SearchFriends" xml:space="preserve">
     <value>Nach Kontakten suchen</value>
   </data>
@@ -6300,6 +6658,9 @@ Du wirst die App nach der Änderung neu starten müssen.</value>
   </data>
   <data name="SearchImagesTitle" xml:space="preserve">
     <value>Suche Bilder</value>
+  </data>
+  <data name="SearchInSettings" xml:space="preserve">
+    <value>Einstellungen durchsuchen</value>
   </data>
   <data name="SearchMembers" xml:space="preserve">
     <value>Mitglieder suchen</value>
@@ -6362,7 +6723,7 @@ Du wirst die App nach der Änderung neu starten müssen.</value>
     <value>Linkvorschau</value>
   </data>
   <data name="SecretWebPageInfo" xml:space="preserve">
-    <value>Die Linkvorschau wird auf den Telegram-Servern generiert. Wir speichern keine Daten über die von dir gesendeten Links.</value>
+    <value>Die Linkvorschau wird auf den Servern von Telegram generiert. Wir speichern keine Daten über die von dir gesendeten Links.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Sicherheit</value>
@@ -6414,6 +6775,9 @@ Du wirst die App nach der Änderung neu starten müssen.</value>
   </data>
   <data name="SendGameToGroup" xml:space="preserve">
     <value>Spiel mit {0} teilen?</value>
+  </data>
+  <data name="SendGifPreview" xml:space="preserve">
+    <value>GIF senden</value>
   </data>
   <data name="SendItems" xml:space="preserve">
     <value>{0} senden</value>
@@ -6564,8 +6928,24 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="Settings" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
+  <data name="SettingsFaqSearchTitle" xml:space="preserve">
+    <value>Häufig gestellte Fragen</value>
+  </data>
   <data name="SettingsHelp" xml:space="preserve">
     <value>Hilfe</value>
+  </data>
+  <data name="SettingsNoRecent" xml:space="preserve">
+    <value>Du hast bisher
+noch nichts gesucht</value>
+  </data>
+  <data name="SettingsNoResults" xml:space="preserve">
+    <value>Leider nichts gefunden</value>
+  </data>
+  <data name="SettingsRecent" xml:space="preserve">
+    <value>Letzte Suche</value>
+  </data>
+  <data name="SettingsSearchFaq" xml:space="preserve">
+    <value>FAQ</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Schatten</value>
@@ -6677,6 +7057,12 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Hochziehen, für Orte in der Nähe</value>
+  </data>
+  <data name="ShowNotificationsFor" xml:space="preserve">
+    <value>Zeige Benachrichtigungen von</value>
+  </data>
+  <data name="ShowNotificationsForInfo" xml:space="preserve">
+    <value>Ausschalten, wenn du nur vom aktiven Konto Benachrichtigungen empfangen möchtest.</value>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>Zufallswiedergabe</value>
@@ -7108,7 +7494,7 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
     <value>Öffentlich</value>
   </data>
   <data name="Typing" xml:space="preserve">
-    <value>tippt…</value>
+    <value>tippt...</value>
   </data>
   <data name="URL" xml:space="preserve">
     <value>URL</value>
@@ -7229,6 +7615,9 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
   </data>
   <data name="UseLessDataOnMobile" xml:space="preserve">
     <value>Nur über Mobilfunk</value>
+  </data>
+  <data name="UseLessDataOnRoaming" xml:space="preserve">
+    <value>Nur bei Roaming</value>
   </data>
   <data name="UseProxyAddress" xml:space="preserve">
     <value>Server</value>

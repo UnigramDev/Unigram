@@ -104,47 +104,19 @@ namespace Unigram
 					bool get() { return thumbnailStreamIndex; }
 				}
 
-				[WFM::Deprecated("Use the AudioStreams property.", WFM::DeprecationType::Deprecate, 0x0)]
-				property AudioStreamDescriptor^ AudioDescriptor
-				{
-					AudioStreamDescriptor^ get()
-					{
-						return currentAudioStream ? dynamic_cast<AudioStreamDescriptor^>(currentAudioStream->StreamDescriptor) : nullptr;
-					};
-				};
-
-				[WFM::Deprecated("Use the VideoStream property.", WFM::DeprecationType::Deprecate, 0x0)]
-				property VideoStreamDescriptor^ VideoDescriptor
-				{
-					VideoStreamDescriptor^ get()
-					{
-						return videoStream ? dynamic_cast<VideoStreamDescriptor^>(videoStream->StreamDescriptor) : nullptr;
-					};
-				};
-
-				[WFM::Deprecated("Use the VideoStream property.", WFM::DeprecationType::Deprecate, 0x0)]
-				property String^ VideoCodecName
-				{
-					String^ get()
-					{
-						return videoStream ? videoStream->CodecName : nullptr;
-					};
-				};
-
-				[WFM::Deprecated("Use the AudioStreams property.", WFM::DeprecationType::Deprecate, 0x0)]
-				property String^ AudioCodecName
-				{
-					String^ get()
-					{
-						return audioStreamInfos->Size > 0 ? audioStreamInfos->GetAt(0)->CodecName : nullptr;
-					};
-				};
-
 				property MediaPlaybackItem^ PlaybackItem
 				{
 					MediaPlaybackItem^ get()
 					{
 						return playbackItem;
+					}
+				}
+
+				property int FileId
+				{
+					int get()
+					{
+						return m_file->Id;
 					}
 				}
 
@@ -191,7 +163,10 @@ namespace Unigram
 				HANDLE m_handle;
 				HANDLE m_event;
 				int64_t m_offset;
-				int32_t m_size;
+				int32_t m_chunk;
+				int32_t m_next;
+				TimeSpan m_seek;
+				TimeSpan m_last;
 
 			private:
 

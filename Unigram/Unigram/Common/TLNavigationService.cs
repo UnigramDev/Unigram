@@ -4,8 +4,10 @@ using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Settings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Core;
@@ -19,6 +21,7 @@ namespace Unigram.Common
     public class TLNavigationService : NavigationService
     {
         private readonly IProtoService _protoService;
+        private readonly IPasscodeService _passcodeService;
 
         private ViewLifetimeControl _instantLifetime;
 
@@ -26,6 +29,7 @@ namespace Unigram.Common
             : base(frame, session, id)
         {
             _protoService = protoService;
+            _passcodeService = TLContainer.Current.Passcode;
         }
 
         public int SessionId => _protoService.SessionId;
@@ -159,6 +163,25 @@ namespace Unigram.Common
             }
 
             NavigateToChat(chat, message, accessToken, state);
+        }
+
+        public async void NavigateToPasscode()
+        {
+            if (_passcodeService.IsEnabled)
+            {
+                var dialog = new SettingsPasscodeConfirmView(_passcodeService);
+                dialog.IsSimple = _passcodeService.IsSimple;
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    Navigate(typeof(SettingsPasscodePage));
+                }
+            }
+            else
+            {
+                Navigate(typeof(SettingsPasscodePage));
+            }
         }
     }
 }

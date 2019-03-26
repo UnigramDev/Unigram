@@ -33,7 +33,7 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -49,7 +49,7 @@ namespace Unigram.ViewModels
             Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator);
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
-            Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService);
+            Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService, settingsSearchService);
 
             ChildViewModels.Add(Chats);
             ChildViewModels.Add(Contacts);

@@ -4,6 +4,7 @@ using System.Text;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Settings;
+using Windows.Globalization;
 using Windows.Storage;
 using Windows.UI.Xaml;
 
@@ -40,10 +41,15 @@ namespace Unigram.Services
         bool IsAutoPlayVideosEnabled { get; set; }
         bool IsSendGrouped { get; set; }
         bool IsAccountsSelectorExpanded { get; set; }
+        bool IsAllAccountsNotifications { get; set; }
 
         bool IsStreamingEnabled { get; set; }
 
         int LastMessageTtl { get; set; }
+
+        string LanguagePackId { get; set; }
+        string LanguagePluralId { get; set; }
+        string LanguageShownId { get; set; }
 
         string NotificationsToken { get; set; }
         int[] NotificationsIds { get; set; }
@@ -154,8 +160,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (0UL << 32) | (2095UL << 16);
-        public const string CurrentChangelog = "• Create polls in groups and channels – right from the attachment menu.\r\n• Apply blur and motion effects to chat backgrounds.\r\n• Instant View 2.0. View web pages instantly with improved support for more types of content.\r\n• Pinned messages in small groups and Saved Messages.";
+        public const ulong CurrentVersion = (3UL << 48) | (3UL << 32) | (2128UL << 16);
+        public const string CurrentChangelog = "• Support for custom languages. Crowdsource a cloud-based language pack for Telegram in any language using our Translations platform – then apply it in real time.\r\n\r\n• See enlarged emoji in messages containing only emoji.\r\n• Use search in Settings to find options and get suggestions from the FAQ.\r\n• Choose whether you'd like to sync contacts and receive notifications for all accounts when using multiple accounts.\r\n• Enjoy improved call quality.\r\n• Extended execution while running on desktop.\r\n• Access the app using Narrator.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -378,6 +384,23 @@ namespace Unigram.Services
             }
         }
 
+        private static bool? _isAllAccountsNotifications;
+        public bool IsAllAccountsNotifications
+        {
+            get
+            {
+                if (_isAllAccountsNotifications == null)
+                    _isAllAccountsNotifications = GetValueOrDefault(_local, "IsAllAccountsNotifications", true);
+
+                return _isAllAccountsNotifications ?? true;
+            }
+            set
+            {
+                _isAllAccountsNotifications = value;
+                AddOrUpdateValue(_local, "IsAllAccountsNotifications", value);
+            }
+        }
+
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {
@@ -579,6 +602,57 @@ namespace Unigram.Services
             {
                 _activeSession = value;
                 AddOrUpdateValue(_local, "SelectedAccount", value);
+            }
+        }
+
+        private string _languagePackId;
+        public string LanguagePackId
+        {
+            get
+            {
+                if (_languagePackId == null)
+                    _languagePackId = GetValueOrDefault(_local, "LanguagePackId", ApplicationLanguages.Languages[0]);
+
+                return _languagePackId;
+            }
+            set
+            {
+                _languagePackId = value;
+                AddOrUpdateValue(_local, "LanguagePackId", value);
+            }
+        }
+
+        private string _languagePluralId;
+        public string LanguagePluralId
+        {
+            get
+            {
+                if (_languagePluralId == null)
+                    _languagePluralId = GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0]);
+
+                return _languagePluralId;
+            }
+            set
+            {
+                _languagePluralId = value;
+                AddOrUpdateValue(_local, "LanguagePluralId", value);
+            }
+        }
+
+        private string _languageShownId;
+        public string LanguageShownId
+        {
+            get
+            {
+                if (_languageShownId == null)
+                    _languageShownId = GetValueOrDefault<string>(_local, "LanguageShownId", null);
+
+                return _languageShownId;
+            }
+            set
+            {
+                _languageShownId = value;
+                AddOrUpdateValue(_local, "LanguageShownId", value);
             }
         }
 

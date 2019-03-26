@@ -77,6 +77,8 @@ namespace Unigram.Controls
                 }
             }
 
+            IsEnabled = true;
+
             Slice.StartAngle = 0;
             Remaining.Content = 5;
 
@@ -127,6 +129,8 @@ namespace Unigram.Controls
             _timeout.Stop();
             _storyboard?.Stop();
             _storyboard = null;
+
+            IsEnabled = false;
 
             Grid.SetRow(LayoutRoot, 1);
         }

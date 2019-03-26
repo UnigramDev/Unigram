@@ -102,6 +102,19 @@ namespace Unigram.Controls
             DependencyProperty.Register("CommandVisibility", typeof(Visibility), typeof(ButtonPageHeader), new PropertyMetadata(Visibility.Visible));
 
         #endregion
+
+        #region CommandToolTip
+
+        public string CommandToolTip
+        {
+            get { return (string)GetValue(CommandToolTipProperty); }
+            set { SetValue(CommandToolTipProperty, value); }
+        }
+
+        public static readonly DependencyProperty CommandToolTipProperty =
+            DependencyProperty.Register("CommandToolTip", typeof(string), typeof(ButtonPageHeader), new PropertyMetadata(null));
+
+        #endregion
     }
 
     public class ContentPageHeader : ContentControl

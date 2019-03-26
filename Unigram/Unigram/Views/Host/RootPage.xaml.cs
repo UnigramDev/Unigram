@@ -57,6 +57,19 @@ namespace Unigram.Views.Host
             Navigation.Content = _navigationService.Frame;
         }
 
+        public void UpdateComponent()
+        {
+            _contentLoaded = false;
+            Resources.Clear();
+            InitializeComponent();
+
+            InitializeTitleBar();
+            InitializeNavigation(_navigationService.Frame);
+            InitializeLocalization();
+
+            Switch(_lifetime.ActiveItem);
+        }
+
         private void InitializeTitleBar()
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
@@ -147,6 +160,7 @@ namespace Unigram.Views.Host
             if (service.Frame.Content is IRootContentPage content)
             {
                 content.Root = null;
+                content.Dispose();
             }
 
             service.Frame.Navigating -= OnNavigating;
@@ -223,6 +237,7 @@ namespace Unigram.Views.Host
             PhoneLabel.Text = PhoneNumber.Format(user.PhoneNumber);
 #endif
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
+            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);
         }
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
@@ -289,6 +304,8 @@ namespace Unigram.Views.Host
             {
                 var title = content.Children[2] as TextBlock;
                 title.Text = user.GetFullName();
+
+                Automation.SetToolTip(content, user.GetFullName());
             }
             else if (args.Phase == 2)
             {
@@ -310,6 +327,8 @@ namespace Unigram.Views.Host
 
             InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
+
+            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
@@ -407,6 +426,8 @@ namespace Unigram.Views.Host
         //Visibility PaneToggleButtonVisibility { get; }
 
         Visibility EvalutatePaneToggleButtonVisibility();
+
+        void Dispose();
     }
 
     public enum RootDestination

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Converters;
+using Unigram.Services;
 using Windows.ApplicationModel.Resources;
 using Windows.Globalization.NumberFormatting;
 using Windows.System.UserProfile;
@@ -63,6 +64,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void SetRules(string code)
+        {
+            if (_allRules.TryGetValue(code, out PluralRules rules))
+            {
+                _currentRules = rules;
+            }
+        }
+
         public static string GetString(string key)
         {
             return _loader.GetString(key);
@@ -75,7 +84,7 @@ namespace Unigram.Common
                 _currentRules = _allRules["en"];
             }
 
-            return string.Format(_loader.GetString(key + StringForQuantity(_currentRules.QuantityForNumber(count))), count.ToString("N0"));
+            return string.Format(LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count)), count.ToString("N0"));
         }
 
         private static string StringForQuantity(int quantity)
@@ -297,6 +306,41 @@ namespace Unigram.Common
             catch (Exception e)
             {
                 //FileLog.e(e);
+            }
+            return "LOC_ERR";
+        }
+
+        public static string FormatDateAudio(long date)
+        {
+            try
+            {
+                var rightNow = DateTime.Now;
+                int day = rightNow.DayOfYear;
+                int year = rightNow.Year;
+
+                var online = Utils.UnixTimestampToDateTime(date);
+                int dateDay = online.DayOfYear;
+                int dateYear = online.Year;
+                if (dateDay == day && year == dateYear)
+                {
+                    return string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(online));
+                }
+                else if (dateDay + 1 == day && year == dateYear)
+                {
+                    return string.Format(Strings.Resources.YesterdayAtFormatted, BindConvert.Current.ShortTime.Format(online));
+                }
+                else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
+                {
+                    return string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
+                }
+                else
+                {
+                    return string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
+                }
+            }
+            catch (Exception e)
+            {
+                //FileLog.m27e(e);
             }
             return "LOC_ERR";
         }

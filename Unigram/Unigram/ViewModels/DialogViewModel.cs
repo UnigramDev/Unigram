@@ -284,38 +284,36 @@ namespace Unigram.ViewModels
             }
         }
 
-        private object _full;
-        public object Full
-        {
-            get
-            {
-                return _full;
-            }
-            set
-            {
-                Set(ref _full, value);
-                RaisePropertyChanged(() => IsSilentVisible);
-            }
-        }
-
         private string _lastSeen;
         public string LastSeen
         {
-            get
-            {
-                return _lastSeen;
-            }
-            set
-            {
-                Set(ref _lastSeen, value);
-            }
+            get { return _lastSeen; }
+            set { Set(ref _lastSeen, value); RaisePropertyChanged(() => Subtitle); }
         }
 
         private string _onlineCount;
         public string OnlineCount
         {
             get { return _onlineCount; }
-            set { Set(ref _onlineCount, value); }
+            set { Set(ref _onlineCount, value); RaisePropertyChanged(() => Subtitle); }
+        }
+
+        public string Subtitle
+        {
+            get
+            {
+                if (_chat.Type is ChatTypePrivate || _chat.Type is ChatTypeSecret)
+                {
+                    return _lastSeen;
+                }
+
+                if (!string.IsNullOrEmpty(_onlineCount) && !string.IsNullOrEmpty(_lastSeen))
+                {
+                    return string.Format("{0}, {1}", _lastSeen, _onlineCount);
+                }
+
+                return _lastSeen;
+            }
         }
 
         private ChatSearchViewModel _search;
@@ -1077,19 +1075,38 @@ namespace Unigram.ViewModels
                     // then we want to skip it to align first unread message at top
                     if (chat.LastReadInboxMessageId != chat.LastMessage?.Id)
                     {
+                        var target = default(MessageViewModel);
+                        var index = -1;
+
                         for (int i = 0; i < replied.Count; i++)
                         {
-                            var previous = replied[i];
-                            if (previous.Id > chat.LastReadInboxMessageId && !previous.IsOutgoing)
+                            var current = replied[i];
+                            if (current.Id > chat.LastReadInboxMessageId)
                             {
-                                if (maxId == chat.LastReadInboxMessageId)
+                                if (target == null && !current.IsOutgoing)
                                 {
-                                    maxId = previous.Id;
-                                    pixel = 28 + 48 + 4;
+                                    target = current;
+                                    index = i;
+                                } 
+                                else if (current.IsOutgoing)
+                                {
+                                    target = current;
+                                    index = -1;
                                 }
+                            }
+                        }
 
-                                replied.Insert(i, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
-                                break;
+                        if (target != null)
+                        {
+                            if (maxId == chat.LastReadInboxMessageId)
+                            {
+                                maxId = target.Id;
+                                pixel = 28 + 48 + 4;
+                            }
+
+                            if (index != -1)
+                            {
+                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.ChatId, null, target.IsOutgoing, false, false, true, false, target.IsChannelPost, false, target.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
                             }
                         }
                     }
@@ -1536,29 +1553,29 @@ namespace Unigram.ViewModels
 
             if (chat.Id == 10)
             {
-                Items.Add(GetMessage(new Message(0, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 58), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Hey Eileen", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(1, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("So, why is Telegram cool?", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(2, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Well, look. Telegram is superfast and you can use it on all your devices at the same time - phones, tablets, even desktops.", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(3, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("😴", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(4, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 00), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("And it has secret chats, like this one, with end-to-end encryption!", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(5, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(15, 00), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("End encryption to what end??", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(6, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Arrgh. Forget it. You can set a timer and send photos that will disappear when the time rush out. Yay!", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(7, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageChatSetTtl(15), null)));
-                Items.Add(GetMessage(new Message(8, 0, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 05), 0, null, 0, 15, 0, 0, string.Empty, 0, 0, new MessagePhoto(new Photo(0, false, new[] { new PhotoSize("t", new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\hot.png"), true, true, false, true, 0, 0), new RemoteFile()), 580, 596) }), new FormattedText(string.Empty, new TextEntity[0]), true), null)));
+                Items.Add(_messageFactory.Create(this, new Message(0, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 58), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Hey Eileen", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(1, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("So, why is Telegram cool?", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(2, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Well, look. Telegram is superfast and you can use it on all your devices at the same time - phones, tablets, even desktops.", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(3, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("😴", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(4, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 00), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("And it has secret chats, like this one, with end-to-end encryption!", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(5, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(15, 00), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("End encryption to what end??", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(6, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Arrgh. Forget it. You can set a timer and send photos that will disappear when the time rush out. Yay!", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(7, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageChatSetTtl(15), null)));
+                Items.Add(_messageFactory.Create(this, new Message(8, 0, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 05), 0, null, 0, 15, 0, 0, string.Empty, 0, 0, new MessagePhoto(new Photo(false, new[] { new PhotoSize("t", new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\hot.png"), true, true, false, true, 0, 0, 0), new RemoteFile()), 580, 596) }), new FormattedText(string.Empty, new TextEntity[0]), true), null)));
 
                 SetText("😱🙈👍");
             }
             else
             {
                 //Items.Add(GetMessage(new Message(0, 11, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 25), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Yeah, that was my iPhone X", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(4, 11, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 25), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageSticker(new Sticker(0, 512, 512, "", false, null, null, new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\sticker0.webp"), true, true, false, true, 0, 0), null))), null)));
-                Items.Add(GetMessage(new Message(1, 9,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 26), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Are you sure it's safe here?", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(2, 7,  chat.Id, null, true,  false, false, false, false, false, false, TodayDate(15, 27), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Yes, sure, don't worry.", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(3, 13, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 27), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Hallo alle zusammen! Is the NSA reading this? 😀", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(4, 9,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 29), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageSticker(new Sticker(0, 512, 512, "", false, null, null, new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\sticker1.webp"), true, true, false, true, 0, 0), null))), null)));
-                Items.Add(GetMessage(new Message(5, 10, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 29), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Sorry, I'll have to publish this conversation on the web.", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(6, 10, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageChatDeleteMember(10), null)));
-                Items.Add(GetMessage(new Message(7, 8,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 30), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Wait, we could have made so much money on this!", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(4, 11, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 25), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageSticker(new Sticker(0, 512, 512, "", false, null, null, new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\sticker0.webp"), true, true, false, true, 0, 0, 0), null))), null)));
+                Items.Add(_messageFactory.Create(this, new Message(1, 9,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 26), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Are you sure it's safe here?", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(2, 7,  chat.Id, null, true,  false, false, false, false, false, false, TodayDate(15, 27), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Yes, sure, don't worry.", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(3, 13, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 27), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Hallo alle zusammen! Is the NSA reading this? 😀", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(4, 9,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 29), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageSticker(new Sticker(0, 512, 512, "", false, null, null, new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\sticker1.webp"), true, true, false, true, 0, 0, 0), null))), null)));
+                Items.Add(_messageFactory.Create(this, new Message(5, 10, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 29), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Sorry, I'll have to publish this conversation on the web.", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(6, 10, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageChatDeleteMember(10), null)));
+                Items.Add(_messageFactory.Create(this, new Message(7, 8,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 30), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Wait, we could have made so much money on this!", new TextEntity[0]), null), null)));
             }
 #endif
 
@@ -2550,7 +2567,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 74)));
+            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, libtgvoip.VoIPControllerWrapper.GetConnectionMaxLayer())));
             if (response is Error error)
             {
                 if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
@@ -3090,7 +3107,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        ToggleMuteExecute(chat.NotificationSettings.MuteFor != 0);
+                        ToggleMuteExecute(CacheService.GetNotificationSettingsMuteFor(chat) > 0);
                     }
                 }
                 else

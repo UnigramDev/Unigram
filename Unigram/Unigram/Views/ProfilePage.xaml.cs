@@ -116,8 +116,9 @@ namespace Unigram.Views
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
 
-            Notifications.IsOn = chat.NotificationSettings.MuteFor == 0;
-            NotificationGlyph.Text = chat.NotificationSettings.MuteFor == 0 ? "\uEA8F" : "\uE7ED";
+            var unmuted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) == 0;
+            Notifications.IsOn = unmuted;
+            NotificationGlyph.Text = unmuted ? Icons.Unmute : Icons.Mute;
 
             Call.Visibility = Visibility.Collapsed;
         }
@@ -134,7 +135,8 @@ namespace Unigram.Views
 
         public void UpdateChatNotificationSettings(Chat chat)
         {
-            NotificationGlyph.Text = chat.NotificationSettings.MuteFor == 0 ? "\uEA8F" : "\uE7ED";
+            var unmuted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) == 0;
+            NotificationGlyph.Text = unmuted ? Icons.Unmute : Icons.Mute;
         }
 
         public void UpdateUser(Chat chat, User user, bool secret)
@@ -298,7 +300,7 @@ namespace Unigram.Views
 
             DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
 
-            ToolTipService.SetToolTip(Edit, group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu);
+            Automation.SetToolTip(Edit, group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu);
 
             Call.Visibility = Visibility.Collapsed;
             Edit.Visibility = group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
@@ -329,7 +331,7 @@ namespace Unigram.Views
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
 
-            if (!group.IsChannel)
+            if (!group.IsChannel && (ViewModel.Members == null || group.MemberCount < 200 && group.MemberCount != ViewModel.Members.Count))
             {
                 ViewModel.Members = ViewModel.CreateMembers(group.Id);
             }

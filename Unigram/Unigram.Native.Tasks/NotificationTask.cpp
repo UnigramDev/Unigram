@@ -338,6 +338,11 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group, String^ 
 		if (mtpeer->HasKey("ph"))
 		{
 			auto ph = mtpeer->GetNamedObject("ph");
+			if (ph->HasKey("_layers") && ph->HasKey("1"))
+			{
+				ph = ph->GetNamedObject("1");
+			}
+
 			auto volume_id = ph->GetNamedString("volume_id");
 			auto local_id = ph->GetNamedString("local_id");
 

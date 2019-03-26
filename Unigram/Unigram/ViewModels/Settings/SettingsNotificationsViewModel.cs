@@ -22,7 +22,7 @@ namespace Unigram.ViewModels.Settings
 
         private bool _suppressUpdating;
 
-        public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVibrationService vibrationService) 
+        public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVibrationService vibrationService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _vibrationService = vibrationService;
@@ -148,6 +148,19 @@ namespace Unigram.ViewModels.Settings
             set
             {
                 CacheService.Options.DisablePinnedMessageNotifications = !(Settings.Notifications.IsPinnedEnabled = value);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsAllAccountsNotifications
+        {
+            get
+            {
+                return SettingsService.Current.IsAllAccountsNotifications;
+            }
+            set
+            {
+                SettingsService.Current.IsAllAccountsNotifications = value;
                 RaisePropertyChanged();
             }
         }

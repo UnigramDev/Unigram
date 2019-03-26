@@ -229,6 +229,11 @@ namespace Unigram.Services
                 return;
             }
 
+            if (!_sessionService.IsActive && SettingsService.Current.IsAllAccountsNotifications)
+            {
+                return;
+            }
+
             foreach (var removed in update.RemovedNotificationIds)
             {
                 ToastNotificationManager.History.Remove($"{removed}", $"{update.NotificationGroupId}");

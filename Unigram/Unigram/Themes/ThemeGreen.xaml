@@ -8,6 +8,9 @@
             <Color x:Key="MessageForegroundColor">#F5F5F5</Color>
             <Color x:Key="MessageForegroundOutColor">#E4ECF2</Color>
 
+            <Color x:Key="MessageForegroundLinkColor">#70BAF5</Color>
+            <Color x:Key="MessageForegroundLinkOutColor">#83CAFF</Color>
+
             <Color x:Key="MessageBackgroundColor">#182533</Color>
             <Color x:Key="MessageBackgroundOutColor">#2B5278</Color>
 
@@ -48,6 +51,9 @@
             <Color x:Key="MessageForegroundColor">#000000</Color>
             <Color x:Key="MessageForegroundOutColor">#000000</Color>
 
+            <Color x:Key="MessageForegroundLinkColor">#168ACD</Color>
+            <Color x:Key="MessageForegroundLinkOutColor">#168ACD</Color>
+
             <Color x:Key="MessageBackgroundColor">#FFFFFF</Color>
             <Color x:Key="MessageBackgroundOutColor">#F0FDDF</Color>
 
@@ -87,6 +93,7 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <SolidColorBrush x:Key="MessageForegroundBrush" Color="{ThemeResource MessageForegroundColor}" />
+    <SolidColorBrush x:Key="MessageForegroundLinkBrush" Color="{ThemeResource MessageForegroundLinkColor}" />
     <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource MessageBackgroundColor}" />
     <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource MessageSubtleLabelColor}" />
     <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource MessageSubtleGlyphColor}" />

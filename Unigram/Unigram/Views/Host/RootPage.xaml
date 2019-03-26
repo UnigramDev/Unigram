@@ -72,7 +72,7 @@
 
     <controls:NavigationView x:Name="Navigation">
         <controls:NavigationView.PaneHeader>
-            <Button Click="Expand_Click" RequestedTheme="Dark" Style="{StaticResource EmptyButtonStyle}">
+            <Button x:Name="Accounts" Click="Expand_Click" RequestedTheme="Dark" Style="{StaticResource EmptyButtonStyle}">
                 <Grid Padding="12,8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

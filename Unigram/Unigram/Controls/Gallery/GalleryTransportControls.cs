@@ -119,6 +119,32 @@ namespace Unigram.Controls.Gallery
 
         #endregion
 
+        #region DownloadValue
+
+        public double DownloadValue
+        {
+            get { return (double)GetValue(DownloadValueProperty); }
+            set { SetValue(DownloadValueProperty, value); }
+        }
+
+        public static readonly DependencyProperty DownloadValueProperty =
+            DependencyProperty.Register("DownloadValue", typeof(double), typeof(GalleryTransportControls), new PropertyMetadata(0d));
+
+        #endregion
+
+        #region DownloadMaximum
+
+        public double DownloadMaximum
+        {
+            get { return (double)GetValue(DownloadMaximumProperty); }
+            set { SetValue(DownloadMaximumProperty, value); }
+        }
+
+        public static readonly DependencyProperty DownloadMaximumProperty =
+            DependencyProperty.Register("DownloadMaximum", typeof(double), typeof(GalleryTransportControls), new PropertyMetadata(0d));
+
+        #endregion
+
         public bool IsVisible
         {
             get
@@ -168,5 +194,34 @@ namespace Unigram.Controls.Gallery
                 VisualStateManager.GoToState(this, "ControlPanelFadeOut", false);
             }
         }
+    }
+
+    public class GalleryTransportSlider : Slider
+    {
+        #region DownloadValue
+
+        public double DownloadValue
+        {
+            get { return (double)GetValue(DownloadValueProperty); }
+            set { SetValue(DownloadValueProperty, value); }
+        }
+
+        public static readonly DependencyProperty DownloadValueProperty =
+            DependencyProperty.Register("DownloadValue", typeof(double), typeof(GalleryTransportSlider), new PropertyMetadata(0d));
+
+        #endregion
+
+        #region DownloadMaximum
+
+        public double DownloadMaximum
+        {
+            get { return (double)GetValue(DownloadMaximumProperty); }
+            set { SetValue(DownloadMaximumProperty, value); }
+        }
+
+        public static readonly DependencyProperty DownloadMaximumProperty =
+            DependencyProperty.Register("DownloadMaximum", typeof(double), typeof(GalleryTransportSlider), new PropertyMetadata(0d));
+
+        #endregion
     }
 }

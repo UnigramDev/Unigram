@@ -15,6 +15,7 @@ using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
@@ -23,7 +24,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageBubble : StackPanel
+    public sealed partial class MessageBubble : UserControl
     {
         private MessageViewModel _message;
 
@@ -62,6 +63,64 @@ namespace Unigram.Controls.Messages
 
             Footer.UpdateMessage(message);
             Markup.Update(message, message.ReplyMarkup);
+        }
+
+        public void UpdateAutomation(MessageViewModel message)
+        {
+            var chat = message.GetChat();
+
+            var sticker = message.Content is MessageSticker;
+            var light = sticker || message.Content is MessageVideoNote;
+
+            var title = string.Empty;
+
+            if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
+            {
+                var sender = message.GetSenderUser();
+                title = sender?.GetFullName();
+            }
+            else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup)
+            {
+                title = message.ProtoService.GetTitle(chat);
+            }
+            else if (!light && message.IsFirst && message.IsSaved())
+            {
+                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                {
+                    title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                }
+                else if (message.ForwardInfo is MessageForwardedPost post)
+                {
+                    title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
+                }
+            }
+
+            var builder = new StringBuilder();
+            if (title?.Length > 0)
+            {
+                builder.AppendLine($"{title}. ");
+            }
+
+            builder.Append(Automation.GetSummary(message.Get()));
+
+            var date = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            if (message.IsOutgoing)
+            {
+                builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
+            }
+            else
+            {
+                builder.Append(string.Format(Strings.Resources.AccDescrReceivedDate, date));
+            }
+
+            builder.Append(". ");
+
+            if (Parent is Grid parent)
+            {
+                AutomationProperties.SetName(parent, builder.ToString());
+            }
+
+            AutomationProperties.SetName(this, builder.ToString());
         }
 
         public void UpdateAttach(MessageViewModel message, bool wide = false)
@@ -450,7 +509,7 @@ namespace Unigram.Controls.Messages
             {
                 Media.Margin = new Thickness(-10, -4, -10, -6);
                 Placeholder.Visibility = Visibility.Collapsed;
-                FooterToLightMedia(message.IsOutgoing);
+                FooterToLightMedia(message.IsOutgoing && !message.IsChannelPost);
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
             }
@@ -615,6 +674,8 @@ namespace Unigram.Controls.Messages
                     Media.Content = null;
                 }
             }
+
+            UpdateAutomation(message);
         }
 
         public void UpdateFile(MessageViewModel message, File file)
@@ -763,6 +824,7 @@ namespace Unigram.Controls.Messages
 
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                     hyperlink.Inlines.Add(new Run { Text = data });
+                    hyperlink.Foreground = GetLinksBrush();
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
 
@@ -788,6 +850,7 @@ namespace Unigram.Controls.Messages
 
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyperlink.Foreground = GetLinksBrush();
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
                 }
@@ -800,7 +863,11 @@ namespace Unigram.Controls.Messages
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
             }
 
-            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
+            if (AdjustEmojis(span, text))
+            {
+                adjust = true;
+            }
+            else if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
@@ -819,6 +886,42 @@ namespace Unigram.Controls.Messages
             }
 
             return true;
+        }
+
+        private bool AdjustEmojis(Span span, string text)
+        {
+            if (Emoji.TryCountEmojis(text, out int count, 3))
+            {
+                switch (count)
+                {
+                    case 1:
+                        Message.TextAlignment = TextAlignment.Center;
+                        span.FontSize = 32;
+                        return true;
+                    case 2:
+                        Message.TextAlignment = TextAlignment.Center;
+                        span.FontSize = 28;
+                        return true;
+                    case 3:
+                        Message.TextAlignment = TextAlignment.Center;
+                        span.FontSize = 24;
+                        return true;
+                }
+            }
+
+            Message.TextAlignment = TextAlignment.DetectFromContent;
+            span.FontSize = (double)App.Current.Resources["MessageFontSize"];
+            return false;
+        }
+
+        private Brush GetLinksBrush()
+        {
+            if (Resources.TryGetValue("MessageForegroundLinkBrush", out object value))
+            {
+                return value as SolidColorBrush;
+            }
+
+            return App.Current.Resources["MessageForegroundLinkBrush"] as SolidColorBrush;
         }
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, string data)
@@ -995,6 +1098,8 @@ namespace Unigram.Controls.Messages
 
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
+
+            UpdateMockup();
         }
 
         public void Mockup(string message, string sender, string reply, bool outgoing, DateTime date)
@@ -1021,9 +1126,14 @@ namespace Unigram.Controls.Messages
 
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
+
+            UpdateMockup();
         }
 
-
+        public void UpdateMockup()
+        {
+            Span.FontSize = (double)App.Current.Resources["MessageFontSize"];
+        }
 
 
 

@@ -19,6 +19,7 @@
         <controls:ButtonPageHeader
             x:Name="Header"
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Next}"
             Text="{CustomResource YourPhone}"
             Glyph="&#xE10B;"/>
 
@@ -47,12 +48,13 @@
                       ItemsSource="{x:Bind ViewModel.Countries}"
                       SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                       PlaceholderText="{CustomResource ChooseCountry}"
+                      AutomationProperties.Name="{CustomResource ChooseCountry}"
                       MinWidth="280"
                       HorizontalAlignment="Stretch"
                       Grid.Row="2">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="models:Country">
-                        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+                        <TextBlock AutomationProperties.Name="{x:Bind DisplayName}" Style="{StaticResource BodyTextBlockStyle}">
                             <Run Text="{x:Bind DisplayName}"/>
                             <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                         </TextBlock>

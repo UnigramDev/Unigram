@@ -1,64 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources.Core;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Services;
 using Telegram.Td.Api;
-using Unigram.Common;
-using Windows.Globalization;
 using Template10.Common;
 using Unigram.Collections;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Services;
+using Unigram.Views.Host;
+using Windows.ApplicationModel.Resources.Core;
+using Windows.Globalization;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsLanguageViewModel : TLViewModelBase
     {
-        public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly ILocaleService _localeService;
+
+        private object _separator;
+
+        public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocaleService localeService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<LanguagePackInfo>();
+            _localeService = localeService;
+
+            Items = new MvxObservableCollection<object>();
 
             ChangeCommand = new RelayCommand<LanguagePackInfo>(ChangeExecute);
+            DeleteCommand = new RelayCommand<LanguagePackInfo>(DeleteExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (Items.Count > 0 && SelectedItem != null)
-            {
-                return;
-            }
-
             var response = await ProtoService.SendAsync(new GetLocalizationTargetInfo(false));
             if (response is LocalizationTargetInfo pack)
             {
-                Items.ReplaceWith(pack.LanguagePacks.OrderBy(x => x.NativeName));
+                var results = new List<object>();
+
+                results.AddRange(pack.LanguagePacks.Where(x => x.IsInstalled).OrderBy(k => k.Name));
+
+                if (results.Count > 0)
+                {
+                    results.Add(_separator = new object());
+                }
+
+                results.AddRange(pack.LanguagePacks.Where(x => !x.IsInstalled).OrderBy(k => k.Name));
+
+                Items.ReplaceWith(results);
+                SelectedItem = pack.LanguagePacks.FirstOrDefault(x => x.Id == SettingsService.Current.LanguagePackId);
             }
-
-            //var response = await LegacyService.GetLanguagesAsync();
-            //if (response.IsSucceeded)
-            //{
-            //    Items.ReplaceWith(response.Result.OrderBy(x => x.NativeName));
-
-            //    var context = ResourceContext.GetForCurrentView();
-            //    if (context.Languages.Count > 0)
-            //    {
-            //        var key = context.Languages[0];
-            //        var already = Items.FirstOrDefault(x => key.StartsWith(x.LangCode, StringComparison.OrdinalIgnoreCase));
-            //        if (already != null)
-            //        {
-            //            SelectedItem = already;
-            //        }
-            //    }
-            //}
         }
 
-        public MvxObservableCollection<LanguagePackInfo> Items { get; private set; }
+        public MvxObservableCollection<object> Items { get; private set; }
 
-        private object _selectedItem;
-        public object SelectedItem
+        private LanguagePackInfo _selectedItem;
+        public LanguagePackInfo SelectedItem
         {
             get
             {
@@ -73,16 +72,67 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<LanguagePackInfo> ChangeCommand { get; }
         private async void ChangeExecute(LanguagePackInfo info)
         {
-            //var response = await ProtoService.SetLanguageAsync(info.Code, true);
-            //if (response)
-            //{
-            //    ApplicationLanguages.PrimaryLanguageOverride = info.Code;
-            //    ResourceContext.GetForCurrentView().Reset();
-            //    ResourceContext.GetForViewIndependentUse().Reset();
+            IsLoading = true;
 
-            //    WindowWrapper.Current().NavigationServices.Remove(NavigationService);
-            //    BootStrapper.Current.NavigationService.Reset();
-            //}
+            var response = await _localeService.SetLanguageAsync(info, true);
+            if (response is Ok)
+            {
+                //ApplicationLanguages.PrimaryLanguageOverride = info.Id;
+                //ResourceContext.GetForCurrentView().Reset();
+                //ResourceContext.GetForViewIndependentUse().Reset();
+
+                //TLWindowContext.GetForCurrentView().NavigationServices.Remove(NavigationService);
+                //BootStrapper.Current.NavigationService.Reset();
+
+                foreach (var window in WindowContext.ActiveWrappers)
+                {
+                    window.Dispatcher.Dispatch(() =>
+                    {
+                        ResourceContext.GetForCurrentView().Reset();
+                        ResourceContext.GetForViewIndependentUse().Reset();
+
+                        if (window.Content is RootPage root)
+                        {
+                            window.Dispatcher.Dispatch(() =>
+                            {
+                                root.UpdateComponent();
+                            });
+                        }
+                    });
+                }
+            }
+
+            IsLoading = false;
+        }
+
+        public RelayCommand<LanguagePackInfo> DeleteCommand { get; }
+        private async void DeleteExecute(LanguagePackInfo info)
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DeleteLocalization, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            ProtoService.Send(new DeleteLanguagePack(info.Id));
+            Items.Remove(info);
+
+            var any = Items.OfType<LanguagePackInfo>().FirstOrDefault(x => x.IsInstalled);
+            if (any == null)
+            {
+                Items.Remove(_separator);
+            }
+
+            if (info.Id != SettingsService.Current.LanguagePackId)
+            {
+                return;
+            }
+
+            var fallback = Items.OfType<LanguagePackInfo>().FirstOrDefault(x => x.Id == ApplicationLanguages.Languages[0]);
+            if (fallback != null)
+            {
+                ChangeExecute(fallback);
+            }
         }
     }
 }

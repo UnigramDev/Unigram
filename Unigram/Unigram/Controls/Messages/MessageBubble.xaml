@@ -1,4 +1,5 @@
-<StackPanel
+<UserControl
+    x:Name="LayoutRoot"
     x:Class="Unigram.Controls.Messages.MessageBubble"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,84 +11,92 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Margin="{StaticResource MessageContentMargin}"
-    MaxWidth="{StaticResource MessageMaxWidth}">
+    MaxWidth="{StaticResource MessageMaxWidth}"
+    IsTabStop="True"
+    UseSystemFocusVisuals="True"
+    FocusVisualMargin="0"
+    FocusVisualPrimaryBrush="{ThemeResource ListViewItemFocusVisualPrimaryBrush}"
+    FocusVisualPrimaryThickness="2"
+    FocusVisualSecondaryBrush="{ThemeResource ListViewItemFocusVisualSecondaryBrush}"
+    FocusVisualSecondaryThickness="1">
 
-    <UserControl x:Name="LayoutRoot">
+    <StackPanel>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Normal"/>
+                <VisualState x:Name="LightStateOut">
+                    <VisualState.Setters>
+                        <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                        <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                        <Setter Target="Footer.Foreground" Value="White"/>
+                        <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
+                        <Setter Target="ContentPanel.BorderThickness" Value="0"/>
+                        <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                        <Setter Target="Header.VerticalAlignment" Value="Top"/>
+                        <Setter Target="Header.CornerRadius" Value="8"/>
+                        <Setter Target="Header.Padding" Value="8,2,8,4"/>
+                        <Setter Target="Header.(Grid.Row)" Value="3"/>
+                        <Setter Target="Reply.Margin" Value="0,4,0,2"/>
+                        <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
+                        <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
+                        <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
+
+                        <Setter Target="Header.Margin" Value="-14,-4,14,0"/>
+                        <Setter Target="Header.HorizontalAlignment" Value="Right"/>
+                        <Setter Target="Media.HorizontalAlignment" Value="Right"/>
+                        <Setter Target="Message.(Grid.Column)" Value="2"/>
+                        <Setter Target="Media.(Grid.Column)" Value="2"/>
+                        <Setter Target="Footer.(Grid.Column)" Value="2"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LightState">
+                    <VisualState.Setters>
+                        <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                        <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                        <Setter Target="Footer.Foreground" Value="White"/>
+                        <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
+                        <Setter Target="ContentPanel.BorderThickness" Value="0"/>
+                        <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                        <Setter Target="Header.VerticalAlignment" Value="Top"/>
+                        <Setter Target="Header.CornerRadius" Value="8"/>
+                        <Setter Target="Header.Padding" Value="8,2,8,4"/>
+                        <Setter Target="Header.(Grid.Row)" Value="3"/>
+                        <Setter Target="Reply.Margin" Value="0,4,0,2"/>
+                        <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
+                        <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
+                        <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
+
+                        <Setter Target="Header.Margin" Value="14,-4,-14,0"/>
+                        <Setter Target="Header.HorizontalAlignment" Value="Left"/>
+                        <Setter Target="Media.HorizontalAlignment" Value="Left"/>
+                        <Setter Target="Message.(Grid.Column)" Value="0"/>
+                        <Setter Target="Media.(Grid.Column)" Value="0"/>
+                        <Setter Target="Footer.(Grid.Column)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="MediaState">
+                    <VisualState.Setters>
+                        <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                        <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                        <Setter Target="Footer.Foreground" Value="White"/>
+                        <Setter Target="ContentPanel.BorderThickness" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="HiddenState">
+                    <VisualState.Setters>
+                        <Setter Target="Footer.Opacity" Value="0"/>
+                        <Setter Target="Footer.IsHitTestVisible" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <Grid x:Name="ContentPanel"
               MinHeight="30"
               Padding="{StaticResource MessageContentPadding}"
               CornerRadius="{StaticResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}"
               DoubleTapped="ContentPanel_DoubleTapped">
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState x:Name="Normal"/>
-                    <VisualState x:Name="LightStateOut">
-                        <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
-                            <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
-                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
-                            <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="Header.VerticalAlignment" Value="Top"/>
-                            <Setter Target="Header.CornerRadius" Value="8"/>
-                            <Setter Target="Header.Padding" Value="8,2,8,4"/>
-                            <Setter Target="Header.(Grid.Row)" Value="3"/>
-                            <Setter Target="Reply.Margin" Value="0,4,0,2"/>
-                            <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
-                            <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
-                            <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
-
-                            <Setter Target="Header.Margin" Value="-12,-4,12,0"/>
-                            <Setter Target="Header.HorizontalAlignment" Value="Right"/>
-                            <Setter Target="Media.HorizontalAlignment" Value="Right"/>
-                            <Setter Target="Message.(Grid.Column)" Value="2"/>
-                            <Setter Target="Media.(Grid.Column)" Value="2"/>
-                            <Setter Target="Footer.(Grid.Column)" Value="2"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="LightState">
-                        <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
-                            <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
-                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
-                            <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="Header.VerticalAlignment" Value="Top"/>
-                            <Setter Target="Header.CornerRadius" Value="8"/>
-                            <Setter Target="Header.Padding" Value="8,2,8,4"/>
-                            <Setter Target="Header.(Grid.Row)" Value="3"/>
-                            <Setter Target="Reply.Margin" Value="0,4,0,2"/>
-                            <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
-                            <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
-                            <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
-
-                            <Setter Target="Header.Margin" Value="14,-4,-14,0"/>
-                            <Setter Target="Header.HorizontalAlignment" Value="Left"/>
-                            <Setter Target="Media.HorizontalAlignment" Value="Left"/>
-                            <Setter Target="Message.(Grid.Column)" Value="0"/>
-                            <Setter Target="Media.(Grid.Column)" Value="0"/>
-                            <Setter Target="Footer.(Grid.Column)" Value="0"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="MediaState">
-                        <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
-                            <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                            <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                    <VisualState x:Name="HiddenState">
-                        <VisualState.Setters>
-                            <Setter Target="Footer.Opacity" Value="0"/>
-                            <Setter Target="Footer.IsHitTestVisible" Value="False"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -128,7 +137,6 @@
             <RichTextBlock
                 x:Name="Message"
                 Style="{StaticResource BodyRichTextBlockStyle}"
-                FontSize="{ThemeResource MessageFontSize}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 ContextMenuOpening="Message_ContextMenuOpening"
                 TextAlignment="DetectFromContent"
@@ -144,6 +152,7 @@
 
             <ContentControl
                 x:Name="Media"
+                IsTabStop="False"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch"
                 Grid.Column="1"
@@ -158,8 +167,8 @@
                 Grid.Column="1"
                 Grid.Row="4"/>
         </Grid>
-    </UserControl>
 
-    <controls:ReplyMarkupPanel x:Name="Markup" InlineButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,0"/>
+        <controls:ReplyMarkupPanel x:Name="Markup" InlineButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,0"/>
+    </StackPanel>
 
-</StackPanel>
+</UserControl>

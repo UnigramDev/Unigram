@@ -67,6 +67,225 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Прервать настройку двухэтапной аутентификации</value>
   </data>
+  <data name="AccActionCancelDownload" xml:space="preserve">
+    <value>Отмена загрузки</value>
+  </data>
+  <data name="AccActionDownload" xml:space="preserve">
+    <value>Загрузка</value>
+  </data>
+  <data name="AccActionEnterSelectionMode" xml:space="preserve">
+    <value>Перейти в режим выбора</value>
+  </data>
+  <data name="AccActionMessageOptions" xml:space="preserve">
+    <value>Параметры сообщения</value>
+  </data>
+  <data name="AccActionOpenFile" xml:space="preserve">
+    <value>Открыть файл</value>
+  </data>
+  <data name="AccActionPause" xml:space="preserve">
+    <value>Пауза</value>
+  </data>
+  <data name="AccActionPlay" xml:space="preserve">
+    <value>Воспроизвести</value>
+  </data>
+  <data name="AccDescrAspectRatio" xml:space="preserve">
+    <value>Соотношение сторон</value>
+  </data>
+  <data name="AccDescrAttachButton" xml:space="preserve">
+    <value>Прикрепить медиа</value>
+  </data>
+  <data name="AccDescrBackspace" xml:space="preserve">
+    <value>Backspace</value>
+  </data>
+  <data name="AccDescrBotCommands" xml:space="preserve">
+    <value>Команды бота</value>
+  </data>
+  <data name="AccDescrBotKeyboard" xml:space="preserve">
+    <value>Клавиатура бота</value>
+  </data>
+  <data name="AccDescrCameraFlashAuto" xml:space="preserve">
+    <value>Вспышка автоматическая</value>
+  </data>
+  <data name="AccDescrCameraFlashOff" xml:space="preserve">
+    <value>Вспышка выключена</value>
+  </data>
+  <data name="AccDescrCameraFlashOn" xml:space="preserve">
+    <value>Вспышка включена</value>
+  </data>
+  <data name="AccDescrCancelEdit" xml:space="preserve">
+    <value>Отмена редактирования</value>
+  </data>
+  <data name="AccDescrCancelForward" xml:space="preserve">
+    <value>Отменить пересылку</value>
+  </data>
+  <data name="AccDescrCancelReply" xml:space="preserve">
+    <value>Отмена ответа</value>
+  </data>
+  <data name="AccDescrChanSilentOff" xml:space="preserve">
+    <value>Отправить уведомления</value>
+  </data>
+  <data name="AccDescrChanSilentOn" xml:space="preserve">
+    <value>Отправить без уведомления</value>
+  </data>
+  <data name="AccDescrChangeProfilePicture" xml:space="preserve">
+    <value>Изменить фотографию в профиле</value>
+  </data>
+  <data name="AccDescrChannel" xml:space="preserve">
+    <value>Канал</value>
+  </data>
+  <data name="AccDescrClosePlayer" xml:space="preserve">
+    <value>Закрыть аудиоплеер</value>
+  </data>
+  <data name="AccDescrCollapsePanel" xml:space="preserve">
+    <value>Свернуть панель</value>
+  </data>
+  <data name="AccDescrContactSorting" xml:space="preserve">
+    <value>Изменить сортировку</value>
+  </data>
+  <data name="AccDescrEditing" xml:space="preserve">
+    <value>Редактирование</value>
+  </data>
+  <data name="AccDescrEmojiButton" xml:space="preserve">
+    <value>Эмодзи, стикеры и GIF</value>
+  </data>
+  <data name="AccDescrExpandPanel" xml:space="preserve">
+    <value>Развернуть панель</value>
+  </data>
+  <data name="AccDescrForwarding" xml:space="preserve">
+    <value>Пересылка от</value>
+  </data>
+  <data name="AccDescrGIFs" xml:space="preserve">
+    <value>GIF</value>
+  </data>
+  <data name="AccDescrGoBack" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="AccDescrGoToMessage" xml:space="preserve">
+    <value>Перейти к сообщению</value>
+  </data>
+  <data name="AccDescrGroup" xml:space="preserve">
+    <value>Группа</value>
+  </data>
+  <data name="AccDescrHideAccounts" xml:space="preserve">
+    <value>Скрыть аккаунты</value>
+  </data>
+  <data name="AccDescrIVHeading" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="AccDescrIVTitle" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="AccDescrInstantCamera" xml:space="preserve">
+    <value>Переключиться в режим камеры</value>
+  </data>
+  <data name="AccDescrMentionDown" xml:space="preserve">
+    <value>Перейти к следующему упоминанию</value>
+  </data>
+  <data name="AccDescrMoreOptions" xml:space="preserve">
+    <value>Дополнительные параметры</value>
+  </data>
+  <data name="AccDescrMusicInfo" xml:space="preserve">
+    <value>{1}  {0}</value>
+  </data>
+  <data name="AccDescrMuteMic" xml:space="preserve">
+    <value>Отключить микрофон</value>
+  </data>
+  <data name="AccDescrMyLocation" xml:space="preserve">
+    <value>Моя геопозиция</value>
+  </data>
+  <data name="AccDescrOpenChat" xml:space="preserve">
+    <value>Открыть чат</value>
+  </data>
+  <data name="AccDescrOpenMenu" xml:space="preserve">
+    <value>Открыть меню навигации</value>
+  </data>
+  <data name="AccDescrPageDown" xml:space="preserve">
+    <value>Перейти в конец</value>
+  </data>
+  <data name="AccDescrPasscodeLock" xml:space="preserve">
+    <value>Заблокировать приложение</value>
+  </data>
+  <data name="AccDescrPasscodeUnlock" xml:space="preserve">
+    <value>Разблокировать приложение</value>
+  </data>
+  <data name="AccDescrPhotoAdjust" xml:space="preserve">
+    <value>Настройка</value>
+  </data>
+  <data name="AccDescrPhotoEditor" xml:space="preserve">
+    <value>Фоторедактор</value>
+  </data>
+  <data name="AccDescrPhotoViewer" xml:space="preserve">
+    <value>Просмотр фото</value>
+  </data>
+  <data name="AccDescrPlayerSpeed" xml:space="preserve">
+    <value>Ускоренное воспроизведение</value>
+  </data>
+  <data name="AccDescrPrevious" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="AccDescrProfilePicture" xml:space="preserve">
+    <value>Фотография профиля</value>
+  </data>
+  <data name="AccDescrReceivedDate" xml:space="preserve">
+    <value>Получено {0}</value>
+  </data>
+  <data name="AccDescrRepeatList" xml:space="preserve">
+    <value>Повтор плейлиста</value>
+  </data>
+  <data name="AccDescrRepeatOff" xml:space="preserve">
+    <value>Повтор отключён</value>
+  </data>
+  <data name="AccDescrRepeatOne" xml:space="preserve">
+    <value>Повтор один раз</value>
+  </data>
+  <data name="AccDescrReplying" xml:space="preserve">
+    <value>Ответ для</value>
+  </data>
+  <data name="AccDescrRotate" xml:space="preserve">
+    <value>Повернуть</value>
+  </data>
+  <data name="AccDescrSecretChat" xml:space="preserve">
+    <value>Секретный чат</value>
+  </data>
+  <data name="AccDescrSentDate" xml:space="preserve">
+    <value>Отправлено {0}</value>
+  </data>
+  <data name="AccDescrShowAccounts" xml:space="preserve">
+    <value>Показать аккаунты</value>
+  </data>
+  <data name="AccDescrShowKeyboard" xml:space="preserve">
+    <value>Показать клавиатуру</value>
+  </data>
+  <data name="AccDescrShutter" xml:space="preserve">
+    <value>Затвор</value>
+  </data>
+  <data name="AccDescrStickerSet" xml:space="preserve">
+    <value>Набор стикеров</value>
+  </data>
+  <data name="AccDescrStickers" xml:space="preserve">
+    <value>Стикеры</value>
+  </data>
+  <data name="AccDescrStopLiveLocation" xml:space="preserve">
+    <value>Остановить трансляцию геопозиции</value>
+  </data>
+  <data name="AccDescrSwitchCamera" xml:space="preserve">
+    <value>Переключить камеру</value>
+  </data>
+  <data name="AccDescrTakeMorePics" xml:space="preserve">
+    <value>Сделать ещё один снимок</value>
+  </data>
+  <data name="AccDescrUserOptions" xml:space="preserve">
+    <value>Параметры пользователя</value>
+  </data>
+  <data name="AccDescrVideoMessage" xml:space="preserve">
+    <value>Записать видеосообщение</value>
+  </data>
+  <data name="AccDescrVideoQuality" xml:space="preserve">
+    <value>Качество видео</value>
+  </data>
+  <data name="AccDescrVoiceMessage" xml:space="preserve">
+    <value>Записать голосовое сообщение</value>
+  </data>
   <data name="Accept" xml:space="preserve">
     <value>Принять</value>
   </data>
@@ -311,7 +530,7 @@
     <value>К сожалению, Вы не можете заблокировать этого пользователя, поскольку он администрирует эту группу, а у Вас нет прав, чтобы его разжаловать.</value>
   </data>
   <data name="AddBotAsAdmin" xml:space="preserve">
-    <value>Добавлять ботов могут только администраторы.</value>
+    <value>Бота можно добавить только как администратора.</value>
   </data>
   <data name="AddCaption" xml:space="preserve">
     <value>Добавить подпись...</value>
@@ -396,6 +615,9 @@
   </data>
   <data name="Alert" xml:space="preserve">
     <value>Показывать уведомления</value>
+  </data>
+  <data name="AllAccounts" xml:space="preserve">
+    <value>Всех аккаунтов</value>
   </data>
   <data name="AllMedia" xml:space="preserve">
     <value>Все медиа</value>
@@ -580,6 +802,9 @@
   <data name="AreYouSureClearHistoryGroup" xml:space="preserve">
     <value>Удалить из кэша все сообщения и материалы этой группы?</value>
   </data>
+  <data name="AreYouSureClearHistorySavedMessages" xml:space="preserve">
+    <value>Вы точно хотите очистить историю чата **Избранное**?</value>
+  </data>
   <data name="AreYouSureClearHistoryWithChat" xml:space="preserve">
     <value>Вы точно хотите удалить историю переписки в **{0}**?</value>
   </data>
@@ -598,6 +823,12 @@
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Вы точно хотите удалить этот контакт?</value>
   </data>
+  <data name="AreYouSureDeleteFewMessages" xml:space="preserve">
+    <value>Вы точно хотите удалить эти сообщения?</value>
+  </data>
+  <data name="AreYouSureDeleteFewMessagesMega" xml:space="preserve">
+    <value>Вы точно хотите удалить сообщения для всех участников чата?</value>
+  </data>
   <data name="AreYouSureDeleteGIF" xml:space="preserve">
     <value>Вы точно хотите удалить GIF?</value>
   </data>
@@ -607,8 +838,17 @@
   <data name="AreYouSureDeletePhoto" xml:space="preserve">
     <value>Вы точно хотите удалить фото?</value>
   </data>
+  <data name="AreYouSureDeleteSingleMessage" xml:space="preserve">
+    <value>Вы точно хотите удалить это сообщение?</value>
+  </data>
+  <data name="AreYouSureDeleteSingleMessageMega" xml:space="preserve">
+    <value>Вы точно хотите удалить сообщение для всех участников чата?</value>
+  </data>
   <data name="AreYouSureDeleteThisChat" xml:space="preserve">
     <value>Вы точно хотите удалить этот чат?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
+    <value>Вы точно хотите удалить чат **Избранное**?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>Вы точно хотите удалить чат **{0}**?</value>
@@ -694,6 +934,12 @@
   <data name="AttachGif" xml:space="preserve">
     <value>GIF</value>
   </data>
+  <data name="AttachGifRestricted" xml:space="preserve">
+    <value>Администраторы группы запретили Вам отправлять GIF до {0}</value>
+  </data>
+  <data name="AttachGifRestrictedForever" xml:space="preserve">
+    <value>Администраторы группы запретили Вам отправлять GIF.</value>
+  </data>
   <data name="AttachInlineRestricted" xml:space="preserve">
     <value>Администраторы группы запретили Вам отправлять сообщения с помощью ботов до {0}</value>
   </data>
@@ -757,12 +1003,6 @@
   <data name="August" xml:space="preserve">
     <value>Август</value>
   </data>
-  <data name="AutoDownloadAllMedia" xml:space="preserve">
-    <value>Все медиафайлы</value>
-  </data>
-  <data name="AutoDownloadAnd" xml:space="preserve">
-    <value>{0} и {1}</value>
-  </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Голосовые сообщения имеют небольшой размер и всегда загружаются автоматически.</value>
   </data>
@@ -770,7 +1010,7 @@
     <value>каналы</value>
   </data>
   <data name="AutoDownloadContacts" xml:space="preserve">
-    <value>Контакты</value>
+    <value>контакты</value>
   </data>
   <data name="AutoDownloadCustom" xml:space="preserve">
     <value>Другой</value>
@@ -854,7 +1094,7 @@
     <value>Предзагрузка длинных видео</value>
   </data>
   <data name="AutoDownloadPreloadVideoInfo" xml:space="preserve">
-    <value>Подгружать первые секунды (1-2 МБ) для видеозаписей длиннее {0}, чтобы воспроизводить их без задержки.</value>
+    <value>Подгружать первые секунды (1-2 МБ) для видеозаписей больше {0}, чтобы воспроизводить их без задержки.</value>
   </data>
   <data name="AutoDownloadTypes" xml:space="preserve">
     <value>Загружать мультимедиа</value>
@@ -951,6 +1191,9 @@
   </data>
   <data name="AutoplayVideo" xml:space="preserve">
     <value>Видео</value>
+  </data>
+  <data name="AutoplayVideoInfo" xml:space="preserve">
+    <value>Звук можно включить кнопками громкости.</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>Доступен</value>
@@ -1251,7 +1494,7 @@
     <value>Изменить номер</value>
   </data>
   <data name="ChangePhoneNumberInfo" xml:space="preserve">
-    <value>Перенесите на новый номер телефона все контакты, сообщения, группы и файлы.</value>
+    <value>Перенесите на новый номер телефона свой аккаунт со всеми чатами и файлами.</value>
   </data>
   <data name="ChangePhoneNumberOccupied" xml:space="preserve">
     <value>Номер {0} уже привязан к аккаунту в Telegram. Удалите тот аккаунт, прежде чем перейти на новый номер.</value>
@@ -1735,6 +1978,9 @@
   <data name="ClearHistoryCache" xml:space="preserve">
     <value>Удалить из кэша</value>
   </data>
+  <data name="ClearHistoryOptionAlso" xml:space="preserve">
+    <value>Также очистить историю для {0}</value>
+  </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Очистить кэш</value>
   </data>
@@ -2059,7 +2305,7 @@
     <value>Настройки звонков</value>
   </data>
   <data name="DebugMenuClearMediaCache" xml:space="preserve">
-    <value>Очистить кэш отправленных файлов</value>
+    <value>Очистить кэш отправки файлов</value>
   </data>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>Выключить встроенную камеру</value>
@@ -2080,7 +2326,7 @@
     <value>Перезагрузить контакты</value>
   </data>
   <data name="DebugMenuResetContacts" xml:space="preserve">
-    <value>Сбросить импортированные контакты</value>
+    <value>Сбросить контакты</value>
   </data>
   <data name="DebugMenuResetDialogs" xml:space="preserve">
     <value>Сбросить кэш диалогов</value>
@@ -2124,6 +2370,9 @@
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Удалить и покинуть группу</value>
   </data>
+  <data name="DeleteAndExitButton" xml:space="preserve">
+    <value>Удалить и покинуть группу</value>
+  </data>
   <data name="DeleteAndStop" xml:space="preserve">
     <value>Удалить и остановить</value>
   </data>
@@ -2163,6 +2412,24 @@
   <data name="DeleteMegaMenu" xml:space="preserve">
     <value>Удалить группу</value>
   </data>
+  <data name="DeleteMessagesOption" xml:space="preserve">
+    <value>Отозвать мои сообщения</value>
+  </data>
+  <data name="DeleteMessagesOptionAlso" xml:space="preserve">
+    <value>Также удалить для {0}</value>
+  </data>
+  <data name="DeleteMessagesText" xml:space="preserve">
+    <value>Чтобы удалить отправленные Вами {0} из истории для **{1}**, выберите «Отозвать мои сообщения».</value>
+  </data>
+  <data name="DeleteMessagesTextGroup" xml:space="preserve">
+    <value>Чтобы удалить отправленные Вами {0} из истории для других участников группы, выберите «Отозвать мои сообщения».</value>
+  </data>
+  <data name="DeleteMessagesTextGroupPart" xml:space="preserve">
+    <value>Чтобы удалить отправленные Вами {0} из истории для других участников группы, выберите «Удалить у всех участников».</value>
+  </data>
+  <data name="DeleteMessagesTitle" xml:space="preserve">
+    <value>Удалить {0}</value>
+  </data>
   <data name="DeletePhoto" xml:space="preserve">
     <value>Удалить фото</value>
   </data>
@@ -2171,6 +2438,9 @@
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Сообщить о спаме</value>
+  </data>
+  <data name="DeleteSingleMessagesTitle" xml:space="preserve">
+    <value>Удалить сообщение</value>
   </data>
   <data name="DeleteThemeAlert" xml:space="preserve">
     <value>Вы точно хотите удалить тему?</value>
@@ -2339,8 +2609,41 @@
   <data name="Emoji" xml:space="preserve">
     <value>Эмодзи</value>
   </data>
+  <data name="Emoji1" xml:space="preserve">
+    <value>Смайлы и люди</value>
+  </data>
+  <data name="Emoji2" xml:space="preserve">
+    <value>Животные и природа</value>
+  </data>
+  <data name="Emoji3" xml:space="preserve">
+    <value>Еда и напитки</value>
+  </data>
+  <data name="Emoji4" xml:space="preserve">
+    <value>Занятия</value>
+  </data>
+  <data name="Emoji5" xml:space="preserve">
+    <value>Места и путешествия</value>
+  </data>
+  <data name="Emoji6" xml:space="preserve">
+    <value>Предметы</value>
+  </data>
+  <data name="Emoji7" xml:space="preserve">
+    <value>Символы</value>
+  </data>
+  <data name="Emoji8" xml:space="preserve">
+    <value>Флаги</value>
+  </data>
   <data name="EmojiBigSize" xml:space="preserve">
     <value>Большие одиночные эмодзи</value>
+  </data>
+  <data name="EmojiSuggestions" xml:space="preserve">
+    <value>Подсказки эмодзи</value>
+  </data>
+  <data name="EmojiSuggestionsInfo" xml:space="preserve">
+    <value>В **Telegram** можно искать эмодзи по множеству ключевых слов, но всегда есть что добавить. Вы можете предложить свои варианты слов для поиска здесь:</value>
+  </data>
+  <data name="EmojiSuggestionsUrl" xml:space="preserve">
+    <value>https://translations.telegram.org/{0}/emoji</value>
   </data>
   <data name="EmojiUseDefault" xml:space="preserve">
     <value>Использовать системные эмодзи</value>
@@ -3145,6 +3448,9 @@
   <data name="GifCaption" xml:space="preserve">
     <value>Подпись к GIF</value>
   </data>
+  <data name="GlobalAttachGifRestricted" xml:space="preserve">
+    <value>В этой группе запрещено отправлять GIF.</value>
+  </data>
   <data name="GlobalAttachInlineRestricted" xml:space="preserve">
     <value>В этой группе запрещено публиковать материалы с помощью ботов.</value>
   </data>
@@ -3273,6 +3579,9 @@
   </data>
   <data name="Hashtags" xml:space="preserve">
     <value>ХЕШТЕГИ</value>
+  </data>
+  <data name="HidAccount" xml:space="preserve">
+    <value>Аккаунт скрыт пользователем</value>
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>Удалённый аккаунт</value>
@@ -4137,10 +4446,16 @@
   <data name="NoContacts" xml:space="preserve">
     <value>Контактов пока нет</value>
   </data>
+  <data name="NoEmojiFound" xml:space="preserve">
+    <value>Эмодзи не найдены</value>
+  </data>
   <data name="NoExceptions" xml:space="preserve">
     <value>В этом разделе будут показаны все чаты с особыми настройками уведомлений.
 
 Чтобы задать свои настройки для чата, откройте профиль чата > Уведомления.</value>
+  </data>
+  <data name="NoGIFsFound" xml:space="preserve">
+    <value>GIF не найдены</value>
   </data>
   <data name="NoGroupsInCommon" xml:space="preserve">
     <value>Общих групп пока нет</value>
@@ -5845,6 +6160,30 @@
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>Действие выполняется слишком часто. Не удалось изменить настройки приватности, пожалуйста, подождите.</value>
   </data>
+  <data name="PrivacyForwards" xml:space="preserve">
+    <value>Пересылка сообщений</value>
+  </data>
+  <data name="PrivacyForwardsContacts" xml:space="preserve">
+    <value>Ссылка, если это разрешают настройки ниже</value>
+  </data>
+  <data name="PrivacyForwardsEverybody" xml:space="preserve">
+    <value>Ссылка на Ваш аккаунт</value>
+  </data>
+  <data name="PrivacyForwardsInfo" xml:space="preserve">
+    <value>В отправленных Вами сообщениях не будет ссылки на Ваш аккаунт, если переслать их в другой чат.</value>
+  </data>
+  <data name="PrivacyForwardsInfo2" xml:space="preserve">
+    <value>Эти исключения будут работать всегда, независимо от настроек выше.</value>
+  </data>
+  <data name="PrivacyForwardsMessageLine" xml:space="preserve">
+    <value>Чем ворон похож на письменный стол?</value>
+  </data>
+  <data name="PrivacyForwardsNobody" xml:space="preserve">
+    <value>Без ссылки на аккаунт</value>
+  </data>
+  <data name="PrivacyForwardsTitle" xml:space="preserve">
+    <value>Кто может ссылаться на мой аккаунт при пересылке сообщений?</value>
+  </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>Последняя активность</value>
   </data>
@@ -5872,8 +6211,23 @@
   <data name="PrivacyPolicyUrl" xml:space="preserve">
     <value>https://telegram.org/privacy</value>
   </data>
+  <data name="PrivacyProfilePhoto" xml:space="preserve">
+    <value>Фотография профиля</value>
+  </data>
+  <data name="PrivacyProfilePhotoInfo" xml:space="preserve">
+    <value>Вы можете выбрать, кому разрешаете видеть фотографию в своём профиле.</value>
+  </data>
+  <data name="PrivacyProfilePhotoInfo2" xml:space="preserve">
+    <value>Эти исключения будут работать всегда, независимо от настроек выше.</value>
+  </data>
+  <data name="PrivacyProfilePhotoTitle" xml:space="preserve">
+    <value>Кто видит мою фотографию?</value>
+  </data>
   <data name="PrivacySettings" xml:space="preserve">
     <value>Конфиденциальность</value>
+  </data>
+  <data name="PrivacySettingsChangedAlert" xml:space="preserve">
+    <value>Вы изменили настройки приватности. Применить изменения?</value>
   </data>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Конфиденциальность</value>
@@ -6271,6 +6625,9 @@
   <data name="SearchByColor" xml:space="preserve">
     <value>Поиск по цвету</value>
   </data>
+  <data name="SearchEmojiHint" xml:space="preserve">
+    <value>Поиск эмодзи</value>
+  </data>
   <data name="SearchFriends" xml:space="preserve">
     <value>Поиск контактов</value>
   </data>
@@ -6291,6 +6648,9 @@
   </data>
   <data name="SearchImagesTitle" xml:space="preserve">
     <value>Поиск в сети</value>
+  </data>
+  <data name="SearchInSettings" xml:space="preserve">
+    <value>Поиск по настройкам и FAQ</value>
   </data>
   <data name="SearchMembers" xml:space="preserve">
     <value>Поиск участников</value>
@@ -6405,6 +6765,9 @@
   </data>
   <data name="SendGameToGroup" xml:space="preserve">
     <value>Поделиться игрой с группой {0}?</value>
+  </data>
+  <data name="SendGifPreview" xml:space="preserve">
+    <value>Отправить GIF</value>
   </data>
   <data name="SendItems" xml:space="preserve">
     <value>Отправить {0}</value>
@@ -6555,8 +6918,23 @@
   <data name="Settings" xml:space="preserve">
     <value>Настройки</value>
   </data>
+  <data name="SettingsFaqSearchTitle" xml:space="preserve">
+    <value>Часто задаваемые вопросы</value>
+  </data>
   <data name="SettingsHelp" xml:space="preserve">
     <value>Помощь</value>
+  </data>
+  <data name="SettingsNoRecent" xml:space="preserve">
+    <value>Нет недавних запросов</value>
+  </data>
+  <data name="SettingsNoResults" xml:space="preserve">
+    <value>Ничего не найдено</value>
+  </data>
+  <data name="SettingsRecent" xml:space="preserve">
+    <value>История поиска</value>
+  </data>
+  <data name="SettingsSearchFaq" xml:space="preserve">
+    <value>FAQ</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Тени</value>
@@ -6668,6 +7046,12 @@
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
     <value>Потяните, чтобы выбрать место</value>
+  </data>
+  <data name="ShowNotificationsFor" xml:space="preserve">
+    <value>Показывать уведомления</value>
+  </data>
+  <data name="ShowNotificationsForInfo" xml:space="preserve">
+    <value>Отключите, если хотите получать только уведомления активного аккаунта.</value>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>Случайный порядок</value>
@@ -7102,7 +7486,7 @@
     <value>Публичная</value>
   </data>
   <data name="Typing" xml:space="preserve">
-    <value>печатает</value>
+    <value>печатает...</value>
   </data>
   <data name="URL" xml:space="preserve">
     <value>URL</value>
@@ -7223,6 +7607,9 @@
   </data>
   <data name="UseLessDataOnMobile" xml:space="preserve">
     <value>В мобильной сети</value>
+  </data>
+  <data name="UseLessDataOnRoaming" xml:space="preserve">
+    <value>Только в роуминге</value>
   </data>
   <data name="UseProxyAddress" xml:space="preserve">
     <value>Сервер</value>

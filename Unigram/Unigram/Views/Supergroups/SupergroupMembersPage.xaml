@@ -67,18 +67,14 @@
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
                 </Grid>
-                <controls:SearchTextBox x:Name="SearchField"
-                                        Padding="12,4,6,4"
-                                        Background="{x:Null}"
-                                        BorderBrush="{x:Null}"
-                                        Style="{StaticResource SearchTextBoxStyle}"
-                                        PlaceholderText="{CustomResource Search}"
-                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                        Clean="Search_LostFocus"
-                                        LostFocus="Search_LostFocus"
-                                        TextChanged="Search_TextChanged"
-                                        Visibility="Collapsed"
-                                        Canvas.ZIndex="1"/>
+                <TextBox x:Name="SearchField"
+                         Style="{StaticResource QueryTextBoxStyle}"
+                         PlaceholderText="{CustomResource Search}"
+                         PreventKeyboardDisplayOnProgrammaticFocus="True"
+                         LostFocus="Search_LostFocus"
+                         TextChanged="Search_TextChanged"
+                         Visibility="Collapsed"
+                         Canvas.ZIndex="1"/>
             </Grid>
         </controls:ContentPageHeader>
 

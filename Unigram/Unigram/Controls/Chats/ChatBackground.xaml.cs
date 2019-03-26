@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -67,6 +68,8 @@ namespace Unigram.Controls.Chats
 
                     Canvas.Children.Add(image);
                 }
+
+                AutomationProperties.SetAccessibilityView(image, Windows.UI.Xaml.Automation.Peers.AccessibilityView.Raw);
 
                 Canvas.SetLeft(image, x * IMAGE_WIDTH);
                 Canvas.SetTop(image, y * IMAGE_HEIGHT);

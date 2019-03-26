@@ -128,6 +128,15 @@ namespace Unigram.Views
             Debug.WriteLine("Released mainpage");
         }
 
+        public void Dispose()
+        {
+            MasterDetail.Dispose();
+            SettingsView.Dispose();
+            //DataContext = null;
+            //Bindings?.Update();
+            Bindings?.StopTracking();
+        }
+
         private void InitializeTitleBar()
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
@@ -442,19 +451,30 @@ namespace Unigram.Views
 
         public void OnBackRequested(HandledEventArgs args)
         {
-            if (rpMasterTitlebar.SelectedIndex > 0)
-            {
-                rpMasterTitlebar.SelectedIndex = 0;
-                args.Handled = true;
-            }
-            else if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
+            if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
             {
                 SearchField.Text = string.Empty;
                 args.Handled = true;
             }
             else if (SearchField.FocusState != FocusState.Unfocused)
             {
-                DialogsSearchListView.Focus(FocusState.Programmatic);
+                rpMasterTitlebar.Focus(FocusState.Programmatic);
+                args.Handled = true;
+            }
+            else if (SearchField.Visibility == Visibility.Visible)
+            {
+                MainHeader.Visibility = Visibility.Visible;
+                SearchField.Visibility = Visibility.Collapsed;
+                UpdatePaneToggleButtonVisibility();
+
+                SearchField.Text = string.Empty;
+                Search_TextChanged(null, null);
+
+                args.Handled = true;
+            }
+            else if (rpMasterTitlebar.SelectedIndex > 0)
+            {
+                rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
         }
@@ -493,7 +513,7 @@ namespace Unigram.Views
             _unloaded = true;
         }
 
-        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        private async void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
             if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
             {
@@ -535,6 +555,7 @@ namespace Unigram.Views
                 Header.Visibility = Visibility.Visible;
                 MainHeader.Visibility = Visibility.Collapsed;
                 SearchField.Visibility = Visibility.Visible;
+                Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
 
                 SearchField.Focus(FocusState.Keyboard);
                 args.Handled = true;
@@ -568,6 +589,50 @@ namespace Unigram.Views
                     case Windows.System.VirtualKey.F7:
                         SetFilter(ChatTypeFilterMode.Unmuted, "Unmuted chats");
                         break;
+                }
+            }
+            else if ((args.VirtualKey == Windows.System.VirtualKey.Number0 || args.VirtualKey == Windows.System.VirtualKey.NumberPad0) && ctrl && !alt && !shift)
+            {
+                var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));
+                if (response is Chat chat)
+                {
+                    MasterDetail.NavigationService.NavigateToChat(chat);
+                    MasterDetail.NavigationService.GoBackAt(0, false);
+                }
+            }
+            else if (((args.VirtualKey >= Windows.System.VirtualKey.Number1 && args.VirtualKey <= Windows.System.VirtualKey.Number5) ||
+                     (args.VirtualKey >= Windows.System.VirtualKey.NumberPad1 && args.VirtualKey <= Windows.System.VirtualKey.NumberPad5)) && ctrl && !alt && !shift)
+            {
+                var index = -1;
+                switch (args.VirtualKey)
+                {
+                    case Windows.System.VirtualKey.Number1:
+                    case Windows.System.VirtualKey.NumberPad1:
+                        index = 0;
+                        break;
+                    case Windows.System.VirtualKey.Number2:
+                    case Windows.System.VirtualKey.NumberPad2:
+                        index = 1;
+                        break;
+                    case Windows.System.VirtualKey.Number3:
+                    case Windows.System.VirtualKey.NumberPad3:
+                        index = 2;
+                        break;
+                    case Windows.System.VirtualKey.Number4:
+                    case Windows.System.VirtualKey.NumberPad4:
+                        index = 3;
+                        break;
+                    case Windows.System.VirtualKey.Number5:
+                    case Windows.System.VirtualKey.NumberPad5:
+                        index = 4;
+                        break;
+                }
+
+                var response = await ViewModel.ProtoService.SendAsync(new GetChats(long.MaxValue, 0, 5));
+                if (response is Telegram.Td.Api.Chats chats && index >= 0 && index < chats.ChatIds.Count)
+                {
+                    MasterDetail.NavigationService.NavigateToChat(chats.ChatIds[index]);
+                    MasterDetail.NavigationService.GoBackAt(0, false);
                 }
             }
         }
@@ -727,16 +792,16 @@ namespace Unigram.Views
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
-                Root?.SetPaneToggleButtonVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
                 SetTitleBarVisibility(Visibility.Visible);
                 MasterDetail.AllowCompact = true;
             }
             else
             {
-                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
                 SetTitleBarVisibility(e.SourcePageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 MasterDetail.AllowCompact = e.SourcePageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
             }
+
+            UpdatePaneToggleButtonVisibility();
 
             if (e.SourcePageType == typeof(ChatPage))
             {
@@ -759,7 +824,6 @@ namespace Unigram.Views
                 Separator.BorderThickness = new Thickness(0);
                 Separator.Visibility = Visibility.Collapsed;
 
-                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
                 SetTitleBarVisibility(Visibility.Visible);
                 Header.Visibility = Visibility.Visible;
                 StatusLabel.Visibility = Visibility.Visible;
@@ -772,13 +836,30 @@ namespace Unigram.Views
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
                 Separator.Visibility = Visibility.Visible;
 
-                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
                 SetTitleBarVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Collapsed : Visibility.Visible);
                 Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
                 StatusLabel.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
             }
 
+            UpdatePaneToggleButtonVisibility();
+
             ChatsList.UpdateViewState(MasterDetail.CurrentState);
+        }
+
+        private void UpdatePaneToggleButtonVisibility()
+        {
+            if (SearchField.Visibility == Visibility.Visible)
+            {
+                Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
+            }
+            else if (MasterDetail.CurrentState == MasterDetailState.Minimal)
+            {
+                Root?.SetPaneToggleButtonVisibility(MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage) ? Visibility.Visible : Visibility.Collapsed);
+            }
+            else
+            {
+                Root?.SetPaneToggleButtonVisibility(Visibility.Visible);
+            }
         }
 
         private void UpdateListViewsSelectedItem(long chatId)
@@ -937,7 +1018,16 @@ namespace Unigram.Views
                         await items.LoadMoreItemsAsync(4);
                     }
                 }
-                else
+                else if (rpMasterTitlebar.SelectedIndex == 1)
+                {
+                    var items = ViewModel.Contacts.Search;
+                    if (items != null && string.Equals(SearchField.Text, items.Query))
+                    {
+                        await items.LoadMoreItemsAsync(1);
+                        await items.LoadMoreItemsAsync(2);
+                    }
+                }
+                else if (rpMasterTitlebar.SelectedIndex == 3)
                 {
                     var items = ViewModel.Contacts.Search;
                     if (items != null && string.Equals(SearchField.Text, items.Query))
@@ -974,8 +1064,9 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var chat = element.Tag as Chat;
 
+            var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
             flyout.CreateFlyoutItem(DialogPin_Loaded, ViewModel.Chats.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = chat.IsPinned ? Icons.Unpin : Icons.Pin });
-            flyout.CreateFlyoutItem(DialogNotify_Loaded, ViewModel.Chats.ChatNotifyCommand, chat, chat.NotificationSettings.MuteFor > 0 ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = chat.NotificationSettings.MuteFor > 0 ? Icons.Unmute : Icons.Mute });
+            flyout.CreateFlyoutItem(DialogNotify_Loaded, ViewModel.Chats.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
             flyout.CreateFlyoutItem(DialogMark_Loaded, ViewModel.Chats.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
             flyout.CreateFlyoutItem(DialogClear_Loaded, ViewModel.Chats.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
             flyout.CreateFlyoutItem(DialogDelete_Loaded, ViewModel.Chats.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
@@ -1180,19 +1271,15 @@ namespace Unigram.Views
             ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
             SettingsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
 
+            SearchField.PlaceholderText = rpMasterTitlebar.SelectedIndex == 3 ? Strings.Resources.SearchInSettings : Strings.Resources.Search;
             SearchField.Text = string.Empty;
             SearchField.Visibility = Visibility.Collapsed;
-
-            DialogsPanel.Visibility = Visibility.Visible;
-            MainHeader.Visibility = Visibility.Visible;
+            UpdatePaneToggleButtonVisibility();
 
             try
             {
+                SearchReset();
                 rpMasterTitlebar.IsLocked = false;
-
-                ViewModel.Chats.TopChats = null;
-                ViewModel.Chats.Search = null;
-                ViewModel.Contacts.Search = null;
             }
             catch { }
 
@@ -1211,6 +1298,7 @@ namespace Unigram.Views
         {
             MainHeader.Visibility = Visibility.Collapsed;
             SearchField.Visibility = Visibility.Visible;
+            Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
 
             SearchField.Focus(FocusState.Keyboard);
         }
@@ -1226,6 +1314,7 @@ namespace Unigram.Views
             {
                 MainHeader.Visibility = Visibility.Visible;
                 SearchField.Visibility = Visibility.Collapsed;
+                UpdatePaneToggleButtonVisibility();
             }
 
             Search_TextChanged(null, null);
@@ -1233,24 +1322,12 @@ namespace Unigram.Views
 
         private async void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
+            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrWhiteSpace(SearchField.Text))
             {
                 rpMasterTitlebar.IsLocked = false;
                 MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
 
-                if (rpMasterTitlebar.SelectedIndex == 0)
-                {
-                    DialogsPanel.Visibility = Visibility.Visible;
-
-                    ViewModel.Chats.TopChats = null;
-                    ViewModel.Chats.Search = null;
-                }
-                else
-                {
-                    ContactsPanel.Visibility = Visibility.Visible;
-
-                    ViewModel.Contacts.Search = null;
-                }
+                SearchReset();
             }
             else if (SearchField.FocusState != FocusState.Unfocused)
             {
@@ -1275,14 +1352,46 @@ namespace Unigram.Views
                     await items.LoadMoreItemsAsync(0);
                     await items.LoadMoreItemsAsync(1);
                 }
-                else
+                else if (rpMasterTitlebar.SelectedIndex == 1)
                 {
-                    ContactsPanel.Visibility = Visibility.Collapsed;
+                    if (string.IsNullOrWhiteSpace(SearchField.Text))
+                    {
+                        SearchReset();
+                    }
+                    else
+                    {
+                        ContactsPanel.Visibility = Visibility.Collapsed;
 
-                    var items = ViewModel.Contacts.Search = new SearchUsersCollection(ViewModel.ProtoService, SearchField.Text);
-                    await items.LoadMoreItemsAsync(0);
+                        var items = ViewModel.Contacts.Search = new SearchUsersCollection(ViewModel.ProtoService, SearchField.Text);
+                        await items.LoadMoreItemsAsync(0);
+                    }
+                }
+                else if (rpMasterTitlebar.SelectedIndex == 3)
+                {
+                    if (string.IsNullOrWhiteSpace(SearchField.Text))
+                    {
+                        SearchReset();
+                    }
+                    else
+                    {
+                        SettingsView.Visibility = Visibility.Collapsed;
+
+                        ViewModel.Settings.Search(SearchField.Text);
+                    }
                 }
             }
+        }
+
+        private void SearchReset()
+        {
+            DialogsPanel.Visibility = Visibility.Visible;
+            ContactsPanel.Visibility = Visibility.Visible;
+            SettingsView.Visibility = Visibility.Visible;
+
+            ViewModel.Chats.TopChats = null;
+            ViewModel.Chats.Search = null;
+            ViewModel.Contacts.Search = null;
+            ViewModel.Settings.Results.Clear();
         }
 
         private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -1337,6 +1446,12 @@ namespace Unigram.Views
                 {
                     App.ShowPasscode();
                 }
+
+                Automation.SetToolTip(Lock, Strings.Resources.AccDescrPasscodeUnlock);
+            }
+            else
+            {
+                Automation.SetToolTip(Lock, Strings.Resources.AccDescrPasscodeLock);
             }
         }
 
@@ -1520,6 +1635,45 @@ namespace Unigram.Views
             args.Handled = true;
         }
 
+        private void Settings_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            string GetPath(SettingsSearchEntry item)
+            {
+                if (item.Parent != null)
+                {
+                    return GetPath(item.Parent) + " > " + item.Text;
+                }
+
+                return item.Text;
+            }
+
+            var entry = args.Item as SettingsSearchEntry;
+            var button = args.ItemContainer.ContentTemplateRoot as BadgeButton;
+            button.Command = ViewModel.Settings.NavigateCommand;
+            button.CommandParameter = entry;
+
+            button.Content = entry.Text;
+            button.Glyph = entry.Glyph ?? string.Empty;
+
+            if (entry.Parent == null)
+            {
+                button.Badge = null;
+                button.BadgeVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                button.Badge = GetPath(entry.Parent);
+                button.BadgeVisibility = Visibility.Visible;
+            }
+
+            args.Handled = true;
+        }
+
         private void DropShadow_Loaded(object sender, RoutedEventArgs e)
         {
             var dropShadow = sender as Border;
@@ -1663,7 +1817,6 @@ namespace Unigram.Views
             if (destination == RootDestination.NewChat)
             {
                 MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
-                //MasterDetail.NavigationService.Navigate(typeof(TestStreamingPage));
             }
             else if (destination == RootDestination.NewSecretChat)
             {

@@ -20,15 +20,18 @@ namespace Unigram.Views
         private ConcurrentDictionary<int, IContainer> _containers = new ConcurrentDictionary<int, IContainer>();
         private ILifetimeService _lifetime;
         private IPasscodeService _passcode;
+        private ILocaleService _locale;
 
         private TLContainer()
         {
             _lifetime = new LifetimeService();
             _passcode = new PasscodeService(SettingsService.Current.PasscodeLock);
+            _locale = LocaleService.Current;
         }
 
         public ILifetimeService Lifetime => _lifetime;
         public IPasscodeService Passcode => _passcode;
+        public ILocaleService Locale => _locale;
 
         public static TLContainer Current
         {
@@ -69,6 +72,7 @@ namespace Unigram.Views
             var builder = new ContainerBuilder();
             builder.RegisterInstance(_lifetime).As<ILifetimeService>();
             builder.RegisterInstance(_passcode).As<IPasscodeService>();
+            builder.RegisterInstance(_locale).As<ILocaleService>();
 
             return _containers[id] = factory(builder, id);
         }

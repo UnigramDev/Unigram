@@ -105,6 +105,17 @@
                  VerticalAlignment="Top"
                  Margin="0,8,8,8"/>
 
+
+        <ProgressRing x:Name="Loading"
+                      MinWidth="20"
+                      MinHeight="20"
+                      Width="20"
+                      Height="20"
+                      UseLayoutRounding="False"
+                      Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                      VerticalAlignment="Top"
+                      Margin="0,8,8,8"/>
+
         <TextBlock x:Name="Percentage"
                    Style="{StaticResource CaptionTextBlockStyle}"
                    FontWeight="SemiBold"

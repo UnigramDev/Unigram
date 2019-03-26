@@ -58,6 +58,7 @@ FFmpegInteropMSS::FFmpegInteropMSS(FFmpegInteropConfig^ interopConfig)
 	, thumbnailStreamIndex(AVERROR_STREAM_NOT_FOUND)
 	, isFirstSeek(true)
 	, m_handle(INVALID_HANDLE_VALUE)
+	, m_chunk(4 * 1024 * 1024)
 {
 }
 
@@ -271,7 +272,7 @@ HRESULT FFmpegInteropMSS::CreateMediaStreamSource(Client^ client, File^ file, Me
 
 	m_client = client;
 	m_file = file;
-	m_event = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_event = CreateEvent(NULL, TRUE, TRUE, NULL);
 
 	if (SUCCEEDED(hr))
 	{
@@ -524,8 +525,7 @@ HRESULT FFmpegInteropMSS::InitFFmpegContext()
 		// Convert media duration from AV_TIME_BASE to TimeSpan unit
 		mediaDuration = { LONGLONG(avFormatCtx->duration * 10000000 / double(AV_TIME_BASE)) };
 
-		TimeSpan buffer = { 0 };
-		//TimeSpan buffer = { 60 * 10000000L };
+		TimeSpan buffer = { 3 * 10000000L };
 		mss->BufferTime = buffer;
 
 		if (Windows::Foundation::Metadata::ApiInformation::IsPropertyPresent("Windows.Media.Core.MediaStreamSource", "MaxSupportedPlaybackRate"))
@@ -537,6 +537,10 @@ HRESULT FFmpegInteropMSS::InitFFmpegContext()
 		{
 			mss->Duration = mediaDuration;
 			mss->CanSeek = true;
+
+			// Chunk is about a minute of video playback
+			m_chunk = m_file->Size / max(mediaDuration.Duration / 10000000L / 60, 1);
+			m_next = 0;
 		}
 
 		startingRequestedToken = mss->Starting += ref new TypedEventHandler<MediaStreamSource ^, MediaStreamSourceStartingEventArgs ^>(this, &FFmpegInteropMSS::OnStarting);
@@ -959,6 +963,7 @@ void FFmpegInteropMSS::OnStarting(MediaStreamSource ^sender, MediaStreamSourceSt
 		if (SUCCEEDED(hr))
 		{
 			request->SetActualStartPosition(request->StartPosition->Value);
+			m_seek = m_last = request->StartPosition->Value;
 		}
 
 		if (videoStream && !videoStream->IsEnabled)
@@ -980,6 +985,15 @@ void FFmpegInteropMSS::OnSampleRequested(Windows::Media::Core::MediaStreamSource
 	mutexGuard.lock();
 	if (mss != nullptr)
 	{
+		MediaStreamSourceSampleRequestDeferral^ deferral;
+		if (WaitForSingleObject(m_event, 0) != WAIT_OBJECT_0)
+		{
+			deferral = args->Request->GetDeferral();
+			args->Request->ReportSampleProgress(1);
+
+			WaitForSingleObject(m_event, INFINITE);
+		}
+
 		if (currentAudioStream && args->Request->StreamDescriptor == currentAudioStream->StreamDescriptor)
 		{
 			args->Request->Sample = currentAudioStream->GetNextSample();
@@ -987,10 +1001,27 @@ void FFmpegInteropMSS::OnSampleRequested(Windows::Media::Core::MediaStreamSource
 		else if (videoStream && args->Request->StreamDescriptor == videoStream->StreamDescriptor)
 		{
 			args->Request->Sample = videoStream->GetNextSample();
+
+			if (args->Request->Sample != nullptr && args->Request->Sample->Timestamp.Duration > m_last.Duration)
+			{
+				auto timestamp = args->Request->Sample->Timestamp;
+				auto duration = args->Request->Sample->Duration;
+				mss->SetBufferedRange(m_seek, { timestamp.Duration + duration.Duration });
+
+				m_last = timestamp;
+
+				DebugMessage(std::to_wstring((timestamp.Duration - m_seek.Duration) / 10000000L).c_str());
+				DebugMessage(L" seconds ahead\n");
+			}
 		}
 		else
 		{
 			args->Request->Sample = nullptr;
+		}
+
+		if (deferral != nullptr)
+		{
+			deferral->Complete();
 		}
 	}
 	mutexGuard.unlock();
@@ -1084,16 +1115,22 @@ static int FileStreamRead(void* ptr, uint8_t* buf, int bufSize)
 
 	auto inBegin = pStream->m_offset >= begin;
 	auto inEnd = end >= pStream->m_offset + bufSize || end == pStream->m_file->Size;
+	auto difference = end - pStream->m_offset;
 
 	if (local->Path && (inBegin && inEnd) || local->IsDownloadingCompleted)
 	{
-		auto a = 0;
+		if (difference < pStream->m_chunk / 3 * 2 && pStream->m_offset > pStream->m_next /*&& !local->IsDownloadingActive*/)
+		{
+			pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, pStream->m_chunk), nullptr);
+			pStream->m_next = pStream->m_offset + pStream->m_chunk / 3;
+		}
 	}
 	else
 	{
-		pStream->m_size = bufSize;
-		//pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, bufSize), nullptr);
-		pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, 2 * 1024 * 1024), nullptr);
+		pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, pStream->m_chunk), nullptr);
+		pStream->m_next = pStream->m_offset + pStream->m_chunk / 3;
+
+		ResetEvent(pStream->m_event);
 		WaitForSingleObject(pStream->m_event, INFINITE);
 	}
 
@@ -1164,7 +1201,7 @@ void FFmpegInteropMSS::UpdateFile(File^ file)
 
 	m_file = file;
 
-	if (file->Local->Path && (file->Local->DownloadOffset == m_offset && file->Local->DownloadedPrefixSize >= m_size) || file->Local->IsDownloadingCompleted)
+	if (file->Local->Path && (file->Local->DownloadOffset == m_offset && file->Local->DownloadedPrefixSize >= config->StreamBufferSize) || file->Local->IsDownloadingCompleted)
 	{
 		SetEvent(m_event);
 	}

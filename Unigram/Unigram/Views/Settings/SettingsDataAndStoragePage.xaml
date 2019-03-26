@@ -101,14 +101,12 @@
             <StackPanel Margin="0,0,0,48">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource DataUsage}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <Button
-                        Tag="{CustomResource StorageUsage}"
-                        Click="Storage_Click"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <Button
-                        Tag="{CustomResource NetworkUsage}"
-                        Click="Stats_Click"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource StorageUsage}"
+                        Click="Storage_Click"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource NetworkUsage}"
+                        Click="Stats_Click"/>
                 </StackPanel>
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
@@ -123,69 +121,69 @@
                          Content="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
                          Style="{StaticResource HyperVerticalDetailButtonStyle}"/>-->
 
-                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                            Tag="{CustomResource LocalPhotoCache}"
-                            Style="{StaticResource HyperDetailButtonStyle}">
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Content="{CustomResource LocalPhotoCache}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
                         </Button.CommandParameter>
-                    </Button>
-                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                            Tag="{CustomResource LocalVideoCache}"
-                            Style="{StaticResource HyperDetailButtonStyle}">
+                    </controls:BadgeButton>
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Content="{CustomResource LocalVideoCache}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
                         </Button.CommandParameter>
-                    </Button>
-                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                            Tag="{CustomResource FilesDataUsage}"
-                            Style="{StaticResource HyperDetailButtonStyle}">
+                    </controls:BadgeButton>
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Content="{CustomResource FilesDataUsage}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
                         </Button.CommandParameter>
-                    </Button>
+                    </controls:BadgeButton>
                     <!--<controls:HyperButton
                          Tag="{CustomResource AttachMusic}"
                          Style="{StaticResource HyperDetailButtonStyle}"/>-->
-                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                            Tag="{CustomResource AudioAutodownload}"
-                            Style="{StaticResource HyperDetailButtonStyle}">
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Content="{CustomResource AudioAutodownload}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>VoiceNotes</settings:AutoDownloadType>
                         </Button.CommandParameter>
-                    </Button>
-                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                            Tag="{CustomResource VideoMessagesAutodownload}"
-                            Style="{StaticResource HyperDetailButtonStyle}">
+                    </controls:BadgeButton>
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Content="{CustomResource VideoMessagesAutodownload}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>VideoNotes</settings:AutoDownloadType>
                         </Button.CommandParameter>
-                    </Button>
-                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                            Tag="{CustomResource LocalMusicCache}"
-                            Style="{StaticResource HyperDetailButtonStyle}">
+                    </controls:BadgeButton>
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Content="{CustomResource LocalMusicCache}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Audios</settings:AutoDownloadType>
                         </Button.CommandParameter>
-                    </Button>
-                    <Button Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                            IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                            Tag="{CustomResource LocalGifCache}"
-                            Style="{StaticResource HyperDetailButtonStyle}">
+                    </controls:BadgeButton>
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                        Content="{CustomResource LocalGifCache}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Animations</settings:AutoDownloadType>
                         </Button.CommandParameter>
-                    </Button>
-                    <Button Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
-                            Tag="{CustomResource ResetAutomaticMediaDownload}"
-                            Style="{StaticResource HyperDetailButtonStyle}"
-                            Foreground="Red"/>
+                    </controls:BadgeButton>
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
+                        Content="{CustomResource ResetAutomaticMediaDownload}"
+                        Foreground="Red"/>
                 </StackPanel>
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
@@ -211,10 +209,9 @@
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Proxy}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <Button
-                        Tag="{CustomResource ProxySettings}"
-                        Click="Proxy_Click"
-                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource ProxySettings}"
+                        Click="Proxy_Click"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

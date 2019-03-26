@@ -45,6 +45,7 @@ using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
+using Windows.ApplicationModel.ExtendedExecution;
 using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
@@ -79,6 +80,8 @@ namespace Unigram
         private readonly UISettings _uiSettings;
 
         public UISettings UISettings => _uiSettings;
+
+        private ExtendedExecutionSession _extendedSession;
 
         //public ViewModelLocator Locator
         //{
@@ -593,6 +596,27 @@ namespace Unigram
                 await VoiceCommandDefinitionManager.InstallCommandDefinitionsFromStorageFileAsync(localVoiceCommands);
             }
             catch { }
+
+            return;
+
+            if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
+            {
+                var session = new ExtendedExecutionSession { Reason = ExtendedExecutionReason.Unspecified };
+                var result = await session.RequestExtensionAsync();
+
+                if (result == ExtendedExecutionResult.Allowed)
+                {
+                    _extendedSession = session;
+
+                    Logs.Log.Write("ExtendedExecutionResult.Allowed");
+                }
+                else
+                {
+                    session.Dispose();
+
+                    Logs.Log.Write("ExtendedExecutionResult.Denied");
+                }
+            }
         }
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)

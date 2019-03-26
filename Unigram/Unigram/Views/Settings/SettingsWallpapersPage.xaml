@@ -56,8 +56,8 @@
                     <controls:BadgeButton
                         Content="{CustomResource SelectFromGallery}"
                         Command="{x:Bind ViewModel.LocalCommand}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource SetColor}"/>
+                    <!--<controls:BadgeButton
+                        Content="{CustomResource SetColor}"/>-->
                 </StackPanel>
             </GridView.Header>
             <GridView.ItemContainerStyle>

@@ -117,6 +117,7 @@
     <Compile Include="Collections\SearchUsersCollection.cs" />
     <Compile Include="Collections\TopChatsCollection.cs" />
     <Compile Include="Common\ApiInfo.cs" />
+    <Compile Include="Common\Automation.cs" />
     <Compile Include="Common\Chats\InputChatActionManager.cs" />
     <Compile Include="Common\Chats\OutputChatActionManager.cs" />
     <Compile Include="Common\ColorsHelper.cs" />
@@ -457,6 +458,7 @@
     <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
+    <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\Settings\AppearanceSettings.cs" />
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
@@ -816,9 +818,6 @@
     <Compile Include="Views\Settings\SettingsPasswordPage.xaml.cs">
       <DependentUpon>SettingsPasswordPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsProfilePage.xaml.cs">
-      <DependentUpon>SettingsProfilePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\SettingsProxiesPage.xaml.cs">
       <DependentUpon>SettingsProxiesPage.xaml</DependentUpon>
     </Compile>
@@ -893,9 +892,6 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TestStreamingPage.xaml.cs">
-      <DependentUpon>TestStreamingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
@@ -1395,6 +1391,7 @@
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
     <Content Include="Assets\Fonts\SegMVR2.ttf" />
+    <Content Include="Assets\Fonts\SEGMDL2.TTF" />
     <None Include="Assets\Fonts\Telegram.json" />
     <PRIResource Include="Strings\uk\Additional.resw">
       <SubType>Designer</SubType>
@@ -2216,10 +2213,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingsProfilePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Settings\SettingsProxiesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2371,10 +2364,6 @@
     <Page Include="Views\Supergroups\SupergroupPermissionsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\TestStreamingPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>

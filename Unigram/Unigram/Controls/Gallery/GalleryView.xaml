@@ -101,9 +101,11 @@
                                       Grid.Column="2"/>
 
                 <Button Click="Menu_ContextRequested"
-                        Padding="{StaticResource EllipsisButtonPadding}"
                         HorizontalAlignment="Right"
+                        Padding="{StaticResource EllipsisButtonPadding}"
                         Style="{StaticResource EllipsisButton}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
                         Grid.Column="3">
                     <FontIcon x:Name="EllipsisIcon"
                               VerticalAlignment="Center"
@@ -127,7 +129,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
+                <TextBlock x:Name="Caption"
+                           Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            TextTrimming="CharacterEllipsis"

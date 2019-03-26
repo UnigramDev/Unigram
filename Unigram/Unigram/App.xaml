@@ -159,6 +159,7 @@
                 <Setter Property="Margin" Value="0" />
             </Style>
 
+            <FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/SEGMDL2.TTF#Segoe MDL2 Assets</FontFamily>
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
             <x:Double x:Key="TelegramLightMediaMaxWidth">200</x:Double>

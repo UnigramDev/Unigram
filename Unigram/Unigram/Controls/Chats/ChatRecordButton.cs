@@ -19,11 +19,18 @@ using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls.Chats
 {
+    public enum ChatRecordMode
+    {
+        Voice,
+        Video
+    }
+
     public class ChatRecordButton : GlyphToggleButton
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
@@ -51,33 +58,26 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        public bool IsVideo
+        public ChatRecordMode Mode
         {
             get
             {
-                return IsChecked.HasValue && IsChecked.Value;
+                return IsChecked.HasValue && IsChecked.Value ? ChatRecordMode.Video : ChatRecordMode.Voice;
             }
             set
             {
-                IsChecked = value;
-            }
-        }
+                IsChecked = value == ChatRecordMode.Video;
 
-        public bool IsVoice
-        {
-            get
-            {
-                return IsChecked.HasValue && !IsChecked.Value;
-            }
-            set
-            {
-                IsChecked = !value;
+                AutomationProperties.SetName(this, value == ChatRecordMode.Video ? Strings.Resources.AccDescrVideoMessage : Strings.Resources.AccDescrVoiceMessage);
+                ToolTipService.SetToolTip(this, value == ChatRecordMode.Video ? Strings.Resources.AccDescrVideoMessage : Strings.Resources.AccDescrVoiceMessage);
             }
         }
 
         public ChatRecordButton()
         {
             DefaultStyleKey = typeof(ChatRecordButton);
+
+            Mode = ChatRecordMode.Voice;
 
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromMilliseconds(300);
@@ -136,13 +136,13 @@ namespace Unigram.Controls.Chats
             }
             else
             {
-                IsVideo = !IsVideo;
+                Mode = Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video;
             }
         }
 
         private void Start()
         {
-            _video = IsVideo;
+            _video = Mode == ChatRecordMode.Video;
 
             Task.Run(async () =>
             {

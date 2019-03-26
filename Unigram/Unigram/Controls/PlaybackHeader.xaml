@@ -25,7 +25,13 @@
             </TextBlock>
         </Button>
 
-        <controls:GlyphButton x:Name="PlaybackButton" Click="Toggle_Click" Glyph="&#xE103;" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" FontSize="16" Height="32"/>
+        <controls:GlyphButton
+            x:Name="PlaybackButton"
+            Click="Toggle_Click"
+            Glyph="&#xE103;"
+            Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+            FontSize="16"
+            Height="32"/>
         <controls:GlyphToggleButton
             x:Name="RateButton"
             Click="Rate_Click"
@@ -35,7 +41,9 @@
             CheckedGlyph="&#xEC58;"
             FontSize="16"
             Height="32"
-            Grid.Column="2"/>
+            Grid.Column="2"
+            AutomationProperties.Name="{CustomResource AccDescrPlayerSpeed}"
+            ToolTipService.ToolTip="{CustomResource AccDescrPlayerSpeed}"/>
         <controls:GlyphButton Click="Clear_Click" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="3"/>
 
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>

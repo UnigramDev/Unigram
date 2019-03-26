@@ -41,7 +41,7 @@ namespace Unigram.Controls.Chats
         public ChatBackgroundPresenter()
         {
             _parallaxEffect = new WallpaperParallaxEffect();
-            _container = new ContentControl { HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Stretch };
+            _container = new ContentControl { HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Stretch, IsTabStop = false };
             _container.SizeChanged += OnSizeChanged;
 
             Children.Add(_container);

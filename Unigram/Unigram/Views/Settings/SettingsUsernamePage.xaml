@@ -17,6 +17,7 @@
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Done}"
             Text="{CustomResource Username}"
             Glyph="&#xE10B;"/>
 
