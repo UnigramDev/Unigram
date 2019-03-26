@@ -1243,7 +1243,11 @@ namespace Unigram.Views
             }
             if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                flyout.CreateFlyoutItem(chat.NotificationSettings.MuteFor == 0 ? ViewModel.MuteCommand : ViewModel.UnmuteCommand, chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.MuteNotifications : Strings.Resources.UnmuteNotifications, new FontIcon { Glyph = chat.NotificationSettings.MuteFor == 0 ? Icons.Mute : Icons.Unmute });
+                var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
+                flyout.CreateFlyoutItem(
+                    muted ? ViewModel.UnmuteCommand : ViewModel.MuteCommand,
+                    muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
+                    new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
             }
 
             //if (currentUser == null || !currentUser.IsSelf)
@@ -2482,7 +2486,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.ChannelMute : Strings.Resources.ChannelUnmute, true);
+                    ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
             }
         }
@@ -2800,7 +2804,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ShowAction(chat.NotificationSettings.MuteFor == 0 ? Strings.Resources.ChannelMute : Strings.Resources.ChannelUnmute, true);
+                    ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
             }
             else

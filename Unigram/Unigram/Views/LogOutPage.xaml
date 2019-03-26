@@ -22,37 +22,37 @@
                 <TextBlock Text="{CustomResource AlternativeOptions}" Margin="12,16,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
 
                 <controls:BadgeButton
-                    Content="{CustomResource AddAnotherAccountInfo}"
-                    Badge="{CustomResource AddAnotherAccount}"
+                    Badge="{CustomResource AddAnotherAccountInfo}"
+                    Content="{CustomResource AddAnotherAccount}"
                     Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                     Glyph="&#xE8FA;"
                     Click="AddAnotherAccount_Click"/>
 
                 <controls:BadgeButton
-                    Content="{CustomResource SetPasscodeInfo}"
-                    Badge="{CustomResource SetPasscode}"
+                    Badge="{CustomResource SetPasscodeInfo}"
+                    Content="{CustomResource SetPasscode}"
                     Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                     Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                     Glyph="&#xE192;"
                     Click="SetPasscode_Click"/>
                 
                 <controls:BadgeButton
-                    Content="{CustomResource ClearCacheInfo}"
-                    Badge="{CustomResource ClearCache}"
+                    Badge="{CustomResource ClearCacheInfo}"
+                    Content="{CustomResource ClearCache}"
                     Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                     Glyph="&#xE107;"
                     Click="ClearCache_Click"/>
                 
                 <controls:BadgeButton
-                    Content="{CustomResource ChangePhoneNumberInfo}"
-                    Badge="{CustomResource ChangePhoneNumber}"
+                    Badge="{CustomResource ChangePhoneNumberInfo}"
+                    Content="{CustomResource ChangePhoneNumber}"
                     Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                     Glyph="&#xF61B;"
                     Click="ChangePhoneNumber_Click"/>
                 
                 <controls:BadgeButton
-                    Content="{CustomResource ContactSupportInfo}"
-                    Badge="{CustomResource ContactSupport}"
+                    Badge="{CustomResource ContactSupportInfo}"
+                    Content="{CustomResource ContactSupport}"
                     Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                     Glyph="&#xED15;"
                     Command="{x:Bind ViewModel.AskCommand}"/>

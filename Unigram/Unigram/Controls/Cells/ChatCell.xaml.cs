@@ -200,9 +200,10 @@ namespace Unigram.Controls.Cells
 
         public void UpdateNotificationSettings(Chat chat)
         {
-            UnreadBackground.Visibility = chat.NotificationSettings.MuteFor > 0 ? Visibility.Collapsed : Visibility.Visible;
-            UnreadMutedBackground.Visibility = chat.NotificationSettings.MuteFor > 0 ? Visibility.Visible : Visibility.Collapsed;
-            MutedIcon.Visibility = chat.NotificationSettings.MuteFor > 0 ? Visibility.Visible : Visibility.Collapsed;
+            var muted = _protoService.GetNotificationSettingsMuteFor(chat) > 0;
+            UnreadBackground.Visibility = muted ? Visibility.Collapsed : Visibility.Visible;
+            UnreadMutedBackground.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
+            MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateChatTitle(Chat chat)

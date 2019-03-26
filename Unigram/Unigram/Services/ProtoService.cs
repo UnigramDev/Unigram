@@ -84,6 +84,8 @@ namespace Unigram.Services
 
         UpdateUnreadChatCount UnreadChatCount { get; }
         UpdateUnreadMessageCount UnreadMessageCount { get; }
+
+        int GetNotificationSettingsMuteFor(Chat chat);
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -109,6 +111,8 @@ namespace Unigram.Services
 
         private readonly Dictionary<int, Supergroup> _supergroups = new Dictionary<int, Supergroup>();
         private readonly Dictionary<int, SupergroupFullInfo> _supergroupsFull = new Dictionary<int, SupergroupFullInfo>();
+
+        private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new Dictionary<Type, ScopeNotificationSettings>();
 
         private readonly SimpleFileContext<long> _chatsMap = new SimpleFileContext<long>();
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
@@ -342,6 +346,8 @@ namespace Unigram.Services
             _chatsMap.Clear();
             _usersMap.Clear();
 
+            _scopeNotificationSettings.Clear();
+
             _favoriteStickers?.Clear();
             _installedStickerSets?.Clear();
             _installedMaskSets?.Clear();
@@ -406,7 +412,7 @@ namespace Unigram.Services
         }
 
         #region Cache
-
+        
         public UpdateUnreadChatCount UnreadChatCount { get; private set; } = new UpdateUnreadChatCount();
         public UpdateUnreadMessageCount UnreadMessageCount { get; private set; } = new UpdateUnreadMessageCount();
 
@@ -778,6 +784,36 @@ namespace Unigram.Services
 
 
 
+        public int GetNotificationSettingsMuteFor(Chat chat)
+        {
+            if (chat.NotificationSettings.UseDefaultMuteFor)
+            {
+                Type scope = null;
+                switch (chat.Type)
+                {
+                    case ChatTypePrivate privata:
+                    case ChatTypeSecret secret:
+                        scope = typeof(NotificationSettingsScopePrivateChats);
+                        break;
+                    case ChatTypeBasicGroup basicGroup:
+                        scope = typeof(NotificationSettingsScopeGroupChats);
+                        break;
+                    case ChatTypeSupergroup supergroup:
+                        scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
+                        break;
+                }
+
+                if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
+                {
+                    return value.MuteFor;
+                }
+            }
+
+            return chat.NotificationSettings.MuteFor;
+        }
+
+
+
         public bool IsStickerFavorite(int id)
         {
             if (_favoriteStickers != null)
@@ -875,6 +911,13 @@ namespace Unigram.Services
                 {
                     value.Order = updateChatLastMessage.Order;
                     value.LastMessage = updateChatLastMessage.LastMessage;
+                }
+            }
+            else if (update is UpdateChatNotificationSettings updateNotificationSettings)
+            {
+                if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))
+                {
+                    value.NotificationSettings = updateNotificationSettings.NotificationSettings;
                 }
             }
             else if (update is UpdateChatOrder updateChatOrder)
@@ -1057,13 +1100,6 @@ namespace Unigram.Services
             {
 
             }
-            else if (update is UpdateChatNotificationSettings updateNotificationSettings)
-            {
-                if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))
-                {
-                    value.NotificationSettings = updateNotificationSettings.NotificationSettings;
-                }
-            }
             else if (update is UpdateOption updateOption)
             {
                 _options.Handle(updateOption);
@@ -1080,6 +1116,10 @@ namespace Unigram.Services
             else if (update is UpdateSavedAnimations updateSavedAnimations)
             {
 
+            }
+            else if (update is UpdateScopeNotificationSettings updateScopeNotificationSettings)
+            {
+                _scopeNotificationSettings[updateScopeNotificationSettings.Scope.GetType()] = updateScopeNotificationSettings.NotificationSettings;
             }
             else if (update is UpdateSecretChat updateSecretChat)
             {

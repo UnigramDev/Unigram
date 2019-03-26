@@ -3090,7 +3090,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        ToggleMuteExecute(chat.NotificationSettings.MuteFor != 0);
+                        ToggleMuteExecute(CacheService.GetNotificationSettingsMuteFor(chat) > 0);
                     }
                 }
                 else

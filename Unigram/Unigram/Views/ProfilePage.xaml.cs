@@ -116,8 +116,9 @@ namespace Unigram.Views
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
 
-            Notifications.IsOn = chat.NotificationSettings.MuteFor == 0;
-            NotificationGlyph.Text = chat.NotificationSettings.MuteFor == 0 ? "\uEA8F" : "\uE7ED";
+            var unmuted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) == 0;
+            Notifications.IsOn = unmuted;
+            NotificationGlyph.Text = unmuted ? Icons.Unmute : Icons.Mute;
 
             Call.Visibility = Visibility.Collapsed;
         }
@@ -134,7 +135,8 @@ namespace Unigram.Views
 
         public void UpdateChatNotificationSettings(Chat chat)
         {
-            NotificationGlyph.Text = chat.NotificationSettings.MuteFor == 0 ? "\uEA8F" : "\uE7ED";
+            var unmuted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) == 0;
+            NotificationGlyph.Text = unmuted ? Icons.Unmute : Icons.Mute;
         }
 
         public void UpdateUser(Chat chat, User user, bool secret)
