@@ -599,6 +599,8 @@ namespace Unigram
             }
             catch { }
 
+            return;
+
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {
                 var session = new ExtendedExecutionSession { Reason = ExtendedExecutionReason.Unspecified };
@@ -612,6 +614,8 @@ namespace Unigram
                 }
                 else
                 {
+                    session.Dispose();
+
                     Logs.Log.Write("ExtendedExecutionResult.Denied");
                 }
             }
