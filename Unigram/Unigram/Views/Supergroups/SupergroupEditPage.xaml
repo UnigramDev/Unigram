@@ -46,7 +46,13 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2">
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Click="Photo_Click"
+                                             AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                             Height="64"
+                                             Width="64"
+                                             Margin="12,6"
+                                             Grid.RowSpan="2">
                         <FlyoutBase.AttachedFlyout>
                             <MenuFlyout>
                                 <controls:GlyphMenuFlyoutItem Click="EditCamera_Click"
