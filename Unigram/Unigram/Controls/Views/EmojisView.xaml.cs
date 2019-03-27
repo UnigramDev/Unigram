@@ -80,7 +80,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (container.Content is string source)
+            if (container.Content is EmojiGroup source)
             {
                 list.ItemsSource = Emoji.Emojis[source];
             }
@@ -106,7 +106,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (container.Content is string source)
+            if (container.Content is EmojiGroup source)
             {
                 list.ItemsSource = Emoji.Emojis[source];
             }

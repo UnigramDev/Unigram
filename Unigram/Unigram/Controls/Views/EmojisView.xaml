@@ -70,7 +70,7 @@
                             Grid.Row="0">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsStackPanel Orientation="Horizontal"/>
+                        <ItemsStackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
                 <ListView.ItemContainerStyle>
@@ -86,29 +86,18 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="x:String">
-                        <Border Background="Transparent">
-                            <TextBlock Text="{x:Bind}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <DataTemplate x:DataType="common:EmojiGroup">
+                        <Border AutomationProperties.Name="{x:Bind Title}"
+                                ToolTipService.ToolTip="{x:Bind Title}"
+                                Background="Transparent">
+                            <TextBlock Text="{x:Bind Glyph}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       IsColorFontEnabled="False"
+                                       TextLineBounds="TrimToBaseline,TrimToCapHeight"/>
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-                <ListView.Footer>
-                    <StackPanel Orientation="Horizontal">
-                        <!--<controls:GlyphButton Width="{ThemeResource AppBarThemeCompactHeight}" Height="{ThemeResource AppBarThemeCompactHeight}" FontFamily="Segoe UI Emoji" Glyph="&#x1F3FB;">
-                            <controls:GlyphButton.Flyout>
-                                <MenuFlyout x:Name="Follodf">
-                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;"/>
-                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FB;"/>
-                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FC;"/>
-                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FD;"/>
-                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FE;"/>
-                                    <MenuFlyoutItem FontFamily="Segoe UI Emoji" Text="&#x1F595;&#x1F3FF;"/>
-                                </MenuFlyout>
-                            </controls:GlyphButton.Flyout>
-                        </controls:GlyphButton>-->
-                        <controls:GlyphButton Click="Switch_Click" Width="{ThemeResource AppBarThemeCompactHeight}" Height="{ThemeResource AppBarThemeCompactHeight}" FontFamily="{StaticResource TelegramThemeFontFamily}" Glyph="&#xE606;"/>
-                    </StackPanel>
-                </ListView.Footer>
                 <ListView.ItemContainerTransitions>
                     <TransitionCollection/>
                 </ListView.ItemContainerTransitions>

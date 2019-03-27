@@ -49,11 +49,17 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
 
-            var shadow = Shadow.Attach(Separator, 20, 0.25f);
+            var shadow1 = Shadow.Attach(HeaderSeparator, 20, 0.25f);
+            var shadow2 = Shadow.Attach(Separator, 20, 0.25f);
 
-            Toolbar.SizeChanged += (s, args) =>
+            HeaderSeparator.SizeChanged += (s, args) =>
             {
-                shadow.Size = new Vector2((float)args.NewSize.Width, (float)args.NewSize.Height);
+                shadow1.Size = args.NewSize.ToVector2();
+            };
+
+            Separator.SizeChanged += (s, args) =>
+            {
+                shadow2.Size = args.NewSize.ToVector2();
             };
         }
 
@@ -212,23 +218,12 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private void Emojis_Switch(object sender, EventArgs e)
-        {
-            FocusCatcher.Focus(FocusState.Programmatic);
-
-            RootPanel.Visibility = Visibility.Visible;
-            Emojis.Visibility = Visibility.Collapsed;
-        }
-
         private void Emojis_Click(object sender, RoutedEventArgs e)
         {
             if (Emojis == null)
                 FindName(nameof(Emojis));
 
             FocusCatcher.Focus(FocusState.Programmatic);
-
-            Emojis.Visibility = Visibility.Visible;
-            RootPanel.Visibility = Visibility.Collapsed;
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
