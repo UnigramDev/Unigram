@@ -87,9 +87,13 @@ namespace Unigram.Controls.Messages.Content
 
         private void Option_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            var option = button.Tag as PollOption;
+            var button = sender as PollOptionControl;
+            if (button.IsChecked == true)
+            {
+                return;
+            }
 
+            var option = button.Tag as PollOption;
             if (option == null)
             {
                 return;
