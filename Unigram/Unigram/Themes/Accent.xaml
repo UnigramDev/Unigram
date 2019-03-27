@@ -239,6 +239,111 @@
         </Setter>
     </Style>
 
+    <Style x:Name="SmallImmersiveFileButtonStyle" TargetType="controls:FileButton">
+        <!--<Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}" />-->
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="FontFamily" Value="{StaticResource TelegramThemeFontFamily}" />
+        <Setter Property="Glyph" Value="&#xE700;" />
+        <Setter Property="Height" Value="Auto" />
+        <Setter Property="Width" Value="Auto" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="RequestedTheme" Value="Dark" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:FileButton">
+                    <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid.Resources>
+                            <Style x:Key="SmallProgressBarRingStyle" TargetType="controls:ProgressBarRing">
+                                <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                                <Setter Property="Foreground" Value="#FFFFFFFF"/>
+                                <Setter Property="Minimum" Value="0"/>
+                                <Setter Property="Maximum" Value="1"/>
+                                <Setter Property="Width" Value="40"/>
+                                <Setter Property="Height" Value="40"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="controls:ProgressBarRing">
+                                            <Grid Background="{TemplateBinding Background}" CornerRadius="20">
+                                                <controls:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="0">
+                                                    <Path.RenderTransform>
+                                                        <RotateTransform x:Name="Rotation" CenterX="18" CenterY="18" Angle="0"/>
+                                                    </Path.RenderTransform>
+                                                </controls:ProgressBarRingSlice>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="TransferStates">
+                                <VisualState x:Name="PendingState"/>
+                                <VisualState x:Name="CompletedState">
+                                    <VisualState.Setters>
+                                        <Setter Target="TransferPresenter.Visibility" Value="Collapsed"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <!--<controls:BackDrop BlurAmount="5"/>-->
+
+                        <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Width="40" Margin="0,0,-4,0" Visibility="{TemplateBinding ProgressVisibility}">
+                                <TextBlock
+                                        x:Name="ContentPresenter"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        AutomationProperties.AccessibilityView="Raw"
+                                        Text="{TemplateBinding Glyph}"/>
+                                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{TemplateBinding Progress}" IsHitTestVisible="False" Style="{StaticResource SmallProgressBarRingStyle}"/>
+                            </Grid>
+
+                            <ContentPresenter Padding="{TemplateBinding Padding}" Grid.Column="1"/>
+                        </Grid>
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ServiceButtonStyle" TargetType="controls:SimpleButton">
         <Setter Property="Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="Transparent"/>

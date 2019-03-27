@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
@@ -136,28 +137,36 @@ namespace Unigram.Controls.Gallery
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (_item == null)
+            var item = _item;
+            if (item == null)
             {
                 return;
             }
 
-            var file = _item.GetFile();
+            var file = item.GetFile();
             if (file.Local.IsDownloadingActive)
             {
-                _item.ProtoService.Send(new CancelDownloadFile(file.Id, false));
+                item.ProtoService.Send(new CancelDownloadFile(file.Id, false));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _item.ProtoService.DownloadFile(file.Id, 32);
+                if (SettingsService.Current.IsStreamingEnabled && item.IsVideo && item.IsStreamable)
+                {
+                    _delegate?.OpenFile(item, file);
+                }
+                else
+                {
+                    item.ProtoService.DownloadFile(file.Id, 32);
+                }
             }
             else
             {
-                if (_item.IsVideo)
+                if (item.IsVideo)
                 {
-                    _delegate?.OpenFile(_item, file);
+                    _delegate?.OpenFile(item, file);
                 }
 
-                _delegate?.OpenItem(_item);
+                _delegate?.OpenItem(item);
             }
         }
 

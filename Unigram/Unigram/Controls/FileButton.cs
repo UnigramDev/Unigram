@@ -35,6 +35,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region ProgressVisibility
+
+        public Visibility ProgressVisibility
+        {
+            get { return (Visibility)GetValue(ProgressVisibilityProperty); }
+            set { SetValue(ProgressVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty ProgressVisibilityProperty =
+            DependencyProperty.Register("ProgressVisibility", typeof(Visibility), typeof(FileButton), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+
         public void UpdateFile(MessageViewModel message, File file)
         {
             string glyph = null;

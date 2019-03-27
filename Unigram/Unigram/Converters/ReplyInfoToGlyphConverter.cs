@@ -25,6 +25,11 @@ namespace Unigram.Converters
 
     public class Icons
     {
+        public const string Download = "\uE118";
+        public const string Cancel = "\uE10A";
+        public const string Play = "\uE102";
+        public const string Ttl = "\uE60D";
+
         public const string Undo = "\uE7A7";
         public const string Redo = "\uE7A6";
         public const string Cut = "\uE8C6";

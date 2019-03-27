@@ -1384,22 +1384,21 @@ namespace Unigram.Views
             flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote, new FontIcon { Glyph = Icons.Undo });
             flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.Restricted });
 
-            if (Services.SettingsService.Current.IsStreamingEnabled)
+#if DEBUG
+            flyout.CreateFlyoutItem(x => true, new RelayCommand<MessageViewModel>(x =>
             {
-                flyout.CreateFlyoutItem(x => true, new RelayCommand<MessageViewModel>(x =>
+                var result = x.Get().GetFile();
+
+                var file = result;
+                if (file == null)
                 {
-                    var result = x.Get().GetFile();
+                    return;
+                }
 
-                    var file = result;
-                    if (file == null)
-                    {
-                        return;
-                    }
+                ViewModel.ProtoService.Send(new DeleteFileW(file.Id));
 
-                    ViewModel.ProtoService.Send(new DeleteFileW(file.Id));
-
-                }), message, "Delete from disk", new FontIcon { Glyph = Icons.Delete });
-            }
+            }), message, "Delete from disk", new FontIcon { Glyph = Icons.Delete });
+#endif
 
             //sender.ContextFlyout = menu;
 

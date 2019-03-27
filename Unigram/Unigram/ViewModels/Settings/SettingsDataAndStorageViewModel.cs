@@ -95,6 +95,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsStreamingEnabled
+        {
+            get
+            {
+                return SettingsService.Current.IsStreamingEnabled;
+            }
+            set
+            {
+                SettingsService.Current.IsStreamingEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public string FilesDirectory
         {
             get

@@ -41,6 +41,7 @@ using Unigram.ViewModels.Delegates;
 using Template10.Services.ViewService;
 using Unigram.ViewModels.Gallery;
 using Unigram.Controls.Gallery;
+using Unigram.Native.Streaming;
 
 namespace Unigram.Controls.Gallery
 {
@@ -55,6 +56,7 @@ namespace Unigram.Controls.Gallery
         private DisplayRequest _request;
         private MediaPlayerElement _mediaPlayerElement;
         private MediaPlayer _mediaPlayer;
+        private FFmpegInteropMSS _streamingInterop;
         private Grid _surface;
 
         private Visual _layer;
@@ -118,6 +120,7 @@ namespace Unigram.Controls.Gallery
 
         public void Handle(UpdateFile update)
         {
+            _streamingInterop?.UpdateFile(update.File);
             this.BeginOnUIThread(() => UpdateFile(update.File));
         }
 
@@ -163,6 +166,12 @@ namespace Unigram.Controls.Gallery
                     {
                         Element2.UpdateFile(item, file);
                     }
+
+                    if (_streamingInterop?.FileId == file.Id)
+                    {
+                        Transport.DownloadMaximum = file.Size;
+                        Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
+                    }
                 }
             }
         }
@@ -195,6 +204,7 @@ namespace Unigram.Controls.Gallery
             {
                 Transport.TransportVisibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
                 Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
+                Caption.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
                 Element0.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
                 Element1.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
                 Element2.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
@@ -493,11 +503,11 @@ namespace Unigram.Controls.Gallery
             catch { }
         }
 
-        private void Play(Grid parent, GalleryContent item, File file)
+        private async void Play(Grid parent, GalleryContent item, File file)
         {
             try
             {
-                if (!file.Local.IsDownloadingCompleted)
+                if (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled)
                 {
                     return;
                 }
@@ -519,10 +529,6 @@ namespace Unigram.Controls.Gallery
                 var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
                 _mediaPlayer.SetSurfaceSize(new Size(parent.ActualWidth * dpi, parent.ActualHeight * dpi));
 
-                _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("file:///" + file.Local.Path));
-                _mediaPlayer.IsLoopingEnabled = item.IsLoop;
-                _mediaPlayer.Play();
-
                 _surface = parent;
                 _surface.Children.Add(_mediaPlayerElement);
 
@@ -530,6 +536,28 @@ namespace Unigram.Controls.Gallery
                 {
                     Transport.ShowAndHideAutomatically = true;
                 }
+
+                Transport.DownloadMaximum = file.Size;
+                Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
+
+                var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable && !file.Local.IsDownloadingCompleted;
+                if (streamable)
+                {
+                    _streamingInterop = new FFmpegInteropMSS(new FFmpegInteropConfig());
+                    var interop = await _streamingInterop.CreateFromFileAsync(ViewModel.ProtoService.Client, file);
+
+                    _mediaPlayer.Source = interop.CreateMediaPlaybackItem();
+
+                    Transport.DownloadMaximum = file.Size;
+                    Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
+                }
+                else
+                {
+                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("file:///" + file.Local.Path));
+                }
+
+                _mediaPlayer.IsLoopingEnabled = item.IsLoop;
+                _mediaPlayer.Play();
             }
             catch { }
         }
@@ -544,6 +572,14 @@ namespace Unigram.Controls.Gallery
             {
                 _surface.Children.Remove(_mediaPlayerElement);
                 _surface = null;
+            }
+
+            if (_streamingInterop != null)
+            {
+                var interop = _streamingInterop;
+                _streamingInterop = null;
+
+                Task.Run(() => interop?.Dispose());
             }
 
             if (_mediaPlayer != null)

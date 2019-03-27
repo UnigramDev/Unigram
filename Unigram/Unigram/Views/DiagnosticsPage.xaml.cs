@@ -49,7 +49,6 @@ namespace Unigram.Views
             catch { }
 
             UseTestDC.IsOn = SettingsService.Current.UseTestDC;
-            Streaming.IsOn = SettingsService.Current.IsStreamingEnabled;
 
 
 
@@ -127,11 +126,6 @@ namespace Unigram.Views
         private void UseTestDC_Toggled(object sender, RoutedEventArgs e)
         {
             SettingsService.Current.UseTestDC = SettingsService.Current.UseTestDC;
-        }
-
-        private void Streaming_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsService.Current.IsStreamingEnabled = Streaming.IsOn;
         }
     }
 }

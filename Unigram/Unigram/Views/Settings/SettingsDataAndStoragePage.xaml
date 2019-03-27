@@ -198,6 +198,20 @@
                         Style="{StaticResource CheckButtonStyle}"
                         IsEnabled="False"/>
                 </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource Streaming}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsStreamingEnabled, Mode=TwoWay}"
+                        Header="{CustomResource EnableStreaming}"
+                        Style="{StaticResource CheckButtonStyle}"/>
+
+                    <TextBlock
+                        Text="{CustomResource EnableAllStreamingInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
+                </StackPanel>
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Calls}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
