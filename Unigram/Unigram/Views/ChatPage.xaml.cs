@@ -185,6 +185,8 @@ namespace Unigram.Views
             _textShadowVisual = Shadow.Attach(Separator, 20, 0.25f);
             _textShadowVisual.IsVisible = false;
 
+            return;
+
             if (ApiInfo.IsFullExperience && ApiInformation.IsEventPresent("Windows.UI.Xaml.Input.FocusManager", "GettingFocus"))
             {
                 FocusManager.GettingFocus += (s, args) =>
@@ -219,42 +221,6 @@ namespace Unigram.Views
             {
                 FocusManager.GettingFocus += (s, args) =>
                 {
-                    //#if DEBUG
-                    //                    var element = args.NewFocusedElement as FrameworkElement;
-                    //                    if (element != null)
-                    //                    {
-                    //                        ViewModel.LastSeen = Enum.GetName(typeof(FocusInputDeviceKind), args.InputDevice) + ", " + Enum.GetName(typeof(FocusState), args.FocusState) + ": ";
-
-
-                    //                        //var control = element as Control;
-                    //                        //if (control != null)
-                    //                        //{
-                    //                        //    if (control.FocusState == FocusState.Pointer && control is ChatListViewItem && args.OldFocusedElement is ChatTextBox)
-                    //                        //    {
-                    //                        //        args.Cancel = true;
-                    //                        //    }
-                    //                        //}
-
-                    //                        if (element.Name != null)
-                    //                        {
-                    //                            if (ViewModel.LastSeen != null)
-                    //                            {
-                    //                                ViewModel.LastSeen += element.Name + ", ";
-                    //                            }
-                    //                            else
-                    //                            {
-                    //                                ViewModel.LastSeen = element.Name + ", ";
-                    //                            }
-                    //                        }
-
-                    //                        ViewModel.LastSeen += element.GetType().FullName;
-                    //                    }
-                    //                    else
-                    //                    {
-                    //                        ViewModel.LastSeen = null;
-                    //                    }
-                    //#endif
-
                     // We want to apply this behavior when using mouse only
                     if (args.InputDevice != FocusInputDeviceKind.Mouse)
                     {
@@ -301,6 +267,11 @@ namespace Unigram.Views
 
         private void OnHeaderContentChanged(DependencyObject sender, DependencyProperty dp)
         {
+            if (Title == null || Subtitle == null || ChatActionLabel == null)
+            {
+                return;
+            }
+
             var result = Title.Text.TrimEnd('.', ',');
             if (ChatActionLabel.Text.Length > 0)
             {
@@ -336,7 +307,7 @@ namespace Unigram.Views
 
                 // Not working here
                 VisualStateManager.GoToState(this, "FilledState", false);
-                VisualStateManager.GoToState(StickersPanel, "FilledState", false);
+                StickersPanel.SetView(true);
 
                 ButtonStickers.PointerEntered += Stickers_Click;
                 ButtonStickers.PointerExited += StickersPanel_PointerExited;
@@ -350,7 +321,7 @@ namespace Unigram.Views
             {
                 // Not working here
                 VisualStateManager.GoToState(this, "NarrowState", false);
-                VisualStateManager.GoToState(StickersPanel, "NarrowState", false);
+                StickersPanel.SetView(false);
 
                 StickersPanel.AllowFocusOnInteraction = false;
             }
@@ -435,7 +406,7 @@ namespace Unigram.Views
             _stickersOpen = true;
 
             VisualStateManager.GoToState(this, "FilledState", false);
-            VisualStateManager.GoToState(StickersPanel, "FilledState", false);
+            StickersPanel.SetView(true);
 
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
@@ -781,8 +752,7 @@ namespace Unigram.Views
                 //btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
 
-                ButtonStickers.Glyph = "\uE606";
-                ButtonStickers.FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
+                ButtonStickers.Glyph = "\uF4AA";
 
                 ViewModel.DisableWebPagePreview = false;
             }
@@ -795,7 +765,6 @@ namespace Unigram.Views
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
 
                 ButtonStickers.Glyph = "\uE76E";
-                ButtonStickers.FontFamily = new FontFamily("Segoe MDL2 Assets");
             }
 
             if (ViewModel.DisableWebPagePreview)
@@ -1043,7 +1012,7 @@ namespace Unigram.Views
             }
 
             VisualStateManager.GoToState(this, "NarrowState", false);
-            VisualStateManager.GoToState(StickersPanel, "NarrowState", false);
+            StickersPanel.SetView(false);
 
             var chat = ViewModel.Chat;
             if (chat == null)
@@ -2403,7 +2372,7 @@ namespace Unigram.Views
             Action.Visibility = Visibility.Visible;
             TextArea.Visibility = Visibility.Collapsed;
 
-            Messages.Focus(FocusState.Programmatic);
+            Action.Focus(FocusState.Programmatic);
         }
 
         private void ShowArea()

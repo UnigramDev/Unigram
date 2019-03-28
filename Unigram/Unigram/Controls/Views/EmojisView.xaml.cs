@@ -43,6 +43,11 @@ namespace Unigram.Controls.Views
             //Follodf.ShowMode = FlyoutShowMode.Transient;
         }
 
+        public void SetView(bool widget)
+        {
+            VisualStateManager.GoToState(this, widget ? "FilledState" : "NarrowState", false);
+        }
+
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Pivot.SelectedIndex = Toolbar.SelectedIndex;

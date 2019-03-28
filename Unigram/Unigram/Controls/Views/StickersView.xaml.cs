@@ -45,6 +45,8 @@ namespace Unigram.Controls.Views
 
         private ScrollViewer stickersScroll;
 
+        private bool _widget;
+
         public StickersView()
         {
             InitializeComponent();
@@ -61,6 +63,14 @@ namespace Unigram.Controls.Views
             {
                 shadow2.Size = args.NewSize.ToVector2();
             };
+        }
+
+        public void SetView(bool widget)
+        {
+            _widget = widget;
+
+            Emojis?.SetView(widget);
+            VisualStateManager.GoToState(this, widget ? "FilledState" : "NarrowState", false);
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -221,7 +231,10 @@ namespace Unigram.Controls.Views
         private void Emojis_Click(object sender, RoutedEventArgs e)
         {
             if (Emojis == null)
+            {
                 FindName(nameof(Emojis));
+                Emojis.SetView(_widget);
+            }
 
             FocusCatcher.Focus(FocusState.Programmatic);
         }

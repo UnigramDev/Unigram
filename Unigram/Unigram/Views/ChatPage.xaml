@@ -896,6 +896,7 @@
 
         <ContentControl x:Name="TextArea"
                         IsTabStop="False"
+                        TabIndex="0"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         Grid.Row="3">
@@ -939,7 +940,7 @@
                         Padding="48,4,0,6"
                         TextWrapping="Wrap"
                         InputScope="Chat"
-                        TabIndex="-1"
+                        TabIndex="0"
                         IsSpellCheckEnabled="True"
                         VerticalAlignment="Bottom"
                         VerticalContentAlignment="Bottom"
@@ -1078,8 +1079,7 @@
                         <controls:GlyphButton x:Name="ButtonStickers"
                                               Click="Stickers_Click"
                                               AllowFocusOnInteraction="False"
-                                              Glyph="&#xE606;"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                              Glyph="&#xF4AA;"
                                               VerticalAlignment="Bottom"
                                               AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
                                               ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"/>

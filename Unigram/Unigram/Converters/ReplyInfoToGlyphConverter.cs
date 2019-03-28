@@ -68,6 +68,8 @@ namespace Unigram.Converters
 
         public const string Message = "\uE8BD";
 
+        public const string Archive = "\uE7B8";
+
         public const string Delete = "\uE74D";
         public const string Forward = "\uE72D";
         public const string Select = "\uE762";
