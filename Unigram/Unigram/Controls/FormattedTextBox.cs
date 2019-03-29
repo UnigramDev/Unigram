@@ -113,13 +113,13 @@ namespace Unigram.Controls
             var mention = TryGetUserId(clone, out int userId);
 
             var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
-            CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, "Bold", null, VirtualKey.B);
-            CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, "Italic", null, VirtualKey.I);
-            CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, "Monospace", null, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.Bold }, VirtualKey.B);
+            CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.Italic }, VirtualKey.I);
+            CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, null, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : "Create link", null, VirtualKey.K);
+            CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, "Plain text", null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, Strings.Resources.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
             CreateFlyoutItem(flyout.Items, Document.CanUndo(), ContextUndo_Click, "Undo", new FontIcon { Glyph = Icons.Undo }, VirtualKey.Z);
             CreateFlyoutItem(flyout.Items, Document.CanRedo(), ContextRedo_Click, "Redo", new FontIcon { Glyph = Icons.Redo }, VirtualKey.Y);
@@ -189,7 +189,7 @@ namespace Unigram.Controls
             var start = Math.Min(range.StartPosition, range.EndPosition);
             var end = Math.Max(range.StartPosition, range.EndPosition);
 
-            var dialog = new CreateLinkView(null);
+            var dialog = new CreateLinkView();
             dialog.Text = text;
             dialog.Link = range.Link.Trim('"');
 
@@ -236,12 +236,12 @@ namespace Unigram.Controls
             range.SetRange(start, start + text.Length);
         }
 
-        private bool IsDefault(ITextCharacterFormat format)
+        protected bool IsDefault(ITextCharacterFormat format)
         {
             return IsEqual(format, Document.GetDefaultCharacterFormat());
         }
 
-        private bool IsEqual(ITextCharacterFormat format, ITextCharacterFormat document)
+        protected bool IsEqual(ITextCharacterFormat format, ITextCharacterFormat document)
         {
             return document.AllCaps == format.AllCaps &&
                 document.BackgroundColor == format.BackgroundColor &&
@@ -269,7 +269,7 @@ namespace Unigram.Controls
                 document.Weight == format.Weight;
         }
 
-        private bool TryGetUserId(ITextRange range, out int userId)
+        protected bool TryGetUserId(ITextRange range, out int userId)
         {
             var link = range.Link.Trim('"');
             if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out userId))
@@ -302,6 +302,11 @@ namespace Unigram.Controls
         }
 
         private void ContextPaste_Click()
+        {
+            OnPaste();
+        }
+
+        protected virtual void OnPaste()
         {
             Document.Selection.Paste(0);
         }
@@ -380,8 +385,10 @@ namespace Unigram.Controls
 
         #endregion
 
-        public FormattedText GetFormattedText(IProtoService protoService, bool clear = false)
+        public FormattedText GetFormattedText(bool clear = false)
         {
+            OnGettingFormattedText();
+
             Document.BatchDisplayUpdates();
 
             var entities = new List<TextEntity>();
@@ -431,7 +438,7 @@ namespace Unigram.Controls
                     }
                     else if (value.Length > 0)
                     {
-                        var sub = Markdown.Parse(protoService, ref value);
+                        var sub = Markdown.Parse(ref value);
                         if (sub != null && sub.Count > 0)
                         {
                             range.SetText(TextSetOptions.None, value);
@@ -461,7 +468,12 @@ namespace Unigram.Controls
             return new FormattedText(text.Replace('\v', '\n').Replace('\r', '\n'), entities);
         }
 
-        public bool IsEmpty
+        protected virtual void OnGettingFormattedText()
+        {
+
+        }
+
+        public virtual bool IsEmpty
         {
             get
             {

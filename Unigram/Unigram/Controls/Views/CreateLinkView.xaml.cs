@@ -15,18 +15,15 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Common;
 using Unigram.Services;
 using Telegram.Td.Api;
+using Telegram.Td;
 
 namespace Unigram.Controls.Views
 {
     public sealed partial class CreateLinkView : ContentDialog
     {
-        private readonly IProtoService _protoService;
-
-        public CreateLinkView(IProtoService protoService)
+        public CreateLinkView()
         {
             InitializeComponent();
-
-            _protoService = protoService;
 
             Title = Strings.Resources.CreateLink;
             PrimaryButtonText = Strings.Resources.OK;
@@ -75,17 +72,10 @@ namespace Unigram.Controls.Views
 
         private bool IsUrlInvalid(string url)
         {
-            if (_protoService != null)
+            var response = Client.Execute(new GetTextEntities(url));
+            if (response is TextEntities entities)
             {
-                var response = _protoService.Execute(new GetTextEntities(url));
-                if (response is TextEntities entities)
-                {
-                    return !(entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == url.Length && entities.Entities[0].Type is TextEntityTypeUrl);
-                }
-            }
-            else
-            {
-                return !Uri.TryCreate(url, UriKind.Absolute, out Uri result);
+                return !(entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == url.Length && entities.Entities[0].Type is TextEntityTypeUrl);
             }
 
             return true;

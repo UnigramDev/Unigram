@@ -36,6 +36,10 @@ namespace Unigram.Converters
         public const string Copy = "\uE8C8";
         public const string Paste = "\uE77F";
 
+        public const string Bold = "\uE8DD";
+        public const string Italic = "\uE8DB";
+        public const string Link = "\uE71B";
+
         public const string BasicGroup = "\uE125";
         public const string Group = "\uE902";
         public const string Channel = "\uE789";
