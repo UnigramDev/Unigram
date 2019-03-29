@@ -46,6 +46,9 @@ namespace Unigram.Views
             //    FullName.Text = user.FullName;
             //}
 
+            var confirmScope = new InputScope();
+            confirmScope.Names.Add(new InputScopeName(_passcodeService.IsSimple ? InputScopeNameValue.NumericPin : InputScopeNameValue.Password));
+            Field.InputScope = confirmScope;
             Field.MaxLength = _passcodeService.IsSimple ? 4 : int.MaxValue;
         }
 
