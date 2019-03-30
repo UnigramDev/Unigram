@@ -228,13 +228,11 @@ namespace Unigram.ViewModels
             }
         }
 
-        //~DialogViewModel()
-        //{
-        //    Debug.WriteLine("Finalizing DialogViewModel");
-        //    Aggregator.Unsubscribe(this);
-
-        //    GC.Collect();
-        //}
+        ~DialogViewModel()
+        {
+            Debug.WriteLine("Finalizing DialogViewModel");
+            GC.Collect();
+        }
 
         public ItemClickEventHandler Sticker_Click;
 
@@ -302,7 +300,13 @@ namespace Unigram.ViewModels
         {
             get
             {
-                if (_chat.Type is ChatTypePrivate || _chat.Type is ChatTypeSecret)
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return null;
+                }
+
+                if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
                 {
                     return _lastSeen;
                 }
@@ -617,10 +621,20 @@ namespace Unigram.ViewModels
 
         private Stack<long> _goBackStack = new Stack<long>();
 
-        public async Task LoadNextSliceAsync(bool force = false)
+        public async Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
+                try
+                {
+                    // We don't want to flood with requests when the chat gets initialized
+                    if (init && ListField?.ScrollingHost?.ScrollableHeight >= 200)
+                    {
+                        return;
+                    }
+                }
+                catch { }
+
                 var chat = _migratedChat ?? _chat;
                 if (chat == null)
                 {
@@ -670,6 +684,7 @@ namespace Unigram.ViewModels
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
                     var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
@@ -707,10 +722,20 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task LoadPreviousSliceAsync(bool force = false, bool reserved = false)
+        public async Task LoadPreviousSliceAsync(bool force = false, bool init = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
+                try
+                {
+                    // We don't want to flood with requests when the chat gets initialized
+                    if (init && ListField?.ScrollingHost?.ScrollableHeight >= 200)
+                    {
+                        return;
+                    }
+                }
+                catch { }
+
                 var chat = _chat;
                 if (chat == null)
                 {
@@ -759,10 +784,12 @@ namespace Unigram.ViewModels
                     if (messages.MessagesValue.Any(x => !Items.ContainsKey(x.Id)))
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepItemsInView");
                     }
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
                     var added = false;
@@ -1004,15 +1031,28 @@ namespace Unigram.ViewModels
             TextField?.FocusMaybe(FocusState.Keyboard);
         }
 
-        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, bool second = false)
+        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool second = false)
         {
+            if (direction == null)
+            {
+                var field = ListField;
+                if (field != null)
+                {
+                    var panel = field.ItemsPanelRoot as ItemsStackPanel;
+                    if (panel != null && panel.FirstVisibleIndex >= 0 && panel.FirstVisibleIndex < Items.Count && Items.Count > 0)
+                    {
+                        direction = Items[panel.FirstVisibleIndex].Id < maxId ? ScrollIntoViewAlignment.Default : ScrollIntoViewAlignment.Leading;
+                    }
+                }
+            }
+
             var already = Items.FirstOrDefault(x => x.Id == maxId);
             if (already != null)
             {
                 var field = ListField;
                 if (field != null)
                 {
-                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel);
+                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel, direction ?? ScrollIntoViewAlignment.Leading);
                 }
 
                 return;
@@ -1065,6 +1105,7 @@ namespace Unigram.ViewModels
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
@@ -1087,7 +1128,7 @@ namespace Unigram.ViewModels
                                 {
                                     target = current;
                                     index = i;
-                                } 
+                                }
                                 else if (current.IsOutgoing)
                                 {
                                     target = current;
@@ -1098,15 +1139,19 @@ namespace Unigram.ViewModels
 
                         if (target != null)
                         {
+                            if (index != -1)
+                            {
+                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.ChatId, null, target.IsOutgoing, false, false, true, false, target.IsChannelPost, false, target.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
+                            }
+                            else if (maxId == chat.LastReadInboxMessageId)
+                            {
+                                Logs.Logger.Debug(Logs.LoggerTag.Chat, "Looking for first unread message, can't find it");
+                            }
+
                             if (maxId == chat.LastReadInboxMessageId)
                             {
                                 maxId = target.Id;
                                 pixel = 28 + 48 + 4;
-                            }
-
-                            if (index != -1)
-                            {
-                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.ChatId, null, target.IsOutgoing, false, false, true, false, target.IsChannelPost, false, target.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
                             }
                         }
                     }
@@ -1144,7 +1189,7 @@ namespace Unigram.ViewModels
                 IsLoading = false;
             }
 
-            await LoadMessageSliceAsync(null, maxId, alignment, pixel, true);
+            await LoadMessageSliceAsync(null, maxId, alignment, pixel, direction, true);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -1384,39 +1429,61 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async void ProcessReplies(Chat chat, IList<MessageViewModel> replied)
+        private async void ProcessReplies(Chat chat, IList<MessageViewModel> slice)
         {
-            foreach (var message in replied)
-            {
-                message.ReplyToMessageState = ReplyToMessageState.Loading;
-            }
-
             var replies = new List<long>();
 
-            foreach (var message in replied)
+            foreach (var message in slice)
             {
-                if (message.Content is MessagePinMessage pinMessage && !replies.Contains(pinMessage.MessageId))
+                message.ReplyToMessageState = ReplyToMessageState.Loading;
+
+                var replyId = 0L;
+
+                if (message.Content is MessagePinMessage pinMessage)
                 {
-                    replies.Add(pinMessage.MessageId);
+                    replyId = pinMessage.MessageId;
                 }
-                else if (message.Content is MessageGameScore gameScore && !replies.Contains(gameScore.GameMessageId))
+                else if (message.Content is MessageGameScore gameScore)
                 {
-                    replies.Add(gameScore.GameMessageId);
+                    replyId = gameScore.GameMessageId;
                 }
-                else if (message.Content is MessagePaymentSuccessful paymentSuccessful && !replies.Contains(paymentSuccessful.InvoiceMessageId))
+                else if (message.Content is MessagePaymentSuccessful paymentSuccessful)
                 {
-                    replies.Add(paymentSuccessful.InvoiceMessageId);
+                    replyId = paymentSuccessful.InvoiceMessageId;
                 }
-                else if (message.ReplyToMessageId != 0 && !replies.Contains(message.ReplyToMessageId))
+                else if (message.ReplyToMessageId != 0)
                 {
-                    replies.Add(message.ReplyToMessageId);
+                    replyId = message.ReplyToMessageId;
+                }
+
+                if (replyId != 0)
+                {
+                    var enqueue = true;
+
+                    foreach (var reply in slice)
+                    {
+                        if (reply.ReplyToMessageId == replyId)
+                        {
+                            message.ReplyToMessage = _messageFactory.Create(this, reply.Get());
+
+                            enqueue = false;
+                            break;
+                        }
+                    }
+
+                    if (enqueue && !replies.Contains(replyId))
+                    {
+                        replies.Add(replyId);
+                    }
                 }
             }
+
+
 
             var response = await ProtoService.SendAsync(new GetMessages(chat.Id, replies));
             if (response is Telegram.Td.Api.Messages messages)
             {
-                foreach (var message in replied)
+                foreach (var message in slice)
                 {
                     foreach (var result in messages.MessagesValue)
                     {
@@ -1456,25 +1523,7 @@ namespace Unigram.ViewModels
                         message.ReplyToMessageState = ReplyToMessageState.None;
                     }
 
-                    var text = message.Content is MessageText tex2 ? tex2.Text : null;
                     Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
-
-                    //var container = ListField.ContainerFromItem(message) as ListViewItem;
-                    //if (container == null)
-                    //{
-                    //    return;
-                    //}
-
-                    //var content = container.ContentTemplateRoot as FrameworkElement;
-                    //if (content is Grid grid)
-                    //{
-                    //    content = grid.FindName("Bubble") as FrameworkElement;
-                    //}
-
-                    //if (content is MessageBubble bubble)
-                    //{
-                    //    bubble.UpdateMessageReply(message);
-                    //}
                 }
             }
         }
@@ -1517,6 +1566,8 @@ namespace Unigram.ViewModels
 #pragma warning disable CS4014
             if (state.TryGet("message_id", out long navigation))
             {
+                Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from specific id", chat.Id));
+
                 state.Remove("message_id");
                 LoadMessageSliceAsync(null, navigation);
             }
@@ -1526,16 +1577,28 @@ namespace Unigram.ViewModels
                 {
                     if (_scrollingPixel.TryRemove(chat.Id, out double pixel))
                     {
+                        Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from specific pixel", chat.Id));
+
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
                     }
                     else
                     {
+                        Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
+
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom);
                     }
                 }
+                else if (chat.UnreadCount > 0)
+                {
+                    Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
+
+                    LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, VerticalAlignment.Top);
+                }
                 else
                 {
-                    LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, VerticalAlignment.Top);
+                    Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from LastMessageId: {1}", chat.Id, chat.LastMessage?.Id));
+
+                    LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
             }
 #pragma warning restore CS4014
@@ -1727,33 +1790,62 @@ namespace Unigram.ViewModels
                 var field = ListField;
                 if (field == null)
                 {
+                    _scrollingIndex.TryRemove(chat.Id, out long index);
+                    _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                    Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
+
                     return Task.CompletedTask;
                 }
 
                 var panel = field.ItemsPanelRoot as ItemsStackPanel;
                 if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
                 {
-                    _scrollingIndex[chat.Id] = Items[panel.LastVisibleIndex].Id;
-
-                    var container = field.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
-                    if (container != null)
+                    var start = Items[panel.LastVisibleIndex].Id;
+                    if (start != chat.LastMessage?.Id)
                     {
-                        var transform = container.TransformToVisual(field);
-                        var position = transform.TransformPoint(new Point());
+                        var container = field.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
+                        if (container != null)
+                        {
+                            var transform = container.TransformToVisual(field);
+                            var position = transform.TransformPoint(new Point());
 
-                        _scrollingPixel[chat.Id] = field.ActualHeight - (position.Y + container.ActualHeight);
+                            _scrollingIndex[chat.Id] = start;
+                            _scrollingPixel[chat.Id] = field.ActualHeight - (position.Y + container.ActualHeight);
+
+                            Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, Items[panel.LastVisibleIndex].Id, field.ActualHeight - (position.Y + container.ActualHeight)));
+                        }
+                        else
+                        {
+                            _scrollingIndex[chat.Id] = start;
+                            _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                            Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, Items[panel.LastVisibleIndex].Id));
+                        }
+
+                    }
+                    else
+                    {
+                        _scrollingIndex.TryRemove(chat.Id, out long index);
+                        _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                        Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Removing scrolling position, as last item is chat.LastMessage", chat.Id));
                     }
                 }
                 else
                 {
                     _scrollingIndex.TryRemove(chat.Id, out long index);
                     _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                    Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
                 }
             }
             catch
             {
                 _scrollingIndex.TryRemove(chat.Id, out long index);
                 _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Removing scrolling position, exception", chat.Id));
             }
 
             if (Dispatcher != null)
@@ -3167,10 +3259,16 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : MvxObservableCollection<MessageViewModel>
     {
-        private readonly Dictionary<long, MessageViewModel> _messages = new Dictionary<long, MessageViewModel>();
+        private readonly Dictionary<long, long> _messages = new Dictionary<long, long>();
         private readonly HashSet<DateTime> _dates = new HashSet<DateTime>();
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
+
+        ~MessageCollection()
+        {
+            Debug.WriteLine("Finalizing MessageCollection");
+            GC.Collect();
+        }
 
         public bool ContainsKey(long id)
         {
@@ -3179,7 +3277,7 @@ namespace Unigram.ViewModels
 
         protected override void InsertItem(int index, MessageViewModel item)
         {
-            _messages[item.Id] = item;
+            _messages[item.Id] = item.Id;
 
             item.IsFirst = true;
             item.IsLast = true;

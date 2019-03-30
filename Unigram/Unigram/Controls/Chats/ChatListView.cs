@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -25,6 +26,8 @@ namespace Unigram.Controls.Chats
 
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
+
+        private DisposableMutex _loadMoreLock = new DisposableMutex();
 
         public ChatListView()
         {
@@ -52,14 +55,17 @@ namespace Unigram.Controls.Chats
                 SetScrollMode();
             }
 
-            if (ScrollingHost.ScrollableHeight < 200 && Items.Count > 0)
+            using (await _loadMoreLock.WaitAsync())
             {
-                if (ViewModel.IsFirstSliceLoaded != true)
+                if (ScrollingHost.ScrollableHeight < 200 && Items.Count > 0)
                 {
-                    await ViewModel.LoadPreviousSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
-                }
+                    if (ViewModel.IsFirstSliceLoaded != true)
+                    {
+                        await ViewModel.LoadPreviousSliceAsync(false, true);
+                    }
 
-                await ViewModel.LoadNextSliceAsync();
+                    await ViewModel.LoadNextSliceAsync(false, true);
+                }
             }
         }
 
@@ -73,16 +79,19 @@ namespace Unigram.Controls.Chats
 
         private async void Panel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (ScrollingHost.ScrollableHeight < 200)
+            using (await _loadMoreLock.WaitAsync())
             {
-                if (ViewModel.IsFirstSliceLoaded != true)
+                if (ScrollingHost.ScrollableHeight < 200)
                 {
-                    await ViewModel.LoadPreviousSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
-                }
+                    if (ViewModel.IsLastSliceLoaded != true)
+                    {
+                        await ViewModel.LoadNextSliceAsync(false, true);
+                    }
 
-                if (ViewModel.IsLastSliceLoaded != true)
-                {
-                    await ViewModel.LoadNextSliceAsync();
+                    if (ViewModel.IsFirstSliceLoaded != true)
+                    {
+                        await ViewModel.LoadPreviousSliceAsync(false, true);
+                    }
                 }
             }
         }
@@ -96,15 +105,23 @@ namespace Unigram.Controls.Chats
 
             //if (ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
             //if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
-            if (ItemsStack.FirstVisibleIndex == 0 && !e.IsIntermediate)
+            using (await _loadMoreLock.WaitAsync())
             {
-                await ViewModel.LoadNextSliceAsync(true);
-            }
-            else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
-            {
-                if (ViewModel.IsFirstSliceLoaded != true)
+                if (ItemsStack.FirstVisibleIndex == 0 && !e.IsIntermediate)
                 {
-                    await ViewModel.LoadPreviousSliceAsync(true, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
+                    await ViewModel.LoadNextSliceAsync(true);
+                }
+                else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
+                {
+                    if (ViewModel.IsFirstSliceLoaded != true)
+                    {
+                        await ViewModel.LoadPreviousSliceAsync(true);
+                    }
+                    else
+                    {
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepLastItemInView");
+                    }
                 }
             }
         }
@@ -146,14 +163,12 @@ namespace Unigram.Controls.Chats
             if (mode == ItemsUpdatingScrollMode.KeepItemsInView && (force || scroll.VerticalOffset < 200))
             {
                 Debug.WriteLine("Changed scrolling mode to KeepItemsInView");
-                Logs.Log.Write("Changed scrolling mode to KeepItemsInView");
 
                 panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
             }
             else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 200))
             {
                 Debug.WriteLine("Changed scrolling mode to KeepLastItemInView");
-                Logs.Log.Write("Changed scrolling mode to KeepLastItemInView");
 
                 panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
             }
@@ -178,6 +193,79 @@ namespace Unigram.Controls.Chats
             }
 
             return -1;
+        }
+
+        public async Task ScrollToItem(object item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading)
+        {
+            var scrollViewer = ScrollingHost;
+            if (scrollViewer == null)
+            {
+                Logs.Logger.Debug(Logs.LoggerTag.Chat, "ScrollingHost == null");
+
+                return;
+            }
+
+            // We are going to try two times, as the first one seem to fail sometimes
+            // leading the chat to the wrong scrolling position
+            var iter = 2;
+
+            var selectorItem = ContainerFromItem(item) as SelectorItem;
+            while (selectorItem == null && iter > 0)
+            {
+                Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("selectorItem == null, {0} try", iter + 1));
+
+                // call task-based ScrollIntoViewAsync to realize the item
+                await this.ScrollIntoViewAsync(item, direction);
+
+                // this time the item shouldn't be null again
+                selectorItem = (SelectorItem)ContainerFromItem(item);
+                iter--;
+            }
+
+            if (selectorItem == null)
+            {
+                Logs.Logger.Debug(Logs.LoggerTag.Chat, "selectorItem == null, abort");
+                return;
+            }
+
+            // calculate the position object in order to know how much to scroll to
+            var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
+            var position = transform.TransformPoint(new Point(0, 0));
+
+            if (alignment == VerticalAlignment.Top)
+            {
+                if (pixel is double adjust)
+                {
+                    position.Y -= adjust;
+                }
+            }
+            else if (alignment == VerticalAlignment.Center)
+            {
+                position.Y -= (ActualHeight - selectorItem.ActualHeight) / 2d;
+            }
+            else if (alignment == VerticalAlignment.Bottom)
+            {
+                position.Y -= ActualHeight - selectorItem.ActualHeight;
+
+                if (pixel is double adjust)
+                {
+                    position.Y += adjust;
+                }
+            }
+
+            // scroll to desired position with animation!
+            scrollViewer.ChangeView(position.X, position.Y, null, alignment != VerticalAlignment.Center);
+
+            if (highlight)
+            {
+                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+                if (bubble == null)
+                {
+                    return;
+                }
+
+                bubble.Highlight();
+            }
         }
     }
 }

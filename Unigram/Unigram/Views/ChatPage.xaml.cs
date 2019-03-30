@@ -459,6 +459,8 @@ namespace Unigram.Views
 
             ViewModel.SetText(null, false);
 
+            Messages.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+
             CheckMessageBoxEmpty();
 
             SearchMask.Update(ViewModel.Search);
