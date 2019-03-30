@@ -83,6 +83,25 @@ namespace Unigram.Common
 
         public int Id => _id;
 
+        public bool IsChatOpen(int session, long chatId)
+        {
+            return Dispatcher.Dispatch(() =>
+            {
+                var service = this.NavigationServices?.GetByFrameId("Main" + session);
+                if (service == null)
+                {
+                    return false;
+                }
+
+                if (ActivationMode != CoreWindowActivationMode.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chatId)
+                {
+                    return true;
+                }
+
+                return false;
+            });
+        }
+
         #region UI
 
         private async void UISettings_ColorValuesChanged(UISettings sender, object args)

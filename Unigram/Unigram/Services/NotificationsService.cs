@@ -53,6 +53,8 @@ namespace Unigram.Services
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
 
+        private bool _suppress;
+
         public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
             _protoService = protoService;
@@ -211,17 +213,24 @@ namespace Unigram.Services
         {
             foreach (var group in update.Groups)
             {
-                _protoService.Send(new RemoveNotificationGroup(group.Id, group.Notifications.Max(x => x.Id)));
+                _protoService.Send(new RemoveNotificationGroup(group.Id, int.MaxValue));
             }
         }
 
         public void Handle(UpdateHavePendingNotifications update)
         {
-
+            //Logs.Logger.Info(Logs.LoggerTag.Notifications, "UpdateHavePendingNotifications: " + update.HavePendingNotifications);
+            //_suppress = update.HavePendingNotifications;
         }
 
         public void Handle(UpdateNotificationGroup update)
         {
+            if (_suppress)
+            {
+                // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
+                return;
+            }
+
             var connectionState = _protoService.GetConnectionState();
             if (connectionState is ConnectionStateUpdating)
             {
@@ -229,7 +238,7 @@ namespace Unigram.Services
                 return;
             }
 
-            if (!_sessionService.IsActive && SettingsService.Current.IsAllAccountsNotifications)
+            if (!_sessionService.IsActive && !SettingsService.Current.IsAllAccountsNotifications)
             {
                 return;
             }
@@ -242,6 +251,7 @@ namespace Unigram.Services
             foreach (var notification in update.AddedNotifications)
             {
                 ProcessNotification(update.NotificationGroupId, notification);
+                //_protoService.Send(new RemoveNotification(update.NotificationGroupId, notification.Id));
             }
         }
 
@@ -304,24 +314,13 @@ namespace Unigram.Services
 
         private void Update(Chat chat, Action action)
         {
-            BeginOnUIThread(() =>
+            var open = TLWindowContext.ActiveWrappers.Cast<TLWindowContext>().Any(x => x.IsChatOpen(_protoService.SessionId, chat.Id));
+            if (open)
             {
-                if (_sessionService.IsActive)
-                {
-                    var service = WindowContext.GetForCurrentView()?.NavigationServices?.GetByFrameId("Main" + _protoService.SessionId);
-                    if (service == null)
-                    {
-                        return;
-                    }
+                return;
+            }
 
-                    if (TLWindowContext.GetForCurrentView().ActivationMode != Windows.UI.Core.CoreWindowActivationMode.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
-                    {
-                        return;
-                    }
-                }
-
-                action();
-            });
+            action();
         }
 
         private ConcurrentDictionary<int, Message> _files = new ConcurrentDictionary<int, Message>();
@@ -533,7 +532,7 @@ namespace Unigram.Services
                 if (string.Equals(action, "reply", StringComparison.OrdinalIgnoreCase) && data.TryGetValue("input", out string text))
                 {
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
-                    var entities = Markdown.Parse(_protoService, ref messageText);
+                    var entities = Markdown.Parse(ref messageText);
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
                     var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, false, true, null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
