@@ -659,10 +659,20 @@ namespace Unigram.Views
         private SelectorItem CreateSelectorItem(string typeName)
         {
             SelectorItem item = new ChatListViewItem(Messages);
-            //item.ContextRequested += Message_ContextRequested;
-            //item.ContentTemplate = _typeToTemplateMapping[typeName];
             item.ContentTemplate = Resources[typeName] as DataTemplate;
             item.Tag = typeName;
+
+            // For some reason the event is available since Anniversary Update,
+            // but the property has been added in April Update.
+            if (ApiInfo.CanAddContextRequestedEvent)
+            {
+                item.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
+            }
+            else
+            {
+                item.ContextRequested += Message_ContextRequested;
+            }
+
             return item;
         }
 

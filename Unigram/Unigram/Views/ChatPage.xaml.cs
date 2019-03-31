@@ -1301,10 +1301,20 @@ namespace Unigram.Views
                 return;
             }
 
-            //if (messageCommon is TLMessageService serviceMessage && (serviceMessage.Action is TLMessageActionDate || serviceMessage.Action is TLMessageActionUnreadMessages))
-            //{
-            //    return;
-            //}
+            if (args.TryGetPosition(Window.Current.Content as FrameworkElement, out Point point))
+            {
+                var children = VisualTreeHelper.FindElementsInHostCoordinates(point, element);
+                var textBlock = children.FirstOrDefault(x => x is RichTextBlock) as RichTextBlock;
+                if (textBlock != null)
+                {
+                    MessageHelper.Hyperlink_ContextRequested(textBlock, args);
+
+                    if (args.Handled)
+                    {
+                        return;
+                    }
+                }
+            }
 
             // Generic
             flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });

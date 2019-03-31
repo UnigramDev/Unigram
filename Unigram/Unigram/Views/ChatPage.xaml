@@ -223,8 +223,8 @@
         <!-- Region Service -->
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
-            <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
-                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
+            <StackPanel Margin="0,8,0,8">
+                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" Style="{StaticResource ServiceButtonStyle}">
                     <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
@@ -235,7 +235,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <messages:MessageService Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
+            <messages:MessageService Click="ServiceMessage_Click" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
                 <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
             </messages:MessageService>
         </DataTemplate>
@@ -256,7 +256,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble x:Name="Bubble" HorizontalAlignment="Right" ContextRequested="Message_ContextRequested">
+            <messages:MessageBubble x:Name="Bubble" HorizontalAlignment="Right">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -273,7 +273,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested"/>
+                <messages:MessageBubble x:Name="Bubble"/>
 
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -301,7 +301,7 @@
                                          Margin="0,0,0,2"
                                          Width="30"
                                          Height="30"/>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
+                <messages:MessageBubble x:Name="Bubble" Grid.Column="1"/>
 
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -441,6 +441,7 @@
                         Command="{x:Bind ViewModel.CallCommand}"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Glyph="&#xE13A;"
+                        AutomationProperties.Name="{CustomResource Call}"
                         ToolTipService.ToolTip="{CustomResource Call}"
                         Grid.Column="1"/>
 
@@ -526,7 +527,6 @@
                     <selectors:MessageStyleSelector>
                         <selectors:MessageStyleSelector.MessageStyle>
                             <Style TargetType="ListViewItem">
-                                <Setter Property="IsTabStop" Value="False"/>
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
                                 <Setter Property="Background" Value="Transparent"/>
@@ -573,7 +573,6 @@
                         </selectors:MessageStyleSelector.MessageStyle>
                         <selectors:MessageStyleSelector.ServiceStyle>
                             <Style TargetType="ListViewItem">
-                                <Setter Property="IsTabStop" Value="False"/>
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
                                 <Setter Property="Background" Value="Transparent"/>
@@ -896,7 +895,6 @@
 
         <ContentControl x:Name="TextArea"
                         IsTabStop="False"
-                        TabIndex="0"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         Grid.Row="3">
@@ -940,7 +938,6 @@
                         Padding="48,4,0,6"
                         TextWrapping="Wrap"
                         InputScope="Chat"
-                        TabIndex="0"
                         IsSpellCheckEnabled="True"
                         VerticalAlignment="Bottom"
                         VerticalContentAlignment="Bottom"

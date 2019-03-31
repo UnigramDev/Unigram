@@ -473,7 +473,7 @@ namespace Unigram.Common
 
                                 NavigateToConfirmPhone(null, phone, hash);
                             }
-                            else if (username.Equals("login", StringComparison.OrdinalIgnoreCase))
+                            else if (username.Equals("login", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
                             {
                                 NavigateToSendCode(protoService, post);
                             }
@@ -523,7 +523,7 @@ namespace Unigram.Common
 
                                 NavigateToShare(text, hasUrl);
                             }
-                            else if (username.Equals("setlanguage", StringComparison.OrdinalIgnoreCase))
+                            else if (username.Equals("setlanguage", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
                             {
                                 NavigateToLanguage(protoService, navigation, post);
                             }
@@ -656,7 +656,7 @@ namespace Unigram.Common
                         await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
-                    Logs.Log.Write("account.signIn error " + error);
+                    Logs.Logger.Warning(Logs.LoggerTag.API, "account.signIn error " + error);
                 }
             }
             else
@@ -819,7 +819,7 @@ namespace Unigram.Common
                     {
                         if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
                         {
-                            Logs.Log.Write("messages.importChatInvite error " + error);
+                            Logs.Logger.Warning(Logs.LoggerTag.API, "messages.importChatInvite error " + error);
                             return;
                         }
                         if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
@@ -842,7 +842,7 @@ namespace Unigram.Common
                             return;
                         }
 
-                        Logs.Log.Write("messages.importChatInvite error " + error);
+                        Logs.Logger.Warning(Logs.LoggerTag.API, "messages.importChatInvite error " + error);
                     }
                 }
             }
@@ -850,7 +850,7 @@ namespace Unigram.Common
             {
                 if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
                 {
-                    Logs.Log.Write("messages.checkChatInvite error " + error);
+                    Logs.Logger.Warning(Logs.LoggerTag.API, "messages.checkChatInvite error " + error);
                     return;
                 }
                 if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
@@ -860,7 +860,7 @@ namespace Unigram.Common
                     return;
                 }
 
-                Logs.Log.Write("messages.checkChatInvite error " + error);
+                Logs.Logger.Warning(Logs.LoggerTag.API, "messages.checkChatInvite error " + error);
             }
         }
 
@@ -943,6 +943,11 @@ namespace Unigram.Common
                     var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
 
                     copy.Click += LinkCopy_Click;
+
+                    if (ApiInfo.CanUseFlyoutIcons)
+                    {
+                        copy.Icon = new FontIcon { Glyph = Icons.Copy };
+                    }
 
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(copy);

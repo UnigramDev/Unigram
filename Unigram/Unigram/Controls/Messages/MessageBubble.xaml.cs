@@ -24,24 +24,13 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageBubble : UserControl
+    public sealed partial class MessageBubble : StackPanel
     {
         private MessageViewModel _message;
 
         public MessageBubble()
         {
             InitializeComponent();
-
-            // For some reason the event is available since Anniversary Update,
-            // but the property has been added in April Update.
-            if (ApiInfo.CanAddContextRequestedEvent)
-            {
-                Message.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
-            }
-            else
-            {
-                Message.ContextRequested += Message_ContextRequested;
-            }
         }
 
         public void UpdateAdaptive(HorizontalAlignment alignment)
@@ -1099,6 +1088,15 @@ namespace Unigram.Controls.Messages
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
 
+            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
+            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
+
             UpdateMockup();
         }
 
@@ -1126,6 +1124,15 @@ namespace Unigram.Controls.Messages
 
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
+
+            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
+            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
 
             UpdateMockup();
         }
@@ -1268,6 +1275,12 @@ namespace Unigram.Controls.Messages
                 //goto Calculate;
             }
 
+            //if (constraint is MessageText)
+            //{
+            //    Message.Measure(new Size(availableSize.Width - 20, availableSize.Height));
+            //    return base.MeasureOverride(new Size(Message.DesiredSize.Width + 20, availableSize.Height));
+            //}
+
             return base.MeasureOverride(availableSize);
 
         Calculate:
@@ -1289,11 +1302,6 @@ namespace Unigram.Controls.Messages
             {
                 return base.MeasureOverride(new Size(Math.Max(96, width), availableSize.Height));
             }
-        }
-
-        private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
-        {
-            MessageHelper.Hyperlink_ContextRequested(sender, args);
         }
 
         private void Message_ContextMenuOpening(object sender, ContextMenuEventArgs e)
