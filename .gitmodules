@@ -4,3 +4,6 @@
 [submodule "Unigram/Libraries/libtgvoip"]
 	path = Unigram/Libraries/libtgvoip
 	url = https://github.com/UnigramDev/libtgvoip.git
+[submodule "Unigram/Unigram.Infrastructure"]
+	path = Unigram/Unigram.Infrastructure
+	url = https://github.com/FrayxRulez/Unigram.Infrastructure.git
