@@ -93,7 +93,7 @@ namespace Unigram.Common
                     await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
 
-                page.ViewModel.TextField?.FocusMaybe(FocusState.Keyboard);
+                page.ViewModel.TextField?.Focus(FocusState.Programmatic);
 
                 if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
                 {

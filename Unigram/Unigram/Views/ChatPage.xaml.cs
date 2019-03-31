@@ -302,7 +302,7 @@ namespace Unigram.Views
                     _stickersTimer.Stop();
 
                     Collapse_Click(StickersPanel, null);
-                    TextField.FocusMaybe(FocusState.Keyboard);
+                    TextField.Focus(FocusState.Programmatic);
                 };
 
                 // Not working here
@@ -361,13 +361,13 @@ namespace Unigram.Views
             {
                 Collapse_Click(StickersPanel, null);
 
-                TextField.FocusMaybe(FocusState.Keyboard);
+                TextField.Focus(FocusState.Programmatic);
             }
             else if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
             {
                 CollapseMarkup(false);
 
-                TextField.FocusMaybe(FocusState.Keyboard);
+                TextField.Focus(FocusState.Programmatic);
             }
         }
 
@@ -467,16 +467,10 @@ namespace Unigram.Views
 
             ViewModel.PropertyChanged += OnPropertyChanged;
             ViewModel.Items.AttachChanged = OnAttachChanged;
-            //Bindings.Update();
 
             Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
 
-            //LosingFocus -= DialogPage_LosingFocus;
-            //LosingFocus += DialogPage_LosingFocus;
-
-            //base.OnNavigatedTo(e);
-
-            TextField.FocusMaybe(FocusState.Keyboard);
+            TextField.Focus(FocusState.Programmatic);
         }
 
         //private void DialogPage_LosingFocus(UIElement sender, LosingFocusEventArgs args)
@@ -597,7 +591,7 @@ namespace Unigram.Views
 
 
 
-            TextField.FocusMaybe(FocusState.Keyboard);
+            TextField.Focus(FocusState.Programmatic);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -641,7 +635,7 @@ namespace Unigram.Views
             if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
             {
                 ViewVisibleMessages(false);
-                TextField.FocusMaybe(FocusState.Keyboard);
+                TextField.Focus(FocusState.Programmatic);
             }
         }
 
@@ -649,7 +643,7 @@ namespace Unigram.Views
         {
             if (e.Visible)
             {
-                TextField.FocusMaybe(FocusState.Keyboard);
+                TextField.Focus(FocusState.Programmatic);
             }
         }
 
@@ -727,7 +721,7 @@ namespace Unigram.Views
             if (args.Handled)
             {
                 Focus(FocusState.Programmatic);
-                TextField.FocusMaybe(FocusState.Keyboard);
+                TextField.Focus(FocusState.Programmatic);
             }
         }
 
@@ -1686,7 +1680,7 @@ namespace Unigram.Views
             Collapse_Click(null, new RoutedEventArgs());
 
             await Task.Delay(100);
-            TextField.FocusMaybe(FocusState.Keyboard);
+            TextField.Focus(FocusState.Programmatic);
         }
 
         public async void Animations_ItemClick(Animation animation)
@@ -1697,7 +1691,7 @@ namespace Unigram.Views
             Collapse_Click(null, new RoutedEventArgs());
 
             await Task.Delay(100);
-            TextField.FocusMaybe(FocusState.Keyboard);
+            TextField.Focus(FocusState.Programmatic);
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -2383,7 +2377,7 @@ namespace Unigram.Views
             Action.Visibility = Visibility.Collapsed;
             TextArea.Visibility = Visibility.Visible;
 
-            TextField.FocusMaybe(FocusState.Keyboard);
+            TextField.Focus(FocusState.Programmatic);
         }
 
         private bool StillValid(Chat chat)

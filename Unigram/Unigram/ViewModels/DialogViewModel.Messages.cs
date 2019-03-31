@@ -235,7 +235,7 @@ namespace Unigram.ViewModels
 
             await ShareView.GetForCurrentView().ShowAsync(message.Get());
 
-            TextField?.FocusMaybe(FocusState.Keyboard);
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         #endregion
@@ -392,7 +392,7 @@ namespace Unigram.ViewModels
 
                 await ShareView.GetForCurrentView().ShowAsync(messages);
 
-                TextField?.FocusMaybe(FocusState.Keyboard);
+                TextField?.Focus(FocusState.Programmatic);
             }
         }
 

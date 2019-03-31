@@ -1028,7 +1028,7 @@ namespace Unigram.ViewModels
                 await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
             }
 
-            TextField?.FocusMaybe(FocusState.Keyboard);
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool second = false)
@@ -2242,6 +2242,8 @@ namespace Unigram.ViewModels
 
                 ComposerHeader = null;
             }
+
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         private long GetReply(bool clean)

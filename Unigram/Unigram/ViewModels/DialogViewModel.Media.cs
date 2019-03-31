@@ -335,7 +335,7 @@ namespace Unigram.ViewModels
 
             var dialogResult = await dialog.ShowAsync();
 
-            TextField?.FocusMaybe(FocusState.Keyboard);
+            TextField?.Focus(FocusState.Programmatic);
 
             if (dialogResult != ContentDialogResult.Primary)
             {
@@ -905,7 +905,7 @@ namespace Unigram.ViewModels
 
             var confirm = await dialog.ShowAsync();
 
-            TextField?.FocusMaybe(FocusState.Keyboard);
+            TextField?.Focus(FocusState.Programmatic);
 
             if (confirm != ContentDialogResult.Primary)
             {
