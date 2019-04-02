@@ -174,15 +174,15 @@ namespace Unigram.Controls.Chats
             switch (state)
             {
                 case ChatSearchState.Members:
-                    ToolsPanel.Visibility = Visibility.Collapsed;
+                    ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Collapsed;
                     ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, string.Empty, false, true);
                     break;
                 case ChatSearchState.TextByMember:
-                    ToolsPanel.Visibility = Visibility.Collapsed;
+                    ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Collapsed;
                     ViewModel.Autocomplete = null;
                     break;
                 default:
-                    ToolsPanel.Visibility = Visibility.Visible;
+                    ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Visible;
                     ViewModel.Autocomplete = null;
                     break;
             }

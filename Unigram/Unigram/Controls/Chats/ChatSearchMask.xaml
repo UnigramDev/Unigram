@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Chats"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:triggers="using:Unigram.Triggers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -321,13 +322,44 @@
     </UserControl.Resources>
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <triggers:FullExperienceTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BottomPanel.Visibility" Value="Collapsed"/>
+                        <Setter Target="TopPanel.Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+                        <Setter Target="TopPanel.Height" Value="{StaticResource TelegramToolBarHeight}"/>
+                        <Setter Target="TopPanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="SearchPanel.Margin" Value="0,0,0,8"/>
+                        <Setter Target="ClearMiniButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="RightPanel.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState/>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
+            <RowDefinition Height="{ThemeResource AppBarThemeCompactHeight}"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
-            <Grid Margin="12,0,12,8" VerticalAlignment="Bottom">
+        <Grid x:Name="TopPanel" Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="SearchPanel"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  Margin="12,0,12,8"
+                  VerticalAlignment="Bottom"
+                  Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -341,7 +373,7 @@
                     Style="{StaticResource Test}"
                     Grid.ColumnSpan="3"/>
 
-                <Button x:Name="ClearButton"
+                <Button x:Name="ClearMiniButton"
                         Click="Delete_Click"
                         Grid.Row="1"
                         Style="{StaticResource DeleteButtonStyle}"
@@ -365,6 +397,51 @@
                         AutomationProperties.AccessibilityView="Raw"
                         VerticalAlignment="Stretch" />
             </Grid>
+
+            <controls:GlyphButton
+                x:Name="SearchPrevious"
+                Command="{x:Bind ViewModel.PreviousCommand}"
+                Glyph="&#xE0A0;"
+                AllowFocusOnInteraction="False"
+                FontSize="{StaticResource GlyphButtonFontSize}"/>
+            <controls:GlyphButton
+                x:Name="SearchNext"
+                Command="{x:Bind ViewModel.NextCommand}"
+                Glyph="&#xE0A1;"
+                AllowFocusOnInteraction="False"
+                FontSize="{StaticResource GlyphButtonFontSize}"
+                Grid.Column="1"/>
+
+            <Grid x:Name="RightPanel" Visibility="Collapsed" Grid.Column="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid x:Name="ToolsPanel">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <controls:GlyphButton
+                        Click="Filter_Click"
+                        Glyph="&#xE2AF;"
+                        AllowFocusOnInteraction="False"
+                        Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        FontSize="{StaticResource GlyphButtonFontSize}"/>
+                    <controls:GlyphButton
+                        Command="{x:Bind ViewModel.Dialog.JumpDateCommand}"
+                        Glyph="&#xE163;"
+                        AllowFocusOnInteraction="False"
+                        FontSize="{StaticResource GlyphButtonFontSize}"
+                        Grid.Column="1"/>
+                </Grid>
+
+                <controls:GlyphButton
+                    Click="Delete_Click"
+                    Glyph="&#xE10A;"
+                    FontSize="16"
+                    Grid.Column="1"/>
+            </Grid>
         </Grid>
 
         <ListView x:Name="ListAutocomplete"
@@ -375,7 +452,7 @@
                   IsItemClickEnabled="True"
                   ItemClick="Autocomplete_ItemClick"
                   ContainerContentChanging="OnContainerContentChanging"
-                  Grid.Row="1">
+                  Grid.Row="2">
             <ListView.Footer>
                 <Border x:Name="AutocompleteHeader"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -392,7 +469,7 @@
             </ListView.ItemContainerTransitions>
         </ListView>
 
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="2">
+        <Grid x:Name="BottomPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -401,7 +478,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Grid x:Name="ToolsPanel">
+            <Grid x:Name="ToolsMiniPanel">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
