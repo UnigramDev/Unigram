@@ -592,7 +592,7 @@ namespace Unigram.ViewModels
                     var props = await file.GetBasicPropertiesAsync();
                     var size = await ImageHelper.GetScaleAsync(file, crop: crop);
 
-                    var generated = await file.ToGeneratedAsync("compress" + (crop.HasValue ? "#" + JsonConvert.SerializeObject(crop) : string.Empty));
+                    var generated = await file.ToGeneratedAsync(ConversionType.Compress, crop.HasValue ? JsonConvert.SerializeObject(crop) : null);
 
                     var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, photo.Caption, photo.Ttl);
 
@@ -628,7 +628,7 @@ namespace Unigram.ViewModels
                     if (profile != null)
                     {
                         conversion.Transcode = true;
-                        conversion.Mute = profile.Audio == null;
+                        conversion.Mute = video.IsMuted;
                         conversion.Width = profile.Video.Width;
                         conversion.Height = profile.Video.Height;
                         conversion.Bitrate = profile.Video.Bitrate;
@@ -643,8 +643,8 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    var generated = await file.ToGeneratedAsync("transcode#" + JsonConvert.SerializeObject(conversion));
-                    var thumbnail = await file.ToThumbnailAsync(conversion, "thumbnail_transcode#" + JsonConvert.SerializeObject(conversion));
+                    var generated = await file.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
+                    var thumbnail = await file.ToThumbnailAsync(conversion, ConversionType.TranscodeThumbnail, JsonConvert.SerializeObject(conversion));
 
                     if (profile != null && profile.Audio == null)
                     {
