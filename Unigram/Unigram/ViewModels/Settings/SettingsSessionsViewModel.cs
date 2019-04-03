@@ -120,7 +120,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Log.Write("auth.resetAuthotization error " + error);
+                    Logs.Logger.Error(Logs.LoggerTag.API, "auth.resetAuthotization error " + error);
                 }
             }
         }
@@ -138,7 +138,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Log.Write("auth.resetAuthotizations error " + error);
+                    Logs.Logger.Error(Logs.LoggerTag.API, "auth.resetAuthotizations error " + error);
                 }
             }
         }

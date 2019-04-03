@@ -233,7 +233,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (response is Error error)
             {
-                Logs.Log.Write("channels.getAdminedPublicChannels error " + error);
+                Logs.Logger.Error(Logs.LoggerTag.API, "channels.getAdminedPublicChannels error " + error);
             }
         }
 

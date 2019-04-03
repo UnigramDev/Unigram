@@ -108,7 +108,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Log.Write("auth.resetWebAuthotization error " + error);
+                    Logs.Logger.Error(Logs.LoggerTag.API, "auth.resetWebAuthotization error " + error);
                 }
 
                 ProtoService.Send(new BlockUser(bot.Id));
@@ -128,7 +128,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Log.Write("auth.resetWebAuthotizations error " + error);
+                    Logs.Logger.Error(Logs.LoggerTag.API, "auth.resetWebAuthotizations error " + error);
                 }
             }
         }

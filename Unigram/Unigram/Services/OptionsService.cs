@@ -363,7 +363,6 @@ namespace Unigram.Services
                 return default(T);
             }
 
-            Logs.Log.Write($"OptionsService, mismatching type, {typeof(T)} requested, {option.GetType()} received");
             return default(T);
         }
 
@@ -390,7 +389,6 @@ namespace Unigram.Services
                 return false;
             }
 
-            Logs.Log.Write($"OptionsService, mismatching type, {typeof(T)} requested, {option.GetType()} received");
             value = default(T);
             return false;
         }
