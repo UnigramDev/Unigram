@@ -1263,7 +1263,21 @@ namespace Unigram.Views
         {
             MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
 
-            Root?.SetSelectedIndex(rpMasterTitlebar.SelectedIndex);
+            switch (rpMasterTitlebar.SelectedIndex)
+            {
+                case 0:
+                    Root?.SetSelectedIndex(RootDestination.Chats);
+                    break;
+                case 1:
+                    Root?.SetSelectedIndex(RootDestination.Contacts);
+                    break;
+                case 2:
+                    Root?.SetSelectedIndex(RootDestination.Calls);
+                    break;
+                case 3:
+                    Root?.SetSelectedIndex(RootDestination.Settings);
+                    break;
+            }
 
             DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex != 0 ? Visibility.Visible : Visibility.Collapsed;
             ChatsFilters.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -1922,45 +1936,6 @@ namespace Unigram.Views
             }
 
             ChatsFilters.Content = text;
-        }
-    }
-
-    public class AnyCollection : MvxObservableCollection<object>
-    {
-
-    }
-
-    public class NavigationViewTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate SessionTemplate { get; set; }
-
-        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
-        {
-            switch (item)
-            {
-                case ISessionService session:
-                    return SessionTemplate;
-            }
-
-            return null;
-            //return base.SelectTemplateCore(item, container);
-        }
-    }
-
-    public class NavigationViewStyleSelector : StyleSelector
-    {
-        public Style UserStyle { get; set; }
-        public Style ItemContainerStyle { get; set; }
-
-        protected override Style SelectStyleCore(object item, DependencyObject container)
-        {
-            switch (item)
-            {
-                case MainViewModel user:
-                    return UserStyle;
-            }
-
-            return ItemContainerStyle;
         }
     }
 }
