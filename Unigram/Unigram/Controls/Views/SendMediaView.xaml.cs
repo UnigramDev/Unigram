@@ -20,6 +20,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -56,7 +57,7 @@ namespace Unigram.Controls.Views
             {
                 if (_selectedItem != null && value != null)
                 {
-                    value.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService)
+                    value.Caption = CaptionInput.GetFormattedText()
                         .Substring(0, ViewModel.CacheService.Options.MessageCaptionLengthMax);
                 }
 
@@ -349,7 +350,7 @@ namespace Unigram.Controls.Views
                 ViewModel.Settings.IsSendGrouped = IsGrouped;
             }
 
-            SelectedItem.Caption = CaptionInput.GetFormattedText(ViewModel.ProtoService)
+            SelectedItem.Caption = CaptionInput.GetFormattedText()
                 .Substring(0, ViewModel.CacheService.Options.MessageCaptionLengthMax);
 
             Hide(ContentDialogResult.Primary);
@@ -679,17 +680,14 @@ namespace Unigram.Controls.Views
 
                 var bitmap = await package.GetBitmapAsync();
                 var media = new ObservableCollection<StorageMedia>();
-                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
                 using (var stream = await bitmap.OpenReadAsync())
-                using (var reader = new DataReader(stream))
                 {
-                    await reader.LoadAsync((uint)stream.Size);
-                    var buffer = new byte[(int)stream.Size];
-                    reader.ReadBytes(buffer);
-                    await FileIO.WriteBytesAsync(cache, buffer);
-
-                    var photo = await StoragePhoto.CreateAsync(cache, true);
+                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
+                    var photo = await StoragePhoto.CreateAsync(result, true);
                     if (photo == null)
                     {
                         return;
