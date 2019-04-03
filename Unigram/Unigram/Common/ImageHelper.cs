@@ -108,6 +108,29 @@ namespace Unigram.Common
             return resizedImageFile;
         }
 
+        public static async Task<StorageFile> TranscodeAsync(IRandomAccessStream imageStream, StorageFile resizedImageFile, Guid encoderId)
+        {
+            var decoder = await BitmapDecoder.CreateAsync(imageStream);
+            //if (decoder.FrameCount > 1)
+            //{
+            //    throw new InvalidCastException();
+            //}
+
+            var originalPixelWidth = decoder.PixelWidth;
+            var originalPixelHeight = decoder.PixelHeight;
+
+            using (var resizedStream = await resizedImageFile.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, new BitmapTransform(), ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                var encoder = await BitmapEncoder.CreateAsync(encoderId, resizedStream);
+                encoder.SetSoftwareBitmap(pixelData);
+                await encoder.FlushAsync();
+            }
+
+            return resizedImageFile;
+        }
+
         public static async Task<ImageSource> GetPreviewBitmapAsync(StorageFile sourceFile, int requestedMinSide = 1280)
         {
             try
