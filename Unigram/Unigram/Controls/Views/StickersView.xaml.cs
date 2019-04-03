@@ -228,17 +228,6 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private void Emojis_Click(object sender, RoutedEventArgs e)
-        {
-            if (Emojis == null)
-            {
-                FindName(nameof(Emojis));
-                Emojis.SetView(_widget);
-            }
-
-            FocusCatcher.Focus(FocusState.Programmatic);
-        }
-
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is ViewModels.Dialogs.StickerViewModel sticker && sticker.StickerValue != null)
@@ -270,6 +259,12 @@ namespace Unigram.Controls.Views
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (Pivot.SelectedIndex == 0 && Emojis == null)
+            {
+                FindName(nameof(Emojis));
+                Emojis.SetView(_widget);
+            }
+
             if (Pivot.SelectedIndex != 2)
             {
                 Toolbar.SelectedItem = null;

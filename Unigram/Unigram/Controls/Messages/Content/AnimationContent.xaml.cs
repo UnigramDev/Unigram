@@ -18,8 +18,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class AnimationContent : AspectView, IContentWithFile
@@ -91,7 +89,6 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-
                 Button.Glyph = "\uE10A";
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 

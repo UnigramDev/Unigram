@@ -158,7 +158,6 @@
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Button x:Name="FocusCatcher" IsHitTestVisible="False" Opacity="0" Grid.Row="1"/>
                 <PivotItem x:Name="Fuffa" x:DeferLoadStrategy="Lazy">
                     <controls:ZoomableGridView
                         x:Name="FeaturedView"
@@ -265,100 +264,34 @@
                         <local:EmojisView x:Name="Emojis" x:DeferLoadStrategy="Lazy" ItemClick="Emojis_ItemClick" Grid.RowSpan="3" d:IsHidden="True"/>
                     </PivotItem>
                     <PivotItem>
-                        <!--<controls:ZoomableGridView
-                             x:Name="GifsView"
-                             ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
-                             common:FluidGridView.OrientationOnly="False"
-                             IsItemClickEnabled="True"
-                             SelectionMode="None"
-                             ItemClick="Gifs_ItemClick"
-                             Padding="10,0,10,10">
-                             <common:FluidGridView.Triggers>
-                             <common:FluidGridViewTrigger RowsOrColumns="5"/>
-                             </common:FluidGridView.Triggers>
-                             <GridView.Header>
-                             <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12,8,0,8" Height="32" Margin="-10,0">
-                             <TextBlock Text="Saved GIFs" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                             </Border>
-                             </GridView.Header>
-                             <GridView.ItemTemplate>
-                             <DataTemplate x:DataType="tl:TLDocument">
-                             <Border Margin="2">
-                             <Image x:Phase="3" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill"/>
-                             </Border>
-                             </DataTemplate>
-                             </GridView.ItemTemplate>
-                             <GridView.ItemContainerStyle>
-                             <Style TargetType="GridViewItem">
-                             <Setter Property="Margin" Value="0"/>
-                             <Setter Property="Padding" Value="0"/>
-                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                             </Style>
-                             </GridView.ItemContainerStyle>
-                             <GridView.ItemContainerTransitions>
-                             <TransitionCollection/>
-                             </GridView.ItemContainerTransitions>
-                             </controls:ZoomableGridView>-->
-                        <ListView x:Name="GifsView"
-                                  ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
-                                  SelectionMode="None"
-                                  ContainerContentChanging="Animations_ContainerContentChanging"
-                                  Padding="2">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <controls:MosaicRow HorizontalAlignment="Stretch"/>
-                                    <!--<GridView ItemsSource="{Binding}"
-                                         IsItemClickEnabled="True"
-                                         SelectionMode="None"
-                                         ItemClick="Gifs_ItemClick"
-                                         ContainerContentChanging="Animations_ContainerContentChanging">
-                                         <GridView.ItemsPanel>
-                                         <ItemsPanelTemplate>
-                                         </ItemsPanelTemplate>
-                                         </GridView.ItemsPanel>
-                                         <GridView.ItemTemplate>
-                                         <DataTemplate x:DataType="common:MosaicMediaPosition">
-                                         <Border Margin="2">
-                                         <Border.Background>
-                                         <ImageBrush Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                                         </Border.Background>
-                                    -->
-                                    <!--<Image x:Phase="3" Source="{x:Bind Item, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill"/>-->
-                                    <!--
-                                         </Border>
-                                         </DataTemplate>
-                                         </GridView.ItemTemplate>
-                                         <GridView.ItemContainerStyle>
-                                         <Style TargetType="GridViewItem">
-                                         <Setter Property="Margin" Value="0"/>
-                                         <Setter Property="Padding" Value="0"/>
-                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                         </Style>
-                                         </GridView.ItemContainerStyle>
-                                         <GridView.ItemContainerTransitions>
-                                         <TransitionCollection/>
-                                         </GridView.ItemContainerTransitions>
-                                         <GridView.Template>
-                                         <ControlTemplate TargetType="GridView">
-                                         <ItemsPresenter />
-                                         </ControlTemplate>
-                                         </GridView.Template>
-                                         </GridView>-->
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemContainerTransitions>
-                                <TransitionCollection/>
-                            </ListView.ItemContainerTransitions>
-                        </ListView>
+                        <Grid>
+                            <TextBlock x:Name="GifsRestricted"
+                                       Margin="12,0"
+                                       TextAlignment="Center"
+                                       Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
+                            
+                            <ListView x:Name="GifsView"
+                                      ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
+                                      SelectionMode="None"
+                                      ContainerContentChanging="Animations_ContainerContentChanging"
+                                      Padding="2">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:MosaicRow HorizontalAlignment="Stretch"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection/>
+                                </ListView.ItemContainerTransitions>
+                            </ListView>
+                        </Grid>
                     </PivotItem>
                     <PivotItem>
                         <Grid>
@@ -746,7 +679,6 @@
                                               Height="{ThemeResource AppBarThemeCompactHeight}"/>-->
 
                         <controls:PivotRadioButton
-                            Click="Emojis_Click"
                             SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
                             Index="0"
                             Glyph="&#xE76E;"

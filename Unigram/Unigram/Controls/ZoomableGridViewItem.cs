@@ -23,8 +23,12 @@ namespace Unigram.Controls
 
         protected override void OnHolding(HoldingRoutedEventArgs e)
         {
+            base.OnHolding(e);
+
             if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
             {
+                VisualStateManager.GoToState(this, "Normal", false);
+
                 if (_lastPointer != null && _lastPointer.IsInContact)
                 {
                     _parent.CapturePointer(_lastPointer);
@@ -33,21 +37,21 @@ namespace Unigram.Controls
 
                 _parent.OnItemHolding(this, Tag);
             }
-
-            base.OnHolding(e);
         }
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
+            base.OnPointerPressed(e);
+
             _lastPointer = e.Pointer;
 
             if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
             {
+                VisualStateManager.GoToState(this, "Normal", false);
+
                 _parent.CapturePointer(e.Pointer);
                 _parent.OnItemHolding(this, Tag);
             }
-
-            base.OnPointerPressed(e);
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)

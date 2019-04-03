@@ -37,6 +37,7 @@ using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -187,36 +188,6 @@ namespace Unigram.Views
 
             return;
 
-            if (ApiInfo.IsFullExperience && ApiInformation.IsEventPresent("Windows.UI.Xaml.Input.FocusManager", "GettingFocus"))
-            {
-                FocusManager.GettingFocus += (s, args) =>
-                {
-                    if (args.NewFocusedElement is FrameworkElement element)
-                    {
-                        bool IsStickersPanel(Uri uri)
-                        {
-                            var segment = uri?.Segments.LastOrDefault();
-                            if (segment == null)
-                            {
-                                return false;
-                            }
-
-                            var paths = new string[] { "StickersView.xaml", "StickersSearchView.xaml", "EmojisView.xaml" };
-
-                            return paths.Contains(segment);
-                        }
-
-                        if (_stickersOpen && !IsStickersPanel(element.BaseUri))
-                        {
-                            Collapse_Click(StickersPanel, null);
-                            args.TrySetNewFocusedElement(TextField);
-                        }
-                    };
-                };
-            }
-
-            return;
-
             if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Input.FocusManager", "GettingFocus"))
             {
                 FocusManager.GettingFocus += (s, args) =>
@@ -229,6 +200,12 @@ namespace Unigram.Views
 
                     // We don't want to steal focus from text areas/keyboard navigation
                     if (args.FocusState == FocusState.Keyboard || args.NewFocusedElement is TextBox || args.NewFocusedElement is RichEditBox)
+                    {
+                        return;
+                    }
+
+                    // We don't want to steal focus from popups
+                    if (VisualTreeHelper.GetOpenPopups(Window.Current).Any())
                     {
                         return;
                     }
@@ -447,8 +424,6 @@ namespace Unigram.Views
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
                 ViewModel.ListField = null;
-
-                //Bindings.StopTracking();
             }
 
             DataContext = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
@@ -740,38 +715,40 @@ namespace Unigram.Views
                 CollapseMarkup(false);
             }
 
-            if (ViewModel != null && TextField.IsEmpty)
+            if (TextField.IsEmpty)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnCommands.Visibility = Visibility.Visible;
                 btnMarkup.Visibility = Visibility.Visible;
-                //btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
 
                 ButtonStickers.Glyph = "\uF4AA";
 
-                ViewModel.DisableWebPagePreview = false;
+                if (ViewModel != null)
+                {
+                    ViewModel.DisableWebPagePreview = false;
+                }
             }
             else
             {
                 btnSendMessage.Visibility = Visibility.Visible;
                 btnCommands.Visibility = Visibility.Collapsed;
                 btnMarkup.Visibility = Visibility.Collapsed;
-                //btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
 
                 ButtonStickers.Glyph = "\uE76E";
             }
 
-            if (ViewModel.DisableWebPagePreview)
+            var viewModel = ViewModel;
+            if (viewModel == null || viewModel.DisableWebPagePreview)
             {
                 return;
             }
 
-            var text = ViewModel.GetText(TextGetOptions.None);
-            var embedded = ViewModel.ComposerHeader;
+            var text = viewModel.GetText(TextGetOptions.None);
+            var embedded = viewModel.ComposerHeader;
 
-            var response = ViewModel.ProtoService.Execute(new GetTextEntities(text));
+            var response = viewModel.ProtoService.Execute(new GetTextEntities(text));
             if (response is TextEntities entities)
             {
                 var entity = entities.Entities.FirstOrDefault(x => x.Type is TextEntityTypeUrl);
@@ -783,11 +760,11 @@ namespace Unigram.Views
                         return;
                     }
 
-                    ViewModel.ProtoService.Send(new GetWebPagePreview(new FormattedText(address, new TextEntity[0])), result =>
+                    viewModel.ProtoService.Send(new GetWebPagePreview(new FormattedText(address, new TextEntity[0])), result =>
                     {
                         this.BeginOnUIThread(() =>
                         {
-                            if (!string.Equals(text, ViewModel.GetText(TextGetOptions.None)))
+                            if (!string.Equals(text, viewModel.GetText(TextGetOptions.None)))
                             {
                                 return;
                             }
@@ -796,22 +773,22 @@ namespace Unigram.Views
                             {
                                 if (embedded == null)
                                 {
-                                    ViewModel.ComposerHeader = new MessageComposerHeader { WebPagePreview = webPage, WebPageUrl = address };
+                                    viewModel.ComposerHeader = new MessageComposerHeader { WebPagePreview = webPage, WebPageUrl = address };
                                 }
                                 else
                                 {
-                                    ViewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = webPage, WebPageUrl = address };
+                                    viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = webPage, WebPageUrl = address };
                                 }
                             }
                             else if (embedded != null)
                             {
                                 if (embedded.IsEmpty)
                                 {
-                                    ViewModel.ComposerHeader = null;
+                                    viewModel.ComposerHeader = null;
                                 }
                                 else if (embedded.WebPagePreview != null)
                                 {
-                                    ViewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                                    viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
                                 }
                             }
                         });
@@ -821,11 +798,11 @@ namespace Unigram.Views
                 {
                     if (embedded.IsEmpty)
                     {
-                        ViewModel.ComposerHeader = null;
+                        viewModel.ComposerHeader = null;
                     }
                     else if (embedded.WebPagePreview != null)
                     {
-                        ViewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                        viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
                     }
                 }
             }
@@ -1827,9 +1804,9 @@ namespace Unigram.Views
 
         private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            var cumulative = (float)e.Cumulative.Translation.X;
+            var cumulative = e.Cumulative.Translation.ToVector2();
             var point = _slideVisual.Offset;
-            point.X = Math.Min(0, cumulative);
+            point.X = Math.Min(0, cumulative.X);
 
             _slideVisual.Offset = point;
 
@@ -1837,8 +1814,33 @@ namespace Unigram.Views
             {
                 e.Complete();
                 btnVoiceMessage.CancelRecording();
+                return;
             }
+
+            //point = _ellipseVisual.Offset;
+            //point.Y = Math.Min(0, cumulative.Y);
+
+            //_ellipseVisual.Offset = point;
+
+            //if (point.Y < -144)
+            //{
+            //    e.Complete();
+            //    btnVoiceMessage.IsLocked = true;
+
+            //    VoiceButton_LockRecording(null, null);
+            //}
         }
+
+        //private void VoiceButton_LockRecording(object sender, EventArgs e)
+        //{
+        //    DetachExpression();
+
+        //    var ellipseAnimation = _compositor.CreateScalarKeyFrameAnimation();
+        //    ellipseAnimation.InsertKeyFrame(0, -144);
+        //    ellipseAnimation.InsertKeyFrame(1, 0);
+
+        //    _ellipseVisual.StartAnimation("Offset.Y", ellipseAnimation);
+        //}
 
         private void AttachExpression()
         {
@@ -1868,10 +1870,7 @@ namespace Unigram.Views
         private void AttachTextAreaExpression()
         {
             AttachTextAreaExpression(ButtonAttach);
-            AttachTextAreaExpression(ButtonSilent);
-            AttachTextAreaExpression(ButtonTimer);
-            AttachTextAreaExpression(btnCommands);
-            AttachTextAreaExpression(btnStickers);
+            AttachTextAreaExpression(SecondaryButtonsPanel);
             AttachTextAreaExpression(ButtonEdit);
             AttachTextAreaExpression(btnSendMessage);
         }
@@ -1885,23 +1884,6 @@ namespace Unigram.Views
 
             visual.StopAnimation("Offset.Y");
             visual.StartAnimation("Offset.Y", expression);
-        }
-
-        private void DetachTextAreaExpression()
-        {
-            DetachTextAreaExpression(ButtonAttach);
-            DetachTextAreaExpression(ButtonSilent);
-            DetachTextAreaExpression(ButtonTimer);
-            DetachTextAreaExpression(btnCommands);
-            DetachTextAreaExpression(btnStickers);
-            DetachTextAreaExpression(ButtonEdit);
-            DetachTextAreaExpression(btnSendMessage);
-        }
-
-        private void DetachTextAreaExpression(FrameworkElement element)
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            visual.StopAnimation("Offset.Y");
         }
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
@@ -2458,10 +2440,14 @@ namespace Unigram.Views
             }
             else
             {
+                ChatActionLabel.Text = string.Empty;
                 ChatActionIndicator.UpdateAction(null);
                 ChatActionPanel.Visibility = Visibility.Collapsed;
                 Subtitle.Opacity = 1;
             }
+
+            //var peer = FrameworkElementAutomationPeer.FromElement(ChatActionLabel);
+            //peer.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
         }
 
 

@@ -32,7 +32,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="1">
+        <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" IsLocked="True" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="1">
             <Pivot.ItemTemplate>
                 <DataTemplate>
                     <UserControl Loaded="ListView_Loaded">

@@ -84,7 +84,6 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-
                 Button.Glyph = "\uE10A";
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 

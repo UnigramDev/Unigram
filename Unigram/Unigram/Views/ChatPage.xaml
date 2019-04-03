@@ -1033,54 +1033,67 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <controls:GlyphToggleButton x:Name="ButtonSilent"
-                                                UncheckedGlyph="&#xEA8F;"
-                                                CheckedGlyph="&#xE7ED;"
-                                                Command="{x:Bind ViewModel.ToggleSilentCommand}"
-                                                VerticalAlignment="Bottom"/>
-                    <controls:GlyphButton x:Name="ButtonTimer"
-                                          Glyph="&#xE916;"
-                                          Command="{x:Bind ViewModel.SetTimerCommand}"
-                                          VerticalAlignment="Bottom"/>
+                    <Grid x:Name="SecondaryButtonsPanel">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Border x:Name="btnCommands" Grid.Column="1">
-                        <controls:GlyphButton x:Name="ButtonCommands"
-                                              Click="Commands_Click"
-                                              AllowFocusOnInteraction="False"
-                                              Glyph="&#xE613;"
-                                              Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                              VerticalAlignment="Bottom"
-                                              AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"/>
-                    </Border>
+                        <!-- Button to toggle silent mode, channels only -->
+                        <controls:GlyphToggleButton x:Name="ButtonSilent"
+                                                    UncheckedGlyph="&#xEA8F;"
+                                                    CheckedGlyph="&#xE7ED;"
+                                                    Command="{x:Bind ViewModel.ToggleSilentCommand}"
+                                                    VerticalAlignment="Bottom"/>
+                        
+                        <!-- Button to change self-destructing timer, secret chats only -->
+                        <controls:GlyphButton x:Name="ButtonTimer"
+                                              Glyph="&#xE916;"
+                                              Command="{x:Bind ViewModel.SetTimerCommand}"
+                                              VerticalAlignment="Bottom"/>
 
-                    <Border x:Name="btnMarkup" Grid.Column="1">
-                        <controls:GlyphToggleButton x:Name="ButtonMarkup"
-                                                    Click="Markup_Click"
-                                                    AllowFocusOnInteraction="False"
-                                                    CheckedGlyph="&#xE910;"
-                                                    UncheckedGlyph="&#xE90F;"
-                                                    IsChecked="True"
-                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                    FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                    VerticalAlignment="Bottom"
-                                                    AutomationProperties.Name="{CustomResource AccDescrBotKeyboard}"
-                                                    ToolTipService.ToolTip="{CustomResource AccDescrBotKeyboard}"/>
-                    </Border>
+                        <!-- Button to use bot commands, bots/groups only -->
+                        <Border x:Name="btnCommands" Grid.Column="1">
+                            <controls:GlyphButton x:Name="ButtonCommands"
+                                                  Click="Commands_Click"
+                                                  AllowFocusOnInteraction="False"
+                                                  Glyph="&#xE613;"
+                                                  Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                  VerticalAlignment="Bottom"
+                                                  AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
+                                                  ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
+                                                  Grid.Column="1"/>
+                        </Border>
 
-                    <Border x:Name="btnStickers" Grid.Column="2">
+                        <!-- Button to use bot keyboard, bots/groups only -->
+                        <Border x:Name="btnMarkup" Grid.Column="1">
+                            <controls:GlyphToggleButton x:Name="ButtonMarkup"
+                                                        Click="Markup_Click"
+                                                        AllowFocusOnInteraction="False"
+                                                        CheckedGlyph="&#xE910;"
+                                                        UncheckedGlyph="&#xE90F;"
+                                                        IsChecked="True"
+                                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                        VerticalAlignment="Bottom"
+                                                        AutomationProperties.Name="{CustomResource AccDescrBotKeyboard}"
+                                                        ToolTipService.ToolTip="{CustomResource AccDescrBotKeyboard}"
+                                                        Grid.Column="1"/>
+                        </Border>
+
+                        <!-- Button to use stickers keyboard, all -->
                         <controls:GlyphButton x:Name="ButtonStickers"
                                               Click="Stickers_Click"
                                               AllowFocusOnInteraction="False"
                                               Glyph="&#xF4AA;"
                                               VerticalAlignment="Bottom"
                                               AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"/>
-                    </Border>
+                                              ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"
+                                              Grid.Column="2"/>
+                    </Grid>
 
                     <Grid x:Name="ButtonRecord" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Bottom" Grid.Column="3" Canvas.ZIndex="1000">
                         <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -1089,7 +1102,7 @@
                                                 RecordingStarted="VoiceButton_RecordingStarted"
                                                 RecordingStopped="VoiceButton_RecordingStopped"
                                                 ManipulationDelta="VoiceButton_ManipulationDelta"
-                                                ManipulationMode="TranslateX"/>
+                                                ManipulationMode="TranslateX,TranslateY"/>
                     </Grid>
 
                     <controls:GlyphButton x:Name="btnSendMessage"
