@@ -610,20 +610,20 @@ namespace Unigram
                 {
                     _extendedSession = session;
 
-                    Logs.Log.Write("ExtendedExecutionResult.Allowed");
+                    Logs.Logger.Info(Logs.LoggerTag.Lifecycle, "ExtendedExecutionResult.Allowed");
                 }
                 else
                 {
                     session.Dispose();
 
-                    Logs.Log.Write("ExtendedExecutionResult.Denied");
+                    Logs.Logger.Warning(Logs.LoggerTag.Lifecycle, "ExtendedExecutionResult.Denied");
                 }
             }
         }
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Logs.Log.Write("OnResuming");
+            Logs.Logger.Info(Logs.LoggerTag.Lifecycle, "OnResuming");
 
             //#if DEBUG
             //await VoIPConnection.Current.ConnectAsync();
@@ -634,7 +634,7 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            Logs.Log.Write("OnSuspendingAsync");
+            Logs.Logger.Info(Logs.LoggerTag.Lifecycle, "OnSuspendingAsync");
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }

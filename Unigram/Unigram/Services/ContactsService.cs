@@ -82,7 +82,7 @@ namespace Unigram.Services
             }
             catch
             {
-                Logs.Log.Write("Sync contacts canceled");
+                Logs.Logger.Warning(Logs.LoggerTag.Contacts, "Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
         }
@@ -105,7 +105,7 @@ namespace Unigram.Services
             }
             catch
             {
-                Logs.Log.Write("Sync contacts canceled");
+                Logs.Logger.Warning(Logs.LoggerTag.Contacts, "Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
 
@@ -116,7 +116,7 @@ namespace Unigram.Services
         {
             Telegram.Td.Api.BaseObject result = null;
 
-            Logs.Log.Write("Importing contacts");
+            Logs.Logger.Info(Logs.LoggerTag.Contacts, "Importing contacts");
             Debug.WriteLine("» Importing contacts");
 
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
@@ -125,7 +125,7 @@ namespace Unigram.Services
                 result = await ImportAsync(store);
             }
 
-            Logs.Log.Write("Importing contacts completed");
+            Logs.Logger.Info(Logs.LoggerTag.Contacts, "Importing contacts completed");
             Debug.WriteLine("» Importing contacts completed");
 
             return result;
@@ -146,7 +146,7 @@ namespace Unigram.Services
 
             var importingContacts = new List<Telegram.Td.Api.Contact>();
 
-            foreach (var phone in importedPhones.Keys.Take(1300).ToList())
+            foreach (var phone in importedPhones.Keys.ToList())
             {
                 var contact = importedPhones[phone];
                 var firstName = contact.FirstName ?? string.Empty;
@@ -198,14 +198,14 @@ namespace Unigram.Services
             }
             catch
             {
-                Logs.Log.Write("Sync contacts canceled");
+                Logs.Logger.Warning(Logs.LoggerTag.Contacts, "Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
         }
 
         private async Task ExportAsyncInternal(Telegram.Td.Api.Users result)
         {
-            Logs.Log.Write("Exporting contacts");
+            Logs.Logger.Info(Logs.LoggerTag.Contacts, "Exporting contacts");
             Debug.WriteLine("» Exporting contacts");
 
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
@@ -224,7 +224,7 @@ namespace Unigram.Services
                 await ExportAsync(contactList, annotationList, result);
             }
 
-            Logs.Log.Write("Exporting contacts completed");
+            Logs.Logger.Info(Logs.LoggerTag.Contacts, "Exporting contacts completed");
             Debug.WriteLine("» Exporting contacts completed");
         }
 
