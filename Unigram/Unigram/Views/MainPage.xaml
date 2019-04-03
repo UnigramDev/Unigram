@@ -102,7 +102,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-                <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="6,0,0,0" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
+                <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="6,0,0,0" AutomationProperties.LiveSetting="Assertive" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
             </Grid>
             <controls:ContentPageHeader x:Name="PageHeader" Grid.Row="1">
                 <Grid x:Name="Header">
@@ -219,6 +219,7 @@
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.LandmarkType="Search"
                                 AutomationProperties.Name="{CustomResource Search}"
                                 ToolTipService.ToolTip="{CustomResource Search}"/>
                             <Button Padding="{StaticResource EllipsisButtonPadding}"
@@ -242,7 +243,7 @@
                                             x:Name="LogoutItem"
                                             Click="LogOut_Click"
                                             Text="{CustomResource LogOut}"
-                                            Glyph="&#xE10A;"/>
+                                            Glyph="&#xF3B1;"/>
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
@@ -258,6 +259,7 @@
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.LandmarkType="Search"
                                 AutomationProperties.Name="{CustomResource Search}"
                                 ToolTipService.ToolTip="{CustomResource Search}"/>
                         </StackPanel>
@@ -284,6 +286,7 @@
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.LandmarkType="Search"
                                 AutomationProperties.Name="{CustomResource Search}"
                                 ToolTipService.ToolTip="{CustomResource Search}"/>
                         </StackPanel>
@@ -293,7 +296,6 @@
                              Style="{StaticResource QueryTextBoxStyle}"
                              PlaceholderText="{CustomResource Search}"
                              PreventKeyboardDisplayOnProgrammaticFocus="True"
-                             GotFocus="Search_GotFocus"
                              LostFocus="Search_LostFocus"
                              TextChanged="Search_TextChanged"
                              KeyDown="Search_KeyDown"
@@ -489,6 +491,7 @@
                         </ListView>
                         <Grid x:Name="DialogsPanel">
                             <controls:ChatsListView x:Name="ChatsList"
+                                                    AutomationProperties.LandmarkType="Main"
                                                     ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                                     IsItemClickEnabled="True"
                                                     SelectionMode="None"

@@ -339,6 +339,7 @@ namespace Unigram.Views
                         ShowStatus(Strings.Resources.Updating);
                         break;
                     case ConnectionStateReady ready:
+                        ShowStatus(Strings.Resources.Connected);
                         HideStatus();
                         return;
                 }
@@ -381,6 +382,9 @@ namespace Unigram.Views
         {
             Status.IsIndeterminate = true;
             StatusLabel.Text = text;
+
+            var peer = FrameworkElementAutomationPeer.FromElement(StatusLabel);
+            peer.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
         }
 
         private void HideStatus()
@@ -534,16 +538,16 @@ namespace Unigram.Views
                 Scroll(false, true);
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Up && !alt && !ctrl && !shift && !MasterDetail.NavigationService.CanGoBack && SearchField.FocusState == FocusState.Unfocused)
-            {
-                Scroll(true, false);
-                args.Handled = true;
-            }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Down && !alt && !ctrl && !shift && !MasterDetail.NavigationService.CanGoBack && SearchField.FocusState == FocusState.Unfocused)
-            {
-                Scroll(false, false);
-                args.Handled = true;
-            }
+            //else if (args.VirtualKey == Windows.System.VirtualKey.Up && !alt && !ctrl && !shift && !MasterDetail.NavigationService.CanGoBack && SearchField.FocusState == FocusState.Unfocused)
+            //{
+            //    Scroll(true, false);
+            //    args.Handled = true;
+            //}
+            //else if (args.VirtualKey == Windows.System.VirtualKey.Down && !alt && !ctrl && !shift && !MasterDetail.NavigationService.CanGoBack && SearchField.FocusState == FocusState.Unfocused)
+            //{
+            //    Scroll(false, false);
+            //    args.Handled = true;
+            //}
             else if (args.VirtualKey == Windows.System.VirtualKey.Home && !alt && !ctrl && !shift)
             {
                 ChatsList.ScrollIntoView(ViewModel.Chats.Items.FirstOrDefault());
@@ -1315,10 +1319,6 @@ namespace Unigram.Views
             Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
 
             SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_GotFocus(object sender, RoutedEventArgs e)
-        {
             Search_TextChanged(null, null);
         }
 
