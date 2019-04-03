@@ -88,6 +88,9 @@ namespace Unigram.Views.Host
             Resources.Clear();
             InitializeComponent();
 
+            _navigationViewSelected = RootDestination.Chats;
+            NavigationViewList.ItemsSource = _navigationViewItems;
+
             InitializeTitleBar();
             InitializeNavigation(_navigationService.Frame);
             InitializeLocalization();
