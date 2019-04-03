@@ -133,7 +133,8 @@ namespace Unigram.Controls.Gallery
         {
             this.BeginOnUIThread(() =>
             {
-                if (ViewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
+                var viewModel = ViewModel;
+                if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
                     OnBackRequestedOverride(this, new HandledEventArgs());
                 }

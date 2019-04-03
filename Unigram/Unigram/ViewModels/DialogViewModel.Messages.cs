@@ -206,6 +206,8 @@ namespace Unigram.ViewModels
                     ProtoService.Send(new DeleteMessages(chat.Id, new[] { message.Id }, dialog.IsChecked == true));
                 }
             }
+
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         #endregion

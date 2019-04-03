@@ -160,8 +160,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (3UL << 32) | (2128UL << 16);
-        public const string CurrentChangelog = "• Support for custom languages. Crowdsource a cloud-based language pack for Telegram in any language using our Translations platform – then apply it in real time.\r\n\r\n• See enlarged emoji in messages containing only emoji.\r\n• Use search in Settings to find options and get suggestions from the FAQ.\r\n• Choose whether you'd like to sync contacts and receive notifications for all accounts when using multiple accounts.\r\n• Enjoy improved call quality.\r\n• Extended execution while running on desktop.\r\n• Access the app using Narrator.";
+        public const ulong CurrentVersion = (3UL << 48) | (4UL << 32) | (2153UL << 16);
+        public const string CurrentChangelog = "• Play video files and listen to music without waiting for them to fully download.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -543,9 +543,9 @@ namespace Unigram.Services
             get
             {
                 if (_isStreamingEnabled == null)
-                    _isStreamingEnabled = GetValueOrDefault("IsStreamingEnabled", false);
+                    _isStreamingEnabled = GetValueOrDefault("IsStreamingEnabled", true);
 
-                return _isStreamingEnabled ?? false;
+                return _isStreamingEnabled ?? true;
             }
             set
             {

@@ -158,7 +158,8 @@
                                               Content="{TemplateBinding Text}"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Margin="{TemplateBinding Padding}" />
+                                              Margin="{TemplateBinding Padding}"
+                                              AutomationProperties.AccessibilityView="Raw" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>

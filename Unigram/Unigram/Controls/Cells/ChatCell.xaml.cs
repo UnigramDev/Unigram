@@ -133,7 +133,7 @@ namespace Unigram.Controls.Cells
             }
 
             var date = Locale.FormatDateAudio(message.Date);
-            if (chat.LastMessage.IsOutgoing)
+            if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
             }
@@ -144,7 +144,7 @@ namespace Unigram.Controls.Cells
 
             builder.Append(". ");
 
-            if (chat != null && !message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
+            if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
             {
                 var fromUser = protoService.GetUser(message.SenderUserId);
                 if (fromUser != null)
@@ -181,7 +181,7 @@ namespace Unigram.Controls.Cells
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
 
-            UpdateAutomation(_protoService, chat, chat.LastMessage);
+            //UpdateAutomation(_protoService, chat, chat.LastMessage);
         }
 
         public void UpdateChatReadOutbox(Chat chat)

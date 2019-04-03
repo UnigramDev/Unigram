@@ -612,7 +612,7 @@
                                   Style="{StaticResource HorizontalListViewStyle}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Margin="0,12">
+                                    <StackPanel Width="72" Margin="0,12">
                                         <Grid Width="48" Height="48" Margin="12,0">
                                             <controls:ProfilePicture IsHitTestVisible="False"/>
                                             <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
