@@ -40,6 +40,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Controls.Views;
 using Unigram.Converters;
+using Windows.Graphics.Imaging;
 
 namespace Unigram.Controls.Chats
 {
@@ -141,17 +142,14 @@ namespace Unigram.Controls.Chats
 
                 var bitmap = await package.GetBitmapAsync();
                 var media = new ObservableCollection<StorageMedia>();
-                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
                 using (var stream = await bitmap.OpenReadAsync())
-                using (var reader = new DataReader(stream))
                 {
-                    await reader.LoadAsync((uint)stream.Size);
-                    var buffer = new byte[(int)stream.Size];
-                    reader.ReadBytes(buffer);
-                    await FileIO.WriteBytesAsync(cache, buffer);
-
-                    var photo = await StoragePhoto.CreateAsync(cache, true);
+                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
+                    var photo = await StoragePhoto.CreateAsync(result, true);
                     if (photo == null)
                     {
                         return;
