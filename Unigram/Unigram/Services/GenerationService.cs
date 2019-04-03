@@ -87,6 +87,14 @@ namespace Unigram.Services
             //throw new NotImplementedException();
         }
 
+        private bool IsTemporary(StorageFile source)
+        {
+            var path1 = Path.GetDirectoryName(source.Path).TrimEnd('\\');
+            var path2 = ApplicationData.Current.TemporaryFolder.Path.TrimEnd('\\');
+
+            return string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase);
+        }
+
         private async Task DownloadAsync(UpdateFileGenerationStart update)
         {
             try
@@ -157,6 +165,11 @@ namespace Unigram.Services
                 await file.CopyAndReplaceAsync(temp);
 
                 _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
+
+                if (IsTemporary(file))
+                {
+                    await file.DeleteAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -182,6 +195,11 @@ namespace Unigram.Services
                 }
 
                 _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
+
+                if (IsTemporary(file))
+                {
+                    await file.DeleteAsync();
+                }
             }
             catch (Exception ex)
             {
