@@ -66,30 +66,24 @@ namespace Unigram.Controls.Messages
 
         public void ConvertViews(MessageViewModel message)
         {
+            var number = string.Empty;
             if (message.Views > 0)
             {
-                //ViewsGlyph.Text = "\uE607\u2009";
-
-                var number = BindConvert.Current.ShortNumber(Math.Max(message.Views, 1));
+                number = BindConvert.Current.ShortNumber(Math.Max(message.Views, 1));
                 number += "   ";
-
-                if (message.IsChannelPost && !string.IsNullOrEmpty(message.AuthorSignature))
-                {
-                    number += $"{message.AuthorSignature}, ";
-                }
-                else if (message.ForwardInfo is MessageForwardedPost forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
-                {
-                    number += $"{forwardedPost.AuthorSignature}, ";
-                }
-
-                ViewsGlyph.Text = "\uE607\u00A0\u00A0";
-                ViewsLabel.Text = number;
             }
-            else
+
+            if (message.IsChannelPost && !string.IsNullOrEmpty(message.AuthorSignature))
             {
-                ViewsGlyph.Text = string.Empty;
-                ViewsLabel.Text = string.Empty;
+                number += $"{message.AuthorSignature}, ";
             }
+            else if (message.ForwardInfo is MessageForwardedPost forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
+            {
+                number += $"{forwardedPost.AuthorSignature}, ";
+            }
+
+            ViewsGlyph.Text = message.Views > 0 ? "\uE607\u00A0\u00A0" : string.Empty;
+            ViewsLabel.Text = number;
         }
 
         private void ConvertEdited(MessageViewModel message)

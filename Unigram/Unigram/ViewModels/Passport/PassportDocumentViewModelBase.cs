@@ -130,7 +130,7 @@ namespace Unigram.ViewModels.Passport
                 foreach (var file in files)
                 {
                     var asFile = true;
-                    var generated = await file.ToGeneratedAsync(asFile ? "copy" : "compress");
+                    var generated = await file.ToGeneratedAsync(asFile ? ConversionType.Copy : ConversionType.Compress);
 
                     ProtoService.Send(new UploadFile(generated, new FileTypeSecure(), 16), result =>
                     {

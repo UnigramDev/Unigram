@@ -1618,7 +1618,7 @@ namespace Unigram.Views
             {
                 if (_anchors.TryGetValue(fragment, out Border anchor))
                 {
-                    await ScrollingHost.ScrollToItem(anchor, VerticalAlignment.Top, false);
+                    await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
                 }
             }
             else

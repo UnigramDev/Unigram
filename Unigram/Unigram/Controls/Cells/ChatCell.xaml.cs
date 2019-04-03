@@ -180,6 +180,8 @@ namespace Unigram.Controls.Cells
             PinnedIcon.Visibility = (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread) && chat.IsPinned ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
+
+            UpdateAutomation(_protoService, chat, chat.LastMessage);
         }
 
         public void UpdateChatReadOutbox(Chat chat)

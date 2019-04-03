@@ -228,11 +228,11 @@ namespace Unigram.ViewModels
             }
         }
 
-        ~DialogViewModel()
-        {
-            Debug.WriteLine("Finalizing DialogViewModel");
-            GC.Collect();
-        }
+        //~DialogViewModel()
+        //{
+        //    Debug.WriteLine("Finalizing DialogViewModel");
+        //    GC.Collect();
+        //}
 
         public ItemClickEventHandler Sticker_Click;
 
@@ -1462,7 +1462,7 @@ namespace Unigram.ViewModels
 
                     foreach (var reply in slice)
                     {
-                        if (reply.ReplyToMessageId == replyId)
+                        if (reply.Id == replyId)
                         {
                             message.ReplyToMessage = _messageFactory.Create(this, reply.Get());
 
@@ -3266,11 +3266,11 @@ namespace Unigram.ViewModels
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
 
-        ~MessageCollection()
-        {
-            Debug.WriteLine("Finalizing MessageCollection");
-            GC.Collect();
-        }
+        //~MessageCollection()
+        //{
+        //    Debug.WriteLine("Finalizing MessageCollection");
+        //    GC.Collect();
+        //}
 
         public bool ContainsKey(long id)
         {
