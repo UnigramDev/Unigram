@@ -400,7 +400,7 @@ namespace Unigram.ViewModels
 
         private bool MessagesForwardCanExecute()
         {
-            return SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeForwarded);
+            return SelectedItems.Count > 0 && SelectedItems.Count <= CacheService.Options.ForwardedMessageCountMax && SelectedItems.All(x => x.CanBeForwarded);
         }
 
         #endregion
