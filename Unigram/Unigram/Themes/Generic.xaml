@@ -2178,9 +2178,9 @@
                                         <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                              <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
                                              </ObjectAnimationUsingKeyFrames>-->
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
-                                        </ObjectAnimationUsingKeyFrames>
+                                        </ObjectAnimationUsingKeyFrames>-->
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -2227,9 +2227,9 @@
                                         <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                              <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
                                              </ObjectAnimationUsingKeyFrames>-->
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
-                                        </ObjectAnimationUsingKeyFrames>
+                                        </ObjectAnimationUsingKeyFrames>-->
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedDisabled">
@@ -2246,24 +2246,52 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="ChatRecordState">
+                                <VisualState x:Name="Stopped"/>
+                                <VisualState x:Name="Started">
+                                    <VisualState.Setters>
+                                        <Setter Target="CheckedContentPresenter.Foreground" Value="White"/>
+                                        <Setter Target="UncheckedContentPresenter.Foreground" Value="White"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Locked">
+                                    <VisualState.Setters>
+                                        <Setter Target="UnlockedPanel.Visibility" Value="Collapsed"/>
+                                        <Setter Target="LockedContentPresenter.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
+                        <Grid x:Name="UnlockedPanel">
+                            <TextBlock
+                                x:Name="CheckedContentPresenter"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding CheckedGlyph}"
+                                Visibility="Collapsed"/>
+                            <TextBlock
+                                x:Name="UncheckedContentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding UncheckedGlyph}"/>
+                        </Grid>
+
                         <TextBlock
-                            x:Name="CheckedContentPresenter"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Text="{TemplateBinding CheckedGlyph}"
-                            Visibility="Collapsed"/>
-                        <TextBlock
-                            x:Name="UncheckedContentPresenter"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Text="{TemplateBinding UncheckedGlyph}"/>
+                                x:Name="LockedContentPresenter"
+                            Foreground="White"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="&#xE919;"
+                                Visibility="Collapsed"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

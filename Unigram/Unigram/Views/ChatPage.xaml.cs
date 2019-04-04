@@ -1784,6 +1784,7 @@ namespace Unigram.Views
                 DetachExpression();
                 //DetachTextAreaExpression();
 
+                ButtonCancelRecording.Visibility = Visibility.Collapsed;
                 ElapsedLabel.Text = "0:00,0";
 
                 var point = _slideVisual.Offset;
@@ -1796,10 +1797,30 @@ namespace Unigram.Views
                 point.X = -_elapsedVisual.Size.X;
 
                 _elapsedVisual.Offset = point;
+                _ellipseVisual.Offset = new Vector3(-18, -18, 0);
             };
             batch.End();
 
             ViewModel.ChatActionManager.CancelTyping();
+        }
+
+        private void VoiceButton_RecordingLocked(object sender, EventArgs e)
+        {
+            DetachExpression();
+
+            var ellipseAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            ellipseAnimation.InsertKeyFrame(0, -57 - 18);
+            ellipseAnimation.InsertKeyFrame(1, -18);
+
+            _ellipseVisual.StartAnimation("Offset.Y", ellipseAnimation);
+
+            ButtonCancelRecording.Visibility = Visibility.Visible;
+
+            var point = _slideVisual.Offset;
+            point.X = _slideVisual.Size.X + 36;
+
+            _slideVisual.Opacity = 0;
+            _slideVisual.Offset = point;
         }
 
         private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
@@ -1810,37 +1831,29 @@ namespace Unigram.Views
 
             _slideVisual.Offset = point;
 
-            if (point.X < -72)
+            if (point.X < -80)
             {
                 e.Complete();
                 btnVoiceMessage.CancelRecording();
                 return;
             }
 
-            //point = _ellipseVisual.Offset;
-            //point.Y = Math.Min(0, cumulative.Y);
+            point = _ellipseVisual.Offset;
+            point.Y = Math.Min(-18, cumulative.Y - 18);
 
-            //_ellipseVisual.Offset = point;
+            _ellipseVisual.Offset = point;
 
-            //if (point.Y < -144)
-            //{
-            //    e.Complete();
-            //    btnVoiceMessage.IsLocked = true;
-
-            //    VoiceButton_LockRecording(null, null);
-            //}
+            if (point.Y < -57 - 18)
+            {
+                e.Complete();
+                btnVoiceMessage.LockRecording();
+            }
         }
 
-        //private void VoiceButton_LockRecording(object sender, EventArgs e)
-        //{
-        //    DetachExpression();
-
-        //    var ellipseAnimation = _compositor.CreateScalarKeyFrameAnimation();
-        //    ellipseAnimation.InsertKeyFrame(0, -144);
-        //    ellipseAnimation.InsertKeyFrame(1, 0);
-
-        //    _ellipseVisual.StartAnimation("Offset.Y", ellipseAnimation);
-        //}
+        private void ButtonCancelRecording_Click(object sender, RoutedEventArgs e)
+        {
+            btnVoiceMessage.CancelRecording();
+        }
 
         private void AttachExpression()
         {

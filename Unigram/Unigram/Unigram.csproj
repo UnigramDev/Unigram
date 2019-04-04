@@ -121,6 +121,7 @@
     <Compile Include="Common\Chats\InputChatActionManager.cs" />
     <Compile Include="Common\Chats\OutputChatActionManager.cs" />
     <Compile Include="Common\ColorsHelper.cs" />
+    <Compile Include="Common\ConcurrentQueueWorker.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
