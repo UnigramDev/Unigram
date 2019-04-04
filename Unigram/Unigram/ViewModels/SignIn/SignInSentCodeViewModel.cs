@@ -160,7 +160,7 @@ namespace Unigram.ViewModels.SignIn
                     await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
 
-                Logs.Logger.Error(Logs.LoggerTag.API, "account.signIn error " + error);
+                Logs.Logger.Error(Logs.Target.API, "account.signIn error " + error);
             }
         }
 

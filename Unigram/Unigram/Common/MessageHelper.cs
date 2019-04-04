@@ -656,7 +656,7 @@ namespace Unigram.Common
                         await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
-                    Logs.Logger.Warning(Logs.LoggerTag.API, "account.signIn error " + error);
+                    Logs.Logger.Warning(Logs.Target.API, "account.signIn error " + error);
                 }
             }
             else
@@ -819,7 +819,7 @@ namespace Unigram.Common
                     {
                         if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
                         {
-                            Logs.Logger.Warning(Logs.LoggerTag.API, "messages.importChatInvite error " + error);
+                            Logs.Logger.Warning(Logs.Target.API, "messages.importChatInvite error " + error);
                             return;
                         }
                         if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
@@ -842,7 +842,7 @@ namespace Unigram.Common
                             return;
                         }
 
-                        Logs.Logger.Warning(Logs.LoggerTag.API, "messages.importChatInvite error " + error);
+                        Logs.Logger.Warning(Logs.Target.API, "messages.importChatInvite error " + error);
                     }
                 }
             }
@@ -850,7 +850,7 @@ namespace Unigram.Common
             {
                 if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
                 {
-                    Logs.Logger.Warning(Logs.LoggerTag.API, "messages.checkChatInvite error " + error);
+                    Logs.Logger.Warning(Logs.Target.API, "messages.checkChatInvite error " + error);
                     return;
                 }
                 if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
@@ -860,7 +860,7 @@ namespace Unigram.Common
                     return;
                 }
 
-                Logs.Logger.Warning(Logs.LoggerTag.API, "messages.checkChatInvite error " + error);
+                Logs.Logger.Warning(Logs.Target.API, "messages.checkChatInvite error " + error);
             }
         }
 

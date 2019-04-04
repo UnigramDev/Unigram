@@ -120,7 +120,7 @@ namespace Unigram.Controls.Chats
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepLastItemInView");
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
                 }
             }
@@ -200,7 +200,7 @@ namespace Unigram.Controls.Chats
             var scrollViewer = ScrollingHost;
             if (scrollViewer == null)
             {
-                Logs.Logger.Debug(Logs.LoggerTag.Chat, "ScrollingHost == null");
+                Logs.Logger.Debug(Logs.Target.Chat, "ScrollingHost == null");
 
                 return;
             }
@@ -212,7 +212,7 @@ namespace Unigram.Controls.Chats
             var selectorItem = ContainerFromItem(item) as SelectorItem;
             while (selectorItem == null && iter > 0)
             {
-                Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("selectorItem == null, {0} try", iter + 1));
+                Logs.Logger.Debug(Logs.Target.Chat, string.Format("selectorItem == null, {0} try", iter + 1));
 
                 // call task-based ScrollIntoViewAsync to realize the item
                 await this.ScrollIntoViewAsync(item, direction);
@@ -224,7 +224,7 @@ namespace Unigram.Controls.Chats
 
             if (selectorItem == null)
             {
-                Logs.Logger.Debug(Logs.LoggerTag.Chat, "selectorItem == null, abort");
+                Logs.Logger.Debug(Logs.Target.Chat, "selectorItem == null, abort");
                 return;
             }
 

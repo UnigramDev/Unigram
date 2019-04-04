@@ -9,7 +9,7 @@ namespace Unigram.Logs
     public sealed class Logger
     {
         [Conditional("DEBUG")]
-        public static void Critical(LoggerTag tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Critical(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Critical, null, message, member, filePath, line);
         }
@@ -21,7 +21,7 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        public static void Debug(LoggerTag tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Debug(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Debug, null, message, member, filePath, line);
         }
@@ -33,7 +33,7 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        public static void Error(LoggerTag tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Error(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Error, null, message, member, filePath, line);
         }
@@ -45,7 +45,7 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        public static void Info(LoggerTag tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Info(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Info, null, message, member, filePath, line);
         }
@@ -57,9 +57,10 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        private static void Log(LoggerTag tag, LogLevel level, Type type, string message, string member, string filePath, int line)
+        private static void Log(Target tag, LogLevel level, Type type, string message, string member, string filePath, int line)
         {
             Logs.Log.Write(LogHelper.CreateEntryWithoutType(DateTime.Now, level, member, line, message));
+            System.Diagnostics.Debug.WriteLine(LogHelper.CreateEntryWithoutType(DateTime.Now, level, member, line, message));
         }
 
         //[Conditional("DEBUG")]
@@ -69,7 +70,7 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        public static void Warning(LoggerTag tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Warning(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Warning, null, message, member, filePath, line);
         }
@@ -82,12 +83,13 @@ namespace Unigram.Logs
     }
 
     [Flags]
-    public enum LoggerTag
+    public enum Target
     {
         Lifecycle,
         API,
         Chat,
         Notifications,
-        Contacts
+        Contacts,
+        Recording
     }
 }

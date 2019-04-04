@@ -684,7 +684,7 @@ namespace Unigram.ViewModels
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
-                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepLastItemInView");
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
                     var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
@@ -784,12 +784,12 @@ namespace Unigram.ViewModels
                     if (messages.MessagesValue.Any(x => !Items.ContainsKey(x.Id)))
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
-                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepItemsInView");
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepItemsInView");
                     }
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepLastItemInView");
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
                     var added = false;
@@ -1105,7 +1105,7 @@ namespace Unigram.ViewModels
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.LoggerTag.Chat, "Setting scroll mode to KeepLastItemInView");
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
@@ -1145,7 +1145,7 @@ namespace Unigram.ViewModels
                             }
                             else if (maxId == chat.LastReadInboxMessageId)
                             {
-                                Logs.Logger.Debug(Logs.LoggerTag.Chat, "Looking for first unread message, can't find it");
+                                Logs.Logger.Debug(Logs.Target.Chat, "Looking for first unread message, can't find it");
                             }
 
                             if (maxId == chat.LastReadInboxMessageId)
@@ -1566,7 +1566,7 @@ namespace Unigram.ViewModels
 #pragma warning disable CS4014
             if (state.TryGet("message_id", out long navigation))
             {
-                Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from specific id", chat.Id));
+                Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from specific id", chat.Id));
 
                 state.Remove("message_id");
                 LoadMessageSliceAsync(null, navigation);
@@ -1577,26 +1577,26 @@ namespace Unigram.ViewModels
                 {
                     if (_scrollingPixel.TryRemove(chat.Id, out double pixel))
                     {
-                        Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from specific pixel", chat.Id));
+                        Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from specific pixel", chat.Id));
 
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
                     }
                     else
                     {
-                        Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
+                        Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
 
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom);
                     }
                 }
                 else if (chat.UnreadCount > 0)
                 {
-                    Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
+                    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
 
                     LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, VerticalAlignment.Top);
                 }
                 else
                 {
-                    Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Loading messages from LastMessageId: {1}", chat.Id, chat.LastMessage?.Id));
+                    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from LastMessageId: {1}", chat.Id, chat.LastMessage?.Id));
 
                     LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
@@ -1793,7 +1793,7 @@ namespace Unigram.ViewModels
                     _scrollingIndex.TryRemove(chat.Id, out long index);
                     _scrollingPixel.TryRemove(chat.Id, out double pixel);
 
-                    Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
+                    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
 
                     return Task.CompletedTask;
                 }
@@ -1813,14 +1813,14 @@ namespace Unigram.ViewModels
                             _scrollingIndex[chat.Id] = start;
                             _scrollingPixel[chat.Id] = field.ActualHeight - (position.Y + container.ActualHeight);
 
-                            Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, Items[panel.LastVisibleIndex].Id, field.ActualHeight - (position.Y + container.ActualHeight)));
+                            Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, Items[panel.LastVisibleIndex].Id, field.ActualHeight - (position.Y + container.ActualHeight)));
                         }
                         else
                         {
                             _scrollingIndex[chat.Id] = start;
                             _scrollingPixel.TryRemove(chat.Id, out double pixel);
 
-                            Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, Items[panel.LastVisibleIndex].Id));
+                            Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, Items[panel.LastVisibleIndex].Id));
                         }
 
                     }
@@ -1829,7 +1829,7 @@ namespace Unigram.ViewModels
                         _scrollingIndex.TryRemove(chat.Id, out long index);
                         _scrollingPixel.TryRemove(chat.Id, out double pixel);
 
-                        Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Removing scrolling position, as last item is chat.LastMessage", chat.Id));
+                        Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, as last item is chat.LastMessage", chat.Id));
                     }
                 }
                 else
@@ -1837,7 +1837,7 @@ namespace Unigram.ViewModels
                     _scrollingIndex.TryRemove(chat.Id, out long index);
                     _scrollingPixel.TryRemove(chat.Id, out double pixel);
 
-                    Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
+                    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
                 }
             }
             catch
@@ -1845,7 +1845,7 @@ namespace Unigram.ViewModels
                 _scrollingIndex.TryRemove(chat.Id, out long index);
                 _scrollingPixel.TryRemove(chat.Id, out double pixel);
 
-                Logs.Logger.Debug(Logs.LoggerTag.Chat, string.Format("{0} - Removing scrolling position, exception", chat.Id));
+                Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, exception", chat.Id));
             }
 
             if (Dispatcher != null)
