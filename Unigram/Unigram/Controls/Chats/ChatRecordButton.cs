@@ -107,6 +107,11 @@ namespace Unigram.Controls.Chats
             {
                 recordingAudioVideo = true;
                 UpdateRecordingInterface();
+
+                if (enqueuedLocking)
+                {
+                    LockRecording();
+                }
             }
         }
 
@@ -393,6 +398,7 @@ namespace Unigram.Controls.Chats
         private bool recordingAudioVideo;
 
         private bool recordingLocked;
+        private bool enqueuedLocking;
 
         public void CancelRecording()
         {
@@ -403,8 +409,39 @@ namespace Unigram.Controls.Chats
 
         public void LockRecording()
         {
+            enqueuedLocking = false;
             recordingLocked = true;
             UpdateRecordingInterface();
+        }
+
+        public async void ToggleRecording()
+        {
+            if (recordingLocked)
+            {
+                if (!hasRecordVideo || calledRecordRunnable)
+                {
+                    Recorder.Current.Stop(ViewModel, false);
+                    recordingAudioVideo = false;
+                    UpdateRecordingInterface();
+                }
+            }
+            else
+            {
+                var chat = ViewModel.Chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+                if (restricted)
+                {
+                    return;
+                }
+
+                enqueuedLocking = true;
+                RecordAudioVideoRunnable();
+            }
         }
 
         public event EventHandler RecordingStarted;

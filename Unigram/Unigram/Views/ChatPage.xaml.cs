@@ -71,6 +71,7 @@ namespace Unigram.Views
         private Visual _ellipseVisual;
         private Visual _elapsedVisual;
         private Visual _slideVisual;
+        private Visual _recordVisual;
         private Visual _rootVisual;
         private Visual _textShadowVisual;
 
@@ -136,6 +137,7 @@ namespace Unigram.Views
             _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
             _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
             _slideVisual = ElementCompositionPreview.GetElementVisual(SlidePanel);
+            _recordVisual = ElementCompositionPreview.GetElementVisual(ButtonRecord);
             _rootVisual = ElementCompositionPreview.GetElementVisual(TextArea);
             _compositor = _slideVisual.Compositor;
 
@@ -640,9 +642,11 @@ namespace Unigram.Views
                 return;
             }
 
+            var alt = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
             var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (args.VirtualKey == Windows.System.VirtualKey.Search || (args.VirtualKey == Windows.System.VirtualKey.F && ctrl))
+            if (args.VirtualKey == Windows.System.VirtualKey.Search || (args.VirtualKey == Windows.System.VirtualKey.F && ctrl && !alt && !shift))
             {
                 ViewModel.SearchCommand.Execute();
                 args.Handled = true;
@@ -650,6 +654,16 @@ namespace Unigram.Views
             else if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
             {
                 ViewModel.MessagesDeleteCommand.Execute();
+                args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.R && ctrl && !alt && !shift)
+            {
+                btnVoiceMessage.ToggleRecording();
+                args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.D && ctrl && !alt && !shift)
+            {
+                btnVoiceMessage.CancelRecording();
                 args.Handled = true;
             }
         }
@@ -1797,11 +1811,17 @@ namespace Unigram.Views
                 point.X = -_elapsedVisual.Size.X;
 
                 _elapsedVisual.Offset = point;
-                _ellipseVisual.Offset = new Vector3(-18, -18, 0);
+
+                point = _recordVisual.Offset;
+                point.Y = 0;
+
+                _recordVisual.Offset = point;
             };
             batch.End();
 
             ViewModel.ChatActionManager.CancelTyping();
+
+            TextField.Focus(FocusState.Programmatic);
         }
 
         private void VoiceButton_RecordingLocked(object sender, EventArgs e)
@@ -1809,12 +1829,13 @@ namespace Unigram.Views
             DetachExpression();
 
             var ellipseAnimation = _compositor.CreateScalarKeyFrameAnimation();
-            ellipseAnimation.InsertKeyFrame(0, -57 - 18);
-            ellipseAnimation.InsertKeyFrame(1, -18);
+            ellipseAnimation.InsertKeyFrame(0, -57);
+            ellipseAnimation.InsertKeyFrame(1, 0);
 
-            _ellipseVisual.StartAnimation("Offset.Y", ellipseAnimation);
+            _recordVisual.StartAnimation("Offset.Y", ellipseAnimation);
 
             ButtonCancelRecording.Visibility = Visibility.Visible;
+            btnVoiceMessage.Focus(FocusState.Programmatic);
 
             var point = _slideVisual.Offset;
             point.X = _slideVisual.Size.X + 36;
@@ -1838,12 +1859,12 @@ namespace Unigram.Views
                 return;
             }
 
-            point = _ellipseVisual.Offset;
-            point.Y = Math.Min(-18, cumulative.Y - 18);
+            point = _recordVisual.Offset;
+            point.Y = Math.Min(0, cumulative.Y);
 
-            _ellipseVisual.Offset = point;
+            _recordVisual.Offset = point;
 
-            if (point.Y < -57 - 18)
+            if (point.Y < -57)
             {
                 e.Complete();
                 btnVoiceMessage.LockRecording();
