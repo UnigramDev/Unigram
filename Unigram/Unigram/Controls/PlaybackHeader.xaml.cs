@@ -75,6 +75,7 @@ namespace Unigram.Controls
             UpdateRate();
 
             PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+            Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Playing ? Strings.Resources.AccActionPause : Strings.Resources.AccActionPlay);
 
             var message = _playbackService.CurrentItem;
             if (message == null)

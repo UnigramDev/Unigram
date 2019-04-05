@@ -18,7 +18,13 @@
             <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
 
-        <Button Click="View_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" Padding="54,0,96,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="4">
+        <Button Click="View_Click"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                Padding="54,0,96,0"
+                Style="{StaticResource EmptyButtonStyle}"
+                AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
+                Grid.ColumnSpan="4">
             <TextBlock TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}">
                 <Run x:Name="TitleLabel" FontWeight="SemiBold"/>
                 <Run x:Name="SubtitleLabel"/>
@@ -44,7 +50,14 @@
             Grid.Column="2"
             AutomationProperties.Name="{CustomResource AccDescrPlayerSpeed}"
             ToolTipService.ToolTip="{CustomResource AccDescrPlayerSpeed}"/>
-        <controls:GlyphButton Click="Clear_Click" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="3"/>
+        <controls:GlyphButton
+            Click="Clear_Click"
+            Glyph="&#xE10A;"
+            FontSize="16"
+            Height="32"
+            Grid.Column="3"
+            AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
+            ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}"/>
 
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
     </Grid>
