@@ -144,6 +144,8 @@
         <ListView ItemsSource="{x:Bind Items}"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
+                  DragEnter="ListView_DragEnter"
+                  Drop="ListView_Drop"
                   CanReorderItems="True"
                   CanDragItems="True"
                   AllowDrop="True">

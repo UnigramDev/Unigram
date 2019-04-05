@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -14,8 +16,11 @@ using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Native;
 using Unigram.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -208,9 +213,61 @@ namespace Unigram.Controls.Views
             throw new NotImplementedException();
         }
 
-        private void OnPaste(object sender, TextControlPasteEventArgs e)
+        private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
+            e.Handled = true;
+            await HandlePackageAsync(Clipboard.GetContent());
+        }
 
+        private void ListView_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+
+        private async void ListView_Drop(object sender, DragEventArgs e)
+        {
+            await HandlePackageAsync(e.DataView);
+        }
+
+        public async Task HandlePackageAsync(DataPackageView package)
+        {
+            var boh = string.Join(", ", package.AvailableFormats);
+
+            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+            {
+                var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
+
+                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                {
+                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
+                    if (result != null)
+                    {
+                        Items.Add(new StorageDocument(result));
+                    }
+
+                    return;
+                }
+            }
+            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await package.GetStorageItemsAsync();
+                var files = new List<StorageFile>(items.Count);
+
+                foreach (StorageFile file in items.OfType<StorageFile>())
+                {
+                    files.Add(file);
+                }
+
+                foreach (var item in files)
+                {
+                    Items.Add(new StorageDocument(item));
+                }
+            }
         }
     }
 }
