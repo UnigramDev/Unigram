@@ -247,6 +247,7 @@ namespace Unigram.Common
             string secret = null;
             string phoneCode = null;
             string lang = null;
+            string channel = null;
             bool hasUrl = false;
 
             var query = scheme.Query.ParseQueryString();
@@ -355,6 +356,11 @@ namespace Unigram.Common
             {
                 lang = query.GetParameter("lang");
             }
+            else if (scheme.AbsoluteUri.StartsWith("tg:privatepost") || scheme.AbsoluteUri.StartsWith("tg://privatepost"))
+            {
+                channel = query.GetParameter("channel");
+                post = query.GetParameter("post");
+            }
 
             if (message != null && message.StartsWith("@"))
             {
@@ -396,6 +402,10 @@ namespace Unigram.Common
             else if (lang != null)
             {
                 NavigateToLanguage(protoService, navigation, lang);
+            }
+            else if (channel != null && post != null)
+            {
+                NavigateToMessage(protoService, navigation, channel, post);
             }
             else
             {
@@ -527,6 +537,10 @@ namespace Unigram.Common
                             {
                                 NavigateToLanguage(protoService, navigation, post);
                             }
+                            else if (username.Equals("c", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post) && uri.Segments.Length >= 3)
+                            {
+                                NavigateToMessage(protoService, navigation, post, uri.Segments[3].Replace("/", string.Empty));
+                            }
                             else
                             {
                                 NavigateToUsername(protoService, navigation, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game, pageKind);
@@ -534,6 +548,26 @@ namespace Unigram.Common
                         }
                     }
                 }
+            }
+        }
+
+        private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string post, string message)
+        {
+            if (int.TryParse(post, out int supergroup) && long.TryParse(message, out long msgId))
+            {
+                var response = await protoService.SendAsync(new CreateSupergroupChat(supergroup, false));
+                if (response is Chat chat)
+                {
+                    navigation.NavigateToChat(chat, msgId << 20);
+                }
+                else
+                {
+                    // TODO: error
+                }
+            }
+            else
+            {
+                // TODO: error
             }
         }
 
