@@ -1049,6 +1049,45 @@ namespace Unigram.Common
             }
         }
 
+        public static void Hyperlink_ContextRequested(UIElement sender, string link, ContextRequestedEventArgs args)
+        {
+            if (args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
+
+                open.Click += LinkOpen_Click;
+                copy.Click += LinkCopy_Click;
+
+                if (ApiInfo.CanUseFlyoutIcons)
+                {
+                    open.Icon = new FontIcon { Glyph = Icons.OpenInNewWindow };
+                    copy.Icon = new FontIcon { Glyph = Icons.Copy };
+                }
+
+                var flyout = new MenuFlyout();
+                flyout.Items.Add(open);
+                flyout.Items.Add(copy);
+
+                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+                {
+                    // We don't want to unfocus the text are when the context menu gets opened
+                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                }
+                else
+                {
+                    flyout.ShowAt(sender, point);
+                }
+
+                args.Handled = true;
+            }
+        }
+
         private async static void LinkOpen_Click(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuFlyoutItem;

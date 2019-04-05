@@ -1305,6 +1305,17 @@ namespace Unigram.Views
                         return;
                     }
                 }
+
+                var button = children.FirstOrDefault(x => x is Button inline && inline.Tag is InlineKeyboardButton) as Button;
+                if (button != null && button.Tag is InlineKeyboardButton inlineButton && inlineButton.Type is InlineKeyboardButtonTypeUrl url)
+                {
+                    MessageHelper.Hyperlink_ContextRequested(button, url.Url, args);
+
+                    if (args.Handled)
+                    {
+                        return;
+                    }
+                }
             }
 
             // Generic
