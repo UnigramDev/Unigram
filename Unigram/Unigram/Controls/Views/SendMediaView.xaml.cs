@@ -39,7 +39,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SendMediaView : OverlayPage, INotifyPropertyChanged
+    public sealed partial class SendMediaView : OverlayPage, IViewWithAutocomplete, INotifyPropertyChanged
     {
         public DialogViewModel ViewModel { get; set; }
 
@@ -498,7 +498,7 @@ namespace Unigram.Controls.Views
                 CaptionInput.Document.Selection.StartPosition = start;
             }
 
-            ViewModel.Autocomplete = null;
+            Autocomplete = null;
         }
 
         private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)

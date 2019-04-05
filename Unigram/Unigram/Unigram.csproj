@@ -386,6 +386,9 @@
     <Compile Include="Controls\Views\SelectLivePeriodView.xaml.cs">
       <DependentUpon>SelectLivePeriodView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\SendFilesView.xaml.cs">
+      <DependentUpon>SendFilesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SendMediaView.xaml.cs">
       <DependentUpon>SendMediaView.xaml</DependentUpon>
     </Compile>
@@ -1895,6 +1898,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SelectLivePeriodView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SendFilesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

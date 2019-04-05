@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        public SendMediaView View { get; set; }
+        public IViewWithAutocomplete View { get; set; }
 
         public CaptionTextBox()
         {
@@ -164,5 +165,11 @@ namespace Unigram.Controls
                 View.Autocomplete = null;
             }
         }
+    }
+
+    public interface IViewWithAutocomplete
+    {
+        ICollection Autocomplete { get; set; }
+        void Accept();
     }
 }

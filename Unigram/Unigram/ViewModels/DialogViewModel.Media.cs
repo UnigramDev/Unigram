@@ -163,10 +163,7 @@ namespace Unigram.ViewModels
                 var files = await picker.PickMultipleFilesAsync();
                 if (files != null && files.Count > 0)
                 {
-                    foreach (var storage in files)
-                    {
-                        await SendDocumentAsync(storage, null);
-                    }
+                    SendFileExecute(files);
                 }
             }
             else
@@ -175,11 +172,40 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void SendFileExecute(IList<StorageFile> files)
+        public async void SendFileExecute(IReadOnlyList<StorageFile> files)
         {
-            foreach (var file in files)
+            var formattedText = GetFormattedText(true);
+            var caption = formattedText.Substring(0, CacheService.Options.MessageCaptionLengthMax);
+
+            var dialog = new SendFilesView();
+            dialog.ViewModel = this;
+            dialog.Caption = caption;
+            dialog.Items.AddRange(files.Select(x => new StorageDocument(x)));
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
             {
-                await SendDocumentAsync(file, null);
+                TextField?.SetText(formattedText);
+                return;
+            }
+
+            files = new List<StorageFile>(dialog.Items.Select(x => x.File));
+
+            if (files.Count == 1)
+            {
+                await SendDocumentAsync(files[0], dialog.Caption);
+            }
+            else
+            {
+                if (dialog.Caption != null)
+                {
+                    await SendMessageAsync(dialog.Caption);
+                }
+
+                foreach (var file in files)
+                {
+                    await SendDocumentAsync(file, null);
+                }
             }
         }
 
