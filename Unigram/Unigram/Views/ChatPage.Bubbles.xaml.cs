@@ -46,6 +46,7 @@ using Windows.Foundation.Metadata;
 using Unigram.Controls.Chats;
 using Unigram.ViewModels.Gallery;
 using Unigram.Controls.Gallery;
+using Windows.Devices.Input;
 
 namespace Unigram.Views
 {
@@ -673,7 +674,35 @@ namespace Unigram.Views
                 item.ContextRequested += Message_ContextRequested;
             }
 
+            item.DoubleTapped += Item_DoubleTapped;
+
             return item;
+        }
+
+        private void Item_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (e.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
+            if (e.OriginalSource is DependencyObject originalSource)
+            {
+                var button = originalSource.AncestorsAndSelf<ButtonBase>().FirstOrDefault() as ButtonBase;
+                if (button != null)
+                {
+                    return;
+                }
+            }
+
+            if (sender is SelectorItem selector && selector.ContentTemplateRoot is FrameworkElement content)
+            {
+                var message = content.Tag as MessageViewModel;
+                if (message != null)
+                {
+                    ViewModel.ReplyToMessage(message);
+                }
+            }
         }
 
         private string SelectTemplateCore(object item)
