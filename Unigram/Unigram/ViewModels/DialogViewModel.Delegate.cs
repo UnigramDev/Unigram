@@ -456,6 +456,11 @@ namespace Unigram.ViewModels
                 else if (webPage != null && webPage.IsInstantGallery())
                 {
                     viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, Aggregator, message, webPage);
+
+                    if (viewModel.Items.IsEmpty())
+                    {
+                        viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
+                    }
                 }
                 else
                 {

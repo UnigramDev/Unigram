@@ -469,7 +469,7 @@ namespace Unigram.Controls.Gallery
 
         private Visibility ConvertCompactVisibility(GalleryContent item)
         {
-            if (item.IsVideo && !item.IsLoop)
+            if (item != null && item.IsVideo && !item.IsLoop)
             {
                 if (item is GalleryMessage message && message.IsHot)
                 {
@@ -814,7 +814,7 @@ namespace Unigram.Controls.Gallery
             Grid.SetColumn(next, 2);
 
             var index = viewModel.SelectedIndex;
-            if (index < 0)
+            if (index < 0 || viewModel.Items.IsEmpty())
             {
                 return;
             }
