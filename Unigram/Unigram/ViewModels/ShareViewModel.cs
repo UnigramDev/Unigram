@@ -341,7 +341,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, false));
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, true));
                     }
                 }
 
