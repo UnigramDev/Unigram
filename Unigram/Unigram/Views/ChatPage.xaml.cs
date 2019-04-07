@@ -1870,8 +1870,24 @@ namespace Unigram.Views
 
         private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
+            Vector3 point;
+            if (btnVoiceMessage.IsLocked || !btnVoiceMessage.IsRecording)
+            {
+                point = _slideVisual.Offset;
+                point.X = 0;
+
+                _slideVisual.Offset = point;
+
+                point = _recordVisual.Offset;
+                point.Y = 0;
+
+                _recordVisual.Offset = point;
+
+                return;
+            }
+
             var cumulative = e.Cumulative.Translation.ToVector2();
-            var point = _slideVisual.Offset;
+            point = _slideVisual.Offset;
             point.X = Math.Min(0, cumulative.X);
 
             _slideVisual.Offset = point;

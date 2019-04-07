@@ -15,6 +15,7 @@ using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Display;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -37,13 +38,10 @@ namespace Unigram.Controls.Chats
 
         private DateTime _start;
 
-        public TimeSpan Elapsed
-        {
-            get
-            {
-                return DateTime.Now - _start;
-            }
-        }
+        public TimeSpan Elapsed => DateTime.Now - _start;
+
+        public bool IsRecording => recordingAudioVideo;
+        public bool IsLocked => recordingLocked;
 
         public ChatRecordMode Mode
         {
@@ -131,6 +129,8 @@ namespace Unigram.Controls.Chats
 
         private void UpdateRecordingInterface()
         {
+            Logger.Debug(Target.Recording, "Updating interface, state: " + recordInterfaceState);
+
             if (recordingLocked && recordingAudioVideo)
             {
                 if (recordInterfaceState == 2)
@@ -203,6 +203,8 @@ namespace Unigram.Controls.Chats
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
                 });
             }
+
+            Logger.Debug(Target.Recording, "Updated interface, state: " + recordInterfaceState);
         }
 
         private async void OnClick(object sender, RoutedEventArgs e)
@@ -409,6 +411,8 @@ namespace Unigram.Controls.Chats
 
         public void LockRecording()
         {
+            Logger.Debug(Target.Recording, "Locking recording");
+
             enqueuedLocking = false;
             recordingLocked = true;
             UpdateRecordingInterface();
@@ -644,11 +648,25 @@ namespace Unigram.Controls.Chats
                     profile.Video.Height = 240;
                     profile.Video.Bitrate = 300000;
 
-                    await viewModel.SendVideoNoteAsync(file, profile, transform);
+                    try
+                    {
+                        viewModel.Dispatcher.Dispatch(async () =>
+                        {
+                            await viewModel.SendVideoNoteAsync(file, profile, transform);
+                        });
+                    }
+                    catch { }
                 }
                 else
                 {
-                    await viewModel.SendVoiceNoteAsync(file, duration, null);
+                    try
+                    {
+                        viewModel.Dispatcher.Dispatch(async () =>
+                        {
+                            await viewModel.SendVoiceNoteAsync(file, duration, null);
+                        });
+                    }
+                    catch { }
                 }
             }
 
