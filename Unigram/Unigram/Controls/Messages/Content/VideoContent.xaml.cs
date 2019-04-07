@@ -175,7 +175,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
-                    Button.Glyph = Icons.Play;
+                    Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play;
                     Button.Progress = 0;
                     Overlay.Progress = 1;
                     Overlay.ProgressVisibility = Visibility.Collapsed;
@@ -288,6 +288,11 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
+                if (_message.SendingState is MessageSendingStatePending)
+                {
+                    return;
+                }
+
                 var file = video.VideoValue;
                 if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
                 {

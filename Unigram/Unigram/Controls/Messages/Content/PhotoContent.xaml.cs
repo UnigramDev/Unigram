@@ -90,7 +90,7 @@ namespace Unigram.Controls.Messages.Content
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                Button.Glyph = "\uE10A";
+                Button.Glyph = Icons.Cancel;
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Button.Opacity = 1;
@@ -98,8 +98,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-
-                Button.Glyph = "\uE10A";
+                Button.Glyph = Icons.Cancel;
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Button.Opacity = 1;
@@ -107,7 +106,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                Button.Glyph = "\uE118";
+                Button.Glyph = Icons.Download;
                 Button.Progress = 0;
 
                 Button.Opacity = 1;
@@ -122,7 +121,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (message.IsSecret())
                 {
-                    Button.Glyph = "\uE60D";
+                    Button.Glyph = Icons.Secret;
                     Button.Progress = 1;
 
                     Button.Opacity = 1;
@@ -132,10 +131,10 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
-                    Button.Glyph = "\uE102";
+                    Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play;
                     Button.Progress = 1;
 
-                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0)
+                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || message.SendingState is MessageSendingStatePending)
                     {
                         Button.Opacity = 1;
                     }
@@ -210,6 +209,11 @@ namespace Unigram.Controls.Messages.Content
 
             var big = photo.GetBig();
             if (big == null)
+            {
+                return;
+            }
+
+            if (_message.SendingState is MessageSendingStatePending)
             {
                 return;
             }
