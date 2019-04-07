@@ -177,12 +177,12 @@
             </Setter>
         </Style>
     </Page.Resources>
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
         <!--<Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
         <Image x:Name="Image" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Border x:Name="BackgroundPanel" Background="Transparent"/>
-        
+
         <Grid Padding="12,0">
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -217,7 +217,7 @@
                     <Rectangle x:Name="Signal3" Fill="{StaticResource SignalBarForegroundBrush}" RadiusX="1" RadiusY="1" Margin="0,0,1,0" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3"/>
                     <Rectangle x:Name="Signal4" Fill="{StaticResource SignalBarForegroundBrush}" RadiusX="1" RadiusY="1" Margin="0,0,1,0" Grid.Column="3" Grid.Row="0" Grid.RowSpan="4"/>
                 </Grid>
-                
+
                 <ContentControl x:Name="StateLabel" HorizontalContentAlignment="Center" Grid.Column="1">
                     <ContentControl.ContentTransitions>
                         <TransitionCollection>
@@ -257,7 +257,7 @@
                 <TextBlock x:Name="DescriptionLabel" Text="If these emoji are the same on {0}'s screen, this call is 100% secure." TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
             </Grid>
         </Grid>
-        
+
         <Grid VerticalAlignment="Bottom" Margin="0,12">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
@@ -272,18 +272,47 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <controls:GlyphToggleButton x:Name="Mute" IsChecked="{x:Bind IsMuted, Mode=TwoWay}" IsOneWay="False" CheckedGlyph="&#xE610;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalAlignment="Right" Margin="0,0,12,0"/>
+            <controls:GlyphToggleButton
+                x:Name="Mute"
+                IsChecked="{x:Bind IsMuted, Mode=TwoWay}"
+                IsOneWay="False"
+                CheckedGlyph="&#xE610;"
+                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                HorizontalAlignment="Right"
+                Margin="0,0,12,0"
+                AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
+                ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"/>
 
             <Border x:Name="Close" Visibility="Collapsed" Background="#FFFFFF" CornerRadius="24" Grid.Column="1">
-                <controls:GlyphButton Click="Close_Click" Glyph="&#xE10A;" Foreground="#777777" RequestedTheme="Light" CornerRadius="24"/>
+                <controls:GlyphButton
+                    Click="Close_Click"
+                    Glyph="&#xE10A;"
+                    Foreground="#777777"
+                    RequestedTheme="Light"
+                    CornerRadius="24"
+                    AutomationProperties.Name="{CustomResource Close}"
+                    ToolTipService.ToolTip="{CustomResource Close}"/>
             </Border>
             <Border x:Name="Accept" Visibility="Collapsed" Background="#64BA57" CornerRadius="24" Grid.Column="2">
-                <controls:GlyphButton Click="Accept_Click" Glyph="&#xE13A;" CornerRadius="24"/>
+                <controls:GlyphButton
+                    Click="Accept_Click"
+                    Glyph="&#xE13A;"
+                    CornerRadius="24"
+                    AutomationProperties.Name="{CustomResource VoipAnswerCall}"
+                    ToolTipService.ToolTip="{CustomResource VoipAnswerCall}"/>
             </Border>
             <Border x:Name="Discard" Background="#E33A32" CornerRadius="24" Grid.Column="3">
-                <controls:GlyphButton Click="Hangup_Click" Glyph="&#xE60F;" FontFamily="{StaticResource TelegramThemeFontFamily}" FontSize="24" Padding="0,0,0,2" CornerRadius="24"/>
+                <controls:GlyphButton
+                    Click="Hangup_Click"
+                    Glyph="&#xE60F;"
+                    FontFamily="{StaticResource TelegramThemeFontFamily}"
+                    FontSize="24"
+                    Padding="0,0,0,2"
+                    CornerRadius="24"
+                    AutomationProperties.Name="{CustomResource VoipEndCall}"
+                    ToolTipService.ToolTip="{CustomResource VoipEndCall}"/>
             </Border>
-            
+
             <controls:GlyphToggleButton x:Name="Routing" x:DeferLoadStrategy="Lazy" Click="Routing_Click" CheckedGlyph="&#xE767;" HorizontalAlignment="Left" Margin="12,0,0,0" Grid.Column="4"/>
         </Grid>
     </Grid>
