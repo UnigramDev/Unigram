@@ -122,17 +122,22 @@ namespace Unigram.Common
                 {
                     //isOut = messageObject.isOutOwner();
                 }
+                int w = 0;
+                int h = 0;
                 if (messageObject.Content is MessagePhoto photoMedia)
                 {
                     photoThumbs = photoMedia.Photo.Sizes;
                 }
                 else if (messageObject.Content is MessageVideo videoMedia)
                 {
+                    w = videoMedia.Video.Width;
+                    h = videoMedia.Video.Height;
                     photoThumbs = new List<PhotoSize> { videoMedia.Video.Thumbnail };
                 }
                 PhotoSize photoSize = GetClosestPhotoSizeWithSize(photoThumbs, 1280);
-                int w = photoSize?.Width ?? 0;
-                int h = photoSize?.Height ?? 0;
+                w = photoSize?.Width > 0 ? photoSize.Width : w;
+                h = photoSize?.Height > 0 ? photoSize.Height : h;
+
                 GroupedMessagePosition position = new GroupedMessagePosition();
                 position.IsLast = a == count - 1;
                 position.AspectRatio = w / (float)h;
