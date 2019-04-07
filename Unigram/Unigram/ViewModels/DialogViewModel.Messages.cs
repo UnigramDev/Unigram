@@ -787,12 +787,24 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetPublicMessageLink(chat.Id, message.Id, false));
-            if (response is PublicMessageLink link)
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup != null && string.IsNullOrEmpty(supergroup.Username))
             {
                 var dataPackage = new DataPackage();
-                dataPackage.SetText(link.Link);
+                dataPackage.SetText(MeUrlPrefixConverter.Convert(CacheService, $"{supergroup.Id}/{message.Id >> 20}"));
                 ClipboardEx.TrySetContent(dataPackage);
+
+                await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+            }
+            else
+            {
+                var response = await ProtoService.SendAsync(new GetPublicMessageLink(chat.Id, message.Id, false));
+                if (response is PublicMessageLink link)
+                {
+                    var dataPackage = new DataPackage();
+                    dataPackage.SetText(link.Link);
+                    ClipboardEx.TrySetContent(dataPackage);
+                }
             }
         }
 

@@ -1563,8 +1563,9 @@ namespace Unigram.Views
             var chat = message.GetChat();
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
-                var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
-                return !string.IsNullOrEmpty(supergroup.Username);
+                //var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
+                //return !string.IsNullOrEmpty(supergroup.Username);
+                return true;
             }
 
             return false;
