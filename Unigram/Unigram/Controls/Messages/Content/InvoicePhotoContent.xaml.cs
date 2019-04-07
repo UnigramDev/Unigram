@@ -23,6 +23,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class InvoicePhotoContent : StackPanel, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public InvoicePhotoContent(MessageViewModel message)
         {

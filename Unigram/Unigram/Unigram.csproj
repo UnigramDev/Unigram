@@ -211,6 +211,9 @@
     <Compile Include="Controls\LazoListView.cs" />
     <Compile Include="Controls\LazoListViewItem.cs" />
     <Compile Include="Controls\MasterDetailPanel.cs" />
+    <Compile Include="Controls\Messages\Content\AlbumContent.xaml.cs">
+      <DependentUpon>AlbumContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\AudioContent.xaml.cs">
       <DependentUpon>AudioContent.xaml</DependentUpon>
     </Compile>
@@ -228,9 +231,6 @@
     </Compile>
     <Compile Include="Controls\Messages\MessageService.cs" />
     <Compile Include="Controls\MediaPlayerView.cs" />
-    <Compile Include="Controls\Media\GroupedMediaView.xaml.cs">
-      <DependentUpon>GroupedMediaView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Media\MusicPlaybackItem.xaml.cs">
       <DependentUpon>MusicPlaybackItem.xaml</DependentUpon>
     </Compile>
@@ -1689,6 +1689,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Messages\Content\AlbumContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Messages\Content\AudioContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1706,10 +1710,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageFooter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Media\GroupedMediaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

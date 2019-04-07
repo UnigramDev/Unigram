@@ -21,6 +21,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class DocumentContent : Grid, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public DocumentContent(MessageViewModel message)
         {

@@ -23,6 +23,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class AnimationContent : AspectView, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public AnimationContent(MessageViewModel message)
         {

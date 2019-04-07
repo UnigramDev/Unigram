@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Selectors;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
@@ -641,6 +642,8 @@ namespace Unigram.Common
         {
             switch (content)
             {
+                case MessageAlbum album:
+                    return album.Caption;
                 case MessageAnimation animation:
                     return animation.Caption;
                 case MessageAudio audio:
@@ -1494,6 +1497,8 @@ namespace Unigram.Common
         {
             switch (message.Content)
             {
+                case MessageAlbum album:
+                    return album.UpdateFile(file);
                 case MessageAnimation animation:
                     return animation.UpdateFile(file);
                 case MessageAudio audio:
@@ -1631,6 +1636,22 @@ namespace Unigram.Common
             }
 
             return false;
+        }
+
+
+
+        public static bool UpdateFile(this MessageAlbum album, File file)
+        {
+            var any = false;
+            foreach (var message in album.Layout.Messages)
+            {
+                if (message.UpdateFile(file))
+                {
+                    any = true;
+                }
+            }
+
+            return any;
         }
 
 
@@ -1844,6 +1865,23 @@ namespace Unigram.Common
 
 namespace Telegram.Td.Api
 {
+    public class MessageAlbum : MessageContent
+    {
+        public FormattedText Caption { get; set; }
+
+        public GroupedMessages Layout { get; private set; }
+
+        public MessageAlbum()
+        {
+            Layout = new GroupedMessages();
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class MessageChatEvent : MessageContent
     {
         public ChatEvent Event { get; set; }

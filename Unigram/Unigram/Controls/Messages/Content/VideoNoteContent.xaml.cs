@@ -26,6 +26,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class VideoNoteContent : AspectView, IContentWithFile, IContentWithMask
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public VideoNoteContent(MessageViewModel message)
         {

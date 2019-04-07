@@ -22,6 +22,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class CallContent : UserControl, IContent
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public CallContent(MessageViewModel message)
         {

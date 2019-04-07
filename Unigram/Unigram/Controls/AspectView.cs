@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls.Messages.Content;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -50,11 +52,21 @@ namespace Unigram.Controls
             {
                 ttl = viewModel.Ttl > 0;
                 constraint = viewModel.Content;
+
+                if (viewModel.MediaAlbumId != 0)
+                {
+                    return base.MeasureOverride(availableSize);
+                }
             }
             else if (constraint is Message message)
             {
                 ttl = message.Ttl > 0;
                 constraint = message.Content;
+
+                if (message.MediaAlbumId != 0)
+                {
+                    return base.MeasureOverride(availableSize);
+                }
             }
 
             #region MessageContent

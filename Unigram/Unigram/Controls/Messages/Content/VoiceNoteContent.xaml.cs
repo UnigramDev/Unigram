@@ -21,6 +21,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class VoiceNoteContent : Grid, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public VoiceNoteContent(MessageViewModel message)
         {

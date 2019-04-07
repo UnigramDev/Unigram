@@ -591,6 +591,10 @@ namespace Unigram.Controls.Messages
                         Media.Content = new WebPageContent(message);
                     }
                 }
+                else if (message.Content is MessageAlbum)
+                {
+                    Media.Content = new AlbumContent(message);
+                }
                 else if (message.Content is MessageAnimation)
                 {
                     Media.Content = new AnimationContent(message);
@@ -690,6 +694,10 @@ namespace Unigram.Controls.Messages
             if (message.Content is MessageText text)
             {
                 result = ReplaceEntities(message, Span, text.Text, out adjust);
+            }
+            else if (message.Content is MessageAlbum album)
+            {
+                result = ReplaceEntities(message, Span, album.Caption, out adjust);
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -1204,6 +1212,30 @@ namespace Unigram.Controls.Messages
             {
                 constraint = chatChangePhoto.Photo;
             }
+            else if (constraint is MessageAlbum album)
+            {
+                var groupedMessages = album.Layout;
+                if (groupedMessages.Messages.Count == 1)
+                {
+                    if (groupedMessages.Messages[0].Content is MessagePhoto photoContent)
+                    {
+                        constraint = photoContent.Photo;
+                    }
+                    else if (groupedMessages.Messages[0].Content is MessageVideo videoContent)
+                    {
+                        constraint = videoContent.Video;
+                    }
+                }
+                else
+                {
+
+                    width = groupedMessages.Width / 800d * Math.Min(availableSize.Width, AlbumContent.MAX_WIDTH - AlbumContent.ITEM_MARGIN);
+                    height = width / (AlbumContent.MAX_WIDTH - AlbumContent.ITEM_MARGIN) * (AlbumContent.MAX_HEIGHT - AlbumContent.ITEM_MARGIN);
+                    height = groupedMessages.Height * height;
+
+                    goto Calculate;
+                }
+            }
 
             if (constraint is Animation animation)
             {
@@ -1318,6 +1350,7 @@ namespace Unigram.Controls.Messages
                 case MessagePhoto photo:
                 case MessageVideo video:
                 case MessageAnimation animation:
+                case MessageAlbum album:
                     return true;
                 case MessageInvoice invoice:
                     return width && invoice.Photo != null;

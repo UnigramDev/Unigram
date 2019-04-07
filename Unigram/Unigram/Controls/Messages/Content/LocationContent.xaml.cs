@@ -23,6 +23,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class LocationContent : StackPanel, IContent
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public LocationContent(MessageViewModel message)
         {

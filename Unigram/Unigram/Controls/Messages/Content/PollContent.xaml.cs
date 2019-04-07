@@ -22,6 +22,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class PollContent : StackPanel, IContent
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public PollContent(MessageViewModel message)
         {

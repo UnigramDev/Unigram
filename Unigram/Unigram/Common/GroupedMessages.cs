@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.ViewModels;
 
 namespace Unigram.Common
@@ -116,28 +117,22 @@ namespace Unigram.Common
             for (int a = 0; a < count; a++)
             {
                 MessageViewModel messageObject = Messages[a];
-                //TLVector<TLPhotoSizeBase> photoThumbs = null;
+                IList<PhotoSize> photoThumbs = null;
                 if (a == 0)
                 {
-                    //isOut = messageObject.IsOutOwner();
+                    //isOut = messageObject.isOutOwner();
                 }
-                //if (messageObject.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-                //{
-                //    photoThumbs = new TLVector<TLPhotoSizeBase> { document.Thumb };
-                //}
-                //TLPhotoSizeBase photoSize = GetClosestPhotoSizeWithSize(photoThumbs, 1280);
-                int w = 0;
-                int h = 0;
-                //if (photoSize is TLPhotoSize size)
-                //{
-                //    w = size.W;
-                //    h = size.H;
-                //}
-                //else if (photoSize is TLPhotoCachedSize cachedSize)
-                //{
-                //    w = cachedSize.W;
-                //    h = cachedSize.H;
-                //}
+                if (messageObject.Content is MessagePhoto photoMedia)
+                {
+                    photoThumbs = photoMedia.Photo.Sizes;
+                }
+                else if (messageObject.Content is MessageVideo videoMedia)
+                {
+                    photoThumbs = new List<PhotoSize> { videoMedia.Video.Thumbnail };
+                }
+                PhotoSize photoSize = GetClosestPhotoSizeWithSize(photoThumbs, 1280);
+                int w = photoSize?.Width ?? 0;
+                int h = photoSize?.Height ?? 0;
                 GroupedMessagePosition position = new GroupedMessagePosition();
                 position.IsLast = a == count - 1;
                 position.AspectRatio = w / (float)h;
@@ -545,60 +540,50 @@ namespace Unigram.Common
             Height = totalHeight;
         }
 
-        //public static TLPhotoSizeBase GetClosestPhotoSizeWithSize(TLVector<TLPhotoSizeBase> sizes, int side)
-        //{
-        //    return GetClosestPhotoSizeWithSize(sizes, side, false);
-        //}
+        public static PhotoSize GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side)
+        {
+            return GetClosestPhotoSizeWithSize(sizes, side, false);
+        }
 
-        //public static TLPhotoSizeBase GetClosestPhotoSizeWithSize(TLVector<TLPhotoSizeBase> sizes, int side, bool byMinSide)
-        //{
-        //    if (sizes == null || sizes.IsEmpty())
-        //    {
-        //        return null;
-        //    }
-        //    int lastSide = 0;
-        //    TLPhotoSizeBase closestObject = null;
-        //    for (int a = 0; a < sizes.Count; a++)
-        //    {
-        //        TLPhotoSizeBase obj = sizes[a];
-        //        if (obj == null)
-        //        {
-        //            continue;
-        //        }
+        public static PhotoSize GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side, bool byMinSide)
+        {
+            if (sizes == null || sizes.IsEmpty())
+            {
+                return null;
+            }
+            int lastSide = 0;
+            PhotoSize closestObject = null;
+            for (int a = 0; a < sizes.Count; a++)
+            {
+                PhotoSize obj = sizes[a];
+                if (obj == null)
+                {
+                    continue;
+                }
 
-        //        int w = 0;
-        //        int h = 0;
-        //        if (obj is TLPhotoSize size)
-        //        {
-        //            w = size.W;
-        //            h = size.H;
-        //        }
-        //        else if (obj is TLPhotoCachedSize cachedSize)
-        //        {
-        //            w = cachedSize.W;
-        //            h = cachedSize.H;
-        //        }
+                int w = obj.Width;
+                int h = obj.Height;
 
-        //        if (byMinSide)
-        //        {
-        //            int currentSide = h >= w ? w : h;
-        //            if (closestObject == null || side > 100 && closestObject is TLPhotoSize closestSize && closestSize.Location is TLFileLocation location && location.DCId == int.MinValue || obj is TLPhotoCachedSize || side > lastSide && lastSide < currentSide)
-        //            {
-        //                closestObject = obj;
-        //                lastSide = currentSide;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            int currentSide = w >= h ? w : h;
-        //            if (closestObject == null || side > 100 && closestObject is TLPhotoSize closestSize && closestSize.Location is TLFileLocation location && location.DCId == int.MinValue || obj is TLPhotoCachedSize || currentSide <= side && lastSide < currentSide)
-        //            {
-        //                closestObject = obj;
-        //                lastSide = currentSide;
-        //            }
-        //        }
-        //    }
-        //    return closestObject;
-        //}
+                if (byMinSide)
+                {
+                    int currentSide = h >= w ? w : h;
+                    if (closestObject == null || side > 100 && side > lastSide && lastSide < currentSide)
+                    {
+                        closestObject = obj;
+                        lastSide = currentSide;
+                    }
+                }
+                else
+                {
+                    int currentSide = w >= h ? w : h;
+                    if (closestObject == null || side > 100 && currentSide <= side && lastSide < currentSide)
+                    {
+                        closestObject = obj;
+                        lastSide = currentSide;
+                    }
+                }
+            }
+            return closestObject;
+        }
     }
 }

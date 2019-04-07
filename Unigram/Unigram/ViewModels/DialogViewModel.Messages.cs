@@ -88,39 +88,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            //var serviceMessage = message as TLMessageService;
-            //if (serviceMessage != null)
-            //{
-            //    var action = serviceMessage.Action;
-            //    // TODO: 
-            //    //if (action is TLMessageActionEmpty || action is TLMessageActionUnreadMessages)
-            //    //{
-            //    //    return;
-            //    //}
-            //}
+            if (message.Content is MessageAlbum album)
+            {
+                message = album.Layout.Messages.FirstOrDefault();
+            }
 
-            //var message31 = message as TLMessage;
-            //if (message31 != null && message31.Media is TLMessageMediaGroup groupMedia)
-            //{
-            //    message = groupMedia.Layout.Messages.FirstOrDefault();
-            //    message31 = message as TLMessage;
-            //}
-
-            //if (message.Id <= 0) return;
-
-            //if (message31 != null && !message31.IsOut && message31.HasFromId)
-            //{
-            //    var fromId = message31.FromId.Value;
-            //    var user = CacheService.GetUser(fromId) as TLUser;
-            //    if (user != null && user.IsBot)
-            //    {
-            //        SetReplyMarkup(message31);
-            //    }
-            //}
-
-            //Reply = message;
             ComposerHeader = new MessageComposerHeader { ReplyToMessage = message };
-            TextField?.Focus(Windows.UI.Xaml.FocusState.Keyboard);
+            TextField?.Focus(FocusState.Keyboard);
         }
 
         #endregion
@@ -675,11 +649,10 @@ namespace Unigram.ViewModels
         {
             DisposeSearch();
 
-            //var messageCommon = message as TLMessageCommonBase;
-            //if (messageCommon == null)
-            //{
-            //    return;
-            //}
+            if (message.MediaAlbumId != 0 && _groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+            {
+                message = group;
+            }
 
             SelectionMode = ListViewSelectionMode.Multiple;
             ListField?.SelectedItems.Add(message);

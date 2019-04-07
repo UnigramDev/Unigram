@@ -350,6 +350,30 @@ namespace Unigram.ViewModels
                         for (int j = 0; j < update.MessageIds.Count; j++)
                         {
                             var message = Items[i];
+                            if (message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
+                            {
+                                var found = false;
+
+                                for (int k = 0; k < album.Layout.Messages.Count; k++)
+                                {
+                                    if (album.Layout.Messages[k].Id == update.MessageIds[j])
+                                    {
+                                        album.Layout.Messages.RemoveAt(k);
+                                        album.Layout.Calculate();
+
+                                        Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
+
+                                        found = true;
+                                        break;
+                                    }
+                                }
+
+                                if (found)
+                                {
+                                    continue;
+                                }
+                            }
+
                             if (message.Id == update.MessageIds[j])
                             {
                                 Items.RemoveAt(i);
@@ -387,7 +411,14 @@ namespace Unigram.ViewModels
             {
                 Handle(update.MessageId, message =>
                 {
-                    message.Content = update.NewContent;
+                    if (update.NewContent is MessageAlbum)
+                    {
+                    }
+                    else
+                    {
+                        message.Content = update.NewContent;
+                    }
+
                     ProcessFiles(_chat, new[] { message });
                 }, (bubble, message, reply) =>
                 {
@@ -515,13 +546,13 @@ namespace Unigram.ViewModels
         {
             BeginOnUIThread(() =>
             {
-                var message = Items.FirstOrDefault(x => x.Id == messageId);
-                if (message == null)
-                {
-                    return;
-                }
+                //var message = Items.FirstOrDefault(x => x.Id == messageId);
+                //if (message == null)
+                //{
+                //    return;
+                //}
 
-                update(message);
+                //update(message);
 
                 var field = ListField;
                 if (field == null)
@@ -529,21 +560,94 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var container = field.ContainerFromItem(message) as ListViewItem;
-                if (container == null)
-                {
-                    return;
-                }
+                //var container = field.ContainerFromItem(message) as ListViewItem;
+                //if (container == null)
+                //{
+                //    return;
+                //}
 
-                var content = container.ContentTemplateRoot as FrameworkElement;
-                if (content is Grid grid)
-                {
-                    content = grid.FindName("Bubble") as FrameworkElement;
-                }
+                //var content = container.ContentTemplateRoot as FrameworkElement;
+                //if (content is Grid grid)
+                //{
+                //    content = grid.FindName("Bubble") as FrameworkElement;
+                //}
 
-                if (content is MessageBubble bubble)
+                //if (content is MessageBubble bubble)
+                //{
+                //    action(bubble, message);
+                //}
+
+                for (int i = 0; i < Items.Count; i++)
                 {
-                    action(bubble, message);
+                    var message = Items[i];
+                    if (message.MediaAlbumId != 0 && _groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+                    {
+                        if (group.Content is MessageAlbum album)
+                        {
+                            var found = false;
+
+                            foreach (var child in album.Layout.Messages)
+                            {
+                                if (child.Id == messageId)
+                                {
+                                    update(child);
+                                    found = true;
+
+                                    if (child == album.Layout.Messages[0])
+                                    {
+                                        group.UpdateWith(child);
+                                        album.Layout.Calculate();
+                                    }
+
+                                    var container = field.ContainerFromItem(message) as ListViewItem;
+                                    if (container == null)
+                                    {
+                                        break;
+                                    }
+
+                                    var content = container.ContentTemplateRoot as FrameworkElement;
+                                    if (content is Grid grid)
+                                    {
+                                        content = grid.FindName("Bubble") as FrameworkElement;
+                                    }
+
+                                    if (content is MessageBubble bubble)
+                                    {
+                                        action(bubble, message);
+                                    }
+
+                                    break;
+                                }
+                            }
+
+                            if (found)
+                            {
+                                return;
+                            }
+                        }
+                    }
+
+                    if (message.Id == messageId)
+                    {
+                        update(message);
+
+                        var container = field.ContainerFromItem(message) as ListViewItem;
+                        if (container == null)
+                        {
+                            return;
+                        }
+
+                        var content = container.ContentTemplateRoot as FrameworkElement;
+                        if (content is Grid grid)
+                        {
+                            content = grid.FindName("Bubble") as FrameworkElement;
+                        }
+
+                        if (content is MessageBubble bubble)
+                        {
+                            action(bubble, message);
+                        }
+                    }
                 }
             });
         }
@@ -561,6 +665,54 @@ namespace Unigram.ViewModels
                 for (int i = 0; i < Items.Count; i++)
                 {
                     var message = Items[i];
+                    if (message.MediaAlbumId != 0 && _groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+                    {
+                        if (group.Content is MessageAlbum album)
+                        {
+                            var found = false;
+
+                            foreach (var child in album.Layout.Messages)
+                            {
+                                if (child.Id == messageId)
+                                {
+                                    update(child);
+                                    found = true;
+
+                                    if (child == album.Layout.Messages[0])
+                                    {
+                                        group.UpdateWith(child);
+                                        album.Layout.Calculate();
+                                    }
+
+                                    var container = field.ContainerFromItem(message) as ListViewItem;
+                                    if (container == null)
+                                    {
+                                        break;
+                                    }
+
+                                    var content = container.ContentTemplateRoot as FrameworkElement;
+                                    if (content is Grid grid)
+                                    {
+                                        content = grid.FindName("Bubble") as FrameworkElement;
+                                    }
+
+                                    if (content is MessageBubble bubble)
+                                    {
+                                        action(bubble, message, false);
+                                    }
+
+                                    break;
+                                }
+                            }
+
+                            if (found)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
+
                     if (message.Id == messageId || (message.ReplyToMessageId == messageId && message.ReplyToMessage != null))
                     {
                         if (message.Id == messageId)
@@ -575,7 +727,7 @@ namespace Unigram.ViewModels
                         var container = field.ContainerFromItem(message) as ListViewItem;
                         if (container == null)
                         {
-                            return;
+                            continue;
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
@@ -638,20 +790,17 @@ namespace Unigram.ViewModels
                 {
                     var messageCommon = _messageFactory.Create(this, message);
                     var result = new List<MessageViewModel> { messageCommon };
+                    ProcessAlbums(_chat, result);
                     ProcessFiles(_chat, result);
                     ProcessReplies(_chat, result);
 
-                    InsertMessageInOrder(Items, messageCommon);
+                    if (result.Count > 0)
+                    {
+                        InsertMessageInOrder(Items, result[0]);
+                    }
                 }
                 else if (message.IsOutgoing)
                 {
-                    var chat = _chat;
-                    if (chat == null)
-                    {
-                        return;
-                    }
-
-                    //await LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, VerticalAlignment.Bottom);
                     await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom, 4);
                 }
             }

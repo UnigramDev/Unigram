@@ -194,5 +194,37 @@ namespace Unigram.ViewModels
         {
             return Id.GetHashCode() ^ ChatId.GetHashCode();
         }
+
+        public void UpdateWith(MessageViewModel message)
+        {
+            _message.AuthorSignature = message.AuthorSignature;
+            _message.CanBeDeletedForAllUsers = message.CanBeDeletedForAllUsers;
+            _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
+            _message.CanBeEdited = message.CanBeEdited;
+            _message.CanBeForwarded = message.CanBeForwarded;
+            _message.ChatId = message.ChatId;
+            _message.ContainsUnreadMention = message.ContainsUnreadMention;
+            //_message.Content = message.Content;
+            //_message.Date = message.Date;
+            _message.EditDate = message.EditDate;
+            _message.ForwardInfo = message.ForwardInfo;
+            _message.Id = message.Id;
+            _message.IsChannelPost = message.IsChannelPost;
+            _message.IsOutgoing = message.IsOutgoing;
+            _message.MediaAlbumId = message.MediaAlbumId;
+            _message.ReplyMarkup = message.ReplyMarkup;
+            _message.ReplyToMessageId = message.ReplyToMessageId;
+            _message.SenderUserId = message.SenderUserId;
+            _message.SendingState = message.SendingState;
+            _message.Ttl = message.Ttl;
+            _message.TtlExpiresIn = message.TtlExpiresIn;
+            _message.ViaBotUserId = message.ViaBotUserId;
+            _message.Views = message.Views;
+
+            if (_message.Content is MessageAlbum album)
+            {
+                album.Caption = message.Content?.GetCaption();
+            }
+        }
     }
 }

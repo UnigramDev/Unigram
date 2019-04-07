@@ -1316,6 +1316,19 @@ namespace Unigram.Views
                         return;
                     }
                 }
+
+                if (message.Content is MessageAlbum album)
+                {
+                    var child = children.FirstOrDefault(x => x is IContent) as IContent;
+                    if (child != null)
+                    {
+                        message = child.Message;
+                    }
+                    else
+                    {
+                        message = album.Layout.Messages.FirstOrDefault() ?? message;
+                    }
+                }
             }
 
             // Generic
@@ -1384,7 +1397,7 @@ namespace Unigram.Views
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
 
-            args.ShowAt(flyout, element);
+            args.ShowAt(flyout, sender as FrameworkElement);
         }
 
         private bool MessageReply_Loaded(MessageViewModel message)

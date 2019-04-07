@@ -25,6 +25,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class StickerContent : ImageView, IContentWithFile, IContentWithMask
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public StickerContent(MessageViewModel message)
         {

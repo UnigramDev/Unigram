@@ -64,21 +64,21 @@ namespace Unigram.ViewModels
         {
             var messages = vector.ToList();
 
-            //for (int i = 0; i < messages.Count; i++)
-            //{
-            //    if (messages[i] is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
-            //    {
-            //        messages.RemoveAt(i);
+            for (int i = 0; i < messages.Count; i++)
+            {
+                if (messages[i].Content is MessageAlbum album)
+                {
+                    messages.RemoveAt(i);
 
-            //        for (int j = 0; j < groupMedia.Layout.Messages.Count; j++)
-            //        {
-            //            messages.Insert(i, groupMedia.Layout.Messages[j]);
-            //            i++;
-            //        }
+                    for (int j = 0; j < album.Layout.Messages.Count; j++)
+                    {
+                        messages.Insert(i, album.Layout.Messages[j]);
+                        i++;
+                    }
 
-            //        i--;
-            //    }
-            //}
+                    i--;
+                }
+            }
 
             SelectedItems = messages;
         }
@@ -565,6 +565,11 @@ namespace Unigram.ViewModels
             }
 
             var last = Items.LastOrDefault();
+            if (last?.Content is MessageAlbum album)
+            {
+                last = album.Layout.Messages.LastOrDefault();
+            }
+
             if (last == null)
             {
                 return true;
@@ -688,6 +693,7 @@ namespace Unigram.ViewModels
                     }
 
                     var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    ProcessAlbums(chat, replied);
                     ProcessFiles(chat, replied);
                     ProcessReplies(chat, replied);
 
@@ -795,6 +801,7 @@ namespace Unigram.ViewModels
                     var added = false;
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    ProcessAlbums(chat, replied);
                     ProcessFiles(chat, replied);
                     ProcessReplies(chat, replied);
 
@@ -1109,6 +1116,7 @@ namespace Unigram.ViewModels
                     }
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    ProcessAlbums(chat, replied);
                     ProcessFiles(chat, replied);
                     ProcessReplies(chat, replied);
 
@@ -1237,11 +1245,17 @@ namespace Unigram.ViewModels
 
         }
 
-        private void ProcessFiles(Chat chat, IList<MessageViewModel> messages)
+        private void ProcessFiles(Chat chat, IList<MessageViewModel> messages, MessageViewModel parent = null)
         {
             foreach (var message in messages)
             {
+                var target = parent ?? message;
                 var content = message.Content as object;
+                if (content is MessageAlbum albumMessage)
+                {
+                    ProcessFiles(chat, albumMessage.Layout.Messages, message);
+                    continue;
+                }
                 if (content is MessageAnimation animationMessage)
                 {
                     content = animationMessage.Animation;
@@ -1334,98 +1348,163 @@ namespace Unigram.ViewModels
                 {
                     if (animation.Thumbnail != null)
                     {
-                        _filesMap[animation.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[animation.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[animation.AnimationValue.Id].Add(message);
+                    _filesMap[animation.AnimationValue.Id].Add(target);
                 }
                 else if (content is Audio audio)
                 {
                     if (audio.AlbumCoverThumbnail != null)
                     {
-                        _filesMap[audio.AlbumCoverThumbnail.Photo.Id].Add(message);
+                        _filesMap[audio.AlbumCoverThumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[audio.AudioValue.Id].Add(message);
+                    _filesMap[audio.AudioValue.Id].Add(target);
                 }
                 else if (content is Document document)
                 {
                     if (document.Thumbnail != null)
                     {
-                        _filesMap[document.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[document.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[document.DocumentValue.Id].Add(message);
+                    _filesMap[document.DocumentValue.Id].Add(target);
                 }
                 else if (content is Photo photo)
                 {
                     foreach (var size in photo.Sizes)
                     {
-                        _filesMap[size.Photo.Id].Add(message);
+                        _filesMap[size.Photo.Id].Add(target);
                     }
                 }
                 else if (content is Sticker sticker)
                 {
                     if (sticker.Thumbnail != null)
                     {
-                        _filesMap[sticker.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[sticker.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[sticker.StickerValue.Id].Add(message);
+                    _filesMap[sticker.StickerValue.Id].Add(target);
                 }
                 else if (content is Video video)
                 {
                     if (video.Thumbnail != null)
                     {
-                        _filesMap[video.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[video.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[video.VideoValue.Id].Add(message);
+                    _filesMap[video.VideoValue.Id].Add(target);
                 }
                 else if (content is VideoNote videoNote)
                 {
                     if (videoNote.Thumbnail != null)
                     {
-                        _filesMap[videoNote.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[videoNote.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[videoNote.Video.Id].Add(message);
+                    _filesMap[videoNote.Video.Id].Add(target);
                 }
                 else if (content is VoiceNote voiceNote)
                 {
-                    _filesMap[voiceNote.Voice.Id].Add(message);
+                    _filesMap[voiceNote.Voice.Id].Add(target);
                 }
 
-                if (message.IsSaved() || ((chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !message.IsOutgoing && !message.IsChannelPost))
+                if (target.IsSaved() || ((chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !target.IsOutgoing && !target.IsChannelPost))
                 {
-                    if (message.IsSaved())
+                    if (target.IsSaved())
                     {
-                        if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                        if (target.ForwardInfo is MessageForwardedFromUser fromUser)
                         {
-                            var user = message.ProtoService.GetUser(fromUser.SenderUserId);
+                            var user = target.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null && user.ProfilePhoto != null)
                             {
-                                _photosMap[user.ProfilePhoto.Small.Id].Add(message);
+                                _photosMap[user.ProfilePhoto.Small.Id].Add(target);
                             }
                         }
-                        else if (message.ForwardInfo is MessageForwardedPost post)
+                        else if (target.ForwardInfo is MessageForwardedPost post)
                         {
                             var fromChat = message.ProtoService.GetChat(post.ForwardedFromChatId);
                             if (fromChat != null && fromChat.Photo != null)
                             {
-                                _photosMap[fromChat.Photo.Small.Id].Add(message);
+                                _photosMap[fromChat.Photo.Small.Id].Add(target);
                             }
                         }
                     }
                     else
                     {
-                        var user = message.GetSenderUser();
+                        var user = target.GetSenderUser();
                         if (user != null && user.ProfilePhoto != null)
                         {
-                            _photosMap[user.ProfilePhoto.Small.Id].Add(message);
+                            _photosMap[user.ProfilePhoto.Small.Id].Add(target);
                         }
                     }
                 }
+            }
+        }
+
+        private void ProcessAlbums(Chat chat, IList<MessageViewModel> slice)
+        {
+            var groups = new Dictionary<long, Tuple<MessageViewModel, GroupedMessages>>();
+            var newGroups = new Dictionary<long, long>();
+
+            for (int i = 0; i < slice.Count; i++)
+            {
+                var message = slice[i];
+                if (message.MediaAlbumId != 0)
+                {
+                    var groupedId = message.MediaAlbumId;
+
+                    _groupedMessages.TryGetValue(groupedId, out MessageViewModel group);
+
+                    if (group == null)
+                    {
+                        var media = new MessageAlbum();
+
+                        var groupBase = new Message();
+                        groupBase.Content = media;
+                        groupBase.Date = message.Date;
+
+                        group = _messageFactory.Create(this, groupBase);
+
+                        slice[i] = group;
+                        newGroups[groupedId] = groupedId;
+                        _groupedMessages[groupedId] = group;
+                    }
+                    else
+                    {
+
+                        slice.RemoveAt(i);
+                        i--;
+                    }
+
+                    if (group.Content is MessageAlbum album)
+                    {
+                        groups[groupedId] = Tuple.Create(group, album.Layout);
+
+                        album.Layout.GroupedId = groupedId;
+                        album.Layout.Messages.Add(message);
+
+                        var first = album.Layout.Messages.FirstOrDefault();
+                        if (first != null)
+                        {
+                            group.UpdateWith(first);
+                        }
+                    }
+                }
+            }
+
+            foreach (var group in groups.Values)
+            {
+                group.Item2.Calculate();
+
+                if (newGroups.ContainsKey(group.Item1.MediaAlbumId))
+                {
+                    continue;
+                }
+
+                Handle(new UpdateMessageContent(chat.Id, group.Item1.Id, group.Item1.Content));
+                Handle(new UpdateMessageEdited(chat.Id, group.Item1.Id, group.Item1.EditDate, group.Item1.ReplyMarkup));
             }
         }
 

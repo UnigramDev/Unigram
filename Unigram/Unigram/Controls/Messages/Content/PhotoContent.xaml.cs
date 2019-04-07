@@ -22,6 +22,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class PhotoContent : AspectView, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public PhotoContent(MessageViewModel message)
         {

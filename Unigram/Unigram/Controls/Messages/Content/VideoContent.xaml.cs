@@ -19,13 +19,12 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class VideoContent : AspectView, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public VideoContent(MessageViewModel message)
         {
