@@ -359,9 +359,19 @@ namespace Unigram.ViewModels
                                     if (album.Layout.Messages[k].Id == update.MessageIds[j])
                                     {
                                         album.Layout.Messages.RemoveAt(k);
-                                        album.Layout.Calculate();
 
-                                        Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
+                                        if (album.Layout.Messages.Count > 0)
+                                        {
+                                            message.UpdateWith(album.Layout.Messages[0]);
+                                            album.Layout.Calculate();
+
+                                            Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
+                                        }
+                                        else
+                                        {
+                                            Items.RemoveAt(i);
+                                            i--;
+                                        }
 
                                         found = true;
                                         break;
@@ -591,7 +601,7 @@ namespace Unigram.ViewModels
                                 update(child);
                                 found = true;
 
-                                message.UpdateWith(child);
+                                message.UpdateWith(album.Layout.Messages[0]);
                                 album.Layout.Calculate();
 
                                 var container = field.ContainerFromItem(message) as ListViewItem;
@@ -670,7 +680,7 @@ namespace Unigram.ViewModels
                                 update(child);
                                 found = true;
 
-                                message.UpdateWith(child);
+                                message.UpdateWith(album.Layout.Messages[0]);
                                 album.Layout.Calculate();
 
                                 var container = field.ContainerFromItem(message) as ListViewItem;
