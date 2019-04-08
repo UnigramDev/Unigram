@@ -223,7 +223,26 @@ namespace Unigram.ViewModels
 
             if (_message.Content is MessageAlbum album)
             {
-                album.Caption = message.Content?.GetCaption();
+                FormattedText caption = null;
+
+                foreach (var child in album.Layout.Messages)
+                {
+                    var childCaption = child.Content?.GetCaption();
+                    if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))
+                    {
+                        if (caption == null || string.IsNullOrEmpty(caption.Text))
+                        {
+                            caption = childCaption;
+                        }
+                        else
+                        {
+                            caption = null;
+                            break;
+                        }
+                    }
+                }
+
+                album.Caption = caption ?? new FormattedText();
             }
         }
     }

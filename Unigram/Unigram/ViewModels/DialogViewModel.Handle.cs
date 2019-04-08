@@ -580,50 +580,44 @@ namespace Unigram.ViewModels
                 for (int i = 0; i < Items.Count; i++)
                 {
                     var message = Items[i];
-                    if (message.MediaAlbumId != 0 && _groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+                    if (message.Content is MessageAlbum album)
                     {
-                        if (group.Content is MessageAlbum album)
+                        var found = false;
+
+                        foreach (var child in album.Layout.Messages)
                         {
-                            var found = false;
-
-                            foreach (var child in album.Layout.Messages)
+                            if (child.Id == messageId)
                             {
-                                if (child.Id == messageId)
+                                update(child);
+                                found = true;
+
+                                message.UpdateWith(child);
+                                album.Layout.Calculate();
+
+                                var container = field.ContainerFromItem(message) as ListViewItem;
+                                if (container == null)
                                 {
-                                    update(child);
-                                    found = true;
-
-                                    if (child == album.Layout.Messages[0])
-                                    {
-                                        group.UpdateWith(child);
-                                        album.Layout.Calculate();
-                                    }
-
-                                    var container = field.ContainerFromItem(message) as ListViewItem;
-                                    if (container == null)
-                                    {
-                                        break;
-                                    }
-
-                                    var content = container.ContentTemplateRoot as FrameworkElement;
-                                    if (content is Grid grid)
-                                    {
-                                        content = grid.FindName("Bubble") as FrameworkElement;
-                                    }
-
-                                    if (content is MessageBubble bubble)
-                                    {
-                                        action(bubble, message);
-                                    }
-
                                     break;
                                 }
-                            }
 
-                            if (found)
-                            {
-                                return;
+                                var content = container.ContentTemplateRoot as FrameworkElement;
+                                if (content is Grid grid)
+                                {
+                                    content = grid.FindName("Bubble") as FrameworkElement;
+                                }
+
+                                if (content is MessageBubble bubble)
+                                {
+                                    action(bubble, message);
+                                }
+
+                                break;
                             }
+                        }
+
+                        if (found)
+                        {
+                            return;
                         }
                     }
 
@@ -665,50 +659,44 @@ namespace Unigram.ViewModels
                 for (int i = 0; i < Items.Count; i++)
                 {
                     var message = Items[i];
-                    if (message.MediaAlbumId != 0 && _groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+                    if (message.Content is MessageAlbum album)
                     {
-                        if (group.Content is MessageAlbum album)
+                        var found = false;
+
+                        foreach (var child in album.Layout.Messages)
                         {
-                            var found = false;
-
-                            foreach (var child in album.Layout.Messages)
+                            if (child.Id == messageId)
                             {
-                                if (child.Id == messageId)
+                                update(child);
+                                found = true;
+
+                                message.UpdateWith(child);
+                                album.Layout.Calculate();
+
+                                var container = field.ContainerFromItem(message) as ListViewItem;
+                                if (container == null)
                                 {
-                                    update(child);
-                                    found = true;
-
-                                    if (child == album.Layout.Messages[0])
-                                    {
-                                        group.UpdateWith(child);
-                                        album.Layout.Calculate();
-                                    }
-
-                                    var container = field.ContainerFromItem(message) as ListViewItem;
-                                    if (container == null)
-                                    {
-                                        break;
-                                    }
-
-                                    var content = container.ContentTemplateRoot as FrameworkElement;
-                                    if (content is Grid grid)
-                                    {
-                                        content = grid.FindName("Bubble") as FrameworkElement;
-                                    }
-
-                                    if (content is MessageBubble bubble)
-                                    {
-                                        action(bubble, message, false);
-                                    }
-
                                     break;
                                 }
-                            }
 
-                            if (found)
-                            {
-                                continue;
+                                var content = container.ContentTemplateRoot as FrameworkElement;
+                                if (content is Grid grid)
+                                {
+                                    content = grid.FindName("Bubble") as FrameworkElement;
+                                }
+
+                                if (content is MessageBubble bubble)
+                                {
+                                    action(bubble, message, false);
+                                }
+
+                                break;
                             }
+                        }
+
+                        if (found)
+                        {
+                            continue;
                         }
                     }
 
