@@ -221,7 +221,14 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageShareCommand { get; }
         private async void MessageShareExecute(MessageViewModel message)
         {
-            await ShareView.GetForCurrentView().ShowAsync(message.Get());
+            if (message.Content is MessageAlbum album)
+            {
+                await ShareView.GetForCurrentView().ShowAsync(album.Layout.Messages.Select(x => x.Get()).ToList());
+            }
+            else
+            {
+                await ShareView.GetForCurrentView().ShowAsync(message.Get());
+            }
         }
 
         #endregion
