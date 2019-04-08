@@ -59,7 +59,7 @@ namespace Unigram.Converters
         public const string Pin = "\uE840";
         public const string Unpin = "\uE77A";
 
-        public const string MarkAsRead = "\uE91B";
+        public const string MarkAsRead = "\uE91D";
         public const string MarkAsUnread = "\uE91C";
 
         public const string CopyLink = "\uE71B";
