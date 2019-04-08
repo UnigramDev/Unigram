@@ -503,7 +503,7 @@
                                         Style="{StaticResource SearchTextBoxStyle}"
                                         PlaceholderText="{CustomResource Search}"
                                         PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                        Clean="Search_LostFocus"
+                                        Delete="Search_LostFocus"
                                         GotFocus="Search_GotFocus"
                                         LostFocus="Search_LostFocus"
                                         TextChanged="Search_TextChanged"

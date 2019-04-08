@@ -1061,7 +1061,7 @@ namespace Unigram.Views
 
         #region Context menu
 
-        private void Dialog_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
 
@@ -1079,6 +1079,18 @@ namespace Unigram.Views
             args.ShowAt(flyout, element);
         }
 
+        private void TopChat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var chat = element.Tag as Chat;
+
+            flyout.CreateFlyoutItem(_ => true, ViewModel.Chats.TopChatDeleteCommand, chat, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+
+            args.ShowAt(flyout, element);
+        }
+
         private void Call_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
@@ -1086,7 +1098,7 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var call = element.Tag as TLCallGroup;
 
-            flyout.CreateFlyoutItem(_ => true, ViewModel.Calls.CallDeleteCommand, call, Strings.Resources.Delete);
+            flyout.CreateFlyoutItem(_ => true, ViewModel.Calls.CallDeleteCommand, call, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }
@@ -1794,6 +1806,9 @@ namespace Unigram.Views
 
             var content = args.ItemContainer.ContentTemplateRoot as StackPanel;
             var chat = args.Item as Chat;
+
+            args.ItemContainer.Tag = chat;
+            content.Tag = chat;
 
             var grid = content.Children[0] as Grid;
 

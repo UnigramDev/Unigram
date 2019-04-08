@@ -292,16 +292,15 @@
                         </StackPanel>
                     </Grid>
 
-                    <TextBox x:Name="SearchField"
-                             Style="{StaticResource QueryTextBoxStyle}"
-                             PlaceholderText="{CustomResource Search}"
-                             PreventKeyboardDisplayOnProgrammaticFocus="True"
-                             LostFocus="Search_LostFocus"
-                             TextChanged="Search_TextChanged"
-                             KeyDown="Search_KeyDown"
-                             Visibility="Collapsed"
-                             Canvas.ZIndex="1"/>
-                             <!--Clean="Search_LostFocus"-->
+                    <controls:SearchTextBox
+                         x:Name="SearchField"
+                         Style="{StaticResource QueryTextBoxStyle}"
+                         PlaceholderText="{CustomResource Search}"
+                         PreventKeyboardDisplayOnProgrammaticFocus="True"
+                         Delete="Search_LostFocus"
+                         TextChanged="Search_TextChanged"
+                         KeyDown="Search_KeyDown"
+                         Visibility="Collapsed"/>
                 </Grid>
             </controls:ContentPageHeader>
 
@@ -353,7 +352,7 @@
                                               Style="{StaticResource HorizontalListViewStyle}">
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Width="72" Margin="0,12">
+                                                <StackPanel Width="72" Padding="0,12" Background="Transparent" ContextRequested="TopChat_ContextRequested">
                                                     <Grid Width="48" Height="48" Margin="12,0">
                                                         <controls:ProfilePicture IsHitTestVisible="False"/>
                                                         <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
@@ -519,7 +518,7 @@
                                 </ListView.ItemContainerStyleSelector>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <cells:ChatCell ContextRequested="Dialog_ContextRequested"/>
+                                        <cells:ChatCell ContextRequested="Chat_ContextRequested"/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.Header>

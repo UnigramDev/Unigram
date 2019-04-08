@@ -43,6 +43,8 @@ namespace Unigram.ViewModels
 
             ClearRecentChatsCommand = new RelayCommand(ClearRecentChatsExecute);
 
+            TopChatDeleteCommand = new RelayCommand<Chat>(TopChatDeleteExecute);
+
 #if MOCKUP
             Items.AddRange(protoService.GetChats(20));
 #endif
@@ -215,6 +217,24 @@ namespace Unigram.ViewModels
             {
                 items.Clear();
             }
+        }
+
+        public RelayCommand<Chat> TopChatDeleteCommand { get; }
+        private async void TopChatDeleteExecute(Chat chat)
+        {
+            if (chat == null)
+            {
+                return;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.ChatHintsDelete, CacheService.GetTitle(chat)), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            ProtoService.Send(new RemoveTopChat(new TopChatCategoryUsers(), chat.Id));
+            TopChats.Remove(chat);
         }
 
         #endregion
