@@ -17,6 +17,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -69,11 +70,19 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat, message, true, false);
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
-
-            UpdateAutomation(_protoService, chat, message);
         }
 
-        private void UpdateAutomation(IProtoService protoService, Chat chat, Message message)
+        public string GetAutomationName()
+        {
+            if (_protoService == null || _chat == null)
+            {
+                return null;
+            }
+
+            return UpdateAutomation(_protoService, _chat, _chat.LastMessage);
+        }
+
+        private string UpdateAutomation(IProtoService protoService, Chat chat, Message message)
         {
             var builder = new StringBuilder();
             if (chat.Type is ChatTypeSecret)
@@ -128,8 +137,8 @@ namespace Unigram.Controls.Cells
 
             if (message == null)
             {
-                AutomationProperties.SetName(this, builder.ToString());
-                return;
+                //AutomationProperties.SetName(this, builder.ToString());
+                return builder.ToString();
             }
 
             var date = Locale.FormatDateAudio(message.Date);
@@ -159,7 +168,8 @@ namespace Unigram.Controls.Cells
                 builder.Append(Automation.GetSummary(message));
             }
 
-            AutomationProperties.SetName(this, builder.ToString());
+            //AutomationProperties.SetName(this, builder.ToString());
+            return builder.ToString();
         }
 
         #region Updates
@@ -171,8 +181,6 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat);
             TimeLabel.Text = UpdateTimeLabel(chat);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
-
-            UpdateAutomation(_protoService, chat, chat.LastMessage);
         }
 
         public void UpdateChatReadInbox(Chat chat)
@@ -760,6 +768,34 @@ namespace Unigram.Controls.Cells
             }
 
             base.OnDrop(e);
+        }
+    }
+
+    public class ChatCellAutomationPeer : FrameworkElementAutomationPeer
+    {
+        private ChatCell _owner;
+        private string _name;
+
+        public ChatCellAutomationPeer(ChatCell owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        public void SetName(string name)
+        {
+            SetName(name, _name);
+        }
+
+        private void SetName(string newValue, string oldValue)
+        {
+            _name = newValue;
+            RaisePropertyChangedEvent(AutomationElementIdentifiers.NameProperty, oldValue ?? string.Empty, newValue);
+        }
+
+        protected override string GetNameCore()
+        {
+            return "ciao";
         }
     }
 }

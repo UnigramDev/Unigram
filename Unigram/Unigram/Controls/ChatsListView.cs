@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Controls.Cells;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
@@ -89,6 +90,11 @@ namespace Unigram.Controls
 
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ChatsListViewItemAutomationPeer(this);
+        }
+
         public ChatsListViewItem(ChatsListView list)
         {
             _list = list;
@@ -102,6 +108,27 @@ namespace Unigram.Controls
             {
                 content.UpdateViewState(_list.ItemFromContainer(this) as Chat, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact);
             }
+        }
+    }
+
+    public class ChatsListViewItemAutomationPeer : ListViewItemAutomationPeer
+    {
+        private ChatsListViewItem _owner;
+
+        public ChatsListViewItemAutomationPeer(ChatsListViewItem owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            if (_owner.ContentTemplateRoot is ChatCell cell)
+            {
+                return cell.GetAutomationName() ?? base.GetNameCore();
+            }
+
+            return base.GetNameCore();
         }
     }
 }

@@ -54,7 +54,17 @@ namespace Unigram.Controls.Messages
             Markup.Update(message, message.ReplyMarkup);
         }
 
-        public void UpdateAutomation(MessageViewModel message)
+        public string GetAutomationName()
+        {
+            if (_message == null)
+            {
+                return null;
+            }
+
+            return UpdateAutomation(_message);
+        }
+
+        public string UpdateAutomation(MessageViewModel message)
         {
             var chat = message.GetChat();
 
@@ -104,12 +114,7 @@ namespace Unigram.Controls.Messages
 
             builder.Append(". ");
 
-            if (Parent is Grid parent)
-            {
-                AutomationProperties.SetName(parent, builder.ToString());
-            }
-
-            AutomationProperties.SetName(this, builder.ToString());
+            return builder.ToString();
         }
 
         public void UpdateAttach(MessageViewModel message, bool wide = false)
@@ -667,8 +672,6 @@ namespace Unigram.Controls.Messages
                     Media.Content = null;
                 }
             }
-
-            UpdateAutomation(message);
         }
 
         public void UpdateFile(MessageViewModel message, File file)
@@ -771,6 +774,12 @@ namespace Unigram.Controls.Messages
 
         private bool ReplaceEntities(MessageViewModel message, Span span, FormattedText text, out bool adjust)
         {
+            if (text == null)
+            {
+                adjust = false;
+                return false;
+            }
+
             return ReplaceEntities(message, span, text.Text, text.Entities, out adjust);
         }
 

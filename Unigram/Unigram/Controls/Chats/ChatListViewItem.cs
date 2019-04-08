@@ -4,12 +4,14 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -40,6 +42,11 @@ namespace Unigram.Controls.Chats
 
             ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateRailsX | ManipulationModes.System;
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ChatListViewAutomationPeer(this);
         }
 
         protected override void OnApplyTemplate()
@@ -133,6 +140,13 @@ namespace Unigram.Controls.Chats
         {
             e.Handled = true;
 
+            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch)
+            {
+                e.Complete();
+                base.OnManipulationDelta(e);
+                return;
+            }
+
             if (_visual == null)
             {
                 var presenter = VisualTreeHelper.GetChild(this, 0) as ListViewItemPresenter;
@@ -206,6 +220,12 @@ namespace Unigram.Controls.Chats
         protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e)
         {
             e.Handled = true;
+
+            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch)
+            {
+                base.OnManipulationCompleted(e);
+                return;
+            }
 
             CompositionAnimation CreateAnimation(Compositor compositor, Vector3 initial, Vector3 final)
             {
@@ -311,6 +331,35 @@ namespace Unigram.Controls.Chats
             //}
 
             return finalSize;
+        }
+    }
+
+    public class ChatListViewAutomationPeer : ListViewItemAutomationPeer
+    {
+        private ChatListViewItem _owner;
+
+        public ChatListViewAutomationPeer(ChatListViewItem owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            if (_owner.ContentTemplateRoot is Grid root)
+            {
+                var bubble = root.FindName("Bubble") as MessageBubble;
+                if (bubble != null)
+                {
+                    return bubble.GetAutomationName() ?? base.GetNameCore();
+                }
+            }
+            else if (_owner.ContentTemplateRoot is MessageBubble child)
+            {
+                return child.GetAutomationName() ?? base.GetNameCore();
+            }
+
+            return base.GetNameCore();
         }
     }
 }
