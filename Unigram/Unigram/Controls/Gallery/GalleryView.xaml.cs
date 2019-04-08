@@ -286,7 +286,7 @@ namespace Unigram.Controls.Gallery
 
                 Load(parameter);
 
-                PrepareNext(0);
+                PrepareNext(0, true);
 
                 RoutedEventHandler handler = null;
                 handler = new RoutedEventHandler(async (s, args) =>
@@ -304,7 +304,7 @@ namespace Unigram.Controls.Gallery
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            PrepareNext(0);
+            PrepareNext(0, true);
         }
 
         protected override void MaskTitleAndStatusBar()
@@ -325,11 +325,15 @@ namespace Unigram.Controls.Gallery
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
-            var container = GetContainer(0);
-            var root = container.Presenter;
-
-            if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
+            //var container = GetContainer(0);
+            //var root = container.Presenter;
+            if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
             {
+                ScrollingHost.Opacity = 0;
+                Preview.Visibility = Visibility.Visible;
+
+                var root = Preview.Presenter;
+
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                 if (animation != null)
                 {
@@ -356,7 +360,7 @@ namespace Unigram.Controls.Gallery
                     Hide();
                 }
             }
-            else if (root != null)
+            else
             {
                 var batch = _layout.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
@@ -365,6 +369,9 @@ namespace Unigram.Controls.Gallery
                 batch.End();
                 batch.Completed += (s, args) =>
                 {
+                    ScrollingHost.Opacity = 0;
+                    Preview.Visibility = Visibility.Visible;
+
                     Hide();
                 };
             }
@@ -382,7 +389,7 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
+        private void Preview_ImageOpened(object sender, RoutedEventArgs e)
         {
             var image = sender as GalleryContentView;
             if (image.Item != ViewModel.FirstItem)
@@ -395,6 +402,8 @@ namespace Unigram.Controls.Gallery
             {
                 return;
             }
+
+            var container = GetContainer(0);
 
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
             if (animation != null)
@@ -411,10 +420,15 @@ namespace Unigram.Controls.Gallery
                     animation.Completed += (s, args) =>
                     {
                         Transport.Show();
+                        ScrollingHost.Opacity = 1;
+                        Preview.Visibility = Visibility.Collapsed;
 
                         if (item.IsVideo)
                         {
-                            Play(image.Presenter, item, item.GetFile());
+                            if (container != null)
+                            {
+                                Play(container.Presenter, item, item.GetFile());
+                            }
                         }
                     };
 
@@ -423,10 +437,12 @@ namespace Unigram.Controls.Gallery
             }
 
             Transport.Show();
+            ScrollingHost.Opacity = 1;
+            Preview.Visibility = Visibility.Collapsed;
 
-            if (item.IsVideo)
+            if (container != null)
             {
-                Play(image.Presenter, item, item.GetFile());
+                Play(container.Presenter, item, item.GetFile());
             }
         }
 
@@ -779,7 +795,7 @@ namespace Unigram.Controls.Gallery
             ScrollingHost.ChangeView(ActualWidth * index, null, null, disableAnimation);
         }
 
-        private void PrepareNext(int direction)
+        private void PrepareNext(int direction, bool initialize = false)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -822,6 +838,11 @@ namespace Unigram.Controls.Gallery
             var set = TrySet(target, viewModel.Items[index]);
             TrySet(previous, index > 0 ? viewModel.Items[index - 1] : null);
             TrySet(next, index < viewModel.Items.Count - 1 ? viewModel.Items[index + 1] : null);
+
+            if (initialize)
+            {
+                TrySet(Preview, viewModel.Items[index]);
+            }
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
