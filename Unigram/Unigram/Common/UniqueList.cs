@@ -18,6 +18,8 @@ namespace Unigram.Common
             _inner = new SortedList<TKey, TValue>();
         }
 
+        public IList<TKey> Keys => _inner.Keys;
+
         public TValue this[int index]
         {
             get

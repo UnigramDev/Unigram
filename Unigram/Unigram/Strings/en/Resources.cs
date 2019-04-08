@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/24/2019 18:20:34
+// 	Generated: 04/06/2019 16:00:05
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -14111,6 +14111,18 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Link copied to clipboard.
+        ///This link will only work for members of this chat."
+        /// </summary>
+        public static string LinkCopiedPrivate
+        {
+            get
+            {
+                return resourceLoader.GetString("LinkCopiedPrivate");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, this name is already taken."
         /// </summary>
         public static string LinkInUse
@@ -14195,6 +14207,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LinkInvalidStartNumberMega");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unfortunately, you can't access this message. You are not a member of the chat where it was posted."
+        /// </summary>
+        public static string LinkNotFound
+        {
+            get
+            {
+                return resourceLoader.GetString("LinkNotFound");
             }
         }
         

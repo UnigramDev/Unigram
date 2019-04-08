@@ -3949,6 +3949,10 @@ You can change your language back at any time in Settings.</value>
   <data name="LinkCopied" xml:space="preserve">
     <value>Link copied to clipboard</value>
   </data>
+  <data name="LinkCopiedPrivate" xml:space="preserve">
+    <value>Link copied to clipboard.
+This link will only work for members of this chat.</value>
+  </data>
   <data name="LinkInUse" xml:space="preserve">
     <value>Sorry, this name is already taken.</value>
   </data>
@@ -3972,6 +3976,9 @@ You can change your language back at any time in Settings.</value>
   </data>
   <data name="LinkInvalidStartNumberMega" xml:space="preserve">
     <value>Group names can't start with a number.</value>
+  </data>
+  <data name="LinkNotFound" xml:space="preserve">
+    <value>Unfortunately, you can't access this message. You are not a member of the chat where it was posted.</value>
   </data>
   <data name="LinkPreview" xml:space="preserve">
     <value>Link preview</value>
