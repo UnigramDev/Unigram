@@ -115,8 +115,16 @@ namespace Unigram.Views
                     ViewModel.SetLastViewedMention(message.Id);
                 }
 
-                messages.Add(message.Id);
-                animations.Add(message);
+                if (message.Content is MessageAlbum album)
+                {
+                    messages.AddRange(album.Layout.Messages.Keys);
+                    animations.Add(message);
+                }
+                else
+                {
+                    messages.Add(message.Id);
+                    animations.Add(message);
+                }
             }
 
             if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
