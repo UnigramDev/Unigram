@@ -60,7 +60,7 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <TextBlock x:Name="GlyphElement"
-                                       Foreground="{ThemeResource TextControlButtonForeground}"
+                                       Foreground="{ThemeResource TextControlForeground}"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        FontStyle="Normal"
@@ -121,7 +121,7 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <TextBlock x:Name="GlyphElement"
-                                       Foreground="{ThemeResource TextControlButtonForeground}"
+                                       Foreground="{ThemeResource TextControlForeground}"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        FontStyle="Normal"
@@ -335,6 +335,8 @@
                         <Setter Target="TopPanel.(Grid.Row)" Value="1"/>
                         <Setter Target="SearchPanel.Margin" Value="0,0,0,8"/>
                         <Setter Target="ClearMiniButton.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchPrevious.Visibility" Value="Visible"/>
+                        <Setter Target="SearchNext.Visibility" Value="Visible"/>
                         <Setter Target="RightPanel.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -370,6 +372,8 @@
                     Text="{x:Bind ViewModel.Query, Mode=OneWay}"
                     InputScope="Search"
                     SelectionChanged="OnSelectionChanged"
+                    GotFocus="Field_GotFocus"
+                    LostFocus="Field_LostFocus"
                     Style="{StaticResource Test}"
                     Grid.ColumnSpan="3"/>
 
@@ -403,13 +407,15 @@
                 Command="{x:Bind ViewModel.PreviousCommand}"
                 Glyph="&#xE0A0;"
                 AllowFocusOnInteraction="False"
-                FontSize="{StaticResource GlyphButtonFontSize}"/>
+                FontSize="{StaticResource GlyphButtonFontSize}"
+                Visibility="Collapsed"/>
             <controls:GlyphButton
                 x:Name="SearchNext"
                 Command="{x:Bind ViewModel.NextCommand}"
                 Glyph="&#xE0A1;"
                 AllowFocusOnInteraction="False"
                 FontSize="{StaticResource GlyphButtonFontSize}"
+                Visibility="Collapsed"
                 Grid.Column="1"/>
 
             <Grid x:Name="RightPanel" Visibility="Collapsed" Grid.Column="3">

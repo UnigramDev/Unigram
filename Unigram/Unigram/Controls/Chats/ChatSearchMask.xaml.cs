@@ -209,5 +209,15 @@ namespace Unigram.Controls.Chats
 
             return true;
         }
+
+        private void Field_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ClearMiniButton.RequestedTheme = QueryButton.RequestedTheme = ElementTheme.Light;
+        }
+
+        private void Field_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ClearMiniButton.RequestedTheme = QueryButton.RequestedTheme = ElementTheme.Default;
+        }
     }
 }
