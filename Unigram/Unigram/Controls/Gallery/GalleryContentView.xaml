@@ -11,7 +11,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <!--<ScrollViewer x:Name="ScrollingHost"
+    <ScrollViewer x:Name="ScrollingHost"
                   ZoomMode="Enabled"
                   MinZoomFactor="1"
                   MaxZoomFactor="4"
@@ -22,12 +22,12 @@
                   HorizontalScrollBarVisibility="Hidden"
                   HorizontalScrollMode="Auto"
                   ViewChanged="ScrollingHost_ViewChanged">
-        <Border HorizontalAlignment="Center" VerticalAlignment="Center">-->
-    <controls:AspectView x:Name="Panel" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Image x:Name="Texture" Stretch="UniformToFill"/>
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center">
+            <controls:AspectView x:Name="Panel" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Image x:Name="Texture" Stretch="UniformToFill"/>
 
-        <controls:FileButton x:Name="Button" Click="Button_Click" ManipulationMode="System" Style="{StaticResource ImmersiveFileButtonStyle}"/>
-    </controls:AspectView>
-        <!--</Border>
-    </ScrollViewer>-->
+                <controls:FileButton x:Name="Button" Click="Button_Click" ManipulationMode="System" Style="{StaticResource ImmersiveFileButtonStyle}"/>
+            </controls:AspectView>
+        </Border>
+    </ScrollViewer>
 </Grid>

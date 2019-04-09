@@ -330,7 +330,7 @@ namespace Unigram.Controls.Gallery
             if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
             {
                 ScrollingHost.Opacity = 0;
-                Preview.Visibility = Visibility.Visible;
+                Preview.Opacity = 1;
 
                 var root = Preview.Presenter;
 
@@ -370,7 +370,7 @@ namespace Unigram.Controls.Gallery
                 batch.Completed += (s, args) =>
                 {
                     ScrollingHost.Opacity = 0;
-                    Preview.Visibility = Visibility.Visible;
+                    Preview.Opacity = 1;
 
                     Hide();
                 };
@@ -391,8 +391,14 @@ namespace Unigram.Controls.Gallery
 
         private void Preview_ImageOpened(object sender, RoutedEventArgs e)
         {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
             var image = sender as GalleryContentView;
-            if (image.Item != ViewModel.FirstItem)
+            if (image.Item != viewModel.FirstItem)
             {
                 return;
             }
@@ -402,6 +408,9 @@ namespace Unigram.Controls.Gallery
             {
                 return;
             }
+
+            ScrollingHost.Opacity = 0;
+            Preview.Opacity = 1;
 
             var container = GetContainer(0);
 
@@ -421,7 +430,7 @@ namespace Unigram.Controls.Gallery
                     {
                         Transport.Show();
                         ScrollingHost.Opacity = 1;
-                        Preview.Visibility = Visibility.Collapsed;
+                        Preview.Opacity = 0;
 
                         if (item.IsVideo)
                         {
@@ -438,7 +447,7 @@ namespace Unigram.Controls.Gallery
 
             Transport.Show();
             ScrollingHost.Opacity = 1;
-            Preview.Visibility = Visibility.Collapsed;
+            Preview.Opacity = 0;
 
             if (container != null)
             {

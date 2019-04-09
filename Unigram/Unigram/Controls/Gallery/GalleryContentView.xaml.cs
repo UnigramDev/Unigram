@@ -44,9 +44,7 @@ namespace Unigram.Controls.Gallery
             Panel.Background = null;
             Texture.Source = null;
 
-#if GALLERY_EXPERIMENTAL
             ScrollingHost.ChangeView(0, 0, 1, true);
-#endif
 
             if (item == null)
             {
@@ -172,12 +170,9 @@ namespace Unigram.Controls.Gallery
 
         public void Reset()
         {
-#if GALLERY_EXPERIMENTAL
             ScrollingHost.ChangeView(0, 0, 1, true);
-#endif
         }
 
-#if GALLERY_EXPERIMENTAL
         protected override Size MeasureOverride(Size availableSize)
         {
             Panel.MaxWidth = availableSize.Width;
@@ -190,6 +185,5 @@ namespace Unigram.Controls.Gallery
         {
             Panel.ManipulationMode = ScrollingHost.ZoomFactor == 1 ? ManipulationModes.TranslateY | ManipulationModes.TranslateRailsY | ManipulationModes.System : ManipulationModes.System;
         }
-#endif
     }
 }
