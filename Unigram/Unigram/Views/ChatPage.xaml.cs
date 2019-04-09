@@ -666,6 +666,14 @@ namespace Unigram.Views
                 btnVoiceMessage.CancelRecording();
                 args.Handled = true;
             }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Escape && !ctrl && !alt && !shift)
+            {
+                if (ViewModel.ComposerHeader != null && ViewModel.ComposerHeader.ReplyToMessage != null)
+                {
+                    ViewModel.ClearReplyCommand.Execute(null);
+                    args.Handled = true;
+                }
+            }
         }
 
         public void OnBackRequested(HandledEventArgs args)
@@ -2216,16 +2224,9 @@ namespace Unigram.Views
             }
         }
 
-        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var height = ListAutocomplete.ItemsPanelRoot.ActualHeight;
-            var padding = ListAutocomplete.ActualHeight - Math.Min(154, ListAutocomplete.Items.Count * 44);
-
-            //ListAutocomplete.Padding = new Thickness(0, padding, 0, 0);
-            AutocompleteHeader.Margin = new Thickness(0, padding, 0, -height);
-            AutocompleteHeader.Height = height;
-
-            Debug.WriteLine("Autocomplete size changed");
+            ListAutocomplete.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
         }
 
         private void MaskTitleAndStatusBar()
@@ -2755,7 +2756,7 @@ namespace Unigram.Views
             {
                 ShowAction(user.Type is UserTypeBot ? Strings.Resources.BotUnblock : Strings.Resources.Unblock, true);
             }
-            else if (accessToken)
+            else if (accessToken || chat.LastMessage == null)
             {
                 ShowAction(Strings.Resources.BotStart, true);
             }
@@ -3135,10 +3136,5 @@ namespace Unigram.Views
         }
 
         #endregion
-
-        private void Messages_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
-        {
-
-        }
     }
 }

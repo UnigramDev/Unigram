@@ -60,7 +60,7 @@ namespace Unigram.Common
         {
             text = text.Trim();
 
-            if (text.Contains(" "))
+            if (text.Length < 1 || text.Contains(" "))
             {
                 return false;
             }

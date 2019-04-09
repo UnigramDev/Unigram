@@ -229,7 +229,7 @@
                 </messages:MessageService>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <!--<controls:ProfilePicture Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>-->
+                    <controls:ProfilePicture x:Name="Photo" Width="96" Height="96"/>
                 </Border>
             </StackPanel>
         </DataTemplate>
@@ -471,10 +471,34 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" ToolTipService.ToolTip="{CustomResource Delete}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
-                    <controls:GlyphButton Glyph="&#xE730;" Command="{x:Bind ViewModel.MessagesReportCommand}" ToolTipService.ToolTip="{CustomResource ReportChat}" Style="{StaticResource HeaderGlyphButtonStyle}" x:Name="Report" Grid.Column="1"/>
-                    <controls:GlyphButton Glyph="&#xE16F;" Command="{x:Bind ViewModel.MessagesCopyCommand}" ToolTipService.ToolTip="{CustomResource Copy}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="2"/>
-                    <controls:GlyphButton Glyph="&#xE72D;" Command="{x:Bind ViewModel.MessagesForwardCommand}" ToolTipService.ToolTip="{CustomResource Forward}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="3"/>
+                    <controls:GlyphButton
+                        Glyph="&#xE107;"
+                        Command="{x:Bind ViewModel.MessagesDeleteCommand}"
+                        AutomationProperties.Name="{CustomResource Delete}"
+                        ToolTipService.ToolTip="{CustomResource Delete}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                    <controls:GlyphButton
+                        x:Name="Report"
+                        Glyph="&#xE730;"
+                        Command="{x:Bind ViewModel.MessagesReportCommand}"
+                        AutomationProperties.Name="{CustomResource ReportChat}"
+                        ToolTipService.ToolTip="{CustomResource ReportChat}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="1"/>
+                    <controls:GlyphButton
+                        Glyph="&#xE16F;"
+                        Command="{x:Bind ViewModel.MessagesCopyCommand}"
+                        AutomationProperties.Name="{CustomResource Copy}"
+                        ToolTipService.ToolTip="{CustomResource Copy}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="2"/>
+                    <controls:GlyphButton
+                        Glyph="&#xE72D;"
+                        Command="{x:Bind ViewModel.MessagesForwardCommand}"
+                        AutomationProperties.Name="{CustomResource Forward}"
+                        ToolTipService.ToolTip="{CustomResource Forward}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="3"/>
 
                     <ContentControl
                         Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
@@ -494,7 +518,12 @@
                         </ContentControl.Clip>
                     </ContentControl>
 
-                    <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="6"/>
+                    <controls:GlyphButton
+                        Click="Manage_Click"
+                        Glyph="&#xE10A;"
+                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="6"/>
                 </Grid>
             </Grid>
         </controls:ContentPageHeader>
@@ -503,7 +532,67 @@
             <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
         </Border>
 
-        <Grid Grid.Row="2">
+        <Grid SizeChanged="ContentPanel_SizeChanged" Grid.Row="2">
+            <Grid x:Name="Clipper" Canvas.ZIndex="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>
+
+                <Grid x:Name="PinnedMessagePanel"
+                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                      Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+
+                    <messages:MessageReference x:Name="PinnedMessage" Click="Reply_Click" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
+
+                    <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
+
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
+                </Grid>
+                <Grid x:Name="CallbackQueryAnswerPanel"
+                      Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                      Grid.Row="1">
+                    <messages:MessageReference x:Name="CallbackQueryAnswer" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
+
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
+                </Grid>
+
+                <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
+                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                      Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Command="{x:Bind ViewModel.ReportSpamCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                        <TextBlock x:Name="ReportSpam" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </Button>
+
+                    <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
+
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                </Grid>
+
+                <StackPanel x:Name="DateHeaderRelative" x:DeferLoadStrategy="Lazy" Grid.Row="3">
+                    <Border x:Name="DateHeaderPanel" HorizontalAlignment="Center">
+                        <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,4,0,4" Style="{StaticResource ServiceButtonStyle}">
+                            <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </messages:MessageService>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
             <chats:ChatListView x:Name="Messages"
                                 Style="{StaticResource BubbleListViewStyle}"
                                 ItemContainerTransitions="{x:Null}"
@@ -668,66 +757,6 @@
                  <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{StaticResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
                  </Border>-->
 
-            <Grid x:Name="Clipper">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>
-
-                <Grid x:Name="PinnedMessagePanel"
-                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
-                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                      Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="48"/>
-                    </Grid.ColumnDefinitions>
-
-                    <messages:MessageReference x:Name="PinnedMessage" Click="Reply_Click" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
-
-                    <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
-
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
-                </Grid>
-                <Grid x:Name="CallbackQueryAnswerPanel"
-                      Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
-                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                      Grid.Row="1">
-                    <messages:MessageReference x:Name="CallbackQueryAnswer" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
-
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
-                </Grid>
-
-                <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
-                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
-                      Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="48"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Button Command="{x:Bind ViewModel.ReportSpamCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                        <TextBlock x:Name="ReportSpam" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    </Button>
-
-                    <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
-
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                </Grid>
-
-                <StackPanel x:Name="DateHeaderRelative" x:DeferLoadStrategy="Lazy" Grid.Row="3">
-                    <Border x:Name="DateHeaderPanel" HorizontalAlignment="Center">
-                        <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,4,0,4" Style="{StaticResource ServiceButtonStyle}">
-                            <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </messages:MessageService>
-                    </Border>
-                </StackPanel>
-            </Grid>
-
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
                 <StackPanel x:Name="MentionsPanel" Visibility="Collapsed" RightTapped="Mentions_RightTapped">
                     <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
@@ -848,6 +877,7 @@
                     </GridView.ItemContainerTransitions>
                 </controls:ZoomableGridView>
                 <ListView x:Name="ListAutocomplete"
+                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                           ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
                           Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                           ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
@@ -855,18 +885,7 @@
                           AllowFocusOnInteraction="False"
                           IsItemClickEnabled="True"
                           ItemClick="Autocomplete_ItemClick"
-                          SizeChanged="Autocomplete_SizeChanged">
-                    <ListView.Header>
-                        <Border x:Name="AutocompleteHeader"
-                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Top" Height="1"/>
-                        </Border>
-                    </ListView.Header>
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
+                          VerticalAlignment="Bottom">
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection/>
                     </ListView.ItemContainerTransitions>
