@@ -568,6 +568,10 @@ namespace Unigram.Views
             {
                 Application.Current.Exit();
             }
+            else if (args.VirtualKey == Windows.System.VirtualKey.L && ctrl && !alt && !shift)
+            {
+                Lock_Click(null, null);
+            }
             else if (args.VirtualKey >= Windows.System.VirtualKey.F1 && args.VirtualKey <= Windows.System.VirtualKey.F7 && !ctrl && !alt && !shift)
             {
                 switch (args.VirtualKey)
@@ -1463,6 +1467,11 @@ namespace Unigram.Views
 
         private void Lock_Click(object sender, RoutedEventArgs e)
         {
+            if (!ViewModel.Passcode.IsEnabled)
+            {
+                return;
+            }
+
             Lock.IsChecked = !Lock.IsChecked;
 
             if (Lock.IsChecked == true)
