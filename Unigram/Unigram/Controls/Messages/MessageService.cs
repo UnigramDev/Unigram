@@ -74,6 +74,8 @@ namespace Unigram.Controls.Messages
                     return UpdateCustomServiceAction(message, customServiceAction, active);
                 case MessageGameScore gameScore:
                     return UpdateGameScore(message, gameScore, active);
+                case MessagePassportDataSent passportDataSent:
+                    return UpdatePassportDataSent(message, passportDataSent, active);
                 case MessagePaymentSuccessful paymentSuccessful:
                     return UpdatePaymentSuccessful(message, paymentSuccessful, active);
                 case MessagePinMessage pinMessage:
@@ -118,7 +120,7 @@ namespace Unigram.Controls.Messages
                 case MessageHeaderDate headerDate:
                     return UpdateHeaderDate(message, headerDate, active);
                 default:
-                    return (null, null);
+                    return (string.Empty, null);
             }
         }
 
@@ -645,6 +647,78 @@ namespace Unigram.Controls.Messages
             }
 
             return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdatePassportDataSent(MessageViewModel message, MessagePassportDataSent passportDataSent, bool active)
+        {
+            var content = string.Empty;
+
+            StringBuilder str = new StringBuilder();
+            for (int a = 0, size = passportDataSent.Types.Count; a < size; a++)
+            {
+                var type = passportDataSent.Types[a];
+                if (str.Length > 0)
+                {
+                    str.Append(", ");
+                }
+                if (type is PassportElementTypePhoneNumber)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentPhone);
+                }
+                else if (type is PassportElementTypeEmailAddress)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentEmail);
+                }
+                else if (type is PassportElementTypeAddress)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentAddress);
+                }
+                else if (type is PassportElementTypePersonalDetails)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentIdentity);
+                }
+                else if (type is PassportElementTypePassport)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentPassport);
+                }
+                else if (type is PassportElementTypeDriverLicense)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentDriverLicence);
+                }
+                else if (type is PassportElementTypeIdentityCard)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentIdentityCard);
+                }
+                else if (type is PassportElementTypeUtilityBill)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentUtilityBill);
+                }
+                else if (type is PassportElementTypeBankStatement)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentBankStatement);
+                }
+                else if (type is PassportElementTypeRentalAgreement)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentRentalAgreement);
+                }
+                else if (type is PassportElementTypeInternalPassport)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentInternalPassport);
+                }
+                else if (type is PassportElementTypePassportRegistration)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentPassportRegistration);
+                }
+                else if (type is PassportElementTypeTemporaryRegistration)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentTemporaryRegistration);
+                }
+            }
+
+            var chat = message.ProtoService.GetChat(message.ChatId);
+            content = string.Format(Strings.Resources.ActionBotDocuments, chat?.Title ?? string.Empty, str.ToString());
+
+            return (content, null);
         }
 
         private static (string, IList<TextEntity>) UpdatePaymentSuccessful(MessageViewModel message, MessagePaymentSuccessful paymentSuccessful, bool active)
