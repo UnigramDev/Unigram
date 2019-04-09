@@ -390,24 +390,61 @@ namespace Unigram.Controls
             OnGettingFormattedText();
 
             Document.BatchDisplayUpdates();
-
             var entities = new List<TextEntity>();
             var adjust = 0;
 
+            void ProcessSpan(ITextRange range)
+            {
+                range.GetText(TextGetOptions.NoHidden, out string value);
+
+                var sub = Markdown.Parse(ref value);
+                if (sub != null && sub.Count > 0)
+                {
+                    range.SetText(TextSetOptions.None, value);
+
+                    foreach (var entity in sub)
+                    {
+                        entity.Offset = range.StartPosition - adjust + entity.Offset;
+                        entities.Add(entity);
+                    }
+                }
+            }
+
+
+            var i = 0;
+            var start = 0;
             var end = false;
-            for (int i = 0; !end; i++)
+            for (i = 0; !end; i++)
             {
                 var range = Document.GetRange(i, i + 1);
                 if (range.Expand(TextRangeUnit.Bold) > 0)
                 {
+                    if (start > -1 && start < range.StartPosition)
+                    {
+                        ProcessSpan(Document.GetRange(start, range.StartPosition));
+                    }
+
+                    start = -1;
                     entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeBold() });
                 }
                 else if (range.Expand(TextRangeUnit.Italic) > 0)
                 {
+                    if (start > -1 && start < range.StartPosition)
+                    {
+                        ProcessSpan(Document.GetRange(start, range.StartPosition));
+                    }
+
+                    start = -1;
                     entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeItalic() });
                 }
                 else if (range.Expand(TextRangeUnit.Link) > 0)
                 {
+                    if (start > -1 && start < range.StartPosition)
+                    {
+                        ProcessSpan(Document.GetRange(start, range.StartPosition));
+                    }
+
+                    start = -1;
                     range.GetText(TextGetOptions.NoHidden, out string value);
 
                     if (TryGetUserId(range, out int userId))
@@ -423,10 +460,16 @@ namespace Unigram.Controls
                 }
                 else if (range.Expand(TextRangeUnit.CharacterFormat) > 0)
                 {
-                    range.GetText(TextGetOptions.NoHidden, out string value);
-
                     if (range.CharacterFormat.Name.Equals("Consolas"))
                     {
+                        if (start > -1 && start < range.StartPosition)
+                        {
+                            ProcessSpan(Document.GetRange(start, range.StartPosition));
+                        }
+
+                        start = -1;
+                        range.GetText(TextGetOptions.NoHidden, out string value);
+
                         if (value.Contains('\v') || value.Contains('\r'))
                         {
                             entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypePre() });
@@ -436,24 +479,24 @@ namespace Unigram.Controls
                             entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeCode() });
                         }
                     }
-                    else if (value.Length > 0)
+                    else
                     {
-                        var sub = Markdown.Parse(ref value);
-                        if (sub != null && sub.Count > 0)
-                        {
-                            range.SetText(TextSetOptions.None, value);
+                        range.GetText(TextGetOptions.NoHidden, out string value);
 
-                            foreach (var entity in sub)
-                            {
-                                entity.Offset = range.StartPosition + entity.Offset;
-                                entities.Add(entity);
-                            }
+                        if (value.Length > 0 && start < 0)
+                        {
+                            start = range.StartPosition;
                         }
                     }
                 }
 
                 end = i >= range.EndPosition;
                 i = range.EndPosition;
+            }
+
+            if (start > -1 && start < i)
+            {
+                ProcessSpan(Document.GetRange(start, i));
             }
 
             Document.GetText(TextGetOptions.NoHidden, out string text);
