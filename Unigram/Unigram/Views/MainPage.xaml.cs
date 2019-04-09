@@ -52,7 +52,7 @@ namespace Unigram.Views
 {
     public sealed partial class MainPage : Page,
         IRootContentPage,
-        INavigablePage,
+        IMasterPage,
         IChatsDelegate,
         IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatLastMessage>,
@@ -453,30 +453,30 @@ namespace Unigram.Views
             Undo.Show(chat, clear, action, undo);
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequesting(HandledEventArgs args)
         {
             if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
             {
                 SearchField.Text = string.Empty;
                 args.Handled = true;
             }
-            else if (SearchField.FocusState != FocusState.Unfocused)
-            {
-                rpMasterTitlebar.Focus(FocusState.Programmatic);
-                args.Handled = true;
-            }
             else if (SearchField.Visibility == Visibility.Visible)
             {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-                UpdatePaneToggleButtonVisibility();
-
-                SearchField.Text = string.Empty;
-                Search_TextChanged(null, null);
-
+                Search_LostFocus(null, null);
                 args.Handled = true;
             }
-            else if (rpMasterTitlebar.SelectedIndex > 0)
+        }
+
+        public void OnBackRequested(HandledEventArgs args)
+        {
+            OnBackRequesting(args);
+
+            if (args.Handled)
+            {
+                return;
+            }
+
+            if (rpMasterTitlebar.SelectedIndex > 0)
             {
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
@@ -945,6 +945,7 @@ namespace Unigram.Views
             else
             {
                 SearchField.Text = string.Empty;
+                Search_LostFocus(null, null);
             }
 
             if (item is TLCallGroup group)
