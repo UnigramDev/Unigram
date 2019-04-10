@@ -695,7 +695,7 @@ namespace Unigram.Services
             }
             else if (message.Content is MessageVideo video)
             {
-                return result + Strings.Resources.AttachVideo + GetCaption(video.Caption.Text);
+                return result + (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -742,12 +742,7 @@ namespace Unigram.Services
             }
             else if (message.Content is MessagePhoto photo)
             {
-                if (string.IsNullOrEmpty(photo.Caption.Text))
-                {
-                    return result + Strings.Resources.AttachPhoto;
-                }
-
-                return result + $"{Strings.Resources.AttachPhoto}, ";
+                return result + (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption.Text);
             }
             else if (message.Content is MessagePoll poll)
             {

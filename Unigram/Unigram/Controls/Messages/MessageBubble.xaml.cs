@@ -100,7 +100,7 @@ namespace Unigram.Controls.Messages
                 builder.AppendLine($"{title}. ");
             }
 
-            builder.Append(Automation.GetSummary(message.Get()));
+            builder.Append(Automation.GetSummary(message.ProtoService, message.Get()));
 
             var date = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
             if (message.IsOutgoing)
