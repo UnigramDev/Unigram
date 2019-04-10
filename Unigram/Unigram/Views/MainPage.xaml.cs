@@ -1833,6 +1833,13 @@ namespace Unigram.Views
 
             badge.Visibility = chat.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             text.Text = chat.UnreadCount.ToString();
+
+            var user = ViewModel.CacheService.GetUser(chat);
+            if (user != null)
+            {
+                var online = grid.Children[2] as Border;
+                online.Visibility = user.Status is UserStatusOnline ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void Calls_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
