@@ -481,6 +481,11 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
+            else if (ResetFilters.Visibility == Visibility.Visible)
+            {
+                ResetFilters_Click(null, null);
+                args.Handled = true;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
