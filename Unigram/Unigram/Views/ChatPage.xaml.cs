@@ -8,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
@@ -19,6 +20,7 @@ using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Chats;
@@ -770,69 +772,86 @@ namespace Unigram.Views
             var text = viewModel.GetText(TextGetOptions.None);
             var embedded = viewModel.ComposerHeader;
 
-            var response = viewModel.ProtoService.Execute(new GetTextEntities(text));
-            if (response is TextEntities entities)
+            TryGetWebPagePreview(viewModel.ProtoService, viewModel.Chat, text, result =>
             {
-                var entity = entities.Entities.FirstOrDefault(x => x.Type is TextEntityTypeUrl);
-                if (entity != null)
+                this.BeginOnUIThread(() =>
                 {
-                    var address = text.Substring(entity.Offset, entity.Length);
-                    if (address.Equals(embedded?.WebPageUrl, StringComparison.OrdinalIgnoreCase))
+                    if (!string.Equals(text, viewModel.GetText(TextGetOptions.None)))
                     {
                         return;
                     }
 
-                    viewModel.ProtoService.Send(new GetWebPagePreview(new FormattedText(address, new TextEntity[0])), result =>
+                    if (result is WebPage webPage)
                     {
-                        this.BeginOnUIThread(() =>
+                        if (embedded == null)
                         {
-                            if (!string.Equals(text, viewModel.GetText(TextGetOptions.None)))
-                            {
-                                return;
-                            }
-
-                            if (result is WebPage webPage)
-                            {
-                                if (embedded == null)
-                                {
-                                    viewModel.ComposerHeader = new MessageComposerHeader { WebPagePreview = webPage, WebPageUrl = address };
-                                }
-                                else
-                                {
-                                    viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = webPage, WebPageUrl = address };
-                                }
-                            }
-                            else if (embedded != null)
-                            {
-                                if (embedded.IsEmpty)
-                                {
-                                    viewModel.ComposerHeader = null;
-                                }
-                                else if (embedded.WebPagePreview != null)
-                                {
-                                    viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
-                                }
-                            }
-                        });
-                    });
-                }
-                else if (embedded != null)
-                {
-                    if (embedded.IsEmpty)
-                    {
-                        viewModel.ComposerHeader = null;
+                            viewModel.ComposerHeader = new MessageComposerHeader { WebPagePreview = webPage, WebPageUrl = webPage.Url };
+                        }
+                        else
+                        {
+                            viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = webPage, WebPageUrl = webPage.Url };
+                        }
                     }
-                    else if (embedded.WebPagePreview != null)
+                    else if (embedded != null)
                     {
-                        viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                        if (embedded.IsEmpty)
+                        {
+                            viewModel.ComposerHeader = null;
+                        }
+                        else if (embedded.WebPagePreview != null)
+                        {
+                            viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                        }
                     }
-                }
-            }
+                });
+            });
         }
 
-        private void TextField_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
+        private void TryGetWebPagePreview(IProtoService protoService, Chat chat, string text, Action<BaseObject> result)
         {
-            CheckMessageBoxEmpty();
+            if (chat == null)
+            {
+                result(null);
+                return;
+            }
+
+            if (chat.Type is ChatTypeSecret)
+            {
+                var response = Client.Execute(new GetTextEntities(text));
+                if (response is TextEntities entities)
+                {
+                    var urls = string.Empty;
+
+                    foreach (var entity in entities.Entities)
+                    {
+                        if (entity.Type is TextEntityTypeUrl)
+                        {
+                            if (urls.Length > 0)
+                            {
+                                urls += " ";
+                            }
+
+                            urls += text.Substring(entity.Offset, entity.Length);
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(urls))
+                    {
+                        result(null);
+                        return;
+                    }
+
+                    protoService.Send(new GetWebPagePreview(new FormattedText(urls, new TextEntity[0])), result);
+                }
+                else
+                {
+                    result(null);
+                }
+            }
+            else
+            {
+                protoService.Send(new GetWebPagePreview(new FormattedText(text.Format(), new TextEntity[0])), result);
+            }
         }
 
         private void TextField_TextChanged(object sender, RoutedEventArgs e)
