@@ -496,20 +496,16 @@
                 <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
             </Grid>
 
-            <controls:SearchTextBox x:Name="SearchField"
-                                        Padding="12,4,6,4"
-                                        Background="{x:Null}"
-                                        BorderBrush="{x:Null}"
-                                        Style="{StaticResource SearchTextBoxStyle}"
-                                        PlaceholderText="{CustomResource Search}"
-                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                        Delete="Search_LostFocus"
-                                        GotFocus="Search_GotFocus"
-                                        LostFocus="Search_LostFocus"
-                                        TextChanged="Search_TextChanged"
-                                        KeyDown="Search_KeyDown"
-                                        Visibility="Collapsed"
-                                        Canvas.ZIndex="1"/>
+            <controls:SearchTextBox
+                x:Name="SearchField"
+                Style="{StaticResource QueryTextBoxStyle}"
+                PlaceholderText="{CustomResource Search}"
+                PreventKeyboardDisplayOnProgrammaticFocus="True"
+                Delete="Search_LostFocus"
+                GotFocus="Search_GotFocus"
+                TextChanged="Search_TextChanged"
+                KeyDown="Search_KeyDown"
+                Visibility="Collapsed"/>
         </Grid>
     </ContentDialog.Title>
     
