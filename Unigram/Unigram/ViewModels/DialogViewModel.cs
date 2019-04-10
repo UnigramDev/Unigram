@@ -3008,8 +3008,6 @@ namespace Unigram.ViewModels
             }
 
             var bot = GetStartingBot();
-            var command = chat.Type is ChatTypePrivate ? "/start" : "/start@" + bot.Username;
-
             if (bot == null)
             {
                 return;
@@ -3017,7 +3015,7 @@ namespace Unigram.ViewModels
 
             if (_accessToken == null)
             {
-                await SendMessageAsync(command);
+                await SendMessageAsync(chat.Type is ChatTypePrivate ? "/start" : "/start@" + bot.Username);
             }
             else
             {

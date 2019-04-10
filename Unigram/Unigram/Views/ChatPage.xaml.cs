@@ -2756,7 +2756,7 @@ namespace Unigram.Views
             {
                 ShowAction(user.Type is UserTypeBot ? Strings.Resources.BotUnblock : Strings.Resources.Unblock, true);
             }
-            else if (accessToken || chat.LastMessage == null)
+            else if (accessToken || chat.LastMessage == null && user.Type is UserTypeBot)
             {
                 ShowAction(Strings.Resources.BotStart, true);
             }
