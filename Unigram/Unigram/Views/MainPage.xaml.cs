@@ -636,11 +636,32 @@ namespace Unigram.Views
                         break;
                 }
 
-                var response = await ViewModel.ProtoService.SendAsync(new GetChats(long.MaxValue, 0, 5));
+                var response = await ViewModel.ProtoService.SendAsync(new GetChats(long.MaxValue, 0, ViewModel.CacheService.Options.PinnedChatCountMax * 2 + 1));
                 if (response is Telegram.Td.Api.Chats chats && index >= 0 && index < chats.ChatIds.Count)
                 {
-                    MasterDetail.NavigationService.NavigateToChat(chats.ChatIds[index]);
-                    MasterDetail.NavigationService.GoBackAt(0, false);
+                    for (int i = 0; i < chats.ChatIds.Count; i++)
+                    {
+                        var chat = ViewModel.CacheService.GetChat(chats.ChatIds[i]);
+                        if (chat == null)
+                        {
+                            return;
+                        }
+
+                        if (chat.IsSponsored)
+                        {
+                            index++;
+                        }
+                        else if (i == index)
+                        {
+                            if (chat.IsPinned)
+                            {
+                                MasterDetail.NavigationService.NavigateToChat(chats.ChatIds[index]);
+                                MasterDetail.NavigationService.GoBackAt(0, false);
+                            }
+
+                            return;
+                        }
+                    }
                 }
             }
         }
