@@ -53,11 +53,13 @@ namespace Unigram.ViewModels
         public IProfileDelegate Delegate { get; set; }
 
         private readonly IVoIPService _voipService;
+        private readonly INotificationsService _notificationsService;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService, INotificationsService notificationsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _voipService = voipService;
+            _notificationsService = notificationsService;
 
             SendMessageCommand = new RelayCommand(SendMessageExecute);
             MediaCommand = new RelayCommand<int>(MediaExecute);
@@ -79,7 +81,7 @@ namespace Unigram.ViewModels
             IdenticonCommand = new RelayCommand(IdenticonExecute);
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
-            ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
+            ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
             SetAdminsCommand = new RelayCommand(SetAdminsExecute);
             StatisticsCommand = new RelayCommand(StatisticsExecute);
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
@@ -798,8 +800,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<bool> ToggleMuteCommand { get; }
-        private void ToggleMuteExecute(bool unmute)
+        public RelayCommand ToggleMuteCommand { get; }
+        private void ToggleMuteExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -807,17 +809,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(
-                false,
-                chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052,
-                false,
-                chat.NotificationSettings.Sound,
-                false,
-                chat.NotificationSettings.ShowPreview,
-                false,
-                chat.NotificationSettings.DisablePinnedMessageNotifications,
-                false,
-                chat.NotificationSettings.DisableMentionNotifications)));
+            _notificationsService.SetMuteFor(chat, CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? 0 : 632053052);
         }
 
         #region Call

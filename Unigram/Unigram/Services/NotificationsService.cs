@@ -30,6 +30,12 @@ namespace Unigram.Services
         Task CloseAsync();
 
         Task ProcessAsync(Dictionary<string, string> data);
+
+        #region Chats related
+
+        void SetMuteFor(Chat chat, int muteFor);
+
+        #endregion
     }
 
     public class NotificationsService : INotificationsService,
@@ -807,6 +813,28 @@ namespace Unigram.Services
                 }
                 catch { }
             }
+        }
+
+
+
+        public void SetMuteFor(Chat chat, int muteFor)
+        {
+            var settings = chat.NotificationSettings;
+            var scope = _protoService.GetScopeNotificationSettings(chat);
+
+            var useDefault = muteFor == scope.MuteFor || muteFor > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
+            if (useDefault)
+            {
+                muteFor = scope.MuteFor;
+            }
+
+            _protoService.Send(new SetChatNotificationSettings(chat.Id,
+                new ChatNotificationSettings(
+                    useDefault, muteFor,
+                    settings.UseDefaultSound, settings.Sound,
+                    settings.UseDefaultShowPreview, settings.ShowPreview,
+                    settings.UseDefaultDisablePinnedMessageNotifications, settings.DisablePinnedMessageNotifications,
+                    settings.UseDefaultDisableMentionNotifications, settings.DisableMentionNotifications)));
         }
     }
 }

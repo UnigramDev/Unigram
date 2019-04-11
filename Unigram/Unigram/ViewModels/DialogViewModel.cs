@@ -157,8 +157,6 @@ namespace Unigram.ViewModels
             UnblockCommand = new RelayCommand(UnblockExecute);
             ShareContactCommand = new RelayCommand(ShareContactExecute);
             AddContactCommand = new RelayCommand(AddContactExecute);
-            PinChatCommand = new RelayCommand(PinChatExecute, CanExecutePinChatCommand);
-            UnpinChatCommand = new RelayCommand(UnpinChatExecute, CanUnpinChatExecute);
             StartCommand = new RelayCommand(StartExecute);
             SearchCommand = new RelayCommand(SearchExecute);
             JumpDateCommand = new RelayCommand(JumpDateExecute);
@@ -243,14 +241,6 @@ namespace Unigram.ViewModels
             {
                 base.Dispatcher = value;
                 Stickers.Dispatcher = value;
-            }
-        }
-
-        public bool IsActive
-        {
-            get
-            {
-                return NavigationService?.IsPeerActive(_chatId) ?? false;
             }
         }
 
@@ -415,32 +405,6 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _isReportSpam, value);
-            }
-        }
-
-        private bool _canPinChat;
-        public bool CanPinChat
-        {
-            get
-            {
-                return _canPinChat;
-            }
-            set
-            {
-                Set(ref _canPinChat, value);
-            }
-        }
-
-        private bool _canUnpinChat;
-        public bool CanUnpinChat
-        {
-            get
-            {
-                return _canUnpinChat;
-            }
-            set
-            {
-                Set(ref _canUnpinChat, value);
             }
         }
 
@@ -2132,108 +2096,15 @@ namespace Unigram.ViewModels
             DraftMessage draft = null;
             if (!string.IsNullOrWhiteSpace(formattedText.Text) || reply != 0)
             {
+                if (formattedText.Text.Length > CacheService.Options.MessageTextLengthMax * 4)
+                {
+                    formattedText = formattedText.Substring(0, CacheService.Options.MessageTextLengthMax * 4);
+                }
+
                 draft = new DraftMessage(reply, new InputMessageText(formattedText, false, false));
             }
 
             ProtoService.Send(new SetChatDraftMessage(_chat.Id, draft));
-        }
-
-        //public async void ProcessDraftReply(TLDraftMessage draft)
-        //{
-        //    var shouldFetch = false;
-
-        //    var replyId = draft.ReplyToMsgId;
-        //    if (replyId != null && replyId.Value != 0)
-        //    {
-        //        var channelId = new int?();
-        //        //var channel = message.ToId as TLPeerChat;
-        //        //if (channel != null)
-        //        //{
-        //        //    channelId = channel.Id;
-        //        //}
-        //        // TODO: verify
-        //        if (Peer is TLInputPeerChannel)
-        //        {
-        //            channelId = Peer.ToPeer().Id;
-        //        }
-
-        //        var reply = CacheService.GetMessage(replyId.Value, channelId);
-        //        if (reply != null)
-        //        {
-        //            Reply = reply;
-        //        }
-        //        else
-        //        {
-        //            shouldFetch = true;
-        //        }
-        //    }
-
-        //    if (shouldFetch)
-        //    {
-        //        Task<MTProtoResponse<TLMessagesMessagesBase>> task = null;
-
-        //        if (Peer is TLInputPeerChannel)
-        //        {
-        //            // TODO: verify
-        //            //var first = replyToMsgs.FirstOrDefault();
-        //            //if (first.ToId is TLPeerChat)
-        //            //{
-        //            //    task = ProtoService.GetMessagesAsync(new TLVector<int> { draft.ReplyToMsgId.Value });
-        //            //}
-        //            //else
-        //            {
-        //                var peer = Peer as TLInputPeerChannel;
-        //                task = LegacyService.GetMessagesAsync(new TLInputChannel { ChannelId = peer.ChannelId, AccessHash = peer.AccessHash }, new TLVector<int> { draft.ReplyToMsgId.Value });
-        //            }
-        //        }
-        //        else
-        //        {
-        //            task = LegacyService.GetMessagesAsync(new TLVector<int> { draft.ReplyToMsgId.Value });
-        //        }
-
-        //        var response = await task;
-        //        if (response.IsSucceeded && response.Result is ITLMessages result)
-        //        {
-        //            //CacheService.AddChats(result.Result.Chats, (results) => { });
-        //            //CacheService.AddUsers(result.Result.Users, (results) => { });
-        //            CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
-
-        //            for (int j = 0; j < result.Messages.Count; j++)
-        //            {
-        //                if (draft.ReplyToMsgId.Value == result.Messages[j].Id)
-        //                {
-        //                    Reply = result.Messages[j];
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Logs.Log.Write("messages.getMessages error " + response.Error);
-        //        }
-        //    }
-        //}
-
-        private bool _isSilent;
-        public bool IsSilent
-        {
-            get
-            {
-                //return _isSilent && Chat != null && Chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
-                return false;
-            }
-            set
-            {
-                Set(ref _isSilent, value);
-            }
-        }
-
-        public bool IsSilentVisible
-        {
-            get
-            {
-                //return Chat != null && Chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
-                return false;
-            }
         }
 
         #region Reply 
@@ -2511,17 +2382,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(
-                false,
-                unmute ? 0 : 632053052,
-                false,
-                chat.NotificationSettings.Sound,
-                false,
-                chat.NotificationSettings.ShowPreview,
-                false,
-                chat.NotificationSettings.DisablePinnedMessageNotifications,
-                false,
-                chat.NotificationSettings.DisableMentionNotifications)));
+            _pushService.SetMuteFor(chat, unmute ? 0 : 632053052);
         }
 
         #endregion
@@ -2892,110 +2753,6 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region Pin chat
-
-        public RelayCommand PinChatCommand { get; }
-        private async void PinChatExecute()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return;
-            //}
-
-            //var displayName = _pushService.GetTitle(this.With);
-            //var arguments = _pushService.GetLaunch(this.With);
-            //var picture = _pushService.GetPicture(this.With, group);
-
-            //var secondaryTile = new SecondaryTile(group, displayName, arguments, new Uri(picture), TileSize.Default);
-            //secondaryTile.VisualElements.Wide310x150Logo = new Uri(picture);
-            //secondaryTile.VisualElements.Square310x310Logo = new Uri(picture);
-
-            //var tileCreated = await secondaryTile.RequestCreateAsync();
-            //if (tileCreated)
-            //{
-            //    UpdatePinChatCommands();
-            //    ResetTile();
-            //}
-        }
-
-        private void ResetTile()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return;
-            //}
-
-            //var displayName = _pushService.GetTitle(this.With);
-            //var picture = _pushService.GetPicture(this.With, group);
-
-            //var existsSecondaryTile = SecondaryTile.Exists(group);
-            //if (existsSecondaryTile)
-            //{
-            //    NotificationTask.ResetSecondaryTile(displayName, picture, group);
-            //}
-        }
-
-        private bool CanExecutePinChatCommand()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return false;
-            //}
-
-            //return !SecondaryTile.Exists(group);
-
-            return false;
-        }
-
-        private void UpdatePinChatCommands()
-        {
-            CanPinChat = CanExecutePinChatCommand();
-            CanUnpinChat = !CanPinChat;
-        }
-
-        #endregion
-
-        #region Unpin chat
-
-        public RelayCommand UnpinChatCommand { get; }
-        private async void UnpinChatExecute()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return;
-            //}
-
-            //var secondaryTile = new SecondaryTile(group);
-            //if (secondaryTile == null)
-            //{
-            //    return;
-            //}
-
-            //var tileDeleted = await secondaryTile.RequestDeleteAsync();
-            //if (tileDeleted)
-            //{
-            //    UpdatePinChatCommands();
-            //}
-        }
-
-        private bool CanUnpinChatExecute()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return false;
-            //}
-
-            //return SecondaryTile.Exists(group);
-            return false;
-        }
-
-        #endregion
-
         #region Start
 
         public RelayCommand StartCommand { get; }
@@ -3312,17 +3069,6 @@ namespace Unigram.ViewModels
 
         #endregion
     }
-
-    //public class TLMessageMediaGroup : TLMessageMediaBase
-    //{
-    //    public TLMessageMediaGroup()
-    //    {
-    //        Layout = new GroupedMessages();
-    //    }
-
-    //    public String Caption { get; set; }
-    //    public GroupedMessages Layout { get; private set; }
-    //}
 
     public class UserCommand
     {
