@@ -86,6 +86,7 @@ namespace Unigram.Services
         UpdateUnreadMessageCount UnreadMessageCount { get; }
 
         int GetNotificationSettingsMuteFor(Chat chat);
+        ScopeNotificationSettings GetScopeNotificationSettings(Chat chat);
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -810,6 +811,31 @@ namespace Unigram.Services
             }
 
             return chat.NotificationSettings.MuteFor;
+        }
+
+        public ScopeNotificationSettings GetScopeNotificationSettings(Chat chat)
+        {
+            Type scope = null;
+            switch (chat.Type)
+            {
+                case ChatTypePrivate privata:
+                case ChatTypeSecret secret:
+                    scope = typeof(NotificationSettingsScopePrivateChats);
+                    break;
+                case ChatTypeBasicGroup basicGroup:
+                    scope = typeof(NotificationSettingsScopeGroupChats);
+                    break;
+                case ChatTypeSupergroup supergroup:
+                    scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
+                    break;
+            }
+
+            if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
+            {
+                return value;
+            }
+
+            return null;
         }
 
 

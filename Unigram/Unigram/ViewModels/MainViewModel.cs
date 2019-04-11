@@ -45,8 +45,7 @@ namespace Unigram.ViewModels
             _sessionService = session;
             _voipService = voipService;
 
-            //Dialogs = new DialogCollection(protoService, cacheService);
-            Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator);
+            Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService);
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
             Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService, settingsSearchService);

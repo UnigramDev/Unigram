@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 04/06/2019 16:00:05
+// 	Generated: 04/11/2019 17:41:49
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2755,6 +2755,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to clear history in selected chats?"
+        /// </summary>
+        public static string AreYouSureClearHistoryFewChats
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureClearHistoryFewChats");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Delete all cached text and media from this group?"
         /// </summary>
         public static string AreYouSureClearHistoryGroup
@@ -2839,6 +2850,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AreYouSureDeleteContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete selected chats?"
+        /// </summary>
+        public static string AreYouSureDeleteFewChats
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeleteFewChats");
             }
         }
         
@@ -6777,13 +6799,79 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} chats"
+        /// Localized resource similar to "{0} Chats"
         /// </summary>
         public static string ChatsExceptionOther
         {
             get
             {
                 return resourceLoader.GetString("ChatsExceptionOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ChatsSelectedZero
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatsSelectedZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Chat"
+        /// </summary>
+        public static string ChatsSelectedOne
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatsSelectedOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ChatsSelectedTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatsSelectedTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ChatsSelectedFew
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatsSelectedFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ChatsSelectedMany
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatsSelectedMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Chats"
+        /// </summary>
+        public static string ChatsSelectedOther
+        {
+            get
+            {
+                return resourceLoader.GetString("ChatsSelectedOther");
             }
         }
         

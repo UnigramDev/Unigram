@@ -23,15 +23,19 @@ namespace Unigram.ViewModels
 {
     public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
+        private readonly INotificationsService _notificationsService;
+
         private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
 
         private readonly Dictionary<long, bool> _deletedChats = new Dictionary<long, bool>();
 
         public IChatsDelegate Delegate { get; set; }
 
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _notificationsService = notificationsService;
+
             Items = new ItemsCollection(protoService, aggregator, this);
 
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
@@ -39,7 +43,12 @@ namespace Unigram.ViewModels
             ChatNotifyCommand = new RelayCommand<Chat>(ChatNotifyExecute);
             ChatDeleteCommand = new RelayCommand<Chat>(ChatDeleteExecute);
             ChatClearCommand = new RelayCommand<Chat>(ChatClearExecute);
-            ChatDeleteAndStopCommand = new RelayCommand<Chat>(ChatDeleteAndStopExecute);
+            ChatSelectCommand = new RelayCommand<Chat>(ChatSelectExecute);
+
+            ChatsMarkCommand = new RelayCommand(ChatsMarkExecute);
+            ChatsNotifyCommand = new RelayCommand(ChatsNotifyExecute);
+            ChatsDeleteCommand = new RelayCommand(ChatsDeleteExecute);
+            ChatsClearCommand = new RelayCommand(ChatsClearExecute);
 
             ClearRecentChatsCommand = new RelayCommand(ClearRecentChatsExecute);
 
@@ -48,6 +57,29 @@ namespace Unigram.ViewModels
 #if MOCKUP
             Items.AddRange(protoService.GetChats(20));
 #endif
+
+            SelectedItems = new MvxObservableCollection<Chat>();
+        }
+
+        private long? _selectedItem;
+        public long? SelectedItem
+        {
+            get { return _selectedItem; }
+            set { Set(ref _selectedItem, value); }
+        }
+
+        private MvxObservableCollection<Chat> _selectedItems;
+        public MvxObservableCollection<Chat> SelectedItems
+        {
+            get { return _selectedItems; }
+            set { Set(ref _selectedItems, value); }
+        }
+
+        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
+        public ListViewSelectionMode SelectionMode
+        {
+            get { return _selectionMode; }
+            set { Set(ref _selectionMode, value); }
         }
 
         public ItemsCollection Items { get; private set; }
@@ -80,13 +112,17 @@ namespace Unigram.ViewModels
             }
         }
 
-        #region Commands
+        #region Pin
 
         public RelayCommand<Chat> ChatPinCommand { get; }
         private void ChatPinExecute(Chat chat)
         {
             ProtoService.Send(new ToggleChatIsPinned(chat.Id, !chat.IsPinned));
         }
+
+        #endregion
+
+        #region Mark
 
         public RelayCommand<Chat> ChatMarkCommand { get; }
         private void ChatMarkExecute(Chat chat)
@@ -106,21 +142,80 @@ namespace Unigram.ViewModels
             }
         }
 
+        #endregion
+
+        #region Multiple Mark
+
+        public RelayCommand ChatsMarkCommand { get; }
+        private void ChatsMarkExecute()
+        {
+            var chats = SelectedItems.ToList();
+            var unread = chats.Any(x => x.IsUnread());
+            foreach (var chat in chats)
+            {
+                if (unread)
+                {
+                    if (chat.UnreadCount > 0)
+                    {
+                        ProtoService.Send(new ViewMessages(chat.Id, new[] { chat.LastMessage.Id }, true));
+                    }
+                    else if (chat.IsMarkedAsUnread)
+                    {
+                        ProtoService.Send(new ToggleChatIsMarkedAsUnread(chat.Id, false));
+                    }
+
+                    if (chat.UnreadMentionCount > 0)
+                    {
+                        ProtoService.Send(new ReadAllChatMentions(chat.Id));
+                    }
+                }
+                else if (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread)
+                {
+                    ProtoService.Send(new ToggleChatIsMarkedAsUnread(chat.Id, true));
+                }
+            }
+
+            Delegate?.SetSelectionMode(false);
+            SelectedItems.Clear();
+        }
+
+        #endregion
+
+        #region Notify
+
         public RelayCommand<Chat> ChatNotifyCommand { get; }
         private void ChatNotifyExecute(Chat chat)
         {
-            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(
-                false,
-                chat.NotificationSettings.MuteFor > 0 ? 0 : 632053052,
-                false,
-                chat.NotificationSettings.Sound,
-                false,
-                chat.NotificationSettings.ShowPreview,
-                false,
-                chat.NotificationSettings.DisablePinnedMessageNotifications,
-                false,
-                chat.NotificationSettings.DisableMentionNotifications)));
+            _notificationsService.SetMuteFor(chat, CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? 0 : 632053052);
         }
+
+        #endregion
+
+        #region Multiple Notify
+
+        public RelayCommand ChatsNotifyCommand { get; }
+        private void ChatsNotifyExecute()
+        {
+            var chats = SelectedItems.ToList();
+            var muted = chats.Any(x => CacheService.GetNotificationSettingsMuteFor(x) > 0);
+
+            foreach (var chat in chats)
+            {
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
+                {
+                    continue;
+                }
+
+                _notificationsService.SetMuteFor(chat, muted ? 0 : 632053052);
+            }
+
+            Delegate?.SetSelectionMode(false);
+            SelectedItems.Clear();
+        }
+
+        #endregion
+
+        #region Delete
 
         public RelayCommand<Chat> ChatDeleteCommand { get; }
         private async void ChatDeleteExecute(Chat chat)
@@ -130,28 +225,91 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
+                var check = dialog.IsChecked == true;
+
                 _deletedChats[chat.Id] = true;
                 Handle(chat.Id, 0);
 
-                Delegate?.DeleteChat(chat, false, async delete =>
+                Delegate?.DeleteChat(new[] { chat }, false, async items =>
                 {
-                    if (delete.Type is ChatTypeSecret secret)
+                    foreach (var delete in items)
                     {
-                        await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-                    }
-                    else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
-                    {
-                        await ProtoService.SendAsync(new LeaveChat(delete.Id));
-                    }
+                        if (delete.Type is ChatTypeSecret secret)
+                        {
+                            await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                        }
+                        else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                        {
+                            await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                        }
+                        else if (delete.Type is ChatTypePrivate privata && check)
+                        {
+                            await ProtoService.SendAsync(new BlockUser(privata.UserId));
+                        }
 
-                    ProtoService.Send(new DeleteChatHistory(delete.Id, true));
-                }, undo =>
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, true));
+                    }
+                }, items =>
                 {
-                    _deletedChats.Remove(undo.Id);
-                    Handle(undo.Id, undo.Order);
+                    foreach (var undo in items)
+                    {
+                        _deletedChats.Remove(undo.Id);
+                        Handle(undo.Id, undo.Order);
+                    }
                 });
             }
         }
+
+        #endregion
+
+        #region Multiple Delete
+
+        public RelayCommand ChatsDeleteCommand { get; }
+        private async void ChatsDeleteExecute()
+        {
+            var chats = SelectedItems.ToList();
+
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.Delete, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                foreach (var chat in chats)
+                {
+                    _deletedChats[chat.Id] = true;
+                    Handle(chat.Id, 0);
+                }
+
+                Delegate?.DeleteChat(chats, false, async items =>
+                {
+                    foreach (var delete in items)
+                    {
+                        if (delete.Type is ChatTypeSecret secret)
+                        {
+                            await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                        }
+                        else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                        {
+                            await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                        }
+
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, true));
+                    }
+                }, items =>
+                {
+                    foreach (var undo in items)
+                    {
+                        _deletedChats.Remove(undo.Id);
+                        Handle(undo.Id, undo.Order);
+                    }
+                });
+            }
+
+            Delegate?.SetSelectionMode(false);
+            SelectedItems.Clear();
+        }
+
+        #endregion
+
+        #region Clear
 
         public RelayCommand<Chat> ChatClearCommand { get; }
         private async void ChatClearExecute(Chat chat)
@@ -161,45 +319,71 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                Delegate?.DeleteChat(chat, true, delete =>
+                Delegate?.DeleteChat(new[] { chat }, true, items =>
                 {
-                    ProtoService.Send(new DeleteChatHistory(delete.Id, false));
-                }, undo =>
+                    foreach (var delete in items)
+                    {
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, false));
+                    }
+                }, items =>
                 {
-                    _deletedChats.Remove(undo.Id);
-                    Handle(undo.Id, undo.Order);
+                    foreach (var undo in items)
+                    {
+                        _deletedChats.Remove(undo.Id);
+                        Handle(undo.Id, undo.Order);
+                    }
                 });
             }
         }
 
-        public RelayCommand<Chat> ChatDeleteAndStopCommand { get; }
-        private async void ChatDeleteAndStopExecute(Chat chat)
-        {
-            var dialog = new DeleteChatView(ProtoService, chat, false);
+        #endregion
 
-            var confirm = await dialog.ShowQueuedAsync();
+        #region Multiple Clear
+
+        public RelayCommand ChatsClearCommand { get; }
+        private async void ChatsClearExecute()
+        {
+            var chats = SelectedItems.ToList();
+
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                _deletedChats[chat.Id] = true;
-                Handle(chat.Id, 0);
-
-                Delegate?.DeleteChat(chat, false, delete =>
+                Delegate?.DeleteChat(chats, true, items =>
                 {
-                    if (delete.Type is ChatTypePrivate privata)
+                    foreach (var delete in items)
                     {
-                        ProtoService.Send(new BlockUser(privata.UserId));
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, false));
                     }
-
-                    ProtoService.Send(new DeleteChatHistory(delete.Id, true));
-                }, undo =>
+                }, items =>
                 {
-                    _deletedChats.Remove(undo.Id);
-                    Handle(undo.Id, undo.Order);
+                    foreach (var undo in items)
+                    {
+                        _deletedChats.Remove(undo.Id);
+                        Handle(undo.Id, undo.Order);
+                    }
                 });
             }
+
+            Delegate?.SetSelectionMode(false);
+            SelectedItems.Clear();
         }
 
+        #endregion
 
+        #region Select
+
+        public RelayCommand<Chat> ChatSelectCommand { get; }
+        private void ChatSelectExecute(Chat chat)
+        {
+            SelectionMode = ListViewSelectionMode.Multiple;
+            SelectedItems.ReplaceWith(new[] { chat });
+
+            Delegate?.SetSelectedItems(_selectedItems);
+        }
+
+        #endregion
+
+        #region Commands
 
         public RelayCommand ClearRecentChatsCommand { get; }
         private async void ClearRecentChatsExecute()
@@ -300,11 +484,30 @@ namespace Unigram.ViewModels
                         {
                             items.Remove(chat);
                             items.Insert(next, chat);
+
+                            if (chat.Id == _selectedItem)
+                            {
+                                Delegate?.SetSelectedItem(chat);
+                            }
+                            if (SelectedItems.Contains(chat))
+                            {
+                                Delegate?.SetSelectedItems(_selectedItems);
+                            }
                         }
                     }
                     else
                     {
                         items.Remove(chat);
+
+                        if (chat.Id == _selectedItem)
+                        {
+                            Delegate?.SetSelectedItem(chat);
+                        }
+                        if (SelectedItems.Contains(chat))
+                        {
+                            SelectedItems.Remove(chat);
+                            Delegate?.SetSelectedItems(_selectedItems);
+                        }
 
                         if (!items.HasMoreItems)
                         {
@@ -417,6 +620,8 @@ namespace Unigram.ViewModels
                             _hasMoreItems = chats.ChatIds.Count > 0;
                             _aggregator.Subscribe(_viewModel);
 
+                            _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+
                             return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                         }
 
@@ -431,7 +636,7 @@ namespace Unigram.ViewModels
 
     public interface IChatFilter
     {
-        bool Intersects(Chat chat); 
+        bool Intersects(Chat chat);
     }
 
     public class ChatTypeFilter : IChatFilter

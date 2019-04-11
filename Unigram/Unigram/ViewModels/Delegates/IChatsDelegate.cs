@@ -9,6 +9,11 @@ namespace Unigram.ViewModels.Delegates
 {
     public interface IChatsDelegate : IViewModelDelegate
     {
-        void DeleteChat(Chat chat, bool clear, Action<Chat> action, Action<Chat> undo);
+        void DeleteChat(IList<Chat> chats, bool clear, Action<IList<Chat>> action, Action<IList<Chat>> undo);
+
+        void SetSelectionMode(bool enabled);
+
+        void SetSelectedItem(Chat chat);
+        void SetSelectedItems(IList<Chat> chats);
     }
 }

@@ -801,6 +801,9 @@ Unused sets are archived when you add more.</value>
   <data name="AreYouSureClearHistoryChannel" xml:space="preserve">
     <value>Delete all cached text and media from this channel?</value>
   </data>
+  <data name="AreYouSureClearHistoryFewChats" xml:space="preserve">
+    <value>Are you sure you want to clear history in selected chats?</value>
+  </data>
   <data name="AreYouSureClearHistoryGroup" xml:space="preserve">
     <value>Delete all cached text and media from this group?</value>
   </data>
@@ -824,6 +827,9 @@ Unused sets are archived when you add more.</value>
   </data>
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Are you sure you want to delete this contact?</value>
+  </data>
+  <data name="AreYouSureDeleteFewChats" xml:space="preserve">
+    <value>Are you sure you want to delete selected chats?</value>
   </data>
   <data name="AreYouSureDeleteFewMessages" xml:space="preserve">
     <value>Are you sure you want to delete these messages?</value>
@@ -1912,7 +1918,25 @@ Minimum length is 5 characters.</value>
     <value/>
   </data>
   <data name="ChatsExceptionOther" xml:space="preserve">
-    <value>{0} chats</value>
+    <value>{0} Chats</value>
+  </data>
+  <data name="ChatsSelectedZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedOne" xml:space="preserve">
+    <value>{0} Chat</value>
+  </data>
+  <data name="ChatsSelectedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedOther" xml:space="preserve">
+    <value>{0} Chats</value>
   </data>
   <data name="Checking" xml:space="preserve">
     <value>Checking...</value>

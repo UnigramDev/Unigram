@@ -51,13 +51,13 @@ namespace Unigram.Controls
             }
         }
 
-        public void Show(Chat chat, bool clear, Action<Chat> action, Action<Chat> undo)
+        public void Show(IList<Chat> chats, bool clear, Action<IList<Chat>> action, Action<IList<Chat>> undo)
         {
             _timeout.Stop();
             _storyboard?.Stop();
 
             _remaining = 5;
-            _queue.Enqueue(new UndoOp(chat, action, undo));
+            _queue.Enqueue(new UndoOp(chats, action, undo));
 
             _timeout.Start();
 
@@ -65,7 +65,7 @@ namespace Unigram.Controls
             {
                 Text.Text = Strings.Resources.HistoryClearedUndo;
             }
-            else
+            else if (chats.Count == 0 && chats[0] is Chat chat)
             {
                 if (chat.Type is ChatTypeSupergroup super)
                 {
@@ -75,6 +75,10 @@ namespace Unigram.Controls
                 {
                     Text.Text = Strings.Resources.ChatDeletedUndo;
                 }
+            }
+            else
+            {
+                Text.Text = Strings.Resources.ChatDeletedUndo;
             }
 
             IsEnabled = true;
@@ -116,11 +120,11 @@ namespace Unigram.Controls
                 var current = _queue.Dequeue();
                 if (undo)
                 {
-                    current.Undo.Invoke(current.Chat);
+                    current.Undo.Invoke(current.Chats);
                 }
                 else
                 {
-                    current.Delete.Invoke(current.Chat);
+                    current.Delete.Invoke(current.Chats);
                 }
             }
 
@@ -137,13 +141,13 @@ namespace Unigram.Controls
 
         private class UndoOp
         {
-            public Chat Chat { get; private set; }
-            public Action<Chat> Delete { get; private set; }
-            public Action<Chat> Undo { get; private set; }
+            public IList<Chat> Chats { get; private set; }
+            public Action<IList<Chat>> Delete { get; private set; }
+            public Action<IList<Chat>> Undo { get; private set; }
 
-            public UndoOp(Chat chat, Action<Chat> delete, Action<Chat> undo)
+            public UndoOp(IList<Chat> chats, Action<IList<Chat>> delete, Action<IList<Chat>> undo)
             {
-                Chat = chat;
+                Chats = chats;
                 Delete = delete;
                 Undo = undo;
             }

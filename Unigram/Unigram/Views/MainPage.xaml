@@ -292,6 +292,68 @@
                         </StackPanel>
                     </Grid>
 
+                    <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <controls:GlyphButton
+                            x:Name="ManageMute"
+                            Command="{x:Bind ViewModel.Chats.ChatsNotifyCommand}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                        <controls:GlyphButton
+                            x:Name="ManageMark"
+                            Command="{x:Bind ViewModel.Chats.ChatsMarkCommand}"
+                            FontFamily="{StaticResource TelegramThemeFontFamily}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            Grid.Column="1"/>
+                        <controls:GlyphButton
+                            Glyph="&#xE107;"
+                            Command="{x:Bind ViewModel.Chats.ChatsDeleteCommand}"
+                            AutomationProperties.Name="{CustomResource Delete}"
+                            ToolTipService.ToolTip="{CustomResource Delete}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            Grid.Column="2"/>
+                        <controls:GlyphButton
+                            x:Name="ManageClear"
+                            Glyph="&#xEA99;"
+                            Command="{x:Bind ViewModel.Chats.ChatsClearCommand}"
+                            AutomationProperties.Name="{CustomResource ClearHistory}"
+                            ToolTipService.ToolTip="{CustomResource ClearHistory}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            Grid.Column="3"/>
+
+                        <ContentControl
+                            Content="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            FontWeight="SemiBold"
+                            Padding="12,0"
+                            Height="{ThemeResource AppBarThemeCompactHeight}"
+                            Grid.Column="5">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,48"/>
+                            </ContentControl.Clip>
+                        </ContentControl>
+
+                        <controls:GlyphButton
+                            Click="Manage_Click"
+                            Glyph="&#xE10A;"
+                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            Grid.Column="6"/>
+                    </Grid>
+
                     <controls:SearchTextBox
                          x:Name="SearchField"
                          Style="{StaticResource QueryTextBoxStyle}"
@@ -505,7 +567,7 @@
                                                     AutomationProperties.LandmarkType="Main"
                                                     ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                                     IsItemClickEnabled="True"
-                                                    SelectionMode="None"
+                                                    SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
                                                     ItemClick="ListView_ItemClick"
                                                     SelectionChanged="ListView_SelectionChanged"
                                                     AllowDrop="True">
