@@ -2088,5 +2088,38 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Chats_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            if (e.Items.Count > 1 || e.Items[0] is Chat chat && !chat.IsPinned || ResetFilters.Visibility == Visibility.Visible)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void Chats_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is Chat chat)
+            {
+                var items = ViewModel.Chats.Items;
+                var index = items.IndexOf(chat);
+
+                var compare = items[index > 0 ? index - 1 : index + 1];
+
+                if (compare.IsSponsored && index > 0)
+                {
+                    compare = items[index + 1];
+                }
+
+                if (compare.IsPinned)
+                {
+                    ViewModel.ProtoService.Send(new SetPinnedChats(items.Where(x => x.IsPinned).Select(x => x.Id).ToList()));
+                }
+                else
+                {
+                    ViewModel.Chats.Handle(new UpdateChatOrder(chat.Id, chat.Order));
+                }
+            }
+        }
     }
 }

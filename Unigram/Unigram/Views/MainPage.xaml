@@ -570,6 +570,10 @@
                                                     SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
                                                     ItemClick="ListView_ItemClick"
                                                     SelectionChanged="ListView_SelectionChanged"
+                                                    CanDragItems="True"
+                                                    CanReorderItems="True"
+                                                    DragItemsStarting="Chats_DragItemsStarting"
+                                                    DragItemsCompleted="Chats_DragItemsCompleted"
                                                     AllowDrop="True">
                                 <ListView.ItemContainerStyleSelector>
                                     <selectors:DialogStyleSelector CacheService="{x:Bind ViewModel.CacheService}">
