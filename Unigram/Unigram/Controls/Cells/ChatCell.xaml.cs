@@ -15,12 +15,14 @@ using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -31,24 +33,28 @@ namespace Unigram.Controls.Cells
     {
         private Chat _chat;
         private IProtoService _protoService;
-        private INavigationService _navigationService;
+
+        private Visual _onlineBadge;
 
         public ChatCell()
         {
             InitializeComponent();
+
+            _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
+            _onlineBadge.CenterPoint = new System.Numerics.Vector3(6.5f);
+            _onlineBadge.Opacity = 0;
+            _onlineBadge.Scale = new System.Numerics.Vector3(0);
         }
 
-        public void UpdateChat(IProtoService protoService, INavigationService navigationService, Chat chat)
+        public void UpdateChat(IProtoService protoService, Chat chat)
         {
             _protoService = protoService;
-            _navigationService = navigationService;
             Update(chat);
         }
 
-        public void UpdateMessage(IProtoService protoService, INavigationService navigationService, Message message)
+        public void UpdateMessage(IProtoService protoService, Message message)
         {
             _protoService = protoService;
-            _navigationService = navigationService;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -272,6 +278,30 @@ namespace Unigram.Controls.Cells
             VerifiedIcon.Visibility = verified ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        public void UpdateUserStatus(Chat chat, UserStatus status)
+        {
+            UpdateOnlineBadge(status is UserStatusOnline);
+        }
+
+        private void UpdateOnlineBadge(bool visible)
+        {
+            OnlineBadge.Visibility = Visibility.Visible;
+
+            var scale = _onlineBadge.Compositor.CreateVector3KeyFrameAnimation();
+            //scale.InsertKeyFrame(0, new System.Numerics.Vector3(visible ? 0 : 1));
+            scale.InsertKeyFrame(1, new System.Numerics.Vector3(visible ? 1 : 0));
+
+            var opacity = _onlineBadge.Compositor.CreateScalarKeyFrameAnimation();
+            //opacity.InsertKeyFrame(0, visible ? 0 : 1);
+            opacity.InsertKeyFrame(1, visible ? 1 : 0);
+
+            _onlineBadge.StopAnimation("Scale");
+            _onlineBadge.StopAnimation("Opacity");
+
+            _onlineBadge.StartAnimation("Scale", scale);
+            _onlineBadge.StartAnimation("Opacity", opacity);
+        }
+
         private void Update(Chat chat)
         {
             _chat = chat;
@@ -288,6 +318,16 @@ namespace Unigram.Controls.Cells
             UpdateChatUnreadMentionCount(chat);
             UpdateNotificationSettings(chat);
             UpdateChatActions(chat, _protoService.GetChatActions(chat.Id));
+
+            var user = _protoService.GetUser(chat);
+            if (user != null && user.Type is UserTypeRegular && user.Id != _protoService.Options.MyId)
+            {
+                UpdateUserStatus(chat, user.Status);
+            }
+            else
+            {
+                OnlineBadge.Visibility = Visibility.Collapsed;
+            }
         }
 
         #endregion

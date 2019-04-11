@@ -431,16 +431,16 @@
                                                                        Margin="4,2,4,0"/>
                                                         </Border>
                                                         <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                                Width="16"
-                                                                Height="16"
-                                                                CornerRadius="8"
+                                                                Width="13"
+                                                                Height="13"
+                                                                CornerRadius="6.5"
                                                                 HorizontalAlignment="Right"
                                                                 VerticalAlignment="Bottom"
-                                                                Margin="0,0,-2,-2">
+                                                                Margin="0,0,1,1">
                                                             <Border Background="{ThemeResource TelegramDialogOnlineBadge}"
-                                                                    Width="12"
-                                                                    Height="12"
-                                                                    CornerRadius="6"/>
+                                                                    Width="9"
+                                                                    Height="9"
+                                                                    CornerRadius="4.5"/>
                                                         </Border>
                                                     </Grid>
 

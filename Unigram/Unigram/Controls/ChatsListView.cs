@@ -35,7 +35,7 @@ namespace Unigram.Controls
             if (content != null)
             {
                 content.UpdateViewState(args.Item as Chat, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
-                content.UpdateChat(ViewModel.ProtoService, ViewModel.NavigationService, args.Item as Chat);
+                content.UpdateChat(ViewModel.ProtoService, args.Item as Chat);
                 args.Handled = true;
             }
         }
