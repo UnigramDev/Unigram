@@ -109,6 +109,12 @@ namespace Unigram.Controls.Views
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithUser, user.GetFullName()));
                 }
+
+                if (user.Type is UserTypeBot)
+                {
+                    CheckBox.Visibility = Visibility.Visible;
+                    CheckBox.Content = Strings.Resources.BotStop;
+                }
             }
             else if (basicGroup != null)
             {
@@ -148,6 +154,8 @@ namespace Unigram.Controls.Views
 
             SecondaryButtonText = Strings.Resources.Cancel;
         }
+
+        public bool IsChecked => CheckBox.Visibility == Visibility.Visible && CheckBox.IsChecked == true;
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
