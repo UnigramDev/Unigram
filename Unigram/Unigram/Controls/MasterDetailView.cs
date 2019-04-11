@@ -95,7 +95,7 @@ namespace Unigram.Controls
             //    _backStack.RemoveLast();
             //}
 
-            if (ParentFrame.Content is IMasterPage masterPaging)
+            if (ParentFrame.Content is IMasterPage masterPaging && CurrentState != MasterDetailState.Minimal)
             {
                 masterPaging.OnBackRequesting(args);
                 if (args.Handled)
