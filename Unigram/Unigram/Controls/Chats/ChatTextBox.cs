@@ -433,7 +433,7 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
-            if (Emoji.ContainsSingleEmoji(text) && ViewModel.EditedMessage == null)
+            if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
             {
                 ViewModel.Autocomplete = null;
                 ViewModel.CurrentInlineBot = null;

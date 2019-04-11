@@ -73,8 +73,11 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new SearchPublicChat(username));
             if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
-                CurrentInlineBot = ProtoService.GetUser(privata.UserId);
-                return true;
+                var user = ProtoService.GetUser(privata.UserId);
+                if (user.Type is UserTypeBot)
+                {
+                    return true;
+                }
             }
 
             return false;
