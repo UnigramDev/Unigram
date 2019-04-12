@@ -38,7 +38,7 @@
                                         PlaceholderText="{CustomResource Search}"
                                         PreventKeyboardDisplayOnProgrammaticFocus="True"
                                         Visibility="Collapsed"
-                                        Clean="Search_LostFocus"
+                                        Delete="Search_LostFocus"
                                         GotFocus="Search_GotFocus"
                                         LostFocus="Search_LostFocus"
                                         TextChanged="Search_TextChanged"
