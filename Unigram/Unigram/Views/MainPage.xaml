@@ -255,6 +255,15 @@
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
                                 AutomationProperties.Name="{CustomResource CreateNewContact}"
                                 ToolTipService.ToolTip="{CustomResource CreateNewContact}"/>
+                            <controls:GlyphToggleButton
+                                UncheckedGlyph="&#xE91B;"
+                                CheckedGlyph="&#xE91E;"
+                                IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
+                                Style="{StaticResource HeaderGlyphToggleButtonStyle}"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
+                                IsOneWay="False"/>
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
@@ -672,7 +681,7 @@
                         </Grid>
                     </Grid>
                 </PivotItem>
-                <PivotItem Loaded="PivotItem_Loaded" Header="{CustomResource Contacts}">
+                <PivotItem Header="{CustomResource Contacts}">
                     <Grid>
                         <ListView x:Name="ContactsSearchListView"
                                   ItemsSource="{x:Bind ContactsResults.View, Mode=OneWay}"
@@ -759,7 +768,7 @@
                         </ListView>
                         <Grid x:Name="ContactsPanel">
                             <ListView x:Name="UsersListView"
-                                      ItemsSource="{x:Bind ViewModel.Contacts.Items}"
+                                      ItemsSource="{x:Bind ViewModel.Contacts.Items, Mode=OneWay}"
                                       IsItemClickEnabled="True"
                                       ItemClick="ListView_ItemClick"
                                       ContainerContentChanging="UsersListView_ContainerContentChanging"
@@ -789,6 +798,11 @@
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
+                                <ListView.Header>
+                                    <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </Border>
+                                </ListView.Header>
                                 <!--<ListView.ItemContainerTransitions>
                                      <TransitionCollection/>
                                      </ListView.ItemContainerTransitions>-->

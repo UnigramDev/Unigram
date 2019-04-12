@@ -50,11 +50,11 @@ namespace Unigram.ViewModels
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
             Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService, settingsSearchService);
 
-            ChildViewModels.Add(Chats);
-            ChildViewModels.Add(Contacts);
-            ChildViewModels.Add(Calls);
-            ChildViewModels.Add(Settings);
-            ChildViewModels.Add(_voipService as TLViewModelBase);
+            Children.Add(Chats);
+            Children.Add(Contacts);
+            Children.Add(Calls);
+            Children.Add(Settings);
+            Children.Add(_voipService as TLViewModelBase);
 
             aggregator.Subscribe(this);
 

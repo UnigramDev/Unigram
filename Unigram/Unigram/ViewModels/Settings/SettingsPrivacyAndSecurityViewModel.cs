@@ -44,10 +44,10 @@ namespace Unigram.ViewModels.Settings
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
 
-            ChildViewModels.Add(_showStatusRules);
-            ChildViewModels.Add(_allowCallsRules);
-            ChildViewModels.Add(_allowP2PCallsRules);
-            ChildViewModels.Add(_allowChatInvitesRules);
+            Children.Add(_showStatusRules);
+            Children.Add(_allowCallsRules);
+            Children.Add(_allowP2PCallsRules);
+            Children.Add(_allowChatInvitesRules);
 
             aggregator.Subscribe(this);
         }

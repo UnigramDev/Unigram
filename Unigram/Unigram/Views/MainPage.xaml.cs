@@ -1112,22 +1112,6 @@ namespace Unigram.Views
             });
         }
 
-        private void PivotItem_Loaded(object sender, RoutedEventArgs e)
-        {
-            var dialogs = ViewModel.Chats;
-            var contacts = ViewModel.Contacts;
-
-            try
-            {
-                Task.Run(() =>
-                {
-                    //dialogs.LoadFirstSlice();
-                    contacts.LoadContacts();
-                });
-            }
-            catch { }
-        }
-
         #region Context menu
 
         private void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -1296,6 +1280,11 @@ namespace Unigram.Views
             return null;
         }
 
+        private string ConvertSortedBy(bool epoch)
+        {
+            return epoch ? Strings.Resources.SortedByLastSeen : Strings.Resources.SortedByName;
+        }
+
         #endregion
 
         private void NewContact_Click(object sender, RoutedEventArgs e)
@@ -1346,6 +1335,21 @@ namespace Unigram.Views
                 //if (Window.Current.Bounds.Width >= 501 && Window.Current.Bounds.Width < 820)
                 {
                     MasterDetail.NavigationService.GoBackAt(0);
+                }
+            }
+
+            for (int i = 0; i < ViewModel.Children.Count; i++)
+            {
+                if (ViewModel.Children[i] is IChildViewModel child)
+                {
+                    if (i == rpMasterTitlebar.SelectedIndex)
+                    {
+                        child.Activate();
+                    }
+                    else
+                    {
+                        child.Deactivate();
+                    }
                 }
             }
         }
@@ -1679,6 +1683,7 @@ namespace Unigram.Views
             {
                 var subtitle = content.Children[2] as TextBlock;
                 subtitle.Text = LastSeenConverter.GetLabel(user, false);
+                subtitle.Foreground = App.Current.Resources[user.Status is UserStatusOnline ? "SystemControlForegroundAccentBrush" : "SystemControlDisabledChromeDisabledLowBrush"] as Brush;
             }
             else if (args.Phase == 2)
             {

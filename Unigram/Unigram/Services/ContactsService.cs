@@ -27,10 +27,11 @@ namespace Unigram.Services
         Task RemoveAsync();
     }
 
-    public class ContactsService : IContactsService
+    public class ContactsService : IContactsService, IHandle<Telegram.Td.Api.UpdateAuthorizationState>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
         private readonly DisposableMutex _syncLock;
@@ -38,14 +39,31 @@ namespace Unigram.Services
 
         private CancellationTokenSource _syncToken;
 
-        public ContactsService(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
+        public ContactsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;
+            _settingsService = settingsService;
             _aggregator = aggregator;
 
             _syncLock = new DisposableMutex();
             _importedPhonesRoot = new object();
+
+            _aggregator.Subscribe(this);
+        }
+
+        public void Handle(Telegram.Td.Api.UpdateAuthorizationState update)
+        {
+            if (update.AuthorizationState is Telegram.Td.Api.AuthorizationStateReady && _settingsService.IsContactsSyncEnabled)
+            {
+                _protoService.Send(new Telegram.Td.Api.GetContacts(), async result =>
+                {
+                    if (result is Telegram.Td.Api.Users users)
+                    {
+                        await SyncAsync(users);
+                    }
+                });
+            }
         }
 
         public async Task JumpListAsync()

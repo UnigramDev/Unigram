@@ -36,6 +36,7 @@ namespace Unigram.Services
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSyncRequested { get; set; }
+        bool IsContactsSortedByEpoch { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
         bool IsAutoPlayAnimationsEnabled { get; set; }
         bool IsAutoPlayVideosEnabled { get; set; }
@@ -160,8 +161,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (4UL << 32) | (2153UL << 16);
-        public const string CurrentChangelog = "• Play video files and listen to music without waiting for them to fully download.";
+        public const ulong CurrentVersion = (3UL << 48) | (4UL << 32) | (2179UL << 16);
+        public const string CurrentChangelog = "• Swipe up while recording for hands free mode.\r\n• Use CTRL+R to quickly record a message, CTRL+D to cancel it.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -460,12 +461,29 @@ namespace Unigram.Services
                 if (_isContactsSyncRequested == null)
                     _isContactsSyncRequested = GetValueOrDefault("IsContactsSyncRequested", false);
 
-                return _isContactsSyncRequested ?? true;
+                return _isContactsSyncRequested ?? false;
             }
             set
             {
                 _isContactsSyncRequested = value;
                 AddOrUpdateValue("IsContactsSyncRequested", value);
+            }
+        }
+
+        private bool? _isContactsSortedByEpoch;
+        public bool IsContactsSortedByEpoch
+        {
+            get
+            {
+                if (_isContactsSortedByEpoch == null)
+                    _isContactsSortedByEpoch = GetValueOrDefault("IsContactsSortedByEpoch", true);
+
+                return _isContactsSortedByEpoch ?? true;
+            }
+            set
+            {
+                _isContactsSortedByEpoch = value;
+                AddOrUpdateValue("IsContactsSortedByEpoch", value);
             }
         }
 
