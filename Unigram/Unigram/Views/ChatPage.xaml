@@ -1210,7 +1210,8 @@
         <chats:ChatSearchMask
             x:Name="SearchMask"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-            Grid.RowSpan="4"/>
+            Grid.RowSpan="4"
+            Canvas.ZIndex="2"/>
 
         <!--<controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48" Grid.RowSpan="4"/>-->
     </Grid>

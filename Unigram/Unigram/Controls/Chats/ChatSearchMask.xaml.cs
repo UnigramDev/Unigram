@@ -42,6 +42,11 @@ namespace Unigram.Controls.Chats
         {
             DataContext = viewModel;
             Bindings.Update();
+
+            Field.Text = string.Empty;
+            Field.From = null;
+            Field.Filter = null;
+            Field.State = ChatSearchState.Text;
         }
 
         private async void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)
@@ -119,6 +124,8 @@ namespace Unigram.Controls.Chats
             {
                 ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, Field.Text, false, true);
             }
+
+            DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && Field.State == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
@@ -137,7 +144,7 @@ namespace Unigram.Controls.Chats
             }
             else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(Field.Text))
             {
-                OnBackRequested(false);
+                Delete(false);
                 e.Handled = true;
             }
         }
@@ -149,7 +156,15 @@ namespace Unigram.Controls.Chats
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            OnBackRequested(true);
+            Delete(true);
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel?.Dialog?.Search != null)
+            {
+                ViewModel.Dialog.DisposeSearch();
+            }
         }
 
         private void FilterByMember_Click(object sender, RoutedEventArgs e)
@@ -213,8 +228,8 @@ namespace Unigram.Controls.Chats
                     break;
             }
         }
-
-        public bool OnBackRequested(bool allowDispose)
+        
+        private void Delete(bool allowDispose)
         {
             if (!string.IsNullOrEmpty(Field.Text))
             {
@@ -236,18 +251,26 @@ namespace Unigram.Controls.Chats
             {
                 ViewModel.Dialog.DisposeSearch();
             }
+        }
+
+        public bool OnBackRequested()
+        {
+            if (ViewModel?.Dialog?.Search != null)
+            {
+                ViewModel.Dialog.DisposeSearch();
+            }
 
             return true;
         }
 
         private void Field_GotFocus(object sender, RoutedEventArgs e)
         {
-            ClearMiniButton.RequestedTheme = QueryButton.RequestedTheme = ElementTheme.Light;
+            DeleteButton.RequestedTheme = QueryButton.RequestedTheme = ElementTheme.Light;
         }
 
         private void Field_LostFocus(object sender, RoutedEventArgs e)
         {
-            ClearMiniButton.RequestedTheme = QueryButton.RequestedTheme = ElementTheme.Default;
+            DeleteButton.RequestedTheme = QueryButton.RequestedTheme = ElementTheme.Default;
         }
     }
 }

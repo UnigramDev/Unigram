@@ -211,7 +211,6 @@
                         <Setter Target="TopPanel.Height" Value="{StaticResource TelegramToolBarHeight}"/>
                         <Setter Target="TopPanel.(Grid.Row)" Value="1"/>
                         <Setter Target="SearchPanel.Margin" Value="0,0,0,8"/>
-                        <Setter Target="ClearMiniButton.Visibility" Value="Collapsed"/>
                         <Setter Target="SearchPrevious.Visibility" Value="Visible"/>
                         <Setter Target="SearchNext.Visibility" Value="Visible"/>
                         <Setter Target="RightPanel.Visibility" Value="Visible"/>
@@ -254,22 +253,21 @@
                     Style="{StaticResource Test}"
                     Grid.ColumnSpan="3"/>
 
-                <Button x:Name="ClearMiniButton"
+                <Button x:Name="DeleteButton"
                         Click="Delete_Click"
                         Grid.Row="1"
                         Style="{StaticResource TextDeleteButtonStyle}"
                         IsTabStop="False"
                         Grid.Column="4"
-                        Visibility="Visible"
                         MinWidth="34"
                         AutomationProperties.AccessibilityView="Raw"
-                        VerticalAlignment="Stretch" />
+                        VerticalAlignment="Stretch"
+                        Visibility="Collapsed"/>
                 <Button x:Name="QueryButton"
                         Click="Search_Click"
                         Grid.Row="1"
                         Style="{StaticResource TextQueryButtonStyle}"
                         IsTabStop="False"
-                        Visibility="Visible"
                         MinWidth="34"
                         AutomationProperties.AccessibilityView="Raw"
                         VerticalAlignment="Stretch" />
@@ -324,7 +322,7 @@
                 </Grid>
 
                 <controls:GlyphButton
-                    Click="Delete_Click"
+                    Click="Close_Click"
                     Glyph="&#xE10A;"
                     FontSize="16"
                     Grid.Column="1"/>

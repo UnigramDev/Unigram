@@ -92,6 +92,20 @@
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.EmojiTemplate>
+        <selectors:AutocompleteTemplateSelector.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Border Width="32" Height="32" Margin="0,0,12,0">
+                        <TextBlock FontSize="16" TextAlignment="Center" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                    </Border>
+                    <TextBlock VerticalAlignment="Center" Grid.Column="1"/>
+                </Grid>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.ItemTemplate>
     </selectors:AutocompleteTemplateSelector>
 
 </ResourceDictionary>
