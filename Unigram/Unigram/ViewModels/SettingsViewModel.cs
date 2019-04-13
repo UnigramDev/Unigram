@@ -165,7 +165,9 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            var text = Regex.Replace(Strings.Resources.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
+
+            var confirm = await TLMessageDialog.ShowAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new GetSupportUser());
