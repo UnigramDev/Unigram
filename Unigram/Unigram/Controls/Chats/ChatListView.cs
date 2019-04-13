@@ -36,6 +36,14 @@ namespace Unigram.Controls.Chats
             Loaded += OnLoaded;
         }
 
+        protected override void OnDoubleTapped(SelectorItem selector)
+        {
+            if (selector.ContentTemplateRoot is FrameworkElement root && root.Tag is MessageViewModel message)
+            {
+                ViewModel.ReplyToMessage(message);
+            }
+        }
+
         public void ScrollToBottom()
         {
             if (ScrollingHost != null)

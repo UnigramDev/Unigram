@@ -58,10 +58,17 @@ namespace Unigram.Controls
 
         internal void OnPointerPressed(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
-            if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
+            if (!_pressed && !_recognizer.IsActive && SelectionMode == ListViewSelectionMode.None)
             {
-                _recognizer.ProcessDownEvent(point);
+                var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+                if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
+                {
+                    try
+                    {
+                        _recognizer.ProcessDownEvent(point);
+                    }
+                    catch { }
+                }
             }
 
             _pressed = true;
