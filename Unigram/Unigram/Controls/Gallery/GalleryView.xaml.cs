@@ -45,7 +45,7 @@ using Unigram.Native.Streaming;
 
 namespace Unigram.Controls.Gallery
 {
-    public sealed partial class GalleryView : OverlayPage, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
+    public sealed partial class GalleryView : OverlayPage, INavigatingPage, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
@@ -247,6 +247,8 @@ namespace Unigram.Controls.Gallery
         private static Dictionary<int, WeakReference<GalleryView>> _windowContext = new Dictionary<int, WeakReference<GalleryView>>();
         public static GalleryView GetForCurrentView()
         {
+            return new GalleryView();
+
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
             if (_windowContext.TryGetValue(id, out WeakReference<GalleryView> reference) && reference.TryGetTarget(out GalleryView value))
             {
@@ -321,6 +323,14 @@ namespace Unigram.Controls.Gallery
                 statusBar.BackgroundColor = Colors.Black;
                 statusBar.ForegroundColor = Colors.White;
             }
+        }
+
+        public void OnBackRequesting(HandledEventArgs e)
+        {
+            Unload();
+            Dispose();
+
+            e.Handled = true;
         }
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)

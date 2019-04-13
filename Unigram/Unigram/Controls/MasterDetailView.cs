@@ -95,7 +95,7 @@ namespace Unigram.Controls
             //    _backStack.RemoveLast();
             //}
 
-            if (ParentFrame.Content is IMasterPage masterPaging && CurrentState != MasterDetailState.Minimal)
+            if (ParentFrame.Content is INavigatingPage masterPaging && CurrentState != MasterDetailState.Minimal)
             {
                 masterPaging.OnBackRequesting(args);
                 if (args.Handled)
@@ -560,10 +560,5 @@ namespace Unigram.Controls
         Minimal,
         Compact,
         Expanded
-    }
-
-    public interface IMasterPage : INavigablePage
-    {
-        void OnBackRequesting(HandledEventArgs args);
     }
 }
