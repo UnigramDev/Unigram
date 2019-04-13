@@ -798,7 +798,7 @@ namespace Unigram.ViewModels
             if (supergroup != null && string.IsNullOrEmpty(supergroup.Username))
             {
                 var dataPackage = new DataPackage();
-                dataPackage.SetText(MeUrlPrefixConverter.Convert(CacheService, $"{supergroup.Id}/{message.Id >> 20}"));
+                dataPackage.SetText(MeUrlPrefixConverter.Convert(CacheService, $"c/{supergroup.Id}/{message.Id >> 20}"));
                 ClipboardEx.TrySetContent(dataPackage);
 
                 await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
@@ -1004,16 +1004,6 @@ namespace Unigram.ViewModels
         #endregion
 
         #region Keyboard button
-
-        private Message _replyMarkupMessage;
-
-        public Message EditedMessage
-        {
-            get
-            {
-                return null;
-            }
-        }
 
         public async void KeyboardButtonExecute(MessageViewModel message, object button)
         {
