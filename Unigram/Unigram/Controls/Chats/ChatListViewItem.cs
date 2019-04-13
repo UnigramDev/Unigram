@@ -128,7 +128,7 @@ namespace Unigram.Controls.Chats
             _reply = CanReply();
             _forward = CanForward();
 
-            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch || CantSelect() || (!_reply && !_forward))
+            if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse || CantSelect() || (!_reply && !_forward))
             {
                 e.Complete();
             }
@@ -140,7 +140,7 @@ namespace Unigram.Controls.Chats
         {
             e.Handled = true;
 
-            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch)
+            if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
             {
                 e.Complete();
                 base.OnManipulationDelta(e);
@@ -221,7 +221,7 @@ namespace Unigram.Controls.Chats
         {
             e.Handled = true;
 
-            if (e.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Touch)
+            if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
             {
                 base.OnManipulationCompleted(e);
                 return;
