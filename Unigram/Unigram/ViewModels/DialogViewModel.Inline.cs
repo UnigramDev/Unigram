@@ -74,8 +74,9 @@ namespace Unigram.ViewModels
             if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
                 var user = ProtoService.GetUser(privata.UserId);
-                if (user.Type is UserTypeBot)
+                if (user.Type is UserTypeBot bot && bot.IsInline)
                 {
+                    CurrentInlineBot = user;
                     return true;
                 }
             }

@@ -426,7 +426,7 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text) || Document.Selection.Length != 0)
             {
                 ViewModel.StickerPack = null;
                 ViewModel.Autocomplete = null;
@@ -444,29 +444,38 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
-            ViewModel.StickerPack = null;
-            ViewModel.CurrentInlineBot = null;
-            ViewModel.InlineBotResults = null;
-            InlinePlaceholderText = string.Empty;
-
             var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
 
             if (TryGetAutocomplete(text, query, out var autocomplete))
             {
+                ViewModel.StickerPack = null;
+                ViewModel.CurrentInlineBot = null;
+                ViewModel.InlineBotResults = null;
+                InlinePlaceholderText = string.Empty;
+
                 ViewModel.Autocomplete = autocomplete;
             }
             else
             {
+                ViewModel.StickerPack = null;
                 ViewModel.Autocomplete = null;
 
                 if (SearchByInlineBot(query, out string username, out int index) && await ViewModel.ResolveInlineBotAsync(username))
                 {
                     if (SearchInlineBotResults(text, out query))
                     {
+                        ViewModel.StickerPack = null;
                         ViewModel.Autocomplete = null;
+
                         ViewModel.GetInlineBotResults(query);
+                        return;
                     }
                 }
+
+                ViewModel.StickerPack = null;
+                ViewModel.CurrentInlineBot = null;
+                ViewModel.InlineBotResults = null;
+                InlinePlaceholderText = string.Empty;
             }
         }
 
