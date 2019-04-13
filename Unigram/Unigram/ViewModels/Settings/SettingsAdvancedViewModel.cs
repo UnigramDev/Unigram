@@ -17,32 +17,6 @@ namespace Unigram.ViewModels.Settings
         {
         }
 
-        public bool IsSendByEnterEnabled
-        {
-            get
-            {
-                return Settings.IsSendByEnterEnabled;
-            }
-            set
-            {
-                Settings.IsSendByEnterEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool IsReplaceEmojiEnabled
-        {
-            get
-            {
-                return Settings.IsReplaceEmojiEnabled;
-            }
-            set
-            {
-                Settings.IsReplaceEmojiEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool IsAdaptiveWideEnabled
         {
             get

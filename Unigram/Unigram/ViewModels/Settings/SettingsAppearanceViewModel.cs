@@ -110,5 +110,46 @@ namespace Unigram.ViewModels.Settings
                 return Settings.Appearance.NightMode;
             }
         }
+
+
+
+        public bool AreAnimationsEnabled
+        {
+            get
+            {
+                return Settings.AreAnimationsEnabled;
+            }
+            set
+            {
+                Settings.AreAnimationsEnabled = value;
+                RaisePropertyChanged(() => AreAnimationsEnabled);
+            }
+        }
+
+        public bool IsSendByEnterEnabled
+        {
+            get
+            {
+                return Settings.IsSendByEnterEnabled;
+            }
+            set
+            {
+                Settings.IsSendByEnterEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsReplaceEmojiEnabled
+        {
+            get
+            {
+                return Settings.IsReplaceEmojiEnabled;
+            }
+            set
+            {
+                Settings.IsReplaceEmojiEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }

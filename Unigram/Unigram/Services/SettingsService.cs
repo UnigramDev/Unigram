@@ -44,6 +44,8 @@ namespace Unigram.Services
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
 
+        bool AreAnimationsEnabled { get; set; }
+
         bool IsStreamingEnabled { get; set; }
 
         int LastMessageTtl { get; set; }
@@ -161,8 +163,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (4UL << 32) | (2179UL << 16);
-        public const string CurrentChangelog = "• Swipe up while recording for hands free mode.\r\n• Use CTRL+R to quickly record a message, CTRL+D to cancel it.";
+        public const ulong CurrentVersion = (3UL << 48) | (5UL << 32) | (2246UL << 16);
+        public const string CurrentChangelog = "• New sorting options in Contacts: by name or by last seen time.\r\n• Select multiple chats to quickly delete them or mark them as \"Read\".\r\n• Reorder pinned chats by dragging them.\r\n• See who's online at a glance with the new badge indicator.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -399,6 +401,23 @@ namespace Unigram.Services
             {
                 _isAllAccountsNotifications = value;
                 AddOrUpdateValue(_local, "IsAllAccountsNotifications", value);
+            }
+        }
+
+        private static bool? _areAnimationsEnabled;
+        public bool AreAnimationsEnabled
+        {
+            get
+            {
+                if (_areAnimationsEnabled == null)
+                    _areAnimationsEnabled = GetValueOrDefault(_local, "AreAnimationsEnabled", ApiInfo.IsFullExperience);
+
+                return _areAnimationsEnabled ?? ApiInfo.IsFullExperience;
+            }
+            set
+            {
+                _areAnimationsEnabled = value;
+                AddOrUpdateValue(_local, "AreAnimationsEnabled", value);
             }
         }
 
