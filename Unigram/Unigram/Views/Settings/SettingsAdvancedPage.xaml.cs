@@ -16,47 +16,6 @@ namespace Unigram.Views.Settings
             DataContext = TLContainer.Current.Resolve<SettingsAdvancedViewModel>();
         }
 
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var chat = args.Item as Chat;
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = ViewModel.ProtoService.GetTitle(chat);
-            }
-            else if (args.Phase == 1)
-            {
-
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
-        }
-
-        private void OnDragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
-        {
-            if (args.DropResult == Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move)
-            {
-                ViewModel.SetPinnedChats();
-            }
-        }
-
         private void OnSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
         {
             AdaptiveWide.Visibility = e.NewSize.Width >= 880 ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed;
