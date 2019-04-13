@@ -22,6 +22,7 @@ using Unigram.Entities;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Chats;
 using Unigram.Views.Dialogs;
@@ -535,13 +536,18 @@ namespace Unigram.Views
 
         private void ShowHideManagePanel(bool show)
         {
-            if ((show && ManagePanel.Visibility == Visibility.Visible) || (!show && InfoPanel.Visibility == Visibility.Visible))
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var info = ElementCompositionPreview.GetElementVisual(InfoPanel);
+
+            manage.StopAnimation("Offset");
+            manage.StopAnimation("Opacity");
+            info.StopAnimation("Offset");
+            info.StopAnimation("Opacity");
+
+            if ((show && InfoPanel.Visibility == Visibility.Collapsed) || (!show && ManagePanel.Visibility == Visibility.Collapsed))
             {
                 return;
             }
-
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
-            var info = ElementCompositionPreview.GetElementVisual(InfoPanel);
 
             manage.Offset = new Vector3(show ? -32 : 0, 0, 0);
             manage.Opacity = show ? 0 : 1;
@@ -552,13 +558,22 @@ namespace Unigram.Views
             var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
+                manage.Offset = new Vector3(show ? 0 : -32, 0, 0);
+                manage.Opacity = show ? 1 : 0;
+
+                info.Offset = new Vector3(show ? 32 : 0, 0, 0);
+                info.Opacity = show ? 0 : 1;
+
                 if (show)
                 {
                     InfoPanel.Visibility = Visibility.Collapsed;
+                    ManagePanel.Visibility = Visibility.Visible;
                 }
                 else
                 {
+                    InfoPanel.Visibility = Visibility.Visible;
                     ManagePanel.Visibility = Visibility.Collapsed;
+
                     ViewModel.SelectedItems = new List<MessageViewModel>();
                 }
             };
@@ -741,7 +756,7 @@ namespace Unigram.Views
         {
             if (ViewModel.Search != null)
             {
-                args.Handled = SearchMask.OnBackRequested(true);
+                args.Handled = SearchMask.OnBackRequested();
             }
 
             if (StickersPanel.Visibility == Visibility.Visible)
@@ -2900,6 +2915,11 @@ namespace Unigram.Views
             {
                 _composerHeaderCollapsed = true;
             }
+        }
+
+        public void UpdateSearchMask(Chat chat, ChatSearchViewModel search)
+        {
+
         }
 
 

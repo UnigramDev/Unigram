@@ -2017,13 +2017,18 @@ namespace Unigram.Views
 
         private void ShowHideManagePanel(bool show)
         {
-            if ((show && ManagePanel.Visibility == Visibility.Visible) || (!show && MainHeader.Visibility == Visibility.Visible))
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var info = ElementCompositionPreview.GetElementVisual(MainHeader);
+
+            manage.StopAnimation("Offset");
+            manage.StopAnimation("Opacity");
+            info.StopAnimation("Offset");
+            info.StopAnimation("Opacity");
+
+            if ((show && MainHeader.Visibility == Visibility.Collapsed) || (!show && ManagePanel.Visibility == Visibility.Collapsed))
             {
                 return;
             }
-
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
-            var info = ElementCompositionPreview.GetElementVisual(MainHeader);
 
             manage.Offset = new Vector3(show ? -32 : 0, 0, 0);
             manage.Opacity = show ? 0 : 1;
@@ -2034,13 +2039,22 @@ namespace Unigram.Views
             var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
+                manage.Offset = new Vector3(show ? 0 : -32, 0, 0);
+                manage.Opacity = show ? 1 : 0;
+
+                info.Offset = new Vector3(show ? 32 : 0, 0, 0);
+                info.Opacity = show ? 0 : 1;
+
                 if (show)
                 {
                     MainHeader.Visibility = Visibility.Collapsed;
+                    ManagePanel.Visibility = Visibility.Visible;
                 }
                 else
                 {
+                    MainHeader.Visibility = Visibility.Visible;
                     ManagePanel.Visibility = Visibility.Collapsed;
+
                     ViewModel.Chats.SelectedItems.Clear();
                 }
             };
