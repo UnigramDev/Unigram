@@ -1017,7 +1017,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var already = Items.FirstOrDefault(x => x.Id == maxId);
+            var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Layout.Messages.ContainsKey(maxId));
             if (already != null)
             {
                 var field = ListField;
