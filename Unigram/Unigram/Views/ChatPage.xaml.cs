@@ -2701,7 +2701,8 @@ namespace Unigram.Views
             if (header == null)
             {
                 // Let's reset
-                ComposerHeader.Visibility = Visibility.Collapsed;
+                //ComposerHeader.Visibility = Visibility.Collapsed;
+                ShowHideComposerHeader(false);
                 ComposerHeaderReference.Message = null;
 
                 AttachMedia.Command = ViewModel.SendMediaCommand;
@@ -2727,7 +2728,8 @@ namespace Unigram.Views
             }
             else
             {
-                ComposerHeader.Visibility = Visibility.Visible;
+                //ComposerHeader.Visibility = Visibility.Visible;
+                ShowHideComposerHeader(true);
                 ComposerHeaderReference.Message = header;
 
                 TextField.Reply = header;
@@ -2812,6 +2814,91 @@ namespace Unigram.Views
                     ButtonsPanel.Visibility = Visibility.Visible;
                     btnEdit.Visibility = Visibility.Collapsed;
                 }
+            }
+        }
+
+        private bool _composerHeaderCollapsed = false;
+
+        private void ShowHideComposerHeader(bool show)
+        {
+            if (Action.Visibility == Visibility.Visible)
+            {
+                _composerHeaderCollapsed = true;
+                ComposerHeader.Visibility = Visibility.Collapsed;
+
+                return;
+            }
+
+            if ((show && ComposerHeader.Visibility == Visibility.Visible) || (!show && (ComposerHeader.Visibility == Visibility.Collapsed || _composerHeaderCollapsed)))
+            {
+                return;
+            }
+
+            var composer = ElementCompositionPreview.GetElementVisual(ComposerHeader);
+            var messages = ElementCompositionPreview.GetElementVisual(Messages);
+            var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
+
+            var value = show ? 48 : 0;
+
+            textArea.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
+            messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
+            composer.Clip = textArea.Compositor.CreateInsetClip(0, 0, 0, value);
+
+            var batch = composer.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                textArea.Clip = null;
+                composer.Clip = null;
+                messages.Clip = null;
+                composer.Offset = new Vector3();
+                messages.Offset = new Vector3();
+
+                ContentPanel.Margin = new Thickness();
+
+                if (show)
+                {
+                    _composerHeaderCollapsed = false;
+                }
+                else
+                {
+                    ComposerHeader.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var animClip = textArea.Compositor.CreateScalarKeyFrameAnimation();
+            animClip.InsertKeyFrame(0, show ? 48 : 0);
+            animClip.InsertKeyFrame(1, show ? 0 : 48);
+            animClip.Duration = TimeSpan.FromMilliseconds(150);
+
+            var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
+            animClip2.InsertKeyFrame(0, show ? 0 : 48);
+            animClip2.InsertKeyFrame(1, show ? 48 : 0);
+            animClip2.Duration = TimeSpan.FromMilliseconds(150);
+
+            var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
+            anim1.InsertKeyFrame(0, new Vector3(0, show ? 48 : 0, 0));
+            anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
+            anim1.Duration = TimeSpan.FromMilliseconds(150);
+
+            textArea.Clip.StartAnimation("TopInset", animClip);
+            messages.Clip.StartAnimation("TopInset", animClip2);
+            composer.Clip.StartAnimation("BottomInset", animClip);
+            messages.StartAnimation("Offset", anim1);
+            composer.StartAnimation("Offset", anim1);
+
+            batch.End();
+
+
+
+            ContentPanel.Margin = new Thickness(0, -48, 0, 0);
+
+            if (show)
+            {
+                ComposerHeader.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                _composerHeaderCollapsed = true;
             }
         }
 
