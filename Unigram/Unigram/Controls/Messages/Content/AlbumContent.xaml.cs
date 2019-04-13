@@ -53,9 +53,10 @@ namespace Unigram.Controls.Messages.Content
             var positions = groupedMessages.Positions.ToList();
 
             var groupedWidth = (double)groupedMessages.Width;
-            var width = groupedMessages.Width / 800d * Math.Min(availableSize.Width, MAX_WIDTH);
-            //var width = availableSize.Width;
+            //var width = groupedMessages.Width / 800d * Math.Min(availableSize.Width, MAX_WIDTH);
+            var width = availableSize.Width;
             var height = width / MAX_WIDTH * MAX_HEIGHT;
+            //var height = groupedMessages.Width / 800d * MAX_HEIGHT;
 
             var size = new Size(width, groupedMessages.Height * height);
 
@@ -86,6 +87,9 @@ namespace Unigram.Controls.Messages.Content
             var groupedWidth = (double)groupedMessages.Width;
             var width = finalSize.Width;
             var height = width / MAX_WIDTH * MAX_HEIGHT;
+            //var height = groupedMessages.Width / 800d * MAX_HEIGHT;
+
+            var size = new Size(width, groupedMessages.Height * height);
 
             var total = 0d;
 
@@ -127,7 +131,7 @@ namespace Unigram.Controls.Messages.Content
                             }
                             else
                             {
-                                top += height * pos.Value.Height;
+                                top = total += height * pos.Value.Height;
                             }
                         }
                     }
@@ -140,7 +144,7 @@ namespace Unigram.Controls.Messages.Content
                 Children[i].Arrange(new Rect(left, top, positions[i].Value.Width / groupedWidth * width, height * positions[i].Value.Height));
             }
 
-            return finalSize;
+            return size;
         }
 
         public void UpdateMessage(MessageViewModel message)
