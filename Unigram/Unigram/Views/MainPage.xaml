@@ -777,6 +777,7 @@
                                       ItemsSource="{x:Bind ViewModel.Contacts.Items, Mode=OneWay}"
                                       IsItemClickEnabled="True"
                                       ItemClick="ListView_ItemClick"
+                                      ChoosingItemContainer="UsersListView_ChoosingItemContainer"
                                       ContainerContentChanging="UsersListView_ContainerContentChanging"
                                       SelectionMode="None">
                                 <ListView.ItemTemplate>

@@ -1662,6 +1662,18 @@ namespace Unigram.Views
             args.Handled = true;
         }
 
+        private void UsersListView_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer.Style = UsersListView.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = UsersListView.ItemTemplate;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void UsersListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
