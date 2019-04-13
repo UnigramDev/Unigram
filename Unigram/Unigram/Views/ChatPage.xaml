@@ -999,36 +999,54 @@
                                 <controls:GlyphMenuFlyoutItem
                                     x:Name="AttachMedia"
                                     Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:True), Mode=OneWay}"
-                                    Command="{x:Bind ViewModel.SendMediaCommand}"
-                                    Glyph="&#xEB9F;"/>
+                                    Command="{x:Bind ViewModel.SendMediaCommand}">
+                                    <controls:GlyphMenuFlyoutItem.Glyph>
+                                        <FontIcon Glyph="&#xEB9F;"/>
+                                    </controls:GlyphMenuFlyoutItem.Glyph>
+                                </controls:GlyphMenuFlyoutItem>
                                 <controls:GlyphMenuFlyoutItem
                                     x:Name="AttachDocument"
                                     Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:False), Mode=OneWay}"
-                                    Command="{x:Bind ViewModel.SendDocumentCommand}"
-                                    Glyph="&#xE160;"/>
+                                    Command="{x:Bind ViewModel.SendDocumentCommand}">
+                                    <controls:GlyphMenuFlyoutItem.Glyph>
+                                        <FontIcon Glyph="&#xE160;"/>
+                                    </controls:GlyphMenuFlyoutItem.Glyph>
+                                </controls:GlyphMenuFlyoutItem>
                                 <controls:GlyphMenuFlyoutItem
                                     x:Name="AttachLocation"
                                     Text="{CustomResource ChatLocation}"
                                     IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                    Command="{x:Bind ViewModel.SendLocationCommand}"
-                                    Glyph="&#xE1C4;"/>
+                                    Command="{x:Bind ViewModel.SendLocationCommand}">
+                                    <controls:GlyphMenuFlyoutItem.Glyph>
+                                        <FontIcon Glyph="&#xE1C4;"/>
+                                    </controls:GlyphMenuFlyoutItem.Glyph>
+                                </controls:GlyphMenuFlyoutItem>
                                 <controls:GlyphMenuFlyoutItem
                                     x:Name="AttachPoll"
                                     Text="{CustomResource Poll}"
                                     IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                    Command="{x:Bind ViewModel.SendPollCommand}"
-                                    Glyph="&#xE9D2;"/>
+                                    Command="{x:Bind ViewModel.SendPollCommand}">
+                                    <controls:GlyphMenuFlyoutItem.Glyph>
+                                        <FontIcon Glyph="&#xE91F;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                                    </controls:GlyphMenuFlyoutItem.Glyph>
+                                </controls:GlyphMenuFlyoutItem>
                                 <controls:GlyphMenuFlyoutItem
                                     x:Name="AttachContact"
                                     Text="{CustomResource AttachContact}"
                                     IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                    Command="{x:Bind ViewModel.SendContactCommand}"
-                                    Glyph="&#xE187;"/>
+                                    Command="{x:Bind ViewModel.SendContactCommand}">
+                                    <controls:GlyphMenuFlyoutItem.Glyph>
+                                        <FontIcon Glyph="&#xE187;"/>
+                                    </controls:GlyphMenuFlyoutItem.Glyph>
+                                </controls:GlyphMenuFlyoutItem>
                                 <controls:GlyphMenuFlyoutItem
                                     x:Name="AttachCurrent"
                                     Text="{CustomResource Edit}"
-                                    Command="{x:Bind ViewModel.EditCurrentCommand}"
-                                    Glyph="&#xE7A8;"/>
+                                    Command="{x:Bind ViewModel.EditCurrentCommand}">
+                                    <controls:GlyphMenuFlyoutItem.Glyph>
+                                        <FontIcon Glyph="&#xE7A8;"/>
+                                    </controls:GlyphMenuFlyoutItem.Glyph>
+                                </controls:GlyphMenuFlyoutItem>
                             </MenuFlyout>
                         </FlyoutBase.AttachedFlyout>
                     </controls:GlyphButton>

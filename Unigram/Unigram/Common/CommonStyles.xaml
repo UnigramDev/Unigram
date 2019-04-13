@@ -5118,7 +5118,14 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <StackPanel Orientation="Horizontal">
-                            <FontIcon x:Name="Glyph" Margin="0,0,12,0" Glyph="{TemplateBinding Glyph}" />
+                            <Viewbox x:Name="IconRoot" 
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Center"
+                                     Width="16" 
+                                     Height="16"
+                                     Margin="0,0,12,0">
+                                <ContentPresenter x:Name="IconContent" Content="{TemplateBinding Glyph}"/>
+                            </Viewbox>
                             <TextBlock x:Name="TextBlock"
                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

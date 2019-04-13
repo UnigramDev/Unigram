@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -16,25 +17,25 @@ namespace Unigram.Controls
             //DefaultStyleKey = typeof(GlyphMenuFlyoutItem);
         }
 
-        public string Glyph
+        public IconElement Glyph
         {
-            get { return (string)GetValue(GlyphProperty); }
+            get { return (IconElement)GetValue(GlyphProperty); }
             set { SetValue(GlyphProperty, value); }
         }
 
         public static readonly DependencyProperty GlyphProperty =
-            DependencyProperty.Register("Glyph", typeof(string), typeof(GlyphMenuFlyoutItem), new PropertyMetadata(null, OnGlyphChanged));
+            DependencyProperty.Register("Glyph", typeof(IconElement), typeof(GlyphMenuFlyoutItem), new PropertyMetadata(null, OnGlyphChanged));
 
         private static void OnGlyphChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((GlyphMenuFlyoutItem)d).OnGlyphChanged((string)e.NewValue);
+            ((GlyphMenuFlyoutItem)d).OnGlyphChanged((IconElement)e.NewValue);
         }
 
-        private void OnGlyphChanged(string newValue)
+        private void OnGlyphChanged(IconElement newValue)
         {
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
             {
-                Icon = new FontIcon { Glyph = newValue };
+                Icon = newValue;
             }
         }
     }
