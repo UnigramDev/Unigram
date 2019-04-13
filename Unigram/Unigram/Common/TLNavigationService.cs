@@ -33,6 +33,7 @@ namespace Unigram.Common
         }
 
         public int SessionId => _protoService.SessionId;
+        public IProtoService ProtoService => _protoService;
 
         public async void NavigateToInstant(string url)
         {
