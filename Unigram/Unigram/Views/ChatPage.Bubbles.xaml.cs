@@ -651,6 +651,27 @@ namespace Unigram.Views
             else if (content is StackPanel panel && !(content is MessageBubble))
             {
                 content = panel.FindName("Service") as FrameworkElement;
+
+                if (message.Content is MessageChatChangePhoto chatChangePhoto)
+                {
+                    var photo = panel.FindName("Photo") as ProfilePicture;
+                    if (photo != null)
+                    {
+                        var file = chatChangePhoto.Photo.GetSmall();
+                        if (file != null)
+                        {
+                            if (file.Photo.Local.IsDownloadingCompleted)
+                            {
+                                photo.Source = new BitmapImage(new Uri("file:///" + file.Photo.Local.Path)) { DecodePixelWidth = 96, DecodePixelHeight = 96, DecodePixelType = DecodePixelType.Logical };
+                            }
+                            else if (file.Photo.Local.CanBeDownloaded && !file.Photo.Local.IsDownloadingActive)
+                            {
+                                photo.Source = null;
+                                ViewModel.ProtoService.DownloadFile(file.Photo.Id, 1);
+                            }
+                        }
+                    }
+                }
             }
 
             if (content is MessageBubble bubble)
@@ -682,35 +703,7 @@ namespace Unigram.Views
                 item.ContextRequested += Message_ContextRequested;
             }
 
-            item.DoubleTapped += Item_DoubleTapped;
-
             return item;
-        }
-
-        private void Item_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            if (e.PointerDeviceType != PointerDeviceType.Mouse)
-            {
-                return;
-            }
-
-            if (e.OriginalSource is DependencyObject originalSource)
-            {
-                var button = originalSource.AncestorsAndSelf<ButtonBase>().FirstOrDefault() as ButtonBase;
-                if (button != null)
-                {
-                    return;
-                }
-            }
-
-            if (sender is SelectorItem selector && selector.ContentTemplateRoot is FrameworkElement content)
-            {
-                var message = content.Tag as MessageViewModel;
-                if (message != null)
-                {
-                    ViewModel.ReplyToMessage(message);
-                }
-            }
         }
 
         private string SelectTemplateCore(object item)

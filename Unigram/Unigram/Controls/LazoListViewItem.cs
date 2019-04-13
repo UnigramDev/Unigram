@@ -59,6 +59,16 @@ namespace Unigram.Controls
             base.OnPointerReleased(e);
         }
 
+        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
+        {
+            if (e.OriginalSource is ListViewItemPresenter)
+            {
+                _parent.OnPointerCanceled(this, e);
+            }
+
+            base.OnPointerCanceled(e);
+        }
+
         public virtual bool CantSelect()
         {
             return true;

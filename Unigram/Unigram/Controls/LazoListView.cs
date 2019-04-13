@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -22,6 +24,33 @@ namespace Unigram.Controls
         private bool _pressed;
         private Point _position;
 
+        private GestureRecognizer _recognizer;
+
+        public LazoListView()
+        {
+            _recognizer = new GestureRecognizer();
+            _recognizer.GestureSettings = GestureSettings.DoubleTap;
+            _recognizer.Tapped += Recognizer_Tapped;
+        }
+
+        private void Recognizer_Tapped(GestureRecognizer sender, TappedEventArgs args)
+        {
+            if (args.TapCount == 2 && args.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
+                var selector = children?.FirstOrDefault(x => x is SelectorItem) as SelectorItem;
+                if (selector != null)
+                {
+                    OnDoubleTapped(selector);
+                }
+            }
+        }
+
+        protected virtual void OnDoubleTapped(SelectorItem selector)
+        {
+
+        }
+
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new LazoListViewItem(this);
@@ -29,6 +58,12 @@ namespace Unigram.Controls
 
         internal void OnPointerPressed(LazoListViewItem item, PointerRoutedEventArgs e)
         {
+            var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+            if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
+            {
+                _recognizer.ProcessDownEvent(point);
+            }
+
             _pressed = true;
         }
 
@@ -92,6 +127,8 @@ namespace Unigram.Controls
 
         internal void OnPointerMoved(LazoListViewItem item, PointerRoutedEventArgs e)
         {
+            _recognizer.ProcessMoveEvents(e.GetIntermediatePoints(Window.Current.Content as FrameworkElement));
+
             var child = ItemFromContainer(item);
             if (child == null)
             {
@@ -153,6 +190,12 @@ namespace Unigram.Controls
 
         internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
         {
+            var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+            if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased)
+            {
+                _recognizer.ProcessUpEvent(point);
+            }
+
             var first = _firstItem != null ? ContainerFromItem(_firstItem) as SelectorItem : null;
             var handled = first != null && first.IsSelected == _operation;
 
@@ -168,6 +211,11 @@ namespace Unigram.Controls
             }
 
             e.Handled = handled;
+        }
+
+        internal void OnPointerCanceled(LazoListViewItem item, PointerRoutedEventArgs e)
+        {
+            _recognizer.CompleteGesture();
         }
 
         protected virtual bool CantSelect(object item)
