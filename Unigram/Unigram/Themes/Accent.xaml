@@ -14,6 +14,8 @@
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
             <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#444444"/>
 
+            <SolidColorBrush x:Key="TelegramDialogOnlineBadge" Color="#89DF9E"/>
+
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-dark.png"/>
 
             <x:Boolean x:Key="IsDarkTheme">true</x:Boolean>
@@ -28,6 +30,8 @@
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
             <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
+
+            <SolidColorBrush x:Key="TelegramDialogOnlineBadge" Color="#00B12C"/>
 
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-light.png"/>
 
