@@ -62,7 +62,7 @@ namespace Unigram.Common.Chats
                 if (user == null)
                 {
                     commonAction = null;
-                    return null;
+                    return string.Empty;
                 }
 
                 var userName = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
@@ -158,7 +158,7 @@ namespace Unigram.Common.Chats
                 }
 
                 commonAction = null;
-                return null;
+                return string.Empty;
             }
         }
     }
