@@ -35,6 +35,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -2004,18 +2005,77 @@ namespace Unigram.Views
         {
             if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                ManagePanel.Visibility = Visibility.Visible;
-                MainHeader.Visibility = Visibility.Collapsed;
+                ShowHideManagePanel(true);
             }
             else
             {
-                ManagePanel.Visibility = Visibility.Collapsed;
-                MainHeader.Visibility = Visibility.Visible;
-
-                ViewModel.Chats.SelectedItems.Clear();
+                ShowHideManagePanel(false);
             }
 
             UpdatePaneToggleButtonVisibility();
+        }
+
+        private void ShowHideManagePanel(bool show)
+        {
+            if ((show && ManagePanel.Visibility == Visibility.Visible) || (!show && MainHeader.Visibility == Visibility.Visible))
+            {
+                return;
+            }
+
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var info = ElementCompositionPreview.GetElementVisual(MainHeader);
+
+            manage.Offset = new Vector3(show ? -32 : 0, 0, 0);
+            manage.Opacity = show ? 0 : 1;
+
+            info.Offset = new Vector3(show ? 0 : 32, 0, 0);
+            info.Opacity = show ? 1 : 0;
+
+            var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    MainHeader.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ManagePanel.Visibility = Visibility.Collapsed;
+                    ViewModel.Chats.SelectedItems.Clear();
+                }
+            };
+
+            var offset1 = manage.Compositor.CreateVector3KeyFrameAnimation();
+            offset1.InsertKeyFrame(show ? 0 : 1, new Vector3(-32, 0, 0));
+            offset1.InsertKeyFrame(show ? 1 : 0, new Vector3());
+
+            var opacity1 = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+
+            var offset2 = manage.Compositor.CreateVector3KeyFrameAnimation();
+            offset2.InsertKeyFrame(show ? 0 : 1, new Vector3());
+            offset2.InsertKeyFrame(show ? 1 : 0, new Vector3(32, 0, 0));
+
+            var opacity2 = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
+            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
+
+            manage.StartAnimation("Offset", offset1);
+            manage.StartAnimation("Opacity", opacity1);
+            info.StartAnimation("Offset", offset2);
+            info.StartAnimation("Opacity", opacity2);
+
+            batch.End();
+
+            if (show)
+            {
+                ManagePanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MainHeader.Visibility = Visibility.Visible;
+            }
         }
 
         private void Manage_Click(object sender, RoutedEventArgs e)
@@ -2094,6 +2154,8 @@ namespace Unigram.Views
 
         #endregion
 
+        #region Reorder
+
         private void Chats_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             if (e.Items.Count > 1 || e.Items[0] is Chat chat && !chat.IsPinned || ResetFilters.Visibility == Visibility.Visible)
@@ -2126,5 +2188,7 @@ namespace Unigram.Views
                 }
             }
         }
+
+        #endregion
     }
 }

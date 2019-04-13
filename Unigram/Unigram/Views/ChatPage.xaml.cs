@@ -525,15 +525,74 @@ namespace Unigram.Views
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
-                ManagePanel.Visibility = Visibility.Collapsed;
-                InfoPanel.Visibility = Visibility.Visible;
-
-                ViewModel.SelectedItems = new List<MessageViewModel>();
+                ShowHideManagePanel(false);
             }
             else
             {
+                ShowHideManagePanel(true);
+            }
+        }
+
+        private void ShowHideManagePanel(bool show)
+        {
+            if ((show && ManagePanel.Visibility == Visibility.Visible) || (!show && InfoPanel.Visibility == Visibility.Visible))
+            {
+                return;
+            }
+
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var info = ElementCompositionPreview.GetElementVisual(InfoPanel);
+
+            manage.Offset = new Vector3(show ? -32 : 0, 0, 0);
+            manage.Opacity = show ? 0 : 1;
+
+            info.Offset = new Vector3(show ? 0 : 32, 0, 0);
+            info.Opacity = show ? 1 : 0;
+
+            var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    InfoPanel.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ManagePanel.Visibility = Visibility.Collapsed;
+                    ViewModel.SelectedItems = new List<MessageViewModel>();
+                }
+            };
+
+            var offset1 = manage.Compositor.CreateVector3KeyFrameAnimation();
+            offset1.InsertKeyFrame(show ? 0 : 1, new Vector3(-32, 0, 0));
+            offset1.InsertKeyFrame(show ? 1 : 0, new Vector3());
+
+            var opacity1 = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+
+            var offset2 = manage.Compositor.CreateVector3KeyFrameAnimation();
+            offset2.InsertKeyFrame(show ? 0 : 1, new Vector3());
+            offset2.InsertKeyFrame(show ? 1 : 0, new Vector3(32, 0, 0));
+
+            var opacity2 = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
+            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
+
+            manage.StartAnimation("Offset", offset1);
+            manage.StartAnimation("Opacity", opacity1);
+            info.StartAnimation("Offset", offset2);
+            info.StartAnimation("Opacity", opacity2);
+
+            batch.End();
+
+            if (show)
+            {
                 ManagePanel.Visibility = Visibility.Visible;
-                InfoPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                InfoPanel.Visibility = Visibility.Visible;
             }
         }
 
