@@ -11,6 +11,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Chats
@@ -41,14 +42,8 @@ namespace Unigram.ViewModels.Chats
         private ICollection _autocomplete;
         public ICollection Autocomplete
         {
-            get
-            {
-                return _autocomplete;
-            }
-            set
-            {
-                Set(ref _autocomplete, value);
-            }
+            get { return _autocomplete; }
+            set { Set(ref _autocomplete, value); }
         }
 
         #region Filters
@@ -56,40 +51,22 @@ namespace Unigram.ViewModels.Chats
         private string _query;
         public string Query
         {
-            get
-            {
-                return _query;
-            }
-            set
-            {
-                Set(ref _query, value);
-            }
+            get { return _query; }
+            set { Set(ref _query, value); }
         }
 
         private DateTimeOffset? _date;
         public DateTimeOffset? Date
         {
-            get
-            {
-                return _date;
-            }
-            set
-            {
-                Set(ref _date, value);
-            }
+            get { return _date; }
+            set { Set(ref _date, value); }
         }
 
         private User _from;
         public User From
         {
-            get
-            {
-                return _from;
-            }
-            set
-            {
-                Set(ref _from, value);
-            }
+            get { return _from; }
+            set { Set(ref _from, value); }
         }
 
         public bool IsFromEnabled
@@ -108,6 +85,38 @@ namespace Unigram.ViewModels.Chats
                 }
 
                 return false;
+            }
+        }
+
+        private SearchMessagesFilter _filter;
+        public SearchMessagesFilter Filter
+        {
+            get { return _filter; }
+            set { Set(ref _filter, value); }
+        }
+
+        public ICollection Filters
+        {
+            get
+            {
+                return new List<ChatSearchMediaFilter>
+                {
+                    new ChatSearchMediaFilter(new SearchMessagesFilterPhoto(), "\uEB9F", Strings.Resources.AutoDownloadPhotos),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterVideo(), "\uE768", Strings.Resources.AutoDownloadVideos),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterDocument(), "\uE160", Strings.Resources.AutoDownloadFiles),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterUrl(), "\uE71B", Strings.Resources.SharedLinks),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterAudio(), "\uE8D6", Strings.Resources.SharedAudioFiles),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterVoiceNote(), "\uE720", Strings.Resources.AudioAutodownload),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterVideoNote(), "\uE612", Strings.Resources.VideoMessagesAutodownload),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterAnimation(), "\uF4A9", Strings.Resources.AccDescrGIFs)
+                    //new SearchMessagesFilterCall(),
+                    //new SearchMessagesFilterChatPhoto(),
+                    //new SearchMessagesFilterMention(),
+                    //new SearchMessagesFilterMissedCall(),
+                    //new SearchMessagesFilterPhotoAndVideo(),
+                    //new SearchMessagesFilterUnreadMention(),
+                    //new SearchMessagesFilterVoiceAndVideoNote(),
+                };
             }
         }
 
@@ -169,15 +178,16 @@ namespace Unigram.ViewModels.Chats
 
         #endregion
 
-        public async void Search(string query, User from)
+        public async void Search(string query, User from, SearchMessagesFilter filter)
         {
-            if (string.Equals(_query, query) && _from?.Id == from?.Id && PreviousCanExecute())
+            if (string.Equals(_query, query) && _from?.Id == from?.Id && _filter?.GetType() == filter?.GetType() && PreviousCanExecute())
             {
                 PreviousExecute();
             }
             else
             {
                 From = from;
+                Filter = filter;
                 Query = query;
 
                 var chat = _dialog.Chat;
@@ -189,19 +199,42 @@ namespace Unigram.ViewModels.Chats
                 Items = null;
                 SelectedItem = null;
 
-                if (string.IsNullOrEmpty(query) && from == null)
+                if (string.IsNullOrEmpty(query) && from == null && filter == null)
                 {
                     return;
                 }
 
-                var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, query, from?.Id ?? 0, null);
+                var fromMessageId = 0L;
+
+                var field = _dialog.ListField;
+                if (field != null)
+                {
+                    var panel = field.ItemsPanelRoot as ItemsStackPanel;
+                    if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < _dialog.Items.Count && _dialog.Items.Count > 0)
+                    {
+                        fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
+                    }
+                }
+
+                var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, query, from?.Id ?? 0, fromMessageId, filter);
                 var result = await collection.LoadMoreItemsAsync(100);
                 if (result.Count > 0)
                 {
-                    Items = collection;
-                    SelectedItem = collection.FirstOrDefault();
+                    var target = collection.FirstOrDefault();
 
-                    await Dialog.LoadMessageSliceAsync(null, collection[0].Id);
+                    if (fromMessageId != 0)
+                    {
+                        var closest = collection.Aggregate((x, y) => Math.Abs(x.Id - fromMessageId) < Math.Abs(y.Id - fromMessageId) ? x : y);
+                        if (closest != null)
+                        {
+                            target = closest;
+                        }
+                    }
+
+                    Items = collection;
+                    SelectedItem = target;
+
+                    await Dialog.LoadMessageSliceAsync(null, target.Id);
                 }
                 else
                 {
@@ -282,6 +315,20 @@ namespace Unigram.ViewModels.Chats
             From = null;
             Items = null;
             SelectedItem = null;
+        }
+    }
+
+    public class ChatSearchMediaFilter
+    {
+        public SearchMessagesFilter Filter { get; private set; }
+        public string Glyph { get; private set; }
+        public string Text { get; private set; }
+
+        public ChatSearchMediaFilter(SearchMessagesFilter filter, string glyph, string text)
+        {
+            Filter = filter;
+            Glyph = glyph;
+            Text = text;
         }
     }
 }

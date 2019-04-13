@@ -300,19 +300,27 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <controls:GlyphButton
-                        Click="Filter_Click"
+                        Click="FilterByMember_Click"
                         Glyph="&#xE2AF;"
                         AllowFocusOnInteraction="False"
                         Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         FontSize="{StaticResource GlyphButtonFontSize}"/>
                     <controls:GlyphButton
+                        Click="FilterByMedia_Click"
+                        Glyph="&#xEA69;"
+                        AllowFocusOnInteraction="False"
+                        FontSize="{StaticResource GlyphButtonFontSize}"
+                        Visibility="Collapsed"
+                        Grid.Column="1"/>
+                    <controls:GlyphButton
                         Command="{x:Bind ViewModel.Dialog.JumpDateCommand}"
                         Glyph="&#xE163;"
                         AllowFocusOnInteraction="False"
                         FontSize="{StaticResource GlyphButtonFontSize}"
-                        Grid.Column="1"/>
+                        Grid.Column="2"/>
                 </Grid>
 
                 <controls:GlyphButton
@@ -327,22 +335,14 @@
                   ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
                   Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                   ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   AllowFocusOnInteraction="False"
                   IsItemClickEnabled="True"
                   ItemClick="Autocomplete_ItemClick"
                   ContainerContentChanging="OnContainerContentChanging"
+                  VerticalAlignment="Top"
+                  MaxHeight="320"
                   Grid.Row="2">
-            <ListView.Footer>
-                <Border x:Name="AutocompleteHeader"
-                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Bottom" Height="1"/>
-                </Border>
-            </ListView.Footer>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged" ItemsUpdatingScrollMode="KeepLastItemInView"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
             <ListView.ItemContainerTransitions>
                 <TransitionCollection/>
             </ListView.ItemContainerTransitions>
@@ -363,7 +363,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Command="{x:Bind ViewModel.Dialog.JumpDateCommand}" Glyph="&#xE163;" AllowFocusOnInteraction="False"/>
-                <controls:GlyphButton Click="Filter_Click" Glyph="&#xE2AF;" AllowFocusOnInteraction="False" Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1"/>
+                <controls:GlyphButton Click="FilterByMember_Click" Glyph="&#xE2AF;" AllowFocusOnInteraction="False" Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1"/>
             </Grid>
 
             <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}" Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Margin="12,0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2"/>

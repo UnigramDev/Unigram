@@ -13,6 +13,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Media;
 using static Unigram.Controls.Chats.ChatTextBox;
 
 namespace Unigram.Controls.Chats
@@ -52,24 +53,6 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var height = e.NewSize.Height;
-            var padding = ListAutocomplete.ActualHeight - Math.Min(154, ListAutocomplete.Items.Count * 44);
-
-            //ListAutocomplete.Padding = new Thickness(0, padding, 0, 0);
-            AutocompleteHeader.Margin = new Thickness(0, -height, 0, padding);
-            AutocompleteHeader.Height = height;
-
-            Debug.WriteLine("Autocomplete size changed");
-
-            var scrollingHost = ListAutocomplete.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
-            if (scrollingHost != null)
-            {
-                scrollingHost.ChangeView(null, scrollingHost.ScrollableHeight, null, true);
-            }
-        }
-
         #region Recycle
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -93,6 +76,24 @@ namespace Unigram.Controls.Chats
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
                 photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+            }
+            else if (args.Item is ChatSearchMediaFilter filter)
+            {
+                var child = content.Children[0] as Border;
+                var glyph = child.Child as TextBlock;
+                var title = content.Children[1] as TextBlock;
+
+                glyph.Text = filter.Glyph;
+                title.Text = filter.Text;
+
+                if (filter.Filter is SearchMessagesFilterVideoNote)
+                {
+                    glyph.FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
+                }
+                else
+                {
+                    glyph.FontFamily = App.Current.Resources["SymbolThemeFontFamily"] as FontFamily;
+                }
             }
         }
 
@@ -126,7 +127,7 @@ namespace Unigram.Controls.Chats
 
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {
-                ViewModel.Search(Field.Text, Field.From);
+                ViewModel.Search(Field.Text, Field.From, Field.Filter?.Filter);
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Enter && shift && Field.State != ChatSearchState.Members)
@@ -143,7 +144,7 @@ namespace Unigram.Controls.Chats
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Search(Field.Text, Field.From);
+            ViewModel.Search(Field.Text, Field.From, Field.Filter?.Filter);
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -151,24 +152,44 @@ namespace Unigram.Controls.Chats
             OnBackRequested(true);
         }
 
-        private void Filter_Click(object sender, RoutedEventArgs e)
+        private void FilterByMember_Click(object sender, RoutedEventArgs e)
         {
             SetState(ChatSearchState.Members);
             Field.Focus(FocusState.Keyboard);
         }
 
+        private void FilterByMedia_Click(object sender, RoutedEventArgs e)
+        {
+            SetState(ChatSearchState.Media);
+            Field.Focus(FocusState.Keyboard);
+        }
+
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is User user)
+            if (e.ClickedItem is User from)
             {
-                SetState(ChatSearchState.TextByMember, user);
+                SetState(ChatSearchState.TextByMember, from);
+            }
+            else if (e.ClickedItem is ChatSearchMediaFilter filter)
+            {
+                SetState(ChatSearchState.TextByMedia, null, filter);
             }
         }
 
-        private void SetState(ChatSearchState state, User user = null)
+        private void SetState(ChatSearchState state, User from = null, ChatSearchMediaFilter filter = null)
         {
+            if (from != null)
+            {
+                Field.Filter = null;
+                Field.From = from;
+            }
+            else
+            {
+                Field.From = null;
+                Field.Filter = filter;
+            }
+
             Field.Text = string.Empty;
-            Field.From = user;
             Field.State = state;
 
             switch (state)
@@ -177,7 +198,12 @@ namespace Unigram.Controls.Chats
                     ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Collapsed;
                     ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, string.Empty, false, true);
                     break;
+                case ChatSearchState.Media:
+                    ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Collapsed;
+                    ViewModel.Autocomplete = ViewModel.Filters;
+                    break;
                 case ChatSearchState.TextByMember:
+                case ChatSearchState.TextByMedia:
                     ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Collapsed;
                     ViewModel.Autocomplete = null;
                     break;
@@ -198,7 +224,11 @@ namespace Unigram.Controls.Chats
             {
                 SetState(ChatSearchState.Members);
             }
-            else if (Field.State == ChatSearchState.Members)
+            else if (Field.State == ChatSearchState.TextByMedia)
+            {
+                SetState(ChatSearchState.Media);
+            }
+            else if (Field.State == ChatSearchState.Members || Field.State == ChatSearchState.Media)
             {
                 SetState(ChatSearchState.Text);
             }
