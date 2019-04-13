@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Template10.Services.NavigationService;
+using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -23,7 +25,7 @@ namespace Unigram.Views.Host
 {
     public sealed partial class StandalonePage : Page
     {
-        public StandalonePage(Frame frame)
+        public StandalonePage(INavigationService navigationService)
         {
             if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
             {
@@ -34,8 +36,18 @@ namespace Unigram.Views.Host
 
             InitializeTitleBar();
 
-            Grid.SetRow(frame, 1);
-            LayoutRoot.Children.Add(frame);
+            Grid.SetRow(navigationService.Frame, 1);
+            LayoutRoot.Children.Add(navigationService.Frame);
+
+            if (navigationService is TLNavigationService service)
+            {
+                var user = service.ProtoService.GetUser(service.ProtoService.Options.MyId);
+                if (user != null)
+                {
+                    StatusLabel.Text = string.Format("{0} - {1}", user.GetFullName(), "Unigram");
+                    ApplicationView.GetForCurrentView().Title = user.GetFullName();
+                }
+            }
         }
 
         private void InitializeTitleBar()
@@ -46,11 +58,13 @@ namespace Unigram.Views.Host
             {
                 // If running on PC and tablet mode is disabled, then titlebar is most likely visible
                 // So we're going to force it
-                Navigation.Padding = new Thickness(0, 32, 0, 0);
+                Navigation.Padding = new Thickness(48, 0, 0, 0);
+                Navigation.Height = 32;
             }
             else
             {
-                Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+                Navigation.Padding = new Thickness(sender.IsVisible ? sender.SystemOverlayLeftInset : 0, 0, 0, 0);
+                Navigation.Height = sender.IsVisible ? sender.Height : 0;
             }
 
             sender.ExtendViewIntoTitleBar = true;
@@ -60,7 +74,8 @@ namespace Unigram.Views.Host
 
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+            Navigation.Padding = new Thickness(sender.IsVisible ? sender.SystemOverlayLeftInset : 0, 0, 0, 0);
+            Navigation.Height = sender.IsVisible ? sender.Height : 0;
 
             var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
             foreach (var popup in popups)
