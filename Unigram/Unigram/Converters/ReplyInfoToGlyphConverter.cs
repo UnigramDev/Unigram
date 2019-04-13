@@ -29,7 +29,7 @@ namespace Unigram.Converters
         public const string Cancel = "\uE10A";
         public const string Play = "\uE102";
         public const string Confirm = "\uE10B";
-        public const string Ttl = "\uE60D";
+        public const string Ttl = "\uE60E";
 
         public const string Undo = "\uE7A7";
         public const string Redo = "\uE7A6";

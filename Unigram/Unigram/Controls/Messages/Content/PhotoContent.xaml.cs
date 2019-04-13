@@ -121,7 +121,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (message.IsSecret())
                 {
-                    Button.Glyph = Icons.Secret;
+                    Button.Glyph = Icons.Ttl;
                     Button.Progress = 1;
 
                     Button.Opacity = 1;
