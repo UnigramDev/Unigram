@@ -797,11 +797,15 @@ namespace Unigram.ViewModels
             var supergroup = CacheService.GetSupergroup(chat);
             if (supergroup != null && string.IsNullOrEmpty(supergroup.Username))
             {
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(MeUrlPrefixConverter.Convert(CacheService, $"c/{supergroup.Id}/{message.Id >> 20}"));
-                ClipboardEx.TrySetContent(dataPackage);
+                var response = await ProtoService.SendAsync(new GetMessageLink(chat.Id, message.Id));
+                if (response is HttpUrl link)
+                {
+                    var dataPackage = new DataPackage();
+                    dataPackage.SetText(link.Url);
+                    ClipboardEx.TrySetContent(dataPackage);
 
-                await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                }
             }
             else
             {
@@ -1517,7 +1521,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new StopPoll(message.ChatId, message.Id));
+            ProtoService.Send(new StopPoll(message.ChatId, message.Id, null));
         }
 
         #endregion
