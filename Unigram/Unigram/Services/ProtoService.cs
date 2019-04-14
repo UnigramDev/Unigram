@@ -24,7 +24,7 @@ namespace Unigram.Services
         void Send(Function function, Action<BaseObject> handler);
         Task<BaseObject> SendAsync(Function function);
 
-        void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0);
+        void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
 
         int SessionId { get; }
 
@@ -388,9 +388,9 @@ namespace Unigram.Services
 
 
 
-        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0)
+        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
         {
-            _client.Send(new DownloadFile(fileId, priority, offset, limit));
+            _client.Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
         }
 
 

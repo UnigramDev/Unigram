@@ -1121,13 +1121,13 @@ static int FileStreamRead(void* ptr, uint8_t* buf, int bufSize)
 	{
 		if (difference < pStream->m_chunk / 3 * 2 && pStream->m_offset > pStream->m_next /*&& !local->IsDownloadingActive*/)
 		{
-			pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, pStream->m_chunk), nullptr);
+			pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, pStream->m_chunk, false), nullptr);
 			pStream->m_next = pStream->m_offset + pStream->m_chunk / 3;
 		}
 	}
 	else
 	{
-		pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, pStream->m_chunk), nullptr);
+		pStream->m_client->Send(ref new DownloadFile(pStream->m_file->Id, 32, pStream->m_offset, pStream->m_chunk, false), nullptr);
 		pStream->m_next = pStream->m_offset + pStream->m_chunk / 3;
 
 		ResetEvent(pStream->m_event);
