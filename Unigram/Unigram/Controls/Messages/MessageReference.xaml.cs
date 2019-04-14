@@ -833,6 +833,10 @@ namespace Unigram.Controls.Messages
                 {
                     return message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
+                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                {
+                    return fromHiddenUser.SenderName;
+                }
             }
 
             var user = message.GetSenderUser();

@@ -1198,7 +1198,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().TryShow();
         }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
+        private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
 
@@ -1218,6 +1218,10 @@ namespace Unigram.Views
                 {
                     // TODO: verify if this is sufficient
                     ViewModel.OpenChat(post.ChatId);
+                }
+                else if (message.ForwardInfo is MessageForwardedFromHiddenUser)
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else if (message.IsChannelPost)

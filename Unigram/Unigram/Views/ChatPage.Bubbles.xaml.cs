@@ -609,6 +609,10 @@ namespace Unigram.Views
                                 photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
                             }
                         }
+                        else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                        {
+                            photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
+                        }
                     }
                     else
                     {
@@ -628,10 +632,17 @@ namespace Unigram.Views
 
                     if (message.IsSaved())
                     {
-                        button.Glyph = "\uE72A";
-                        action.Visibility = Visibility.Visible;
+                        if (message.ForwardInfo is MessageForwardedFromHiddenUser)
+                        {
+                            action.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            button.Glyph = "\uE72A";
+                            action.Visibility = Visibility.Visible;
 
-                        Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
+                            Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
+                        }
                     }
                     else if (message.IsShareable())
                     {

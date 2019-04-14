@@ -92,6 +92,10 @@ namespace Unigram.Controls.Messages
                 {
                     title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
+                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                {
+                    title = fromHiddenUser.SenderName;
+                }
             }
 
             var builder = new StringBuilder();
@@ -274,6 +278,10 @@ namespace Unigram.Controls.Messages
                 {
                     title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
+                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                {
+                    title = fromHiddenUser.SenderName;
+                }
 
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(new Run { Text = title ?? string.Empty });
@@ -312,6 +320,10 @@ namespace Unigram.Controls.Messages
                 else if (message.ForwardInfo is MessageForwardedPost post)
                 {
                     title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
+                }
+                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                {
+                    title = fromHiddenUser.SenderName;
                 }
 
                 var hyperlink = new Hyperlink();
@@ -377,7 +389,7 @@ namespace Unigram.Controls.Messages
             message.Delegate.OpenViaBot(message.ViaBotUserId);
         }
 
-        private void FwdFrom_Click(MessageViewModel message)
+        private async void FwdFrom_Click(MessageViewModel message)
         {
             if (message.ForwardInfo is MessageForwardedFromUser fromUser)
             {
@@ -387,6 +399,10 @@ namespace Unigram.Controls.Messages
             {
                 // TODO: verify if this is sufficient
                 message.Delegate.OpenChat(post.ChatId, post.MessageId);
+            }
+            else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+            {
+                await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 

@@ -916,7 +916,7 @@ namespace Unigram.Common
             return TdNetworkType.Other;
         }
 
-        public static bool IsSaved(this Message message)
+        public static bool IsSaved(this Message message, int savedMessagesId)
         {
             if (message.ForwardInfo is MessageForwardedFromUser fromUser)
             {
@@ -925,6 +925,10 @@ namespace Unigram.Common
             else if (message.ForwardInfo is MessageForwardedPost post)
             {
                 return post.ForwardedFromChatId != 0;
+            }
+            else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+            {
+                return message.ChatId == savedMessagesId;
             }
 
             return false;

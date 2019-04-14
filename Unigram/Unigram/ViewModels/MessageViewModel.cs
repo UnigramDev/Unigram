@@ -23,11 +23,6 @@ namespace Unigram.ViewModels
             _message = message;
         }
 
-        public MessageViewModel(Message message)
-        {
-            _message = message;
-        }
-
         public IProtoService ProtoService => _protoService;
         public IPlaybackService PlaybackService => _playbackService;
         public IMessageDelegate Delegate => _delegate;
@@ -66,7 +61,7 @@ namespace Unigram.ViewModels
         public File GetFile() => _message.GetFile();
 
         public bool IsService() => _message.IsService();
-        public bool IsSaved() => _message.IsSaved();
+        public bool IsSaved() => _message.IsSaved(_protoService.Options.MyId);
         public bool IsSecret() => _message.IsSecret();
 
         public MessageViewModel ReplyToMessage { get; set; }

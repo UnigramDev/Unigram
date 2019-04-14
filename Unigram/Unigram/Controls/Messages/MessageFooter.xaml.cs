@@ -177,19 +177,24 @@ namespace Unigram.Controls.Messages
                 text += $"\r\n{Strings.Resources.EditedMessage}: {editDate} {editTime}";
             }
 
+            DateTime? original = null;
             if (message.ForwardInfo is MessageForwardedPost forwardedPost)
             {
-                var original = BindConvert.Current.DateTime(forwardedPost.Date);
-                var originalDate = BindConvert.Current.LongDate.Format(original);
-                var originalTime = BindConvert.Current.LongTime.Format(original);
-
-                text += $"\r\n{Strings.Additional.OriginalMessage}: {originalDate} {originalTime}";
+                original = BindConvert.Current.DateTime(forwardedPost.Date);
             }
             else if (message.ForwardInfo is MessageForwardedFromUser forwardedFromUser)
             {
-                var original = BindConvert.Current.DateTime(forwardedFromUser.Date);
-                var originalDate = BindConvert.Current.LongDate.Format(original);
-                var originalTime = BindConvert.Current.LongTime.Format(original);
+                original = BindConvert.Current.DateTime(forwardedFromUser.Date);
+            }
+            else if (message.ForwardInfo is MessageForwardedFromHiddenUser forwardedFromHiddenUser)
+            {
+                original = BindConvert.Current.DateTime(forwardedFromHiddenUser.Date);
+            }
+
+            if (original != null)
+            {
+                var originalDate = BindConvert.Current.LongDate.Format(original.Value);
+                var originalTime = BindConvert.Current.LongTime.Format(original.Value);
 
                 text += $"\r\n{Strings.Additional.OriginalMessage}: {originalDate} {originalTime}";
             }

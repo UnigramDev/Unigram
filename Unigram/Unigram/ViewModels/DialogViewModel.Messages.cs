@@ -430,6 +430,11 @@ namespace Unigram.ViewModels
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.Resources.From} {from.GetFullName()}]");
                     }
+                    else if (message.ForwardInfo is MessageForwardedFromHiddenUser forwardedFromHiddenUser)
+                    {
+                        builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
+                        builder.AppendLine($"[{Strings.Resources.From} {forwardedFromHiddenUser.SenderName}]");
+                    }
 
                     if (message.ReplyToMessage != null)
                     {
