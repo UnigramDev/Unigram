@@ -61,8 +61,9 @@ Before reporting bugs, doing features requests or embarking pull requests, be su
 Changelogs are provided both in [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) and [Unigram News channel](https://t.me/unigram).
 
 <a name="screenshots"></a>
-![1](Screenshots/SCREEN1.PNG)
-![2](Screenshots/SCREEN2.PNG)
+## Screenshots
+![1](https://github.com/UnigramDev/Unigram/blob/develop/Screenshots/Screen1.PNG)
+![2](https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Screenshots/Screen2.PNG)
 
 <a name="alternativedownload"></a>
 ## Download without the store
