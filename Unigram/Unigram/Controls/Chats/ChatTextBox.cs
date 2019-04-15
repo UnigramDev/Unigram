@@ -42,6 +42,7 @@ using Unigram.Controls.Views;
 using Unigram.Converters;
 using Windows.Graphics.Imaging;
 using System.Collections;
+using System.Globalization;
 
 namespace Unigram.Controls.Chats
 {
@@ -391,6 +392,19 @@ namespace Unigram.Controls.Chats
                 if (send)
                 {
                     _ = SendAsync();
+                }
+            }
+            else if (e.Key == VirtualKey.X && Math.Abs(Document.Selection.Length) == 4)
+            {
+                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                if (alt)
+                {
+                    Document.Selection.GetText(TextGetOptions.NoHidden, out string hex);
+
+                    if (int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int result))
+                    {
+                        Document.Selection.SetText(TextSetOptions.None, new string((char)result, 1));
+                    }
                 }
             }
 
