@@ -18,8 +18,7 @@
 <br>
 
 
-Unigram is a third-party Telegram client specifically designed for the Windows 10 platform. 
-
+Unigram is a third-party Telegram client specifically designed for the Windows 10 platform.
 In fact, thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones and Xbox One) providing a seamless, performant and consistent user experience.
 
 Furthermore, the project is open-source, built by the community for the community, providing the best transparency possible.
@@ -28,6 +27,7 @@ Furthermore, the project is open-source, built by the community for the communit
 - [Features](#features);
 - [Contributing](#contributing);
 - [Changelog](#changelog);
+- [Screenshots](#screenshots)
 - [Download without Microsoft Store](#alternativedownload);
 - [Wiki](#wiki).
 
@@ -48,7 +48,8 @@ Furthermore, the project is open-source, built by the community for the communit
 - Backgrounds 2.0 (blurred and motion options available);
 - Built-in app lock (fingerprint and Windows Hello authentication available);
 - Windows My People integration;
-- Full support of Windows 10 Action Centre (reply from notification or mark as read).
+- Full support of Windows 10 notifications and Action Centre (reply to a message or mark it as read without opening the app);
+- Accessibility for visually impaired people.
 
 
 <a name="contributing"></a>
@@ -59,6 +60,10 @@ Before reporting bugs, doing features requests or embarking pull requests, be su
 ## Changelog
 Changelogs are provided both in [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) and [Unigram News channel](https://t.me/unigram).
 
+<a name="screenshots"></a>
+![1](Screenshots/SCREEN1.PNG)
+![2](Screenshots/SCREEN2.PNG)
+
 <a name="alternativedownload"></a>
 ## Download without the store
 If you don't want Microsoft Store you can install Unigram from [here](https://unigramdev.github.io/).
@@ -67,4 +72,3 @@ Only major updates will be posted here. If you care about minor updates you shou
 <a name="wiki"></a>
 ## Wiki
 For additional information (keyboard shortcuts, other contact information, FAQ, missing features, build instructions and other stuff) you can check [Unigram wiki](https://github.com/UnigramDev/Unigram/wiki).
-
