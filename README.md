@@ -19,37 +19,38 @@
 
 
 Unigram is a third-party Telegram client specifically designed for the Windows 10 platform.
+
 In fact, thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones and Xbox One) providing a seamless, performant and consistent user experience.
 
 Furthermore, the project is open-source, built by the community for the community, providing the best transparency possible.
 
 ## Table of contents
-- [Features](#features);
-- [Contributing](#contributing);
-- [Changelog](#changelog);
+- [Features](#features)
+- [Contributing](#contributing)
+- [Changelog](#changelog)
 - [Screenshots](#screenshots)
-- [Download without Microsoft Store](#alternativedownload);
-- [Wiki](#wiki).
+- [Download without Microsoft Store](#alternativedownload)
+- [Wiki](#wiki)
 
 
 <a name="features"></a>
 ## Features
-- Based on [TDlib](https://github.com/tdlib/td);
-- Secret chats;
-- Instant view (now updated with the most recent 2.0);
-- Multi-account;
-- Filter chats (users, bots, groups, channels, unread chats and unmuted chats);
-- Calls;
-- Videos and photos editor (easily crop photos, set video resultion or remove some parts of the videos before sending them);
-- Drag&drop files to chats to send them quickly;
-- Open chats in separated windows (Shift+click);
-- Replace sent media content;
-- Polls;
-- Backgrounds 2.0 (blurred and motion options available);
-- Built-in app lock (fingerprint and Windows Hello authentication available);
-- Windows My People integration;
-- Full support of Windows 10 notifications and Action Centre (reply to a message or mark it as read without opening the app);
-- Accessibility for visually impaired people.
+- Based on [TDLib](https://github.com/tdlib/td)
+- Secret chats
+- Instant view (now updated with the most recent 2.0)
+- Multi-account
+- Filter chats (users, bots, groups, channels, unread chats and unmuted chats)
+- Calls
+- Videos and photos editor (easily crop photos, set video resultion or remove some parts of the videos before sending them)
+- Drag&drop files to chats to send them quickly
+- Open chats in separated windows (Shift+click)
+- Replace sent media content
+- Polls
+- Backgrounds 2.0 (blurred and motion options available)
+- Built-in app lock (fingerprint and Windows Hello authentication available)
+- Windows My People integration
+- Full support of Windows 10 notifications and Action Centre (reply to a message or mark it as read without opening the app)
+- Accessibility for visually impaired people
 
 
 <a name="contributing"></a>
