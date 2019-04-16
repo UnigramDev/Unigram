@@ -92,6 +92,7 @@ namespace Unigram.Controls.Messages.Content
             var size = new Size(width, groupedMessages.Height * height);
 
             var total = 0d;
+            var space = 0d;
 
             for (int i = 0; i < Math.Min(positions.Count, Children.Count); i++)
             {
@@ -129,16 +130,20 @@ namespace Unigram.Controls.Messages.Content
                                 leftColumn = pos;
                                 break;
                             }
-                            else
+                            else if (pos.Value.LeftSpanOffset > 0)
                             {
-                                top = total += height * pos.Value.Height;
+                                top += height * pos.Value.Height;
                             }
                         }
                     }
-                    else
-                    {
-                        top = total += height * positions[i - 1].Value.Height;
-                    }
+                }
+
+                space += positions[i].Value.Width;
+
+                if (space >= groupedMessages.Width)
+                {
+                    space = 0;
+                    total += height * position.Value.Height;
                 }
 
                 Children[i].Arrange(new Rect(left, top, positions[i].Value.Width / groupedWidth * width, height * positions[i].Value.Height));
