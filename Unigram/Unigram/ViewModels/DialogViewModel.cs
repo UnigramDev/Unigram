@@ -2461,7 +2461,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+                ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
             }
         }
 
@@ -2511,7 +2511,7 @@ namespace Unigram.ViewModels
                     await ProtoService.SendAsync(new LeaveChat(chat.Id));
                 }
 
-                ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+                ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
             }
         }
 
@@ -2531,7 +2531,7 @@ namespace Unigram.ViewModels
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistory, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new DeleteChatHistory(chat.Id, false));
+                ProtoService.Send(new DeleteChatHistory(chat.Id, false, false));
             }
         }
 

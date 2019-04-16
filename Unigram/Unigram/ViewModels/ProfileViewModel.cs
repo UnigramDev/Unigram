@@ -977,7 +977,7 @@ namespace Unigram.ViewModels
                         await ProtoService.SendAsync(new LeaveChat(chat.Id));
                     }
 
-                    ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+                    ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
                 }
             }
 

@@ -251,107 +251,61 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            //for (int i = 0; i < messages.Count; i++)
-            //{
-            //    if (messages[i] is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
-            //    {
-            //        messages.RemoveAt(i);
+            var user = CacheService.GetUser(chat);
 
-            //        for (int j = 0; j < groupMedia.Layout.Messages.Count; j++)
-            //        {
-            //            messages.Insert(i, groupMedia.Layout.Messages[j]);
-            //            i++;
-            //        }
+            var dialog = new TLMessageDialog();
+            dialog.Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("Messages", messages.Count));
+            dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
+            dialog.PrimaryButtonText = Strings.Resources.Delete;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            //        i--;
-            //    }
-            //}
+            var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
+            var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
+            var anyCanBeDeletedForAllUsers = messages.Any(x => x.IsOutgoing && x.CanBeDeletedForAllUsers);
 
-            //if (messageBase == null) return;
-
-            //var message = messageBase as TLMessage;
-            //if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
-            //{
-            //    var dialog = new DeleteChannelMessageDialog();
-
-            //    var result = await dialog.ShowAsync();
-            //    if (result == ContentDialogResult.Primary)
-            //    {
-            //        var channel = With as TLChannel;
-
-            //        if (dialog.DeleteAll)
-            //        {
-            //            // TODO
-            //        }
-            //        else
-            //        {
-            //            var messages = new List<TLMessageBase>() { messageBase };
-            //            if (messageBase.Id == 0 && messageBase.RandomId != 0L)
-            //            {
-            //                DeleteMessagesInternal(null, messages);
-            //                return;
-            //            }
-
-            //            DeleteMessages(null, null, messages, true, null, DeleteMessagesInternal);
-            //        }
-
-            //        if (dialog.BanUser)
-            //        {
-            //            var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
-            //            if (response.IsSucceeded)
-            //            {
-            //                var updates = response.Result as TLUpdates;
-            //                if (updates != null)
-            //                {
-            //                    var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
-            //                    if (newChannelMessageUpdate != null)
-            //                    {
-            //                        Aggregator.Publish(newChannelMessageUpdate.Message);
-            //                    }
-            //                }
-            //            }
-            //        }
-
-            //        if (dialog.ReportSpam)
-            //        {
-            //            var response = await ProtoService.ReportSpamAsync(channel.ToInputChannel(), message.From.ToInputUser(), new TLVector<int> { message.Id });
-            //        }
-            //    }
-            //}
-            //else
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeBasicGroup)
             {
-                var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Resources.Message;
-                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
-                dialog.PrimaryButtonText = Strings.Resources.OK;
-                dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-                var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
-                var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
-
-                if (canBeDeletedForAllUsers && canBeDeletedOnlyForSelf)
+                if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                 {
-                    if (chat.Type is ChatTypePrivate privata)
+                    dialog.Message = chat.Type is ChatTypePrivate && user != null
+                        ? string.Format(Strings.Resources.DeleteMessagesText, Locale.Declension("Messages", messages.Count), user.FirstName)
+                        : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("Messages", messages.Count));
+
+                    dialog.CheckBoxLabel = Strings.Resources.DeleteMessagesOption;
+                }
+                else
+                {
+                    dialog.Message = messages.Count == 1
+                        ? Strings.Resources.AreYouSureDeleteSingleMessage
+                        : Strings.Resources.AreYouSureDeleteFewMessages;
+
+                    if (canBeDeletedForAllUsers)
                     {
-                        var user = ProtoService.GetUser(privata.UserId);
-                        if (user != null && !(user.Type is UserTypeBot))
-                        {
-                            dialog.CheckBoxLabel = string.Format(Strings.Resources.DeleteForUser, ProtoService.GetTitle(chat));
-                        }
-                    }
-                    else if (chat.Type is ChatTypeBasicGroup)
-                    {
-                        dialog.CheckBoxLabel = Strings.Resources.DeleteForAll;
+                        dialog.CheckBoxLabel = chat.Type is ChatTypePrivate && user != null
+                            ? string.Format(Strings.Resources.DeleteMessagesOptionAlso, user.FirstName)
+                            : Strings.Resources.DeleteForAll;
                     }
                 }
+            }
+            else if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+            {
+                dialog.Message = messages.Count == 1
+                    ? Strings.Resources.AreYouSureDeleteSingleMessageMega
+                    : Strings.Resources.AreYouSureDeleteFewMessagesMega;
+            }
+            else
+            {
+                dialog.Message = messages.Count == 1
+                    ? Strings.Resources.AreYouSureDeleteSingleMessage
+                    : Strings.Resources.AreYouSureDeleteFewMessages;
+            }
 
-                var result = await dialog.ShowQueuedAsync();
-                if (result == ContentDialogResult.Primary)
-                {
-                    SelectionMode = ListViewSelectionMode.None;
+            var result = await dialog.ShowQueuedAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                SelectionMode = ListViewSelectionMode.None;
 
-                    ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.IsChecked == true));
-                }
+                ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.IsChecked == true));
             }
         }
 

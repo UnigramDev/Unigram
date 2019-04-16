@@ -32,12 +32,7 @@ namespace Unigram.Controls.Views
             var basicGroup = protoService.GetBasicGroup(chat);
             var supergroup = protoService.GetSupergroup(chat);
 
-#if DEBUG
-            var deleteAll = user != null && chat.Type is ChatTypePrivate;
-#else
-            var deleteAll = false;
-#endif
-
+            var deleteAll = user != null && chat.Type is ChatTypePrivate privata && privata.UserId != protoService.Options.MyId;
             if (deleteAll)
             {
                 CheckBox.Visibility = Visibility.Visible;
