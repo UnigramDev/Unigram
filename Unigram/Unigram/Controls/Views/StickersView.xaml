@@ -23,8 +23,7 @@
 
     <UserControl.Resources>
         <CollectionViewSource x:Name="FeaturedSource" Source="{x:Bind ViewModel.Stickers.FeaturedStickers}" ItemsPath="Covers" IsSourceGrouped="True"/>
-        <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers.SavedStickers}" ItemsPath="Stickers" IsSourceGrouped="True"/>
-        <CollectionViewSource x:Name="StickersSearchSource" Source="{x:Bind ViewModel.Stickers.Search}" ItemsPath="Stickers" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers.Stickers, Mode=OneWay}" ItemsPath="Stickers" IsSourceGrouped="True"/>
 
         <Style x:Name="ModernPivotRadioButtonStyle" TargetType="controls:PivotRadioButton">
             <Setter Property="Background" Value="Transparent" />
@@ -132,7 +131,7 @@
                         <Setter Target="ShowRow.MaxHeight" Value="736"/>
                         <Setter Target="HideRow.Height" Value="*"/>
 
-                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="2"/>
+                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="3"/>
                         <Setter Target="Header.(Grid.Row)" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -259,22 +258,31 @@
                     </controls:ZoomableGridView>
                 </PivotItem>
 
-                <Pivot x:Name="Pivot" SelectedIndex="2" Style="{StaticResource HeaderlessPivotStyle}" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
+                <Pivot x:Name="Pivot" Style="{StaticResource HeaderlessPivotStyle}" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                     <PivotItem>
                         <local:EmojisView x:Name="Emojis" x:DeferLoadStrategy="Lazy" ItemClick="Emojis_ItemClick" Grid.RowSpan="3" d:IsHidden="True"/>
                     </PivotItem>
                     <PivotItem>
                         <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
                             <TextBlock x:Name="GifsRestricted"
                                        Margin="12,0"
                                        TextAlignment="Center"
                                        Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
-                            
+
+                            <Border>
+                                <TextBox x:Name="FieldAnimations" PlaceholderText="{CustomResource SearchGifsTitle}" TextChanged="FieldAnimations_TextChanged" Margin="12,8" Grid.Row="1"/>
+                            </Border>
+
                             <ListView x:Name="GifsView"
-                                      ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
+                                      ItemsSource="{x:Bind ViewModel.Stickers.Animations, Mode=OneWay}"
                                       SelectionMode="None"
                                       ContainerContentChanging="Animations_ContainerContentChanging"
-                                      Padding="2">
+                                      Padding="2"
+                                      Grid.Row="1">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <controls:MosaicRow HorizontalAlignment="Stretch"/>
@@ -297,20 +305,26 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
+                            <Border>
+                                <TextBox x:Name="FieldStickers" PlaceholderText="{CustomResource SearchStickersHint}" TextChanged="FieldStickers_TextChanged" Margin="12,8" Grid.Row="1"/>
+                            </Border>
+
                             <controls:ZoomableGridView
                                 x:Name="Stickers"
-                                ItemsSource="{x:Bind StickersSource.View}"
+                                ItemsSource="{x:Bind StickersSource.View, Mode=OneWay}"
                                 common:FluidGridView.OrientationOnly="False"
+                                ChoosingGroupHeaderContainer="Stickers_ChoosingGroupHeaderContainer"
                                 ContainerContentChanging="Stickers_ContainerContentChanging"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
                                 ItemClick="Stickers_ItemClick"
                                 Loaded="Stickers_Loaded"
                                 Padding="2,0"
-                                Grid.Row="1">
+                                Grid.Row="2">
                                 <common:FluidGridView.Triggers>
                                     <common:FluidGridViewTrigger RowsOrColumns="5"/>
                                 </common:FluidGridView.Triggers>
@@ -590,11 +604,11 @@
                                                     <Image Margin="6" AutomationProperties.Name="{x:Bind Title}" ToolTipService.ToolTip="{x:Bind Title}"/>
                                                 </DataTemplate>
                                             </selectors:StickerSetTemplateSelector.ItemTemplate>
-                                            <!--<selectors:StickerSetTemplateSelector.GroupTemplate>
-                                                 <DataTemplate x:DataType="viewModels:TLChannelStickerSet">
-                                                 <controls:ProfilePicture Margin="6" Source="{x:Bind With, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
+                                            <selectors:StickerSetTemplateSelector.GroupTemplate>
+                                                <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                                                    <controls:ProfilePicture Margin="6" AutomationProperties.Name="{x:Bind Title}" ToolTipService.ToolTip="{x:Bind Title}" IsEnabled="False"/>
                                                  </DataTemplate>
-                                                 </selectors:StickerSetTemplateSelector.GroupTemplate>-->
+                                            </selectors:StickerSetTemplateSelector.GroupTemplate>
                                             <selectors:StickerSetTemplateSelector.RecentsTemplate>
                                                 <DataTemplate x:DataType="viewModels:StickerSetViewModel">
                                                     <Border AutomationProperties.Name="{x:Bind Title}"

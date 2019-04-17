@@ -1767,6 +1767,7 @@ namespace Unigram.ViewModels
                 else
                 {
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
+                    //Stickers?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
                 ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
@@ -2472,7 +2473,7 @@ namespace Unigram.ViewModels
         public RelayCommand OpenStickersCommand { get; }
         private void OpenStickersExecute()
         {
-            _stickers.SyncStickers();
+            _stickers.SyncStickers(_chat);
             _stickers.SyncGifs();
         }
 
