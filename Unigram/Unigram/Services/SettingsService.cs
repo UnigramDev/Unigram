@@ -202,12 +202,12 @@ namespace Unigram.Services
             }
         }
 
-        private StickersSettings _stickers;
+        private static StickersSettings _stickers;
         public StickersSettings Stickers
         {
             get
             {
-                return _stickers = _stickers ?? new StickersSettings(_container);
+                return _stickers = _stickers ?? new StickersSettings(_local);
             }
         }
 

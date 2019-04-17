@@ -307,6 +307,19 @@ namespace Unigram.Views
 
                 StickersPanel.AllowFocusOnInteraction = false;
             }
+
+            switch (ViewModel.Settings.Stickers.SelectedTab)
+            {
+                case Services.Settings.StickersTab.Emoji:
+                    ButtonStickers.Glyph = "\uE76E";
+                    break;
+                case Services.Settings.StickersTab.Animations:
+                    ButtonStickers.Glyph = "\uF4A9";
+                    break;
+                case Services.Settings.StickersTab.Stickers:
+                    ButtonStickers.Glyph = "\uF4AA";
+                    break;
+            }
         }
 
         private void ContactPanel_LaunchFullAppRequested(Windows.ApplicationModel.Contacts.ContactPanel sender, Windows.ApplicationModel.Contacts.ContactPanelLaunchFullAppRequestedEventArgs args)
@@ -2486,6 +2499,19 @@ namespace Unigram.Views
                 _stickersPanel.Clip.StartAnimation("TopInset", clip);
 
                 batch.End();
+
+                switch (ViewModel.Settings.Stickers.SelectedTab)
+                {
+                    case Services.Settings.StickersTab.Emoji:
+                        ButtonStickers.Glyph = "\uE76E";
+                        break;
+                    case Services.Settings.StickersTab.Animations:
+                        ButtonStickers.Glyph = "\uF4A9";
+                        break;
+                    case Services.Settings.StickersTab.Stickers:
+                        ButtonStickers.Glyph = "\uF4AA";
+                        break;
+                }
             }
             else
             {
@@ -2512,6 +2538,19 @@ namespace Unigram.Views
                     UnmaskTitleAndStatusBar();
 
                     StickersPanel.Visibility = Visibility.Collapsed;
+
+                    switch (ViewModel.Settings.Stickers.SelectedTab)
+                    {
+                        case Services.Settings.StickersTab.Emoji:
+                            ButtonStickers.Glyph = "\uE76E";
+                            break;
+                        case Services.Settings.StickersTab.Animations:
+                            ButtonStickers.Glyph = "\uF4A9";
+                            break;
+                        case Services.Settings.StickersTab.Stickers:
+                            ButtonStickers.Glyph = "\uF4AA";
+                            break;
+                    }
                 }
             }
         }

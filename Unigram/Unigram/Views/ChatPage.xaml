@@ -1131,19 +1131,20 @@
                                 ToolTipService.ToolTip="{CustomResource AccDescrBotKeyboard}"
                                 Grid.Column="1"/>
                         </Border>
-
-                        <!-- Button to use stickers keyboard, all -->
-                        <controls:GlyphButton x:Name="ButtonStickers"
-                                              Click="Stickers_Click"
-                                              AllowFocusOnInteraction="False"
-                                              Glyph="&#xF4AA;"
-                                              VerticalAlignment="Bottom"
-                                              AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"
-                                              Grid.Column="2"/>
                     </Grid>
 
-                    <Grid x:Name="ButtonRecord" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Bottom" Grid.Column="3" Canvas.ZIndex="1000">
+                    <!-- Button to use stickers keyboard, all -->
+                    <controls:AnimatedGlyphButton
+                        x:Name="ButtonStickers"
+                        Click="Stickers_Click"
+                        AllowFocusOnInteraction="False"
+                        Glyph="&#xF4AA;"
+                        VerticalAlignment="Bottom"
+                        AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"
+                        Grid.Column="1"/>
+
+                    <Grid x:Name="ButtonRecord" VerticalAlignment="Bottom" Grid.Column="2" Canvas.ZIndex="1000">
                         <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <chats:ChatRecordButton
                             x:Name="btnVoiceMessage"

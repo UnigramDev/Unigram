@@ -614,7 +614,7 @@
                                             </selectors:StickerSetTemplateSelector.FavedTemplate>
                                         </selectors:StickerSetTemplateSelector>
                                     </ListView.ItemTemplateSelector>
-                                    <ListView.Header>
+                                    <!--<ListView.Header>
                                         <StackPanel Orientation="Horizontal">
                                             <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                                        SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
@@ -643,10 +643,10 @@
                                                 </Grid>
                                             </controls:PivotRadioButton>
                                         </StackPanel>
-                                    </ListView.Header>
+                                    </ListView.Header>-->
                                     <ListView.Footer>
                                         <StackPanel Orientation="Horizontal">
-                                            <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}" Width="{StaticResource AppBarThemeCompactHeight}" Height="{StaticResource AppBarThemeCompactHeight}" Style="{StaticResource GlyphPivotRadioButton}"/>
+                                            <!--<controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}" Width="{StaticResource AppBarThemeCompactHeight}" Height="{StaticResource AppBarThemeCompactHeight}" Style="{StaticResource GlyphPivotRadioButton}"/>-->
                                             <controls:GlyphButton Click="Settings_Click" Width="{ThemeResource AppBarThemeCompactHeight}" Height="{ThemeResource AppBarThemeCompactHeight}" Glyph="&#xE115;"/>
                                         </StackPanel>
                                     </ListView.Footer>
@@ -713,37 +713,6 @@
                             Grid.Column="4"/>
                     </Grid>
                 </Grid>
-
-                <local:StickersSearchView x:Name="Search" x:DeferLoadStrategy="Lazy" Grid.Row="1" d:IsHidden="True"/>
-
-                <!--<Grid Background="White" Grid.Row="1">
-                     <ListView ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
-                     SelectionMode="None"
-                     ContainerContentChanging="ListView_ContainerContentChanging">
-                     <ListView.ItemTemplate>
-                     <DataTemplate>
-                     <cells:StickerSetCell/>
-                     </DataTemplate>
-                     </ListView.ItemTemplate>
-                     <ListView.ItemContainerStyle>
-                     <Style TargetType="ListViewItem">
-                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                     <Setter Property="Padding" Value="0"/>
-                     <Setter Property="Template">
-                     <Setter.Value>
-                     <ControlTemplate TargetType="ListViewItem">
-                     <ContentPresenter/>
-                     </ControlTemplate>
-                     </Setter.Value>
-                     </Setter>
-                     </Style>
-                     </ListView.ItemContainerStyle>
-                     <ListView.ItemContainerTransitions>
-                     <TransitionCollection/>
-                     </ListView.ItemContainerTransitions>
-                     </ListView>
-                     </Grid>-->
-
             </Grid>
         </Border>
     </Grid>

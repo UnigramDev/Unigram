@@ -43,8 +43,6 @@ namespace Unigram.Controls.Views
         private FileContext<ViewModels.Dialogs.StickerViewModel> _stickers = new FileContext<ViewModels.Dialogs.StickerViewModel>();
         private FileContext<Animation> _animations = new FileContext<Animation>();
 
-        private ScrollViewer stickersScroll;
-
         private bool _widget;
 
         public StickersView()
@@ -63,6 +61,19 @@ namespace Unigram.Controls.Views
             {
                 shadow2.Size = args.NewSize.ToVector2();
             };
+
+            switch (SettingsService.Current.Stickers.SelectedTab)
+            {
+                case Services.Settings.StickersTab.Emoji:
+                    Pivot.SelectedIndex = 0;
+                    break;
+                case Services.Settings.StickersTab.Animations:
+                    Pivot.SelectedIndex = 1;
+                    break;
+                case Services.Settings.StickersTab.Stickers:
+                    Pivot.SelectedIndex = 2;
+                    break;
+            }
         }
 
         public void SetView(bool widget)
@@ -272,6 +283,22 @@ namespace Unigram.Controls.Views
             else
             {
                 ScrollingHost_ViewChanged(null, null);
+            }
+
+            if (ViewModel != null)
+            {
+                switch (Pivot.SelectedIndex)
+                {
+                    case 0:
+                        ViewModel.Settings.Stickers.SelectedTab = Services.Settings.StickersTab.Emoji;
+                        break;
+                    case 1:
+                        ViewModel.Settings.Stickers.SelectedTab = Services.Settings.StickersTab.Animations;
+                        break;
+                    case 2:
+                        ViewModel.Settings.Stickers.SelectedTab = Services.Settings.StickersTab.Stickers;
+                        break;
+                }
             }
 
             //if (Pivot.SelectedIndex == 0)

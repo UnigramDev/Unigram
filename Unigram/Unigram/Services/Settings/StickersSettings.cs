@@ -9,6 +9,13 @@ namespace Unigram.Services.Settings
         None
     }
 
+    public enum StickersTab
+    {
+        Emoji,
+        Animations,
+        Stickers
+    }
+
     public class StickersSettings : SettingsServiceBase
     {
         public StickersSettings(ApplicationDataContainer container)
@@ -31,6 +38,23 @@ namespace Unigram.Services.Settings
             {
                 _suggestionMode = (int)value;
                 AddOrUpdateValue("SuggestionMode", (int)value);
+            }
+        }
+
+        private int? _selectedTab;
+        public StickersTab SelectedTab
+        {
+            get
+            {
+                if (_selectedTab == null)
+                    _selectedTab = GetValueOrDefault("SelectedTab", 2);
+
+                return (StickersTab)(_selectedTab ?? 2);
+            }
+            set
+            {
+                _selectedTab = (int)value;
+                AddOrUpdateValue("SelectedTab", (int)value);
             }
         }
     }
