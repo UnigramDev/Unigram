@@ -165,11 +165,11 @@ namespace Unigram
                 builder.RegisterType<SignInSentCodeViewModel>();
                 builder.RegisterType<SignInPasswordViewModel>();
                 builder.RegisterType<SignInRecoveryViewModel>();
-                builder.RegisterType<MainViewModel>().SingleInstance();
+                builder.RegisterType<MainViewModel>();//.SingleInstance();
                 builder.RegisterType<PlaybackViewModel>().SingleInstance();
-                builder.RegisterType<ShareViewModel>().SingleInstance();
+                builder.RegisterType<ShareViewModel>();//.SingleInstance();
                 builder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
-                builder.RegisterType<ChatsViewModel>().SingleInstance();
+                builder.RegisterType<ChatsViewModel>();//.SingleInstance();
                 builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
                 builder.RegisterType<ProfileViewModel>();
                 builder.RegisterType<UserCommonChatsViewModel>();
@@ -201,7 +201,7 @@ namespace Unigram
                 builder.RegisterType<SecretChatCreateViewModel>();
                 builder.RegisterType<InstantViewModel>(); //.SingleInstance();
                 builder.RegisterType<LogOutViewModel>().SingleInstance();
-                builder.RegisterType<SettingsViewModel>().SingleInstance();
+                builder.RegisterType<SettingsViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsAdvancedViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPhoneIntroViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPhoneViewModel>().SingleInstance();
