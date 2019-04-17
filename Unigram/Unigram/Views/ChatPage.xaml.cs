@@ -3015,15 +3015,17 @@ namespace Unigram.Views
                         case MessageAnimation animation:
                         case MessageAudio audio:
                         case MessageDocument document:
-                        case MessagePhoto photo:
-                        case MessageVideo video:
                             ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachEditGlyph;
                             ButtonAttach.IsEnabled = true;
                             break;
-                        //case MessageVoiceNote voiceNote:
-                        //    ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
-                        //    ButtonAttach.IsEnabled = false;
-                        //    break;
+                        case MessagePhoto photo:
+                            ButtonAttach.Glyph = !photo.IsSecret ? ReplyInfoToGlyphConverter.AttachEditGlyph : ReplyInfoToGlyphConverter.AttachGlyph;
+                            ButtonAttach.IsEnabled = !photo.IsSecret;
+                            break;
+                        case MessageVideo video:
+                            ButtonAttach.Glyph = !video.IsSecret ? ReplyInfoToGlyphConverter.AttachEditGlyph : ReplyInfoToGlyphConverter.AttachGlyph;
+                            ButtonAttach.IsEnabled = !video.IsSecret;
+                            break;
                         default:
                             ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
                             ButtonAttach.IsEnabled = false;
