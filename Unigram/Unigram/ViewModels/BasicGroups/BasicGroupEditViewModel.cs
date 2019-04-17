@@ -224,7 +224,7 @@ namespace Unigram.ViewModels.BasicGroups
                 {
                     await ProtoService.SendAsync(new LeaveChat(chat.Id));
 
-                    var response = await ProtoService.SendAsync(new DeleteChatHistory(chat.Id, true));
+                    var response = await ProtoService.SendAsync(new DeleteChatHistory(chat.Id, true, false));
                     if (response is Ok)
                     {
                         NavigationService.RemovePeerFromStack(chat.Id);
