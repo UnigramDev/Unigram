@@ -19,7 +19,7 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <selectors:MemberTemplateSelector x:Name="MemberTemplateSelector">
+        <selectors:MemberTemplateSelector x:Key="MemberTemplateSelector">
             <selectors:MemberTemplateSelector.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">

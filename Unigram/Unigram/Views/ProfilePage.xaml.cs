@@ -732,7 +732,7 @@ namespace Unigram.Views
                 args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
             }
 
-            args.ItemContainer.ContentTemplate = MemberTemplateSelector.SelectTemplateImplicit(args.Item);
+            args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplateSelector.SelectTemplate(args.Item);
 
             args.IsContainerPrepared = true;
         }
