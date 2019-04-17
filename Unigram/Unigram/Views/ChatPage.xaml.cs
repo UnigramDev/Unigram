@@ -2016,17 +2016,20 @@ namespace Unigram.Views
 
         #endregion
 
+        private async void Emojis_ItemClick(string emoji)
+        {
+            TextField.InsertText(emoji, false, false);
+
+            await Task.Delay(100);
+            TextField.Focus(FocusState.Programmatic);
+        }
+
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is Sticker sticker)
             {
                 Stickers_ItemClick(sticker);
             }
-        }
-
-        private void Emojis_ItemClick(string emoji)
-        {
-            TextField.InsertText(emoji, false, false);
         }
 
         public async void Stickers_ItemClick(Sticker sticker)
