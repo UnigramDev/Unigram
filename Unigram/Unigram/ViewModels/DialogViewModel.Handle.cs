@@ -26,6 +26,7 @@ namespace Unigram.ViewModels
 
         IHandle<UpdateUserChatAction>,
 
+        IHandle<UpdateChatLastMessage>,
         IHandle<UpdateNewMessage>,
         IHandle<UpdateDeleteMessages>,
 
@@ -330,6 +331,14 @@ namespace Unigram.ViewModels
 
 
 
+        public void Handle(UpdateChatLastMessage update)
+        {
+            if (update.ChatId == _chat?.Id && update.LastMessage == null)
+            {
+                IsFirstSliceLoaded = IsEndReached();
+            }
+        }
+
         public void Handle(UpdateNewMessage update)
         {
             if (update.Message.ChatId == _chat?.Id)
@@ -424,6 +433,13 @@ namespace Unigram.ViewModels
                     if (update.NewContent is MessageAlbum)
                     {
                     }
+                    //else if (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo)
+                    //{
+                    //    // Probably not the best way
+                    //    Items.Remove(message);
+                    //    message.Content = update.NewContent;
+                    //    InsertMessageInOrder(Items, message);
+                    //}
                     else
                     {
                         message.Content = update.NewContent;
