@@ -8,6 +8,7 @@ using Unigram.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -46,6 +47,10 @@ namespace Unigram.Controls
             Votes.Value = results ? option.VoterCount : 0;
             
             Loading.IsActive = option.IsBeingChosen;
+
+
+
+            AutomationProperties.SetName(this, option.Text);
         }
 
         protected override void OnToggle() { }
