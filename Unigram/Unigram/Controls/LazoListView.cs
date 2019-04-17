@@ -67,7 +67,10 @@ namespace Unigram.Controls
                     {
                         _recognizer.ProcessDownEvent(point);
                     }
-                    catch { }
+                    catch
+                    {
+                        _recognizer.CompleteGesture();
+                    }
                 }
             }
 
@@ -134,8 +137,6 @@ namespace Unigram.Controls
 
         internal void OnPointerMoved(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            _recognizer.ProcessMoveEvents(e.GetIntermediatePoints(Window.Current.Content as FrameworkElement));
-
             var child = ItemFromContainer(item);
             if (child == null)
             {
@@ -200,7 +201,14 @@ namespace Unigram.Controls
             var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
             if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased)
             {
-                _recognizer.ProcessUpEvent(point);
+                try
+                {
+                    _recognizer.ProcessUpEvent(point);
+                }
+                catch
+                {
+                    _recognizer.CompleteGesture();
+                }
             }
 
             var first = _firstItem != null ? ContainerFromItem(_firstItem) as SelectorItem : null;

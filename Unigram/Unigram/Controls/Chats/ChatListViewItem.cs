@@ -10,6 +10,7 @@ using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
+using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -21,14 +22,16 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatListViewItem : LazoListViewItem
+    public class ChatListViewItem : LazoListViewItem, IInteractionTrackerOwner
     {
         private readonly ChatListView _parent;
 
+        private Visual _hitTest;
         private Visual _visual;
         private ContainerVisual _indicator;
 
-        private DependencyObject _originalSource;
+        private InteractionTracker _tracker;
+        private VisualInteractionSource _interactionSource;
 
         private bool _forward;
         private bool _reply;
@@ -40,7 +43,6 @@ namespace Unigram.Controls.Chats
         {
             _parent = parent;
 
-            ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateRailsX | ManipulationModes.System;
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
@@ -53,7 +55,65 @@ namespace Unigram.Controls.Chats
         {
             _presenter = GetTemplateChild("Presenter") as ListViewItemPresenter;
 
+            _hitTest = ElementCompositionPreview.GetElementVisual(this);
+            _visual = ElementCompositionPreview.GetElementVisual(_presenter);
+
+            _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, this);
+
+            ConfigureInteractionTracker();
+
+            SizeChanged += (s, args) =>
+            {
+                ConfigureInteractionTracker();
+            };
+
             base.OnApplyTemplate();
+        }
+
+        private void ConfigureInteractionTracker()
+        {
+            // Configure hittestVisual size for the interaction (size needs to be explicitly set in order for the hittesting to work correctly due to XAML-COMP interop policy)
+            _hitTest.Size = new Vector2((float)_presenter.ActualWidth, (float)_presenter.ActualHeight);
+            _visual.Size = new Vector2((float)_presenter.ActualWidth, (float)_presenter.ActualHeight);
+
+            VisualInteractionSource interactionSource = _interactionSource = VisualInteractionSource.Create(_hitTest);
+
+            //Configure for y-direction panning
+            interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
+            interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
+            interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
+            interactionSource.IsPositionYRailsEnabled = true;
+
+            //Create tracker and associate interaction source
+            _tracker.InteractionSources.Add(interactionSource);
+
+            _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
+            _tracker.MinPosition = new Vector3(_forward ? -72 : 0);
+
+            _tracker.Properties.InsertBoolean("CanReply", _reply);
+            _tracker.Properties.InsertBoolean("CanForward", _forward);
+
+            ConfigureAnimations(_visual, null);
+            ConfigureRestingPoints();
+        }
+
+        private void ConfigureRestingPoints()
+        {
+            var neutralX = InteractionTrackerInertiaRestingValue.Create(_visual.Compositor);
+            neutralX.Condition = _visual.Compositor.CreateExpressionAnimation("true");
+            neutralX.RestingValue = _visual.Compositor.CreateExpressionAnimation("0");
+
+            _tracker.ConfigurePositionXInertiaModifiers(new InteractionTrackerInertiaModifier[] { neutralX });
+        }
+
+        private void ConfigureAnimations(Visual visual, Visual indicator)
+        {
+            // Create an animation that changes the offset of the photoVisual and shadowVisual based on the manipulation progress
+            var offsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanForward ? 0 : -tracker.Position.X");
+            //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanForward ? 0 : Max(-72, Min(72, -tracker.Position.X))");
+            //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("-tracker.Position.X");
+            offsetExp.SetReferenceParameter("tracker", _tracker);
+            visual.StartAnimation("Offset.X", offsetExp);
         }
 
         #region ContentMargin
@@ -71,7 +131,17 @@ namespace Unigram.Controls.Chats
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            _originalSource = e.OriginalSource as DependencyObject;
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Touch)
+            {
+                try
+                {
+                    _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(sender as UIElement));
+                }
+                catch (Exception)
+                {
+                    // Ignoring the failed redirect to prevent app crashing
+                }
+            }
         }
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
@@ -89,10 +159,26 @@ namespace Unigram.Controls.Chats
             return ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message && message.IsService();
         }
 
+        public void PrepareForItemOverride(MessageViewModel message)
+        {
+            _reply = CanReply();
+            _forward = CanForward();
+
+            _tracker.Properties.InsertBoolean("CanReply", _reply);
+            _tracker.Properties.InsertBoolean("CanForward", _forward);
+            _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
+            _tracker.MinPosition = new Vector3(_forward ? -72 : 0);
+        }
+
         private bool CanReply()
         {
             if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
             {
+                if (message.IsService())
+                {
+                    return false;
+                }
+
                 var chat = message.GetChat();
                 if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
                 {
@@ -123,44 +209,16 @@ namespace Unigram.Controls.Chats
             return false;
         }
 
-        protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e)
+        public void ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
         {
-            _reply = CanReply();
-            _forward = CanForward();
-
-            if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse || CantSelect() || (!_reply && !_forward))
-            {
-                e.Complete();
-            }
-
-            base.OnManipulationStarted(e);
-        }
-
-        protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs e)
-        {
-            e.Handled = true;
-
-            if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                e.Complete();
-                base.OnManipulationDelta(e);
-                return;
-            }
-
-            if (_visual == null)
-            {
-                var presenter = VisualTreeHelper.GetChild(this, 0) as ListViewItemPresenter;
-                _visual = ElementCompositionPreview.GetElementVisual(presenter);
-            }
-
-            if (_indicator == null && ApiInfo.CanUseDirectComposition /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
+            if (_indicator == null && ApiInfo.CanUseDirectComposition && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
             {
                 var sprite = _visual.Compositor.CreateSpriteVisual();
                 sprite.Size = new Vector2(30, 30);
                 sprite.CenterPoint = new Vector3(15);
 
                 var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/Reply.png"));
-                surface.LoadCompleted += (s, args) =>
+                surface.LoadCompleted += (s, e) =>
                 {
                     sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
                 };
@@ -181,11 +239,12 @@ namespace Unigram.Controls.Chats
                 _indicator.Children.InsertAtTop(sprite);
                 _indicator.Size = new Vector2(30, 30);
                 _indicator.CenterPoint = new Vector3(15);
+                _indicator.Scale = new Vector3();
 
                 ElementCompositionPreview.SetElementChildVisual(this, _indicator);
             }
 
-            var offset = (e.Cumulative.Translation.X < 0 && !_reply) || (e.Cumulative.Translation.X >= 0 && !_forward) ? 0 : Math.Max(0, Math.Min(72, Math.Abs((float)e.Cumulative.Translation.X)));
+            var offset = (_tracker.Position.X > 0 && !_reply) || (_tracker.Position.X <= 0 && !_forward) ? 0 : Math.Max(0, Math.Min(72, Math.Abs(_tracker.Position.X)));
 
             var abs = Math.Abs(offset);
             var percent = abs / 72f;
@@ -193,101 +252,49 @@ namespace Unigram.Controls.Chats
             var width = (float)ActualWidth;
             var height = (float)ActualHeight;
 
-            _visual.Offset = new Vector3(e.Cumulative.Translation.X < 0 ? -offset : offset, 0, 0);
-
             if (_indicator != null)
             {
-                _indicator.Offset = new Vector3(e.Cumulative.Translation.X < 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
-                _indicator.Scale = new Vector3(e.Cumulative.Translation.X < 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
+                _indicator.Offset = new Vector3(_tracker.Position.X > 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
+                _indicator.Scale = new Vector3(_tracker.Position.X > 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
                 _indicator.Opacity = percent;
             }
-
-            var originalSource = _originalSource;
-            if (originalSource != null)
-            {
-                _originalSource = null;
-
-                var button = originalSource.AncestorsAndSelf<ButtonBase>().FirstOrDefault() as ButtonBase;
-                if (button != null)
-                {
-                    button.ReleasePointerCaptures();
-                }
-            }
-
-            base.OnManipulationDelta(e);
         }
 
-        protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e)
+        public void InertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
         {
-            e.Handled = true;
-
-            if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                base.OnManipulationCompleted(e);
-                return;
-            }
-
-            CompositionAnimation CreateAnimation(Compositor compositor, Vector3 initial, Vector3 final)
-            {
-                if (ApiInfo.CanUseDirectComposition)
-                {
-                    var temp = compositor.CreateSpringVector3Animation();
-                    temp.InitialValue = initial;
-                    temp.FinalValue = final;
-
-                    return temp;
-                }
-                else
-                {
-                    var temp = compositor.CreateVector3KeyFrameAnimation();
-                    temp.InsertKeyFrame(0, initial);
-                    temp.InsertKeyFrame(1, final);
-
-                    return temp;
-                }
-            }
-
-            var visual = _visual;
-            if (visual != null)
-            {
-                visual.StartAnimation("Offset", CreateAnimation(visual.Compositor, visual.Offset, new Vector3()));
-            }
-
-            var indicator = _indicator;
-            if (indicator != null && visual != null)
-            {
-                var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-
-                var width = (float)ActualWidth;
-                var height = (float)ActualHeight;
-
-                indicator.Opacity = 1;
-                indicator.Scale = new Vector3(e.Cumulative.Translation.X < 0 ? 1 : -1, 1, 1);
-                indicator.StartAnimation("Offset", CreateAnimation(visual.Compositor, indicator.Offset, new Vector3(e.Cumulative.Translation.X < 0 ? width : -30, (height - 30) / 2, 0)));
-
-                batch.Completed += (s, args) =>
-                {
-                    _indicator?.Dispose();
-                    _indicator = null;
-                };
-
-                batch.End();
-            }
-
             if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
             {
-                if (e.Cumulative.Translation.X <= -45 && _reply)
+                if (_tracker.Position.X >= 72 && _reply)
                 {
                     _parent.ViewModel.MessageReplyCommand.Execute(message);
                 }
-                else if (e.Cumulative.Translation.X >= 45 && _forward)
+                else if (_tracker.Position.X <= -72 && _forward)
                 {
                     _parent.ViewModel.MessageForwardCommand.Execute(message);
                 }
             }
-
-            base.OnManipulationCompleted(e);
         }
+
+        public void CustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
+        {
+
+        }
+
+        public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
+        {
+
+        }
+
+        public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
+        {
+
+        }
+
+        public void RequestIgnored(InteractionTracker sender, InteractionTrackerRequestIgnoredArgs args)
+        {
+
+        }
+
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -310,27 +317,6 @@ namespace Unigram.Controls.Chats
             }
 
             return base.ArrangeOverride(finalSize);
-
-            //var content = ContentTemplateRoot as FrameworkElement;
-            //var message = content.Tag as MessageViewModel;
-
-            //if (content is Grid grid)
-            //{
-            //    content = grid.FindName("Bubble") as FrameworkElement;
-            //}
-
-            //if (content is MessageBubble bubble)
-            //{
-            //    var wide = message.IsOutgoing && finalSize.Width >= 880 && SettingsService.Current.IsAdaptiveWideEnabled;
-            //    var alignment = wide || !message.IsOutgoing ? HorizontalAlignment.Left : HorizontalAlignment.Right;
-            //    if (alignment != bubble.HorizontalAlignment)
-            //    {
-            //        bubble.UpdateAdaptive(alignment);
-            //        _parent.PrepareContainerForItem(this, message, wide);
-            //    }
-            //}
-
-            return finalSize;
         }
     }
 

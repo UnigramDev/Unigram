@@ -583,6 +583,11 @@ namespace Unigram.Views
             var content = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
             content.Tag = message;
 
+            if (args.ItemContainer is ChatListViewItem selector)
+            {
+                selector.PrepareForItemOverride(message);
+            }
+
             if (content is Grid grid)
             {
                 var photo = grid.FindName("Photo") as ProfilePicture;
