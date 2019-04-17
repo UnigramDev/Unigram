@@ -19,7 +19,7 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <selectors:MemberTemplateSelector x:Key="MemberTemplateSelector">
+        <selectors:MemberTemplateSelector x:Name="MemberTemplateSelector">
             <selectors:MemberTemplateSelector.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
@@ -183,6 +183,7 @@
                   ItemTemplateSelector="{StaticResource MemberTemplateSelector}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
+                  ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   Grid.Row="1">
@@ -204,6 +205,7 @@
                       ItemTemplateSelector="{StaticResource MemberTemplateSelector}"
                       ItemClick="ListView_ItemClick"
                       IsItemClickEnabled="True"
+                      ChoosingItemContainer="OnChoosingItemContainer"
                       ContainerContentChanging="OnContainerContentChanging"
                       SelectionMode="None"
                       Grid.Row="1">

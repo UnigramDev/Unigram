@@ -724,6 +724,19 @@ namespace Unigram.Views
 
         #region Recycle
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
+            }
+
+            args.ItemContainer.ContentTemplate = MemberTemplateSelector.SelectTemplateImplicit(args.Item);
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
