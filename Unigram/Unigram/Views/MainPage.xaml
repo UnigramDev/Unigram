@@ -586,7 +586,7 @@
                                                     ItemClick="ListView_ItemClick"
                                                     SelectionChanged="ListView_SelectionChanged"
                                                     CanDragItems="True"
-                                                    CanReorderItems="True"
+                                                    CanReorderItems="False"
                                                     DragItemsStarting="Chats_DragItemsStarting"
                                                     DragItemsCompleted="Chats_DragItemsCompleted"
                                                     AllowDrop="True">

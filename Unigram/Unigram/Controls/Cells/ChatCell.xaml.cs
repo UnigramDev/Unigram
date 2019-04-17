@@ -789,6 +789,11 @@ namespace Unigram.Controls.Cells
             if (DropVisual != null)
                 DropVisual.Visibility = Visibility.Collapsed;
 
+            if (e.DataView.AvailableFormats.Count == 0)
+            {
+                return;
+            }
+
             var chat = _chat;
             if (chat == null)
             {

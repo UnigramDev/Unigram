@@ -2186,12 +2186,19 @@ namespace Unigram.Views
         {
             if (e.Items.Count > 1 || e.Items[0] is Chat chat && !chat.IsPinned || ResetFilters.Visibility == Visibility.Visible)
             {
+                ChatsList.CanReorderItems = false;
                 e.Cancel = true;
+            }
+            else
+            {
+                ChatsList.CanReorderItems = true;
             }
         }
 
         private void Chats_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
+            ChatsList.CanReorderItems = false;
+
             if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is Chat chat)
             {
                 var items = ViewModel.Chats.Items;
