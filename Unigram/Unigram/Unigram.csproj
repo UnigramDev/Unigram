@@ -150,6 +150,7 @@
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>

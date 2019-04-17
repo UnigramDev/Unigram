@@ -801,6 +801,237 @@ namespace Unigram.Views
         //private bool _isAlreadyLoading;
         //private bool _isAlreadyCalled;
 
+        private bool _oldEmpty = true;
+        private bool _oldEditing;
+
+        private void CheckButtonsVisibility()
+        {
+            var editing = ViewModel.ComposerHeader?.EditingMessage != null;
+            var empty = TextField.IsEmpty;
+
+            FrameworkElement elementHide = null;
+            FrameworkElement elementShow = null;
+
+            if (empty != _oldEmpty && !editing)
+            {
+                if (empty)
+                {
+                    if (_oldEditing)
+                    {
+                        elementHide = btnEdit;
+                        btnSendMessage.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        elementHide = btnSendMessage;
+                        btnEdit.Visibility = Visibility.Collapsed;
+                    }
+
+                    elementShow = ButtonRecord;
+                }
+                else
+                {
+                    if (_oldEditing)
+                    {
+                        elementHide = btnEdit;
+                        ButtonRecord.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        elementHide = ButtonRecord;
+                        btnEdit.Visibility = Visibility.Collapsed;
+                    }
+
+                    elementShow = btnSendMessage;
+                }
+            }
+            else if (editing != _oldEditing)
+            {
+                if (editing)
+                {
+                    if (_oldEmpty)
+                    {
+                        elementHide = ButtonRecord;
+                        btnSendMessage.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        elementHide = btnSendMessage;
+                        ButtonRecord.Visibility = Visibility.Collapsed;
+                    }
+
+                    elementShow = btnEdit;
+                }
+                else
+                {
+                    if (empty)
+                    {
+                        elementShow = ButtonRecord;
+                        btnSendMessage.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        elementShow = btnSendMessage;
+                        ButtonRecord.Visibility = Visibility.Collapsed;
+                    }
+
+                    elementHide = btnEdit;
+                }
+            }
+            //else
+            //{
+            //    btnSendMessage.Visibility = empty || editing ? Visibility.Collapsed : Visibility.Visible;
+            //    btnEdit.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
+            //    ButtonRecord.Visibility = empty && !editing ? Visibility.Visible : Visibility.Collapsed;
+            //}
+
+            if (elementHide == null || elementShow == null)
+            {
+                return;
+            }
+
+            //elementShow.Visibility = Visibility.Visible;
+            //elementHide.Visibility = Visibility.Collapsed;
+
+            var visualHide = ElementCompositionPreview.GetElementVisual(elementHide);
+            var visualShow = ElementCompositionPreview.GetElementVisual(elementShow);
+
+            visualHide.CenterPoint = new Vector3(24);
+            visualShow.CenterPoint = new Vector3(24);
+
+            var batch = visualShow.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                elementHide.Visibility = Visibility.Collapsed;
+                elementShow.Visibility = Visibility.Visible;
+
+                visualHide.Scale = visualShow.Scale = new Vector3(1);
+                visualHide.Opacity = visualShow.Opacity = 1;
+            };
+
+            var hide1 = visualShow.Compositor.CreateVector3KeyFrameAnimation();
+            hide1.InsertKeyFrame(0, new Vector3(1));
+            hide1.InsertKeyFrame(1, new Vector3(0));
+
+            var hide2 = visualShow.Compositor.CreateScalarKeyFrameAnimation();
+            hide2.InsertKeyFrame(0, 1);
+            hide2.InsertKeyFrame(1, 0);
+
+            visualHide.StartAnimation("Scale", hide1);
+            visualHide.StartAnimation("Opacity", hide2);
+
+            elementShow.Visibility = Visibility.Visible;
+
+            var show1 = visualShow.Compositor.CreateVector3KeyFrameAnimation();
+            show1.InsertKeyFrame(1, new Vector3(1));
+            show1.InsertKeyFrame(0, new Vector3(0));
+
+            var show2 = visualShow.Compositor.CreateScalarKeyFrameAnimation();
+            show2.InsertKeyFrame(1, 1);
+            show2.InsertKeyFrame(0, 0);
+
+            visualShow.StartAnimation("Scale", show1);
+            visualShow.StartAnimation("Opacity", show2);
+
+            batch.End();
+
+            if (editing && editing != _oldEditing || empty != _oldEmpty)
+            {
+                var commands = ElementCompositionPreview.GetElementVisual(btnCommands);
+                var markup = ElementCompositionPreview.GetElementVisual(btnMarkup);
+
+                commands.CenterPoint = new Vector3(24);
+                markup.CenterPoint = new Vector3(24);
+
+                var show = empty && !editing;
+                if (show)
+                {
+                    btnCommands.Visibility = Visibility.Visible;
+                    btnMarkup.Visibility = Visibility.Visible;
+
+                    batch = commands.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    batch.Completed += (s, args) =>
+                    {
+                        btnCommands.Visibility = Visibility.Visible;
+                        btnMarkup.Visibility = Visibility.Visible;
+
+                        commands.Scale = markup.Scale = new Vector3(1);
+                        commands.Opacity = markup.Opacity = 1;
+                    };
+
+                    commands.StartAnimation("Scale", show1);
+                    commands.StartAnimation("Opacity", show2);
+
+                    markup.StartAnimation("Scale", show1);
+                    markup.StartAnimation("Opacity", show2);
+
+                    batch.End();
+                }
+                else
+                {
+                    batch = commands.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    batch.Completed += (s, args) =>
+                    {
+                        btnCommands.Visibility = Visibility.Collapsed;
+                        btnMarkup.Visibility = Visibility.Collapsed;
+
+                        commands.Scale = markup.Scale = new Vector3(1);
+                        commands.Opacity = markup.Opacity = 1;
+                    };
+
+                    commands.StartAnimation("Scale", hide1);
+                    commands.StartAnimation("Opacity", hide2);
+
+                    markup.StartAnimation("Scale", hide1);
+                    markup.StartAnimation("Opacity", hide2);
+
+                    batch.End();
+                }
+            }
+
+            _oldEmpty = empty;
+            _oldEditing = editing;
+
+            return;
+
+            if (editing != _oldEditing)
+            {
+                var target = _oldEmpty ? ButtonRecord : (FrameworkElement)btnSendMessage;
+                var targetVisual = ElementCompositionPreview.GetElementVisual(target);
+                var editVisual = ElementCompositionPreview.GetElementVisual(btnEdit);
+
+                visualHide = editing ? targetVisual : editVisual;
+                visualShow = editing ? editVisual : targetVisual;
+            }
+            else
+            {
+                if (empty && empty != _oldEmpty || editing && editing != _oldEditing)
+                {
+                    btnSendMessage.Visibility = empty || editing ? Visibility.Collapsed : Visibility.Visible;
+                    btnEdit.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
+                    btnCommands.Visibility = Visibility.Visible;
+                    btnMarkup.Visibility = Visibility.Visible;
+                    btnVoiceMessage.Visibility = Visibility.Visible;
+
+                    if (ViewModel != null)
+                    {
+                        ViewModel.DisableWebPagePreview = false;
+                    }
+                }
+                else
+                {
+                    btnSendMessage.Visibility = Visibility.Visible;
+                    btnEdit.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
+                    btnCommands.Visibility = Visibility.Collapsed;
+                    btnMarkup.Visibility = Visibility.Collapsed;
+                    btnVoiceMessage.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            _oldEmpty = empty;
+            _oldEditing = editing;
+        }
+
         private void CheckMessageBoxEmpty()
         {
             if (StickersPanel.Visibility == Visibility.Visible)
@@ -813,29 +1044,7 @@ namespace Unigram.Views
                 CollapseMarkup(false);
             }
 
-            if (TextField.IsEmpty)
-            {
-                btnSendMessage.Visibility = Visibility.Collapsed;
-                btnCommands.Visibility = Visibility.Visible;
-                btnMarkup.Visibility = Visibility.Visible;
-                btnVoiceMessage.Visibility = Visibility.Visible;
-
-                ButtonStickers.Glyph = "\uF4AA";
-
-                if (ViewModel != null)
-                {
-                    ViewModel.DisableWebPagePreview = false;
-                }
-            }
-            else
-            {
-                btnSendMessage.Visibility = Visibility.Visible;
-                btnCommands.Visibility = Visibility.Collapsed;
-                btnMarkup.Visibility = Visibility.Collapsed;
-                btnVoiceMessage.Visibility = Visibility.Collapsed;
-
-                ButtonStickers.Glyph = "\uE76E";
-            }
+            CheckButtonsVisibility();
 
             var viewModel = ViewModel;
             if (viewModel == null || viewModel.DisableWebPagePreview)
@@ -1161,7 +1370,9 @@ namespace Unigram.Views
         private void CollapseMarkup(bool keyboard)
         {
             ReplyMarkupPanel.Visibility = Visibility.Collapsed;
-            ButtonMarkup.IsChecked = false;
+
+            ButtonMarkup.Glyph = "\uE90F";
+            Automation.SetToolTip(ButtonMarkup, Strings.Resources.AccDescrBotCommands);
 
             if (keyboard)
             {
@@ -1175,7 +1386,9 @@ namespace Unigram.Views
         public void ShowMarkup()
         {
             ReplyMarkupPanel.Visibility = Visibility.Visible;
-            ButtonMarkup.IsChecked = true;
+
+            ButtonMarkup.Glyph = "\uE910";
+            Automation.SetToolTip(ButtonMarkup, Strings.Resources.AccDescrShowKeyboard);
 
             Focus(FocusState.Programmatic);
             TextField.Focus(FocusState.Programmatic);
@@ -2051,7 +2264,7 @@ namespace Unigram.Views
         {
             AttachTextAreaExpression(ButtonAttach);
             AttachTextAreaExpression(SecondaryButtonsPanel);
-            AttachTextAreaExpression(ButtonEdit);
+            AttachTextAreaExpression(ButtonStickers);
             AttachTextAreaExpression(btnSendMessage);
         }
 
@@ -2742,8 +2955,10 @@ namespace Unigram.Views
                 ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
                 ButtonAttach.IsEnabled = true;
 
-                ButtonsPanel.Visibility = Visibility.Visible;
-                btnEdit.Visibility = Visibility.Collapsed;
+                SecondaryButtonsPanel.Visibility = Visibility.Visible;
+                //ButtonRecord.Visibility = Visibility.Visible;
+
+                //CheckButtonsVisibility();
             }
             else
             {
@@ -2792,8 +3007,10 @@ namespace Unigram.Views
 
                     Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelEdit);
 
-                    ButtonsPanel.Visibility = Visibility.Collapsed;
-                    btnEdit.Visibility = Visibility.Visible;
+                    SecondaryButtonsPanel.Visibility = Visibility.Collapsed;
+                    //ButtonRecord.Visibility = Visibility.Collapsed;
+
+                    //CheckButtonsVisibility();
                 }
                 else
                 {
@@ -2830,8 +3047,10 @@ namespace Unigram.Views
 
                     Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelReply);
 
-                    ButtonsPanel.Visibility = Visibility.Visible;
-                    btnEdit.Visibility = Visibility.Collapsed;
+                    SecondaryButtonsPanel.Visibility = Visibility.Visible;
+                    //ButtonRecord.Visibility = Visibility.Visible;
+
+                    //CheckButtonsVisibility();
                 }
             }
         }
