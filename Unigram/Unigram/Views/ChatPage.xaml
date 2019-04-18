@@ -1202,12 +1202,12 @@
         </ContentControl>
 
         <chats:ChatBottomButton
-            x:Name="Action"
+            x:Name="ButtonAction"
             Command="{x:Bind ViewModel.ActionCommand}"
             Height="{StaticResource TelegramToolBarHeight}"
             Grid.Row="3">
             <Button.Content>
-                <TextBlock x:Name="ActionLabel" TextWrapping="Wrap" TextAlignment="Center"/>
+                <TextBlock x:Name="LabelAction" TextWrapping="Wrap" TextAlignment="Center"/>
             </Button.Content>
         </chats:ChatBottomButton>
 

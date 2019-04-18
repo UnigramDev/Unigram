@@ -164,11 +164,11 @@ namespace Unigram.Views
                 ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
             };
 
-            var visual = Shadow.Attach(ArrowShadow, 2, 0.25f, null);
+            var visual = DropShadowEx.Attach(ArrowShadow, 2, 0.25f, null);
             visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
 
-            visual = Shadow.Attach(ArrowMentionsShadow, 2, 0.25f, null);
+            visual = DropShadowEx.Attach(ArrowMentionsShadow, 2, 0.25f, null);
             visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
 
@@ -188,7 +188,7 @@ namespace Unigram.Views
             //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
             //}
 
-            _textShadowVisual = Shadow.Attach(Separator, 20, 0.25f);
+            _textShadowVisual = DropShadowEx.Attach(Separator, 20, 0.25f);
             _textShadowVisual.IsVisible = false;
 
             return;
@@ -2783,18 +2783,18 @@ namespace Unigram.Views
 
         private void ShowAction(string content, bool enabled)
         {
-            ActionLabel.Text = content;
-            Action.IsEnabled = enabled;
-            Action.Visibility = Visibility.Visible;
+            LabelAction.Text = content;
+            ButtonAction.IsEnabled = enabled;
+            ButtonAction.Visibility = Visibility.Visible;
             TextArea.Visibility = Visibility.Collapsed;
 
-            Action.Focus(FocusState.Programmatic);
+            ButtonAction.Focus(FocusState.Programmatic);
         }
 
         private void ShowArea()
         {
-            Action.IsEnabled = false;
-            Action.Visibility = Visibility.Collapsed;
+            ButtonAction.IsEnabled = false;
+            ButtonAction.Visibility = Visibility.Collapsed;
             TextArea.Visibility = Visibility.Visible;
 
             TextField.Focus(FocusState.Programmatic);
@@ -3103,7 +3103,7 @@ namespace Unigram.Views
 
         private void ShowHideComposerHeader(bool show)
         {
-            if (Action.Visibility == Visibility.Visible)
+            if (ButtonAction.Visibility == Visibility.Visible)
             {
                 _composerHeaderCollapsed = true;
                 ComposerHeader.Visibility = Visibility.Collapsed;

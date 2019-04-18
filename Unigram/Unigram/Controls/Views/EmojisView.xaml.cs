@@ -29,7 +29,7 @@ namespace Unigram.Controls.Views
         {
             this.InitializeComponent();
 
-            var shadow = Shadow.Attach(Separator, 20, 0.25f);
+            var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
 
             Toolbar.SizeChanged += (s, args) =>
             {

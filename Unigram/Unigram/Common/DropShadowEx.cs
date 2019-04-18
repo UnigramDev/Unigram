@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Common
 {
-    public static class Shadow
+    public static class DropShadowEx
     {
         public static Visual Attach(UIElement element, float radius, float opacity, CompositionClip clip = null)
         {

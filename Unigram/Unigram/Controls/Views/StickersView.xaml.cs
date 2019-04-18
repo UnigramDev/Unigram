@@ -50,8 +50,8 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
 
-            var shadow1 = Shadow.Attach(HeaderSeparator, 20, 0.25f);
-            var shadow2 = Shadow.Attach(Separator, 20, 0.25f);
+            var shadow1 = DropShadowEx.Attach(HeaderSeparator, 20, 0.25f);
+            var shadow2 = DropShadowEx.Attach(Separator, 20, 0.25f);
 
             HeaderSeparator.SizeChanged += (s, args) =>
             {
