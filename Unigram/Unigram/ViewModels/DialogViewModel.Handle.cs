@@ -338,6 +338,15 @@ namespace Unigram.ViewModels
             {
                 IsFirstSliceLoaded = IsEndReached();
             }
+
+            if (update.ChatId == _chat?.Id && _chat.Type is ChatTypePrivate privata)
+            {
+                var user = CacheService.GetUser(privata.UserId);
+                if (user != null && user.Type is UserTypeBot)
+                {
+                    BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(_chat, user, CacheService.GetUserFull(user.Id), false, _accessToken != null));
+                }
+            }
         }
 
         public void Handle(UpdateNewMessage update)

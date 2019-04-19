@@ -2777,7 +2777,10 @@ namespace Unigram.ViewModels
             }
             else
             {
-                ProtoService.Send(new SendBotStartMessage(bot.Id, chat.Id, _accessToken));
+                var token = _accessToken;
+
+                AccessToken = null;
+                ProtoService.Send(new SendBotStartMessage(bot.Id, chat.Id, token));
             }
         }
 
