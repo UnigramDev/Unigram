@@ -1587,6 +1587,11 @@ namespace Unigram.Views
 
             if (flyout.Items.Count > 0)
             {
+                if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+                {
+                    flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+                }
+
                 flyout.ShowAt((Button)sender);
             }
         }

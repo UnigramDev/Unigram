@@ -65,6 +65,11 @@ namespace Unigram.Views
                 CopyButton.Icon = new FontIcon { Glyph = Icons.Copy };
             }
 
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                EllipsisFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
+
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = System.IO.File.ReadAllText(jsPath);
         }
