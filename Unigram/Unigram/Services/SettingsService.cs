@@ -47,6 +47,7 @@ namespace Unigram.Services
         bool AreAnimationsEnabled { get; set; }
 
         bool IsStreamingEnabled { get; set; }
+        double VolumeLevel { get; set; }
 
         int LastMessageTtl { get; set; }
 
@@ -163,8 +164,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (5UL << 32) | (2246UL << 16);
-        public const string CurrentChangelog = "• New sorting options in Contacts: by name or by last seen time.\r\n• Select multiple chats to quickly delete them or mark them as \"Read\".\r\n• Reorder pinned chats by dragging them.\r\n• See who's online at a glance with the new badge indicator.";
+        public const ulong CurrentVersion = (3UL << 48) | (6UL << 32) | (2263UL << 16);
+        public const string CurrentChangelog = "• Search for Stickers. Scroll up in the sticker panel and use the new search field to quickly locate your sticker sets or discover new ones, enjoy improved GIF search.\r\n• Delete any message on both ends in any private chat, anytime.\r\n• Swipe to reply/forward using your laptop touchpad.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -588,6 +589,23 @@ namespace Unigram.Services
             {
                 _isStreamingEnabled = value;
                 AddOrUpdateValue("IsStreamingEnabled", value);
+            }
+        }
+
+        private static double? _volumeLevel;
+        public double VolumeLevel
+        {
+            get
+            {
+                if (_volumeLevel == null)
+                    _volumeLevel = GetValueOrDefault("VolumeLevel", 1);
+
+                return _volumeLevel ?? 1;
+            }
+            set
+            {
+                _volumeLevel = value;
+                AddOrUpdateValue("VolumeLevel", value);
             }
         }
 

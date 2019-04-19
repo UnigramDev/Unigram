@@ -145,6 +145,19 @@ namespace Unigram.Controls.Gallery
 
         #endregion
 
+        #region Volume
+
+        public double Volume
+        {
+            get { return (double)GetValue(VolumeProperty); }
+            set { SetValue(VolumeProperty, value); }
+        }
+
+        public static readonly DependencyProperty VolumeProperty =
+            DependencyProperty.Register("Volume", typeof(double), typeof(GalleryTransportControls), new PropertyMetadata(1d));
+
+        #endregion
+
         public bool IsVisible
         {
             get

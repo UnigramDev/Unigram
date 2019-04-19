@@ -244,6 +244,21 @@ namespace Unigram.Controls.Gallery
             });
         }
 
+        private async void OnVolumeChanged(MediaPlayer sender, object args)
+        {
+            SettingsService.Current.VolumeLevel = sender.Volume;
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Transport.Volume = sender.Volume;
+            });
+        }
+
+        private void OnMediaOpened(MediaPlayer sender, object args)
+        {
+            sender.Volume = SettingsService.Current.VolumeLevel;
+        }
+
         private static Dictionary<int, WeakReference<GalleryView>> _windowContext = new Dictionary<int, WeakReference<GalleryView>>();
         public static GalleryView GetForCurrentView()
         {
@@ -569,7 +584,9 @@ namespace Unigram.Controls.Gallery
                 if (_mediaPlayer == null)
                 {
                     _mediaPlayer = Task.Run(() => new MediaPlayer()).Result;
+                    _mediaPlayer.VolumeChanged += OnVolumeChanged;
                     _mediaPlayer.SourceChanged += OnSourceChanged;
+                    _mediaPlayer.MediaOpened += OnMediaOpened;
                     _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                     _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
                 }
@@ -632,7 +649,9 @@ namespace Unigram.Controls.Gallery
 
             if (_mediaPlayer != null)
             {
+                _mediaPlayer.VolumeChanged -= OnVolumeChanged;
                 _mediaPlayer.SourceChanged -= OnSourceChanged;
+                _mediaPlayer.MediaOpened -= OnMediaOpened;
                 _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
 
                 _mediaPlayerElement.SetMediaPlayer(null);
