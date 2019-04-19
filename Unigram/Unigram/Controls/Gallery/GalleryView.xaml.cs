@@ -267,7 +267,10 @@ namespace Unigram.Controls.Gallery
             {
                 _closing = closing;
 
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                if (SettingsService.Current.AreAnimationsEnabled)
+                {
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                }
 
                 if (_compactLifetime != null)
                 {
@@ -344,21 +347,28 @@ namespace Unigram.Controls.Gallery
 
                 var root = Preview.Presenter;
 
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                if (animation != null)
+                if (SettingsService.Current.AreAnimationsEnabled)
                 {
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                    var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                    if (animation != null)
                     {
-                        animation.Configuration = new BasicConnectedAnimationConfiguration();
-                    }
+                        if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                        {
+                            animation.Configuration = new BasicConnectedAnimationConfiguration();
+                        }
 
-                    var element = _closing();
-                    if (element.ActualWidth > 0 && animation.TryStart(element))
-                    {
-                        animation.Completed += (s, args) =>
+                        var element = _closing();
+                        if (element.ActualWidth > 0 && animation.TryStart(element))
+                        {
+                            animation.Completed += (s, args) =>
+                            {
+                                Hide();
+                            };
+                        }
+                        else
                         {
                             Hide();
-                        };
+                        }
                     }
                     else
                     {
@@ -424,42 +434,44 @@ namespace Unigram.Controls.Gallery
 
             var container = GetContainer(0);
 
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-            if (animation != null)
+            if (SettingsService.Current.AreAnimationsEnabled)
             {
-                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                if (animation != null)
                 {
-                    animation.Configuration = new BasicConnectedAnimationConfiguration();
-                }
-
-                _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
-
-                if (animation.TryStart(image.Presenter))
-                {
-                    animation.Completed += (s, args) =>
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                     {
-                        Transport.Show();
-                        ScrollingHost.Opacity = 1;
-                        Preview.Opacity = 0;
+                        animation.Configuration = new BasicConnectedAnimationConfiguration();
+                    }
 
-                        if (item.IsVideo)
+                    _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
+
+                    if (animation.TryStart(image.Presenter))
+                    {
+                        animation.Completed += (s, args) =>
                         {
-                            if (container != null)
+                            Transport.Show();
+                            ScrollingHost.Opacity = 1;
+                            Preview.Opacity = 0;
+
+                            if (item.IsVideo && container != null)
                             {
                                 Play(container.Presenter, item, item.GetFile());
                             }
-                        }
-                    };
+                        };
 
-                    return;
+                        return;
+                    }
                 }
             }
+
+            _layer.Opacity = 1;
 
             Transport.Show();
             ScrollingHost.Opacity = 1;
             Preview.Opacity = 0;
 
-            if (container != null)
+            if (item.IsVideo && container != null)
             {
                 Play(container.Presenter, item, item.GetFile());
             }
@@ -941,6 +953,11 @@ namespace Unigram.Controls.Gallery
             flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
             flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
+
             flyout.ShowAt(sender as FrameworkElement);
         }
 
@@ -1087,7 +1104,7 @@ namespace Unigram.Controls.Gallery
         {
             _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
 
-#if GALLERY_EXPERIMENTAL
+#if !GALLERY_EXPERIMENTAL
             void Register(Grid presenter)
             {
                 presenter.ManipulationMode =
