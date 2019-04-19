@@ -227,8 +227,10 @@ namespace Unigram.Controls.Chats
                     ViewModel.Autocomplete = null;
                     break;
             }
+
+            DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && state == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
         }
-        
+
         private void Delete(bool allowDispose)
         {
             if (!string.IsNullOrEmpty(Field.Text))
