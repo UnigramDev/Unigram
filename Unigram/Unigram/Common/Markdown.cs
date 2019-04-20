@@ -110,7 +110,14 @@ namespace Unigram.Common
                                     message = message.Remove(i - 1, 1);
                                 }
 
-                                message = message.Insert(i, "\n");
+                                if (i == 0 && message[i] == '\n')
+                                {
+                                    message = message.Remove(0, 1);
+                                }
+                                else if (i > 0 && message[i - 1] != '\n')
+                                {
+                                    message = message.Insert(i, "\n");
+                                }
                             }
 
                             if (current == Mode.None)
