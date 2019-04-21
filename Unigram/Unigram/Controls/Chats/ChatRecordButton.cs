@@ -721,7 +721,7 @@ namespace Unigram.Controls.Chats
                 {
                     settings = new MediaCaptureInitializationSettings();
                     settings.MediaCategory = MediaCategory.Speech;
-                    settings.AudioProcessing = AudioProcessing.Default;
+                    settings.AudioProcessing = m_isVideo ? AudioProcessing.Default : AudioProcessing.Raw;
                     settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
                     settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
                     settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;
