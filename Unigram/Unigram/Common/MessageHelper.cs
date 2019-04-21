@@ -537,7 +537,7 @@ namespace Unigram.Common
                             {
                                 NavigateToLanguage(protoService, navigation, post);
                             }
-                            else if (username.Equals("c", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post) && uri.Segments.Length >= 3)
+                            else if (username.Equals("c", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post) && uri.Segments.Length >= 4)
                             {
                                 NavigateToMessage(protoService, navigation, post, uri.Segments[3].Replace("/", string.Empty));
                             }
@@ -562,7 +562,7 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    // TODO: error
+                    await TLMessageDialog.ShowAsync(Strings.Resources.LinkNotFound, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else
@@ -851,50 +851,31 @@ namespace Unigram.Common
                     }
                     else if (import is Error error)
                     {
-                        if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
+                        if (error.TypeEquals(ErrorType.FLOOD_WAIT))
                         {
-                            Logs.Logger.Warning(Logs.Target.API, "messages.importChatInvite error " + error);
-                            return;
-                        }
-                        if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
-                        {
-                            //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
-                            return;
+                            await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                         }
                         else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
                         {
-                            //MessageBox.Show(Strings.Additional.UsersTooMuch, Strings.Additional.Error, 0);
-                            return;
+                            await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorFull, Strings.Resources.AppName, Strings.Resources.OK);
                         }
-                        else if (error.TypeEquals(ErrorType.BOTS_TOO_MUCH))
+                        else
                         {
-                            //MessageBox.Show(Strings.Additional.BotsTooMuch, Strings.Additional.Error, 0);
-                            return;
+                            await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
                         }
-                        else if (error.TypeEquals(ErrorType.USER_ALREADY_PARTICIPANT))
-                        {
-                            return;
-                        }
-
-                        Logs.Logger.Warning(Logs.Target.API, "messages.importChatInvite error " + error);
                     }
                 }
             }
             else if (response is Error error)
             {
-                if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
+                if (error.TypeEquals(ErrorType.FLOOD_WAIT))
                 {
-                    Logs.Logger.Warning(Logs.Target.API, "messages.checkChatInvite error " + error);
-                    return;
+                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-                if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
+                else
                 {
-                    //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
-                    await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
-                    return;
+                    await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-
-                Logs.Logger.Warning(Logs.Target.API, "messages.checkChatInvite error " + error);
             }
         }
 
