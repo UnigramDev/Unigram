@@ -1088,7 +1088,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Button to toggle silent mode, channels only -->
-                        <controls:GlyphToggleButton
+                        <controls:AnimatedGlyphToggleButton
                             x:Name="ButtonSilent"
                             UncheckedGlyph="&#xEA8F;"
                             CheckedGlyph="&#xE7ED;"
