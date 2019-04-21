@@ -33,8 +33,6 @@
                             <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
                             <Setter Target="Header.(Grid.Row)" Value="3"/>
-                            <Setter Target="Reply.Margin" Value="0,4,0,2"/>
-                            <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
@@ -58,8 +56,6 @@
                             <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
                             <Setter Target="Header.(Grid.Row)" Value="3"/>
-                            <Setter Target="Reply.Margin" Value="0,4,0,2"/>
-                            <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
