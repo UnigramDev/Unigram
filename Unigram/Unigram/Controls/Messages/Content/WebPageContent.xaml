@@ -21,7 +21,7 @@
         </RichTextBlock>
 
         <Grid HorizontalAlignment="Left">
-            <ContentControl x:Name="Media"/>
+            <Border x:Name="Media"/>
             
             <Border x:Name="Overlay" Visibility="Collapsed" Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="8,4,8,4" Margin="4">
                 <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>

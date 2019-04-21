@@ -73,7 +73,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateContent(MessageViewModel message, WebPage webPage)
         {
-            if (Media.Content is Messages.IContent content && content.IsValid(message.Content, false))
+            if (Media.Child is Messages.IContent content && content.IsValid(message.Content, false))
             {
                 content.UpdateMessage(message);
             }
@@ -81,47 +81,47 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (webPage.Animation != null)
                 {
-                    Media.Content = new AnimationContent(message);
+                    Media.Child = new AnimationContent(message);
                 }
                 else if (webPage.Audio != null)
                 {
-                    Media.Content = new AudioContent(message);
+                    Media.Child = new AudioContent(message);
                 }
                 else if (webPage.Document != null)
                 {
-                    Media.Content = new DocumentContent(message);
+                    Media.Child = new DocumentContent(message);
                 }
                 else if (webPage.Sticker != null)
                 {
-                    Media.Content = new StickerContent(message);
+                    Media.Child = new StickerContent(message);
                 }
                 else if (webPage.Video != null)
                 {
-                    Media.Content = new VideoContent(message);
+                    Media.Child = new VideoContent(message);
                 }
                 else if (webPage.VideoNote != null)
                 {
-                    Media.Content = new VideoNoteContent(message);
+                    Media.Child = new VideoNoteContent(message);
                 }
                 else if (webPage.VoiceNote != null)
                 {
-                    Media.Content = new VoiceNoteContent(message);
+                    Media.Child = new VoiceNoteContent(message);
                 }
                 else if (webPage.Photo != null)
                 {
                     // Photo at last: web page preview might have both a file and a thumbnail
-                    Media.Content = new PhotoContent(message);
+                    Media.Child = new PhotoContent(message);
                 }
                 else
                 {
-                    Media.Content = null;
+                    Media.Child = null;
                 }
             }
         }
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            if (Media.Content is IContentWithFile content && content.IsValid(message.Content, false))
+            if (Media.Child is IContentWithFile content && content.IsValid(message.Content, false))
             {
                 content.UpdateFile(message, file);
             }

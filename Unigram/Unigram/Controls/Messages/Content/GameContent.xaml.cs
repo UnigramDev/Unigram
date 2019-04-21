@@ -61,7 +61,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateContent(MessageViewModel message, Game game)
         {
-            if (Media.Content is IContent content && content.IsValid(message.Content, false))
+            if (Media.Child is IContent content && content.IsValid(message.Content, false))
             {
                 content.UpdateMessage(message);
             }
@@ -69,23 +69,23 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (game.Animation != null)
                 {
-                    Media.Content = new AnimationContent(message);
+                    Media.Child = new AnimationContent(message);
                 }
                 else if (game.Photo != null)
                 {
                     // Photo at last: web page preview might have both a file and a thumbnail
-                    Media.Content = new PhotoContent(message);
+                    Media.Child = new PhotoContent(message);
                 }
                 else
                 {
-                    Media.Content = null;
+                    Media.Child = null;
                 }
             }
         }
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            if (Media.Content is IContentWithFile content && content.IsValid(message.Content, false))
+            if (Media.Child is IContentWithFile content && content.IsValid(message.Content, false))
             {
                 content.UpdateFile(message, file);
             }
