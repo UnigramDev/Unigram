@@ -27,6 +27,8 @@ namespace Unigram.Controls
         private ZoomableGridViewPopup _popupPanel;
         private object _popupContent;
 
+        private Pointer _pointer;
+
         public ZoomableGridView()
         {
             _recognizer = new GestureRecognizer();
@@ -44,10 +46,17 @@ namespace Unigram.Controls
         {
             if (args.HoldingState == HoldingState.Started)
             {
+                if (_pointer != null)
+                {
+                    CapturePointer(_pointer);
+                }
+
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
                 var selector = children?.FirstOrDefault(x => x is SelectorItem) as SelectorItem;
                 if (selector != null)
                 {
+                    VisualStateManager.GoToState(selector, "Normal", false);
+
                     OnItemHolding(selector, selector.Tag);
                 }
             }
@@ -69,6 +78,7 @@ namespace Unigram.Controls
         {
             try
             {
+                _pointer = e.Pointer;
                 _recognizer.ProcessDownEvent(e.GetCurrentPoint(Window.Current.Content as FrameworkElement));
             }
             catch
@@ -79,6 +89,8 @@ namespace Unigram.Controls
 
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
         {
+            ReleasePointerCapture(e.Pointer);
+
             try
             {
                 _recognizer.ProcessUpEvent(e.GetCurrentPoint(Window.Current.Content as FrameworkElement));
@@ -163,10 +175,10 @@ namespace Unigram.Controls
                 _recognizer.CompleteGesture();
             }
 
-            //if (_popupHost.IsOpen && e.OriginalSource is FrameworkElement element)
-            //{
-            //    OnItemPointerEntered(sender, element.Tag);
-            //}
+            if (_popupHost.IsOpen && e.OriginalSource is FrameworkElement element)
+            {
+                OnItemPointerEntered(sender, element.Tag);
+            }
         }
 
         //protected override void OnPointerReleased(PointerRoutedEventArgs e)
