@@ -256,7 +256,7 @@ namespace Unigram.Services
 
             foreach (var notification in update.AddedNotifications)
             {
-                ProcessNotification(update.NotificationGroupId, notification);
+                ProcessNotification(update.NotificationGroupId, update.ChatId, notification);
                 //_protoService.Send(new RemoveNotification(update.NotificationGroupId, notification.Id));
             }
         }
@@ -270,10 +270,10 @@ namespace Unigram.Services
                 return;
             }
 
-            ProcessNotification(update.NotificationGroupId, update.Notification);
+            ProcessNotification(update.NotificationGroupId, 0, update.Notification);
         }
 
-        private void ProcessNotification(int group, Telegram.Td.Api.Notification notification)
+        private void ProcessNotification(int group, long chatId, Telegram.Td.Api.Notification notification)
         {
             switch (notification.Type)
             {
@@ -282,9 +282,17 @@ namespace Unigram.Services
                 case NotificationTypeNewMessage newMessage:
                     ProcessNewMessage(group, notification.Id, newMessage.Message);
                     break;
+                //case NotificationTypeNewPushMessage newPushMessage:
+                //    ProcessNewPushMessage(group, notification.Id, newPushMessage);
+                //    break;
                 case NotificationTypeNewSecretChat newSecretChat:
                     break;
             }
+        }
+
+        private void ProcessNewPushMessage(int group, int id, NotificationTypeNewPushMessage newPushMessage)
+        {
+            throw new NotImplementedException();
         }
 
         private void ProcessNewMessage(int gId, int id, Message message)

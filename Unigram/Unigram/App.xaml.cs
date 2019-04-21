@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
@@ -52,6 +53,8 @@ using Windows.Foundation.Metadata;
 using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Media.SpeechRecognition;
+using Windows.Networking.PushNotifications;
+using Windows.Storage;
 using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Core;
@@ -261,11 +264,14 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
+            var deferral = args.TaskInstance.GetDeferral();
+
             if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
             {
                 var data = Toast.GetData(triggerDetail);
                 if (data == null)
                 {
+                    deferral.Complete();
                     return;
                 }
 
@@ -275,10 +281,45 @@ namespace Unigram
                     session = result;
                 }
 
-                var deferral = args.TaskInstance.GetDeferral();
                 await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
-                deferral.Complete();
             }
+            else if (args.TaskInstance.TriggerDetails is RawNotification notification)
+            {
+                int? GetSession(long id)
+                {
+                    if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
+                    {
+                        return value;
+                    }
+
+                    return null;
+                }
+
+                var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
+                if (receiver == null)
+                {
+                    deferral.Complete();
+                    return;
+                }
+
+                var session = GetSession(receiver.Id);
+                if (session == null)
+                {
+                    deferral.Complete();
+                    return;
+                }
+
+                var service = TLContainer.Current.Resolve<IProtoService>(session.Value);
+                if (service == null)
+                {
+                    deferral.Complete();
+                    return;
+                }
+
+                await service.SendAsync(new ProcessPushNotification(notification.Content));
+            }
+
+            deferral.Complete();
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
