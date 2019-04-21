@@ -18,6 +18,8 @@ namespace Unigram.Common
             _inner = new SortedList<TKey, TValue>();
         }
 
+        public IList<TKey> Keys => _inner.Keys;
+
         public TValue this[int index]
         {
             get
@@ -64,6 +66,11 @@ namespace Unigram.Common
             return _inner.ContainsKey(_selector(item));
         }
 
+        public bool ContainsKey(TKey key)
+        {
+            return _inner.ContainsKey(key);
+        }
+
         public void CopyTo(TValue[] array, int arrayIndex)
         {
             throw new NotImplementedException();
@@ -81,7 +88,13 @@ namespace Unigram.Common
 
         public void Insert(int index, TValue item)
         {
-            throw new NotImplementedException();
+            var key = _selector(item);
+            if (_inner.ContainsKey(key))
+            {
+                return;
+            }
+
+            _inner.Add(key, item);
         }
 
         public bool Remove(TValue item)

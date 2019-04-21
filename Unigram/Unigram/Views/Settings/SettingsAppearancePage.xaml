@@ -104,7 +104,26 @@
                               Click="Switch_Click"
                               IsChecked="{x:Bind ViewModel.IsSystemTheme, Mode=TwoWay}"
                               Content="Use system accent color"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,6"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,0"/>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="{CustomResource Settings}" Margin="12,18,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.AreAnimationsEnabled, Mode=TwoWay}"
+                        Header="{CustomResource EnableAnimations}"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
+                        Header="{CustomResource SendByEnter}"
+                        Style="{StaticResource CheckButtonStyle}"/>
+
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
+                        Header="Replace emojis"
+                        Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

@@ -17,10 +17,15 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
+            return SelectTemplateCore(item);
+        }
+
+        protected override DataTemplate SelectTemplateCore(object item)
+        {
             var member = item as ChatMember;
             if (member == null)
             {
-                return base.SelectTemplateCore(item, container);
+                return base.SelectTemplateCore(item);
             }
 
             switch (member.Status)

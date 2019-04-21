@@ -53,7 +53,7 @@ namespace Unigram.Common
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
 
-                if (icon != null && ApiInfo.CanUseFlyoutIcons)
+                if (icon != null)
                 {
                     flyoutItem.Icon = icon;
                 }
@@ -78,7 +78,7 @@ namespace Unigram.Common
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
 
-                if (icon != null && ApiInfo.CanUseFlyoutIcons)
+                if (icon != null)
                 {
                     flyoutItem.Icon = icon;
                 }
@@ -99,7 +99,7 @@ namespace Unigram.Common
             flyoutItem.Command = command;
             flyoutItem.Text = text;
 
-            if (icon != null && ApiInfo.CanUseFlyoutIcons)
+            if (icon != null)
             {
                 flyoutItem.Icon = icon;
             }
@@ -120,7 +120,7 @@ namespace Unigram.Common
             flyoutItem.CommandParameter = parameter;
             flyoutItem.Text = text;
 
-            if (icon != null && ApiInfo.CanUseFlyoutIcons)
+            if (icon != null)
             {
                 flyoutItem.Icon = icon;
             }

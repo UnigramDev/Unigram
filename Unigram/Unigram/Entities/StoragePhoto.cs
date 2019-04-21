@@ -70,6 +70,11 @@ namespace Unigram.Entities
                 var basic = await file.GetBasicPropertiesAsync();
                 var image = await file.Properties.GetImagePropertiesAsync();
 
+                if (image.Width >= 20 * image.Height || image.Height >= 20 * image.Width)
+                {
+                    return null;
+                }
+
                 if (image.Width > 0 && image.Height > 0)
                 {
                     return new StoragePhoto(file, basic, image) { IsSelected = selected };

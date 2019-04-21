@@ -16,14 +16,15 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <controls:ProfilePicture x:Name="Photo" Width="72" Height="72" IsEnabled="False"/>
 
         <StackPanel Margin="12,8,12,12" Grid.Row="1">
             <TextBlock x:Name="Title" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock x:Name="Subtitle" TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+            <TextBlock x:Name="Subtitle" TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
         </StackPanel>
+
+        <CheckBox x:Name="CheckBox" Margin="12,12,12,0" Visibility="Collapsed" Grid.Row="2"/>
     </Grid>
 </ContentDialog>

@@ -36,7 +36,7 @@ namespace Unigram.ViewModels.Settings
 
             foreach (var scope in Scopes)
             {
-                ChildViewModels.Add(scope);
+                Children.Add(scope);
             }
 
             ResetCommand = new RelayCommand(ResetExecute);

@@ -59,10 +59,9 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<InstantViewModel>();
 
-            if (ApiInfo.CanUseFlyoutIcons)
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
-                BrowserButton.Icon = new FontIcon { Glyph = Icons.OpenIn };
-                CopyButton.Icon = new FontIcon { Glyph = Icons.Copy };
+                EllipsisFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
             }
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
@@ -1367,28 +1366,12 @@ namespace Unigram.Views
                     ProcessRichText(italicText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextStrikethrough strikeText:
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
-                    {
-                        span.TextDecorations |= TextDecorations.Strikethrough;
-                        ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
-                    }
-                    else
-                    {
-                        ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
-                    }
+                    span.TextDecorations |= TextDecorations.Strikethrough;
+                    ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextUnderline underlineText:
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
-                    {
-                        span.TextDecorations |= TextDecorations.Underline;
-                        ProcessRichText(underlineText.Text, span, textBlock, effects, ref offset);
-                    }
-                    else
-                    {
-                        var underline = new Underline();
-                        span.Inlines.Add(underline);
-                        ProcessRichText(underlineText.Text, underline, textBlock, effects, ref offset);
-                    }
+                    span.TextDecorations |= TextDecorations.Underline;
+                    ProcessRichText(underlineText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextUrl urlText:
                     try
@@ -1618,7 +1601,7 @@ namespace Unigram.Views
             {
                 if (_anchors.TryGetValue(fragment, out Border anchor))
                 {
-                    await ScrollingHost.ScrollToItem(anchor, VerticalAlignment.Top, false);
+                    await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
                 }
             }
             else

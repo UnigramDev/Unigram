@@ -29,7 +29,7 @@ namespace Unigram.Controls.Views
         {
             this.InitializeComponent();
 
-            var shadow = Shadow.Attach(Separator, 20, 0.25f);
+            var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
 
             Toolbar.SizeChanged += (s, args) =>
             {
@@ -41,6 +41,11 @@ namespace Unigram.Controls.Views
             Toolbar.SelectedIndex = 0;
 
             //Follodf.ShowMode = FlyoutShowMode.Transient;
+        }
+
+        public void SetView(bool widget)
+        {
+            VisualStateManager.GoToState(this, widget ? "FilledState" : "NarrowState", false);
         }
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -80,7 +85,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (container.Content is string source)
+            if (container.Content is EmojiGroup source)
             {
                 list.ItemsSource = Emoji.Emojis[source];
             }
@@ -106,7 +111,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (container.Content is string source)
+            if (container.Content is EmojiGroup source)
             {
                 list.ItemsSource = Emoji.Emojis[source];
             }

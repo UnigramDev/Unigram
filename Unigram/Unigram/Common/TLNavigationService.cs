@@ -33,6 +33,7 @@ namespace Unigram.Common
         }
 
         public int SessionId => _protoService.SessionId;
+        public IProtoService ProtoService => _protoService;
 
         public async void NavigateToInstant(string url)
         {
@@ -65,7 +66,12 @@ namespace Unigram.Common
                     return;
                 }
 
-                //user.RestrictionReason
+                var reason = user.GetRestrictionReason();
+                if (reason != null && reason.Length > 0)
+                {
+                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
@@ -78,6 +84,13 @@ namespace Unigram.Common
                 if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
+
+                var reason = supergroup.GetRestrictionReason();
+                if (reason != null && reason.Length > 0)
+                {
+                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -93,7 +106,7 @@ namespace Unigram.Common
                     await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
 
-                page.ViewModel.TextField?.FocusMaybe(FocusState.Keyboard);
+                page.ViewModel.TextField?.Focus(FocusState.Programmatic);
 
                 if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
                 {
@@ -133,8 +146,9 @@ namespace Unigram.Common
                     }
                 }
 
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-                if (shift)
+                if (shift && !ctrl)
                 {
                     await OpenAsync(typeof(ChatPage), chat.Id);
                 }

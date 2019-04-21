@@ -22,6 +22,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class WebPageSmallPhotoContent : WebPageContentBase, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public WebPageSmallPhotoContent(MessageViewModel message)
         {

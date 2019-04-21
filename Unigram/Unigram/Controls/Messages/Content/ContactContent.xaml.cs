@@ -24,6 +24,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class ContactContent : Grid, IContent
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public ContactContent(MessageViewModel message)
         {

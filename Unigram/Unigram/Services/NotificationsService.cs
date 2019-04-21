@@ -30,6 +30,12 @@ namespace Unigram.Services
         Task CloseAsync();
 
         Task ProcessAsync(Dictionary<string, string> data);
+
+        #region Chats related
+
+        void SetMuteFor(Chat chat, int muteFor);
+
+        #endregion
     }
 
     public class NotificationsService : INotificationsService,
@@ -52,6 +58,8 @@ namespace Unigram.Services
 
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
+
+        private bool _suppress;
 
         public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
@@ -211,17 +219,24 @@ namespace Unigram.Services
         {
             foreach (var group in update.Groups)
             {
-                _protoService.Send(new RemoveNotificationGroup(group.Id, group.Notifications.Max(x => x.Id)));
+                _protoService.Send(new RemoveNotificationGroup(group.Id, int.MaxValue));
             }
         }
 
         public void Handle(UpdateHavePendingNotifications update)
         {
-
+            //Logs.Logger.Info(Logs.LoggerTag.Notifications, "UpdateHavePendingNotifications: " + update.HavePendingNotifications);
+            //_suppress = update.HavePendingNotifications;
         }
 
         public void Handle(UpdateNotificationGroup update)
         {
+            if (_suppress)
+            {
+                // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
+                return;
+            }
+
             var connectionState = _protoService.GetConnectionState();
             if (connectionState is ConnectionStateUpdating)
             {
@@ -229,7 +244,7 @@ namespace Unigram.Services
                 return;
             }
 
-            if (!_sessionService.IsActive && SettingsService.Current.IsAllAccountsNotifications)
+            if (!_sessionService.IsActive && !SettingsService.Current.IsAllAccountsNotifications)
             {
                 return;
             }
@@ -241,7 +256,8 @@ namespace Unigram.Services
 
             foreach (var notification in update.AddedNotifications)
             {
-                ProcessNotification(update.NotificationGroupId, notification);
+                ProcessNotification(update.NotificationGroupId, update.ChatId, notification);
+                //_protoService.Send(new RemoveNotification(update.NotificationGroupId, notification.Id));
             }
         }
 
@@ -254,10 +270,10 @@ namespace Unigram.Services
                 return;
             }
 
-            ProcessNotification(update.NotificationGroupId, update.Notification);
+            ProcessNotification(update.NotificationGroupId, 0, update.Notification);
         }
 
-        private void ProcessNotification(int group, Telegram.Td.Api.Notification notification)
+        private void ProcessNotification(int group, long chatId, Telegram.Td.Api.Notification notification)
         {
             switch (notification.Type)
             {
@@ -266,9 +282,17 @@ namespace Unigram.Services
                 case NotificationTypeNewMessage newMessage:
                     ProcessNewMessage(group, notification.Id, newMessage.Message);
                     break;
+                //case NotificationTypeNewPushMessage newPushMessage:
+                //    ProcessNewPushMessage(group, notification.Id, newPushMessage);
+                //    break;
                 case NotificationTypeNewSecretChat newSecretChat:
                     break;
             }
+        }
+
+        private void ProcessNewPushMessage(int group, int id, NotificationTypeNewPushMessage newPushMessage)
+        {
+            throw new NotImplementedException();
         }
 
         private void ProcessNewMessage(int gId, int id, Message message)
@@ -304,24 +328,13 @@ namespace Unigram.Services
 
         private void Update(Chat chat, Action action)
         {
-            BeginOnUIThread(() =>
+            var open = TLWindowContext.ActiveWrappers.Cast<TLWindowContext>().Any(x => x.IsChatOpen(_protoService.SessionId, chat.Id));
+            if (open)
             {
-                if (_sessionService.IsActive)
-                {
-                    var service = WindowContext.GetForCurrentView()?.NavigationServices?.GetByFrameId("Main" + _protoService.SessionId);
-                    if (service == null)
-                    {
-                        return;
-                    }
+                return;
+            }
 
-                    if (TLWindowContext.GetForCurrentView().ActivationMode != Windows.UI.Core.CoreWindowActivationMode.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
-                    {
-                        return;
-                    }
-                }
-
-                action();
-            });
+            action();
         }
 
         private ConcurrentDictionary<int, Message> _files = new ConcurrentDictionary<int, Message>();
@@ -533,7 +546,7 @@ namespace Unigram.Services
                 if (string.Equals(action, "reply", StringComparison.OrdinalIgnoreCase) && data.TryGetValue("input", out string text))
                 {
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
-                    var entities = Markdown.Parse(_protoService, ref messageText);
+                    var entities = Markdown.Parse(ref messageText);
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
                     var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, false, true, null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
@@ -696,7 +709,7 @@ namespace Unigram.Services
             }
             else if (message.Content is MessageVideo video)
             {
-                return result + Strings.Resources.AttachVideo + GetCaption(video.Caption.Text);
+                return result + (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -743,12 +756,7 @@ namespace Unigram.Services
             }
             else if (message.Content is MessagePhoto photo)
             {
-                if (string.IsNullOrEmpty(photo.Caption.Text))
-                {
-                    return result + Strings.Resources.AttachPhoto;
-                }
-
-                return result + $"{Strings.Resources.AttachPhoto}, ";
+                return result + (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption.Text);
             }
             else if (message.Content is MessagePoll poll)
             {
@@ -813,6 +821,28 @@ namespace Unigram.Services
                 }
                 catch { }
             }
+        }
+
+
+
+        public void SetMuteFor(Chat chat, int muteFor)
+        {
+            var settings = chat.NotificationSettings;
+            var scope = _protoService.GetScopeNotificationSettings(chat);
+
+            var useDefault = muteFor == scope.MuteFor || muteFor > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
+            if (useDefault)
+            {
+                muteFor = scope.MuteFor;
+            }
+
+            _protoService.Send(new SetChatNotificationSettings(chat.Id,
+                new ChatNotificationSettings(
+                    useDefault, muteFor,
+                    settings.UseDefaultSound, settings.Sound,
+                    settings.UseDefaultShowPreview, settings.ShowPreview,
+                    settings.UseDefaultDisablePinnedMessageNotifications, settings.DisablePinnedMessageNotifications,
+                    settings.UseDefaultDisableMentionNotifications, settings.DisableMentionNotifications)));
         }
     }
 }

@@ -103,7 +103,7 @@ namespace Unigram.ViewModels.SignIn
                     AlertsService.ShowFloodWaitAlert(error.Message);
                 }
 
-                Logs.Log.Write("account.checkPassword error " + error);
+                Logs.Logger.Error(Logs.Target.API, "account.checkPassword error " + error);
             }
         }
 

@@ -394,7 +394,7 @@ namespace Unigram.ViewModels
         public void OpenHashtag(string hashtag)
         {
             var search = Search = new ChatSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
-            search.Search(hashtag, null);
+            search.Search(hashtag, null, null);
         }
 
         public async void OpenUrl(string url, bool untrust)
@@ -440,26 +440,35 @@ namespace Unigram.ViewModels
 
         public async void OpenMedia(MessageViewModel message, FrameworkElement target)
         {
-            var webPage = message.Content is MessageText text ? text.WebPage : null;
+            GalleryViewModelBase viewModel = null;
 
-            if (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null))
+            var webPage = message.Content is MessageText text ? text.WebPage : null;
+            if (webPage != null && webPage.IsInstantGallery())
+            {
+                viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, Aggregator, message, webPage);
+
+                if (viewModel.Items.IsEmpty())
+                {
+                    viewModel = null;
+                }
+            }
+
+            if (viewModel == null && (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
             {
                 Delegate?.PlayMessage(message, target);
             }
             else
             {
-                GalleryViewModelBase viewModel;
-                if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
+                if (viewModel == null)
                 {
-                    viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
-                }
-                else if (webPage != null && webPage.IsInstantGallery())
-                {
-                    viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, Aggregator, message, webPage);
-                }
-                else
-                {
-                    viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
+                    if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
+                    {
+                        viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
+                    }
+                    else
+                    {
+                        viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
+                    }
                 }
 
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);

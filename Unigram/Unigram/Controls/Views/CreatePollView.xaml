@@ -30,7 +30,7 @@
                    Style="{StaticResource SettingsGroupTextBlockStyle}"
                    Margin="12,8,12,0"/>
 
-        <ItemsControl x:Name="Presenter" ItemsSource="{x:Bind Items}">
+        <ItemsControl x:Name="Presenter" ItemsSource="{x:Bind Items}" IsTabStop="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="local:PollOptionViewModel">
                     <Grid Margin="12,8,12,0">

@@ -13,6 +13,8 @@
             <RowDefinition Height="32"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="Navigation" Background="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
+        <Grid x:Name="Navigation" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
+            <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="6,0,0,0" AutomationProperties.LiveSetting="Assertive" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
+        </Grid>
     </Grid>
 </Page>

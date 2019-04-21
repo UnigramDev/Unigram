@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
@@ -32,8 +33,8 @@ namespace Unigram.Views.Host
         private ILifetimeService _lifetime;
         private NavigationService _navigationService;
 
-        private const string NavigationAdd = "NavigationAdd";
-        private const string NavigationAddSeparator = "NavigationAddSeparator";
+        private RootDestination _navigationViewSelected;
+        private MvxObservableCollection<object> _navigationViewItems;
 
         public RootPage(NavigationService service)
         {
@@ -45,6 +46,30 @@ namespace Unigram.Views.Host
             InitializeComponent();
 
             _lifetime = TLContainer.Current.Lifetime;
+
+            _navigationViewSelected = RootDestination.Chats;
+            _navigationViewItems = new MvxObservableCollection<object>
+            {
+                //RootDestination.Separator,
+
+                RootDestination.NewChat,
+                RootDestination.NewSecretChat,
+                RootDestination.NewChannel,
+
+                RootDestination.Separator,
+
+                RootDestination.Chats,
+                RootDestination.Contacts,
+                RootDestination.Calls,
+                RootDestination.Settings,
+
+                RootDestination.Separator,
+
+                RootDestination.SavedMessages,
+                RootDestination.News
+            };
+
+            NavigationViewList.ItemsSource = _navigationViewItems;
 
             service.Frame.Navigating += OnNavigating;
             service.Frame.Navigated += OnNavigated;
@@ -62,6 +87,9 @@ namespace Unigram.Views.Host
             _contentLoaded = false;
             Resources.Clear();
             InitializeComponent();
+
+            _navigationViewSelected = RootDestination.Chats;
+            NavigationViewList.ItemsSource = _navigationViewItems;
 
             InitializeTitleBar();
             InitializeNavigation(_navigationService.Frame);
@@ -194,9 +222,9 @@ namespace Unigram.Views.Host
 
         private void InitializeLocalization()
         {
-            NavigationChats.Text = Strings.Additional.Chats;
+            //NavigationChats.Text = Strings.Additional.Chats;
             //NavigationAbout.Content = Strings.Additional.About;
-            NavigationNews.Text = Strings.Additional.News;
+            //NavigationNews.Text = Strings.Additional.News;
         }
 
         private void InitializeNavigation(Frame frame)
@@ -207,14 +235,6 @@ namespace Unigram.Views.Host
             }
 
             InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
-
-            foreach (var item in NavigationViewItems)
-            {
-                if (item is Controls.NavigationViewItem viewItem)
-                {
-                    viewItem.Content = viewItem.Name;
-                }
-            }
         }
 
         private async void InitializeUser(MainViewModel viewModel)
@@ -242,38 +262,61 @@ namespace Unigram.Views.Host
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
         {
-            for (int i = 0; i < NavigationViewItems.Count; i++)
+            for (int i = 0; i < _navigationViewItems.Count; i++)
             {
-                if (NavigationViewItems[i] is ISessionService)
+                if (_navigationViewItems[i] is ISessionService)
                 {
-                    NavigationViewItems.RemoveAt(i);
+                    _navigationViewItems.RemoveAt(i);
                     i--;
                 }
-                else if (NavigationViewItems[i] is Controls.NavigationViewItem viewItem && string.Equals(viewItem.Name, NavigationAdd))
+                else if (_navigationViewItems[i] is RootDestination viewItem && viewItem == RootDestination.AddAccount)
                 {
-                    NavigationViewItems.RemoveAt(i);
-                    i--;
-                }
-                else if (NavigationViewItems[i] is Controls.NavigationViewItemSeparator viewItemSeparator && string.Equals(viewItemSeparator.Name, NavigationAddSeparator))
-                {
-                    NavigationViewItems.RemoveAt(i);
-                    i--;
+                    _navigationViewItems.RemoveAt(i);
+
+                    if (i < _navigationViewItems.Count && _navigationViewItems[i] is RootDestination destination && destination == RootDestination.Separator)
+                    {
+                        _navigationViewItems.RemoveAt(i);
+                        break;
+                    }
                 }
             }
 
             if (show && items != null)
             {
-                NavigationViewItems.Insert(1, new Controls.NavigationViewItemSeparator { Name = NavigationAddSeparator });
-                NavigationViewItems.Insert(1, new Controls.NavigationViewItem { Name = NavigationAdd, Content = NavigationAdd, Text = Strings.Resources.AddAccount, Glyph = "\uE109" });
+                _navigationViewItems.Insert(0, RootDestination.Separator);
+                _navigationViewItems.Insert(0, RootDestination.AddAccount);
 
                 for (int k = items.Count - 1; k >= 0; k--)
                 {
-                    NavigationViewItems.Insert(1, items[k]);
+                    _navigationViewItems.Insert(0, items[k]);
                 }
             }
         }
 
         #region Recycling
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.Item is ISessionService && (args.ItemContainer == null || args.ItemContainer is Controls.NavigationViewItem || args.ItemContainer is Controls.NavigationViewItemSeparator))
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = NavigationViewList.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = Resources["SessionItemTemplate"] as DataTemplate;
+            }
+            else if (args.Item is RootDestination destination)
+            {
+                if (destination == RootDestination.Separator && !(args.ItemContainer is Controls.NavigationViewItemSeparator))
+                {
+                    args.ItemContainer = new Controls.NavigationViewItemSeparator();
+                }
+                else if (destination != RootDestination.Separator && !(args.ItemContainer is Controls.NavigationViewItem))
+                {
+                    args.ItemContainer = new Controls.NavigationViewItem();
+                }
+            }
+
+            args.IsContainerPrepared = true;
+        }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -282,40 +325,102 @@ namespace Unigram.Views.Host
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            if (content == null)
+            if (args.Item is ISessionService session)
             {
-                return;
-            }
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                if (content == null)
+                {
+                    return;
+                }
 
-            var session = args.Item as ISessionService;
-            if (session == null)
-            {
-                return;
-            }
+                var user = session.ProtoService.GetUser(session.UserId);
+                if (user == null)
+                {
+                    return;
+                }
 
-            var user = session.ProtoService.GetUser(session.UserId);
-            if (user == null)
-            {
-                return;
-            }
+                if (args.Phase == 0)
+                {
+                    var title = content.Children[2] as TextBlock;
+                    title.Text = user.GetFullName();
 
-            if (args.Phase == 0)
-            {
-                var title = content.Children[2] as TextBlock;
-                title.Text = user.GetFullName();
+                    Automation.SetToolTip(content, user.GetFullName());
+                }
+                else if (args.Phase == 2)
+                {
+                    var photo = content.Children[0] as ProfilePicture;
+                    photo.Source = PlaceholderHelper.GetUser(session.ProtoService, user, 28);
+                }
 
-                Automation.SetToolTip(content, user.GetFullName());
+                if (args.Phase < 2)
+                {
+                    args.RegisterUpdateCallback(OnContainerContentChanging);
+                }
             }
-            else if (args.Phase == 2)
+            else if (args.Item is RootDestination destination)
             {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(session.ProtoService, user, 28);
-            }
+                var content = args.ItemContainer as Controls.NavigationViewItem;
+                if (content != null)
+                {
+                    content.IsChecked = destination == _navigationViewSelected;
 
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
+                    if (destination == RootDestination.SavedMessages)
+                    {
+                        content.FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
+                    }
+                    else
+                    {
+                        content.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    }
+                }
+
+                switch (destination)
+                {
+                    case RootDestination.AddAccount:
+                        content.Text = Strings.Resources.AddAccount;
+                        content.Glyph = "\uE109";
+                        break;
+
+                    case RootDestination.NewChat:
+                        content.Text = Strings.Resources.NewGroup;
+                        content.Glyph = "\uE902";
+                        break;
+                    case RootDestination.NewSecretChat:
+                        content.Text = Strings.Resources.NewSecretChat;
+                        content.Glyph = "\uE1F6";
+                        break;
+                    case RootDestination.NewChannel:
+                        content.Text = Strings.Resources.NewChannel;
+                        content.Glyph = "\uE789";
+                        break;
+
+                    case RootDestination.Chats:
+                        content.Text = "Chats";
+                        content.Glyph = "\uE8BD";
+                        break;
+                    case RootDestination.Contacts:
+                        content.Text = Strings.Resources.Contacts;
+                        content.Glyph = "\uE716";
+                        break;
+                    case RootDestination.Calls:
+                        content.Text = Strings.Resources.Calls;
+                        content.Glyph = "\uE789";
+                        break;
+                    case RootDestination.Settings:
+                        content.Text = Strings.Resources.Settings;
+                        content.Glyph = "\uE115";
+                        break;
+
+                    case RootDestination.SavedMessages:
+                        content.Text = Strings.Resources.SavedMessages;
+                        content.Glyph = "\uE907";
+                        break;
+
+                    case RootDestination.News:
+                        content.Text = "News";
+                        content.Glyph = "\uE789";
+                        break;
+                }
             }
         }
 
@@ -333,11 +438,7 @@ namespace Unigram.Views.Host
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem as string == "NavigationAdd")
-            {
-                Switch(_lifetime.Create());
-            }
-            else if (e.ClickedItem is ISessionService session)
+            if (e.ClickedItem is ISessionService session)
             {
                 if (session.IsActive)
                 {
@@ -346,47 +447,15 @@ namespace Unigram.Views.Host
 
                 Switch(session);
             }
-            else if (_navigationService?.Frame?.Content is IRootContentPage content)
+            else if (e.ClickedItem is RootDestination destination)
             {
-                if (e.ClickedItem as string == NavigationNewChat.Name)
+                if (destination == RootDestination.AddAccount)
                 {
-                    content.NavigationView_ItemClick(RootDestination.NewChat);
+                    Switch(_lifetime.Create());
                 }
-                else if (e.ClickedItem as string == NavigationNewSecretChat.Name)
+                else if (_navigationService?.Frame?.Content is IRootContentPage content)
                 {
-                    content.NavigationView_ItemClick(RootDestination.NewSecretChat);
-                }
-                else if (e.ClickedItem as string == NavigationNewChannel.Name)
-                {
-                    content.NavigationView_ItemClick(RootDestination.NewChannel);
-                }
-                else if (e.ClickedItem as string == NavigationChats.Name)
-                {
-                    content.NavigationView_ItemClick(RootDestination.Chats);
-                }
-                else if (e.ClickedItem as string == NavigationContacts.Name)
-                {
-                    content.NavigationView_ItemClick(RootDestination.Contacts);
-                }
-                else if (e.ClickedItem as string == NavigationCalls.Name)
-                {
-                    content.NavigationView_ItemClick(RootDestination.Calls);
-                }
-                else if (e.ClickedItem as string == NavigationSettings.Name)
-                {
-                    content.NavigationView_ItemClick(RootDestination.Settings);
-                }
-                //else if (e.ClickedItem as string == NavigationInviteFriends.Name)
-                //{
-                //    content.NavigationView_ItemClick(RootDestination.InviteFriends);
-                //}
-                else if (e.ClickedItem as string == NavigationSavedMessages.Name)
-                {
-                    content.NavigationView_ItemClick(RootDestination.SavedMessages);
-                }
-                else if (e.ClickedItem as string == NavigationNews.Name)
-                {
-                    content.NavigationView_ItemClick(RootDestination.News);
+                    content.NavigationView_ItemClick(destination);
                 }
             }
 
@@ -406,12 +475,23 @@ namespace Unigram.Views.Host
             Navigation.PaneToggleButtonVisibility = value;
         }
 
-        public void SetSelectedIndex(int value)
+        public void SetSelectedIndex(RootDestination value)
         {
-            NavigationChats.IsChecked = value == 0;
-            NavigationContacts.IsChecked = value == 1;
-            NavigationCalls.IsChecked = value == 2;
-            NavigationSettings.IsChecked = value == 3;
+            _navigationViewSelected = value;
+
+            void SetChecked(RootDestination destination, RootDestination target)
+            {
+                var selector = NavigationViewList.ContainerFromItem(_navigationViewItems.FirstOrDefault(x => x is RootDestination y && y == destination)) as Controls.NavigationViewItem;
+                if (selector != null)
+                {
+                    selector.IsChecked = destination == target;
+                }
+            }
+
+            SetChecked(RootDestination.Chats, value);
+            SetChecked(RootDestination.Contacts, value);
+            SetChecked(RootDestination.Calls, value);
+            SetChecked(RootDestination.Settings, value);
         }
 
         #endregion
@@ -432,6 +512,8 @@ namespace Unigram.Views.Host
 
     public enum RootDestination
     {
+        AddAccount,
+
         NewChat,
         NewSecretChat,
         NewChannel,
@@ -444,6 +526,8 @@ namespace Unigram.Views.Host
         InviteFriends,
 
         SavedMessages,
-        News
+        News,
+
+        Separator
     }
 }

@@ -30,6 +30,7 @@ using Windows.UI.Text;
 using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
 using Unigram.Controls.Gallery;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.Views
 {
@@ -46,13 +47,6 @@ namespace Unigram.Views
             {
                 DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
                 DescriptionPanel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Description_ContextRequested), true);
-            }
-
-            if (ApiInfo.CanUseFlyoutIcons)
-            {
-                CopyDescription.Icon = new FontIcon { Glyph = Icons.Copy };
-                CopyPhone.Icon = new FontIcon { Glyph = Icons.Copy };
-                CopyUsername.Icon = new FontIcon { Glyph = Icons.Copy };
             }
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
@@ -607,6 +601,11 @@ namespace Unigram.Views
 
             if (flyout.Items.Count > 0)
             {
+                if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+                {
+                    flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+                }
+
                 flyout.ShowAt((Button)sender);
             }
         }
@@ -709,6 +708,19 @@ namespace Unigram.Views
         #endregion
 
         #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
+            }
+
+            args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplateSelector.SelectTemplate(args.Item);
+
+            args.IsContainerPrepared = true;
+        }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {

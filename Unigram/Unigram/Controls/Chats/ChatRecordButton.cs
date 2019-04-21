@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls.Views;
-using Unigram.Converters;
+using Unigram.Logs;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
+using Windows.System;
+using Windows.System.Display;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -35,28 +33,15 @@ namespace Unigram.Controls.Chats
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private bool _video;
         private DispatcherTimer _timer;
-        private OpusRecorder _recorder;
-        private StorageFile _file;
-        private bool _cancelOnRelease;
-        private bool _cancelPointer;
-        private bool _pressed;
-        private bool _recording;
-        private DateTime _start;
-
-        private ManualResetEvent _startReset = new ManualResetEvent(true);
-        private ManualResetEvent _stopReset = new ManualResetEvent(false);
-
         private RoundVideoView _roundView = new RoundVideoView();
 
-        public TimeSpan Elapsed
-        {
-            get
-            {
-                return DateTime.Now - _start;
-            }
-        }
+        private DateTime _start;
+
+        public TimeSpan Elapsed => DateTime.Now - _start;
+
+        public bool IsRecording => recordingAudioVideo;
+        public bool IsLocked => recordingLocked;
 
         public ChatRecordMode Mode
         {
@@ -79,39 +64,209 @@ namespace Unigram.Controls.Chats
 
             Mode = ChatRecordMode.Voice;
 
+            ClickMode = ClickMode.Press;
+            Click += OnClick;
+
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromMilliseconds(300);
             _timer.Tick += (s, args) =>
             {
-                _timer.Stop();
+                Logger.Debug(Target.Recording, "Timer Tick, check for permissions");
 
-                if (_pressed)
-                {
-                    Start();
-                }
+                _timer.Stop();
+                RecordAudioVideoRunnable();
             };
+
+            Recorder.Current.RecordingStarted += Current_RecordingStarted;
+            Recorder.Current.RecordingStopped += Current_RecordingStopped;
+            Recorder.Current.RecordingFailed += Current_RecordingStopped;
         }
 
-        protected override async void OnPointerPressed(PointerRoutedEventArgs e)
+        private async void RecordAudioVideoRunnable()
         {
-            var chat = ViewModel.Chat;
-            if (chat == null)
+            calledRecordRunnable = true;
+            recordAudioVideoRunnableStarted = false;
+
+            var permissions = await CheckAccessAsync(Mode);
+            if (permissions == false)
             {
                 return;
             }
 
-            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
-            if (restricted)
+            Logger.Debug(Target.Recording, "Permissions granted, mode: " + Mode);
+
+            Recorder.Current.Start(Mode);
+            UpdateRecordingInterface();
+        }
+
+        private void Current_RecordingStarted(object sender, EventArgs e)
+        {
+            if (!recordingAudioVideo)
             {
-                return;
+                recordingAudioVideo = true;
+                UpdateRecordingInterface();
+
+                if (enqueuedLocking)
+                {
+                    LockRecording();
+                }
+            }
+        }
+
+        private void Current_RecordingStopped(object sender, EventArgs e)
+        {
+            if (recordingAudioVideo)
+            {
+                // cancel typing
+                recordingAudioVideo = false;
+                UpdateRecordingInterface();
+            }
+        }
+
+        private int recordInterfaceState;
+
+        private DisplayRequest _request;
+
+        private void UpdateRecordingInterface()
+        {
+            Logger.Debug(Target.Recording, "Updating interface, state: " + recordInterfaceState);
+
+            if (recordingLocked && recordingAudioVideo)
+            {
+                if (recordInterfaceState == 2)
+                {
+                    return;
+                }
+                recordInterfaceState = 2;
+
+                this.BeginOnUIThread(() =>
+                {
+                    VisualStateManager.GoToState(this, "Locked", false);
+
+                    ClickMode = ClickMode.Press;
+                    RecordingLocked?.Invoke(this, EventArgs.Empty);
+                });
+            }
+            else if (recordingAudioVideo)
+            {
+                if (recordInterfaceState == 1)
+                {
+                    return;
+                }
+                recordInterfaceState = 1;
+                try
+                {
+                    if (_request == null)
+                    {
+                        _request = new DisplayRequest();
+                        _request.GetType();
+                    }
+                }
+                catch { }
+
+                recordingLocked = false;
+
+                _start = DateTime.Now;
+
+                this.BeginOnUIThread(() =>
+                {
+                    VisualStateManager.GoToState(this, "Started", false);
+
+                    ClickMode = ClickMode.Release;
+                    RecordingStarted?.Invoke(this, EventArgs.Empty);
+                });
+            }
+            else
+            {
+                if (_request != null)
+                {
+                    try
+                    {
+                        _request.RequestRelease();
+                        _request = null;
+                    }
+                    catch { }
+                }
+                if (recordInterfaceState == 0)
+                {
+                    return;
+                }
+                recordInterfaceState = 0;
+
+                recordingLocked = false;
+
+                this.BeginOnUIThread(() =>
+                {
+                    VisualStateManager.GoToState(this, "Stopped", false);
+
+                    ClickMode = ClickMode.Press;
+                    RecordingStopped?.Invoke(this, EventArgs.Empty);
+                });
             }
 
-            _timer.Stop();
-            _timer.Start();
+            Logger.Debug(Target.Recording, "Updated interface, state: " + recordInterfaceState);
+        }
 
-            _pressed = true;
+        private async void OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ClickMode == ClickMode.Press)
+            {
+                Logger.Debug(Target.Recording, "Click mode: Press");
+
+                if (recordingLocked)
+                {
+                    if (!hasRecordVideo || calledRecordRunnable)
+                    {
+                        Recorder.Current.Stop(ViewModel, false);
+                        recordingAudioVideo = false;
+                        UpdateRecordingInterface();
+                    }
+
+                    return;
+                }
+
+                ClickMode = ClickMode.Release;
+
+                var chat = ViewModel.Chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+                if (restricted)
+                {
+                    return;
+                }
+
+                _timer.Stop();
+
+                if (hasRecordVideo)
+                {
+                    Logger.Debug(Target.Recording, "Can record videos, start timer to allow switch");
+
+                    calledRecordRunnable = false;
+                    recordAudioVideoRunnableStarted = true;
+                    _timer.Start();
+                }
+                else
+                {
+                    RecordAudioVideoRunnable();
+                }
+            }
+            else
+            {
+                Logger.Debug(Target.Recording, "Click mode: Release");
+
+                ClickMode = ClickMode.Press;
+
+                OnRelease();
+            }
+        }
+
+        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        {
             CapturePointer(e.Pointer);
-
             base.OnPointerPressed(e);
         }
 
@@ -120,386 +275,553 @@ namespace Unigram.Controls.Chats
             base.OnPointerReleased(e);
             ReleasePointerCapture(e.Pointer);
 
-            if (_cancelPointer)
+            Logger.Debug(Target.Recording, "OnPointerReleased");
+
+            OnRelease();
+        }
+
+        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
+        {
+            base.OnPointerCanceled(e);
+            ReleasePointerCapture(e.Pointer);
+
+            Logger.Debug(Target.Recording, "OnPointerCanceled");
+
+            OnRelease();
+        }
+
+        protected override void OnPointerCaptureLost(PointerRoutedEventArgs e)
+        {
+            base.OnPointerCaptureLost(e);
+
+            Logger.Debug(Target.Recording, "OnPointerCaptureLost");
+
+            OnRelease();
+        }
+
+        private void OnRelease()
+        {
+            if (recordingLocked)
             {
-                _cancelPointer = false;
+                Logger.Debug(Target.Recording, "Recording is locked, abort");
                 return;
             }
-
-            _timer.Stop();
-            _pressed = false;
-
-            //Stop();
-            if (_recording)
+            if (recordAudioVideoRunnableStarted)
             {
-                Stop();
-            }
-            else
-            {
+                Logger.Debug(Target.Recording, "Timer should still tick, change mode to: " + (Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video));
+
+                _timer.Stop();
                 Mode = Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video;
             }
-        }
-
-        private void Start()
-        {
-            _video = Mode == ChatRecordMode.Video;
-
-            Task.Run(async () =>
+            else if (!hasRecordVideo || calledRecordRunnable)
             {
-                _startReset.WaitOne();
-                _startReset.Reset();
+                Logger.Debug(Target.Recording, "Timer has tick, stopping recording");
 
-                _recording = true;
-                _start = DateTime.Now;
-
-                this.BeginOnUIThread(() =>
-                {
-                    if (_video)
-                    {
-                        _roundView.IsOpen = true;
-                    }
-
-                    RecordingStarted?.Invoke(this, EventArgs.Empty);
-                });
-
-                //_stopReset.Set();
-                //return;
-
-                _file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_video ? "temp\\recording.mp4" : "temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
-                _recorder = new OpusRecorder(_file, _video);
-
-                /* This following was moved from sub thread, because of a exception which comes from that device initializiation
-                 * is only allowed from UI thread!
-                 */
-                if (_recorder.m_mediaCapture != null)
-                {
-                    Debug.WriteLine("Cannot start while recording");
-                }
-
-                try
-                {
-                    _recorder.m_mediaCapture = new MediaCapture();
-
-                    var cameraDevice = await _recorder.FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Front);
-                    if (cameraDevice == null)
-                    {
-                        // TODO: ...
-                    }
-
-                    // Figure out where the camera is located
-                    if (cameraDevice.EnclosureLocation == null || cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Unknown)
-                    {
-                        // No information on the location of the camera, assume it's an external camera, not integrated on the device
-                        _recorder._externalCamera = true;
-                    }
-                    else
-                    {
-                        // Camera is fixed on the device
-                        _recorder._externalCamera = false;
-
-                        // Only mirror the preview if the camera is on the front panel
-                        _recorder._mirroringPreview = (cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front);
-                    }
-
-                    _recorder.settings.VideoDeviceId = cameraDevice.Id;
-                    await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
-
-                    await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                    {
-                        if (_video)
-                        {
-                            // Initialize rotationHelper
-                            _recorder._rotationHelper = new CameraRotationHelper(cameraDevice.EnclosureLocation);
-                            _recorder._rotationHelper.OrientationChanged += RotationHelper_OrientationChanged;
-
-                            await _roundView.SetAsync(_recorder.m_mediaCapture, _recorder._mirroringPreview);
-                            await _recorder.SetPreviewRotationAsync();
-                        }
-
-                        await _recorder.StartAsync();
-
-                        if (_video)
-                        {
-                            _roundView.IsOpen = true;
-                        }
-
-                        RecordingStarted?.Invoke(this, EventArgs.Empty);
-                    });
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    Debug.WriteLine("The access to microphone was denied!");
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("The app couldn't initialize microphone!");
-                    return;
-                }
-
-                _pressed = true;
-                _cancelOnRelease = false;
-                _start = DateTime.Now;
-                _stopReset.Set();
-
-                Debug.WriteLine("Start: " + _start);
-                Debug.WriteLine("Stop unlocked");
-            });
-        }
-
-        private async void RotationHelper_OrientationChanged(object sender, bool updatePreview)
-        {
-            if (updatePreview)
-            {
-                await _recorder.SetPreviewRotationAsync();
+                Recorder.Current.Stop(ViewModel, false);
+                recordingAudioVideo = false;
+                UpdateRecordingInterface();
             }
         }
+
+        private async Task<bool> CheckAccessAsync(ChatRecordMode mode)
+        {
+            var audioPermission = await CheckDeviceAccessAsync(true, mode);
+            if (audioPermission == false)
+            {
+                return false;
+            }
+
+            if (mode == ChatRecordMode.Video)
+            {
+                var videoPermission = await CheckDeviceAccessAsync(false, ChatRecordMode.Video);
+                if (videoPermission == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private async Task<bool> CheckDeviceAccessAsync(bool audio, ChatRecordMode mode)
+        {
+            var access = DeviceAccessInformation.CreateFromDeviceClass(audio ? DeviceClass.AudioCapture : DeviceClass.VideoCapture);
+            if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
+            {
+                MediaCapture capture = null;
+                try
+                {
+                    capture = new MediaCapture();
+                    var settings = new MediaCaptureInitializationSettings();
+                    settings.StreamingCaptureMode = mode == ChatRecordMode.Video
+                        ? StreamingCaptureMode.AudioAndVideo
+                        : StreamingCaptureMode.Audio;
+                    await capture.InitializeAsync(settings);
+                }
+                finally
+                {
+                    if (capture != null)
+                    {
+                        capture.Dispose();
+                        capture = null;
+                    }
+                }
+
+                return false;
+            }
+            else if (access.CurrentStatus != DeviceAccessStatus.Allowed)
+            {
+                var message = audio
+                    ? mode == ChatRecordMode.Voice
+                    ? Strings.Resources.PermissionNoAudio
+                    : Strings.Resources.PermissionNoAudioVideo
+                    : Strings.Resources.PermissionNoCamera;
+
+                this.BeginOnUIThread(async () =>
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
+                    }
+                });
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool hasRecordVideo = false;
+
+        private bool calledRecordRunnable;
+        private bool recordAudioVideoRunnableStarted;
+
+        private bool recordingAudioVideo;
+
+        private bool recordingLocked;
+        private bool enqueuedLocking;
 
         public void CancelRecording()
         {
-            _timer.Stop();
-            _pressed = false;
-
-            if (_recording)
-            {
-                _cancelPointer = true;
-                _cancelOnRelease = true;
-                Stop();
-            }
+            Recorder.Current.Stop(null, true);
+            recordingAudioVideo = false;
+            UpdateRecordingInterface();
         }
 
-        private void Stop()
+        public void LockRecording()
         {
-            Task.Run(async () =>
+            Logger.Debug(Target.Recording, "Locking recording");
+
+            enqueuedLocking = false;
+            recordingLocked = true;
+            UpdateRecordingInterface();
+        }
+
+        public async void ToggleRecording()
+        {
+            if (recordingLocked)
             {
-                _stopReset.WaitOne();
-                _stopReset.Reset();
-
-                _recording = false;
-
-                this.BeginOnUIThread(() =>
+                if (!hasRecordVideo || calledRecordRunnable)
                 {
-                    if (_video)
-                    {
-                        _roundView.IsOpen = false;
-                    }
-
-                    RecordingStopped?.Invoke(this, EventArgs.Empty);
-                });
-
-                //_startReset.Set();
-                //return;
-
-                var now = DateTime.Now;
-                var elapsed = now - _start;
-
-                Debug.WriteLine("Stop reached");
-                Debug.WriteLine("Stop: " + now);
-
-                if (_recorder == null)
+                    Recorder.Current.Stop(ViewModel, false);
+                    recordingAudioVideo = false;
+                    UpdateRecordingInterface();
+                }
+            }
+            else
+            {
+                var chat = ViewModel.Chat;
+                if (chat == null)
                 {
-                    _startReset.Set();
                     return;
                 }
 
-                if (_recorder.IsRecording)
+                var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted);
+                if (restricted)
                 {
-                    await _recorder.StopAsync();
+                    return;
                 }
 
-                if (_cancelOnRelease || elapsed < TimeSpan.FromSeconds(1))
-                {
-                    await _file.DeleteAsync();
-                }
-                else if (_file != null)
-                {
-                    Debug.WriteLine("Sending voice message");
-
-                    this.BeginOnUIThread(async () =>
-                    {
-                        if (_video)
-                        {
-                            var props = await _file.Properties.GetVideoPropertiesAsync();
-                            var width = props.GetWidth();
-                            var height = props.GetHeight();
-                            var x = 0d;
-                            var y = 0d;
-
-                            if (width > height)
-                            {
-                                x = (width - height) / 2;
-                                width = height;
-                            }
-
-                            if (height > width)
-                            {
-                                y = (height - width) / 2;
-                                height = width;
-                            }
-
-                            var transform = new VideoTransformEffectDefinition();
-                            transform.CropRectangle = new Windows.Foundation.Rect(x, y, width, height);
-                            transform.OutputSize = new Windows.Foundation.Size(240, 240);
-                            transform.Mirror = _recorder._mirroringPreview ? MediaMirroringOptions.Horizontal : MediaMirroringOptions.None;
-
-                            var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
-                            profile.Video.Width = 240;
-                            profile.Video.Height = 240;
-                            profile.Video.Bitrate = 300000;
-
-                            await ViewModel.SendVideoNoteAsync(_file, profile, transform);
-                        }
-                        else
-                        {
-                            await ViewModel.SendVoiceNoteAsync(_file, (int)elapsed.TotalSeconds, null);
-                        }
-                    });
-                }
-
-                _startReset.Set();
-            });
-        }
-
-        internal sealed class OpusRecorder
-        {
-            #region fields
-
-            private bool m_isRecording;
-            private bool m_isVideo;
-
-            private StorageFile m_file;
-            private IMediaExtension m_opusSink;
-            private LowLagMediaRecording m_lowLag;
-            public MediaCapture m_mediaCapture;
-            public MediaCaptureInitializationSettings settings;
-
-            // Information about the camera device
-            public bool _mirroringPreview;
-            public bool _externalCamera;
-
-            // Rotation Helper to simplify handling rotation compensation for the camera streams
-            public CameraRotationHelper _rotationHelper;
-
-            #endregion
-
-            #region properties
-
-            public StorageFile File
-            {
-                get { return m_file; }
-            }
-
-            public bool IsRecording
-            {
-                get { return m_mediaCapture != null && m_isRecording; }
-            }
-
-            #endregion
-
-            #region constructors
-
-            public OpusRecorder(StorageFile file, bool video)
-            {
-                m_file = file;
-                m_isVideo = video;
-                InitializeSettings();
-            }
-
-            #endregion
-
-            #region methods
-
-            private void InitializeSettings()
-            {
-                settings = new MediaCaptureInitializationSettings();
-                settings.MediaCategory = MediaCategory.Speech;
-                settings.AudioProcessing = AudioProcessing.Default;
-                settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
-                settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
-                settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;
-            }
-
-            public async Task<DeviceInformation> FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel desiredPanel)
-            {
-                // Get available devices for capturing pictures
-                var allVideoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
-
-                // Get the desired camera by panel
-                DeviceInformation desiredDevice = allVideoDevices.FirstOrDefault(x => x.EnclosureLocation != null && x.EnclosureLocation.Panel == desiredPanel);
-
-                // If there is no device mounted on the desired panel, return the first device found
-                return desiredDevice ?? allVideoDevices.FirstOrDefault();
-            }
-
-            public async Task StartAsync()
-            {
-                m_isRecording = true;
-
-                if (m_isVideo)
-                {
-                    var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
-                    var rotationAngle = CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(_rotationHelper.GetCameraCaptureOrientation());
-                    profile.Video.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), PropertyValue.CreateInt32(rotationAngle));
-
-                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
-
-                    await m_lowLag.StartAsync();
-                }
-                else
-                {
-                    var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
-                    wavEncodingProfile.Audio.BitsPerSample = 16;
-                    wavEncodingProfile.Audio.SampleRate = 48000;
-                    wavEncodingProfile.Audio.ChannelCount = 1;
-
-                    m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
-
-                    await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
-                }
-            }
-
-            public async Task StopAsync()
-            {
-                try
-                {
-                    if (m_lowLag != null)
-                    {
-                        await m_lowLag.StopAsync();
-                        await m_lowLag.FinishAsync();
-                    }
-                    else
-                    {
-                        await m_mediaCapture.StopRecordAsync();
-                    }
-
-                    m_mediaCapture.Dispose();
-                    m_mediaCapture = null;
-
-                    if (m_opusSink is IDisposable disposable)
-                    {
-                        disposable.Dispose();
-                        m_opusSink = null;
-                    }
-                }
-                catch { }
-            }
-
-            #endregion
-
-            public async Task SetPreviewRotationAsync()
-            {
-                // Only need to update the orientation if the camera is mounted on the device
-                if (_externalCamera || _rotationHelper == null || m_mediaCapture == null) return;
-
-                // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
-                var rotation = _rotationHelper.GetCameraPreviewOrientation();
-                var props = m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
-                props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(rotation));
-                await m_mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
+                enqueuedLocking = true;
+                RecordAudioVideoRunnable();
             }
         }
 
         public event EventHandler RecordingStarted;
         public event EventHandler RecordingStopped;
+        public event EventHandler RecordingLocked;
+
+        class Recorder
+        {
+            public event EventHandler RecordingFailed;
+            public event EventHandler RecordingStarted;
+            public event EventHandler RecordingStopped;
+            public event EventHandler RecordingTooShort;
+
+            private static Recorder _current;
+            public static Recorder Current => _current = _current ?? new Recorder();
+
+            private ConcurrentQueueWorker _recordQueue;
+
+            private OpusRecorder _recorder;
+            private StorageFile _file;
+            private ChatRecordMode _mode;
+            private DateTime _start;
+
+            public Recorder()
+            {
+                _recordQueue = new ConcurrentQueueWorker(1);
+            }
+
+            public async void Start(ChatRecordMode mode)
+            {
+                Logger.Debug(Target.Recording, "Start invoked, mode: " + mode);
+
+                await _recordQueue.Enqueue(async () =>
+                {
+                    Logger.Debug(Target.Recording, "Enqueued start invoked");
+
+                    if (_recorder != null)
+                    {
+                        Logger.Debug(Target.Recording, "_recorder != null, abort");
+
+                        RecordingFailed?.Invoke(this, EventArgs.Empty);
+                        return;
+                    }
+
+                    // Create a new temporary file for the recording
+                    var fileName = string.Format(mode == ChatRecordMode.Video
+                        ? "video_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.mp4"
+                        : "voice_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.ogg", DateTime.Now);
+                    var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+
+                    try
+                    {
+                        _mode = mode;
+                        _file = cache;
+                        _recorder = new OpusRecorder(cache, mode == ChatRecordMode.Video);
+
+                        _recorder.m_mediaCapture = new MediaCapture();
+
+                        if (mode == ChatRecordMode.Video)
+                        {
+                            var cameraDevice = await _recorder.FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Front);
+                            if (cameraDevice == null)
+                            {
+                                // TODO: ...
+                            }
+
+                            // Figure out where the camera is located
+                            if (cameraDevice.EnclosureLocation == null || cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Unknown)
+                            {
+                                // No information on the location of the camera, assume it's an external camera, not integrated on the device
+                                _recorder._externalCamera = true;
+                            }
+                            else
+                            {
+                                // Camera is fixed on the device
+                                _recorder._externalCamera = false;
+
+                                // Only mirror the preview if the camera is on the front panel
+                                _recorder._mirroringPreview = cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front;
+                            }
+
+                            _recorder.settings.VideoDeviceId = cameraDevice.Id;
+                        }
+
+                        await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
+
+                        Logger.Debug(Target.Recording, "Devices initialized, starting");
+
+                        await _recorder.StartAsync();
+
+                        Logger.Debug(Target.Recording, "Recording started at " + DateTime.Now);
+
+                        _start = DateTime.Now;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Debug(Target.Recording, "Failed to initialize devices, abort: " + ex);
+
+                        _recorder.Dispose();
+                        _recorder = null;
+
+                        _file = null;
+
+                        RecordingFailed?.Invoke(this, EventArgs.Empty);
+                        return;
+                    }
+
+                    RecordingStarted?.Invoke(this, EventArgs.Empty);
+                });
+            }
+
+            private async void RotationHelper_OrientationChanged(object sender, bool updatePreview)
+            {
+                if (updatePreview)
+                {
+                    await _recorder.SetPreviewRotationAsync();
+                }
+            }
+
+            public async void Stop(DialogViewModel viewModel, bool cancel)
+            {
+                Logger.Debug(Target.Recording, "Stop invoked, cancel: " + cancel);
+
+                await _recordQueue.Enqueue(async () =>
+                {
+                    Logger.Debug(Target.Recording, "Enqueued stop invoked");
+
+                    var recorder = _recorder;
+                    var file = _file;
+                    var mode = _mode;
+
+                    if (recorder == null || file == null)
+                    {
+                        Logger.Debug(Target.Recording, "recorder or file == null, abort");
+                        return;
+                    }
+
+                    RecordingStopped?.Invoke(this, EventArgs.Empty);
+
+                    var now = DateTime.Now;
+                    var elapsed = now - _start;
+
+                    Logger.Debug(Target.Recording, "stopping recorder, elapsed " + elapsed);
+
+                    await recorder.StopAsync();
+
+                    Logger.Debug(Target.Recording, "recorder stopped");
+
+                    if (cancel || elapsed.TotalMilliseconds < 700)
+                    {
+                        try
+                        {
+                            await file.DeleteAsync();
+                        }
+                        catch { }
+
+                        Logger.Debug(Target.Recording, "recording canceled or too short, abort");
+
+                        if (elapsed.TotalMilliseconds < 700)
+                        {
+                            RecordingTooShort?.Invoke(this, EventArgs.Empty);
+                        }
+                    }
+                    else
+                    {
+                        Logger.Debug(Target.Recording, "sending recorded file");
+
+                        Send(viewModel, mode, file, recorder._mirroringPreview, (int)elapsed.TotalSeconds);
+                    }
+
+                    _recorder = null;
+                    _file = null;
+                });
+            }
+
+            private async void Send(DialogViewModel viewModel, ChatRecordMode mode, StorageFile file, bool mirroring, int duration)
+            {
+                if (mode == ChatRecordMode.Video)
+                {
+                    var props = await file.Properties.GetVideoPropertiesAsync();
+                    var width = props.GetWidth();
+                    var height = props.GetHeight();
+                    var x = 0d;
+                    var y = 0d;
+
+                    if (width > height)
+                    {
+                        x = (width - height) / 2;
+                        width = height;
+                    }
+                    else if (height > width)
+                    {
+                        y = (height - width) / 2;
+                        height = width;
+                    }
+
+                    var transform = new VideoTransformEffectDefinition();
+                    transform.CropRectangle = new Rect(x, y, width, height);
+                    transform.OutputSize = new Size(240, 240);
+                    transform.Mirror = mirroring ? MediaMirroringOptions.Horizontal : MediaMirroringOptions.None;
+
+                    var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
+                    profile.Video.Width = 240;
+                    profile.Video.Height = 240;
+                    profile.Video.Bitrate = 300000;
+
+                    try
+                    {
+                        viewModel.Dispatcher.Dispatch(async () =>
+                        {
+                            await viewModel.SendVideoNoteAsync(file, profile, transform);
+                        });
+                    }
+                    catch { }
+                }
+                else
+                {
+                    try
+                    {
+                        viewModel.Dispatcher.Dispatch(async () =>
+                        {
+                            await viewModel.SendVoiceNoteAsync(file, duration, null);
+                        });
+                    }
+                    catch { }
+                }
+            }
+
+            internal sealed class OpusRecorder
+            {
+                #region fields
+
+                private bool m_isVideo;
+
+                private StorageFile m_file;
+                private IMediaExtension m_opusSink;
+                private LowLagMediaRecording m_lowLag;
+                public MediaCapture m_mediaCapture;
+                public MediaCaptureInitializationSettings settings;
+
+                // Information about the camera device
+                public bool _mirroringPreview;
+                public bool _externalCamera;
+
+                // Rotation Helper to simplify handling rotation compensation for the camera streams
+                public CameraRotationHelper _rotationHelper;
+
+                #endregion
+
+                #region properties
+
+                public StorageFile File
+                {
+                    get { return m_file; }
+                }
+
+                #endregion
+
+                #region constructors
+
+                public OpusRecorder(StorageFile file, bool video)
+                {
+                    m_file = file;
+                    m_isVideo = video;
+                    InitializeSettings();
+                }
+
+                #endregion
+
+                #region methods
+
+                private void InitializeSettings()
+                {
+                    settings = new MediaCaptureInitializationSettings();
+                    settings.MediaCategory = MediaCategory.Speech;
+                    settings.AudioProcessing = m_isVideo ? AudioProcessing.Default : AudioProcessing.Raw;
+                    settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
+                    settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
+                    settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;
+                }
+
+                public async Task<DeviceInformation> FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel desiredPanel)
+                {
+                    // Get available devices for capturing pictures
+                    var allVideoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+
+                    // Get the desired camera by panel
+                    DeviceInformation desiredDevice = allVideoDevices.FirstOrDefault(x => x.EnclosureLocation != null && x.EnclosureLocation.Panel == desiredPanel);
+
+                    // If there is no device mounted on the desired panel, return the first device found
+                    return desiredDevice ?? allVideoDevices.FirstOrDefault();
+                }
+
+                public async Task StartAsync()
+                {
+                    if (m_isVideo)
+                    {
+                        var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
+                        var rotationAngle = CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(Windows.Devices.Sensors.SimpleOrientation.NotRotated); // _rotationHelper.GetCameraCaptureOrientation());
+                        profile.Video.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), PropertyValue.CreateInt32(rotationAngle));
+
+                        m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
+
+                        await m_lowLag.StartAsync();
+                    }
+                    else
+                    {
+                        var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
+                        wavEncodingProfile.Audio.BitsPerSample = 16;
+                        wavEncodingProfile.Audio.SampleRate = 48000;
+                        wavEncodingProfile.Audio.ChannelCount = 1;
+
+                        m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
+
+                        await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
+                    }
+                }
+
+                public async Task StopAsync()
+                {
+                    try
+                    {
+                        if (m_lowLag != null)
+                        {
+                            await m_lowLag.StopAsync();
+                            await m_lowLag.FinishAsync();
+                        }
+                        else
+                        {
+                            await m_mediaCapture.StopRecordAsync();
+                        }
+
+                        m_mediaCapture.Dispose();
+                        m_mediaCapture = null;
+
+                        if (m_opusSink is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                            m_opusSink = null;
+                        }
+                    }
+                    catch { }
+                }
+
+                public void Dispose()
+                {
+                    try
+                    {
+                        m_lowLag = null;
+
+                        m_mediaCapture.Dispose();
+                        m_mediaCapture = null;
+
+                        if (m_opusSink is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                            m_opusSink = null;
+                        }
+                    }
+                    catch { }
+                }
+
+                #endregion
+
+                public async Task SetPreviewRotationAsync()
+                {
+                    // Only need to update the orientation if the camera is mounted on the device
+                    if (_externalCamera || _rotationHelper == null || m_mediaCapture == null) return;
+
+                    // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
+                    var rotation = _rotationHelper.GetCameraPreviewOrientation();
+                    var props = m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
+                    props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(rotation));
+                    await m_mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
+                }
+            }
+        }
     }
 }

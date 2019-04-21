@@ -20,7 +20,7 @@ namespace Unigram.Converters
             {
                 return string.Format("{0} KB", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
-            if (bytesCount < 1073741824L)
+            //if (bytesCount < 1073741824L)
             {
                 return string.Format("{0} MB", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
@@ -38,7 +38,7 @@ namespace Unigram.Converters
             {
                 return string.Format("{0} ", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
-            if (total < 1073741824L)
+            //if (total < 1073741824L)
             {
                 return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }

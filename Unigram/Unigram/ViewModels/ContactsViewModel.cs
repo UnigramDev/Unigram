@@ -12,56 +12,118 @@ using Unigram.ViewModels.Supergroups;
 
 namespace Unigram.ViewModels
 {
-    public class ContactsViewModel : TLViewModelBase, IHandle<UpdateUserStatus>
+    public class ContactsViewModel : TLViewModelBase, IChildViewModel, IHandle<UpdateUserStatus>
     {
-        private IContactsService _contactsService;
+        private readonly IContactsService _contactsService;
+
+        private readonly DisposableMutex _loadMoreLock;
 
         public ContactsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
-            aggregator.Subscribe(this);
 
-            // Let's sort contacts alphabetically due to high amount of crashes in the latest version
-            Items = new SortedObservableCollection<User>(new UserComparer(false));
+            _loadMoreLock = new DisposableMutex();
+
+            Items = new SortedObservableCollection<User>(new UserComparer(Settings.IsContactsSortedByEpoch));
+
+            Initialize();
         }
 
-        public void LoadContacts()
+        private async void Initialize()
         {
-            ProtoService.Send(new GetContacts(), result =>
+            if (!Settings.IsContactsSyncRequested)
             {
-                if (result is Telegram.Td.Api.Users users)
+                Settings.IsContactsSyncRequested = true;
+
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
+                if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
-                    BeginOnUIThread(async () =>
+                    Settings.IsContactsSyncEnabled = false;
+                    await _contactsService.RemoveAsync();
+                }
+
+                if (Settings.IsContactsSyncEnabled)
+                {
+                    ProtoService.Send(new GetContacts(), async result =>
                     {
-                        foreach (var id in users.UserIds)
-                        {
-                            var user = ProtoService.GetUser(id);
-                            if (user != null)
-                            {
-                                Items.Add(user);
-                            }
-                        }
-
-                        if (!Settings.IsContactsSyncRequested)
-                        {
-                            Settings.IsContactsSyncRequested = true;
-
-                            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
-                            if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
-                            {
-                                Settings.IsContactsSyncEnabled = false;
-                                await _contactsService.RemoveAsync();
-                            }
-                        }
-
-                        if (Settings.IsContactsSyncEnabled)
+                        if (result is Telegram.Td.Api.Users users)
                         {
                             await _contactsService.SyncAsync(users);
                         }
                     });
                 }
-            });
+            }
+        }
+
+        public async void Activate()
+        {
+            Aggregator.Subscribe(this);
+
+            using (await _loadMoreLock.WaitAsync())
+            {
+                var response = await ProtoService.SendAsync(new GetContacts());
+                if (response is Telegram.Td.Api.Users users)
+                {
+                    var items = new List<User>();
+
+                    foreach (var id in users.UserIds)
+                    {
+                        var user = ProtoService.GetUser(id);
+                        if (user != null)
+                        {
+                            items.Add(user);
+                        }
+                    }
+
+                    Items.ReplaceWith(items);
+                }
+            }
+        }
+
+        public void Deactivate()
+        {
+            Aggregator.Unsubscribe(this);
+        }
+
+        public bool IsSortedByEpoch
+        {
+            get { return Settings.IsContactsSortedByEpoch; }
+            set
+            {
+                if (Settings.IsContactsSortedByEpoch != value)
+                {
+                    Settings.IsContactsSortedByEpoch = value;
+                    Load(value);
+
+                    RaisePropertyChanged(() => IsSortedByEpoch);
+                }
+            }
+        }
+
+        private async void Load(bool epoch)
+        {
+            using (await _loadMoreLock.WaitAsync())
+            {
+                var response = await ProtoService.SendAsync(new GetContacts());
+                if (response is Telegram.Td.Api.Users users)
+                {
+                    var items = new List<User>();
+
+                    foreach (var id in users.UserIds)
+                    {
+                        var user = ProtoService.GetUser(id);
+                        if (user != null)
+                        {
+                            items.Add(user);
+                        }
+                    }
+
+                    Items = new SortedObservableCollection<User>(new UserComparer(epoch));
+                    Items.ReplaceWith(items);
+                    RaisePropertyChanged(() => Items);
+                }
+            }
         }
 
         private SearchUsersCollection _search;
@@ -81,7 +143,11 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateUserStatus update)
         {
-            return;
+            var user = CacheService.GetUser(update.UserId);
+            if (user == null || user.Id == CacheService.Options.MyId || user.OutgoingLink is LinkStateIsContact == false)
+            {
+                return;
+            }
 
             BeginOnUIThread(() =>
             {
@@ -91,19 +157,7 @@ namespace Unigram.ViewModels
                     Items.Remove(first);
                 }
 
-                var user = CacheService.GetUser(update.UserId);
-                if (user != null && user.OutgoingLink is LinkStateIsContact)
-                {
-                    //var status = LastSeenHelper.GetLastSeen(user);
-                    //var listItem = new UsersPanelListItem(user as TLUser);
-                    //listItem.fullName = user.FullName;
-                    //listItem.LastSeen = status.Item1;
-                    //listItem.LastSeenEpoch = status.Item2;
-                    //listItem.Photo = listItem._parent.Photo;
-                    //listItem.PlaceHolderColor = BindConvert.Current.Bubble(listItem._parent.Id);
-
-                    Items.Add(user);
-                }
+                Items.Add(user);
             });
         }
 

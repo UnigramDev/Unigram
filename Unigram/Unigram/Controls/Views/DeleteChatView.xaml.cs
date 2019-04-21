@@ -32,6 +32,27 @@ namespace Unigram.Controls.Views
             var basicGroup = protoService.GetBasicGroup(chat);
             var supergroup = protoService.GetSupergroup(chat);
 
+            var deleteAll = user != null && chat.Type is ChatTypePrivate privata && privata.UserId != protoService.Options.MyId;
+            if (deleteAll)
+            {
+                CheckBox.Visibility = Visibility.Visible;
+
+                var name = user.FirstName;
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = user.LastName;
+                }
+
+                if (clear)
+                {
+                    CheckBox.Content = string.Format(Strings.Resources.ClearHistoryOptionAlso, name);
+                }
+                else
+                {
+                    CheckBox.Content = string.Format(Strings.Resources.DeleteMessagesOptionAlso, name);
+                }
+            }
+
             if (clear)
             {
                 if (user != null)
@@ -39,6 +60,10 @@ namespace Unigram.Controls.Views
                     if (chat.Type is ChatTypeSecret)
                     {
                         TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureClearHistoryWithSecretUser, user.GetFullName()));
+                    }
+                    else if (user.Id == protoService.Options.MyId)
+                    {
+                        TextBlockHelper.SetMarkdown(Subtitle, Strings.Resources.AreYouSureClearHistorySavedMessages);
                     }
                     else
                     {
@@ -71,9 +96,19 @@ namespace Unigram.Controls.Views
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithSecretUser, user.GetFullName()));
                 }
+                else if (user.Id == protoService.Options.MyId)
+                {
+                    TextBlockHelper.SetMarkdown(Subtitle, Strings.Resources.AreYouSureDeleteThisChatSavedMessages);
+                }
                 else
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Resources.AreYouSureDeleteThisChatWithUser, user.GetFullName()));
+                }
+
+                if (user.Type is UserTypeBot)
+                {
+                    CheckBox.Visibility = Visibility.Visible;
+                    CheckBox.Content = Strings.Resources.BotStop;
                 }
             }
             else if (basicGroup != null)
@@ -114,6 +149,8 @@ namespace Unigram.Controls.Views
 
             SecondaryButtonText = Strings.Resources.Cancel;
         }
+
+        public bool IsChecked => CheckBox.Visibility == Visibility.Visible && CheckBox.IsChecked == true;
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {

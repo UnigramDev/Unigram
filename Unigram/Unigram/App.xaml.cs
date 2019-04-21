@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
@@ -52,6 +53,8 @@ using Windows.Foundation.Metadata;
 using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Media.SpeechRecognition;
+using Windows.Networking.PushNotifications;
+using Windows.Storage;
 using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Core;
@@ -160,160 +163,6 @@ namespace Unigram
 #endif
         }
 
-        public override INavigable ResolveForPage(Page page, INavigationService navigationService)
-        {
-            var id = navigationService is TLNavigationService ex ? ex.SessionId : 0;
-            var container = TLContainer.Current;
-
-            switch (page)
-            {
-                case ChannelCreateStep1Page channelCreateStep1:
-                    return container.Resolve<ChannelCreateStep1ViewModel>(id);
-                case ChannelCreateStep2Page channelCreateStep2:
-                    return container.Resolve<ChannelCreateStep2ViewModel>(id);
-                case ChannelCreateStep3Page channelCreateStep3:
-                    return container.Resolve<ChannelCreateStep3ViewModel>(id);
-                case BasicGroupCreateStep1Page chatCreateStep1:
-                    return container.Resolve<BasicGroupCreateStep1ViewModel>(id);
-                case BasicGroupCreateStep2Page chatCreateStep2:
-                    return container.Resolve<BasicGroupCreateStep2ViewModel>(id);
-                case ChatInviteLinkPage chatInviteLink:
-                    return container.Resolve<ChatInviteLinkViewModel>(id);
-                case ChatInvitePage chatInvite:
-                    return container.Resolve<ChatInviteViewModel>(id);
-                case ChatSharedMediaPage dialogSharedMedia:
-                    return container.Resolve<ChatSharedMediaViewModel, IFileDelegate>(dialogSharedMedia, id);
-                case DialogShareLocationPage dialogShareLocation:
-                    return container.Resolve<DialogShareLocationViewModel>(id);
-                case InstantPage instant:
-                    return container.Resolve<InstantViewModel>(id);
-                case MainPage main:
-                    return container.Resolve<MainViewModel>(id);
-                case PaymentFormStep1Page paymentFormStep1:
-                    return container.Resolve<PaymentFormStep1ViewModel>(id);
-                case PaymentFormStep2Page paymentFormStep2:
-                    return container.Resolve<PaymentFormStep2ViewModel>(id);
-                case PaymentFormStep3Page paymentFormStep3:
-                    return container.Resolve<PaymentFormStep3ViewModel>(id);
-                case PaymentFormStep4Page paymentFormStep4:
-                    return container.Resolve<PaymentFormStep4ViewModel>(id);
-                case PaymentFormStep5Page paymentFormStep5:
-                    return container.Resolve<PaymentFormStep5ViewModel>(id);
-                case PaymentReceiptPage paymentReceipt:
-                    return container.Resolve<PaymentReceiptViewModel>(id);
-                case ProfilePage profile:
-                    return container.Resolve<ProfileViewModel, IProfileDelegate>(profile, id);
-                case SecretChatCreatePage secretChatCreate:
-                    return container.Resolve<SecretChatCreateViewModel>(id);
-                case SettingsPhoneIntroPage settingsPhoneIntro:
-                    return container.Resolve<SettingsPhoneIntroViewModel>(id);
-                case SettingsPhonePage settingsPhone:
-                    return container.Resolve<SettingsPhoneViewModel>(id);
-                case SettingsPhoneSentCodePage settingsPhoneSentCode:
-                    return container.Resolve<SettingsPhoneSentCodeViewModel>(id);
-                case SettingsPrivacyAllowCallsPage settingsPrivacyAllowCalls:
-                    return container.Resolve<SettingsPrivacyAllowCallsViewModel>(id);
-                case SettingsPrivacyAllowChatInvitesPage settingsPrivacyAllowChatInvites:
-                    return container.Resolve<SettingsPrivacyAllowChatInvitesViewModel>(id);
-                case SettingsPrivacyAlwaysAllowCallsPage settingsPrivacyAlwaysAllowCalls:
-                    return container.Resolve<SettingsPrivacyAlwaysAllowCallsViewModel>(id);
-                case SettingsPrivacyAlwaysAllowChatInvitesPage settingsPrivacyAlwaysAllowChatInvites:
-                    return container.Resolve<SettingsPrivacyAlwaysAllowChatInvitesViewModel>(id);
-                case SettingsPrivacyAlwaysShowStatusPage settingsPrivacyAlwaysShowStatus:
-                    return container.Resolve<SettingsPrivacyAlwaysShowStatusViewModel>(id);
-                case SettingsPrivacyNeverAllowCallsPage settingsPrivacyNeverAllowCalls:
-                    return container.Resolve<SettingsPrivacyNeverAllowCallsViewModel>(id);
-                case SettingsPrivacyNeverAllowChatInvitesPage settingsPrivacyNeverAllowChatInvites:
-                    return container.Resolve<SettingsPrivacyNeverAllowChatInvitesViewModel>(id);
-                case SettingsPrivacyNeverShowStatusPage settingsPrivacyNeverShowStatus:
-                    return container.Resolve<SettingsPrivacyNeverShowStatusViewModel>(id);
-                case SettingsPrivacyShowStatusPage settingsPrivacyShowStatus:
-                    return container.Resolve<SettingsPrivacyShowStatusViewModel>(id);
-                case SettingsAppearancePage settingsAppearance:
-                    return container.Resolve<SettingsAppearanceViewModel>(id);
-                case SettingsBlockedUsersPage settingsBlockedUsers:
-                    return container.Resolve<SettingsBlockedUsersViewModel, IFileDelegate>(settingsBlockedUsers, id);
-                case SettingsBlockUserPage settingsBlockUser:
-                    return container.Resolve<SettingsBlockUserViewModel>(id);
-                case SettingsDataAndStoragePage settingsDataAndStorage:
-                    return container.Resolve<SettingsDataAndStorageViewModel>(id);
-                case SettingsDataAutoPage settingsDataAuto:
-                    return container.Resolve<SettingsDataAutoViewModel>(id);
-                case SettingsAdvancedPage settingsGeneral:
-                    return container.Resolve<SettingsAdvancedViewModel>(id);
-                case SettingsLanguagePage settingsLanguage:
-                    return container.Resolve<SettingsLanguageViewModel>(id);
-                case SettingsMasksArchivedPage settingsMasksArchived:
-                    return container.Resolve<SettingsMasksArchivedViewModel>(id);
-                case SettingsMasksPage settingsMasks:
-                    return container.Resolve<SettingsMasksViewModel>(id);
-                case SettingsNotificationsPage settingsNotifications:
-                    return container.Resolve<SettingsNotificationsViewModel>(id);
-                case SettingsPrivacyAndSecurityPage settingsPrivacyAndSecurity:
-                    return container.Resolve<SettingsPrivacyAndSecurityViewModel>(id);
-                case SettingsPasswordPage settingsSecurityEnterPassword:
-                    return container.Resolve<SettingsPasswordViewModel>(id);
-                case SettingsPasscodePage settingsSecurityPasscode:
-                    return container.Resolve<SettingsPasscodeViewModel>(id);
-                case SettingsSessionsPage settingsSessions:
-                    return container.Resolve<SettingsSessionsViewModel>(id);
-                case SettingsNetworkPage settingsNetwork:
-                    return container.Resolve<SettingsNetworkViewModel>(id);
-                case SettingsStickersArchivedPage settingsStickersArchived:
-                    return container.Resolve<SettingsStickersArchivedViewModel>(id);
-                case SettingsStickersFeaturedPage settingsStickersTrending:
-                    return container.Resolve<SettingsStickersTrendingViewModel>(id);
-                case SettingsStickersPage settingsStickers:
-                    return container.Resolve<SettingsStickersViewModel>(id);
-                case SettingsStoragePage settingsStorage:
-                    return container.Resolve<SettingsStorageViewModel>(id);
-                case SettingsUsernamePage settingsUsername:
-                    return container.Resolve<SettingsUsernameViewModel>(id);
-                case SettingsWallpapersPage settingsWallPaper:
-                    return container.Resolve<SettingsWallpapersViewModel>(id);
-                case SettingsWebSessionsPage settingsWebSessions:
-                    return container.Resolve<SettingsWebSessionsViewModel>(id);
-                case SettingsPage settings:
-                    return container.Resolve<SettingsViewModel, ISettingsDelegate>(settings, id);
-                case SignInPage signIn:
-                    return container.Resolve<SignInViewModel>(id);
-                case SignInPasswordPage signInPassword:
-                    return container.Resolve<SignInPasswordViewModel>(id);
-                case SignInSentCodePage signInSentCode:
-                    return container.Resolve<SignInSentCodeViewModel>(id);
-                case SignUpPage signUp:
-                    return container.Resolve<SignUpViewModel>(id);
-                case SupergroupAddAdministratorPage supergroupAddAdministrator:
-                    return container.Resolve<SupergroupAddAdministratorViewModel>(id);
-                case SupergroupAddRestrictedPage supergroupAddRestricted:
-                    return container.Resolve<SupergroupAddRestrictedViewModel>(id);
-                case SupergroupAdministratorsPage supergroupAdministrators:
-                    return container.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(supergroupAdministrators, id);
-                case SupergroupBannedPage supergroupBanned:
-                    return container.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(supergroupBanned, id);
-                case SupergroupEditAdministratorPage supergroupEditAdministrator:
-                    return container.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(supergroupEditAdministrator, id);
-                case SupergroupEditPage supergroupEdit:
-                    return container.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(supergroupEdit, id);
-                case SupergroupEditRestrictedPage supergroupEditRestricted:
-                    return container.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(supergroupEditRestricted, id);
-                case SupergroupEditStickerSetPage supergroupEditStickerSet:
-                    return container.Resolve<SupergroupEditStickerSetViewModel>(id);
-                case SupergroupEventLogPage supergroupEventLog:
-                    return container.Resolve<SupergroupEventLogViewModel>(id);
-                case SupergroupMembersPage supergroupMembers:
-                    return container.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(supergroupMembers, id);
-                case SupergroupPermissionsPage supergroupRestricted:
-                    return container.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(supergroupRestricted, id);
-                case UserCommonChatsPage userCommonChats:
-                    return container.Resolve<UserCommonChatsViewModel>(id);
-                case UserCreatePage userCreate:
-                    return container.Resolve<UserCreateViewModel>(id);
-            }
-
-            return base.ResolveForPage(page, navigationService);
-        }
-
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
             //var flowDirectionSetting = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
@@ -415,11 +264,14 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
+            var deferral = args.TaskInstance.GetDeferral();
+
             if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
             {
                 var data = Toast.GetData(triggerDetail);
                 if (data == null)
                 {
+                    deferral.Complete();
                     return;
                 }
 
@@ -429,10 +281,45 @@ namespace Unigram
                     session = result;
                 }
 
-                var deferral = args.TaskInstance.GetDeferral();
                 await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
-                deferral.Complete();
             }
+            else if (args.TaskInstance.TriggerDetails is RawNotification notification)
+            {
+                int? GetSession(long id)
+                {
+                    if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
+                    {
+                        return value;
+                    }
+
+                    return null;
+                }
+
+                var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
+                if (receiver == null)
+                {
+                    deferral.Complete();
+                    return;
+                }
+
+                var session = GetSession(receiver.Id);
+                if (session == null)
+                {
+                    deferral.Complete();
+                    return;
+                }
+
+                var service = TLContainer.Current.Resolve<IProtoService>(session.Value);
+                if (service == null)
+                {
+                    deferral.Complete();
+                    return;
+                }
+
+                await service.SendAsync(new ProcessPushNotification(notification.Content));
+            }
+
+            deferral.Complete();
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
@@ -542,9 +429,9 @@ namespace Unigram
             }
         }
 
-        public override UIElement CreateRootElement(Frame frame)
+        public override UIElement CreateRootElement(INavigationService navigationService)
         {
-            return new StandalonePage(frame) { FlowDirection = ApiInfo.FlowDirection };
+            return new StandalonePage(navigationService) { FlowDirection = ApiInfo.FlowDirection };
         }
 
         protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
@@ -608,20 +495,20 @@ namespace Unigram
                 {
                     _extendedSession = session;
 
-                    Logs.Log.Write("ExtendedExecutionResult.Allowed");
+                    Logs.Logger.Info(Logs.Target.Lifecycle, "ExtendedExecutionResult.Allowed");
                 }
                 else
                 {
                     session.Dispose();
 
-                    Logs.Log.Write("ExtendedExecutionResult.Denied");
+                    Logs.Logger.Warning(Logs.Target.Lifecycle, "ExtendedExecutionResult.Denied");
                 }
             }
         }
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Logs.Log.Write("OnResuming");
+            Logs.Logger.Info(Logs.Target.Lifecycle, "OnResuming");
 
             //#if DEBUG
             //await VoIPConnection.Current.ConnectAsync();
@@ -632,7 +519,7 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            Logs.Log.Write("OnSuspendingAsync");
+            Logs.Logger.Info(Logs.Target.Lifecycle, "OnSuspendingAsync");
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -29,10 +30,12 @@ namespace Unigram.Controls.Chats
                 case ChatSearchState.Text:
                     VisualStateManager.GoToState(this, "Text", false);
                     break;
+                case ChatSearchState.Media:
                 case ChatSearchState.Members:
                     VisualStateManager.GoToState(this, "Members", false);
                     break;
                 case ChatSearchState.TextByMember:
+                case ChatSearchState.TextByMedia:
                     VisualStateManager.GoToState(this, "TextByMember", false);
                     break;
             }
@@ -48,12 +51,27 @@ namespace Unigram.Controls.Chats
                 Header = _from?.FirstName ?? string.Empty;
             }
         }
+
+        private ChatSearchMediaFilter _filter;
+        public ChatSearchMediaFilter Filter
+        {
+            get { return _filter; }
+            set
+            {
+                _filter = value;
+                Header = _filter?.Text ?? string.Empty;
+            }
+        }
     }
 
     public enum ChatSearchState
     {
         Text,
+
         Members,
-        TextByMember
+        TextByMember,
+
+        Media,
+        TextByMedia
     }
 }

@@ -18,9 +18,24 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
+    public enum MessageContentState
+    {
+        None,
+        Download,
+        Downloading,
+        Uploading,
+        Open,
+        Ttl,
+        Play,
+        Pause,
+    }
+
     public sealed partial class DocumentContent : Grid, IContentWithFile
     {
+        private MessageContentState _oldState;
+
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public DocumentContent(MessageViewModel message)
         {
@@ -77,22 +92,28 @@ namespace Unigram.Controls.Messages.Content
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+
+                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
+
+                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                Button.Glyph = "\uE118";
+                //Button.Glyph = Icons.Download;
+                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
                 Button.Progress = 0;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
@@ -101,13 +122,18 @@ namespace Unigram.Controls.Messages.Content
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
+
+                _oldState = MessageContentState.Download;
             }
             else
             {
-                Button.Glyph = "\uE160";
+                //Button.Glyph = Icons.Document;
+                Button.SetGlyph(Icons.Document, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
+
+                _oldState = MessageContentState.Open;
             }
         }
 

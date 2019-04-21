@@ -27,6 +27,7 @@ using Windows.UI;
 using System.Numerics;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using System.Reactive.Linq;
 
 namespace Unigram.Controls.Views
 {
@@ -43,18 +44,68 @@ namespace Unigram.Controls.Views
         private FileContext<ViewModels.Dialogs.StickerViewModel> _stickers = new FileContext<ViewModels.Dialogs.StickerViewModel>();
         private FileContext<Animation> _animations = new FileContext<Animation>();
 
-        private ScrollViewer stickersScroll;
+        private bool _widget;
 
         public StickersView()
         {
             InitializeComponent();
 
-            var shadow = Shadow.Attach(Separator, 20, 0.25f);
+            var shadow1 = DropShadowEx.Attach(HeaderSeparator, 20, 0.25f);
+            var shadow2 = DropShadowEx.Attach(Separator, 20, 0.25f);
 
-            Toolbar.SizeChanged += (s, args) =>
+            HeaderSeparator.SizeChanged += (s, args) =>
             {
-                shadow.Size = new Vector2((float)args.NewSize.Width, (float)args.NewSize.Height);
+                shadow1.Size = args.NewSize.ToVector2();
             };
+
+            Separator.SizeChanged += (s, args) =>
+            {
+                shadow2.Size = args.NewSize.ToVector2();
+            };
+
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(FieldStickers, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>
+            {
+                var items = ViewModel.Stickers.SearchStickers;
+                if (items != null && string.Equals(FieldStickers.Text, items.Query))
+                {
+                    await items.LoadMoreItemsAsync(1);
+                    await items.LoadMoreItemsAsync(2);
+                }
+            });
+
+            var observable2 = Observable.FromEventPattern<TextChangedEventArgs>(FieldAnimations, "TextChanged");
+            var throttled2 = observable2.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                ViewModel.Stickers.FindAnimations(FieldAnimations.Text);
+                //var items = ViewModel.Stickers.SearchStickers;
+                //if (items != null && string.Equals(FieldStickers.Text, items.Query))
+                //{
+                //    await items.LoadMoreItemsAsync(1);
+                //    await items.LoadMoreItemsAsync(2);
+                //}
+            });
+
+            switch (SettingsService.Current.Stickers.SelectedTab)
+            {
+                case Services.Settings.StickersTab.Emoji:
+                    Pivot.SelectedIndex = 0;
+                    break;
+                case Services.Settings.StickersTab.Animations:
+                    Pivot.SelectedIndex = 1;
+                    break;
+                case Services.Settings.StickersTab.Stickers:
+                    Pivot.SelectedIndex = 2;
+                    break;
+            }
+        }
+
+        public void SetView(bool widget)
+        {
+            _widget = widget;
+
+            Emojis?.SetView(widget);
+            VisualStateManager.GoToState(this, widget ? "FilledState" : "NarrowState", false);
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -65,12 +116,6 @@ namespace Unigram.Controls.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var scrollViewer = Stickers.GetScrollViewer();
-            if (scrollViewer != null)
-            {
-                stickersScroll = scrollViewer;
-                stickersScroll.ViewChanged += Stickers_ViewChanged;
-            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -94,7 +139,7 @@ namespace Unigram.Controls.Views
                     var container = Stickers.ContainerFromItem(item) as SelectorItem;
                     if (container == null)
                     {
-                        return;
+                        continue;
                     }
 
                     var content = container.ContentTemplateRoot as Image;
@@ -108,6 +153,10 @@ namespace Unigram.Controls.Views
                 foreach (var item in line)
                 {
                     if (item.Item is Animation animation && animation.UpdateFile(file))
+                    {
+                        any = true;
+                    }
+                    else if (item.Item is InlineQueryResultAnimation inlineAnimation && inlineAnimation.Animation.UpdateFile(file))
                     {
                         any = true;
                     }
@@ -192,6 +241,10 @@ namespace Unigram.Controls.Views
             {
                 Animation_Click(null, animation);
             }
+            else if (item is InlineQueryResultAnimation inlineAnimation)
+            {
+                Animation_Click(null, inlineAnimation.Animation);
+            }
         }
 
         private void Animation_Click(object sender, Animation animation)
@@ -210,25 +263,6 @@ namespace Unigram.Controls.Views
             {
                 EmojiClick?.Invoke(emoji);
             }
-        }
-
-        private void Emojis_Switch(object sender, EventArgs e)
-        {
-            FocusCatcher.Focus(FocusState.Programmatic);
-
-            RootPanel.Visibility = Visibility.Visible;
-            Emojis.Visibility = Visibility.Collapsed;
-        }
-
-        private void Emojis_Click(object sender, RoutedEventArgs e)
-        {
-            if (Emojis == null)
-                FindName(nameof(Emojis));
-
-            FocusCatcher.Focus(FocusState.Programmatic);
-
-            Emojis.Visibility = Visibility.Visible;
-            RootPanel.Visibility = Visibility.Collapsed;
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
@@ -262,6 +296,12 @@ namespace Unigram.Controls.Views
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (Pivot.SelectedIndex == 0 && Emojis == null)
+            {
+                FindName(nameof(Emojis));
+                Emojis.SetView(_widget);
+            }
+
             if (Pivot.SelectedIndex != 2)
             {
                 Toolbar.SelectedItem = null;
@@ -269,6 +309,22 @@ namespace Unigram.Controls.Views
             else
             {
                 ScrollingHost_ViewChanged(null, null);
+            }
+
+            if (ViewModel != null)
+            {
+                switch (Pivot.SelectedIndex)
+                {
+                    case 0:
+                        ViewModel.Settings.Stickers.SelectedTab = Services.Settings.StickersTab.Emoji;
+                        break;
+                    case 1:
+                        ViewModel.Settings.Stickers.SelectedTab = Services.Settings.StickersTab.Animations;
+                        break;
+                    case 2:
+                        ViewModel.Settings.Stickers.SelectedTab = Services.Settings.StickersTab.Stickers;
+                        break;
+                }
             }
 
             //if (Pivot.SelectedIndex == 0)
@@ -355,133 +411,33 @@ namespace Unigram.Controls.Views
             ViewModel.Stickers.InstallCommand.Execute(((Button)sender).DataContext);
         }
 
-        private async void Stickers_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private async void Stickers_ChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
         {
-            var content = args.ItemContainer.ContentTemplateRoot as Image;
-
-            if (args.InRecycleQueue)
+            if (args.GroupHeaderContainer == null)
             {
-                content.Source = null;
-                return;
+                args.GroupHeaderContainer = new GridViewHeaderItem();
+                args.GroupHeaderContainer.Style = Stickers.GroupStyle[0].HeaderContainerStyle;
+                args.GroupHeaderContainer.ContentTemplate = Stickers.GroupStyle[0].HeaderTemplate;
             }
 
-            var sticker = args.Item as ViewModels.Dialogs.StickerViewModel;
-
-            if (sticker == null || sticker.Thumbnail == null)
+            if (args.Group is ViewModels.Dialogs.StickerSetViewModel group && !group.IsLoaded)
             {
-                content.Source = null;
-                return;
-            }
-
-            args.ItemContainer.Tag = args.Item;
-            content.Tag = args.Item;
-
-            //if (args.Phase < 2)
-            //{
-            //    content.Source = null;
-            //    args.RegisterUpdateCallback(Stickers_ContainerContentChanging);
-            //}
-            //else
-            if (args.Phase == 0)
-            {
-                Debug.WriteLine("Loading sticker " + sticker.StickerValue.Id + " for sticker set id " + sticker.SetId);
-
-                var file = sticker.Thumbnail.Photo;
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    DownloadFile(file.Id, sticker);
-                }
-            }
-            else
-            {
-                throw new System.Exception("We should be in phase 0, but we are not.");
-            }
-
-            args.Handled = true;
-        }
-
-        private void Stickers_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            if (e.IsIntermediate)
-            {
-                return;
-            }
-
-            LoadVisibleStickers();
-        }
-
-        private async void LoadVisibleStickers()
-        {
-            var scrollingHost = Stickers.ItemsPanelRoot as ItemsWrapGrid;
-            if (scrollingHost == null)
-            {
-                return;
-            }
-
-            if (scrollingHost.FirstVisibleIndex < 0)
-            {
-                return;
-            }
-
-            var lastSet = 0L;
-
-            for (int i = scrollingHost.FirstVisibleIndex; i <= scrollingHost.LastVisibleIndex; i++)
-            {
-                if (i >= Stickers.Items.Count)
-                {
-                    return;
-                }
-
-                var first = Stickers.Items[i] as ViewModels.Dialogs.StickerViewModel;
-                if (first == null || first.SetId == lastSet)
-                {
-                    continue;
-                }
-
-                lastSet = first.SetId;
-
-                var fromItem = Stickers.ContainerFromItem(first);
-                if (fromItem == null)
-                {
-                    continue;
-                }
-
-                var header = Stickers.GroupHeaderContainerFromItemContainer(fromItem) as GridViewHeaderItem;
-                if (header == null)
-                {
-                    continue;
-                }
-
-                var group = header.Content as ViewModels.Dialogs.StickerSetViewModel;
-                if (group == null || group.IsLoaded)
-                {
-                    continue;
-                }
-
                 group.IsLoaded = true;
 
-                Debug.WriteLine("Loading sticker set " + group.Id);
+                //Debug.WriteLine("Loading sticker set " + group.Id);
 
                 var response = await ViewModel.ProtoService.SendAsync(new GetStickerSet(group.Id));
                 if (response is StickerSet full)
                 {
-                    group.Update(full);
-                    //group.Stickers.RaiseCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+                    group.Update(full, true);
+                    return;
 
-                    int j = 0;
                     foreach (var sticker in group.Stickers)
                     {
                         if (sticker.Thumbnail == null)
                         {
                             continue;
                         }
-
-                        //group.Stickers.RaiseCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Move, sticker, j, j));
-                        //j++;
 
                         var container = Stickers.ContainerFromItem(sticker) as SelectorItem;
                         if (container == null)
@@ -506,6 +462,58 @@ namespace Unigram.Controls.Views
                     }
                 }
             }
+
+            //Debug.WriteLine("Choosing group header container");
+        }
+
+        private async void Stickers_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            var content = args.ItemContainer.ContentTemplateRoot as Image;
+
+            if (args.InRecycleQueue)
+            {
+                content.Source = null;
+                return;
+            }
+
+            var sticker = args.Item as ViewModels.Dialogs.StickerViewModel;
+
+            args.ItemContainer.Tag = args.Item;
+            args.ItemContainer.Content = args.Item;
+            content.Tag = args.Item;
+
+            if (sticker == null || sticker.Thumbnail == null)
+            {
+                content.Source = null;
+                return;
+            }
+
+            //if (args.Phase < 2)
+            //{
+            //    content.Source = null;
+            //    args.RegisterUpdateCallback(Stickers_ContainerContentChanging);
+            //}
+            //else
+            if (args.Phase == 0)
+            {
+                //Debug.WriteLine("Loading sticker " + sticker.StickerValue.Id + " for sticker set id " + sticker.SetId);
+
+                var file = sticker.Thumbnail.Photo;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    DownloadFile(file.Id, sticker);
+                }
+            }
+            else
+            {
+                throw new System.Exception("We should be in phase 0, but we are not.");
+            }
+
+            args.Handled = true;
         }
 
         private void DownloadFile(int id, ViewModels.Dialogs.StickerViewModel sticker)
@@ -568,46 +576,58 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Image;
-            var sticker = args.Item as ViewModels.Dialogs.StickerSetViewModel;
+            if (args.Item is ViewModels.Dialogs.SupergroupStickerSetViewModel supergroup)
+            {
+                var chat = ViewModel.CacheService.GetChat(supergroup.ChatId);
+                if (chat == null)
+                {
+                    return;
+                }
 
-            if (content == null || sticker == null || sticker.Covers == null)
-            {
-                return;
-            }
+                var content = args.ItemContainer.ContentTemplateRoot as ProfilePicture;
+                if (content == null)
+                {
+                    return;
+                }
 
-            var cover = sticker.Covers.FirstOrDefault();
-            if (cover == null || cover.Thumbnail == null)
-            {
-                content.Source = null;
-                return;
+                content.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
             }
+            else if (args.Item is ViewModels.Dialogs.StickerSetViewModel sticker)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as Image;
+                if (content == null || sticker == null || sticker.Covers == null)
+                {
+                    return;
+                }
 
-            var file = cover.Thumbnail.Photo;
-            if (file.Local.IsDownloadingCompleted)
-            {
-                content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                //DownloadFile(file.Id, cover);
-                ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                var cover = sticker.Covers.FirstOrDefault();
+                if (cover == null || cover.Thumbnail == null)
+                {
+                    content.Source = null;
+                    return;
+                }
+
+                var file = cover.Thumbnail.Photo;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    //DownloadFile(file.Id, cover);
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
             }
         }
 
-        private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void FieldStickers_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
+            ViewModel.Stickers.FindStickers(FieldStickers.Text);
+        }
 
-            if (args.ItemContainer.ContentTemplateRoot is Cells.StickerSetCell cell && args.Item is ViewModels.Dialogs.StickerSetViewModel vm)
-            {
-                cell.Update(ViewModel.ProtoService, vm);
-            }
-
-            args.Handled = true;
+        private void FieldAnimations_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //ViewModel.Stickers.FindAnimations(FieldAnimations.Text);
         }
     }
 }

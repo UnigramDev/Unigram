@@ -183,6 +183,7 @@
                   ItemTemplateSelector="{StaticResource MemberTemplateSelector}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
+                  ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   Grid.Row="1">
@@ -204,6 +205,7 @@
                       ItemTemplateSelector="{StaticResource MemberTemplateSelector}"
                       ItemClick="ListView_ItemClick"
                       IsItemClickEnabled="True"
+                      ChoosingItemContainer="OnChoosingItemContainer"
                       ContainerContentChanging="OnContainerContentChanging"
                       SelectionMode="None"
                       Grid.Row="1">
@@ -270,7 +272,11 @@
                                 </Grid.RowDefinitions>
                                 <Grid.ContextFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem x:Name="CopyDescription" Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}"/>
+                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8C8;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Grid.ContextFlyout>
                                 <Border Height="44" VerticalAlignment="Top">
@@ -308,7 +314,11 @@
                                 Glyph="&#xE717;">
                                 <Button.ContextFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem x:Name="CopyPhone" Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}"/>
+                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8C8;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Button.ContextFlyout>
                             </controls:BadgeButton>
@@ -323,7 +333,11 @@
                                 Glyph="&#xE91A;">
                                 <Button.ContextFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem x:Name="CopyUsername" Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}"/>
+                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8C8;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Button.ContextFlyout>
                             </controls:BadgeButton>

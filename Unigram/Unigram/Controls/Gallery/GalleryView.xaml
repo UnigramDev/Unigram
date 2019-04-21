@@ -43,7 +43,8 @@
     <local:GalleryTransportControls x:Name="Transport" Switch="Transport_Switch" RequestedTheme="Dark">
         <local:GalleryTransportControls.Content>
             <Grid>
-                <Border x:Name="Layer" Margin="0,-32,0,0" Background="Black" Grid.RowSpan="3"/>
+                <Border x:Name="Layer" Margin="0,-32,0,0" Background="Black"/>
+                <local:GalleryContentView x:Name="Preview" Loaded="Preview_ImageOpened"/>
 
                 <ScrollViewer x:Name="ScrollingHost"
                               VerticalScrollMode="Disabled"
@@ -53,7 +54,8 @@
                               HorizontalSnapPointsType="MandatorySingle"
                               HorizontalSnapPointsAlignment="Near"
                               HorizontalContentAlignment="Center"
-                              ViewChanged="ScrollingHost_ViewChanged">
+                              ViewChanged="ScrollingHost_ViewChanged"
+                              Opacity="0">
                     <local:GalleryPanel x:Name="LayoutRoot" HorizontalSnapPointsChanged="LayoutRoot_HorizontalSnapPointsChanged">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -62,9 +64,9 @@
                         </Grid.ColumnDefinitions>
                         <!--<Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>-->
 
-                        <local:GalleryContentView x:Name="Element2" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested"/>
-                        <local:GalleryContentView x:Name="Element0" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
-                        <local:GalleryContentView x:Name="Element1" Loaded="ImageView_ImageOpened" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
+                        <local:GalleryContentView x:Name="Element2" ContextRequested="ImageView_ContextRequested"/>
+                        <local:GalleryContentView x:Name="Element0" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
+                        <local:GalleryContentView x:Name="Element1" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
                     </local:GalleryPanel>
                 </ScrollViewer>
             </Grid>
@@ -88,9 +90,8 @@
                 <controls:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
                                       Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
                                       Height="{ThemeResource AppBarThemeCompactHeight}"
-                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                      Glyph="&#xE60E;"
-                                      FontSize="24"
+                                      Glyph="&#xF4AA;"
+                                      FontSize="{StaticResource GlyphButtonFontSize}"
                                       Grid.Column="1"/>
                 <controls:GlyphButton Click="Compact_Click"
                                       Visibility="{x:Bind ConvertCompactVisibility(ViewModel.SelectedItem), Mode=OneWay}"

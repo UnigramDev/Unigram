@@ -223,19 +223,19 @@
         <!-- Region Service -->
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
-            <StackPanel Margin="0,8,0,8" ContextRequested="Message_ContextRequested">
-                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Style="{StaticResource ServiceButtonStyle}">
+            <StackPanel Margin="0,8,0,8">
+                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" Style="{StaticResource ServiceButtonStyle}">
                     <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <!--<controls:ProfilePicture Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>-->
+                    <controls:ProfilePicture x:Name="Photo" Width="96" Height="96"/>
                 </Border>
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <messages:MessageService Click="ServiceMessage_Click" ContextRequested="Message_ContextRequested" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
+            <messages:MessageService Click="ServiceMessage_Click" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
                 <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
             </messages:MessageService>
         </DataTemplate>
@@ -256,7 +256,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble x:Name="Bubble" HorizontalAlignment="Right" ContextRequested="Message_ContextRequested">
+            <messages:MessageBubble x:Name="Bubble" HorizontalAlignment="Right">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -273,7 +273,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested"/>
+                <messages:MessageBubble x:Name="Bubble"/>
 
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -301,7 +301,7 @@
                                          Margin="0,0,0,2"
                                          Width="30"
                                          Height="30"/>
-                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
+                <messages:MessageBubble x:Name="Bubble" Grid.Column="1"/>
 
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -441,6 +441,7 @@
                         Command="{x:Bind ViewModel.CallCommand}"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Glyph="&#xE13A;"
+                        AutomationProperties.Name="{CustomResource Call}"
                         ToolTipService.ToolTip="{CustomResource Call}"
                         Grid.Column="1"/>
 
@@ -470,10 +471,34 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" ToolTipService.ToolTip="{CustomResource Delete}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
-                    <controls:GlyphButton Glyph="&#xE730;" Command="{x:Bind ViewModel.MessagesReportCommand}" ToolTipService.ToolTip="{CustomResource ReportChat}" Style="{StaticResource HeaderGlyphButtonStyle}" x:Name="Report" Grid.Column="1"/>
-                    <controls:GlyphButton Glyph="&#xE16F;" Command="{x:Bind ViewModel.MessagesCopyCommand}" ToolTipService.ToolTip="{CustomResource Copy}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="2"/>
-                    <controls:GlyphButton Glyph="&#xE72D;" Command="{x:Bind ViewModel.MessagesForwardCommand}" ToolTipService.ToolTip="{CustomResource Forward}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="3"/>
+                    <controls:GlyphButton
+                        Glyph="&#xE107;"
+                        Command="{x:Bind ViewModel.MessagesDeleteCommand}"
+                        AutomationProperties.Name="{CustomResource Delete}"
+                        ToolTipService.ToolTip="{CustomResource Delete}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                    <controls:GlyphButton
+                        x:Name="Report"
+                        Glyph="&#xE730;"
+                        Command="{x:Bind ViewModel.MessagesReportCommand}"
+                        AutomationProperties.Name="{CustomResource ReportChat}"
+                        ToolTipService.ToolTip="{CustomResource ReportChat}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="1"/>
+                    <controls:GlyphButton
+                        Glyph="&#xE16F;"
+                        Command="{x:Bind ViewModel.MessagesCopyCommand}"
+                        AutomationProperties.Name="{CustomResource Copy}"
+                        ToolTipService.ToolTip="{CustomResource Copy}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="2"/>
+                    <controls:GlyphButton
+                        Glyph="&#xE72D;"
+                        Command="{x:Bind ViewModel.MessagesForwardCommand}"
+                        AutomationProperties.Name="{CustomResource Forward}"
+                        ToolTipService.ToolTip="{CustomResource Forward}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="3"/>
 
                     <ContentControl
                         Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
@@ -493,7 +518,12 @@
                         </ContentControl.Clip>
                     </ContentControl>
 
-                    <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="6"/>
+                    <controls:GlyphButton
+                        Click="Manage_Click"
+                        Glyph="&#xE10A;"
+                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="6"/>
                 </Grid>
             </Grid>
         </controls:ContentPageHeader>
@@ -502,7 +532,67 @@
             <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
         </Border>
 
-        <Grid Grid.Row="2">
+        <Grid x:Name="Clipper" Canvas.ZIndex="1" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>
+
+            <Grid x:Name="PinnedMessagePanel"
+                    Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                    MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                    Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+
+                <messages:MessageReference x:Name="PinnedMessage" Click="Reply_Click" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
+
+                <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
+
+                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
+            </Grid>
+            <Grid x:Name="CallbackQueryAnswerPanel"
+                    Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                    Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                    MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                    Grid.Row="1">
+                <messages:MessageReference x:Name="CallbackQueryAnswer" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
+
+                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
+            </Grid>
+
+            <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
+                    Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                    Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Command="{x:Bind ViewModel.ReportSpamCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                    <TextBlock x:Name="ReportSpam" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </Button>
+
+                <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
+
+                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+            </Grid>
+
+            <StackPanel x:Name="DateHeaderRelative" x:DeferLoadStrategy="Lazy" Grid.Row="3">
+                <Border x:Name="DateHeaderPanel" HorizontalAlignment="Center">
+                    <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,4,0,4" Style="{StaticResource ServiceButtonStyle}">
+                        <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </messages:MessageService>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="ContentPanel" SizeChanged="ContentPanel_SizeChanged" Grid.Row="2">
             <chats:ChatListView x:Name="Messages"
                                 Style="{StaticResource BubbleListViewStyle}"
                                 ItemContainerTransitions="{x:Null}"
@@ -526,7 +616,6 @@
                     <selectors:MessageStyleSelector>
                         <selectors:MessageStyleSelector.MessageStyle>
                             <Style TargetType="ListViewItem">
-                                <Setter Property="IsTabStop" Value="False"/>
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
                                 <Setter Property="Background" Value="Transparent"/>
@@ -573,7 +662,6 @@
                         </selectors:MessageStyleSelector.MessageStyle>
                         <selectors:MessageStyleSelector.ServiceStyle>
                             <Style TargetType="ListViewItem">
-                                <Setter Property="IsTabStop" Value="False"/>
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
                                 <Setter Property="Background" Value="Transparent"/>
@@ -668,66 +756,6 @@
             <!--<Border Visibility="{x:Bind (Visibility)ViewModel.IsEmpty, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="18">
                  <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{StaticResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
                  </Border>-->
-
-            <Grid x:Name="Clipper">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>
-
-                <Grid x:Name="PinnedMessagePanel"
-                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
-                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                      Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="48"/>
-                    </Grid.ColumnDefinitions>
-
-                    <messages:MessageReference x:Name="PinnedMessage" Click="Reply_Click" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
-
-                    <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
-
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
-                </Grid>
-                <Grid x:Name="CallbackQueryAnswerPanel"
-                      Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
-                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                      Grid.Row="1">
-                    <messages:MessageReference x:Name="CallbackQueryAnswer" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
-
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
-                </Grid>
-
-                <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
-                      Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
-                      Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="48"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Button Command="{x:Bind ViewModel.ReportSpamCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                        <TextBlock x:Name="ReportSpam" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    </Button>
-
-                    <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
-
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                </Grid>
-
-                <StackPanel x:Name="DateHeaderRelative" x:DeferLoadStrategy="Lazy" Grid.Row="3">
-                    <Border x:Name="DateHeaderPanel" HorizontalAlignment="Center">
-                        <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,4,0,4" Style="{StaticResource ServiceButtonStyle}">
-                            <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </messages:MessageService>
-                    </Border>
-                </StackPanel>
-            </Grid>
 
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
                 <StackPanel x:Name="MentionsPanel" Visibility="Collapsed" RightTapped="Mentions_RightTapped">
@@ -849,6 +877,7 @@
                     </GridView.ItemContainerTransitions>
                 </controls:ZoomableGridView>
                 <ListView x:Name="ListAutocomplete"
+                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                           ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
                           Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                           ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
@@ -856,18 +885,7 @@
                           AllowFocusOnInteraction="False"
                           IsItemClickEnabled="True"
                           ItemClick="Autocomplete_ItemClick"
-                          SizeChanged="Autocomplete_SizeChanged">
-                    <ListView.Header>
-                        <Border x:Name="AutocompleteHeader"
-                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Top" Height="1"/>
-                        </Border>
-                    </ListView.Header>
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
+                          VerticalAlignment="Bottom">
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection/>
                     </ListView.ItemContainerTransitions>
@@ -914,7 +932,7 @@
                 </Grid.ColumnDefinitions>
 
 
-                <Grid x:Name="ComposerHeader" Grid.ColumnSpan="4">
+                <Grid x:Name="ComposerHeader" Visibility="Collapsed" Grid.ColumnSpan="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48"/>
                         <ColumnDefinition/>
@@ -939,7 +957,6 @@
                         Padding="48,4,0,6"
                         TextWrapping="Wrap"
                         InputScope="Chat"
-                        TabIndex="-1"
                         IsSpellCheckEnabled="True"
                         VerticalAlignment="Bottom"
                         VerticalContentAlignment="Bottom"
@@ -979,39 +996,57 @@
                                         </ControlTemplate>
                                     </MenuFlyoutSeparator.Template>
                                 </MenuFlyoutSeparator>
-                                <controls:GlyphMenuFlyoutItem
+                                <MenuFlyoutItem
                                     x:Name="AttachMedia"
                                     Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:True), Mode=OneWay}"
-                                    Command="{x:Bind ViewModel.SendMediaCommand}"
-                                    Glyph="&#xEB9F;"/>
-                                <controls:GlyphMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.SendMediaCommand}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xEB9F;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem
                                     x:Name="AttachDocument"
                                     Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:False), Mode=OneWay}"
-                                    Command="{x:Bind ViewModel.SendDocumentCommand}"
-                                    Glyph="&#xE160;"/>
-                                <controls:GlyphMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.SendDocumentCommand}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE160;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem
                                     x:Name="AttachLocation"
                                     Text="{CustomResource ChatLocation}"
                                     IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                    Command="{x:Bind ViewModel.SendLocationCommand}"
-                                    Glyph="&#xE1C4;"/>
-                                <controls:GlyphMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.SendLocationCommand}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE1C4;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem
                                     x:Name="AttachPoll"
                                     Text="{CustomResource Poll}"
                                     IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                    Command="{x:Bind ViewModel.SendPollCommand}"
-                                    Glyph="&#xE9D2;"/>
-                                <controls:GlyphMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.SendPollCommand}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE91F;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem
                                     x:Name="AttachContact"
                                     Text="{CustomResource AttachContact}"
                                     IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                    Command="{x:Bind ViewModel.SendContactCommand}"
-                                    Glyph="&#xE187;"/>
-                                <controls:GlyphMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.SendContactCommand}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE77B;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem
                                     x:Name="AttachCurrent"
                                     Text="{CustomResource Edit}"
-                                    Command="{x:Bind ViewModel.EditCurrentCommand}"
-                                    Glyph="&#xE7A8;"/>
+                                    Command="{x:Bind ViewModel.EditCurrentCommand}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE7A8;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
                             </MenuFlyout>
                         </FlyoutBase.AttachedFlyout>
                     </controls:GlyphButton>
@@ -1031,83 +1066,123 @@
                     </StackPanel>
                 </Border>
 
+                <HyperlinkButton x:Name="ButtonCancelRecording"
+                                 Click="ButtonCancelRecording_Click"
+                                 Content="{CustomResource Cancel}"
+                                 HorizontalAlignment="Center"
+                                 Visibility="Collapsed"
+                                 Grid.ColumnSpan="4"
+                                 Grid.Row="1"/>
+
                 <Grid x:Name="ButtonsPanel" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <controls:GlyphToggleButton x:Name="ButtonSilent"
-                                                UncheckedGlyph="&#xEA8F;"
-                                                CheckedGlyph="&#xE7ED;"
-                                                Command="{x:Bind ViewModel.ToggleSilentCommand}"
-                                                VerticalAlignment="Bottom"/>
-                    <controls:GlyphButton x:Name="ButtonTimer"
-                                          Glyph="&#xE916;"
-                                          Command="{x:Bind ViewModel.SetTimerCommand}"
-                                          VerticalAlignment="Bottom"/>
+                    <Grid x:Name="SecondaryButtonsPanel">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Border x:Name="btnCommands" Grid.Column="1">
-                        <controls:GlyphButton x:Name="ButtonCommands"
-                                              Click="Commands_Click"
-                                              AllowFocusOnInteraction="False"
-                                              Glyph="&#xE613;"
-                                              Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                              VerticalAlignment="Bottom"
-                                              AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"/>
-                    </Border>
+                        <!-- Button to toggle silent mode, channels only -->
+                        <controls:AnimatedGlyphToggleButton
+                            x:Name="ButtonSilent"
+                            UncheckedGlyph="&#xEA8F;"
+                            CheckedGlyph="&#xE7ED;"
+                            Command="{x:Bind ViewModel.ToggleSilentCommand}"
+                            VerticalAlignment="Bottom"/>
+                        
+                        <!-- Button to change self-destructing timer, secret chats only -->
+                        <controls:GlyphButton
+                            x:Name="ButtonTimer"
+                            Glyph="&#xE916;"
+                            Command="{x:Bind ViewModel.SetTimerCommand}"
+                            VerticalAlignment="Bottom"/>
 
-                    <Border x:Name="btnMarkup" Grid.Column="1">
-                        <controls:GlyphToggleButton x:Name="ButtonMarkup"
-                                                    Click="Markup_Click"
-                                                    AllowFocusOnInteraction="False"
-                                                    CheckedGlyph="&#xE910;"
-                                                    UncheckedGlyph="&#xE90F;"
-                                                    IsChecked="True"
-                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                    FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                    VerticalAlignment="Bottom"
-                                                    AutomationProperties.Name="{CustomResource AccDescrBotKeyboard}"
-                                                    ToolTipService.ToolTip="{CustomResource AccDescrBotKeyboard}"/>
-                    </Border>
+                        <!-- Button to use bot commands, bots/groups only -->
+                        <Border x:Name="btnCommands" Grid.Column="1">
+                            <controls:GlyphButton
+                                x:Name="ButtonCommands"
+                                Click="Commands_Click"
+                                AllowFocusOnInteraction="False"
+                                Glyph="&#xE613;"
+                                Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                VerticalAlignment="Bottom"
+                                AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
+                                Grid.Column="1"/>
+                        </Border>
 
-                    <Border x:Name="btnStickers" Grid.Column="2">
-                        <controls:GlyphButton x:Name="ButtonStickers"
-                                              Click="Stickers_Click"
-                                              AllowFocusOnInteraction="False"
-                                              Glyph="&#xE606;"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                              VerticalAlignment="Bottom"
-                                              AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"/>
-                    </Border>
-
-                    <Grid x:Name="ButtonRecord" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Bottom" Grid.Column="3" Canvas.ZIndex="1000">
-                        <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <chats:ChatRecordButton x:Name="btnVoiceMessage"
-                                                AllowFocusOnInteraction="False"
-                                                RecordingStarted="VoiceButton_RecordingStarted"
-                                                RecordingStopped="VoiceButton_RecordingStopped"
-                                                ManipulationDelta="VoiceButton_ManipulationDelta"
-                                                ManipulationMode="TranslateX"/>
+                        <!-- Button to use bot keyboard, bots/groups only -->
+                        <Border x:Name="btnMarkup" Grid.Column="1">
+                            <controls:AnimatedGlyphButton
+                                x:Name="ButtonMarkup"
+                                Click="Markup_Click"
+                                AllowFocusOnInteraction="False"
+                                Glyph="&#xE90F;"
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                VerticalAlignment="Bottom"
+                                AutomationProperties.Name="{CustomResource AccDescrBotKeyboard}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrBotKeyboard}"
+                                Grid.Column="1"/>
+                        </Border>
                     </Grid>
 
-                    <controls:GlyphButton x:Name="btnSendMessage"
-                                          VerticalAlignment="Bottom"
-                                          Click="btnSendMessage_Click"
-                                          Glyph="&#xE919;"
-                                          AllowFocusOnInteraction="False"
-                                          FontSize="20"
-                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                          Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                          Padding="4,0,0,0"
-                                          Grid.Column="3"
-                                          Canvas.ZIndex="1001"
-                                          AutomationProperties.Name="{CustomResource Send}"
-                                          ToolTipService.ToolTip="{CustomResource Send}"/>
+                    <!-- Button to use stickers keyboard, all -->
+                    <controls:AnimatedGlyphButton
+                        x:Name="ButtonStickers"
+                        Click="Stickers_Click"
+                        AllowFocusOnInteraction="False"
+                        Glyph="&#xF4AA;"
+                        VerticalAlignment="Bottom"
+                        AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"
+                        Grid.Column="1"/>
+
+                    <Grid x:Name="ButtonRecord" VerticalAlignment="Bottom" Grid.Column="2" Canvas.ZIndex="1000">
+                        <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <chats:ChatRecordButton
+                            x:Name="btnVoiceMessage"
+                            AllowFocusOnInteraction="False"
+                            RecordingStarted="VoiceButton_RecordingStarted"
+                            RecordingStopped="VoiceButton_RecordingStopped"
+                            RecordingLocked="VoiceButton_RecordingLocked"
+                            ManipulationDelta="VoiceButton_ManipulationDelta"
+                            ManipulationMode="TranslateX,TranslateY"/>
+                    </Grid>
+
+                    <controls:GlyphButton
+                        x:Name="btnSendMessage"
+                        VerticalAlignment="Bottom"
+                        Click="btnSendMessage_Click"
+                        Glyph="&#xE919;"
+                        AllowFocusOnInteraction="False"
+                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                        Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                        Padding="4,0,0,0"
+                        Grid.Column="2"
+                        Canvas.ZIndex="1001"
+                        AutomationProperties.Name="{CustomResource Send}"
+                        ToolTipService.ToolTip="{CustomResource Send}"
+                        Visibility="Collapsed"/>
+
+                    <controls:GlyphButton
+                        x:Name="btnEdit"
+                        VerticalAlignment="Bottom"
+                        Click="btnSendMessage_Click"
+                        Glyph="&#xEC61;"
+                        AllowFocusOnInteraction="False"
+                        Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                        FontSize="24"
+                        Grid.Column="2"
+                        AutomationProperties.Name="{CustomResource Done}"
+                        ToolTipService.ToolTip="{CustomResource Done}"
+                        Visibility="Collapsed"/>
                 </Grid>
 
                 <Border x:Name="btnExpand"
@@ -1123,38 +1198,24 @@
                                           AllowFocusOnInteraction="False"
                                           Padding="0,2,0,0"/>
                 </Border>
-
-                <Border x:Name="btnEdit" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                        HorizontalAlignment="Right"
-                        Grid.Column="3"
-                        Grid.Row="1">
-                    <controls:GlyphButton x:Name="ButtonEdit"
-                                          VerticalAlignment="Bottom"
-                                          Click="btnSendMessage_Click"
-                                          Glyph="&#xE10B;"
-                                          AllowFocusOnInteraction="False"
-                                          Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                          Padding="0,2,0,0"
-                                          AutomationProperties.Name="{CustomResource Done}"
-                                          ToolTipService.ToolTip="{CustomResource Done}"/>
-                </Border>
             </Grid>
         </ContentControl>
 
         <chats:ChatBottomButton
-            x:Name="Action"
+            x:Name="ButtonAction"
             Command="{x:Bind ViewModel.ActionCommand}"
             Height="{StaticResource TelegramToolBarHeight}"
             Grid.Row="3">
             <Button.Content>
-                <TextBlock x:Name="ActionLabel" TextWrapping="Wrap" TextAlignment="Center"/>
+                <TextBlock x:Name="LabelAction" TextWrapping="Wrap" TextAlignment="Center"/>
             </Button.Content>
         </chats:ChatBottomButton>
 
         <chats:ChatSearchMask
             x:Name="SearchMask"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-            Grid.RowSpan="4"/>
+            Grid.RowSpan="4"
+            Canvas.ZIndex="2"/>
 
         <!--<controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48" Grid.RowSpan="4"/>-->
     </Grid>

@@ -69,9 +69,7 @@ namespace Unigram.Logs
 
         private static void WriteInternal(string str, Action callback = null)
         {
-            var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-
-            str = string.Format("{0} {1}{2}", timestamp, str, Environment.NewLine);
+            str = string.Format("{0}{1}", str, Environment.NewLine);
             Write(_fileSyncRoot, DirectoryName, FileName, str);
             callback?.Invoke();
         }

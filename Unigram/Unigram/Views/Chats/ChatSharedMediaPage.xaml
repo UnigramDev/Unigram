@@ -137,11 +137,12 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox x:Name="SearchFiles" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
-                            <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
-                                 Text="{Binding Files.Query, Mode=TwoWay}"
-                                 PlaceholderText="Search..."
-                                 Canvas.ZIndex="1"/>-->
+                            <controls:SearchTextBox
+                                x:Name="SearchFiles"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
                             <Border Height="6"/>
@@ -178,11 +179,12 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox x:Name="SearchLinks" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
-                            <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
-                                 Text="{Binding Links.Query, Mode=TwoWay}"
-                                 PlaceholderText="Search..."
-                                 Canvas.ZIndex="1"/>-->
+                            <controls:SearchTextBox
+                                x:Name="SearchLinks"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
                             <Border Height="6"/>
@@ -219,11 +221,12 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox x:Name="SearchMusic" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
-                            <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
-                                 Text="{Binding Music.Query, Mode=TwoWay}"
-                                 PlaceholderText="Search..."
-                                 Canvas.ZIndex="1"/>-->
+                            <controls:SearchTextBox
+                                x:Name="SearchMusic"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
                             <Border Height="6"/>
@@ -260,11 +263,12 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox x:Name="SearchVoice" PlaceholderText="{CustomResource Search}" Margin="12,8" InputScope="Search"/>
-                            <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
-                                 Text="{Binding Music.Query, Mode=TwoWay}"
-                                 PlaceholderText="Search..."
-                                 Canvas.ZIndex="1"/>-->
+                            <controls:SearchTextBox
+                                x:Name="SearchVoice"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
                             <Border Height="6"/>

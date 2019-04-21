@@ -38,7 +38,7 @@ namespace Unigram.Views.Chats
                 _chatId = chatId;
 
                 var response = await _protoService.SendAsync(new GetChatStatisticsUrl(chatId, string.Empty));
-                if (response is ChatStatisticsUrl url && Uri.TryCreate(url.Url, UriKind.Absolute, out Uri uri))
+                if (response is HttpUrl url && Uri.TryCreate(url.Url, UriKind.Absolute, out Uri uri))
                 {
                     View.Navigate(uri);
                 }
@@ -71,7 +71,7 @@ namespace Unigram.Views.Chats
             if (query.TryGetValue("params", out string parameters))
             {
                 var response = await _protoService.SendAsync(new GetChatStatisticsUrl(_chatId, string.Empty));
-                if (response is ChatStatisticsUrl url && Uri.TryCreate(url.Url, UriKind.Absolute, out Uri uri))
+                if (response is HttpUrl url && Uri.TryCreate(url.Url, UriKind.Absolute, out Uri uri))
                 {
                     View.Navigate(uri);
                 }

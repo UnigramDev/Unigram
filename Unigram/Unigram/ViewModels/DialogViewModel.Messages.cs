@@ -88,39 +88,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            //var serviceMessage = message as TLMessageService;
-            //if (serviceMessage != null)
-            //{
-            //    var action = serviceMessage.Action;
-            //    // TODO: 
-            //    //if (action is TLMessageActionEmpty || action is TLMessageActionUnreadMessages)
-            //    //{
-            //    //    return;
-            //    //}
-            //}
+            if (message.Content is MessageAlbum album)
+            {
+                message = album.Layout.Messages.FirstOrDefault();
+            }
 
-            //var message31 = message as TLMessage;
-            //if (message31 != null && message31.Media is TLMessageMediaGroup groupMedia)
-            //{
-            //    message = groupMedia.Layout.Messages.FirstOrDefault();
-            //    message31 = message as TLMessage;
-            //}
-
-            //if (message.Id <= 0) return;
-
-            //if (message31 != null && !message31.IsOut && message31.HasFromId)
-            //{
-            //    var fromId = message31.FromId.Value;
-            //    var user = CacheService.GetUser(fromId) as TLUser;
-            //    if (user != null && user.IsBot)
-            //    {
-            //        SetReplyMarkup(message31);
-            //    }
-            //}
-
-            //Reply = message;
             ComposerHeader = new MessageComposerHeader { ReplyToMessage = message };
-            TextField?.Focus(Windows.UI.Xaml.FocusState.Keyboard);
+            TextField?.Focus(FocusState.Keyboard);
         }
 
         #endregion
@@ -206,6 +180,8 @@ namespace Unigram.ViewModels
                     ProtoService.Send(new DeleteMessages(chat.Id, new[] { message.Id }, dialog.IsChecked == true));
                 }
             }
+
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         #endregion
@@ -235,7 +211,7 @@ namespace Unigram.ViewModels
 
             await ShareView.GetForCurrentView().ShowAsync(message.Get());
 
-            TextField?.FocusMaybe(FocusState.Keyboard);
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         #endregion
@@ -245,7 +221,14 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageShareCommand { get; }
         private async void MessageShareExecute(MessageViewModel message)
         {
-            await ShareView.GetForCurrentView().ShowAsync(message.Get());
+            if (message.Content is MessageAlbum album)
+            {
+                await ShareView.GetForCurrentView().ShowAsync(album.Layout.Messages.Select(x => x.Get()).ToList());
+            }
+            else
+            {
+                await ShareView.GetForCurrentView().ShowAsync(message.Get());
+            }
         }
 
         #endregion
@@ -268,107 +251,61 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            //for (int i = 0; i < messages.Count; i++)
-            //{
-            //    if (messages[i] is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
-            //    {
-            //        messages.RemoveAt(i);
+            var user = CacheService.GetUser(chat);
 
-            //        for (int j = 0; j < groupMedia.Layout.Messages.Count; j++)
-            //        {
-            //            messages.Insert(i, groupMedia.Layout.Messages[j]);
-            //            i++;
-            //        }
+            var dialog = new TLMessageDialog();
+            dialog.Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("Messages", messages.Count));
+            dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
+            dialog.PrimaryButtonText = Strings.Resources.Delete;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-            //        i--;
-            //    }
-            //}
+            var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
+            var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
+            var anyCanBeDeletedForAllUsers = messages.Any(x => x.IsOutgoing && x.CanBeDeletedForAllUsers);
 
-            //if (messageBase == null) return;
-
-            //var message = messageBase as TLMessage;
-            //if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
-            //{
-            //    var dialog = new DeleteChannelMessageDialog();
-
-            //    var result = await dialog.ShowAsync();
-            //    if (result == ContentDialogResult.Primary)
-            //    {
-            //        var channel = With as TLChannel;
-
-            //        if (dialog.DeleteAll)
-            //        {
-            //            // TODO
-            //        }
-            //        else
-            //        {
-            //            var messages = new List<TLMessageBase>() { messageBase };
-            //            if (messageBase.Id == 0 && messageBase.RandomId != 0L)
-            //            {
-            //                DeleteMessagesInternal(null, messages);
-            //                return;
-            //            }
-
-            //            DeleteMessages(null, null, messages, true, null, DeleteMessagesInternal);
-            //        }
-
-            //        if (dialog.BanUser)
-            //        {
-            //            var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
-            //            if (response.IsSucceeded)
-            //            {
-            //                var updates = response.Result as TLUpdates;
-            //                if (updates != null)
-            //                {
-            //                    var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
-            //                    if (newChannelMessageUpdate != null)
-            //                    {
-            //                        Aggregator.Publish(newChannelMessageUpdate.Message);
-            //                    }
-            //                }
-            //            }
-            //        }
-
-            //        if (dialog.ReportSpam)
-            //        {
-            //            var response = await ProtoService.ReportSpamAsync(channel.ToInputChannel(), message.From.ToInputUser(), new TLVector<int> { message.Id });
-            //        }
-            //    }
-            //}
-            //else
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeBasicGroup)
             {
-                var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Resources.Message;
-                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
-                dialog.PrimaryButtonText = Strings.Resources.OK;
-                dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-                var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
-                var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
-
-                if (canBeDeletedForAllUsers && canBeDeletedOnlyForSelf)
+                if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                 {
-                    if (chat.Type is ChatTypePrivate privata)
+                    dialog.Message = chat.Type is ChatTypePrivate && user != null
+                        ? string.Format(Strings.Resources.DeleteMessagesText, Locale.Declension("Messages", messages.Count), user.FirstName)
+                        : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("Messages", messages.Count));
+
+                    dialog.CheckBoxLabel = Strings.Resources.DeleteMessagesOption;
+                }
+                else
+                {
+                    dialog.Message = messages.Count == 1
+                        ? Strings.Resources.AreYouSureDeleteSingleMessage
+                        : Strings.Resources.AreYouSureDeleteFewMessages;
+
+                    if (canBeDeletedForAllUsers)
                     {
-                        var user = ProtoService.GetUser(privata.UserId);
-                        if (user != null && !(user.Type is UserTypeBot))
-                        {
-                            dialog.CheckBoxLabel = string.Format(Strings.Resources.DeleteForUser, ProtoService.GetTitle(chat));
-                        }
-                    }
-                    else if (chat.Type is ChatTypeBasicGroup)
-                    {
-                        dialog.CheckBoxLabel = Strings.Resources.DeleteForAll;
+                        dialog.CheckBoxLabel = chat.Type is ChatTypePrivate && user != null
+                            ? string.Format(Strings.Resources.DeleteMessagesOptionAlso, user.FirstName)
+                            : Strings.Resources.DeleteForAll;
                     }
                 }
+            }
+            else if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+            {
+                dialog.Message = messages.Count == 1
+                    ? Strings.Resources.AreYouSureDeleteSingleMessageMega
+                    : Strings.Resources.AreYouSureDeleteFewMessagesMega;
+            }
+            else
+            {
+                dialog.Message = messages.Count == 1
+                    ? Strings.Resources.AreYouSureDeleteSingleMessage
+                    : Strings.Resources.AreYouSureDeleteFewMessages;
+            }
 
-                var result = await dialog.ShowQueuedAsync();
-                if (result == ContentDialogResult.Primary)
-                {
-                    SelectionMode = ListViewSelectionMode.None;
+            var result = await dialog.ShowQueuedAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                SelectionMode = ListViewSelectionMode.None;
 
-                    ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.IsChecked == true));
-                }
+                ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.IsChecked == true));
             }
         }
 
@@ -392,13 +329,13 @@ namespace Unigram.ViewModels
 
                 await ShareView.GetForCurrentView().ShowAsync(messages);
 
-                TextField?.FocusMaybe(FocusState.Keyboard);
+                TextField?.Focus(FocusState.Programmatic);
             }
         }
 
         private bool MessagesForwardCanExecute()
         {
-            return SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeForwarded);
+            return SelectedItems.Count > 0 && SelectedItems.Count <= CacheService.Options.ForwardedMessageCountMax && SelectedItems.All(x => x.CanBeForwarded);
         }
 
         #endregion
@@ -446,6 +383,11 @@ namespace Unigram.ViewModels
                         var from = ProtoService.GetUser(forwardedFromUser.SenderUserId);
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.Resources.From} {from.GetFullName()}]");
+                    }
+                    else if (message.ForwardInfo is MessageForwardedFromHiddenUser forwardedFromHiddenUser)
+                    {
+                        builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
+                        builder.AppendLine($"[{Strings.Resources.From} {forwardedFromHiddenUser.SenderName}]");
                     }
 
                     if (message.ReplyToMessage != null)
@@ -673,11 +615,10 @@ namespace Unigram.ViewModels
         {
             DisposeSearch();
 
-            //var messageCommon = message as TLMessageCommonBase;
-            //if (messageCommon == null)
-            //{
-            //    return;
-            //}
+            if (message.MediaAlbumId != 0 && _groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+            {
+                message = group;
+            }
 
             SelectionMode = ListViewSelectionMode.Multiple;
             ListField?.SelectedItems.Add(message);
@@ -812,12 +753,28 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetPublicMessageLink(chat.Id, message.Id, false));
-            if (response is PublicMessageLink link)
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup != null && string.IsNullOrEmpty(supergroup.Username))
             {
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(link.Link);
-                ClipboardEx.TrySetContent(dataPackage);
+                var response = await ProtoService.SendAsync(new GetMessageLink(chat.Id, message.Id));
+                if (response is HttpUrl link)
+                {
+                    var dataPackage = new DataPackage();
+                    dataPackage.SetText(link.Url);
+                    ClipboardEx.TrySetContent(dataPackage);
+
+                    await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
+            else
+            {
+                var response = await ProtoService.SendAsync(new GetPublicMessageLink(chat.Id, message.Id, false));
+                if (response is PublicMessageLink link)
+                {
+                    var dataPackage = new DataPackage();
+                    dataPackage.SetText(link.Link);
+                    ClipboardEx.TrySetContent(dataPackage);
+                }
             }
         }
 
@@ -1010,16 +967,6 @@ namespace Unigram.ViewModels
         #endregion
 
         #region Keyboard button
-
-        private Message _replyMarkupMessage;
-
-        public Message EditedMessage
-        {
-            get
-            {
-                return null;
-            }
-        }
 
         public async void KeyboardButtonExecute(MessageViewModel message, object button)
         {
@@ -1533,7 +1480,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new StopPoll(message.ChatId, message.Id));
+            ProtoService.Send(new StopPoll(message.ChatId, message.Id, null));
         }
 
         #endregion

@@ -40,16 +40,17 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Controls.Views;
 using Unigram.Converters;
+using Windows.Graphics.Imaging;
+using System.Collections;
+using System.Globalization;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatTextBox : RichEditBox
+    public class ChatTextBox : FormattedTextBox
     {
         private ContentControl InlinePlaceholderTextContentPresenter;
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
-
-        private readonly IDisposable _textChangedSubscription;
 
         public ChatTextBox()
         {
@@ -67,358 +68,6 @@ namespace Unigram.Controls.Chats
 
             SelectionChanged += OnSelectionChanged;
             TextChanged += OnTextChanged;
-
-            var textChangedEvents = Observable.FromEventPattern<RoutedEventHandler, RoutedEventArgs>(
-                keh => { TextChanged += keh; },
-                keh => { TextChanged -= keh; });
-
-            _textChangedSubscription = textChangedEvents
-                .Throttle(TimeSpan.FromMilliseconds(200))
-                .Subscribe(e => this.BeginOnUIThread(() => UpdateInlineBot(true)));
-
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
-
-            ContextFlyout = new MenuFlyout();
-            ContextFlyout.Opening += OnContextFlyoutOpening;
-
-            //ContextMenuOpening += OnContextMenuOpening;
-
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
-            {
-                DisabledFormattingAccelerators = DisabledFormattingAccelerators.All;
-            }
-
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAcceleratorPlacementMode"))
-            {
-                KeyboardAcceleratorPlacementMode = KeyboardAcceleratorPlacementMode.Hidden;
-
-                CreateKeyboardAccelerator(VirtualKey.B);
-                CreateKeyboardAccelerator(VirtualKey.I);
-                CreateKeyboardAccelerator(VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-                CreateKeyboardAccelerator(VirtualKey.K);
-                CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            }
-        }
-
-        #region Context menu
-
-        private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void OnContextFlyoutOpening(object sender, object e)
-        {
-            var flyout = ContextFlyout as MenuFlyout;
-            if (flyout == null)
-            {
-                return;
-            }
-
-            flyout.Items.Clear();
-
-            //if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
-            //{
-            //    var sub = new MenuFlyoutItem();
-            //    sub.Text = "Proofing";
-            //    sub.Click += (s, args) =>
-            //    {
-            //        proofing.ShowAt(this);
-            //    };
-
-            //    flyout.Items.Add(sub);
-            //    flyout.Items.Add(new MenuFlyoutSeparator());
-            //}
-
-            var selection = Document.Selection;
-            var format = Document.Selection.CharacterFormat;
-
-            var length = Math.Abs(selection.Length) > 0;
-
-            var clipboard = Clipboard.GetContent();
-
-            var clone = Document.Selection.GetClone();
-            clone.StartOf(TextRangeUnit.Link, true);
-            var mention = TryGetUserId(clone, out int userId);
-
-            var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
-            CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, "Bold", null, VirtualKey.B);
-            CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, "Italic", null, VirtualKey.I);
-            CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, "Monospace", null, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : "Create link", null, VirtualKey.K);
-            formatting.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, "Plain text", null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-
-            CreateFlyoutItem(flyout.Items, Document.CanUndo(), ContextUndo_Click, "Undo", new FontIcon { Glyph = Icons.Undo }, VirtualKey.Z);
-            CreateFlyoutItem(flyout.Items, Document.CanRedo(), ContextRedo_Click, "Redo", new FontIcon { Glyph = Icons.Redo }, VirtualKey.Y);
-            flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCut_Click, "Cut", new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
-            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCopy_Click, "Copy", new FontIcon { Glyph = Icons.Copy }, VirtualKey.C);
-            CreateFlyoutItem(flyout.Items, Document.CanPaste(), ContextPaste_Click, "Paste", new FontIcon { Glyph = Icons.Paste }, VirtualKey.V);
-            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, "Delete");
-            flyout.Items.Add(new MenuFlyoutSeparator());
-            flyout.Items.Add(formatting);
-            flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
-        }
-
-        private void ContextBold_Click()
-        {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
-
-            Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
-            Document.Selection.CharacterFormat.Bold = FormatEffect.On;
-            Document.ApplyDisplayUpdates();
-        }
-
-        private void ContextItalic_Click()
-        {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
-
-            Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
-            Document.Selection.CharacterFormat.Italic = FormatEffect.On;
-            Document.ApplyDisplayUpdates();
-        }
-
-        private void ContextMonospace_Click()
-        {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
-
-            Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
-            Document.Selection.CharacterFormat.Name = "Consolas";
-            Document.ApplyDisplayUpdates();
-        }
-
-        private async void ContextLink_Click()
-        {
-            var range = Document.Selection.GetClone();
-            var clone = Document.Selection.GetClone();
-            clone.StartOf(TextRangeUnit.Link, true);
-
-            if (clone.Link.Length > 0)
-            {
-                range.Expand(TextRangeUnit.Link);
-            }
-
-            range.GetText(TextGetOptions.NoHidden, out string text);
-
-            var start = Math.Min(range.StartPosition, range.EndPosition);
-            var end = Math.Max(range.StartPosition, range.EndPosition);
-
-            var dialog = new CreateLinkView(ViewModel.ProtoService);
-            dialog.Text = text;
-            dialog.Link = range.Link.Trim('"');
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            Document.BatchDisplayUpdates();
-            range.SetRange(start, end);
-            range.CharacterFormat = Document.GetDefaultCharacterFormat();
-
-            range.SetText(end > start ? TextSetOptions.Unlink : TextSetOptions.None, dialog.Text);
-            range.SetRange(start, start + dialog.Text.Length);
-            range.Link = $"\"{dialog.Link}\"";
-
-            Document.Selection.SetRange(range.EndPosition, range.EndPosition);
-            Document.ApplyDisplayUpdates();
-        }
-
-        private void ContextPlain_Click()
-        {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
-
-            Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
-            Document.ApplyDisplayUpdates();
-        }
-
-        private void ClearStyle(ITextRange range)
-        {
-            var start = Math.Min(range.StartPosition, range.EndPosition);
-            var end = Math.Max(range.StartPosition, range.EndPosition);
-
-            range.SetRange(start, end);
-            range.CharacterFormat = Document.GetDefaultCharacterFormat();
-
-            range.GetText(TextGetOptions.NoHidden, out string text);
-            range.SetText(TextSetOptions.Unlink, text);
-            range.SetRange(start, start + text.Length);
-        }
-
-        private bool IsDefault(ITextCharacterFormat format)
-        {
-            return IsEqual(format, Document.GetDefaultCharacterFormat());
-        }
-
-        private bool IsEqual(ITextCharacterFormat format, ITextCharacterFormat document)
-        {
-            return document.AllCaps == format.AllCaps &&
-                document.BackgroundColor == format.BackgroundColor &&
-                document.Bold == format.Bold &&
-                document.FontStretch == format.FontStretch &&
-                document.FontStyle == format.FontStyle &&
-                document.ForegroundColor == format.ForegroundColor &&
-                document.Hidden == format.Hidden &&
-                document.Italic == format.Italic &&
-                document.Kerning == format.Kerning &&
-                //document.LanguageTag == format.LanguageTag &&
-                document.LinkType == format.LinkType &&
-                document.Name == format.Name &&
-                document.Outline == format.Outline &&
-                document.Position == format.Position &&
-                document.ProtectedText == format.ProtectedText &&
-                document.Size == format.Size &&
-                document.SmallCaps == format.SmallCaps &&
-                document.Spacing == format.Spacing &&
-                document.Strikethrough == format.Strikethrough &&
-                document.Subscript == format.Subscript &&
-                document.Superscript == format.Superscript &&
-                //document.TextScript == format.TextScript &&
-                document.Underline == format.Underline &&
-                document.Weight == format.Weight;
-        }
-
-        private bool TryGetUserId(ITextRange range, out int userId)
-        {
-            var link = range.Link.Trim('"');
-            if (link.StartsWith("tg-user://") && int.TryParse(link.Substring("tg-user://".Length), out userId))
-            {
-                return true;
-            }
-
-            userId = 0;
-            return false;
-        }
-
-        private void ContextUndo_Click()
-        {
-            Document.Undo();
-        }
-
-        private void ContextRedo_Click()
-        {
-            Document.Redo();
-        }
-
-        private void ContextCut_Click()
-        {
-            Document.Selection.Cut();
-        }
-
-        private void ContextCopy_Click()
-        {
-            Document.Selection.Copy();
-        }
-
-        private void ContextPaste_Click()
-        {
-            //Document.Selection.Paste(0);
-            OnPaste(this, null);
-        }
-
-        private void ContextDelete_Click()
-        {
-            Document.Selection.SetText(TextSetOptions.None, string.Empty);
-        }
-
-        private void ContextSelectAll_Click()
-        {
-            Document.Selection.Expand(TextRangeUnit.Paragraph);
-        }
-
-        private void CreateFlyoutItem(IList<MenuFlyoutItemBase> flyout, bool create, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
-        {
-            var flyoutItem = new MenuFlyoutItem();
-            flyoutItem.IsEnabled = create;
-            flyoutItem.Command = new RelayCommand(command);
-            flyoutItem.Text = text;
-
-            if (icon != null && ApiInfo.CanUseFlyoutIcons)
-            {
-                flyoutItem.Icon = icon;
-            }
-
-            if (key.HasValue && ApiInfo.CanUseAccelerators)
-            {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
-            }
-
-            flyout.Add(flyoutItem);
-        }
-
-        private void CreateKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
-        {
-            if (ApiInfo.CanUseAccelerators)
-            {
-                var accelerator = new KeyboardAccelerator { Modifiers = modifiers, Key = key, ScopeOwner = this };
-                accelerator.Invoked += FlyoutAccelerator_Invoked;
-
-                KeyboardAccelerators.Add(accelerator);
-            }
-        }
-
-        private void FlyoutAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-        {
-            args.Handled = true;
-
-            var selection = Document.Selection;
-            var format = Document.Selection.CharacterFormat;
-
-            var length = Math.Abs(selection.Length) > 0;
-
-            if (sender.Key == VirtualKey.B && sender.Modifiers == VirtualKeyModifiers.Control)
-            {
-                ContextBold_Click();
-            }
-            else if (sender.Key == VirtualKey.I && sender.Modifiers == VirtualKeyModifiers.Control && length && format.Italic == FormatEffect.Off)
-            {
-                ContextItalic_Click();
-            }
-            else if (sender.Key == VirtualKey.M && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.Name != "Consolas")
-            {
-                ContextMonospace_Click();
-            }
-            else if (sender.Key == VirtualKey.K && sender.Modifiers == VirtualKeyModifiers.Control)
-            {
-                ContextLink_Click();
-            }
-            else if (sender.Key == VirtualKey.N && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && !IsDefault(format))
-            {
-                ContextPlain_Click();
-            }
-        }
-
-        #endregion
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         protected override void OnApplyTemplate()
@@ -453,6 +102,11 @@ namespace Unigram.Controls.Chats
             base.OnTapped(e);
         }
 
+        protected override void OnPaste()
+        {
+            OnPaste(null, null);
+        }
+
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
@@ -467,17 +121,14 @@ namespace Unigram.Controls.Chats
 
                 var bitmap = await package.GetBitmapAsync();
                 var media = new ObservableCollection<StorageMedia>();
-                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
                 using (var stream = await bitmap.OpenReadAsync())
-                using (var reader = new DataReader(stream))
                 {
-                    await reader.LoadAsync((uint)stream.Size);
-                    var buffer = new byte[(int)stream.Size];
-                    reader.ReadBytes(buffer);
-                    await FileIO.WriteBytesAsync(cache, buffer);
-
-                    var photo = await StoragePhoto.CreateAsync(cache, true);
+                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
+                    var photo = await StoragePhoto.CreateAsync(result, true);
                     if (photo == null)
                     {
                         return;
@@ -619,104 +270,6 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private void OnSelectionChanged(object sender, RoutedEventArgs e)
-        {
-            OnSelectionChanged();
-        }
-
-        private void OnSelectionChanged()
-        {
-            //if (Document.Selection.Length != 0)
-            //{
-            //    Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
-            //    _flyout.ShowAt(this, new Point(rect.X + 12, rect.Y - _presenter?.ActualHeight ?? 0));
-            //}
-            //else
-            //{
-            //    _flyout.Hide();
-            //}
-        }
-
-        //protected override async void OnKeyDown(KeyRoutedEventArgs e)
-        //{
-        //    if (e.Key == VirtualKey.Enter)
-        //    {
-        //        // Check if CTRL or Shift is also pressed in addition to Enter key.
-        //        var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-        //        var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-
-        //        // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-        //        if (!ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down) && !IsEmpty)
-        //        {
-        //            e.Handled = true;
-        //            await SendAsync();
-        //        }
-        //    }
-
-        //    base.OnKeyDown(e);
-        //}
-
-        private async void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-            if ((args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.Tab) && args.EventType == CoreAcceleratorKeyEventType.KeyDown && FocusState != FocusState.Unfocused)
-            {
-                // Check if CTRL or Shift is also pressed in addition to Enter key.
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-                var key = Window.Current.CoreWindow.GetKeyState(VirtualKey.Enter);
-
-                if (Autocomplete != null && ViewModel.Autocomplete != null && Autocomplete.Items.Count > 0)
-                {
-                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send || args.VirtualKey == VirtualKey.Tab)
-                    {
-                        AcceptsReturn = false;
-                        var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as ListViewItem;
-                        if (container != null)
-                        {
-                            var peer = new ListViewItemAutomationPeer(container);
-                            var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                            provider.Invoke();
-                        }
-                    }
-                    else
-                    {
-                        AcceptsReturn = true;
-                    }
-
-                    return;
-                }
-
-                // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (ViewModel.Settings.IsSendByEnterEnabled)
-                {
-                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send)
-                    {
-                        await SendAsync();
-                        AcceptsReturn = false;
-                    }
-                    else
-                    {
-                        AcceptsReturn = true;
-                    }
-                }
-                else
-                {
-                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send)
-                    {
-                        await SendAsync();
-                        AcceptsReturn = false;
-                    }
-                    else
-                    {
-                        AcceptsReturn = true;
-                    }
-                }
-            }
-        }
-
         public ListView Messages { get; set; }
         public ListView Autocomplete { get; set; }
 
@@ -731,13 +284,6 @@ namespace Unigram.Controls.Chats
 
                 FormatText();
 
-                Document.GetText(TextGetOptions.NoHidden, out string text);
-
-                if (MessageHelper.IsValidUsername(text))
-                {
-                    ViewModel.ResolveInlineBot(text);
-                }
-
                 var clone = Document.Selection.GetClone();
                 var end = clone.EndOf(TextRangeUnit.CharacterFormat, true);
 
@@ -750,7 +296,7 @@ namespace Unigram.Controls.Chats
                     Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
                 }
             }
-            else if ((e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.PageUp || e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Tab))
+            else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.PageUp || e.Key == VirtualKey.PageDown)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -769,16 +315,6 @@ namespace Unigram.Controls.Chats
                 else if (e.Key == VirtualKey.Down && ctrl)
                 {
                     ViewModel.MessageReplyNextCommand.Execute();
-                    e.Handled = true;
-                }
-                else if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.PageUp && ctrl) || (e.Key == VirtualKey.Tab && ctrl && shift))
-                {
-                    //ViewModel.Aggregator.Publish("move_up");
-                    e.Handled = true;
-                }
-                else if ((e.Key == VirtualKey.Down && alt) || (e.Key == VirtualKey.PageDown && ctrl) || (e.Key == VirtualKey.Tab && ctrl && !shift))
-                {
-                    //ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
                 }
                 else if ((e.Key == VirtualKey.PageUp || e.Key == VirtualKey.Up) && Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
@@ -820,16 +356,65 @@ namespace Unigram.Controls.Chats
                         e.Handled = true;
                     }
                 }
-                else if (e.Key == VirtualKey.Tab && Autocomplete != null && ViewModel.Autocomplete != null)
+            }
+            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null)
+            {
+                var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as ListViewItem;
+                if (container != null)
                 {
-                    e.Handled = true;
+                    var peer = new ListViewItemAutomationPeer(container);
+                    var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                    provider.Invoke();
+                }
+
+                Logs.Logger.Debug(Logs.Target.Chat, "Tab pressed and handled");
+                e.Handled = true;
+            }
+            else if (e.Key == VirtualKey.Tab)
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                if (ctrl)
+                {
+                    return;
                 }
             }
-            //else if (e.Key == VirtualKey.Escape && ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)
-            //{
-            //    ViewModel.ClearReplyCommand.Execute();
-            //    e.Handled = true;
-            //}
+            else if (e.Key == VirtualKey.Enter)
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+                var send = false;
+
+                if (ViewModel.Settings.IsSendByEnterEnabled)
+                {
+                    send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                }
+                else
+                {
+                    send = ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                }
+
+                AcceptsReturn = !send;
+                e.Handled = send;
+
+                if (send)
+                {
+                    _ = SendAsync();
+                }
+            }
+            else if (e.Key == VirtualKey.X && Math.Abs(Document.Selection.Length) == 4)
+            {
+                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                if (alt)
+                {
+                    Document.Selection.GetText(TextGetOptions.NoHidden, out string hex);
+
+                    if (int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int result))
+                    {
+                        Document.Selection.SetText(TextSetOptions.None, new string((char)result, 1));
+                    }
+                }
+            }
 
             if (!e.Handled)
             {
@@ -839,46 +424,8 @@ namespace Unigram.Controls.Chats
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
-            AcceptsReturn = false;
+            //AcceptsReturn = false;
             UpdateText();
-            UpdateInlineBot(false);
-
-            //string result;
-            //if (SearchByStickers(this.Text, out result))
-            //{
-            //    this.GetStickerHints(result);
-            //}
-            //else
-            //{
-            //    this.ClearStickerHints();
-            //}
-
-            //if (SearchInlineBotResults(this.Text, out result))
-            //{
-            //    this.GetInlineBotResults(result);
-            //}
-            //else
-            //{
-            //    this.ClearInlineBotResults();
-            //}
-
-            //if (SearchByUsernames(this.Text, out result))
-            //{
-            //    this.GetUsernameHints(result);
-            //}
-            //else
-            //{
-            //    this.ClearUsernameHints();
-            //}
-
-            //if (SearchByCommands(this.Text, out result))
-            //{
-            //    this.GetCommandHints(result);
-            //}
-            //else
-            //{
-            //    this.ClearCommandHints();
-            //}
 
             if (IsEmpty == false)
             {
@@ -886,72 +433,112 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private void UpdateInlineBot(bool fast)
+        private async void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            //var text = Text.Substring(0, Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition));
-            var text = Text;
-            var query = string.Empty;
-            var inline = SearchInlineBotResults(text, out query);
-            if (inline && fast)
+            Document.GetText(TextGetOptions.NoHidden, out string text);
+
+            // This needs to run before text empty check as it cleans up
+            // some stuff it inline bot isn't found
+            if (SearchInlineBotResults(text, out string inlineQuery))
             {
                 ViewModel.Autocomplete = null;
-                ViewModel.GetInlineBotResults(query);
+                ViewModel.StickerPack = null;
+
+                ViewModel.GetInlineBotResults(inlineQuery);
+                return;
             }
-            else if (!inline)
+
+            if (string.IsNullOrEmpty(text) || Document.Selection.Length != 0)
             {
+                ViewModel.StickerPack = null;
+                ViewModel.Autocomplete = null;
+                return;
+            }
+
+            if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
+            {
+                ViewModel.Autocomplete = null;
                 ViewModel.CurrentInlineBot = null;
                 ViewModel.InlineBotResults = null;
                 InlinePlaceholderText = string.Empty;
 
-                if (fast)
+                ViewModel.StickerPack = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
+                return;
+            }
+
+            var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
+
+            if (TryGetAutocomplete(text, query, out var autocomplete))
+            {
+                ViewModel.StickerPack = null;
+                ViewModel.CurrentInlineBot = null;
+                ViewModel.InlineBotResults = null;
+                InlinePlaceholderText = string.Empty;
+
+                ViewModel.Autocomplete = autocomplete;
+            }
+            else
+            {
+                ViewModel.StickerPack = null;
+                ViewModel.Autocomplete = null;
+
+                if (SearchByInlineBot(query, out string username, out int index) && await ViewModel.ResolveInlineBotAsync(username))
                 {
-                    if (Emoji.ContainsSingleEmoji(text) && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
-                    {
-                        ViewModel.StickerPack = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
-                    }
-                    else
+                    if (SearchInlineBotResults(text, out query))
                     {
                         ViewModel.StickerPack = null;
-                    }
-                }
-                else
-                {
-                    ViewModel.StickerPack = null;
-
-                    if (SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out int index))
-                    {
-                        var chat = ViewModel.Chat;
-                        if (chat == null)
-                        {
-                            return;
-                        }
-
-                        var members = true;
-                        if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret || chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
-                        {
-                            members = false;
-                        }
-
-                        ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, index == 0, members);
-                    }
-                    else if (SearchByHashtag(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string hashtag, out int index2))
-                    {
-                        ViewModel.Autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
-                    }
-                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
-                    {
-                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement.Length < 2 ? replacement : replacement.ToLower());
-                    }
-                    else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
-                    {
-                        ViewModel.Autocomplete = GetCommands(command.ToLower());
-                    }
-                    else
-                    {
                         ViewModel.Autocomplete = null;
+
+                        ViewModel.GetInlineBotResults(query);
+                        return;
                     }
                 }
+
+                ViewModel.StickerPack = null;
+                ViewModel.CurrentInlineBot = null;
+                ViewModel.InlineBotResults = null;
+                InlinePlaceholderText = string.Empty;
             }
+        }
+
+        private bool TryGetAutocomplete(string text, string query, out ICollection autocomplete)
+        {
+            if (SearchByUsername(query, out string username, out int index))
+            {
+                var chat = ViewModel.Chat;
+                if (chat == null)
+                {
+                    autocomplete = null;
+                    return false;
+                }
+
+                var members = true;
+                if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret || chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                {
+                    members = false;
+                }
+
+                autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, index == 0, members);
+                return true;
+            }
+            else if (SearchByHashtag(query, out string hashtag, out int index2))
+            {
+                autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
+                return true;
+            }
+            else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
+            {
+                autocomplete = EmojiSuggestion.GetSuggestions(replacement.Length < 2 ? replacement : replacement.ToLower());
+                return true;
+            }
+            else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
+            {
+                autocomplete = GetCommands(command.ToLower());
+                return true;
+            }
+
+            autocomplete = null;
+            return false;
         }
 
         private List<UserCommand> GetCommands(string command)
@@ -1075,6 +662,167 @@ namespace Unigram.Controls.Chats
             public bool HasMoreItems => _hasMore;
         }
 
+        private void UpdateText()
+        {
+            Document.GetText(TextGetOptions.NoHidden, out string text);
+            Text = text;
+        }
+
+        private void FormatText()
+        {
+            if (!ViewModel.Settings.IsReplaceEmojiEnabled)
+            {
+                return;
+            }
+
+            Document.GetText(TextGetOptions.NoHidden, out string text);
+
+            var caretPosition = Document.Selection.StartPosition;
+            var result = Emoticon.Pattern.Matches(text);
+
+            Document.BatchDisplayUpdates();
+
+            foreach (Match match in result)
+            {
+                var emoticon = match.Groups[1].Value;
+                var emoji = Emoticon.Replace(emoticon);
+                if (match.Index + match.Length < caretPosition)
+                {
+                    caretPosition += emoji.Length - emoticon.Length;
+                }
+                if (match.Value.StartsWith(" "))
+                {
+                    emoji = $" {emoji}";
+                }
+
+                Document.GetRange(match.Index, match.Index + match.Length).SetText(TextSetOptions.None, emoji);
+            }
+
+            Document.ApplyDisplayUpdates();
+            Document.Selection.SetRange(caretPosition, caretPosition);
+        }
+
+        public async Task SendAsync()
+        {
+            await ViewModel.SendMessageAsync(GetFormattedText(true));
+        }
+
+        protected override void OnGettingFormattedText()
+        {
+            FormatText();
+        }
+
+        public override bool IsEmpty
+        {
+            get
+            {
+                var isEmpty = string.IsNullOrWhiteSpace(Text);
+                if (isEmpty)
+                {
+                    Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
+                }
+
+                return isEmpty;
+            }
+        }
+
+        #region Username
+
+        public static bool SearchByUsername(string text, out string searchText, out int index)
+        {
+            index = -1;
+            searchText = string.Empty;
+
+            var found = true;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == '@')
+                {
+                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
+                    {
+                        index = i;
+                        break;
+                    }
+
+                    found = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
+                    {
+                        found = false;
+                        break;
+                    }
+
+                    i--;
+                }
+            }
+
+            if (found)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart('@');
+            }
+
+            return found;
+        }
+
+        public static bool SearchByInlineBot(string text, out string searchText, out int index)
+        {
+            index = -1;
+            searchText = string.Empty;
+
+            var found = true;
+            var i = 0;
+
+            while (i < text.Length)
+            {
+                if (i == 0 && text[i] != '@')
+                {
+                    found = false;
+                    break;
+                }
+                else if (text[i] == ' ')
+                {
+                    index = i;
+                    break;
+                }
+                else if (text[i] == '@')
+                {
+                    i++;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
+                    {
+                        found = false;
+                        break;
+                    }
+
+                    i++;
+                }
+            }
+
+            if (found)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(0, index).TrimStart('@');
+            }
+
+            return found;
+        }
+
         public static bool SearchByCommand(string text, out string searchText)
         {
             searchText = string.Empty;
@@ -1161,196 +909,6 @@ namespace Unigram.Controls.Chats
             }
 
             return flag;
-        }
-
-        private void UpdateText()
-        {
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-            Text = text;
-        }
-
-        private void FormatText()
-        {
-            if (!ViewModel.Settings.IsReplaceEmojiEnabled)
-            {
-                return;
-            }
-
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            var caretPosition = Document.Selection.StartPosition;
-            var result = Emoticon.Pattern.Matches(text);
-
-            Document.BatchDisplayUpdates();
-
-            foreach (Match match in result)
-            {
-                var emoticon = match.Groups[1].Value;
-                var emoji = Emoticon.Replace(emoticon);
-                if (match.Index + match.Length < caretPosition)
-                {
-                    caretPosition += emoji.Length - emoticon.Length;
-                }
-                if (match.Value.StartsWith(" "))
-                {
-                    emoji = $" {emoji}";
-                }
-
-                Document.GetRange(match.Index, match.Index + match.Length).SetText(TextSetOptions.None, emoji);
-            }
-
-            Document.ApplyDisplayUpdates();
-            Document.Selection.SetRange(caretPosition, caretPosition);
-        }
-
-        public async Task SendAsync()
-        {
-            await ViewModel.SendMessageAsync(GetFormattedText(true));
-        }
-
-        public FormattedText GetFormattedText(bool clear = false)
-        {
-            FormatText();
-
-            Document.BatchDisplayUpdates();
-
-            var entities = new List<TextEntity>();
-            var adjust = 0;
-
-            var end = false;
-            for (int i = 0; !end; i++)
-            {
-                var range = Document.GetRange(i, i + 1);
-                if (range.Expand(TextRangeUnit.Bold) > 0)
-                {
-                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeBold() });
-                }
-                else if (range.Expand(TextRangeUnit.Italic) > 0)
-                {
-                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeItalic() });
-                }
-                else if (range.Expand(TextRangeUnit.Link) > 0)
-                {
-                    range.GetText(TextGetOptions.NoHidden, out string value);
-
-                    if (TryGetUserId(range, out int userId))
-                    {
-                        entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = value.Length, Type = new TextEntityTypeMentionName { UserId = userId } });
-                    }
-                    else
-                    {
-                        entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = value.Length, Type = new TextEntityTypeTextUrl { Url = range.Link.Trim('"') } });
-                    }
-
-                    adjust += Math.Abs(range.Length) - value.Length;
-                }
-                else if (range.Expand(TextRangeUnit.CharacterFormat) > 0)
-                {
-                    range.GetText(TextGetOptions.NoHidden, out string value);
-
-                    if (range.CharacterFormat.Name.Equals("Consolas"))
-                    {
-                        if (value.Contains('\v') || value.Contains('\r'))
-                        {
-                            entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypePre() });
-                        }
-                        else
-                        {
-                            entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeCode() });
-                        }
-                    }
-                    else if (value.Length > 0)
-                    {
-                        var sub = Markdown.Parse(ViewModel.ProtoService, ref value);
-                        if (sub != null && sub.Count > 0)
-                        {
-                            range.SetText(TextSetOptions.None, value);
-
-                            foreach (var entity in sub)
-                            {
-                                entity.Offset = range.StartPosition + entity.Offset;
-                                entities.Add(entity);
-                            }
-                        }
-                    }
-                }
-
-                end = i >= range.EndPosition;
-                i = range.EndPosition;
-            }
-
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            if (clear)
-            {
-                Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
-            }
-
-            Document.ApplyDisplayUpdates();
-
-            return new FormattedText(text.Replace('\v', '\n').Replace('\r', '\n'), entities);
-        }
-
-        public bool IsEmpty
-        {
-            get
-            {
-                var isEmpty = string.IsNullOrWhiteSpace(Text);
-                if (isEmpty)
-                {
-                    Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
-                }
-
-                return isEmpty;
-            }
-        }
-
-        #region Username
-
-        public static bool SearchByUsername(string text, out string searchText, out int index)
-        {
-            index = -1;
-            searchText = string.Empty;
-
-            var found = true;
-            var i = text.Length - 1;
-
-            while (i >= 0)
-            {
-                if (text[i] == '@')
-                {
-                    if (i == 0 || text[i - 1] == ' ' || text[i - 1] == '\n' || text[i - 1] == '\r' || text[i - 1] == '\v')
-                    {
-                        index = i;
-                        break;
-                    }
-
-                    found = false;
-                    break;
-                }
-                else
-                {
-                    if (!MessageHelper.IsValidUsernameSymbol(text[i]))
-                    {
-                        found = false;
-                        break;
-                    }
-
-                    i--;
-                }
-            }
-
-            if (found)
-            {
-                if (index == -1)
-                {
-                    return false;
-                }
-
-                searchText = text.Substring(index).TrimStart('@');
-            }
-
-            return found;
         }
 
         public static bool SearchByHashtag(string text, out string searchText, out int index)
@@ -1477,9 +1035,9 @@ namespace Unigram.Controls.Chats
             if (InlinePlaceholderTextContentPresenter != null)
             {
                 var placeholder = Text;
-                if (!placeholder.EndsWith(" "))
+                if (placeholder == null)
                 {
-                    placeholder += " ";
+                    return;
                 }
 
                 var range = Document.GetRange(Text.Length, Text.Length);
@@ -1540,61 +1098,5 @@ namespace Unigram.Controls.Chats
         }
 
         #endregion
-
-        public void SetText(FormattedText formatted)
-        {
-            if (formatted != null)
-            {
-                SetText(formatted.Text, formatted.Entities);
-            }
-        }
-
-        public void SetText(string text, IList<TextEntity> entities)
-        {
-            Document.BatchDisplayUpdates();
-            Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
-
-            if (!string.IsNullOrEmpty(text))
-            {
-                Document.SetText(TextSetOptions.None, text);
-
-                if (entities != null && entities.Count > 0)
-                {
-                    // We want to enumerate entities from last to first to not
-                    // fuck up ranges due to hidden texts when formatting a link
-                    foreach (var entity in entities.Reverse())
-                    {
-                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
-
-                        if (entity.Type is TextEntityTypeBold)
-                        {
-                            range.CharacterFormat.Bold = FormatEffect.On;
-                        }
-                        else if (entity.Type is TextEntityTypeItalic)
-                        {
-                            range.CharacterFormat.Italic = FormatEffect.On;
-                        }
-                        else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
-                        {
-                            range.CharacterFormat.Name = "Consolas";
-                        }
-                        else if (entity.Type is TextEntityTypeTextUrl textUrl)
-                        {
-                            range.Link = $"\"{textUrl.Url}\"";
-                        }
-                        else if (entity.Type is TextEntityTypeMentionName mentionName)
-                        {
-                            range.Link = $"\"tg-user://{mentionName.UserId}\"";
-                        }
-                    }
-                }
-
-                // We need to get full text as hidden content has been added and we don't want to hardcode lengths
-                Document.GetText(TextGetOptions.None, out string result);
-                Document.Selection.SetRange(result.Length, result.Length);
-            }
-
-            Document.ApplyDisplayUpdates();
-        }
     }
 }

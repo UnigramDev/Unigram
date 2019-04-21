@@ -86,7 +86,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnBackRequested(object sender, HandledEventArgs args)
+        private void OnBackRequested(object sender, HandledRoutedEventArgs args)
         {
             //var type = BackStackType.Navigation;
             //if (_backStack.Count > 0)
@@ -94,6 +94,15 @@ namespace Unigram.Controls
             //    type = _backStack.Last.Value;
             //    _backStack.RemoveLast();
             //}
+
+            if (ParentFrame.Content is INavigatingPage masterPaging && CurrentState != MasterDetailState.Minimal)
+            {
+                masterPaging.OnBackRequesting(args);
+                if (args.Handled)
+                {
+                    return;
+                }
+            }
 
             if (DetailFrame.Content is INavigablePage detailPage /*&& type == BackStackType.Navigation*/)
             {

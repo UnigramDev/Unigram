@@ -25,6 +25,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class VenueContent : Grid, IContent
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public VenueContent(MessageViewModel message)
         {

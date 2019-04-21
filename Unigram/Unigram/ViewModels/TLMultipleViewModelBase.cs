@@ -12,12 +12,12 @@ namespace Unigram.ViewModels
 {
     public class TLMultipleViewModelBase : TLViewModelBase
     {
-        protected readonly List<TLViewModelBase> ChildViewModels;
+        public readonly List<TLViewModelBase> Children;
 
         public TLMultipleViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            ChildViewModels = new List<TLViewModelBase>();
+            Children = new List<TLViewModelBase>();
         }
 
         public override IDispatcherWrapper Dispatcher
@@ -30,7 +30,7 @@ namespace Unigram.ViewModels
             {
                 base.Dispatcher = value;
 
-                foreach (var child in ChildViewModels)
+                foreach (var child in Children)
                 {
                     child.Dispatcher = value;
                 }
@@ -47,7 +47,7 @@ namespace Unigram.ViewModels
             {
                 base.NavigationService = value;
 
-                foreach (var child in ChildViewModels)
+                foreach (var child in Children)
                 {
                     child.NavigationService = value;
                 }
@@ -64,7 +64,7 @@ namespace Unigram.ViewModels
             {
                 base.SessionState = value;
 
-                foreach (var child in ChildViewModels)
+                foreach (var child in Children)
                 {
                     child.SessionState = value;
                 }
@@ -74,19 +74,25 @@ namespace Unigram.ViewModels
         public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
             await base.OnNavigatedFromAsync(pageState, suspending);
-            await Task.WhenAll(ChildViewModels.ToList().Select(x => x.OnNavigatedFromAsync(pageState, suspending)));
+            await Task.WhenAll(Children.ToList().Select(x => x.OnNavigatedFromAsync(pageState, suspending)));
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
-            await Task.WhenAll(ChildViewModels.ToList().Select(x => x.OnNavigatedToAsync(parameter, mode, state)));
+            await Task.WhenAll(Children.ToList().Select(x => x.OnNavigatedToAsync(parameter, mode, state)));
         }
 
         public override async Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {
             await base.OnNavigatingFromAsync(args);
-            await Task.WhenAll(ChildViewModels.ToList().Select(x => x.OnNavigatingFromAsync(args)));
+            await Task.WhenAll(Children.ToList().Select(x => x.OnNavigatingFromAsync(args)));
         }
+    }
+
+    public interface IChildViewModel
+    {
+        void Activate();
+        void Deactivate();
     }
 }

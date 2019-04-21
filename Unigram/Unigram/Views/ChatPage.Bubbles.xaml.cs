@@ -46,6 +46,7 @@ using Windows.Foundation.Metadata;
 using Unigram.Controls.Chats;
 using Unigram.ViewModels.Gallery;
 using Unigram.Controls.Gallery;
+using Windows.Devices.Input;
 
 namespace Unigram.Views
 {
@@ -114,8 +115,16 @@ namespace Unigram.Views
                     ViewModel.SetLastViewedMention(message.Id);
                 }
 
-                messages.Add(message.Id);
-                animations.Add(message);
+                if (message.Content is MessageAlbum album)
+                {
+                    messages.AddRange(album.Layout.Messages.Keys);
+                    animations.Add(message);
+                }
+                else
+                {
+                    messages.Add(message.Id);
+                    animations.Add(message);
+                }
             }
 
             if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
@@ -138,9 +147,14 @@ namespace Unigram.Views
                 {
                     try
                     {
-                        presenter.MediaPlayer.Source = null;
                         presenter.MediaPlayer.Dispose();
                         presenter.MediaPlayer = null;
+                    }
+                    catch { }
+
+                    try
+                    {
+                        item.Container.Children.Remove(presenter);
                     }
                     catch { }
                 }
@@ -334,8 +348,8 @@ namespace Unigram.Views
                     }
 
                     var target = message.Content as object;
-                    var media = root.FindName("Media") as ContentControl;
-                    var panel = media.ContentTemplateRoot as Panel;
+                    var media = root.FindName("Media") as Border;
+                    var panel = media.Child as Panel;
 
                     if (target is MessageText messageText && messageText.WebPage != null)
                     {
@@ -373,13 +387,13 @@ namespace Unigram.Views
                             target = messageText.WebPage.Photo;
                         }
 
-                        media = panel?.FindName("Media") as ContentControl;
-                        panel = media?.ContentTemplateRoot as Panel;
+                        media = panel?.FindName("Media") as Border;
+                        panel = media?.Child as Panel;
                     }
                     else if (target is MessageGame)
                     {
-                        media = panel?.FindName("Media") as ContentControl;
-                        panel = media?.ContentTemplateRoot as Panel;
+                        media = panel?.FindName("Media") as Border;
+                        panel = media?.Child as Panel;
                     }
                     else if (target is MessageVideoNote messageVideoNote)
                     {
@@ -404,7 +418,6 @@ namespace Unigram.Views
                 var presenter = _old[item].Presenter;
                 if (presenter != null && presenter.MediaPlayer != null)
                 {
-                    presenter.MediaPlayer.Source = null;
                     presenter.MediaPlayer.Dispose();
                     presenter.MediaPlayer = null;
                 }
@@ -490,8 +503,6 @@ namespace Unigram.Views
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             var typeName = SelectTemplateCore(args.Item);
-
-            Debug.Assert(_typeToItemHashSetMapping.ContainsKey(typeName), "The type of the item used with DataTemplateSelectorBehavior must have a DataTemplate mapping");
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -503,9 +514,6 @@ namespace Unigram.Views
                 {
                     // Suggestion matches what we want, so remove it from the recycle queue
                     relevantHashSet.Remove(args.ItemContainer);
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Removing (suggested) {args.ItemContainer.GetHashCode()} from {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
                 else
                 {
@@ -528,9 +536,6 @@ namespace Unigram.Views
                     // because you can't remove a specific element (which is needed in the block above).
                     args.ItemContainer = relevantHashSet.First();
                     relevantHashSet.Remove(args.ItemContainer);
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Removing (reused) {args.ItemContainer.GetHashCode()} from {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
                 else
                 {
@@ -539,9 +544,6 @@ namespace Unigram.Views
                     var item = CreateSelectorItem(typeName);
                     item.Style = Messages.ItemContainerStyleSelector.SelectStyle(args.Item, item);
                     args.ItemContainer = item;
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Creating {args.ItemContainer.GetHashCode()} for {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
             }
 
@@ -555,16 +557,7 @@ namespace Unigram.Views
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
                 var tag = args.ItemContainer.Tag as string;
-
-#if ENABLE_DEBUG_SPEW
-                Debug.WriteLine($"Adding {args.ItemContainer.GetHashCode()} to {tag}");
-#endif // ENABLE_DEBUG_SPEW
-
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
-
-#if ENABLE_DEBUG_SPEW
-                Debug.Assert(added == true, "Recycle queue should never have dupes. If so, we may be incorrectly reusing a container that is already in use!");
-#endif // ENABLE_DEBUG_SPEW
 
                 return;
             }
@@ -573,6 +566,11 @@ namespace Unigram.Views
 
             var content = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
             content.Tag = message;
+
+            if (args.ItemContainer is ChatListViewItem selector)
+            {
+                selector.PrepareForItemOverride(message);
+            }
 
             if (content is Grid grid)
             {
@@ -600,6 +598,10 @@ namespace Unigram.Views
                                 photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
                             }
                         }
+                        else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                        {
+                            photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
+                        }
                     }
                     else
                     {
@@ -619,10 +621,17 @@ namespace Unigram.Views
 
                     if (message.IsSaved())
                     {
-                        button.Glyph = "\uE72A";
-                        action.Visibility = Visibility.Visible;
+                        if (message.ForwardInfo is MessageForwardedFromHiddenUser)
+                        {
+                            action.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            button.Glyph = "\uE72A";
+                            action.Visibility = Visibility.Visible;
 
-                        Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
+                            Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
+                        }
                     }
                     else if (message.IsShareable())
                     {
@@ -642,6 +651,27 @@ namespace Unigram.Views
             else if (content is StackPanel panel && !(content is MessageBubble))
             {
                 content = panel.FindName("Service") as FrameworkElement;
+
+                if (message.Content is MessageChatChangePhoto chatChangePhoto)
+                {
+                    var photo = panel.FindName("Photo") as ProfilePicture;
+                    if (photo != null)
+                    {
+                        var file = chatChangePhoto.Photo.GetSmall();
+                        if (file != null)
+                        {
+                            if (file.Photo.Local.IsDownloadingCompleted)
+                            {
+                                photo.Source = new BitmapImage(new Uri("file:///" + file.Photo.Local.Path)) { DecodePixelWidth = 96, DecodePixelHeight = 96, DecodePixelType = DecodePixelType.Logical };
+                            }
+                            else if (file.Photo.Local.CanBeDownloaded && !file.Photo.Local.IsDownloadingActive)
+                            {
+                                photo.Source = null;
+                                ViewModel.ProtoService.DownloadFile(file.Photo.Id, 1);
+                            }
+                        }
+                    }
+                }
             }
 
             if (content is MessageBubble bubble)
@@ -659,10 +689,20 @@ namespace Unigram.Views
         private SelectorItem CreateSelectorItem(string typeName)
         {
             SelectorItem item = new ChatListViewItem(Messages);
-            //item.ContextRequested += Message_ContextRequested;
-            //item.ContentTemplate = _typeToTemplateMapping[typeName];
             item.ContentTemplate = Resources[typeName] as DataTemplate;
             item.Tag = typeName;
+
+            // For some reason the event is available since Anniversary Update,
+            // but the property has been added in April Update.
+            if (ApiInfo.CanAddContextRequestedEvent)
+            {
+                item.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
+            }
+            else
+            {
+                item.ContextRequested += Message_ContextRequested;
+            }
+
             return item;
         }
 

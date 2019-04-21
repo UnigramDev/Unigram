@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Selectors;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
@@ -641,6 +642,8 @@ namespace Unigram.Common
         {
             switch (content)
             {
+                case MessageAlbum album:
+                    return album.Caption;
                 case MessageAnimation animation:
                     return animation.Caption;
                 case MessageAudio audio:
@@ -752,6 +755,7 @@ namespace Unigram.Common
                 case MessageContactRegistered contactRegistered:
                 case MessageCustomServiceAction customServiceAction:
                 case MessageGameScore gameScore:
+                case MessagePassportDataSent passportDataSent:
                 case MessagePaymentSuccessful paymentSuccessful:
                 case MessagePinMessage pinMessage:
                 case MessageScreenshotTaken screenshotTaken:
@@ -838,6 +842,43 @@ namespace Unigram.Common
             }
         }
 
+        public static string GetRestrictionReason(this User user)
+        {
+            return GetRestrictionReason(user.RestrictionReason);
+        }
+
+        public static string GetRestrictionReason(this Supergroup supergroup)
+        {
+            return GetRestrictionReason(supergroup.RestrictionReason);
+        }
+
+        public static string GetRestrictionReason(string reason)
+        {
+            if (reason.Length > 0)
+            {
+                var fullTypeEnd = reason.IndexOf(':');
+                if (fullTypeEnd <= 0)
+                {
+                    return null;
+                }
+
+                // {fulltype} is in "{type}-{tag}-{tag}-{tag}" format
+                // if we find "all" tag we return the restriction string
+                var typeTags = reason.Substring(0, fullTypeEnd).Split('-');
+#if STORE_RESTRICTIVE
+                var restrictionApplies = typeTags.Contains("all") || typeTags.Contains("ios");
+#else
+                var restrictionApplies = typeTags.Contains("all");
+#endif
+                if (restrictionApplies)
+                {
+                    return reason.Substring(fullTypeEnd + 1).Trim();
+                }
+            }
+
+            return null;
+        }
+
         public static bool IsUnread(this Chat chat)
         {
             if (chat.IsMarkedAsUnread)
@@ -912,7 +953,7 @@ namespace Unigram.Common
             return TdNetworkType.Other;
         }
 
-        public static bool IsSaved(this Message message)
+        public static bool IsSaved(this Message message, int savedMessagesId)
         {
             if (message.ForwardInfo is MessageForwardedFromUser fromUser)
             {
@@ -921,6 +962,10 @@ namespace Unigram.Common
             else if (message.ForwardInfo is MessageForwardedPost post)
             {
                 return post.ForwardedFromChatId != 0;
+            }
+            else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+            {
+                return message.ChatId == savedMessagesId;
             }
 
             return false;
@@ -1494,6 +1539,8 @@ namespace Unigram.Common
         {
             switch (message.Content)
             {
+                case MessageAlbum album:
+                    return album.UpdateFile(file);
                 case MessageAnimation animation:
                     return animation.UpdateFile(file);
                 case MessageAudio audio:
@@ -1631,6 +1678,22 @@ namespace Unigram.Common
             }
 
             return false;
+        }
+
+
+
+        public static bool UpdateFile(this MessageAlbum album, File file)
+        {
+            var any = false;
+            foreach (var message in album.Layout.Messages)
+            {
+                if (message.UpdateFile(file))
+                {
+                    any = true;
+                }
+            }
+
+            return any;
         }
 
 
@@ -1844,6 +1907,23 @@ namespace Unigram.Common
 
 namespace Telegram.Td.Api
 {
+    public class MessageAlbum : MessageContent
+    {
+        public FormattedText Caption { get; set; }
+
+        public GroupedMessages Layout { get; private set; }
+
+        public MessageAlbum()
+        {
+            Layout = new GroupedMessages();
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class MessageChatEvent : MessageContent
     {
         public ChatEvent Event { get; set; }

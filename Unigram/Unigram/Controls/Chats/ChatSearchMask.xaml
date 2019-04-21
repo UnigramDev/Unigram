@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Chats"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:triggers="using:Unigram.Triggers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -11,129 +12,6 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Style x:Name="DeleteButtonStyle" TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="ButtonLayoutGrid"
-                              BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}"
-                              Background="{ThemeResource TextControlButtonBackground}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="0"
-                                                             Duration="0" />
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <TextBlock x:Name="GlyphElement"
-                                       Foreground="{ThemeResource TextControlButtonForeground}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       FontStyle="Normal"
-                                       FontSize="12"
-                                       Text="&#xE10A;"
-                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                       AutomationProperties.AccessibilityView="Raw" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Name="QueryButtonStyle" TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="ButtonLayoutGrid"
-                              BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}"
-                              Background="{ThemeResource TextControlButtonBackground}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ButtonLayoutGrid"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="0"
-                                                             Duration="0" />
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <TextBlock x:Name="GlyphElement"
-                                       Foreground="{ThemeResource TextControlButtonForeground}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       FontStyle="Normal"
-                                       FontSize="12"
-                                       Text="&#xE11A;"
-                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                       AutomationProperties.AccessibilityView="Raw" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <Style x:Key="Test" TargetType="TextBox">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -321,13 +199,45 @@
     </UserControl.Resources>
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <triggers:FullExperienceTrigger/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BottomPanel.Visibility" Value="Collapsed"/>
+                        <Setter Target="TopPanel.Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+                        <Setter Target="TopPanel.Height" Value="{StaticResource TelegramToolBarHeight}"/>
+                        <Setter Target="TopPanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="SearchPanel.Margin" Value="0,0,0,8"/>
+                        <Setter Target="SearchPrevious.Visibility" Value="Visible"/>
+                        <Setter Target="SearchNext.Visibility" Value="Visible"/>
+                        <Setter Target="RightPanel.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState/>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
+            <RowDefinition Height="{ThemeResource AppBarThemeCompactHeight}"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
-            <Grid Margin="12,0,12,8" VerticalAlignment="Bottom">
+        <Grid x:Name="TopPanel" Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="SearchPanel"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  Margin="12,0,12,8"
+                  VerticalAlignment="Bottom"
+                  Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -338,32 +248,84 @@
                     Text="{x:Bind ViewModel.Query, Mode=OneWay}"
                     InputScope="Search"
                     SelectionChanged="OnSelectionChanged"
+                    GotFocus="Field_GotFocus"
+                    LostFocus="Field_LostFocus"
                     Style="{StaticResource Test}"
                     Grid.ColumnSpan="3"/>
 
-                <Button x:Name="ClearButton"
+                <Button x:Name="DeleteButton"
                         Click="Delete_Click"
                         Grid.Row="1"
-                        Style="{StaticResource DeleteButtonStyle}"
-                        BorderThickness="{ThemeResource TextControlBorderThemeThickness}"
-                        Margin="{ThemeResource HelperButtonThemePadding}"
+                        Style="{StaticResource TextDeleteButtonStyle}"
                         IsTabStop="False"
                         Grid.Column="4"
-                        Visibility="Visible"
                         MinWidth="34"
                         AutomationProperties.AccessibilityView="Raw"
-                        VerticalAlignment="Stretch" />
+                        VerticalAlignment="Stretch"
+                        Visibility="Collapsed"/>
                 <Button x:Name="QueryButton"
                         Click="Search_Click"
                         Grid.Row="1"
-                        Style="{StaticResource QueryButtonStyle}"
-                        BorderThickness="{ThemeResource TextControlBorderThemeThickness}"
-                        Margin="{ThemeResource HelperButtonThemePadding}"
+                        Style="{StaticResource TextQueryButtonStyle}"
                         IsTabStop="False"
-                        Visibility="Visible"
                         MinWidth="34"
                         AutomationProperties.AccessibilityView="Raw"
                         VerticalAlignment="Stretch" />
+            </Grid>
+
+            <controls:GlyphButton
+                x:Name="SearchPrevious"
+                Command="{x:Bind ViewModel.PreviousCommand}"
+                Glyph="&#xE0A0;"
+                AllowFocusOnInteraction="False"
+                FontSize="{StaticResource GlyphButtonFontSize}"
+                Visibility="Collapsed"/>
+            <controls:GlyphButton
+                x:Name="SearchNext"
+                Command="{x:Bind ViewModel.NextCommand}"
+                Glyph="&#xE0A1;"
+                AllowFocusOnInteraction="False"
+                FontSize="{StaticResource GlyphButtonFontSize}"
+                Visibility="Collapsed"
+                Grid.Column="1"/>
+
+            <Grid x:Name="RightPanel" Visibility="Collapsed" Grid.Column="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid x:Name="ToolsPanel">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <controls:GlyphButton
+                        Click="FilterByMember_Click"
+                        Glyph="&#xE2AF;"
+                        AllowFocusOnInteraction="False"
+                        Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        FontSize="{StaticResource GlyphButtonFontSize}"/>
+                    <controls:GlyphButton
+                        Click="FilterByMedia_Click"
+                        Glyph="&#xEA69;"
+                        AllowFocusOnInteraction="False"
+                        FontSize="{StaticResource GlyphButtonFontSize}"
+                        Visibility="Collapsed"
+                        Grid.Column="1"/>
+                    <controls:GlyphButton
+                        Command="{x:Bind ViewModel.Dialog.JumpDateCommand}"
+                        Glyph="&#xE163;"
+                        AllowFocusOnInteraction="False"
+                        FontSize="{StaticResource GlyphButtonFontSize}"
+                        Grid.Column="2"/>
+                </Grid>
+
+                <controls:GlyphButton
+                    Click="Close_Click"
+                    Glyph="&#xE10A;"
+                    FontSize="16"
+                    Grid.Column="1"/>
             </Grid>
         </Grid>
 
@@ -371,28 +333,20 @@
                   ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
                   Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                   ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   AllowFocusOnInteraction="False"
                   IsItemClickEnabled="True"
                   ItemClick="Autocomplete_ItemClick"
                   ContainerContentChanging="OnContainerContentChanging"
-                  Grid.Row="1">
-            <ListView.Footer>
-                <Border x:Name="AutocompleteHeader"
-                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Bottom" Height="1"/>
-                </Border>
-            </ListView.Footer>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged" ItemsUpdatingScrollMode="KeepLastItemInView"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
+                  VerticalAlignment="Top"
+                  MaxHeight="320"
+                  Grid.Row="2">
             <ListView.ItemContainerTransitions>
                 <TransitionCollection/>
             </ListView.ItemContainerTransitions>
         </ListView>
 
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="2">
+        <Grid x:Name="BottomPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -401,13 +355,13 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Grid x:Name="ToolsPanel">
+            <Grid x:Name="ToolsMiniPanel">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Command="{x:Bind ViewModel.Dialog.JumpDateCommand}" Glyph="&#xE163;" AllowFocusOnInteraction="False"/>
-                <controls:GlyphButton Click="Filter_Click" Glyph="&#xE2AF;" AllowFocusOnInteraction="False" Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1"/>
+                <controls:GlyphButton Click="FilterByMember_Click" Glyph="&#xE2AF;" AllowFocusOnInteraction="False" Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1"/>
             </Grid>
 
             <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}" Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Margin="12,0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2"/>

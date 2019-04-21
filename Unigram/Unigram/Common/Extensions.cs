@@ -12,6 +12,7 @@ using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -183,15 +184,15 @@ namespace Unigram.Common
             return relativePath;
         }
 
-        public static async Task<InputFileGenerated> ToGeneratedAsync(this StorageFile file, string conversion = "copy")
+        public static async Task<InputFileGenerated> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
             var props = await file.GetBasicPropertiesAsync();
 
-            return new InputFileGenerated(file.Path, conversion + "#" + props.DateModified.ToString("s"), (int)props.Size);
+            return new InputFileGenerated(file.Path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (int)props.Size);
         }
 
-        public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, VideoConversion video = null, string conversion = "copy")
+        public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             var props = await file.Properties.GetVideoPropertiesAsync();
 
@@ -211,7 +212,7 @@ namespace Unigram.Common
             int width = (int)(originalWidth * ratio);
             int height = (int)(originalHeight * ratio);
 
-            return new InputThumbnail(await file.ToGeneratedAsync(conversion), width, height);
+            return new InputThumbnail(await file.ToGeneratedAsync(conversion, arguments), width, height);
         }
 
         public static T RemoveLast<T>(this List<T> list)
@@ -535,7 +536,7 @@ namespace Unigram.Common
             return GetHyperlink(parent.ElementStart.Parent as TextElement);
         }
 
-        public static void FocusMaybe(this RichEditBox textBox, FocusState focusState)
+        public static void FocusMaybe2(this Control textBox, FocusState focusState)
         {
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -676,13 +677,16 @@ namespace Unigram.Common
     // Modified from: https://stackoverflow.com/a/32559623/1680863
     public static class ListViewExtensions
     {
-        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, VerticalAlignment alignment, bool highlight, double? pixel = null)
+        public async static Task ScrollToItem2(this ListViewBase listViewBase, object item, VerticalAlignment alignment, bool highlight, double? pixel = null)
         {
             var scrollViewer = listViewBase.GetScrollViewer();
             if (scrollViewer == null)
             {
                 return;
             }
+
+            //listViewBase.SelectionMode = ListViewSelectionMode.Single;
+            //listViewBase.SelectedItem = item;
 
             var selectorItem = listViewBase.ContainerFromItem(item) as SelectorItem;
             if (selectorItem == null)
@@ -739,7 +743,7 @@ namespace Unigram.Common
             }
         }
 
-        public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item)
+        public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item, ScrollIntoViewAlignment alignment = ScrollIntoViewAlignment.Leading)
         {
             var tcs = new TaskCompletionSource<object>();
             var scrollViewer = listViewBase.GetScrollViewer();
@@ -753,7 +757,7 @@ namespace Unigram.Common
             try
             {
                 scrollViewer.ViewChanged += viewChanged;
-                listViewBase.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                listViewBase.ScrollIntoView(item, alignment);
                 await tcs.Task;
             }
             finally

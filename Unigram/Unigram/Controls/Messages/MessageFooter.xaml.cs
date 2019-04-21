@@ -66,30 +66,24 @@ namespace Unigram.Controls.Messages
 
         public void ConvertViews(MessageViewModel message)
         {
+            var number = string.Empty;
             if (message.Views > 0)
             {
-                //ViewsGlyph.Text = "\uE607\u2009";
-
-                var number = BindConvert.Current.ShortNumber(Math.Max(message.Views, 1));
+                number = BindConvert.Current.ShortNumber(Math.Max(message.Views, 1));
                 number += "   ";
-
-                if (message.IsChannelPost && !string.IsNullOrEmpty(message.AuthorSignature))
-                {
-                    number += $"{message.AuthorSignature}, ";
-                }
-                else if (message.ForwardInfo is MessageForwardedPost forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
-                {
-                    number += $"{forwardedPost.AuthorSignature}, ";
-                }
-
-                ViewsGlyph.Text = "\uE607\u00A0\u00A0";
-                ViewsLabel.Text = number;
             }
-            else
+
+            if (message.IsChannelPost && !string.IsNullOrEmpty(message.AuthorSignature))
             {
-                ViewsGlyph.Text = string.Empty;
-                ViewsLabel.Text = string.Empty;
+                number += $"{message.AuthorSignature}, ";
             }
+            else if (message.ForwardInfo is MessageForwardedPost forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
+            {
+                number += $"{forwardedPost.AuthorSignature}, ";
+            }
+
+            ViewsGlyph.Text = message.Views > 0 ? "\uE607\u00A0\u00A0" : string.Empty;
+            ViewsLabel.Text = number;
         }
 
         private void ConvertEdited(MessageViewModel message)
@@ -183,19 +177,24 @@ namespace Unigram.Controls.Messages
                 text += $"\r\n{Strings.Resources.EditedMessage}: {editDate} {editTime}";
             }
 
+            DateTime? original = null;
             if (message.ForwardInfo is MessageForwardedPost forwardedPost)
             {
-                var original = BindConvert.Current.DateTime(forwardedPost.Date);
-                var originalDate = BindConvert.Current.LongDate.Format(original);
-                var originalTime = BindConvert.Current.LongTime.Format(original);
-
-                text += $"\r\n{Strings.Additional.OriginalMessage}: {originalDate} {originalTime}";
+                original = BindConvert.Current.DateTime(forwardedPost.Date);
             }
             else if (message.ForwardInfo is MessageForwardedFromUser forwardedFromUser)
             {
-                var original = BindConvert.Current.DateTime(forwardedFromUser.Date);
-                var originalDate = BindConvert.Current.LongDate.Format(original);
-                var originalTime = BindConvert.Current.LongTime.Format(original);
+                original = BindConvert.Current.DateTime(forwardedFromUser.Date);
+            }
+            else if (message.ForwardInfo is MessageForwardedFromHiddenUser forwardedFromHiddenUser)
+            {
+                original = BindConvert.Current.DateTime(forwardedFromHiddenUser.Date);
+            }
+
+            if (original != null)
+            {
+                var originalDate = BindConvert.Current.LongDate.Format(original.Value);
+                var originalTime = BindConvert.Current.LongTime.Format(original.Value);
 
                 text += $"\r\n{Strings.Additional.OriginalMessage}: {originalDate} {originalTime}";
             }

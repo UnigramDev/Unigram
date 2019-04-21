@@ -41,10 +41,11 @@ using Unigram.ViewModels.Delegates;
 using Template10.Services.ViewService;
 using Unigram.ViewModels.Gallery;
 using Unigram.Controls.Gallery;
+using Unigram.Native.Streaming;
 
 namespace Unigram.Controls.Gallery
 {
-    public sealed partial class GalleryView : OverlayPage, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
+    public sealed partial class GalleryView : OverlayPage, INavigatingPage, IGalleryDelegate, IFileDelegate, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>, IHandle<UpdateMessageContent>
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
@@ -55,6 +56,7 @@ namespace Unigram.Controls.Gallery
         private DisplayRequest _request;
         private MediaPlayerElement _mediaPlayerElement;
         private MediaPlayer _mediaPlayer;
+        private FFmpegInteropMSS _streamingInterop;
         private Grid _surface;
 
         private Visual _layer;
@@ -118,6 +120,7 @@ namespace Unigram.Controls.Gallery
 
         public void Handle(UpdateFile update)
         {
+            _streamingInterop?.UpdateFile(update.File);
             this.BeginOnUIThread(() => UpdateFile(update.File));
         }
 
@@ -130,9 +133,10 @@ namespace Unigram.Controls.Gallery
         {
             this.BeginOnUIThread(() =>
             {
-                if (ViewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
+                var viewModel = ViewModel;
+                if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
-                    OnBackRequestedOverride(this, new HandledEventArgs());
+                    OnBackRequestedOverride(this, new HandledRoutedEventArgs());
                 }
             });
         }
@@ -162,6 +166,12 @@ namespace Unigram.Controls.Gallery
                     if (Element2.Item == item)
                     {
                         Element2.UpdateFile(item, file);
+                    }
+
+                    if (_streamingInterop?.FileId == file.Id)
+                    {
+                        Transport.DownloadMaximum = file.Size;
+                        Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
                     }
                 }
             }
@@ -195,6 +205,7 @@ namespace Unigram.Controls.Gallery
             {
                 Transport.TransportVisibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
                 Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
+                Caption.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
                 Element0.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
                 Element1.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
                 Element2.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
@@ -233,9 +244,26 @@ namespace Unigram.Controls.Gallery
             });
         }
 
+        private async void OnVolumeChanged(MediaPlayer sender, object args)
+        {
+            SettingsService.Current.VolumeLevel = sender.Volume;
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Transport.Volume = sender.Volume;
+            });
+        }
+
+        private void OnMediaOpened(MediaPlayer sender, object args)
+        {
+            sender.Volume = SettingsService.Current.VolumeLevel;
+        }
+
         private static Dictionary<int, WeakReference<GalleryView>> _windowContext = new Dictionary<int, WeakReference<GalleryView>>();
         public static GalleryView GetForCurrentView()
         {
+            return new GalleryView();
+
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
             if (_windowContext.TryGetValue(id, out WeakReference<GalleryView> reference) && reference.TryGetTarget(out GalleryView value))
             {
@@ -254,7 +282,10 @@ namespace Unigram.Controls.Gallery
             {
                 _closing = closing;
 
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                if (SettingsService.Current.AreAnimationsEnabled)
+                {
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                }
 
                 if (_compactLifetime != null)
                 {
@@ -275,7 +306,7 @@ namespace Unigram.Controls.Gallery
 
                 Load(parameter);
 
-                PrepareNext(0);
+                PrepareNext(0, true);
 
                 RoutedEventHandler handler = null;
                 handler = new RoutedEventHandler(async (s, args) =>
@@ -293,7 +324,7 @@ namespace Unigram.Controls.Gallery
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            PrepareNext(0);
+            PrepareNext(0, true);
         }
 
         protected override void MaskTitleAndStatusBar()
@@ -312,28 +343,47 @@ namespace Unigram.Controls.Gallery
             }
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
+        public void OnBackRequesting(HandledRoutedEventArgs e)
         {
-            var container = GetContainer(0);
-            var root = container.Presenter;
+            Unload();
+            Dispose();
 
-            if (root != null && ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
+            e.Handled = true;
+        }
+
+        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
+        {
+            //var container = GetContainer(0);
+            //var root = container.Presenter;
+            if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
             {
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                if (animation != null)
-                {
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                    {
-                        animation.Configuration = new BasicConnectedAnimationConfiguration();
-                    }
+                ScrollingHost.Opacity = 0;
+                Preview.Opacity = 1;
 
-                    var element = _closing();
-                    if (element.ActualWidth > 0 && animation.TryStart(element))
+                var root = Preview.Presenter;
+
+                if (SettingsService.Current.AreAnimationsEnabled)
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                    if (animation != null)
                     {
-                        animation.Completed += (s, args) =>
+                        if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                        {
+                            animation.Configuration = new BasicConnectedAnimationConfiguration();
+                        }
+
+                        var element = _closing();
+                        if (element.ActualWidth > 0 && animation.TryStart(element))
+                        {
+                            animation.Completed += (s, args) =>
+                            {
+                                Hide();
+                            };
+                        }
+                        else
                         {
                             Hide();
-                        };
+                        }
                     }
                     else
                     {
@@ -345,7 +395,7 @@ namespace Unigram.Controls.Gallery
                     Hide();
                 }
             }
-            else if (root != null)
+            else
             {
                 var batch = _layout.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
@@ -354,6 +404,9 @@ namespace Unigram.Controls.Gallery
                 batch.End();
                 batch.Completed += (s, args) =>
                 {
+                    ScrollingHost.Opacity = 0;
+                    Preview.Opacity = 1;
+
                     Hide();
                 };
             }
@@ -371,10 +424,16 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
+        private void Preview_ImageOpened(object sender, RoutedEventArgs e)
         {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
             var image = sender as GalleryContentView;
-            if (image.Item != ViewModel.FirstItem)
+            if (image.Item != viewModel.FirstItem)
             {
                 return;
             }
@@ -385,37 +444,51 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-            if (animation != null)
+            ScrollingHost.Opacity = 0;
+            Preview.Opacity = 1;
+
+            var container = GetContainer(0);
+
+            if (SettingsService.Current.AreAnimationsEnabled)
             {
-                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                if (animation != null)
                 {
-                    animation.Configuration = new BasicConnectedAnimationConfiguration();
-                }
-
-                _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
-
-                if (animation.TryStart(image.Presenter))
-                {
-                    animation.Completed += (s, args) =>
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                     {
-                        Transport.Show();
+                        animation.Configuration = new BasicConnectedAnimationConfiguration();
+                    }
 
-                        if (item.IsVideo)
+                    _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
+
+                    if (animation.TryStart(image.Presenter))
+                    {
+                        animation.Completed += (s, args) =>
                         {
-                            Play(image.Presenter, item, item.GetFile());
-                        }
-                    };
+                            Transport.Show();
+                            ScrollingHost.Opacity = 1;
+                            Preview.Opacity = 0;
 
-                    return;
+                            if (item.IsVideo && container != null)
+                            {
+                                Play(container.Presenter, item, item.GetFile());
+                            }
+                        };
+
+                        return;
+                    }
                 }
             }
 
-            Transport.Show();
+            _layer.Opacity = 1;
 
-            if (item.IsVideo)
+            Transport.Show();
+            ScrollingHost.Opacity = 1;
+            Preview.Opacity = 0;
+
+            if (item.IsVideo && container != null)
             {
-                Play(image.Presenter, item, item.GetFile());
+                Play(container.Presenter, item, item.GetFile());
             }
         }
 
@@ -458,14 +531,14 @@ namespace Unigram.Controls.Gallery
 
         private Visibility ConvertCompactVisibility(GalleryContent item)
         {
-            if (item.IsVideo && !item.IsLoop)
+            if (item != null && item.IsVideo && !item.IsLoop)
             {
                 if (item is GalleryMessage message && message.IsHot)
                 {
                     return Visibility.Collapsed;
                 }
 
-                return ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay) ? Visibility.Visible : Visibility.Collapsed;
+                return ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay) ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return Visibility.Collapsed;
@@ -493,11 +566,11 @@ namespace Unigram.Controls.Gallery
             catch { }
         }
 
-        private void Play(Grid parent, GalleryContent item, File file)
+        private async void Play(Grid parent, GalleryContent item, File file)
         {
             try
             {
-                if (!file.Local.IsDownloadingCompleted)
+                if (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled)
                 {
                     return;
                 }
@@ -511,17 +584,15 @@ namespace Unigram.Controls.Gallery
                 if (_mediaPlayer == null)
                 {
                     _mediaPlayer = Task.Run(() => new MediaPlayer()).Result;
+                    _mediaPlayer.VolumeChanged += OnVolumeChanged;
                     _mediaPlayer.SourceChanged += OnSourceChanged;
+                    _mediaPlayer.MediaOpened += OnMediaOpened;
                     _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                     _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
                 }
 
                 var dpi = DisplayInformation.GetForCurrentView().LogicalDpi / 96.0f;
                 _mediaPlayer.SetSurfaceSize(new Size(parent.ActualWidth * dpi, parent.ActualHeight * dpi));
-
-                _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("file:///" + file.Local.Path));
-                _mediaPlayer.IsLoopingEnabled = item.IsLoop;
-                _mediaPlayer.Play();
 
                 _surface = parent;
                 _surface.Children.Add(_mediaPlayerElement);
@@ -530,6 +601,28 @@ namespace Unigram.Controls.Gallery
                 {
                     Transport.ShowAndHideAutomatically = true;
                 }
+
+                Transport.DownloadMaximum = file.Size;
+                Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
+
+                var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable && !file.Local.IsDownloadingCompleted;
+                if (streamable)
+                {
+                    _streamingInterop = new FFmpegInteropMSS(new FFmpegInteropConfig());
+                    var interop = await _streamingInterop.CreateFromFileAsync(ViewModel.ProtoService.Client, file);
+
+                    _mediaPlayer.Source = interop.CreateMediaPlaybackItem();
+
+                    Transport.DownloadMaximum = file.Size;
+                    Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
+                }
+                else
+                {
+                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("file:///" + file.Local.Path));
+                }
+
+                _mediaPlayer.IsLoopingEnabled = item.IsLoop;
+                _mediaPlayer.Play();
             }
             catch { }
         }
@@ -546,9 +639,19 @@ namespace Unigram.Controls.Gallery
                 _surface = null;
             }
 
+            if (_streamingInterop != null)
+            {
+                var interop = _streamingInterop;
+                _streamingInterop = null;
+
+                Task.Run(() => interop?.Dispose());
+            }
+
             if (_mediaPlayer != null)
             {
+                _mediaPlayer.VolumeChanged -= OnVolumeChanged;
                 _mediaPlayer.SourceChanged -= OnSourceChanged;
+                _mediaPlayer.MediaOpened -= OnMediaOpened;
                 _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
 
                 _mediaPlayerElement.SetMediaPlayer(null);
@@ -742,7 +845,7 @@ namespace Unigram.Controls.Gallery
             ScrollingHost.ChangeView(ActualWidth * index, null, null, disableAnimation);
         }
 
-        private void PrepareNext(int direction)
+        private void PrepareNext(int direction, bool initialize = false)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -777,7 +880,7 @@ namespace Unigram.Controls.Gallery
             Grid.SetColumn(next, 2);
 
             var index = viewModel.SelectedIndex;
-            if (index < 0)
+            if (index < 0 || viewModel.Items.IsEmpty())
             {
                 return;
             }
@@ -785,6 +888,11 @@ namespace Unigram.Controls.Gallery
             var set = TrySet(target, viewModel.Items[index]);
             TrySet(previous, index > 0 ? viewModel.Items[index - 1] : null);
             TrySet(next, index < viewModel.Items.Count - 1 ? viewModel.Items[index + 1] : null);
+
+            if (initialize)
+            {
+                TrySet(Preview, viewModel.Items[index]);
+            }
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -863,6 +971,11 @@ namespace Unigram.Controls.Gallery
             flyout.CreateFlyoutItem(x => item.CanSave, viewModel.SaveCommand, item, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, Windows.System.VirtualKey.S);
             flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
             flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
 
             flyout.ShowAt(sender as FrameworkElement);
         }
@@ -997,7 +1110,7 @@ namespace Unigram.Controls.Gallery
                 });
             };
 
-            OnBackRequestedOverride(this, new HandledEventArgs());
+            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
         }
 
         #endregion
@@ -1010,7 +1123,7 @@ namespace Unigram.Controls.Gallery
         {
             _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
 
-#if GALLERY_EXPERIMENTAL
+#if !GALLERY_EXPERIMENTAL
             void Register(Grid presenter)
             {
                 presenter.ManipulationMode =

@@ -102,7 +102,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-                <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="6,0,0,0" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
+                <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="6,0,0,0" AutomationProperties.LiveSetting="Assertive" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
             </Grid>
             <controls:ContentPageHeader x:Name="PageHeader" Grid.Row="1">
                 <Grid x:Name="Header">
@@ -219,6 +219,7 @@
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.LandmarkType="Search"
                                 AutomationProperties.Name="{CustomResource Search}"
                                 ToolTipService.ToolTip="{CustomResource Search}"/>
                             <Button Padding="{StaticResource EllipsisButtonPadding}"
@@ -233,16 +234,20 @@
                                           Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                                 <Button.Flyout>
                                     <MenuFlyout x:Name="SettingsFlyout">
-                                        <controls:GlyphMenuFlyoutItem
-                                            x:Name="EditNameItem"
+                                        <MenuFlyoutItem
                                             Click="EditName_Click"
-                                            Text="{CustomResource EditName}"
-                                            Glyph="&#xE104;"/>
-                                        <controls:GlyphMenuFlyoutItem
-                                            x:Name="LogoutItem"
+                                            Text="{CustomResource EditName}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE104;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem
                                             Click="LogOut_Click"
-                                            Text="{CustomResource LogOut}"
-                                            Glyph="&#xE10A;"/>
+                                            Text="{CustomResource LogOut}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xF3B1;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
@@ -254,10 +259,20 @@
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
                                 AutomationProperties.Name="{CustomResource CreateNewContact}"
                                 ToolTipService.ToolTip="{CustomResource CreateNewContact}"/>
+                            <controls:GlyphToggleButton
+                                UncheckedGlyph="&#xE91B;"
+                                CheckedGlyph="&#xE91E;"
+                                IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
+                                Style="{StaticResource HeaderGlyphToggleButtonStyle}"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
+                                IsOneWay="False"/>
                             <controls:GlyphButton
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.LandmarkType="Search"
                                 AutomationProperties.Name="{CustomResource Search}"
                                 ToolTipService.ToolTip="{CustomResource Search}"/>
                         </StackPanel>
@@ -284,22 +299,83 @@
                                 Glyph="&#xE11A;"
                                 Click="Search_Click"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.LandmarkType="Search"
                                 AutomationProperties.Name="{CustomResource Search}"
                                 ToolTipService.ToolTip="{CustomResource Search}"/>
                         </StackPanel>
                     </Grid>
 
-                    <TextBox x:Name="SearchField"
-                             Style="{StaticResource QueryTextBoxStyle}"
-                             PlaceholderText="{CustomResource Search}"
-                             PreventKeyboardDisplayOnProgrammaticFocus="True"
-                             GotFocus="Search_GotFocus"
-                             LostFocus="Search_LostFocus"
-                             TextChanged="Search_TextChanged"
-                             KeyDown="Search_KeyDown"
-                             Visibility="Collapsed"
-                             Canvas.ZIndex="1"/>
-                             <!--Clean="Search_LostFocus"-->
+                    <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <controls:GlyphButton
+                            x:Name="ManageMute"
+                            Command="{x:Bind ViewModel.Chats.ChatsNotifyCommand}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                        <controls:GlyphButton
+                            x:Name="ManageMark"
+                            Command="{x:Bind ViewModel.Chats.ChatsMarkCommand}"
+                            FontFamily="{StaticResource TelegramThemeFontFamily}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            Grid.Column="1"/>
+                        <controls:GlyphButton
+                            Glyph="&#xE107;"
+                            Command="{x:Bind ViewModel.Chats.ChatsDeleteCommand}"
+                            AutomationProperties.Name="{CustomResource Delete}"
+                            ToolTipService.ToolTip="{CustomResource Delete}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            Grid.Column="2"/>
+                        <controls:GlyphButton
+                            x:Name="ManageClear"
+                            Glyph="&#xEA99;"
+                            Command="{x:Bind ViewModel.Chats.ChatsClearCommand}"
+                            AutomationProperties.Name="{CustomResource ClearHistory}"
+                            ToolTipService.ToolTip="{CustomResource ClearHistory}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            Grid.Column="3"/>
+
+                        <ContentControl
+                            Content="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            FontWeight="SemiBold"
+                            Padding="12,0"
+                            Height="{ThemeResource AppBarThemeCompactHeight}"
+                            Grid.Column="5">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,48"/>
+                            </ContentControl.Clip>
+                        </ContentControl>
+
+                        <controls:GlyphButton
+                            Click="Manage_Click"
+                            Glyph="&#xE10A;"
+                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            Grid.Column="6"/>
+                    </Grid>
+
+                    <controls:SearchTextBox
+                         x:Name="SearchField"
+                         Style="{StaticResource QueryTextBoxStyle}"
+                         PlaceholderText="{CustomResource Search}"
+                         PreventKeyboardDisplayOnProgrammaticFocus="True"
+                         Delete="Search_LostFocus"
+                         TextChanged="Search_TextChanged"
+                         KeyDown="Search_KeyDown"
+                         Visibility="Collapsed"/>
                 </Grid>
             </controls:ContentPageHeader>
 
@@ -351,7 +427,7 @@
                                               Style="{StaticResource HorizontalListViewStyle}">
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Width="72" Margin="0,12">
+                                                <StackPanel Width="72" Padding="0,12" Background="Transparent" ContextRequested="TopChat_ContextRequested">
                                                     <Grid Width="48" Height="48" Margin="12,0">
                                                         <controls:ProfilePicture IsHitTestVisible="False"/>
                                                         <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
@@ -366,6 +442,18 @@
                                                                        Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                                        TextAlignment="Center"
                                                                        Margin="4,2,4,0"/>
+                                                        </Border>
+                                                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                                Width="13"
+                                                                Height="13"
+                                                                CornerRadius="6.5"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Bottom"
+                                                                Margin="0,0,1,1">
+                                                            <Border Background="{ThemeResource TelegramDialogOnlineBadge}"
+                                                                    Width="9"
+                                                                    Height="9"
+                                                                    CornerRadius="4.5"/>
                                                         </Border>
                                                     </Grid>
 
@@ -489,11 +577,17 @@
                         </ListView>
                         <Grid x:Name="DialogsPanel">
                             <controls:ChatsListView x:Name="ChatsList"
+                                                    AutomationProperties.LandmarkType="Main"
                                                     ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                                     IsItemClickEnabled="True"
-                                                    SelectionMode="None"
+                                                    SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
                                                     ItemClick="ListView_ItemClick"
                                                     SelectionChanged="ListView_SelectionChanged"
+                                                    ChoosingItemContainer="ChatsList_ChoosingItemContainer"
+                                                    CanDragItems="True"
+                                                    CanReorderItems="False"
+                                                    DragItemsStarting="Chats_DragItemsStarting"
+                                                    DragItemsCompleted="Chats_DragItemsCompleted"
                                                     AllowDrop="True">
                                 <ListView.ItemContainerStyleSelector>
                                     <selectors:DialogStyleSelector CacheService="{x:Bind ViewModel.CacheService}">
@@ -516,7 +610,7 @@
                                 </ListView.ItemContainerStyleSelector>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <cells:ChatCell ContextRequested="Dialog_ContextRequested"/>
+                                        <cells:ChatCell/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.Header>
@@ -592,7 +686,7 @@
                         </Grid>
                     </Grid>
                 </PivotItem>
-                <PivotItem Loaded="PivotItem_Loaded" Header="{CustomResource Contacts}">
+                <PivotItem Header="{CustomResource Contacts}">
                     <Grid>
                         <ListView x:Name="ContactsSearchListView"
                                   ItemsSource="{x:Bind ContactsResults.View, Mode=OneWay}"
@@ -679,9 +773,10 @@
                         </ListView>
                         <Grid x:Name="ContactsPanel">
                             <ListView x:Name="UsersListView"
-                                      ItemsSource="{x:Bind ViewModel.Contacts.Items}"
+                                      ItemsSource="{x:Bind ViewModel.Contacts.Items, Mode=OneWay}"
                                       IsItemClickEnabled="True"
                                       ItemClick="ListView_ItemClick"
+                                      ChoosingItemContainer="UsersListView_ChoosingItemContainer"
                                       ContainerContentChanging="UsersListView_ContainerContentChanging"
                                       SelectionMode="None">
                                 <ListView.ItemTemplate>
@@ -709,6 +804,11 @@
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
+                                <ListView.Header>
+                                    <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </Border>
+                                </ListView.Header>
                                 <!--<ListView.ItemContainerTransitions>
                                      <TransitionCollection/>
                                      </ListView.ItemContainerTransitions>-->

@@ -19,13 +19,12 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class VideoContent : AspectView, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public VideoContent(MessageViewModel message)
         {
@@ -81,47 +80,105 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            if (message.IsSecret())
             {
-                Button.Glyph = "\uE10A";
-                Button.Progress = (double)file.Local.DownloadedSize / size;
+                Overlay.ProgressVisibility = Visibility.Collapsed;
 
-                Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
-            }
-            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
-            {
-
-                Button.Glyph = "\uE10A";
-                Button.Progress = (double)file.Remote.UploadedSize / size;
-
-                Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
-            {
-                Button.Glyph = "\uE118";
-                Button.Progress = 0;
-
-                Subtitle.Text = video.GetDuration() + ", " + FileSizeConverter.Convert(size);
-
-                if (message.Delegate.CanBeDownloaded(message))
+                var size = Math.Max(file.Size, file.ExpectedSize);
+                if (file.Local.IsDownloadingActive)
                 {
-                    _message.ProtoService.DownloadFile(file.Id, 32);
+                    Button.Glyph = Icons.Cancel;
+                    Button.Progress = (double)file.Local.DownloadedSize / size;
+
+                    Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+                }
+                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
+                {
+                    var generating = file.Local.DownloadedSize < size;
+
+                    Button.Glyph = Icons.Cancel;
+                    Button.Progress = (double)(generating ? file.Local.DownloadedSize : file.Remote.UploadedSize) / size;
+
+                    if (generating)
+                    {
+                        Subtitle.Text = string.Format("{0}%", file.Local.DownloadedSize);
+                    }
+                    else
+                    {
+                        Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
+                    }
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+                {
+                    Button.Glyph = Icons.Download;
+                    Button.Progress = 0;
+
+                    Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(message.Ttl, true), FileSizeConverter.Convert(size));
+
+                    if (message.Delegate.CanBeDownloaded(message))
+                    {
+                        _message.ProtoService.DownloadFile(file.Id, 32);
+                    }
+                }
+                else
+                {
+                    Button.Glyph = Icons.Ttl;
+                    Button.Progress = 1;
+
+                    Subtitle.Text = Locale.FormatTtl(message.Ttl, true);
                 }
             }
             else
             {
-                if (message.IsSecret())
+                var size = Math.Max(file.Size, file.ExpectedSize);
+                if (file.Local.IsDownloadingActive)
                 {
-                    Button.Glyph = "\uE60D";
-                    Button.Progress = 1;
+                    Button.Glyph = Icons.Play;
+                    Button.Progress = 0;
+                    Overlay.Glyph = Icons.Cancel;
+                    Overlay.Progress = (double)file.Local.DownloadedSize / size;
+                    Overlay.ProgressVisibility = Visibility.Visible;
 
-                    Subtitle.Text = Locale.FormatTtl(Math.Max(message.Ttl, video.Duration), true);
+                    Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+                }
+                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
+                {
+                    var generating = file.Local.DownloadedSize < size;
+
+                    Button.Glyph = Icons.Cancel;
+                    Button.Progress = (double)(generating ? file.Local.DownloadedSize : file.Remote.UploadedSize) / size;
+                    Overlay.ProgressVisibility = Visibility.Collapsed;
+
+                    if (generating)
+                    {
+                        Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0}%", file.Local.DownloadedSize);
+                    }
+                    else
+                    {
+                        Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
+                    }
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+                {
+                    Button.Glyph = Icons.Play;
+                    Button.Progress = 0;
+                    Overlay.Glyph = Icons.Download;
+                    Overlay.Progress = 0;
+                    Overlay.ProgressVisibility = Visibility.Visible;
+
+                    Subtitle.Text = video.GetDuration() + Environment.NewLine + FileSizeConverter.Convert(size);
+
+                    if (message.Delegate.CanBeDownloaded(message))
+                    {
+                        _message.ProtoService.DownloadFile(file.Id, 32);
+                    }
                 }
                 else
                 {
-                    Button.Glyph = "\uE102";
-                    Button.Progress = 1;
+                    Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play;
+                    Button.Progress = 0;
+                    Overlay.Progress = 1;
+                    Overlay.ProgressVisibility = Visibility.Collapsed;
 
                     Subtitle.Text = video.GetDuration();
                 }
@@ -177,6 +234,11 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
+            if (_message.IsSecret())
+            {
+                return;
+            }
+
             var file = video.VideoValue;
             if (file.Local.IsDownloadingActive)
             {
@@ -193,6 +255,53 @@ namespace Unigram.Controls.Messages.Content
             else
             {
                 _message.Delegate.OpenMedia(_message, this);
+            }
+        }
+
+        private void Play_Click(object sender, RoutedEventArgs e)
+        {
+            var video = GetContent(_message.Content);
+            if (video == null)
+            {
+                return;
+            }
+
+            if (_message.IsSecret())
+            {
+                var file = video.VideoValue;
+                if (file.Local.IsDownloadingActive)
+                {
+                    _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
+                }
+                else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
+                {
+                    _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
+                {
+                    _message.ProtoService.DownloadFile(file.Id, 32);
+                }
+                else
+                {
+                    _message.Delegate.OpenMedia(_message, this);
+                }
+            }
+            else
+            {
+                if (_message.SendingState is MessageSendingStatePending)
+                {
+                    return;
+                }
+
+                var file = video.VideoValue;
+                if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
+                {
+                    _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                }
+                else
+                {
+                    _message.Delegate.OpenMedia(_message, this);
+                }
             }
         }
     }

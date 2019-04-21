@@ -36,6 +36,7 @@ namespace Unigram.Services
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSyncRequested { get; set; }
+        bool IsContactsSortedByEpoch { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
         bool IsAutoPlayAnimationsEnabled { get; set; }
         bool IsAutoPlayVideosEnabled { get; set; }
@@ -43,7 +44,10 @@ namespace Unigram.Services
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
 
+        bool AreAnimationsEnabled { get; set; }
+
         bool IsStreamingEnabled { get; set; }
+        double VolumeLevel { get; set; }
 
         int LastMessageTtl { get; set; }
 
@@ -160,8 +164,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (3UL << 32) | (2128UL << 16);
-        public const string CurrentChangelog = "• Support for custom languages. Crowdsource a cloud-based language pack for Telegram in any language using our Translations platform – then apply it in real time.\r\n\r\n• See enlarged emoji in messages containing only emoji.\r\n• Use search in Settings to find options and get suggestions from the FAQ.\r\n• Choose whether you'd like to sync contacts and receive notifications for all accounts when using multiple accounts.\r\n• Enjoy improved call quality.\r\n• Extended execution while running on desktop.\r\n• Access the app using Narrator.";
+        public const ulong CurrentVersion = (3UL << 48) | (6UL << 32) | (2263UL << 16);
+        public const string CurrentChangelog = "• Search for Stickers. Scroll up in the sticker panel and use the new search field to quickly locate your sticker sets or discover new ones, enjoy improved GIF search.\r\n• Delete any message on both ends in any private chat, anytime.\r\n• Swipe to reply/forward using your laptop touchpad.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -199,12 +203,12 @@ namespace Unigram.Services
             }
         }
 
-        private StickersSettings _stickers;
+        private static StickersSettings _stickers;
         public StickersSettings Stickers
         {
             get
             {
-                return _stickers = _stickers ?? new StickersSettings(_container);
+                return _stickers = _stickers ?? new StickersSettings(_local);
             }
         }
 
@@ -401,6 +405,23 @@ namespace Unigram.Services
             }
         }
 
+        private static bool? _areAnimationsEnabled;
+        public bool AreAnimationsEnabled
+        {
+            get
+            {
+                if (_areAnimationsEnabled == null)
+                    _areAnimationsEnabled = GetValueOrDefault(_local, "AreAnimationsEnabled", ApiInfo.IsFullExperience);
+
+                return _areAnimationsEnabled ?? ApiInfo.IsFullExperience;
+            }
+            set
+            {
+                _areAnimationsEnabled = value;
+                AddOrUpdateValue(_local, "AreAnimationsEnabled", value);
+            }
+        }
+
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {
@@ -460,12 +481,29 @@ namespace Unigram.Services
                 if (_isContactsSyncRequested == null)
                     _isContactsSyncRequested = GetValueOrDefault("IsContactsSyncRequested", false);
 
-                return _isContactsSyncRequested ?? true;
+                return _isContactsSyncRequested ?? false;
             }
             set
             {
                 _isContactsSyncRequested = value;
                 AddOrUpdateValue("IsContactsSyncRequested", value);
+            }
+        }
+
+        private bool? _isContactsSortedByEpoch;
+        public bool IsContactsSortedByEpoch
+        {
+            get
+            {
+                if (_isContactsSortedByEpoch == null)
+                    _isContactsSortedByEpoch = GetValueOrDefault("IsContactsSortedByEpoch", true);
+
+                return _isContactsSortedByEpoch ?? true;
+            }
+            set
+            {
+                _isContactsSortedByEpoch = value;
+                AddOrUpdateValue("IsContactsSortedByEpoch", value);
             }
         }
 
@@ -543,14 +581,31 @@ namespace Unigram.Services
             get
             {
                 if (_isStreamingEnabled == null)
-                    _isStreamingEnabled = GetValueOrDefault("IsStreamingEnabled", false);
+                    _isStreamingEnabled = GetValueOrDefault("IsStreamingEnabled", true);
 
-                return _isStreamingEnabled ?? false;
+                return _isStreamingEnabled ?? true;
             }
             set
             {
                 _isStreamingEnabled = value;
                 AddOrUpdateValue("IsStreamingEnabled", value);
+            }
+        }
+
+        private static double? _volumeLevel;
+        public double VolumeLevel
+        {
+            get
+            {
+                if (_volumeLevel == null)
+                    _volumeLevel = GetValueOrDefault("VolumeLevel", 1);
+
+                return _volumeLevel ?? 1;
+            }
+            set
+            {
+                _volumeLevel = value;
+                AddOrUpdateValue("VolumeLevel", value);
             }
         }
 

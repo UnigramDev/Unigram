@@ -15,11 +15,14 @@ using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -30,24 +33,28 @@ namespace Unigram.Controls.Cells
     {
         private Chat _chat;
         private IProtoService _protoService;
-        private INavigationService _navigationService;
+
+        private Visual _onlineBadge;
 
         public ChatCell()
         {
             InitializeComponent();
+
+            _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
+            _onlineBadge.CenterPoint = new System.Numerics.Vector3(6.5f);
+            _onlineBadge.Opacity = 0;
+            _onlineBadge.Scale = new System.Numerics.Vector3(0);
         }
 
-        public void UpdateChat(IProtoService protoService, INavigationService navigationService, Chat chat)
+        public void UpdateChat(IProtoService protoService, Chat chat)
         {
             _protoService = protoService;
-            _navigationService = navigationService;
             Update(chat);
         }
 
-        public void UpdateMessage(IProtoService protoService, INavigationService navigationService, Message message)
+        public void UpdateMessage(IProtoService protoService, Message message)
         {
             _protoService = protoService;
-            _navigationService = navigationService;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -69,11 +76,19 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat, message, true, false);
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
-
-            UpdateAutomation(_protoService, chat, message);
         }
 
-        private void UpdateAutomation(IProtoService protoService, Chat chat, Message message)
+        public string GetAutomationName()
+        {
+            if (_protoService == null || _chat == null)
+            {
+                return null;
+            }
+
+            return UpdateAutomation(_protoService, _chat, _chat.LastMessage);
+        }
+
+        private string UpdateAutomation(IProtoService protoService, Chat chat, Message message)
         {
             var builder = new StringBuilder();
             if (chat.Type is ChatTypeSecret)
@@ -128,12 +143,12 @@ namespace Unigram.Controls.Cells
 
             if (message == null)
             {
-                AutomationProperties.SetName(this, builder.ToString());
-                return;
+                //AutomationProperties.SetName(this, builder.ToString());
+                return builder.ToString();
             }
 
             var date = Locale.FormatDateAudio(message.Date);
-            if (chat.LastMessage.IsOutgoing)
+            if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
             }
@@ -144,7 +159,7 @@ namespace Unigram.Controls.Cells
 
             builder.Append(". ");
 
-            if (chat != null && !message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
+            if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
             {
                 var fromUser = protoService.GetUser(message.SenderUserId);
                 if (fromUser != null)
@@ -156,10 +171,11 @@ namespace Unigram.Controls.Cells
 
             if (chat.Type is ChatTypeSecret == false)
             {
-                builder.Append(Automation.GetSummary(message));
+                builder.Append(Automation.GetSummary(protoService, message));
             }
 
-            AutomationProperties.SetName(this, builder.ToString());
+            //AutomationProperties.SetName(this, builder.ToString());
+            return builder.ToString();
         }
 
         #region Updates
@@ -171,8 +187,7 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat);
             TimeLabel.Text = UpdateTimeLabel(chat);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
-
-            UpdateAutomation(_protoService, chat, chat.LastMessage);
+            FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateChatReadInbox(Chat chat)
@@ -180,6 +195,8 @@ namespace Unigram.Controls.Cells
             PinnedIcon.Visibility = (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread) && chat.IsPinned ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
+
+            //UpdateAutomation(_protoService, chat, chat.LastMessage);
         }
 
         public void UpdateChatReadOutbox(Chat chat)
@@ -201,8 +218,7 @@ namespace Unigram.Controls.Cells
         public void UpdateNotificationSettings(Chat chat)
         {
             var muted = _protoService.GetNotificationSettingsMuteFor(chat) > 0;
-            UnreadBackground.Visibility = muted ? Visibility.Collapsed : Visibility.Visible;
-            UnreadMutedBackground.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
+            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -262,6 +278,30 @@ namespace Unigram.Controls.Cells
             VerifiedIcon.Visibility = verified ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        public void UpdateUserStatus(Chat chat, UserStatus status)
+        {
+            UpdateOnlineBadge(status is UserStatusOnline);
+        }
+
+        private void UpdateOnlineBadge(bool visible)
+        {
+            OnlineBadge.Visibility = Visibility.Visible;
+
+            var scale = _onlineBadge.Compositor.CreateVector3KeyFrameAnimation();
+            //scale.InsertKeyFrame(0, new System.Numerics.Vector3(visible ? 0 : 1));
+            scale.InsertKeyFrame(1, new System.Numerics.Vector3(visible ? 1 : 0));
+
+            var opacity = _onlineBadge.Compositor.CreateScalarKeyFrameAnimation();
+            //opacity.InsertKeyFrame(0, visible ? 0 : 1);
+            opacity.InsertKeyFrame(1, visible ? 1 : 0);
+
+            _onlineBadge.StopAnimation("Scale");
+            _onlineBadge.StopAnimation("Opacity");
+
+            _onlineBadge.StartAnimation("Scale", scale);
+            _onlineBadge.StartAnimation("Opacity", opacity);
+        }
+
         private void Update(Chat chat)
         {
             _chat = chat;
@@ -278,6 +318,16 @@ namespace Unigram.Controls.Cells
             UpdateChatUnreadMentionCount(chat);
             UpdateNotificationSettings(chat);
             UpdateChatActions(chat, _protoService.GetChatActions(chat.Id));
+
+            var user = _protoService.GetUser(chat);
+            if (user != null && user.Type is UserTypeRegular && user.Id != _protoService.Options.MyId)
+            {
+                UpdateUserStatus(chat, user.Status);
+            }
+            else
+            {
+                OnlineBadge.Visibility = Visibility.Collapsed;
+            }
         }
 
         #endregion
@@ -457,11 +507,6 @@ namespace Unigram.Controls.Cells
                 }
             }
 
-            if (message.SendingState is MessageSendingStateFailed && message.IsOutgoing)
-            {
-                result = "Failed: ";
-            }
-
             if (message.Content is MessageGame gameMedia)
             {
                 return result + "\uD83C\uDFAE " + gameMedia.Game.Title;
@@ -499,7 +544,7 @@ namespace Unigram.Controls.Cells
             }
             else if (message.Content is MessageVideo video)
             {
-                return result + Strings.Resources.AttachVideo + GetCaption(video.Caption.Text);
+                return result + (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -546,12 +591,7 @@ namespace Unigram.Controls.Cells
             }
             else if (message.Content is MessagePhoto photo)
             {
-                if (string.IsNullOrEmpty(photo.Caption.Text))
-                {
-                    return result + Strings.Resources.AttachPhoto;
-                }
-
-                return result + $"{Strings.Resources.AttachPhoto}, ";
+                return result + (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption.Text);
             }
             else if (message.Content is MessagePoll poll)
             {
@@ -744,6 +784,11 @@ namespace Unigram.Controls.Cells
             if (DropVisual != null)
                 DropVisual.Visibility = Visibility.Collapsed;
 
+            if (e.DataView.AvailableFormats.Count == 0)
+            {
+                return;
+            }
+
             var chat = _chat;
             if (chat == null)
             {
@@ -758,6 +803,34 @@ namespace Unigram.Controls.Cells
             }
 
             base.OnDrop(e);
+        }
+    }
+
+    public class ChatCellAutomationPeer : FrameworkElementAutomationPeer
+    {
+        private ChatCell _owner;
+        private string _name;
+
+        public ChatCellAutomationPeer(ChatCell owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        public void SetName(string name)
+        {
+            SetName(name, _name);
+        }
+
+        private void SetName(string newValue, string oldValue)
+        {
+            _name = newValue;
+            RaisePropertyChangedEvent(AutomationElementIdentifiers.NameProperty, oldValue ?? string.Empty, newValue);
+        }
+
+        protected override string GetNameCore()
+        {
+            return "ciao";
         }
     }
 }

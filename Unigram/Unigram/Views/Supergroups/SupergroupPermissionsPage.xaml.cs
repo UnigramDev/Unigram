@@ -51,7 +51,7 @@ namespace Unigram.Views.Supergroups
             });
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(HandledRoutedEventArgs args)
         {
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {

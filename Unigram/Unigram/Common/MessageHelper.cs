@@ -247,6 +247,7 @@ namespace Unigram.Common
             string secret = null;
             string phoneCode = null;
             string lang = null;
+            string channel = null;
             bool hasUrl = false;
 
             var query = scheme.Query.ParseQueryString();
@@ -355,6 +356,11 @@ namespace Unigram.Common
             {
                 lang = query.GetParameter("lang");
             }
+            else if (scheme.AbsoluteUri.StartsWith("tg:privatepost") || scheme.AbsoluteUri.StartsWith("tg://privatepost"))
+            {
+                channel = query.GetParameter("channel");
+                post = query.GetParameter("post");
+            }
 
             if (message != null && message.StartsWith("@"))
             {
@@ -396,6 +402,10 @@ namespace Unigram.Common
             else if (lang != null)
             {
                 NavigateToLanguage(protoService, navigation, lang);
+            }
+            else if (channel != null && post != null)
+            {
+                NavigateToMessage(protoService, navigation, channel, post);
             }
             else
             {
@@ -473,7 +483,7 @@ namespace Unigram.Common
 
                                 NavigateToConfirmPhone(null, phone, hash);
                             }
-                            else if (username.Equals("login", StringComparison.OrdinalIgnoreCase))
+                            else if (username.Equals("login", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
                             {
                                 NavigateToSendCode(protoService, post);
                             }
@@ -523,9 +533,13 @@ namespace Unigram.Common
 
                                 NavigateToShare(text, hasUrl);
                             }
-                            else if (username.Equals("setlanguage", StringComparison.OrdinalIgnoreCase))
+                            else if (username.Equals("setlanguage", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
                             {
                                 NavigateToLanguage(protoService, navigation, post);
+                            }
+                            else if (username.Equals("c", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post) && uri.Segments.Length >= 4)
+                            {
+                                NavigateToMessage(protoService, navigation, post, uri.Segments[3].Replace("/", string.Empty));
                             }
                             else
                             {
@@ -534,6 +548,26 @@ namespace Unigram.Common
                         }
                     }
                 }
+            }
+        }
+
+        private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string post, string message)
+        {
+            if (int.TryParse(post, out int supergroup) && long.TryParse(message, out long msgId))
+            {
+                var response = await protoService.SendAsync(new CreateSupergroupChat(supergroup, false));
+                if (response is Chat chat)
+                {
+                    navigation.NavigateToChat(chat, msgId << 20);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.LinkNotFound, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
+            else
+            {
+                // TODO: error
             }
         }
 
@@ -656,7 +690,7 @@ namespace Unigram.Common
                         await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
-                    Logs.Log.Write("account.signIn error " + error);
+                    Logs.Logger.Warning(Logs.Target.API, "account.signIn error " + error);
                 }
             }
             else
@@ -817,50 +851,31 @@ namespace Unigram.Common
                     }
                     else if (import is Error error)
                     {
-                        if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
+                        if (error.TypeEquals(ErrorType.FLOOD_WAIT))
                         {
-                            Logs.Log.Write("messages.importChatInvite error " + error);
-                            return;
-                        }
-                        if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
-                        {
-                            //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
-                            return;
+                            await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                         }
                         else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
                         {
-                            //MessageBox.Show(Strings.Additional.UsersTooMuch, Strings.Additional.Error, 0);
-                            return;
+                            await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorFull, Strings.Resources.AppName, Strings.Resources.OK);
                         }
-                        else if (error.TypeEquals(ErrorType.BOTS_TOO_MUCH))
+                        else
                         {
-                            //MessageBox.Show(Strings.Additional.BotsTooMuch, Strings.Additional.Error, 0);
-                            return;
+                            await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
                         }
-                        else if (error.TypeEquals(ErrorType.USER_ALREADY_PARTICIPANT))
-                        {
-                            return;
-                        }
-
-                        Logs.Log.Write("messages.importChatInvite error " + error);
                     }
                 }
             }
             else if (response is Error error)
             {
-                if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
+                if (error.TypeEquals(ErrorType.FLOOD_WAIT))
                 {
-                    Logs.Log.Write("messages.checkChatInvite error " + error);
-                    return;
+                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-                if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
+                else
                 {
-                    //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
-                    await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
-                    return;
+                    await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-
-                Logs.Log.Write("messages.checkChatInvite error " + error);
             }
         }
 
@@ -940,8 +955,7 @@ namespace Unigram.Common
                 {
                     var link = text.SelectedText;
 
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
-
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
                     copy.Click += LinkCopy_Click;
 
                     var flyout = new MenuFlyout();
@@ -975,17 +989,11 @@ namespace Unigram.Common
                         return;
                     }
 
-                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link };
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
+                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
 
                     open.Click += LinkOpen_Click;
                     copy.Click += LinkCopy_Click;
-
-                    if (ApiInfo.CanUseFlyoutIcons)
-                    {
-                        open.Icon = new FontIcon { Glyph = Icons.OpenInNewWindow };
-                        copy.Icon = new FontIcon { Glyph = Icons.Copy };
-                    }
 
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(open);
@@ -1007,6 +1015,39 @@ namespace Unigram.Common
             else
             {
                 args.Handled = false;
+            }
+        }
+
+        public static void Hyperlink_ContextRequested(UIElement sender, string link, ContextRequestedEventArgs args)
+        {
+            if (args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
+
+                open.Click += LinkOpen_Click;
+                copy.Click += LinkCopy_Click;
+
+                var flyout = new MenuFlyout();
+                flyout.Items.Add(open);
+                flyout.Items.Add(copy);
+
+                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+                {
+                    // We don't want to unfocus the text are when the context menu gets opened
+                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                }
+                else
+                {
+                    flyout.ShowAt(sender, point);
+                }
+
+                args.Handled = true;
             }
         }
 

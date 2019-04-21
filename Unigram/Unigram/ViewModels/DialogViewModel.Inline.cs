@@ -52,8 +52,43 @@ namespace Unigram.ViewModels
             }
         }
 
+        public async Task<bool> ResolveInlineBotAsync(string text)
+        {
+            var username = text.TrimStart('@').TrimEnd(' ');
+            if (string.IsNullOrEmpty(username))
+            {
+                return false;
+            }
+
+            var chat = Chat;
+            if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel)
+            {
+                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
+                if (supergroup != null && !supergroup.CanPostMessages())
+                {
+                    return false;
+                }
+            }
+
+            var response = await ProtoService.SendAsync(new SearchPublicChat(username));
+            if (response is Chat result && result.Type is ChatTypePrivate privata)
+            {
+                var user = ProtoService.GetUser(privata.UserId);
+                if (user.Type is UserTypeBot bot && bot.IsInline)
+                {
+                    CurrentInlineBot = user;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
         public async void ResolveInlineBot(string text, string command = null)
         {
+            var username = text.TrimStart('@').TrimEnd(' ');
+
             var chat = Chat;
             if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel)
             {
@@ -63,30 +98,6 @@ namespace Unigram.ViewModels
                     return;
                 }
             }
-
-            var username = text.TrimStart('@');
-            //var cached = CacheService.GetUsers();
-
-            //for (int i = 0; i < cached.Count; i++)
-            //{
-            //    var user = cached[i] as TLUser;
-            //    if (user != null && user.HasBotInlinePlaceholder && user.Username.Equals(text, StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        CurrentInlineBot = user;
-            //        GetInlineBotResults(command ?? string.Empty);
-            //        return;
-            //    }
-            //}
-
-            //if (CurrentInlineBot == null)
-            //{
-            //    var response = await LegacyService.ResolveUsernameAsync(username);
-            //    if (response.IsSucceeded)
-            //    {
-            //        CurrentInlineBot = response.Result.Users.FirstOrDefault() as TLUser;
-            //        GetInlineBotResults(command ?? string.Empty);
-            //    }
-            //}
 
             var response = await ProtoService.SendAsync(new SearchPublicChat(username));
             if (response is Chat result && result.Type is ChatTypePrivate privata)

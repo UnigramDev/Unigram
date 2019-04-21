@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Telegram.Td.Api;
+using Unigram.ViewModels.Chats;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Delegates
@@ -17,6 +18,7 @@ namespace Unigram.ViewModels.Delegates
         void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);
 
         void UpdateComposerHeader(Chat chat, MessageComposerHeader header);
+        void UpdateSearchMask(Chat chat, ChatSearchViewModel search);
 
 
 

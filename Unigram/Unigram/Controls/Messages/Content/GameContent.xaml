@@ -24,7 +24,7 @@
     </StackPanel>
 
     <Grid HorizontalAlignment="Left">
-        <ContentControl x:Name="Media"/>
+        <Border x:Name="Media"/>
 
         <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
             <TextBlock Text="{CustomResource AttachGame}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>

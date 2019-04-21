@@ -129,7 +129,7 @@ namespace Unigram.Controls
                     for (int i = 0; i < row.Count; i++)
                     {
                         var button = new GlyphButton();
-                        button.DataContext = row[i];
+                        button.Tag = row[i];
                         button.Margin = new Thickness(1, 2, 1, 0);
                         button.HorizontalAlignment = HorizontalAlignment.Stretch;
                         button.VerticalAlignment = VerticalAlignment.Stretch;
@@ -221,11 +221,11 @@ namespace Unigram.Controls
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            if (button.DataContext is KeyboardButton btn)
+            if (button.Tag is KeyboardButton btn)
             {
                 ButtonClick?.Invoke(this, new ReplyMarkupButtonClickEventArgs(btn));
             }
-            else if (button.DataContext is InlineKeyboardButton inlineBtn)
+            else if (button.Tag is InlineKeyboardButton inlineBtn)
             {
                 InlineButtonClick?.Invoke(this, new ReplyMarkupInlineButtonClickEventArgs(inlineBtn));
             }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -20,7 +21,10 @@ namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class VoiceNoteContent : Grid, IContentWithFile
     {
+        private MessageContentState _oldState;
+
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public VoiceNoteContent(MessageViewModel message)
         {
@@ -172,37 +176,60 @@ namespace Unigram.Controls.Messages.Content
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
+
+                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
+
+                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                Button.Glyph = "\uE118";
+                //Button.Glyph = Icons.Download;
+                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
                 Button.Progress = 0;
 
                 if (message.Delegate.CanBeDownloaded(message))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
+
+                _oldState = MessageContentState.Download;
             }
             else
             {
                 if (Equals(message, message.PlaybackService.CurrentItem))
                 {
-                    Button.Glyph = message.PlaybackService.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
-                    UpdatePosition();
+                    if (message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
+                    {
+                        //Button.Glyph = Icons.Pause;
+                        Button.SetGlyph(Icons.Pause, _oldState != MessageContentState.None && _oldState != MessageContentState.Pause);
+                    }
+                    else
+                    {
+                        //Button.Glyph = Icons.Play;
+                        Button.SetGlyph(Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Play);
+                    }
 
+                    UpdatePosition();
                     message.PlaybackService.PositionChanged += OnPositionChanged;
+
+                    _oldState = message.PlaybackService.PlaybackState == MediaPlaybackState.Playing ? MessageContentState.Pause : MessageContentState.Play;
                 }
                 else
                 {
-                    Button.Glyph = "\uE102";
+                    //Button.Glyph = Icons.Play;
+                    Button.SetGlyph(Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Play);
                     UpdateDuration();
+
+                    _oldState = MessageContentState.Play;
                 }
 
                 Button.Progress = 1;

@@ -24,7 +24,7 @@ namespace Unigram.Services
         void Send(Function function, Action<BaseObject> handler);
         Task<BaseObject> SendAsync(Function function);
 
-        void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0);
+        void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
 
         int SessionId { get; }
 
@@ -86,6 +86,7 @@ namespace Unigram.Services
         UpdateUnreadMessageCount UnreadMessageCount { get; }
 
         int GetNotificationSettingsMuteFor(Chat chat);
+        ScopeNotificationSettings GetScopeNotificationSettings(Chat chat);
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -387,9 +388,9 @@ namespace Unigram.Services
 
 
 
-        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0)
+        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
         {
-            _client.Send(new DownloadFile(fileId, priority, offset, limit));
+            _client.Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
         }
 
 
@@ -810,6 +811,31 @@ namespace Unigram.Services
             }
 
             return chat.NotificationSettings.MuteFor;
+        }
+
+        public ScopeNotificationSettings GetScopeNotificationSettings(Chat chat)
+        {
+            Type scope = null;
+            switch (chat.Type)
+            {
+                case ChatTypePrivate privata:
+                case ChatTypeSecret secret:
+                    scope = typeof(NotificationSettingsScopePrivateChats);
+                    break;
+                case ChatTypeBasicGroup basicGroup:
+                    scope = typeof(NotificationSettingsScopeGroupChats);
+                    break;
+                case ChatTypeSupergroup supergroup:
+                    scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
+                    break;
+            }
+
+            if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
+            {
+                return value;
+            }
+
+            return null;
         }
 
 

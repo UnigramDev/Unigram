@@ -21,6 +21,9 @@ namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class InvoiceContent : StackPanel, IContent
     {
+        private MessageViewModel _message;
+        public MessageViewModel Message => _message;
+
         public InvoiceContent(MessageViewModel message)
         {
             InitializeComponent();
@@ -29,6 +32,8 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessage(MessageViewModel message)
         {
+            _message = message;
+
             var invoice = message.Content as MessageInvoice;
             if (invoice == null)
             {

@@ -26,9 +26,6 @@ namespace Unigram.Common
         private static bool? _canUseDirectComposition;
         public static bool CanUseDirectComposition => (_canUseDirectComposition = _canUseDirectComposition ?? ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7)) ?? false;
 
-        private static bool? _canUseFlyoutIcons;
-        public static bool CanUseFlyoutIcons => (_canUseFlyoutIcons = _canUseFlyoutIcons ?? ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon")) ?? false;
-
         private static bool? _canUseAccelerators;
         public static bool CanUseAccelerators => (_canUseAccelerators = _canUseAccelerators ?? ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators")) ?? false;
 
