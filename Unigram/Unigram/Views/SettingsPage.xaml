@@ -72,8 +72,16 @@
                                               FontSize="16">
                             <Button.Flyout>
                                 <MenuFlyout x:Name="PhotoFlyout">
-                                    <MenuFlyoutItem x:Name="EditCamera" Click="EditCamera_Click" Text="{CustomResource FromCamera}"/>
-                                    <MenuFlyoutItem x:Name="EditPhoto" Click="EditPhoto_Click" Text="{CustomResource FromGalley}"/>
+                                    <MenuFlyoutItem Click="EditCamera_Click" Text="{CustomResource FromCamera}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE722;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="EditPhoto_Click" Text="{CustomResource FromGalley}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xEB9F;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </controls:GlyphButton>

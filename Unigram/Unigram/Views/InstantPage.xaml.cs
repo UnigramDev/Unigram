@@ -59,12 +59,6 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<InstantViewModel>();
 
-            if (ApiInfo.CanUseFlyoutIcons)
-            {
-                BrowserButton.Icon = new FontIcon { Glyph = Icons.OpenIn };
-                CopyButton.Icon = new FontIcon { Glyph = Icons.Copy };
-            }
-
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
                 EllipsisFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
@@ -1372,28 +1366,12 @@ namespace Unigram.Views
                     ProcessRichText(italicText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextStrikethrough strikeText:
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
-                    {
-                        span.TextDecorations |= TextDecorations.Strikethrough;
-                        ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
-                    }
-                    else
-                    {
-                        ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
-                    }
+                    span.TextDecorations |= TextDecorations.Strikethrough;
+                    ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextUnderline underlineText:
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
-                    {
-                        span.TextDecorations |= TextDecorations.Underline;
-                        ProcessRichText(underlineText.Text, span, textBlock, effects, ref offset);
-                    }
-                    else
-                    {
-                        var underline = new Underline();
-                        span.Inlines.Add(underline);
-                        ProcessRichText(underlineText.Text, underline, textBlock, effects, ref offset);
-                    }
+                    span.TextDecorations |= TextDecorations.Underline;
+                    ProcessRichText(underlineText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextUrl urlText:
                     try

@@ -49,13 +49,6 @@ namespace Unigram.Views
                 DescriptionPanel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Description_ContextRequested), true);
             }
 
-            if (ApiInfo.CanUseFlyoutIcons)
-            {
-                CopyDescription.Icon = new FontIcon { Glyph = Icons.Copy };
-                CopyPhone.Icon = new FontIcon { Glyph = Icons.Copy };
-                CopyUsername.Icon = new FontIcon { Glyph = Icons.Copy };
-            }
-
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {

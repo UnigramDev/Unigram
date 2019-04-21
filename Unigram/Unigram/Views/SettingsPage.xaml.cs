@@ -45,12 +45,6 @@ namespace Unigram.Views
 
             Diagnostics.Text = $"Unigram " + GetVersion();
 
-            if (ApiInfo.CanUseFlyoutIcons)
-            {
-                EditCamera.Icon = new FontIcon { Glyph = Icons.Camera };
-                EditPhoto.Icon = new FontIcon { Glyph = Icons.Photo };
-            }
-
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
                 PhotoFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;

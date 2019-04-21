@@ -516,7 +516,7 @@ namespace Unigram.Services
 
         public bool IsSupportedPlaybackRateRange(double min, double max)
         {
-            if (_mediaPlayer != null && ApiInformation.IsMethodPresent("Windows.Media.Playback.MediaPlaybackSession", "IsSupportedPlaybackRateRange"))
+            if (_mediaPlayer != null)
             {
                 return _mediaPlayer.PlaybackSession.IsSupportedPlaybackRateRange(min,  max);
             }

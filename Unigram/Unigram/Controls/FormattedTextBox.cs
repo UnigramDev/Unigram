@@ -328,7 +328,7 @@ namespace Unigram.Controls
             flyoutItem.Command = new RelayCommand(command);
             flyoutItem.Text = text;
 
-            if (icon != null && ApiInfo.CanUseFlyoutIcons)
+            if (icon != null)
             {
                 flyoutItem.Icon = icon;
             }

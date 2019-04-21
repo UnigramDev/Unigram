@@ -13,27 +13,6 @@ namespace Unigram.Themes
     {
         public Fluent()
         {
-            var commonStyles = new ResourceDictionary { Source = new Uri("ms-appx:///Common/CommonStyles.xaml") };
-            MergedDictionaries.Add(commonStyles);
-
-            if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
-            {
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Fluent.xaml") });
-            }
-            else
-            {
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Plain.xaml") });
-            }
-
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MenuFlyoutItem", "Icon"))
-            {
-
-            }
-            else
-            {
-                this[typeof(GlyphMenuFlyoutItem)] = new Style { TargetType = typeof(GlyphMenuFlyoutItem), BasedOn = commonStyles["MenuFlyoutItemGlyphStyle"] as Style };
-            }
-
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))
             {
                 this["EllipsisButtonPadding"] = new Thickness(16, 19, 16, 0);
@@ -45,6 +24,18 @@ namespace Unigram.Themes
                 this["EllipsisButtonPadding"] = new Thickness(16, 23, 16, 0);
                 this["GlyphButtonFontSize"] = 20d;
                 this["ChatPhotoSize"] = 36d;
+            }
+
+            var commonStyles = new ResourceDictionary { Source = new Uri("ms-appx:///Common/CommonStyles.xaml") };
+            MergedDictionaries.Add(commonStyles);
+
+            if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
+            {
+                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Fluent.xaml") });
+            }
+            else
+            {
+                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Plain.xaml") });
             }
 
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))

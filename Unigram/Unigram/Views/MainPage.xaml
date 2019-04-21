@@ -234,22 +234,20 @@
                                           Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                                 <Button.Flyout>
                                     <MenuFlyout x:Name="SettingsFlyout">
-                                        <controls:GlyphMenuFlyoutItem
-                                            x:Name="EditNameItem"
+                                        <MenuFlyoutItem
                                             Click="EditName_Click"
                                             Text="{CustomResource EditName}">
-                                            <controls:GlyphMenuFlyoutItem.Glyph>
+                                            <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE104;"/>
-                                            </controls:GlyphMenuFlyoutItem.Glyph>
-                                        </controls:GlyphMenuFlyoutItem>
-                                        <controls:GlyphMenuFlyoutItem
-                                            x:Name="LogoutItem"
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem
                                             Click="LogOut_Click"
                                             Text="{CustomResource LogOut}">
-                                            <controls:GlyphMenuFlyoutItem.Glyph>
+                                            <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xF3B1;"/>
-                                            </controls:GlyphMenuFlyoutItem.Glyph>
-                                        </controls:GlyphMenuFlyoutItem>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>

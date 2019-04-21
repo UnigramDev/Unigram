@@ -192,8 +192,16 @@
                         Grid.Column="2">
                     <Button.Flyout>
                         <MenuFlyout x:Name="EllipsisFlyout">
-                            <MenuFlyoutItem x:Name="BrowserButton" Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}"/>
-                            <MenuFlyoutItem x:Name="CopyButton" Command="{x:Bind ViewModel.CopyCommand}" Text="{CustomResource CopyLink}"/>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE7AC;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.CopyCommand}" Text="{CustomResource CopyLink}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8C8;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                         </MenuFlyout>
                     </Button.Flyout>
                     <FontIcon x:Name="EllipsisIcon"

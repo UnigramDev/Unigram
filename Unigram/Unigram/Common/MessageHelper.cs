@@ -955,14 +955,8 @@ namespace Unigram.Common
                 {
                     var link = text.SelectedText;
 
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
-
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
                     copy.Click += LinkCopy_Click;
-
-                    if (ApiInfo.CanUseFlyoutIcons)
-                    {
-                        copy.Icon = new FontIcon { Glyph = Icons.Copy };
-                    }
 
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(copy);
@@ -995,17 +989,11 @@ namespace Unigram.Common
                         return;
                     }
 
-                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link };
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
+                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
 
                     open.Click += LinkOpen_Click;
                     copy.Click += LinkCopy_Click;
-
-                    if (ApiInfo.CanUseFlyoutIcons)
-                    {
-                        open.Icon = new FontIcon { Glyph = Icons.OpenInNewWindow };
-                        copy.Icon = new FontIcon { Glyph = Icons.Copy };
-                    }
 
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(open);
@@ -1039,17 +1027,11 @@ namespace Unigram.Common
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link };
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
+                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
 
                 open.Click += LinkOpen_Click;
                 copy.Click += LinkCopy_Click;
-
-                if (ApiInfo.CanUseFlyoutIcons)
-                {
-                    open.Icon = new FontIcon { Glyph = Icons.OpenInNewWindow };
-                    copy.Icon = new FontIcon { Glyph = Icons.Copy };
-                }
 
                 var flyout = new MenuFlyout();
                 flyout.Items.Add(open);
