@@ -448,7 +448,7 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (Media.Content is IContentWithFile content && content.IsValid(message.Content, true))
+            if (Media.Child is IContentWithFile content && content.IsValid(message.Content, true))
             {
                 content.UpdateMessageContentOpened(message);
             }
@@ -595,7 +595,7 @@ namespace Unigram.Controls.Messages
 
             UpdateMessageText(message);
 
-            if (Media.Content is IContent content && content.IsValid(message.Content, true))
+            if (Media.Child is IContent content && content.IsValid(message.Content, true))
             {
                 content.UpdateMessage(message);
             }
@@ -605,94 +605,94 @@ namespace Unigram.Controls.Messages
                 {
                     if (textMessage.WebPage.IsSmallPhoto())
                     {
-                        Media.Content = new WebPageSmallPhotoContent(message);
+                        Media.Child = new WebPageSmallPhotoContent(message);
                     }
                     else
                     {
-                        Media.Content = new WebPageContent(message);
+                        Media.Child = new WebPageContent(message);
                     }
                 }
                 else if (message.Content is MessageAlbum)
                 {
-                    Media.Content = new AlbumContent(message);
+                    Media.Child = new AlbumContent(message);
                 }
                 else if (message.Content is MessageAnimation)
                 {
-                    Media.Content = new AnimationContent(message);
+                    Media.Child = new AnimationContent(message);
                 }
                 else if (message.Content is MessageAudio)
                 {
-                    Media.Content = new AudioContent(message);
+                    Media.Child = new AudioContent(message);
                 }
                 else if (message.Content is MessageCall)
                 {
-                    Media.Content = new CallContent(message);
+                    Media.Child = new CallContent(message);
                 }
                 else if (message.Content is MessageContact)
                 {
-                    Media.Content = new ContactContent(message);
+                    Media.Child = new ContactContent(message);
                 }
                 else if (message.Content is MessageDocument)
                 {
-                    Media.Content = new DocumentContent(message);
+                    Media.Child = new DocumentContent(message);
                 }
                 else if (message.Content is MessageGame)
                 {
-                    Media.Content = new GameContent(message);
+                    Media.Child = new GameContent(message);
                 }
                 else if (message.Content is MessageInvoice invoice)
                 {
                     if (invoice.Photo == null)
                     {
-                        Media.Content = new InvoiceContent(message);
+                        Media.Child = new InvoiceContent(message);
                     }
                     else
                     {
-                        Media.Content = new InvoicePhotoContent(message);
+                        Media.Child = new InvoicePhotoContent(message);
                     }
                 }
                 else if (message.Content is MessageLocation)
                 {
-                    Media.Content = new LocationContent(message);
+                    Media.Child = new LocationContent(message);
                 }
                 else if (message.Content is MessagePhoto)
                 {
-                    Media.Content = new PhotoContent(message);
+                    Media.Child = new PhotoContent(message);
                 }
                 else if (message.Content is MessagePoll)
                 {
-                    Media.Content = new PollContent(message);
+                    Media.Child = new PollContent(message);
                 }
                 else if (message.Content is MessageSticker)
                 {
-                    Media.Content = new StickerContent(message);
+                    Media.Child = new StickerContent(message);
                 }
                 else if (message.Content is MessageVenue)
                 {
-                    Media.Content = new VenueContent(message);
+                    Media.Child = new VenueContent(message);
                 }
                 else if (message.Content is MessageVideo)
                 {
-                    Media.Content = new VideoContent(message);
+                    Media.Child = new VideoContent(message);
                 }
                 else if (message.Content is MessageVideoNote)
                 {
-                    Media.Content = new VideoNoteContent(message);
+                    Media.Child = new VideoNoteContent(message);
                 }
                 else if (message.Content is MessageVoiceNote)
                 {
-                    Media.Content = new VoiceNoteContent(message);
+                    Media.Child = new VoiceNoteContent(message);
                 }
                 else
                 {
-                    Media.Content = null;
+                    Media.Child = null;
                 }
             }
         }
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            if (Media.Content is IContentWithFile content)
+            if (Media.Child is IContentWithFile content)
             {
                 content.UpdateFile(message, file);
             }
@@ -1051,7 +1051,7 @@ namespace Unigram.Controls.Messages
             var fill = overlay.Compositor.CreateColorBrush(settings.GetColorValue(UIColorType.Accent));
             var brush = (CompositionBrush)fill;
 
-            if (Media.Content is IContentWithMask withMask)
+            if (Media.Child is IContentWithMask withMask)
             {
                 var alpha = withMask.GetAlphaMask();
                 if (alpha != null)

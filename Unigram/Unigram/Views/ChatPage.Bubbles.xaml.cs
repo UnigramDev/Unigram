@@ -147,9 +147,14 @@ namespace Unigram.Views
                 {
                     try
                     {
-                        presenter.MediaPlayer.Source = null;
                         presenter.MediaPlayer.Dispose();
                         presenter.MediaPlayer = null;
+                    }
+                    catch { }
+
+                    try
+                    {
+                        item.Container.Children.Remove(presenter);
                     }
                     catch { }
                 }
@@ -343,8 +348,8 @@ namespace Unigram.Views
                     }
 
                     var target = message.Content as object;
-                    var media = root.FindName("Media") as ContentControl;
-                    var panel = media.ContentTemplateRoot as Panel;
+                    var media = root.FindName("Media") as Border;
+                    var panel = media.Child as Panel;
 
                     if (target is MessageText messageText && messageText.WebPage != null)
                     {
@@ -382,13 +387,13 @@ namespace Unigram.Views
                             target = messageText.WebPage.Photo;
                         }
 
-                        media = panel?.FindName("Media") as ContentControl;
-                        panel = media?.ContentTemplateRoot as Panel;
+                        media = panel?.FindName("Media") as Border;
+                        panel = media?.Child as Panel;
                     }
                     else if (target is MessageGame)
                     {
-                        media = panel?.FindName("Media") as ContentControl;
-                        panel = media?.ContentTemplateRoot as Panel;
+                        media = panel?.FindName("Media") as Border;
+                        panel = media?.Child as Panel;
                     }
                     else if (target is MessageVideoNote messageVideoNote)
                     {
@@ -413,7 +418,6 @@ namespace Unigram.Views
                 var presenter = _old[item].Presenter;
                 if (presenter != null && presenter.MediaPlayer != null)
                 {
-                    presenter.MediaPlayer.Source = null;
                     presenter.MediaPlayer.Dispose();
                     presenter.MediaPlayer = null;
                 }
@@ -499,8 +503,6 @@ namespace Unigram.Views
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             var typeName = SelectTemplateCore(args.Item);
-
-            Debug.Assert(_typeToItemHashSetMapping.ContainsKey(typeName), "The type of the item used with DataTemplateSelectorBehavior must have a DataTemplate mapping");
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -512,9 +514,6 @@ namespace Unigram.Views
                 {
                     // Suggestion matches what we want, so remove it from the recycle queue
                     relevantHashSet.Remove(args.ItemContainer);
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Removing (suggested) {args.ItemContainer.GetHashCode()} from {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
                 else
                 {
@@ -537,9 +536,6 @@ namespace Unigram.Views
                     // because you can't remove a specific element (which is needed in the block above).
                     args.ItemContainer = relevantHashSet.First();
                     relevantHashSet.Remove(args.ItemContainer);
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Removing (reused) {args.ItemContainer.GetHashCode()} from {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
                 else
                 {
@@ -548,9 +544,6 @@ namespace Unigram.Views
                     var item = CreateSelectorItem(typeName);
                     item.Style = Messages.ItemContainerStyleSelector.SelectStyle(args.Item, item);
                     args.ItemContainer = item;
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Creating {args.ItemContainer.GetHashCode()} for {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
             }
 
@@ -564,16 +557,7 @@ namespace Unigram.Views
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
                 var tag = args.ItemContainer.Tag as string;
-
-#if ENABLE_DEBUG_SPEW
-                Debug.WriteLine($"Adding {args.ItemContainer.GetHashCode()} to {tag}");
-#endif // ENABLE_DEBUG_SPEW
-
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
-
-#if ENABLE_DEBUG_SPEW
-                Debug.Assert(added == true, "Recycle queue should never have dupes. If so, we may be incorrectly reusing a container that is already in use!");
-#endif // ENABLE_DEBUG_SPEW
 
                 return;
             }

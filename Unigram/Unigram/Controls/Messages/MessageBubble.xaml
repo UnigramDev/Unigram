@@ -128,19 +128,13 @@
                 TextAlignment="DetectFromContent"
                 Grid.Column="1"
                 Grid.Row="2">
-                <RichTextBlock.Resources>
-                    <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                </RichTextBlock.Resources>
                 <Paragraph>
                     <Span x:Name="Span"/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
                 </Paragraph>
             </RichTextBlock>
 
-            <ContentControl
+            <Border
                 x:Name="Media"
-                IsTabStop="False"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch"
                 Grid.Column="1"
                 Grid.Row="3"/>
 
