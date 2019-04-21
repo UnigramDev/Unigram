@@ -370,6 +370,14 @@ namespace Unigram.Controls.Chats
                 Logs.Logger.Debug(Logs.Target.Chat, "Tab pressed and handled");
                 e.Handled = true;
             }
+            else if (e.Key == VirtualKey.Tab)
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                if (ctrl)
+                {
+                    return;
+                }
+            }
             else if (e.Key == VirtualKey.Enter)
             {
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
