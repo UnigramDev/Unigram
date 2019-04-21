@@ -252,7 +252,7 @@ namespace Unigram.Controls.Views
             Unloaded += OnUnloaded;
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
         {
             if (IsEditingCompression)
             {

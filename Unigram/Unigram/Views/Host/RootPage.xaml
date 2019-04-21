@@ -77,28 +77,29 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture IsEnabled="False" Width="28" Height="28" Margin="10,0,10,0"/>
-                <Rectangle Width="6"
-                                                Height="24"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Visibility="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" />
+                <Rectangle Width="2"
+                           Height="24"
+                           Margin="4,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Visibility="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" />
 
                 <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.Column="1"/>
 
                 <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
-                                            Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                                            MinWidth="20"
-                                            Height="20"
-                                            CornerRadius="10"
-                                            VerticalAlignment="Center"
-                                            Margin="8,0,12,0"
-                                            Grid.Column="2">
+                        Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                        MinWidth="20"
+                        Height="20"
+                        CornerRadius="10"
+                        VerticalAlignment="Center"
+                        Margin="8,0,12,0"
+                        Grid.Column="2">
                     <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
-                                                    TextAlignment="Center"
-                                                    Margin="4,2,4,0"/>
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                               TextAlignment="Center"
+                               Margin="4,2,4,0"/>
                 </Border>
             </Grid>
         </DataTemplate>

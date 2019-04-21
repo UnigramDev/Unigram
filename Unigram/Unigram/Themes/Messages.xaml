@@ -92,7 +92,7 @@
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.EmojiTemplate>
-        <selectors:AutocompleteTemplateSelector.ItemTemplate>
+        <!--<selectors:AutocompleteTemplateSelector.ItemTemplate>
             <DataTemplate>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -105,7 +105,7 @@
                     <TextBlock VerticalAlignment="Center" Grid.Column="1"/>
                 </Grid>
             </DataTemplate>
-        </selectors:AutocompleteTemplateSelector.ItemTemplate>
+        </selectors:AutocompleteTemplateSelector.ItemTemplate>-->
     </selectors:AutocompleteTemplateSelector>
 
 </ResourceDictionary>

@@ -226,7 +226,7 @@ namespace Unigram.Controls
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
         }
 
-        public void OnBackRequested(HandledEventArgs e)
+        public void OnBackRequested(HandledRoutedEventArgs e)
         {
             if (_closing)
             {
@@ -239,7 +239,7 @@ namespace Unigram.Controls
             OnBackRequestedOverride(this, e);
         }
 
-        protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)
+        protected virtual void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
         {
             e.Handled = true;
             Hide(ContentDialogResult.None);
@@ -253,7 +253,7 @@ namespace Unigram.Controls
 
         public void TryHide(ContentDialogResult result)
         {
-            var e = new HandledEventArgs();
+            var e = new HandledRoutedEventArgs();
             OnBackRequestedOverride(this, e);
 
             if (e.Handled)

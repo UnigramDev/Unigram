@@ -397,6 +397,8 @@ namespace Unigram.Controls
             {
                 range.GetText(TextGetOptions.NoHidden, out string value);
 
+                value = value.Format();
+
                 var sub = Markdown.Parse(ref value);
                 if (sub != null && sub.Count > 0)
                 {

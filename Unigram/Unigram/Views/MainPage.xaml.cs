@@ -468,7 +468,7 @@ namespace Unigram.Views
             Undo.Show(chats, clear, action, undo);
         }
 
-        public void OnBackRequesting(HandledEventArgs args)
+        public void OnBackRequesting(HandledRoutedEventArgs args)
         {
             if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
             {
@@ -487,7 +487,7 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(HandledRoutedEventArgs args)
         {
             OnBackRequesting(args);
 

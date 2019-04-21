@@ -770,7 +770,7 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(HandledRoutedEventArgs args)
         {
             if (ViewModel.Search != null)
             {
@@ -2622,62 +2622,6 @@ namespace Unigram.Views
             TLWindowContext.GetForCurrentView().UpdateTitleBar();
         }
 
-        private void Autocomplete_Loaded(object sender, RoutedEventArgs e)
-        {
-            var padding = ActualHeight - 48 * 2 - 152;
-
-            var boh = ListAutocomplete.Descendants().FirstOrDefault();
-
-            _autocompleteLayer = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
-            _autocompleteLayer.Clip = _autocompleteInset = _compositor.CreateInsetClip(0, (float)padding, 0, 0);
-
-            var scroll = ListAutocomplete.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
-            if (scroll != null)
-            {
-                //_scrollingHost = scroll;
-                //_scrollingHost.ChangeView(null, 0, null, true);
-                //scroll.ViewChanged += Scroll_ViewChanged;
-                //Scroll_ViewChanged(scroll, null);
-
-                //var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
-                var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroll);
-
-                //if (_backgroundVisual == null)
-                //{
-                //    _backgroundVisual = ElementCompositionPreview.GetElementVisual(BackgroundPanel).Compositor.CreateSpriteVisual();
-                //    ElementCompositionPreview.SetElementChildVisual(BackgroundPanel, _backgroundVisual);
-                //}
-
-                //_backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
-                //_backgroundVisual.Size = new System.Numerics.Vector2((float)BackgroundPanel.ActualWidth, (float)BackgroundPanel.ActualHeight);
-                //_backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
-
-                //_expression = _expression ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
-                //_expression.SetReferenceParameter("Scrolling", props);
-                //_expression.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
-                //_backgroundVisual.StopAnimation("Offset.Y");
-                //_backgroundVisual.StartAnimation("Offset.Y", _expression);
-
-
-                ExpressionAnimation _expressionClip = null;
-                //_expressionClip = _expressionClip ?? _compositor.CreateExpressionAnimation("Min(0, Maximum - Scrolling.Translation.Y)");
-                _expressionClip = _expressionClip ?? _compositor.CreateExpressionAnimation("Scrolling.Translation.Y");
-                _expressionClip.SetReferenceParameter("Scrolling", props);
-                _expressionClip.SetScalarParameter("Maximum", -(float)padding);
-                _autocompleteLayer.Clip.StopAnimation("Offset.Y");
-                _autocompleteLayer.Clip.StartAnimation("Offset.Y", _expressionClip);
-            }
-
-            //var panel = List.ItemsPanelRoot as ItemsWrapGrid;
-            //if (panel != null)
-            //{
-            //    panel.SizeChanged += (s, args) =>
-            //    {
-            //        Scroll_ViewChanged(scroll, null);
-            //    };
-            //}
-        }
-
         private void Mentions_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             ViewModel.ReadMentionsCommand.Execute();
@@ -3129,6 +3073,12 @@ namespace Unigram.Views
             var composer = ElementCompositionPreview.GetElementVisual(ComposerHeader);
             var messages = ElementCompositionPreview.GetElementVisual(Messages);
             var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
+
+            textArea.Clip?.StopAnimation("TopInset");
+            messages.Clip?.StopAnimation("TopInset");
+            composer.Clip?.StopAnimation("BottomInset");
+            messages.StopAnimation("Offset");
+            composer.StopAnimation("Offset");
 
             var value = show ? 48 : 0;
 

@@ -141,7 +141,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Rectangle x:Name="SelectionIndicator" Width="6" Height="24" Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" Opacity="0" />
+                            <Rectangle x:Name="SelectionIndicator" Width="2" Height="24" Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" Margin="4,0,0,0" Opacity="0" />
                         </Grid>
                         <Grid Height="40" HorizontalAlignment="Left">
                             <Grid.ColumnDefinitions>

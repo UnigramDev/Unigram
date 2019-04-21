@@ -34,7 +34,7 @@
                                         Padding="12,4,6,4"
                                         Background="{x:Null}"
                                         BorderBrush="{x:Null}"
-                                        Style="{StaticResource SearchTextBoxStyle}"
+                                        Style="{StaticResource QueryTextBoxStyle}"
                                         PlaceholderText="{CustomResource Search}"
                                         PreventKeyboardDisplayOnProgrammaticFocus="True"
                                         Visibility="Collapsed"

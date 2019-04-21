@@ -34,7 +34,7 @@ namespace Unigram.Selectors
                 return EmojiTemplate;
             }
 
-            return ItemTemplate;
+            //return ItemTemplate;
 
             return base.SelectTemplateCore(item, container);
         }

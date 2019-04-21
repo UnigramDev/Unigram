@@ -191,7 +191,7 @@
                         ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
                         Grid.Column="2">
                     <Button.Flyout>
-                        <MenuFlyout>
+                        <MenuFlyout x:Name="EllipsisFlyout">
                             <MenuFlyoutItem x:Name="BrowserButton" Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}"/>
                             <MenuFlyoutItem x:Name="CopyButton" Command="{x:Bind ViewModel.CopyCommand}" Text="{CustomResource CopyLink}"/>
                         </MenuFlyout>
