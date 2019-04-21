@@ -177,10 +177,11 @@ namespace Unigram.ViewModels
             var formattedText = GetFormattedText(true);
             var caption = formattedText.Substring(0, CacheService.Options.MessageCaptionLengthMax);
 
-            var dialog = new SendFilesView();
+            var media = await StorageMedia.CreateAsync(files);
+
+            var dialog = new SendFilesView(media, false);
             dialog.ViewModel = this;
             dialog.Caption = caption;
-            dialog.Items.AddRange(files.Select(x => new StorageDocument(x)));
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -189,11 +190,29 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            files = new List<StorageFile>(dialog.Items.Select(x => x.File));
-
             if (files.Count == 1)
             {
-                await SendDocumentAsync(files[0], dialog.Caption);
+                await SendStorageMediaAsync(dialog.Items[0], dialog.Caption, dialog.IsFilesSelected);
+            }
+            else if (dialog.IsAlbum && dialog.IsAlbumAvailable)
+            {
+                var group = new List<StorageMedia>(Math.Min(dialog.Items.Count, 10));
+
+                foreach (var item in dialog.Items)
+                {
+                    group.Add(item);
+
+                    if (group.Count == 10)
+                    {
+                        await SendGroupedAsync(group);
+                        group = new List<StorageMedia>(Math.Min(dialog.Items.Count, 10));
+                    }
+                }
+
+                if (group.Count > 0)
+                {
+                    await SendGroupedAsync(group);
+                }
             }
             else
             {
@@ -202,10 +221,26 @@ namespace Unigram.ViewModels
                     await SendMessageAsync(dialog.Caption);
                 }
 
-                foreach (var file in files)
+                foreach (var file in dialog.Items)
                 {
-                    await SendDocumentAsync(file, null);
+                    await SendStorageMediaAsync(file, null, dialog.IsFilesSelected);
                 }
+            }
+        }
+
+        private async Task SendStorageMediaAsync(StorageMedia storage, FormattedText caption, bool asFile)
+        {
+            if (storage is StorageDocument)
+            {
+                await SendDocumentAsync(storage.File, caption);
+            }
+            else if (storage is StoragePhoto photo)
+            {
+                await SendPhotoAsync(storage.File, storage.Caption, asFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null);
+            }
+            else if (storage is StorageVideo video)
+            {
+                await SendVideoAsync(storage.File, storage.Caption, video.IsMuted, asFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
             }
         }
 
@@ -334,7 +369,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                SendMediaExecute(storages, storages[0]);
+                SendMediaExecute(storages, storages.Count > 0 ? storages[0] : null);
             }
         }
 
@@ -355,9 +390,14 @@ namespace Unigram.ViewModels
             selectedItem.Caption = formattedText
                 .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 
+#if DEBUG
+            var dialog = new SendFilesView(media, true);
+            dialog.ViewModel = this;
+#else
             var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = chat.Type is ChatTypePrivate };
             dialog.SetItems(media);
             dialog.SelectedItem = selectedItem;
+#endif
 
             var dialogResult = await dialog.ShowAsync();
 
@@ -369,8 +409,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
+#if DEBUG
+            var items = dialog.Items.ToList();
+            if (items.Count > 1 /*&& dialog.IsGrouped*/)
+#else
             var items = dialog.SelectedItems.ToList();
             if (items.Count > 1 && dialog.IsGrouped)
+#endif
             {
                 var group = new List<StorageMedia>(Math.Min(items.Count, 10));
 
@@ -487,7 +532,7 @@ namespace Unigram.ViewModels
             return SendMessageAsync(0, new InputMessageContact(contact));
         }
 
-        private Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent)
+        private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent)
         {
             var chat = _chat;
             if (chat == null)
@@ -495,7 +540,13 @@ namespace Unigram.ViewModels
                 return null;
             }
 
-            return ProtoService.SendAsync(new SendMessage(chat.Id, replyToMessageId, false, false, null, inputMessageContent));
+            var response = await ProtoService.SendAsync(new SendMessage(chat.Id, replyToMessageId, false, false, null, inputMessageContent));
+            if (response is Error error)
+            {
+
+            }
+
+            return response;
         }
 
         private async Task<BaseObject> EditMessageAsync(MessageViewModel message, InputFile inputFile, FileType type, Func<InputFile, InputMessageContent> inputMessageContent)
@@ -857,6 +908,7 @@ namespace Unigram.ViewModels
                 header.EditingMessageMedia = factory;
             }
         }
+
         public RelayCommand EditMediaCommand { get; }
         private async void EditMediaExecute()
         {

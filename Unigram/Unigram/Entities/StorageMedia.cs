@@ -224,5 +224,47 @@ namespace Unigram.Entities
                 return await StoragePhoto.CreateAsync(file, selected);
             }
         }
+
+        public static async Task<IEnumerable<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
+        {
+            var results = new List<StorageMedia>();
+
+            foreach (StorageFile file in items.OfType<StorageFile>())
+            {
+                if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
+                    file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                    file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
+                    file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
+                {
+                    var photo = await StoragePhoto.CreateAsync(file, true);
+                    if (photo != null)
+                    {
+                        results.Add(photo);
+                    }
+                    else
+                    {
+                        results.Add(new StorageDocument(file));
+                    }
+                }
+                else if (file.ContentType == "video/mp4")
+                {
+                    var video = await StorageVideo.CreateAsync(file, true);
+                    if (video != null)
+                    {
+                        results.Add(video);
+                    }
+                    else
+                    {
+                        results.Add(new StorageDocument(file));
+                    }
+                }
+                else
+                {
+                    results.Add(new StorageDocument(file));
+                }
+            }
+
+            return results;
+        }
     }
 }
