@@ -585,6 +585,7 @@
                                                     SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
                                                     ItemClick="ListView_ItemClick"
                                                     SelectionChanged="ListView_SelectionChanged"
+                                                    ChoosingItemContainer="ChatsList_ChoosingItemContainer"
                                                     CanDragItems="True"
                                                     CanReorderItems="False"
                                                     DragItemsStarting="Chats_DragItemsStarting"
@@ -611,7 +612,7 @@
                                 </ListView.ItemContainerStyleSelector>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <cells:ChatCell ContextRequested="Chat_ContextRequested"/>
+                                        <cells:ChatCell/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.Header>

@@ -1662,6 +1662,19 @@ namespace Unigram.Views
             args.Handled = true;
         }
 
+        private void ChatsList_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ChatsListViewItem(ChatsList);
+                args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
+                args.ItemContainer.ContextRequested += Chat_ContextRequested;
+            }
+
+            args.ItemContainer.Style = ChatsList.ItemContainerStyleSelector.SelectStyle(args.Item, null);
+            args.IsContainerPrepared = true;
+        }
+
         private void UsersListView_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             if (args.ItemContainer == null)

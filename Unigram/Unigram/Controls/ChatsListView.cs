@@ -31,6 +31,8 @@ namespace Unigram.Controls
                 return;
             }
 
+            args.ItemContainer.Tag = args.Item;
+
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null)
             {
