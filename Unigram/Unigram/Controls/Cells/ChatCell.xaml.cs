@@ -187,6 +187,7 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat);
             TimeLabel.Text = UpdateTimeLabel(chat);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+            FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateChatReadInbox(Chat chat)
@@ -217,8 +218,7 @@ namespace Unigram.Controls.Cells
         public void UpdateNotificationSettings(Chat chat)
         {
             var muted = _protoService.GetNotificationSettingsMuteFor(chat) > 0;
-            UnreadBackground.Visibility = muted ? Visibility.Collapsed : Visibility.Visible;
-            UnreadMutedBackground.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
+            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -505,11 +505,6 @@ namespace Unigram.Controls.Cells
                         }
                     }
                 }
-            }
-
-            if (message.SendingState is MessageSendingStateFailed && message.IsOutgoing)
-            {
-                result = "Failed: ";
             }
 
             if (message.Content is MessageGame gameMedia)

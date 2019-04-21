@@ -12,7 +12,12 @@
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            
             <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#444444"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelMutedBrush" Color="#000000"/>
+
+            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeFailedBrush" Color="#FF0000"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelFailedBrush" Color="#FFFFFF"/>
 
             <SolidColorBrush x:Key="TelegramDialogOnlineBadge" Color="#89DF9E"/>
 
@@ -29,7 +34,12 @@
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+
             <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelMutedBrush" Color="#FFFFFF"/>
+
+            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeFailedBrush" Color="#FF0000"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelFailedBrush" Color="#FFFFFF"/>
 
             <SolidColorBrush x:Key="TelegramDialogOnlineBadge" Color="#00B12C"/>
 
