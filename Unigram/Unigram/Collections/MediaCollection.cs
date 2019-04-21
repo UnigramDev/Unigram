@@ -9,45 +9,25 @@ using Unigram.Services;
 
 namespace Unigram.Collections
 {
-    public class MediaCollection : IncrementalCollection<KeyedList<DateTime, Message>>
+    public class MediaCollection : IncrementalCollection<Message>
     {
         private readonly IProtoService _protoService;
         private readonly SearchMessagesFilter _filter;
         private readonly long _chatId;
+        private readonly string _query;
 
         private long _lastMaxId;
         private bool _hasMore;
 
-        public MediaCollection(IProtoService protoService, long chatId, SearchMessagesFilter filter)
+        public MediaCollection(IProtoService protoService, long chatId, SearchMessagesFilter filter, string query = null)
         {
             _protoService = protoService;
             _chatId = chatId;
             _filter = filter;
+            _query = query ?? string.Empty;
         }
 
-        private string _query = string.Empty;
-        public string Query
-        {
-            get
-            {
-                return _query;
-            }
-            set
-            {
-                if (_query != value)
-                {
-                    _query = value;
-                    _lastMaxId = 0;
-                    RaisePropertyChanged("Query");
-
-                    Clear();
-
-                    HasMoreItems = true;
-                }
-            }
-        }
-
-        public override async Task<IList<KeyedList<DateTime, Message>>> LoadDataAsync()
+        public override async Task<IList<Message>> LoadDataAsync()
         {
             try
             {
@@ -64,17 +44,12 @@ namespace Unigram.Collections
                         _hasMore = false;
                     }
 
-                    return messages.MessagesValue.GroupBy(x =>
-                    {
-                        var dateTime = Utils.UnixTimestampToDateTime(x.Date);
-                        return new DateTime(dateTime.Year, dateTime.Month, 1);
-
-                    }).Select(x => new KeyedList<DateTime, Message>(x)).ToList();
+                    return messages.MessagesValue;
                 }
             }
             catch { }
 
-            return new KeyedList<DateTime, Message>[0];
+            return new Message[0];
         }
 
         protected override bool GetHasMoreItems()
@@ -82,37 +57,44 @@ namespace Unigram.Collections
             return _hasMore;
         }
 
-        protected override void Merge(IList<KeyedList<DateTime, Message>> result)
+        protected override void InsertItem(int index, Message item)
         {
-            base.Merge(result);
-            return;
+            base.InsertItem(index, item);
 
-            var last = this.LastOrDefault();
-            if (last == null)
+            var previous = index > 0 ? this[index - 1] : null;
+            var next = index < Count - 1 ? this[index + 1] : null;
+
+            UpdateSeparatorOnInsert(item, next, index);
+            UpdateSeparatorOnInsert(previous, item, index - 1);
+        }
+
+        private static Message ShouldUpdateSeparatorOnInsert(Message item, Message previous, int index)
+        {
+            if (item != null && previous != null)
             {
-                Add(new KeyedList<DateTime, Message>(DateTime.Now));
+                var itemDate = Utils.UnixTimestampToDateTime(item.Date);
+                var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
+                if (previousDate.Year != itemDate.Year && previousDate.Month != itemDate.Month)
+                {
+                    var service = new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null);
+                    return service;
+                }
+            }
+            else if (item == null && previous != null)
+            {
+                var service = new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null);
+                return service;
             }
 
-            foreach (var group in result)
+            return null;
+        }
+
+        private void UpdateSeparatorOnInsert(Message item, Message previous, int index)
+        {
+            var service = ShouldUpdateSeparatorOnInsert(item, previous, index);
+            if (service != null)
             {
-                if (last != null && last.Key.Date == group.Key.Date)
-                {
-                    //last.AddRange(group);
-
-                    foreach (var item in group)
-                    {
-                        last.Add(item);
-                    }
-
-                    last.Update();
-                }
-                else
-                {
-                    //if (Count < 1)
-                    {
-                        Add(group);
-                    }
-                }
+                base.InsertItem(index + 1, service);
             }
         }
     }

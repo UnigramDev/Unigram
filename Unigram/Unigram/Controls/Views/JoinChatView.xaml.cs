@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class JoinChatView : BottomSheet
+    public sealed partial class JoinChatView : ContentDialog
     {
         private IProtoService _protoService;
 
@@ -28,10 +28,13 @@ namespace Unigram.Controls.Views
 
             _protoService = protoService;
 
-            Photo.Source = PlaceholderHelper.GetChat(protoService, info, 72, 72);
+            Photo.Source = PlaceholderHelper.GetChat(protoService, info, 72);
 
             Title.Text = info.Title;
             Subtitle.Text = ConvertCount(info.MemberCount, info.MemberUserIds.Count == 0);
+
+            PrimaryButtonText = Strings.Resources.ChannelJoin;
+            SecondaryButtonText = Strings.Resources.Cancel;
 
             if (info.MemberUserIds.Count > 0)
             {
@@ -64,12 +67,12 @@ namespace Unigram.Controls.Views
 
         private void Join_Click(object sender, RoutedEventArgs e)
         {
-            Hide(ContentDialogBaseResult.OK);
+            Hide();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Hide(ContentDialogBaseResult.Cancel);
+            Hide();
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -90,7 +93,7 @@ namespace Unigram.Controls.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 48, 48);
+                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 48);
             }
 
             if (args.Phase < 2)

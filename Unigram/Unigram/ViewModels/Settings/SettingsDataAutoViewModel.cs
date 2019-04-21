@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -39,7 +40,7 @@ namespace Unigram.ViewModels.Settings
                     ? Strings.Resources.LocalMusicCache
                     : Strings.Resources.LocalGifCache;
 
-                var preferences = ProtoService.Preferences;
+                var preferences = Settings.AutoDownload;
                 var mode = type == AutoDownloadType.Photos
                     ? preferences.Photos
                     : type == AutoDownloadType.Videos
@@ -131,7 +132,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         private void SendExecute()
         {
-            var preferences = ProtoService.Preferences;
+            var preferences = Settings.AutoDownload;
             var mode = (AutoDownloadMode)0;
 
             if (_contacts)
@@ -180,7 +181,7 @@ namespace Unigram.ViewModels.Settings
                 preferences = preferences.UpdateAnimationsMode(mode);
             }
 
-            ProtoService.SetPreferences(preferences);
+            Settings.AutoDownload = preferences;
             NavigationService.GoBack();
         }
     }

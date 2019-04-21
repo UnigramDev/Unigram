@@ -1,0 +1,331 @@
+<Page
+    x:Class="Unigram.Views.Chats.ChatSharedMediaPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
+    xmlns:cells="using:Unigram.Controls.Cells"
+    xmlns:controls ="using:Unigram.Controls"
+    xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+    xmlns:collections="using:Unigram.Collections"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <DrillInNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+            <Style TargetType="PivotItem">
+                <Setter Property="Margin" Value="0"/>
+            </Style>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <microsoft:NavigationView x:Name="Header" OverflowLabelMode="NoLabel" PaneDisplayMode="Top" ItemInvoked="NavigationView_ItemInvoked" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" Grid.RowSpan="2">
+            <microsoft:NavigationView.MenuItems>
+                <microsoft:NavigationViewItem x:Name="MediaHeader" Content="{CustomResource SharedMediaTab}" IsSelected="True"/>
+                <microsoft:NavigationViewItem x:Name="FilesHeader" Content="{CustomResource SharedFilesTab}"/>
+                <microsoft:NavigationViewItem x:Name="LinksHeader" Content="{CustomResource SharedLinksTab}"/>
+                <microsoft:NavigationViewItem x:Name="MusicHeader" Content="{CustomResource SharedMusicTab}"/>
+                <microsoft:NavigationViewItem x:Name="VoiceHeader" Content="{CustomResource SharedVoiceTab}"/>
+            </microsoft:NavigationView.MenuItems>
+
+            <Pivot x:Name="ScrollingHost"
+                   SelectionChanged="ScrollingHost_SelectionChanged"
+                   SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
+                   IsLocked="{x:Bind ConvertSelectionMode(ViewModel.SelectionMode), Mode=OneWay}"
+                   Style="{StaticResource HeaderlessPivotStyle}"
+                   Grid.Row="1">
+                <PivotItem>
+                    <controls:SelectGridView
+                        x:Name="ScrollingMedia"
+                        ItemsSource="{x:Bind ViewModel.Media, Mode=OneWay}"
+                        SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging"
+                        Padding="8,0,8,8"
+                        common:FluidGridView.OrientationOnly="False">
+                        <common:FluidGridView.Triggers>
+                            <common:LengthGridViewTrigger ItemLength="96"/>
+                        </common:FluidGridView.Triggers>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="Margin" Value="4"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.Header>
+                             <Border Height="8"/>
+                        </GridView.Header>
+                        <GridView.Footer>
+                            <Border Height="8"/>
+                        </GridView.Footer>
+                        <GridView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.PhotoTemplate>
+                                    <DataTemplate>
+                                        <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                            <Image Stretch="UniformToFill"/>
+                                        </controls:SimpleHyperlinkButton>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.PhotoTemplate>
+                                <selectors:MessageContentTemplateSelector.VideoTemplate>
+                                    <DataTemplate>
+                                        <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                            <Grid>
+                                                <Image Stretch="UniformToFill"/>
+                                                
+                                                <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" Padding="4,4,8,4">
+                                                    <FontIcon Glyph="&#xE102;" Foreground="White" HorizontalAlignment="Left" FontSize="12"/>
+                                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                                                </Grid>
+                                            </Grid>
+                                        </controls:SimpleHyperlinkButton>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.VideoTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </GridView.ItemTemplateSelector>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                    </controls:SelectGridView>
+                </PivotItem>
+                <PivotItem>
+                    <controls:SelectListView
+                        x:Name="ScrollingFiles"
+                        ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}"
+                        SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.Header>
+                            <controls:SearchTextBox
+                                x:Name="SearchFiles"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
+                        </ListView.Header>
+                        <ListView.Footer>
+                            <Border Height="6"/>
+                        </ListView.Footer>
+                        <ListView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                    <DataTemplate>
+                                        <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </ListView.ItemTemplateSelector>
+                    </controls:SelectListView>
+                </PivotItem>
+                <PivotItem>
+                    <controls:SelectListView
+                        x:Name="ScrollingLinks"
+                        ItemsSource="{x:Bind ViewModel.Links, Mode=OneWay}"
+                        SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.Header>
+                            <controls:SearchTextBox
+                                x:Name="SearchLinks"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
+                        </ListView.Header>
+                        <ListView.Footer>
+                            <Border Height="6"/>
+                        </ListView.Footer>
+                        <ListView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.TextTemplate>
+                                    <DataTemplate>
+                                        <cells:SharedLinkCell ContextRequested="Message_ContextRequested"/>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.TextTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </ListView.ItemTemplateSelector>
+                    </controls:SelectListView>
+                </PivotItem>
+                <PivotItem>
+                    <controls:SelectListView
+                        x:Name="ScrollingMusic"
+                        ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
+                        SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.Header>
+                            <controls:SearchTextBox
+                                x:Name="SearchMusic"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
+                        </ListView.Header>
+                        <ListView.Footer>
+                            <Border Height="6"/>
+                        </ListView.Footer>
+                        <ListView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                    <DataTemplate>
+                                        <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </ListView.ItemTemplateSelector>
+                    </controls:SelectListView>
+                </PivotItem>
+                <PivotItem>
+                    <controls:SelectListView
+                        x:Name="ScrollingVoice"
+                        ItemsSource="{x:Bind ViewModel.Voice, Mode=OneWay}"
+                        SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                        SelectionChanged="List_SelectionChanged"
+                        ContainerContentChanging="OnContainerContentChanging">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.Header>
+                            <controls:SearchTextBox
+                                x:Name="SearchVoice"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
+                        </ListView.Header>
+                        <ListView.Footer>
+                            <Border Height="6"/>
+                        </ListView.Footer>
+                        <ListView.ItemTemplateSelector>
+                            <selectors:MessageContentTemplateSelector>
+                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                    <DataTemplate>
+                                        <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                            </selectors:MessageContentTemplateSelector>
+                        </ListView.ItemTemplateSelector>
+                    </controls:SelectListView>
+                </PivotItem>
+            </Pivot>
+        </microsoft:NavigationView>
+
+        <controls:ContentPageHeader x:Name="ManagePanel" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                <controls:GlyphButton Glyph="&#xE72D;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
+
+                <ContentControl
+                    Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontWeight="SemiBold"
+                    Padding="12,0"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    Grid.Column="3">
+                    <ContentControl.ContentTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition/>
+                        </TransitionCollection>
+                    </ContentControl.ContentTransitions>
+                    <ContentControl.Clip>
+                        <RectangleGeometry Rect="0,0,200,48"/>
+                    </ContentControl.Clip>
+                </ContentControl>
+
+                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="4"/>
+            </Grid>
+        </controls:ContentPageHeader>
+    </Grid>
+</Page>

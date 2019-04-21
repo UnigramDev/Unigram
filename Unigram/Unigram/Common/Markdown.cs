@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Telegram.Td;
 using Telegram.Td.Api;
-using Unigram.Services;
 
 namespace Unigram.Common
 {
@@ -28,14 +28,9 @@ namespace Unigram.Common
 
         private static readonly Regex _defaultUrl = new Regex("\\G\\[(.+?)\\]\\((.+?)\\)", RegexOptions.Compiled);
 
-        public static bool IsValidLink(IProtoService protoService, string url)
+        public static bool IsValidLink(string url)
         {
-            if (protoService == null)
-            {
-                return Uri.IsWellFormedUriString(url, UriKind.Absolute);
-            }
-
-            var response = protoService.Execute(new GetTextEntities(url));
+            var response = Client.Execute(new GetTextEntities(url));
             if (response is TextEntities entities)
             {
                 return entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == url.Length && entities.Entities[0].Type is TextEntityTypeUrl;
@@ -44,7 +39,7 @@ namespace Unigram.Common
             return false;
         }
 
-        public static IList<TextEntity> Parse(IProtoService protoService, ref string message)
+        public static IList<TextEntity> Parse(ref string message)
         {
             // Cannot use a for loop because we need to skip some indices
             var i = 0;
@@ -63,7 +58,7 @@ namespace Unigram.Common
                     // If we're not inside a previous match since Telegram doesn't allow
                     // nested message entities, try matching the URL from the i'th pos.
                     url_match = _defaultUrl.Match(message, i);
-                    if (url_match.Success && IsValidLink(protoService, url_match.Groups[2].Value))
+                    if (url_match.Success && IsValidLink(url_match.Groups[2].Value))
                     {
                         // Replace the whole match with only the inline URL text.
                         message = message.Substring(0, url_match.Index) + url_match.Groups[1].Value + message.Substring(url_match.Index + url_match.Length);
@@ -115,7 +110,14 @@ namespace Unigram.Common
                                     message = message.Remove(i - 1, 1);
                                 }
 
-                                message = message.Insert(i, "\n");
+                                if (i == 0 && message[i] == '\n')
+                                {
+                                    message = message.Remove(0, 1);
+                                }
+                                else if (i > 0 && message[i - 1] != '\n')
+                                {
+                                    message = message.Insert(i, "\n");
+                                }
                             }
 
                             if (current == Mode.None)

@@ -1,0 +1,160 @@
+<controls:OverlayPage
+    x:Class="Unigram.Controls.Gallery.GalleryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Gallery"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:gallery="using:Unigram.ViewModels.Gallery"
+    xmlns:common="using:Unigram.Common"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    Background="{x:Null}"
+    OverlayBrush="{x:Null}"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
+
+    <Control.Resources>
+        <Style x:Name="TransportLessMediaPlayerStyle" TargetType="MediaPlayerElement">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MediaPlayerElement">
+                        <Grid x:Name="LayoutRoot">
+                            <Border Background="Transparent" />
+                            <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
+                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
+                                                  Stretch="{TemplateBinding Stretch}"
+                                                  MediaPlayer="{TemplateBinding MediaPlayer}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Control.Resources>
+
+    <local:GalleryTransportControls x:Name="Transport" Switch="Transport_Switch" RequestedTheme="Dark">
+        <local:GalleryTransportControls.Content>
+            <Grid>
+                <Border x:Name="Layer" Margin="0,-32,0,0" Background="Black"/>
+                <local:GalleryContentView x:Name="Preview" Loaded="Preview_ImageOpened"/>
+
+                <ScrollViewer x:Name="ScrollingHost"
+                              VerticalScrollMode="Disabled"
+                              VerticalScrollBarVisibility="Disabled"
+                              HorizontalScrollMode="Auto"
+                              HorizontalScrollBarVisibility="Hidden"
+                              HorizontalSnapPointsType="MandatorySingle"
+                              HorizontalSnapPointsAlignment="Near"
+                              HorizontalContentAlignment="Center"
+                              ViewChanged="ScrollingHost_ViewChanged"
+                              Opacity="0">
+                    <local:GalleryPanel x:Name="LayoutRoot" HorizontalSnapPointsChanged="LayoutRoot_HorizontalSnapPointsChanged">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <!--<Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>-->
+
+                        <local:GalleryContentView x:Name="Element2" ContextRequested="ImageView_ContextRequested"/>
+                        <local:GalleryContentView x:Name="Element0" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
+                        <local:GalleryContentView x:Name="Element1" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
+                    </local:GalleryPanel>
+                </ScrollViewer>
+            </Grid>
+        </local:GalleryTransportControls.Content>
+        <local:GalleryTransportControls.Header>
+            <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Grid.ColumnSpan="4"/>
+
+                <controls:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
+                                      Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
+                                      Height="{ThemeResource AppBarThemeCompactHeight}"
+                                      Glyph="&#xF4AA;"
+                                      FontSize="{StaticResource GlyphButtonFontSize}"
+                                      Grid.Column="1"/>
+                <controls:GlyphButton Click="Compact_Click"
+                                      Visibility="{x:Bind ConvertCompactVisibility(ViewModel.SelectedItem), Mode=OneWay}"
+                                      Height="{ThemeResource AppBarThemeCompactHeight}"
+                                      FontFamily="ms-appx:///Assets/Fonts/SegMVR2.ttf#Segoe MVR MDL2 Assets"
+                                      Glyph="&#xEE49;"
+                                      FontSize="16"
+                                      Grid.Column="2"/>
+
+                <Button Click="Menu_ContextRequested"
+                        HorizontalAlignment="Right"
+                        Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="3">
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </local:GalleryTransportControls.Header>
+        <local:GalleryTransportControls.Footer>
+            <Grid x:Name="BotBar">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="Caption"
+                           Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           TextTrimming="CharacterEllipsis"
+                           MaxLines="5"
+                           Margin="12,8"
+                           Grid.ColumnSpan="3"/>
+
+                <Border Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2"/>
+
+                <Border x:Name="Details" Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2">
+                    <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </StackPanel>
+                </Border>
+
+                <controls:GlyphButton
+                    Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanShare, Mode=OneWay}"
+                    Click="{x:Bind ViewModel.SelectedItem.Share, Mode=OneWay}"
+                    Glyph="&#xE72D;"
+                    Grid.Column="1"
+                    Grid.Row="2"/>
+            </Grid>
+        </local:GalleryTransportControls.Footer>
+    </local:GalleryTransportControls>
+</controls:OverlayPage>

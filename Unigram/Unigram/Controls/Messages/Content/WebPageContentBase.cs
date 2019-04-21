@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -75,24 +77,15 @@ namespace Unigram.Controls.Messages.Content
             label.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        protected async void UpdateInstantView(IProtoService protoService, WebPage webPage, Border yolo, TextBlock yololol, Button button, Run run1, Run run2, Run run3)
-        {
-            var response = await protoService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
-            if (response is WebPageInstantView instantView && instantView.IsFull)
-            {
-
-            }
-        }
-
         protected void UpdateInstantView(WebPage webPage, Button button, Run run1, Run run2, Run run3)
         {
-            if (webPage.HasInstantView)
+            if (webPage.InstantViewVersion != 0)
             {
-                //if (webPage.IsInstantGallery())
-                //{
-                //    Visibility = Visibility.Collapsed;
-                //}
-                //else
+                if (webPage.IsInstantGallery())
+                {
+                    button.Visibility = Visibility.Collapsed;
+                }
+                else
                 {
                     if (run1 != null)
                     {
@@ -141,6 +134,72 @@ namespace Unigram.Controls.Messages.Content
             {
                 button.Visibility = Visibility.Collapsed;
             }
+        }
+
+        protected async void UpdateInstantView(IProtoService protoService, CancellationToken token, WebPage webPage, Border border, TextBlock label)
+        {
+            if (webPage.IsInstantGallery())
+            {
+                var response = await protoService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
+                if (response is WebPageInstantView instantView && instantView.IsFull && !token.IsCancellationRequested)
+                {
+                    var count = CountWebPageMedia(instantView);
+
+                    border.Visibility = Visibility.Visible;
+                    label.Text = string.Format(Strings.Resources.Of, 1, count);
+                }
+                else
+                {
+                    border.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                border.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private static int CountBlock(WebPageInstantView webPage, PageBlock pageBlock, int count)
+        {
+            if (pageBlock is PageBlockPhoto photoBlock)
+            {
+                return count + 1;
+            }
+            else if (pageBlock is PageBlockVideo videoBlock)
+            {
+                return count + 1;
+            }
+            else if (pageBlock is PageBlockAnimation animationBlock)
+            {
+                return count + 1;
+            }
+
+            return count;
+        }
+
+        public static int CountWebPageMedia(WebPageInstantView webPage)
+        {
+            var result = 0;
+
+            foreach (var block in webPage.PageBlocks)
+            {
+                if (block is PageBlockSlideshow slideshow)
+                {
+                    foreach (var item in slideshow.PageBlocks)
+                    {
+                        result = CountBlock(webPage, item, result);
+                    }
+                }
+                else if (block is PageBlockCollage collage)
+                {
+                    foreach (var item in collage.PageBlocks)
+                    {
+                        result = CountBlock(webPage, item, result);
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

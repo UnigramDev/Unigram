@@ -46,8 +46,8 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.14393.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.15063.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <ProjectName>Unigram.Native</ProjectName>
   </PropertyGroup>
@@ -55,35 +55,35 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -138,7 +138,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -155,7 +155,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -172,7 +172,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -189,7 +189,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -206,7 +206,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -223,7 +223,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -251,6 +251,9 @@
     <ClInclude Include="MediaFoundationExtensions.h" />
     <ClInclude Include="MediaSink.h" />
     <ClInclude Include="MediaSource.h" />
+    <ClInclude Include="Mrz\fast-edge.h" />
+    <ClInclude Include="Mrz\genann.h" />
+    <ClInclude Include="Mrz\MrzRecognizer.h" />
     <ClInclude Include="NativeUtils.h" />
     <ClInclude Include="Opus\OpusCodec.h" />
     <ClInclude Include="Opus\OpusByteStreamHandler.h" />
@@ -261,6 +264,35 @@
     <ClInclude Include="Opus\OpusOutputByteStream.h" />
     <ClInclude Include="PlaceholderImageHelper.h" />
     <ClInclude Include="MediaCapturePreview.h" />
+    <ClInclude Include="Proxies\TelegramGameProxy.h" />
+    <ClInclude Include="Proxies\TelegramPaymentProxy.h" />
+    <ClInclude Include="Streaming\AudioFilter.h" />
+    <ClInclude Include="Streaming\AvEffectDefinition.h" />
+    <ClInclude Include="Streaming\CompressedSampleProvider.h" />
+    <ClInclude Include="Streaming\CritSec.h" />
+    <ClInclude Include="Streaming\FFmpegInteropConfig.h" />
+    <ClInclude Include="Streaming\FFmpegInteropLogging.h" />
+    <ClInclude Include="Streaming\FFmpegInteropMSS.h" />
+    <ClInclude Include="Streaming\FFmpegReader.h" />
+    <ClInclude Include="Streaming\H264AVCSampleProvider.h" />
+    <ClInclude Include="Streaming\HEVCSampleProvider.h" />
+    <ClInclude Include="Streaming\IAvEffect.h" />
+    <ClInclude Include="Streaming\ILogProvider.h" />
+    <ClInclude Include="Streaming\LanguageTagConverter.h" />
+    <ClInclude Include="Streaming\MediaSampleProvider.h" />
+    <ClInclude Include="Streaming\MediaThumbnailData.h" />
+    <ClInclude Include="Streaming\NALPacketSampleProvider.h" />
+    <ClInclude Include="Streaming\NativeBuffer.h" />
+    <ClInclude Include="Streaming\NativeBufferFactory.h" />
+    <ClInclude Include="Streaming\StreamInfo.h" />
+    <ClInclude Include="Streaming\SubtitleProvider.h" />
+    <ClInclude Include="Streaming\SubtitleProviderBitmap.h" />
+    <ClInclude Include="Streaming\SubtitleProviderSsaAss.h" />
+    <ClInclude Include="Streaming\UncompressedAudioSampleProvider.h" />
+    <ClInclude Include="Streaming\UncompressedFrameProvider.h" />
+    <ClInclude Include="Streaming\UncompressedSampleProvider.h" />
+    <ClInclude Include="Streaming\UncompressedVideoSampleProvider.h" />
+    <ClInclude Include="Streaming\VideoFrame.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="GIF\GIFByteStreamHandler.h" />
     <ClInclude Include="GIF\GIFMediaSource.h" />
@@ -288,6 +320,12 @@
     <ClCompile Include="MediaFoundationExtensions.cpp" />
     <ClCompile Include="MediaSink.cpp" />
     <ClCompile Include="MediaSource.cpp" />
+    <ClCompile Include="Mrz\fast-edge.cpp" />
+    <ClCompile Include="Mrz\genann.c">
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Mrz\MrzRecognizer.cpp" />
     <ClCompile Include="NativeUtils.cpp" />
     <ClCompile Include="Opus\OpusCodec.cpp" />
     <ClCompile Include="Opus\OpusByteStreamHandler.cpp" />
@@ -308,6 +346,20 @@
     <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp" />
     <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="MediaCapturePreview.cpp" />
+    <ClCompile Include="Proxies\TelegramGameProxy.cpp" />
+    <ClCompile Include="Proxies\TelegramPaymentProxy.cpp" />
+    <ClCompile Include="Streaming\CompressedSampleProvider.cpp" />
+    <ClCompile Include="Streaming\FFmpegInteropLogging.cpp" />
+    <ClCompile Include="Streaming\FFmpegInteropMSS.cpp" />
+    <ClCompile Include="Streaming\FFmpegReader.cpp" />
+    <ClCompile Include="Streaming\H264AVCSampleProvider.cpp" />
+    <ClCompile Include="Streaming\HEVCSampleProvider.cpp" />
+    <ClCompile Include="Streaming\MediaSampleProvider.cpp" />
+    <ClCompile Include="Streaming\NALPacketSampleProvider.cpp" />
+    <ClCompile Include="Streaming\NativeBufferFactory.cpp" />
+    <ClCompile Include="Streaming\UncompressedAudioSampleProvider.cpp" />
+    <ClCompile Include="Streaming\UncompressedSampleProvider.cpp" />
+    <ClCompile Include="Streaming\UncompressedVideoSampleProvider.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>
@@ -325,6 +377,20 @@
       <Project>{7789c8b7-887c-46b6-bd76-952c590b1853}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Telegram.Td.UWP, Version=1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\FFmpeg.UWP.4.1.2.2\build\native\FFmpeg.UWP.targets" Condition="Exists('..\packages\FFmpeg.UWP.4.1.2.2\build\native\FFmpeg.UWP.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\FFmpeg.UWP.4.1.2.2\build\native\FFmpeg.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FFmpeg.UWP.4.1.2.2\build\native\FFmpeg.UWP.targets'))" />
+  </Target>
 </Project>

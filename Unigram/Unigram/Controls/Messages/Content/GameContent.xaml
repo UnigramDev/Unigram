@@ -23,19 +23,12 @@
         </RichTextBlock>
     </StackPanel>
 
-    <Grid x:Name="Media"
-          Background="Black"
-          MinWidth="{ThemeResource TelegramMediaMinWidth}"
-          MinHeight="{ThemeResource TelegramMediaMinHeight}"
-          HorizontalAlignment="Left">
-        <controls:ImageView x:Name="Texture"
-                            MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                            MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+    <Grid HorizontalAlignment="Left">
+        <Border x:Name="Media"/>
 
         <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
-            <TextBlock Text="GAME" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+            <TextBlock Text="{CustomResource AttachGame}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
         </Border>
-
-        <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
     </Grid>
+
 </StackPanel>

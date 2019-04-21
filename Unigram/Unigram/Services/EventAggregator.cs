@@ -22,7 +22,7 @@ namespace Unigram.Services
         ///   Handles the message.
         /// </summary>
         /// <param name = "message">The message.</param>
-        void Handle(TMessage message);
+        void Handle(TMessage update);
     }
 
     /// <summary>

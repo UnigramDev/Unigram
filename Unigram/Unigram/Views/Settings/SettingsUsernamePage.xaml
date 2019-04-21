@@ -7,6 +7,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -16,6 +17,7 @@
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Done}"
             Text="{CustomResource Username}"
             Glyph="&#xE10B;"/>
 
@@ -28,9 +30,9 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <controls:UpdateTextBox
+            <TextBox
                 x:Name="Username"
-                Text="{Binding Username, Mode=TwoWay}"
+                Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 PlaceholderText="{CustomResource UsernamePlaceholder}"
                 Margin="0,0,0,8"/>
 

@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Views;
 using Template10.Common;
 using Windows.UI.Xaml.Media;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Views.Users;
 using System.Diagnostics;
 using Windows.UI.ViewManagement;
@@ -23,7 +23,7 @@ using Unigram.Common;
 
 namespace Unigram.Controls
 {
-    public sealed class MasterDetailView : ContentControl
+    public sealed class MasterDetailView : ContentControl, IDisposable
     {
         private MasterDetailPanel AdaptivePanel;
         private Frame DetailFrame;
@@ -41,7 +41,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(MasterDetailView);
 
             Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
         }
 
@@ -55,50 +54,85 @@ namespace Unigram.Controls
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, key + session, false) as NavigationService;
                 service.SerializationService = TLSerializationService.Current;
                 service.Frame.DataContext = new object();
-                service.FrameFacade.BackRequested += (s, args) =>
-                {
-                    //var type = BackStackType.Navigation;
-                    //if (_backStack.Count > 0)
-                    //{
-                    //    type = _backStack.Last.Value;
-                    //    _backStack.RemoveLast();
-                    //}
-
-                    if (DetailFrame.Content is IMasterDetailPage detailPage /*&& type == BackStackType.Navigation*/)
-                    {
-                        detailPage.OnBackRequested(args);
-                        if (args.Handled)
-                        {
-                            return;
-                        }
-                    }
-
-                    // TODO: maybe checking for the actual width is not the perfect way,
-                    // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
-                    if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
-                    {
-                        DetailFrame.GoBack();
-                        args.Handled = true;
-                    }
-                    else if (ParentFrame.Content is IMasterDetailPage masterPage /*&& type == BackStackType.Hamburger*/)
-                    {
-                        masterPage.OnBackRequested(args);
-                        if (args.Handled)
-                        {
-                            return;
-                        }
-                    }
-                    else if (ParentFrame.CanGoBack && ActualWidth > 0)
-                    {
-                        ParentFrame.GoBack();
-                        args.Handled = true;
-                    }
-                };
+                service.FrameFacade.BackRequested += OnBackRequested;
             }
 
             NavigationService = service;
             DetailFrame = NavigationService.Frame;
             ParentFrame = parent;
+        }
+
+        public void Dispose()
+        {
+            Loaded -= OnLoaded;
+            SizeChanged -= OnSizeChanged;
+
+            var service = NavigationService;
+            if (service != null)
+            {
+                service.FrameFacade.BackRequested -= OnBackRequested;
+            }
+
+            var panel = AdaptivePanel;
+            if (panel != null)
+            {
+                panel.ViewStateChanged -= OnViewStateChanged;
+            }
+
+            var frame = DetailFrame;
+            if (frame != null)
+            {
+                frame.Navigated -= OnNavigated;
+            }
+        }
+
+        private void OnBackRequested(object sender, HandledRoutedEventArgs args)
+        {
+            //var type = BackStackType.Navigation;
+            //if (_backStack.Count > 0)
+            //{
+            //    type = _backStack.Last.Value;
+            //    _backStack.RemoveLast();
+            //}
+
+            if (ParentFrame.Content is INavigatingPage masterPaging && CurrentState != MasterDetailState.Minimal)
+            {
+                masterPaging.OnBackRequesting(args);
+                if (args.Handled)
+                {
+                    return;
+                }
+            }
+
+            if (DetailFrame.Content is INavigablePage detailPage /*&& type == BackStackType.Navigation*/)
+            {
+                detailPage.OnBackRequested(args);
+                if (args.Handled)
+                {
+                    return;
+                }
+            }
+
+            // TODO: maybe checking for the actual width is not the perfect way,
+            // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
+            if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
+            {
+                DetailFrame.GoBack();
+                args.Handled = true;
+            }
+            else if (ParentFrame.Content is INavigablePage masterPage /*&& type == BackStackType.Hamburger*/)
+            {
+                masterPage.OnBackRequested(args);
+                if (args.Handled)
+                {
+                    return;
+                }
+            }
+            else if (ParentFrame.CanGoBack && ActualWidth > 0)
+            {
+                ParentFrame.GoBack();
+                args.Handled = true;
+            }
         }
 
         #endregion
@@ -158,13 +192,6 @@ namespace Unigram.Controls
             {
                 ViewStateChanged(this, EventArgs.Empty);
             }
-
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void UpdateVisualState()
@@ -212,18 +239,6 @@ namespace Unigram.Controls
         //    }
         //}
 
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
-            {
-                if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Minimal)
-                {
-                    DetailFrame.GoBack();
-                    args.Handled = true;
-                }
-            }
-        }
-
         protected override void OnApplyTemplate()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
@@ -244,6 +259,8 @@ namespace Unigram.Controls
                 {
                     VisualTreeHelper.DisconnectChildrenRecursive(parent);
                 }
+
+                //Grid.SetRow(DetailFrame, 1);
 
                 DetailFrame.Navigated += OnNavigated;
                 DetailPresenter.Children.Add(DetailFrame);
@@ -283,6 +300,15 @@ namespace Unigram.Controls
             {
                 return;
             }
+
+            //if (e.Content is Page page)
+            //{
+            //    PageHeader = GetHeader(page);
+            //}
+            //else
+            //{
+            //    PageHeader = null;
+            //}
 
             if (e.NavigationMode == NavigationMode.New && DetailFrame.CanGoBack)
             {
@@ -427,7 +453,7 @@ namespace Unigram.Controls
             get
             {
                 return DetailFrame.CanGoBack;
-                
+
                 // BEFORE BACK NAVIGATION IN FILLED (WIDE) STATE FIX.
                 // return DetailFrame.CanGoBack && AdaptiveStates.CurrentState.Name == NarrowState;
             }
@@ -480,6 +506,53 @@ namespace Unigram.Controls
         }
 
         #endregion
+
+        #region Header
+
+        public static UIElement GetHeader(DependencyObject obj)
+        {
+            return (UIElement)obj.GetValue(HeaderProperty);
+        }
+
+        public static void SetHeader(DependencyObject obj, UIElement value)
+        {
+            obj.SetValue(HeaderProperty, value);
+        }
+
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.RegisterAttached("Header", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region PageHeader
+
+
+
+        public UIElement PageHeader
+        {
+            get { return (UIElement)GetValue(PageHeaderProperty); }
+            set { SetValue(PageHeaderProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for PageHeader.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PageHeaderProperty =
+            DependencyProperty.Register("PageHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+
+
+        #endregion
+
+        #region BackgroundOpacity
+
+        public double BackgroundOpacity
+        {
+            get { return (double)GetValue(BackgroundOpacityProperty); }
+            set { SetValue(BackgroundOpacityProperty, value); }
+        }
+
+        public static readonly DependencyProperty BackgroundOpacityProperty =
+            DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(MasterDetailView), new PropertyMetadata(1d));
+
+        #endregion
     }
 
     public enum MasterDetailState
@@ -487,10 +560,5 @@ namespace Unigram.Controls
         Minimal,
         Compact,
         Expanded
-    }
-
-    public interface IMasterDetailPage
-    {
-        void OnBackRequested(HandledEventArgs args);
     }
 }

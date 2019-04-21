@@ -23,6 +23,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class InvoicePhotoContent : StackPanel, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public InvoicePhotoContent(MessageViewModel message)
         {
@@ -80,7 +81,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.Send(new DownloadFile(file.Id, 1));
+                message.ProtoService.DownloadFile(file.Id, 1);
             }
         }
 

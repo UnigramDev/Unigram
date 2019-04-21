@@ -65,23 +65,30 @@ namespace Unigram.ViewModels
             }
         }
 
-        protected virtual void BeginOnUIThread(Action action)
+        protected virtual void BeginOnUIThread(Action action, Action fallback = null)
         {
             var dispatcher = Dispatcher;
+            if (dispatcher == null)
+            {
+                dispatcher = WindowContext.Default()?.Dispatcher;
+            }
+
             if (dispatcher != null)
             {
                 dispatcher.Dispatch(action);
             }
-        }
-
-        protected void NavigateOnUIThread(Type page)
-        {
-            NavigateOnUIThread(page, null);
-        }
-
-        protected void NavigateOnUIThread(Type page, object param)
-        {
-            BeginOnUIThread(() => NavigationService.Navigate(page, param));
+            else if (fallback != null)
+            {
+                fallback();
+            }
+            else
+            {
+                try
+                {
+                    action();
+                }
+                catch { }
+            }
         }
     }
 }

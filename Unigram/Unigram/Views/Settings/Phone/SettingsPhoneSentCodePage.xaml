@@ -35,16 +35,16 @@
                 x:Name="TitleLabel"
                 Visibility="Collapsed"
                 Text="{CustomResource YourCode}"
-                Style="{ThemeResource TitleTextBlockStyle}"/>
+                Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
                 common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.CodeInfo, ViewModel.PhoneNumber), FallbackValue=''}"
                 Style="{StaticResource BodyTextBlockStyle}"
                 Padding="0,8,0,16"
                 Grid.Row="1"/>
 
-            <controls:UpdateTextBox
+            <TextBox
                 x:Name="PrimaryInput"
-                Text="{Binding PhoneCode, Mode=TwoWay}"
+                Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Margin="0,12,0,4"
                 InputScope="Digits"
                 IsTextPredictionEnabled="False"

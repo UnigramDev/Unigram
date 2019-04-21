@@ -10,22 +10,54 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Visibility="{x:Bind Playback.CurrentItem, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+    <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="48"/>
             <ColumnDefinition />
             <ColumnDefinition Width="48"/>
+            <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
 
-        <Button Click="View_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="3">
-            <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
+        <Button Click="View_Click"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                Padding="54,0,96,0"
+                Style="{StaticResource EmptyButtonStyle}"
+                AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
+                Grid.ColumnSpan="4">
+            <TextBlock TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}">
                 <Run x:Name="TitleLabel" FontWeight="SemiBold"/>
                 <Run x:Name="SubtitleLabel"/>
             </TextBlock>
         </Button>
 
-        <controls:GlyphButton x:Name="PlaybackButton" Click="Toggle_Click" Glyph="&#xE103;" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" FontSize="16" Height="32"/>
-        <controls:GlyphButton Click="Clear_Click" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="2"/>
+        <controls:GlyphButton
+            x:Name="PlaybackButton"
+            Click="Toggle_Click"
+            Glyph="&#xE103;"
+            Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+            FontSize="16"
+            Height="32"/>
+        <controls:GlyphToggleButton
+            x:Name="RateButton"
+            Click="Rate_Click"
+            UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+            CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+            UncheckedGlyph="&#xEC57;"
+            CheckedGlyph="&#xEC58;"
+            FontSize="16"
+            Height="32"
+            Grid.Column="2"
+            AutomationProperties.Name="{CustomResource AccDescrPlayerSpeed}"
+            ToolTipService.ToolTip="{CustomResource AccDescrPlayerSpeed}"/>
+        <controls:GlyphButton
+            Click="Clear_Click"
+            Glyph="&#xE10A;"
+            FontSize="16"
+            Height="32"
+            Grid.Column="3"
+            AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
+            ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}"/>
 
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
     </Grid>

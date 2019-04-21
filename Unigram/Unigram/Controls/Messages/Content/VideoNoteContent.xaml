@@ -7,8 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400"
+    d:DesignHeight="200"
+    d:DesignWidth="200"
     MinWidth="{ThemeResource TelegramMediaMinWidth}"
     MinHeight="{ThemeResource TelegramMediaMinHeight}"
     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
@@ -20,9 +20,14 @@
         </Ellipse.Fill>
     </Ellipse>
 
-    <Border x:Name="Overlay" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Padding="8,4,8,4" Margin="4">
-        <TextBlock x:Name="Subtitle" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-    </Border>
-
     <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
+
+    <!-- Used to host the MediaPlayer -->
+    <!-- TODO: future, remove this and use CompositionGeometricClip
+         when most more desktop users will be on RS5 -->
+    <Grid x:Name="Presenter" CornerRadius="100"/>
+
+    <Border x:Name="Overlay" IsHitTestVisible="False" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Padding="8,4,8,4" Margin="4">
+        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+    </Border>
 </controls:AspectView>

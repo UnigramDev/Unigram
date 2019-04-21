@@ -7,7 +7,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
-using Unigram.Strings;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -33,6 +32,8 @@ namespace Unigram.ViewModels.Chats
             set
             {
                 Set(ref _chat, value);
+                RaisePropertyChanged(() => IsCreator);
+                RaisePropertyChanged(() => IsGroup);
             }
         }
 
@@ -40,8 +41,25 @@ namespace Unigram.ViewModels.Chats
         {
             get
             {
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return false;
+                }
+
+                var supergroup = ProtoService.GetSupergroup(chat);
+                if (supergroup != null)
+                {
+                    return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers;
+                }
+
+                var group = ProtoService.GetBasicGroup(chat);
+                if (group != null)
+                {
+                    return group.Status is ChatMemberStatusCreator;
+                }
+
                 return false;
-                //return _item != null && ((_item is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsInviteLink))) || (_item is TLChat chat && chat.IsCreator));
             }
         }
 
@@ -49,8 +67,7 @@ namespace Unigram.ViewModels.Chats
         {
             get
             {
-                return false;
-                //return _item != null && ((_item is TLChannel channel && channel.IsMegaGroup) || (_item is TLChat chat));
+                return _chat != null && ((_chat.Type is ChatTypeSupergroup super && !super.IsChannel) || _chat.Type is ChatTypeBasicGroup);
             }
         }
 
@@ -100,8 +117,6 @@ namespace Unigram.ViewModels.Chats
 
         protected override async void SendExecute(User user)
         {
-            var count = ProtoService.GetOption<OptionValueInteger>("forwarded_messages_count_max");
-
             var chat = _chat;
             if (chat == null)
             {
@@ -119,7 +134,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            ProtoService.Send(new AddChatMember(chat.Id, user.Id, count?.Value ?? 0));
+            ProtoService.Send(new AddChatMember(chat.Id, user.Id, CacheService.Options.ForwardedMessageCountMax));
 
             NavigationService.GoBack();
         }

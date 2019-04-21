@@ -1,0 +1,75 @@
+﻿<ToggleButton
+    x:Class="Unigram.Controls.PollOptionControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Style="{StaticResource PollOptionButtonStyle}"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid Padding="10,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="28"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="0"/>
+        </Grid.RowDefinitions>
+        <Ellipse x:Name="Ellipse"
+                 Width="20"
+                 Height="20"
+                 UseLayoutRounding="False"
+                 Stroke="{ThemeResource MessageSubtleForegroundBrush}"
+                 StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}"
+                 VerticalAlignment="Top"
+                 Margin="0,8,8,8"/>
+
+
+        <ProgressRing x:Name="Loading"
+                      MinWidth="20"
+                      MinHeight="20"
+                      Width="20"
+                      Height="20"
+                      UseLayoutRounding="False"
+                      Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                      VerticalAlignment="Top"
+                      Margin="0,8,8,8"/>
+
+        <TextBlock x:Name="Percentage"
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   FontWeight="SemiBold"
+                   TextWrapping="NoWrap"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Right"
+                   Margin="-10,10,8,8"/>
+
+        <TextBlock x:Name="Text"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   VerticalAlignment="Top"
+                   Margin="0,8,0,8"
+                   Grid.Column="1"/>
+
+        <Ellipse x:Name="Zero"
+                 Fill="{ThemeResource MessageHeaderBorderBrush}"
+                 VerticalAlignment="Top"
+                 HorizontalAlignment="Left"
+                 Width="4"
+                 Height="4"
+                 Margin="0,-4,0,0"
+                 Grid.Column="1"
+                 Grid.Row="1"/>
+
+        <ProgressBar x:Name="Votes"
+                     Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                     Style="{StaticResource PollOptionProgressBarStyle}"
+                     Background="Transparent"
+                     Margin="0,-4,0,0"
+                     VerticalAlignment="Top"
+                     Grid.Row="1"
+                     Grid.Column="1"/>
+    </Grid>
+</ToggleButton>

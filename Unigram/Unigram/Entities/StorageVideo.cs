@@ -5,9 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Core.Common;
-using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
@@ -54,6 +53,11 @@ namespace Unigram.Entities
         {
             try
             {
+                if (!file.IsAvailable)
+                {
+                    return null;
+                }
+
                 var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
                 if (profile.Video == null)
                 {

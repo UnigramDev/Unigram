@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Common;
 using Unigram.Services;
+using Unigram.ViewModels.Gallery;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Users
@@ -24,7 +25,7 @@ namespace Unigram.ViewModels.Users
         {
             _user = user;
 
-            Items = new MvxObservableCollection<GalleryItem> { new GalleryProfilePhotoItem(protoService, user) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryProfilePhoto(protoService, user) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -42,13 +43,14 @@ namespace Unigram.ViewModels.Users
 
                     foreach (var item in photos.Photos)
                     {
-                        if (item.Id == user.ProfilePhoto.Id && Items[0] is GalleryProfilePhotoItem main)
+                        if (item.Id == user.ProfilePhoto.Id && Items[0] is GalleryProfilePhoto main)
                         {
                             main.SetDate(item.AddedDate);
+                            RaisePropertyChanged(() => SelectedItem);
                         }
                         else
                         {
-                            Items.Add(new GalleryUserProfilePhotoItem(ProtoService, _user, item));
+                            Items.Add(new GalleryUserProfilePhoto(ProtoService, _user, item));
                         }
                     }
                 }
@@ -66,45 +68,53 @@ namespace Unigram.ViewModels.Users
 
                     foreach (var item in photos.Photos)
                     {
-                        Items.Add(new GalleryUserProfilePhotoItem(ProtoService, _user, item));
+                        Items.Add(new GalleryUserProfilePhoto(ProtoService, _user, item));
                     }
                 }
             }
         }
 
-        public override MvxObservableCollection<GalleryItem> Group => this.Items;
+        public override MvxObservableCollection<GalleryContent> Group => this.Items;
 
-        public override bool CanDelete => _user != null && _user.Id == ProtoService.GetMyId();
+        public override bool CanDelete => _user != null && _user.Id == ProtoService.Options.MyId;
 
         protected override async void DeleteExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryProfilePhotoItem item)
+            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryProfilePhoto item)
             {
                 var response = await ProtoService.SendAsync(new DeleteProfilePhoto(item.Id));
                 if (response is Ok)
                 {
-                    NavigationService.GoBack();
-
-                    //var index = Items.IndexOf(item);
-                    //if (index < Items.Count - 1)
-                    //{
-                    //    Items.Remove(item);
-                    //    SelectedItem = Items[index > 0 ? index - 1 : index];
-                    //    TotalItems--;
-                    //}
-                    //else
-                    //{
-                    //    NavigationService.GoBack();
-                    //}
+                    var index = Items.IndexOf(item);
+                    if (index < Items.Count - 1)
+                    {
+                        SelectedItem = Items[index > 0 ? index - 1 : index + 1];
+                        Items.Remove(item);
+                        TotalItems--;
+                    }
+                    else
+                    {
+                        NavigationService.GoBack();
+                    }
                 }
             }
-            else if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryUserProfilePhotoItem profileItem)
+            else if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryUserProfilePhoto profileItem)
             {
                 var response = await ProtoService.SendAsync(new DeleteProfilePhoto(profileItem.Id));
                 if (response is Ok)
                 {
-                    NavigationService.GoBack();
+                    var index = Items.IndexOf(profileItem);
+                    if (index < Items.Count - 1)
+                    {
+                        SelectedItem = Items[index > 0 ? index - 1 : index + 1];
+                        Items.Remove(profileItem);
+                        TotalItems--;
+                    }
+                    else
+                    {
+                        NavigationService.GoBack();
+                    }
                 }
             }
         }

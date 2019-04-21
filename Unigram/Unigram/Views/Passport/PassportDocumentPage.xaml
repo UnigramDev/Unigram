@@ -1,0 +1,78 @@
+﻿<Page
+    x:Class="Unigram.Views.Passport.PassportDocumentPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Passport"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:passport="using:Unigram.Controls.Passport"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader
+            Text="{x:Bind ConvertHeader(ViewModel.DocumentType), Mode=OneWay}"
+            Glyph="&#xE10B;"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <StackPanel x:Name="FilesPanel">
+                    <TextBlock Text="{CustomResource PassportDocuments}" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <ListView x:Name="Files"
+                              ItemsSource="{x:Bind ViewModel.Files}"
+                              ContainerContentChanging="OnContainerContentChanging">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <passport:PassportDocumentCell/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    
+                    <Button x:Name="FilesButton"
+                            Command="{x:Bind ViewModel.AddFileCommand}"
+                            Content="{x:Bind ConvertAdd(ViewModel.Files.Count), Mode=OneWay}"
+                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                            Style="{StaticResource HyperButtonStyle}"/>
+
+                    <TextBlock Text="{x:Bind ConvertInfo(ViewModel.DocumentType, x:False), Mode=OneWay}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Margin="12,8,12,24"/>
+                </StackPanel>
+
+                <StackPanel x:Name="TranslationPanel">
+                    <TextBlock Text="{CustomResource PassportTranslation}" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    <ListView x:Name="Translation"
+                              ItemsSource="{x:Bind ViewModel.Translation}"
+                              ContainerContentChanging="OnContainerContentChanging">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <passport:PassportDocumentCell/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    
+                    <Button x:Name="TranslationButton"
+                            Command="{x:Bind ViewModel.AddTranslationCommand}"
+                            Content="{x:Bind ConvertAdd(ViewModel.Translation.Count), Mode=OneWay}"
+                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                            Style="{StaticResource HyperButtonStyle}"/>
+                    
+                    <TextBlock Text="{x:Bind ConvertInfo(ViewModel.DocumentType, x:True), Mode=OneWay}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Margin="12,8,12,24"/>
+                </StackPanel>
+
+                <Button Content="{CustomResource PassportDeleteDocument}"
+                        Margin="0,20,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

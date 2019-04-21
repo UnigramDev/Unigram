@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
+using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace Unigram.Services
@@ -22,16 +24,18 @@ namespace Unigram.Services
         void Send(Function function, Action<BaseObject> handler);
         Task<BaseObject> SendAsync(Function function);
 
+        void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
+
         int SessionId { get; }
+
+        Client Client { get; }
     }
 
     public interface ICacheService
     {
         int UserId { get; }
 
-        int GetMyId();
-        T GetOption<T>(string key) where T : OptionValue;
-        bool TryGetOption<T>(string key, out T value) where T : OptionValue;
+        IOptionsService Options { get; }
 
         AuthorizationState GetAuthorizationState();
         ConnectionState GetConnectionState();
@@ -40,9 +44,12 @@ namespace Unigram.Services
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
         IList<Chat> GetChats(int count);
+        IList<Chat> GetPinnedChats();
 
-        bool IsUserSavedMessages(User user);
-        bool IsChatSavedMessages(Chat chat);
+        IDictionary<int, ChatAction> GetChatActions(long id);
+
+        bool IsSavedMessages(User user);
+        bool IsSavedMessages(Chat chat);
         bool IsChatSponsored(Chat chat);
 
         bool CanPostMessages(Chat chat);
@@ -57,6 +64,7 @@ namespace Unigram.Services
         User GetUser(Chat chat);
         User GetUser(int id);
         UserFullInfo GetUserFull(int id);
+        UserFullInfo GetUserFull(Chat chat);
         IList<User> GetUsers(IList<int> ids);
 
         BasicGroup GetBasicGroup(int id);
@@ -74,11 +82,11 @@ namespace Unigram.Services
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
 
-        AutoDownloadPreferences Preferences { get; }
-        void SetPreferences(AutoDownloadPreferences preferences);
+        UpdateUnreadChatCount UnreadChatCount { get; }
+        UpdateUnreadMessageCount UnreadMessageCount { get; }
 
-        int UnreadCount { get; }
-        int UnreadUnmutedCount { get; }
+        int GetNotificationSettingsMuteFor(Chat chat);
+        ScopeNotificationSettings GetScopeNotificationSettings(Chat chat);
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -87,11 +95,12 @@ namespace Unigram.Services
         private readonly int _session;
         private readonly IDeviceInfoService _deviceInfoService;
         private readonly ISettingsService _settings;
+        private readonly IOptionsService _options;
+        private readonly ILocaleService _locale;
         private readonly IEventAggregator _aggregator;
 
-        private readonly Dictionary<string, object> _options = new Dictionary<string, object>();
-
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
+        private readonly ConcurrentDictionary<long, Dictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, Dictionary<int, ChatAction>>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
@@ -104,10 +113,10 @@ namespace Unigram.Services
         private readonly Dictionary<int, Supergroup> _supergroups = new Dictionary<int, Supergroup>();
         private readonly Dictionary<int, SupergroupFullInfo> _supergroupsFull = new Dictionary<int, SupergroupFullInfo>();
 
+        private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new Dictionary<Type, ScopeNotificationSettings>();
+
         private readonly SimpleFileContext<long> _chatsMap = new SimpleFileContext<long>();
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
-
-        private AutoDownloadPreferences _preferences;
 
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
@@ -116,16 +125,16 @@ namespace Unigram.Services
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
-        public ProtoService(int session, IDeviceInfoService deviceInfoService, ISettingsService settings, IEventAggregator aggregator)
+        public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
             _session = session;
             _deviceInfoService = deviceInfoService;
             _settings = settings;
+            _locale = locale;
+            _options = new OptionsService(this);
             _aggregator = aggregator;
 
-            _preferences = new AutoDownloadPreferences(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
-
-            Initialize();
+            Initialize(online);
         }
 
         public bool TryInitialize()
@@ -139,7 +148,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private void Initialize()
+        private void Initialize(bool online = true)
         {
             _client = Client.Create(this);
 
@@ -169,29 +178,29 @@ namespace Unigram.Services
 #if MOCKUP
             ProfilePhoto ProfilePhoto(string name)
             {
-                return new ProfilePhoto(0, new Telegram.Td.Api.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
+                return new ProfilePhoto(0, new Telegram.Td.Api.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0, 0), null), null);
             }
 
             ChatPhoto ChatPhoto(string name)
             {
-                return new ChatPhoto(new Telegram.Td.Api.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0), null), null);
+                return new ChatPhoto(new Telegram.Td.Api.File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\", name), true, true, false, true, 0, 0, 0), null), null);
             }
 
-            _users[ 0] = new User( 0, "Jane",                   string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[ 1] = new User( 1, "Tyrion", "Lannister",    string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[ 2] = new User( 2, "Alena", "Shy",           string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[ 3] = new User( 3, "Heisenberg",             string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[ 4] = new User( 4, "Bender",                 string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[ 5] = new User( 5, "EVE",                    string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[16] = new User(16, "Nick",                   string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[ 7] = new User( 7, "Eileen", "Lockhard \uD83D\uDC99", string.Empty, string.Empty, new UserStatusOnline(int.MaxValue), ProfilePhoto("a5.png"), null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[11] = new User(11, "Thomas",                 string.Empty, string.Empty, string.Empty, null, ProfilePhoto("a3.png"), null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[ 9] = new User( 9, "Daenerys",               string.Empty, string.Empty, string.Empty, null, ProfilePhoto("a2.png"), null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[13] = new User(13, "Angela", "Merkel",       string.Empty, string.Empty, null, ProfilePhoto("a1.png"), null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[10] = new User(10, "Julian", "Assange",      string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[ 8] = new User( 8, "Pierre",                 string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[17] = new User(17, "Alexmitter",             string.Empty, string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
-            _users[18] = new User(18, "Jaina", "Moore",         string.Empty, string.Empty, null, null, null, null, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 0] = new User( 0, "Jane",                   string.Empty, string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 1] = new User( 1, "Tyrion", "Lannister",    string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 2] = new User( 2, "Alena", "Shy",           string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 3] = new User( 3, "Heisenberg",             string.Empty, string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 4] = new User( 4, "Bender",                 string.Empty, string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 5] = new User( 5, "EVE",                    string.Empty, string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[16] = new User(16, "Nick",                   string.Empty, string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 7] = new User( 7, "Eileen", "Lockhard \uD83D\uDC99", string.Empty, string.Empty, new UserStatusOnline(int.MaxValue), ProfilePhoto("a5.png"), null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[11] = new User(11, "Thomas",                 string.Empty, string.Empty, string.Empty, null, ProfilePhoto("a3.png"), null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 9] = new User( 9, "Daenerys",               string.Empty, string.Empty, string.Empty, null, ProfilePhoto("a2.png"), null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[13] = new User(13, "Angela", "Merkel",       string.Empty, string.Empty, null, ProfilePhoto("a1.png"), null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[10] = new User(10, "Julian", "Assange",      string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[ 8] = new User( 8, "Pierre",                 string.Empty, string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[17] = new User(17, "Alexmitter",             string.Empty, string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
+            _users[18] = new User(18, "Jaina", "Moore",         string.Empty, string.Empty, null, null, null, null, false, false, string.Empty, true, new UserTypeRegular(), string.Empty);
 
             _secretChats[1] = new SecretChat(1, 7, new SecretChatStateReady(), false, 15, new byte[0], 75);
 
@@ -238,25 +247,34 @@ namespace Unigram.Services
             var lastMessage10 = new Message(long.MaxValue, 17, 12, null, false, false, false, false, false, false, false, TuesdayDate(), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Let's design more robust memes", new TextEntity[0]), null), null);
             var lastMessage11 = new Message(long.MaxValue, 18, 13, null, false, false, false, false, false, false, false, TuesdayDate(), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("What?! 😱", new TextEntity[0]), null), null);
 
-            _chats[ 0] = new Chat( 0, new ChatTypeSupergroup(0, true),      "Unigram News",     ChatPhoto("a0.png"),  lastMessage0,  long.MaxValue - 0,  true,  false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[ 1] = new Chat( 1, new ChatTypePrivate(0),               "Jane",             ChatPhoto("a6.png"),  lastMessage1,  long.MaxValue - 1,  true,  false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[ 2] = new Chat( 2, new ChatTypePrivate(1),               "Tyrion Lannister", null,                 lastMessage2,  long.MaxValue - 2,  false, false, false, false, false, 1, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[ 3] = new Chat( 3, new ChatTypePrivate(2),               "Alena Shy",        ChatPhoto("a7.png"),  lastMessage3,  long.MaxValue - 3,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[ 4] = new Chat( 4, new ChatTypeSecret(0, 3),             "Heisenberg",       ChatPhoto("a8.png"),  lastMessage4,  long.MaxValue - 4,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[ 5] = new Chat( 5, new ChatTypePrivate(4),               "Bender",           ChatPhoto("a9.png"),  lastMessage5,  long.MaxValue - 5,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[ 6] = new Chat( 6, new ChatTypeSupergroup(1, true),      "World News Today", ChatPhoto("a10.png"), lastMessage6,  long.MaxValue - 6,  false, false, false, false, false, 1, 0, 0, 0, new ChatNotificationSettings(false, int.MaxValue, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[ 7] = new Chat( 7, new ChatTypePrivate(5),               "EVE",              ChatPhoto("a11.png"), lastMessage7,  long.MaxValue - 7,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[ 8] = new Chat( 8, new ChatTypePrivate(16),              "Nick",             null,                 lastMessage8,  long.MaxValue - 8,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[11] = new Chat(11, new ChatTypePrivate(16),              "Kate Rodriguez",   ChatPhoto("a13.png"), lastMessage9,  long.MaxValue - 9,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[12] = new Chat(12, new ChatTypeSupergroup(3, false),     "Meme Factory",     ChatPhoto("a14.png"), lastMessage10, long.MaxValue - 10, false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[13] = new Chat(13, new ChatTypePrivate(18),              "Jaina Moore",      null,                 lastMessage11, long.MaxValue - 11, false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
+            _chats[ 0] = new Chat( 0, new ChatTypeSupergroup(0, true),      "Unigram News",     ChatPhoto("a0.png"),  lastMessage0,  long.MaxValue - 0,  true,  false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[ 1] = new Chat( 1, new ChatTypePrivate(0),               "Jane",             ChatPhoto("a6.png"),  lastMessage1,  long.MaxValue - 1,  true,  false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[ 2] = new Chat( 2, new ChatTypePrivate(1),               "Tyrion Lannister", null,                 lastMessage2,  long.MaxValue - 2,  false, false, false, false, false, 1, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[ 3] = new Chat( 3, new ChatTypePrivate(2),               "Alena Shy",        ChatPhoto("a7.png"),  lastMessage3,  long.MaxValue - 3,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[ 4] = new Chat( 4, new ChatTypeSecret(0, 3),             "Heisenberg",       ChatPhoto("a8.png"),  lastMessage4,  long.MaxValue - 4,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[ 5] = new Chat( 5, new ChatTypePrivate(4),               "Bender",           ChatPhoto("a9.png"),  lastMessage5,  long.MaxValue - 5,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[ 6] = new Chat( 6, new ChatTypeSupergroup(1, true),      "World News Today", ChatPhoto("a10.png"), lastMessage6,  long.MaxValue - 6,  false, false, false, false, false, 1, 0, 0, 0, new ChatNotificationSettings(false, int.MaxValue, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[ 7] = new Chat( 7, new ChatTypePrivate(5),               "EVE",              ChatPhoto("a11.png"), lastMessage7,  long.MaxValue - 7,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[ 8] = new Chat( 8, new ChatTypePrivate(16),              "Nick",             null,                 lastMessage8,  long.MaxValue - 8,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[11] = new Chat(11, new ChatTypePrivate(16),              "Kate Rodriguez",   ChatPhoto("a13.png"), lastMessage9,  long.MaxValue - 9,  false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[12] = new Chat(12, new ChatTypeSupergroup(3, false),     "Meme Factory",     ChatPhoto("a14.png"), lastMessage10, long.MaxValue - 10, false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[13] = new Chat(13, new ChatTypePrivate(18),              "Jaina Moore",      null,                 lastMessage11, long.MaxValue - 11, false, false, false, false, false, 0, 0, 0, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
 
-            _chats[ 9] = new Chat( 9, new ChatTypeSupergroup(2, false),        "Weekend Plans", ChatPhoto("a4.png"),  null, 0, false, false, false, false, false, 0, 0, long.MaxValue, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
-            _chats[10] = new Chat(10, new ChatTypeSecret(1, 7), "Eileen Lockhard \uD83D\uDC99", ChatPhoto("a5.png"),  null, 0, false, false, false, false, false, 0, 0, long.MaxValue, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true), 0, null, string.Empty);
+            _chats[ 9] = new Chat( 9, new ChatTypeSupergroup(2, false),        "Weekend Plans", ChatPhoto("a4.png"),  null, 0, false, false, false, false, false, 0, 0, long.MaxValue, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
+            _chats[10] = new Chat(10, new ChatTypeSecret(1, 7), "Eileen Lockhard \uD83D\uDC99", ChatPhoto("a5.png"),  null, 0, false, false, false, false, false, 0, 0, long.MaxValue, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), 0, 0, null, string.Empty);
 #endif
 
             Task.Run(() =>
             {
+
+                _client.Send(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"), 10 * 1024 * 1024)));
+                _client.Send(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
+
+                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
+                _client.Send(new SetOption("localization_target", new OptionValueString("android")));
+                _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
+                _client.Send(new SetOption("online", new OptionValueBoolean(online)));
+                _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Run();
@@ -270,11 +288,41 @@ namespace Unigram.Services
                 var response = await SendAsync(new CreatePrivateChat(777000, false));
                 if (response is Chat chat)
                 {
-                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(new FormattedText(SettingsService.CurrentChangelog, new TextEntity[0]), true, false)));
+                    ulong major = (SettingsService.CurrentVersion & 0xFFFF000000000000L) >> 48;
+                    ulong minor = (SettingsService.CurrentVersion & 0x0000FFFF00000000L) >> 32;
+                    ulong build = (SettingsService.CurrentVersion & 0x00000000FFFF0000L) >> 16;
+
+                    var title = $"What's new in Unigram {major}.{minor}.{build}:";
+                    var message = title + Environment.NewLine + SettingsService.CurrentChangelog;
+                    var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
+
+                    if (SettingsService.CurrentMedia)
+                    {
+                        Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageAnimation(
+                            new InputFileLocal(Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\Changelog.mp4")), new InputThumbnail(
+                                new InputFileLocal(Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\Changelog.jpg")), 450, 392), 5, 450, 392, formattedText)));
+                    }
+                    else
+                    {
+                        Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, true, false)));
+                    }
                 }
             }
 
             _settings.UpdateVersion();
+        }
+
+        private async void UpdateLanguagePackStrings(UpdateLanguagePackStrings update)
+        {
+            var response = await SendAsync(new CreatePrivateChat(777000, false));
+            if (response is Chat chat)
+            {
+                var title = $"New language pack strings for {update.LocalizationTarget}:";
+                var message = title + Environment.NewLine + string.Join(Environment.NewLine, update.Strings);
+                var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
+
+                Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, true, false)));
+            }
         }
 
         public void CleanUp()
@@ -299,6 +347,8 @@ namespace Unigram.Services
             _chatsMap.Clear();
             _usersMap.Clear();
 
+            _scopeNotificationSettings.Clear();
+
             _favoriteStickers?.Clear();
             _installedStickerSets?.Clear();
             _installedMaskSets?.Clear();
@@ -311,7 +361,7 @@ namespace Unigram.Services
 
         public BaseObject Execute(Function function)
         {
-            return _client.Execute(function);
+            return Client.Execute(function);
         }
 
 
@@ -338,7 +388,16 @@ namespace Unigram.Services
 
 
 
+        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
+        {
+            _client.Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
+        }
+
+
+
         public int SessionId => _session;
+
+        public Client Client => _client;
 
         private int? _userId;
         public int UserId
@@ -353,10 +412,10 @@ namespace Unigram.Services
             }
         }
 
-#region Cache
-
-        public int UnreadCount { get; private set; }
-        public int UnreadUnmutedCount { get; private set; }
+        #region Cache
+        
+        public UpdateUnreadChatCount UnreadChatCount { get; private set; } = new UpdateUnreadChatCount();
+        public UpdateUnreadMessageCount UnreadMessageCount { get; private set; } = new UpdateUnreadMessageCount();
 
         private bool TryGetChatForFileId(int fileId, out Chat chat)
         {
@@ -384,20 +443,6 @@ namespace Unigram.Services
 
 
 
-        public AutoDownloadPreferences Preferences
-        {
-            get
-            {
-                return _preferences;
-            }
-        }
-
-        public void SetPreferences(AutoDownloadPreferences preferences)
-        {
-            _preferences = preferences ?? AutoDownloadPreferences.Default;
-            _preferences.Save(ApplicationData.Current.LocalSettings.CreateContainer("autoDownload", ApplicationDataCreateDisposition.Always));
-        }
-
         public AuthorizationState GetAuthorizationState()
         {
             return _authorizationState;
@@ -408,48 +453,9 @@ namespace Unigram.Services
             return _connectionState;
         }
 
-        public int GetMyId()
+        public IOptionsService Options
         {
-            var option = GetOption<OptionValueInteger>("my_id");
-            if (option != null)
-            {
-                return option.Value;
-            }
-
-            return 0;
-        }
-
-        public T GetOption<T>(string key) where T : OptionValue
-        {
-            if (_options.TryGetValue(key, out object value))
-            {
-                if (value is OptionValueEmpty)
-                {
-                    return default(T);
-                }
-
-                return (T)value;
-            }
-
-            return default(T);
-        }
-
-        public bool TryGetOption<T>(string key, out T result) where T : OptionValue
-        {
-            if (_options.TryGetValue(key, out object value))
-            {
-                if (value is OptionValueEmpty)
-                {
-                    result = default(T);
-                    return false;
-                }
-
-                result = (T)value;
-                return true;
-            }
-
-            result = default(T);
-            return false;
+            get { return _options; }
         }
 
         public string GetTitle(Chat chat, bool tiny = false)
@@ -466,7 +472,7 @@ namespace Unigram.Services
                 {
                     return Strings.Resources.HiddenName;
                 }
-                else if (user.Id == GetMyId())
+                else if (user.Id == _options.MyId)
                 {
                     return Strings.Resources.SavedMessages;
                 }
@@ -489,9 +495,19 @@ namespace Unigram.Services
             return null;
         }
 
-        public bool IsUserSavedMessages(User user)
+        public IDictionary<int, ChatAction> GetChatActions(long id)
         {
-            if (user.Id == GetMyId())
+            if (_chatActions.TryGetValue(id, out Dictionary<int, ChatAction> value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        public bool IsSavedMessages(User user)
+        {
+            if (user.Id == _options.MyId)
             {
                 return true;
             }
@@ -499,9 +515,9 @@ namespace Unigram.Services
             return false;
         }
 
-        public bool IsChatSavedMessages(Chat chat)
+        public bool IsSavedMessages(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == GetMyId())
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == _options.MyId)
             {
                 return true;
             }
@@ -599,6 +615,11 @@ namespace Unigram.Services
         public IList<Chat> GetChats(int count)
         {
             return _chats.Values.Where(x => x.Order != 0).OrderByDescending(x => x.Order).Take(count).ToList();
+        }
+
+        public IList<Chat> GetPinnedChats()
+        {
+            return _chats.Values.Where(x => x.Order != 0).OrderByDescending(x => x.Order).Where(x => x.IsPinned).ToList();
         }
 
         public SecretChat GetSecretChat(int id)
@@ -764,6 +785,61 @@ namespace Unigram.Services
 
 
 
+        public int GetNotificationSettingsMuteFor(Chat chat)
+        {
+            if (chat.NotificationSettings.UseDefaultMuteFor)
+            {
+                Type scope = null;
+                switch (chat.Type)
+                {
+                    case ChatTypePrivate privata:
+                    case ChatTypeSecret secret:
+                        scope = typeof(NotificationSettingsScopePrivateChats);
+                        break;
+                    case ChatTypeBasicGroup basicGroup:
+                        scope = typeof(NotificationSettingsScopeGroupChats);
+                        break;
+                    case ChatTypeSupergroup supergroup:
+                        scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
+                        break;
+                }
+
+                if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
+                {
+                    return value.MuteFor;
+                }
+            }
+
+            return chat.NotificationSettings.MuteFor;
+        }
+
+        public ScopeNotificationSettings GetScopeNotificationSettings(Chat chat)
+        {
+            Type scope = null;
+            switch (chat.Type)
+            {
+                case ChatTypePrivate privata:
+                case ChatTypeSecret secret:
+                    scope = typeof(NotificationSettingsScopePrivateChats);
+                    break;
+                case ChatTypeBasicGroup basicGroup:
+                    scope = typeof(NotificationSettingsScopeGroupChats);
+                    break;
+                case ChatTypeSupergroup supergroup:
+                    scope = supergroup.IsChannel ? typeof(NotificationSettingsScopeChannelChats) : typeof(NotificationSettingsScopeGroupChats);
+                    break;
+            }
+
+            if (scope != null && _scopeNotificationSettings.TryGetValue(scope, out ScopeNotificationSettings value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+
+
         public bool IsStickerFavorite(int id)
         {
             if (_favoriteStickers != null)
@@ -863,6 +939,13 @@ namespace Unigram.Services
                     value.LastMessage = updateChatLastMessage.LastMessage;
                 }
             }
+            else if (update is UpdateChatNotificationSettings updateNotificationSettings)
+            {
+                if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))
+                {
+                    value.NotificationSettings = updateNotificationSettings.NotificationSettings;
+                }
+            }
             else if (update is UpdateChatOrder updateChatOrder)
             {
                 if (_chats.TryGetValue(updateChatOrder.ChatId, out Chat value))
@@ -881,6 +964,13 @@ namespace Unigram.Services
                 {
                     _chatsMap[updateChatPhoto.Photo.Small.Id] = updateChatPhoto.ChatId;
                     _chatsMap[updateChatPhoto.Photo.Big.Id] = updateChatPhoto.ChatId;
+                }
+            }
+            else if (update is UpdateChatPinnedMessage updateChatPinnedMessage)
+            {
+                if (_chats.TryGetValue(updateChatPinnedMessage.ChatId, out Chat value))
+                {
+                    value.PinnedMessageId = updateChatPinnedMessage.PinnedMessageId;
                 }
             }
             else if (update is UpdateChatReadInbox updateChatReadInbox)
@@ -972,6 +1062,14 @@ namespace Unigram.Services
                     _installedStickerSets = updateInstalledStickerSets.StickerSetIds;
                 }
             }
+            else if (update is UpdateLanguagePackStrings updateLanguagePackStrings)
+            {
+                _locale.Handle(updateLanguagePackStrings);
+
+#if DEBUG
+                UpdateLanguagePackStrings(updateLanguagePackStrings);
+#endif
+            }
             else if (update is UpdateMessageContent updateMessageContent)
             {
 
@@ -1028,16 +1126,9 @@ namespace Unigram.Services
             {
 
             }
-            else if (update is UpdateChatNotificationSettings updateNotificationSettings)
-            {
-                if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))
-                {
-                    value.NotificationSettings = updateNotificationSettings.NotificationSettings;
-                }
-            }
             else if (update is UpdateOption updateOption)
             {
-                _options[updateOption.Name] = updateOption.Value;
+                _options.Handle(updateOption);
 
                 if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
                 {
@@ -1051,6 +1142,10 @@ namespace Unigram.Services
             else if (update is UpdateSavedAnimations updateSavedAnimations)
             {
 
+            }
+            else if (update is UpdateScopeNotificationSettings updateScopeNotificationSettings)
+            {
+                _scopeNotificationSettings[updateScopeNotificationSettings.Scope.GetType()] = updateScopeNotificationSettings.NotificationSettings;
             }
             else if (update is UpdateSecretChat updateSecretChat)
             {
@@ -1076,10 +1171,13 @@ namespace Unigram.Services
             {
 
             }
+            else if (update is UpdateUnreadChatCount updateUnreadChatCount)
+            {
+                UnreadChatCount = updateUnreadChatCount;
+            }
             else if (update is UpdateUnreadMessageCount updateUnreadMessageCount)
             {
-                UnreadCount = updateUnreadMessageCount.UnreadCount;
-                UnreadUnmutedCount = updateUnreadMessageCount.UnreadUnmutedCount;
+                UnreadMessageCount = updateUnreadMessageCount;
             }
             else if (update is UpdateUser updateUser)
             {
@@ -1100,7 +1198,15 @@ namespace Unigram.Services
             }
             else if (update is UpdateUserChatAction updateUserChatAction)
             {
-
+                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new Dictionary<int, ChatAction>());
+                if (updateUserChatAction.Action is ChatActionCancel)
+                {
+                    actions.Remove(updateUserChatAction.UserId);
+                }
+                else
+                {
+                    actions[updateUserChatAction.UserId] = updateUserChatAction.Action;
+                }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {

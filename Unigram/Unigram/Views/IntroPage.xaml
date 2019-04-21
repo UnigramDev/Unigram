@@ -6,7 +6,8 @@
     xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="OnLoaded">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -17,98 +18,6 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <SolidColorBrush x:Key="StartButtonBackground" Color="#2ca5e0" />
-        <SolidColorBrush x:Key="StartButtonBackgroundPointerOver" Color="#2ca5e0" />
-        <SolidColorBrush x:Key="StartButtonBackgroundPressed" Color="#227eab" />
-        <StaticResource x:Key="StartButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-        <StaticResource x:Key="StartButtonForeground" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
-        <StaticResource x:Key="StartButtonForegroundPointerOver" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
-        <StaticResource x:Key="StartButtonForegroundPressed" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
-        <StaticResource x:Key="StartButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-        <StaticResource x:Key="StartButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
-        <StaticResource x:Key="StartButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-        <StaticResource x:Key="StartButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
-        <StaticResource x:Key="StartButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
-
-        <Style x:Key="StartButtonStyle" TargetType="Button">
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Bottom"/>
-            <Setter Property="Margin" Value="24"/>
-            <Setter Property="Padding" Value="12,3,12,5" />
-            <Setter Property="Foreground" Value="{ThemeResource StartButtonForeground}"/>
-            <Setter Property="Background" Value="{ThemeResource StartButtonBackground}"/>
-            <Setter Property="BorderBrush" Value="{ThemeResource StartButtonBorderBrush}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="16">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBackgroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBorderBrushPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonForegroundPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBackgroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBorderBrushPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonForegroundPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBackgroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBorderBrushDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonForegroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              CornerRadius="16"
-                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              Padding="{TemplateBinding Padding}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              AutomationProperties.AccessibilityView="Raw" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <ControlTemplate x:Key="HorizontalNextTemplate" TargetType="Button">
             <Border x:Name="Root"
                     Background="{ThemeResource FlipViewNextPreviousButtonBackground}"
@@ -218,11 +127,11 @@
                            Text="Telegram"
                            FontWeight="SemiBold"
                            TextAlignment="Center"
-                           Style="{ThemeResource TitleTextBlockStyle}"/>
+                           Style="{StaticResource TitleTextBlockStyle}"/>
                 <TextBlock Padding="12,0,12,24"
                            common:TextBlockHelper.Markdown="The world's **fastest** messaging app.&#x0a;It is **free** and **secure**."
                            TextAlignment="Center"
-                           Style="{ThemeResource BodyTextBlockStyle}"/>
+                           Style="{StaticResource BodyTextBlockStyle}"/>
             </StackPanel>
             <ListView x:Name="Carousel"
                       Style="{StaticResource IndicatorListViewStyle}"
@@ -256,11 +165,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page1Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="1">
@@ -269,11 +178,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page2Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="2">
@@ -282,11 +191,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page3Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="3">
@@ -295,11 +204,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page5Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="4">
@@ -308,11 +217,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page4Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Center" Grid.Column="5">
@@ -321,11 +230,11 @@
                                FontWeight="SemiBold"
                                TextAlignment="Center"
                                Padding="12,200,12,12"
-                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                               Style="{StaticResource TitleTextBlockStyle}"/>
                     <TextBlock common:TextBlockHelper.Markdown="{CustomResource Page6Message}"
                                TextAlignment="Center"
                                Padding="12,0,12,64"
-                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                               Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
             </Border>
         </Grid>
@@ -349,6 +258,6 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
 
-        <Button Click="Start_Click" Content="{CustomResource StartMessaging}" Style="{StaticResource StartButtonStyle}"/>
+        <Button x:Name="Start" Click="Start_Click" Content="{CustomResource StartMessaging}" Style="{StaticResource StartButtonStyle}"/>
     </Grid>
 </Page>

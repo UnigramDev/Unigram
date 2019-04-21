@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Unigram.Core.Helpers;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -455,18 +455,20 @@ namespace Unigram.Controls
 
         public async Task<StorageFile> CropAsync(int min = 1280, int max = 0)
         {
-            var croppedFile = await ImageHelper.CropAsync(m_imageSource, CropRectangle, min, max);
+            var croppedFile = await ImageHelper.CropAsync(m_imageSource, null, CropRectangle, min, max);
 
             return croppedFile;
         }
 
-        public async Task SetSourceAsync(StorageFile file)
+        public async Task SetSourceAsync(StorageFile file, BitmapRotation rotation = BitmapRotation.None)
         {
             SoftwareBitmapSource source;
             using (var fileStream = await ImageHelper.OpenReadAsync(file))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
                 var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+
+                transform.Rotation = rotation;
 
                 var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
                 source = new SoftwareBitmapSource();

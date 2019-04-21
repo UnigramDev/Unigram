@@ -18,26 +18,16 @@ namespace Unigram.Controls
         public SearchTextBox()
         {
             DefaultStyleKey = typeof(SearchTextBox);
-
-            //DataContextChanged += OnDataContextChanged;
-            TextChanged += OnTextChanged;
         }
 
-        public event RoutedEventHandler Clean;
+        public event RoutedEventHandler Delete;
 
         protected override void OnApplyTemplate()
         {
-            var clean = GetTemplateChild("CleanButton") as Button;
+            var clean = GetTemplateChild("DeleteButton") as Button;
             if (clean != null)
             {
                 clean.Click += Clean_Click;
-                clean.Click += Clean;
-            }
-
-            var search = GetTemplateChild("SearchButton") as Button;
-            if (search != null)
-            {
-                search.Click += Search_Click;
             }
 
             base.OnApplyTemplate();
@@ -45,69 +35,14 @@ namespace Unigram.Controls
 
         private void Clean_Click(object sender, RoutedEventArgs e)
         {
-            Text = string.Empty;
-            Focus(FocusState.Keyboard);
-        }
-
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            Focus(FocusState.Keyboard);
-        }
-
-        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            if (ViewModel != null && ViewModel.NavigationService != null)
+            if (string.IsNullOrEmpty(Text))
             {
-                ViewModel.NavigationService.FrameFacade.BackRequested += OnBackRequested;
+                Delete?.Invoke(this, e);
             }
-        }
-
-        private void OnBackRequested(object sender, Template10.Common.HandledEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(Text) == false)
+            else if (FocusState == FocusState.Unfocused)
             {
-                e.Handled = true;
-
                 Text = string.Empty;
-                Focus(FocusState.Keyboard);
             }
         }
-
-        private void OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            GetBindingExpression(TextProperty)?.UpdateSource();
-
-            if (string.IsNullOrWhiteSpace(Text))
-            {
-                VisualStateManager.GoToState(this, "ButtonCollapsed1", false);
-                SearchCommand?.Execute(null);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "ButtonVisible1", false);
-            }
-        }
-
-        //protected override void OnKeyDown(KeyRoutedEventArgs e)
-        //{
-        //    if (e.Key == Windows.System.VirtualKey.Enter)
-        //    {
-        //        GetBindingExpression(TextProperty)?.UpdateSource();
-        //        SearchCommand?.Execute(null);
-        //    }
-
-        //    base.OnKeyDown(e);
-        //}
-
-        #region SearchCommand
-        public ICommand SearchCommand
-        {
-            get { return (ICommand)GetValue(SearchCommandProperty); }
-            set { SetValue(SearchCommandProperty, value); }
-        }
-
-        public static readonly DependencyProperty SearchCommandProperty =
-            DependencyProperty.Register("SearchCommand", typeof(ICommand), typeof(SearchTextBox), new PropertyMetadata(null));
-        #endregion
     }
 }

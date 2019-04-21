@@ -24,7 +24,7 @@ using Windows.Web.Http;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class WebPageView : BottomSheet
+    public sealed partial class WebPageView : ContentDialog
     {
         private WebPageView()
         {
@@ -43,7 +43,7 @@ namespace Unigram.Controls.Views
             }
         }
 
-        //public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLWebPage webPage)
+        //public IAsyncOperation<ContentDialogResult> ShowAsync(TLWebPage webPage)
         //{
         //    if (ApplicationView.GetForCurrentView().IsCompactOverlaySupported())
         //    {
@@ -118,7 +118,7 @@ namespace Unigram.Controls.Views
 
         //            var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
 
-        //            return ContentDialogBaseResult.OK;
+        //            return ContentDialogResult.Primary;
         //        });
         //    }
         //    else
@@ -135,12 +135,12 @@ namespace Unigram.Controls.Views
 
         private void Join_Click(object sender, RoutedEventArgs e)
         {
-            Hide(ContentDialogBaseResult.OK);
+            Hide();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Hide(ContentDialogBaseResult.Cancel);
+            Hide();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

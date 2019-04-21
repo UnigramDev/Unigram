@@ -23,7 +23,7 @@
                     <TextBlock x:Name="TitleLabel" Style="{StaticResource BaseTextBlockStyle}"/>
                     <TextBlock x:Name="UsernameLabel" Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" />
                 </StackPanel>
-                <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
+                <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
             </Grid>
         </controls:ContentPageHeader>
 

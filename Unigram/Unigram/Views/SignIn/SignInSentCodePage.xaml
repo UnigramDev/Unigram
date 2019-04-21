@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Loaded="OnLoaded"
     mc:Ignorable="d">
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -18,6 +18,7 @@
         <controls:ButtonPageHeader
             x:Name="Header"
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Next}"
             Text="{CustomResource YourCode}"
             Glyph="&#xE10B;"/>
 
@@ -35,16 +36,16 @@
                 x:Name="TitleLabel"
                 Visibility="Collapsed"
                 Text="{CustomResource YourCode}"
-                Style="{ThemeResource TitleTextBlockStyle}"/>
+                Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
                 common:TextBlockHelper.Markdown="{x:Bind ConvertType(ViewModel.CodeInfo), FallbackValue=''}"
                 Style="{StaticResource BodyTextBlockStyle}"
                 Padding="0,8,0,16"
                 Grid.Row="1"/>
 
-            <controls:UpdateTextBox
+            <TextBox
                 x:Name="PrimaryInput"
-                Text="{Binding PhoneCode, Mode=TwoWay}"
+                Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Margin="0,12,0,4"
                 InputScope="Digits"
                 IsTextPredictionEnabled="False"

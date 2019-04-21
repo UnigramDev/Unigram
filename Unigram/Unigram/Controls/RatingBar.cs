@@ -67,7 +67,7 @@ namespace Unigram.Controls
             var position = e.GetCurrentPoint(this);
             var index = (int)Math.Truncate(position.Position.X / (FontSize + Padding.Left + Padding.Right));
 
-            Value = index;
+            Value = index + 1;
             ReleasePointerCapture(e.Pointer);
             UpdateVisual(e);
         }
@@ -81,10 +81,12 @@ namespace Unigram.Controls
 
         private void UpdateVisual(int index = -1)
         {
+            var value = Value - 1;
+
             for (int i = 0; i < _unselected.Count; i++)
             {
-                var brush = i <= Value || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
-                var glyph = i <= Value && (index == -1 ? true : i <= index) ? "\uE1CF" : "\uE1CE";
+                var brush = i <= value || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
+                var glyph = i <= value && (index == -1 ? true : i <= index) ? "\uE1CF" : "\uE1CE";
 
                 _unselected[i].Foreground = App.Current.Resources[brush] as SolidColorBrush;
                 _unselected[i].Glyph = glyph;
@@ -102,7 +104,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(int), typeof(RatingBar), new PropertyMetadata(-1, OnValueChanged));
+            DependencyProperty.Register("Value", typeof(int), typeof(RatingBar), new PropertyMetadata(0, OnValueChanged));
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

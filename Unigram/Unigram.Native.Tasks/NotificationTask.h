@@ -27,7 +27,7 @@ namespace Unigram
 				static void ResetSecondaryTile(String^ caption, String^ picture, String^ group);
 				static void UpdatePrimaryTile(String^ session, String^ caption, String^ message, String^ picture);
 				//static void UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group);
-				static void UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key); 
+				static void UpdateToast(String^ caption, String^ message, String^ attribution, String^ session, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key); 
 
 			private:
 				void UpdateToastAndTiles(String^ content /*, std::wofstream* log*/);
@@ -36,8 +36,9 @@ namespace Unigram
 				String^ GetLaunch(JsonObject^ custom, String^ loc_key);
 				String^ GetTag(JsonObject^ custom);
 				String^ GetGroup(JsonObject^ custom);
-				String^ GetPicture(JsonObject^ custom, String^ group);
+				String^ GetPicture(JsonObject^ custom, String^ group, String^ session);
 				String^ GetDate(JsonObject^ notification);
+				String^ GetSession(JsonObject^ data);
 				static String^ NotificationTask::CreateTileMessageBody(String^ message);
 				static String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, String^ message);
 

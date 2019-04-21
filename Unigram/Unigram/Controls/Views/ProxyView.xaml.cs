@@ -158,7 +158,7 @@ namespace Unigram.Controls.Views
         {
             if (TypeSocksPanel != null)
             {
-                TypeSocksPanel.Visibility = TypeSocks.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+                TypeSocksPanel.Visibility = TypeSocks.IsChecked == true || TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             }
 
             if (TypeProtoPanel != null)

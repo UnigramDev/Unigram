@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using Unigram.Views;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Core.Common;
 using Telegram.Td.Api;
+using Unigram.Collections;
 
 namespace Unigram.ViewModels.Settings
 {

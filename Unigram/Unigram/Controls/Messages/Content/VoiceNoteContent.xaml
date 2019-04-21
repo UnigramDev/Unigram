@@ -8,7 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Unloaded="OnUnloaded">
 
     <Grid.Resources>
         <Style TargetType="controls:ProgressVoice">
@@ -50,9 +51,9 @@
         <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource InlineFileButtonStyle}"/>
     </Border>
     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-        <!--<TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>-->
-        <controls:ProgressVoice x:Name="Progress" Value="50" Media="{Binding Media}"/>
+        <!--<TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>-->
+        <controls:ProgressVoice x:Name="Progress" HorizontalAlignment="Left"/>
 
-        <TextBlock x:Name="Subtitle" Style="{ThemeResource DisabledCaptionTextBlockStyle}"/>
+        <TextBlock x:Name="Subtitle" Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
     </StackPanel>
 </Grid>

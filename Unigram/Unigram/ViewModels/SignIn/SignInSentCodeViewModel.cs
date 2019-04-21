@@ -107,14 +107,14 @@ namespace Unigram.ViewModels.SignIn
             var firstName = string.Empty;
             var lastName = string.Empty;
 
-            if (ProtoService.TryGetOption("x_firstname", out OptionValueString firstValue))
+            if (CacheService.Options.TryGetValue("x_firstname", out string firstValue))
             {
-                firstName = firstValue.Value;
+                firstName = firstValue;
             }
             
-            if (ProtoService.TryGetOption("x_lastname", out OptionValueString lastValue))
+            if (CacheService.Options.TryGetValue("x_lastname", out string lastValue))
             {
-                lastName = lastValue.Value;
+                lastName = lastValue;
             }
 
             var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode, firstName, lastName));
@@ -122,73 +122,45 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(ErrorType.PHONE_NUMBER_UNOCCUPIED))
+                if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
-                    //var signup = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, PhoneCode, "Paolo", "Veneziani");
-                    //if (signup.IsSucceeded)
-                    //{
-                    //    ProtoService.SetInitState();
-                    //    ProtoService.CurrentUserId = signup.Value.User.Id;
-                    //    SettingsHelper.IsAuthorized = true;
-                    //    SettingsHelper.UserId = signup.Value.User.Id;
-                    //}
-
-                    //this._callTimer.Stop();
-                    //this.StateService.ClearNavigationStack = true;
-                    //this.NavigationService.UriFor<SignUpViewModel>().Navigate();
-                    //var state = new SignUpPage.NavigationParameters
-                    //{
-                    //    PhoneNumber = _phoneNumber,
-                    //    PhoneCode = _phoneCode,
-                    //    Result = _sentCode,
-                    //};
-
-                    //NavigationService.Navigate(typeof(SignUpPage), new SignUpPage.NavigationParameters
-                    //{
-                    //    PhoneNumber = _phoneNumber,
-                    //    PhoneCode = _phoneCode,
-                    //    Result = _sentCode,
-                    //});
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
+                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
-                    //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
-                }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY))
-                {
-                    //await new MessageDialog(Resources.PhoneCodeEmpty, Resources.Error).ShowAsync();
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
-                    //await new MessageDialog(Resources.PhoneCodeExpiredString, Resources.Error).ShowAsync();
-                }
-                else if (error.TypeEquals(ErrorType.SESSION_PASSWORD_NEEDED))
-                {
-                    //this.IsWorking = true;
-                    //var password = await LegacyService.GetPasswordAsync();
-                    //if (password.IsSucceeded && password.Result is TLAccountPassword)
-                    //{
-                    //    var state = new SignInPasswordPage.NavigationParameters
-                    //    {
-                    //        PhoneNumber = _phoneNumber,
-                    //        PhoneCode = _phoneCode,
-                    //        Result = _sentCode,
-                    //        Password = password.Result as TLAccountPassword
-                    //    };
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
 
-                    //    NavigationService.Navigate(typeof(SignInPasswordPage), state);
-                    //}
-                    //else
-                    //{
-                    //    Execute.ShowDebugMessage("account.getPassword error " + password.Error);
-                    //}
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
                 }
-                else if (error.CodeEquals(ErrorCode.FLOOD))
+                else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
                 {
-                    //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
+
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
+                }
+                else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
+                {
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
+
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
+                }
+                else if (error.Message.StartsWith("FLOOD_WAIT"))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+                else if (error.Code != -1000)
+                {
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
 
-                Execute.ShowDebugMessage("account.signIn error " + error);
+                Logs.Logger.Error(Logs.Target.API, "account.signIn error " + error);
             }
         }
 

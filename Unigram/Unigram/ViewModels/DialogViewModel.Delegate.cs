@@ -16,6 +16,10 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Gallery;
+using Unigram.Services.Settings;
+using Unigram.Controls.Gallery;
 
 namespace Unigram.ViewModels
 {
@@ -115,19 +119,19 @@ namespace Unigram.ViewModels
 
             if (content is Animation animation)
             {
-                return ProtoService.Preferences.ShouldDownloadAnimation(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadAnimation(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is Audio audio)
             {
-                return ProtoService.Preferences.ShouldDownloadAudio(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadAudio(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is Document document)
             {
-                return ProtoService.Preferences.ShouldDownloadDocument(GetChatType(chat), new NetworkTypeWiFi(), document.DocumentValue.Size);
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), new NetworkTypeWiFi(), document.DocumentValue.Size);
             }
             else if (content is Photo photo)
             {
-                return ProtoService.Preferences.ShouldDownloadPhoto(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadPhoto(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is Sticker sticker)
             {
@@ -135,15 +139,15 @@ namespace Unigram.ViewModels
             }
             else if (content is Video video)
             {
-                return ProtoService.Preferences.ShouldDownloadVideo(GetChatType(chat), new NetworkTypeWiFi(), video.VideoValue.Size);
+                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), new NetworkTypeWiFi(), video.VideoValue.Size);
             }
             else if (content is VideoNote videoNote)
             {
-                return ProtoService.Preferences.ShouldDownloadVideoNote(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadVideoNote(GetChatType(chat), new NetworkTypeWiFi());
             }
             else if (content is VoiceNote voiceNote)
             {
-                return ProtoService.Preferences.ShouldDownloadVoiceNote(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadVoiceNote(GetChatType(chat), new NetworkTypeWiFi());
             }
 
             return false;
@@ -151,7 +155,7 @@ namespace Unigram.ViewModels
 
         private AutoDownloadChat GetChatType(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel || chat.Type is ChatTypePrivate)
+            if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel || chat.Type is ChatTypeBasicGroup)
             {
                 return AutoDownloadChat.Group;
             }
@@ -173,7 +177,7 @@ namespace Unigram.ViewModels
 
         public void DownloadFile(MessageViewModel message, File file)
         {
-            ProtoService.Send(new DownloadFile(file.Id, 1));
+            ProtoService.DownloadFile(file.Id, 1);
         }
 
         public bool TryGetMessagesForFileId(int fileId, out IList<MessageViewModel> items)
@@ -202,6 +206,11 @@ namespace Unigram.ViewModels
 
 
 
+        public void ReplyToMessage(MessageViewModel message)
+        {
+            MessageReplyCommand.Execute(message);
+        }
+
         public async void OpenReply(MessageViewModel message)
         {
             await LoadMessageSliceAsync(message.Id, message.ReplyToMessageId);
@@ -229,7 +238,7 @@ namespace Unigram.ViewModels
 
         public void OpenWebPage(WebPage webPage)
         {
-            if (webPage.HasInstantView)
+            if (webPage.InstantViewVersion != 0)
             {
                 //if (NavigationService is UnigramNavigationService asdas)
                 //{
@@ -239,11 +248,12 @@ namespace Unigram.ViewModels
 
                 NavigationService.Navigate(typeof(InstantPage), webPage.Url);
             }
-            else if (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
+            else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri) &&
+                    (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(webPage.Type, "telegram_channel", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase))
+                     string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase)))
             {
-                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, webPage.Url);
+                MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
             }
         }
 
@@ -267,6 +277,11 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void OpenLiveLocation(MessageViewModel message)
+        {
+            NavigationService.Navigate(typeof(LiveLocationPage), message.ChatId);
+        }
+
         public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
         {
             KeyboardButtonExecute(message, button);
@@ -275,6 +290,17 @@ namespace Unigram.ViewModels
         public void Call(MessageViewModel message)
         {
             CallCommand.Execute();
+        }
+
+        public void VotePoll(MessageViewModel message, PollOption option)
+        {
+            var poll = message.Content as MessagePoll;
+            if (poll == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new SetPollAnswer(message.ChatId, message.Id, new int[] { poll.Poll.Options.IndexOf(option) }));
         }
 
 
@@ -299,6 +325,10 @@ namespace Unigram.ViewModels
                 {
                     NavigationService.NavigateToChat(chat);
                 }
+            }
+            else
+            {
+                await TLMessageDialog.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -363,8 +393,8 @@ namespace Unigram.ViewModels
 
         public void OpenHashtag(string hashtag)
         {
-            var search = Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
-            search.SearchCommand.Execute(hashtag);
+            var search = Search = new ChatSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
+            search.Search(hashtag, null, null);
         }
 
         public async void OpenUrl(string url, bool untrust)
@@ -373,7 +403,7 @@ namespace Unigram.ViewModels
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
+                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
                 }
                 else
                 {
@@ -410,20 +440,35 @@ namespace Unigram.ViewModels
 
         public async void OpenMedia(MessageViewModel message, FrameworkElement target)
         {
-            if (message.Content is MessageAnimation || message.Content is MessageVideoNote || message.Content is MessageText text && text.WebPage != null && text.WebPage.Animation != null)
+            GalleryViewModelBase viewModel = null;
+
+            var webPage = message.Content is MessageText text ? text.WebPage : null;
+            if (webPage != null && webPage.IsInstantGallery())
             {
-                Delegate?.PlayMessage(message);
+                viewModel = await InstantGalleryViewModel.CreateAsync(ProtoService, Aggregator, message, webPage);
+
+                if (viewModel.Items.IsEmpty())
+                {
+                    viewModel = null;
+                }
+            }
+
+            if (viewModel == null && (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
+            {
+                Delegate?.PlayMessage(message, target);
             }
             else
             {
-                GalleryViewModelBase viewModel;
-                if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
+                if (viewModel == null)
                 {
-                    viewModel = new DialogGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
-                }
-                else
-                {
-                    viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessageItem(ProtoService, message.Get()));
+                    if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
+                    {
+                        viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
+                    }
+                    else
+                    {
+                        viewModel = new SingleGalleryViewModel(ProtoService, Aggregator, new GalleryMessage(ProtoService, message.Get()));
+                    }
                 }
 
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
@@ -432,19 +477,12 @@ namespace Unigram.ViewModels
 
         public void PlayMessage(MessageViewModel message)
         {
-            if (message.Content is MessageAnimation || message.Content is MessageVideoNote || message.Content is MessageText text && text.WebPage != null && text.WebPage.Animation != null)
+            if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
             {
-                Delegate?.PlayMessage(message);
+                ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
             }
-            else
-            {
-                if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
-                {
-                    ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
-                }
 
-                _playbackService.Enqueue(message.Get());
-            }
+            _playbackService.Enqueue(message.Get());
         }
 
 
@@ -458,7 +496,13 @@ namespace Unigram.ViewModels
 
         public bool IsAdmin(int userId)
         {
-            return false;
+            var chat = _chat;
+            if (chat == null)
+            {
+                return false;
+            }
+
+            return _admins.TryGetValue(chat.Id, out IList<int> value) && value.Contains(userId);
         }
     }
 }

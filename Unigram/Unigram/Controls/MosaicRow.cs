@@ -105,7 +105,7 @@ namespace Unigram.Controls
 
                     if (!animation.Thumbnail.Photo.Local.IsDownloadingCompleted)
                     {
-                        protoService.Send(new DownloadFile(animation.Thumbnail.Photo.Id, 1));
+                        protoService.DownloadFile(animation.Thumbnail.Photo.Id, 1);
                     }
                 }
                 else if (item is Photo photo)
@@ -117,7 +117,7 @@ namespace Unigram.Controls
 
                         if (!small.Photo.Local.IsDownloadingCompleted)
                         {
-                            protoService.Send(new DownloadFile(small.Photo.Id, 1));
+                            protoService.DownloadFile(small.Photo.Id, 1);
                         }
                     }
                 }

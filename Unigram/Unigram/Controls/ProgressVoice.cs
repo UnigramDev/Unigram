@@ -36,19 +36,6 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        #region Media
-
-        public object Media
-        {
-            get { return (object)GetValue(MediaProperty); }
-            set { SetValue(MediaProperty, value); }
-        }
-
-        public static readonly DependencyProperty MediaProperty =
-            DependencyProperty.Register("Media", typeof(object), typeof(ProgressVoice), new PropertyMetadata(null));
-
-        #endregion
-
         private IList<byte> _deferred;
 
         public void UpdateWave(VoiceNote voiceNote)

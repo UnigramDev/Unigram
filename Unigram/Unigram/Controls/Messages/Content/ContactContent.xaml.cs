@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
-using Telegram.Helpers;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
@@ -25,6 +24,7 @@ namespace Unigram.Controls.Messages.Content
     public sealed partial class ContactContent : Grid, IContent
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public ContactContent(MessageViewModel message)
         {
@@ -45,18 +45,16 @@ namespace Unigram.Controls.Messages.Content
             var user = message.ProtoService.GetUser(contact.Contact.UserId);
             if (user != null)
             {
-                Photo.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 48, 48);
+                Photo.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 48);
 
                 Title.Text = user.GetFullName();
                 Subtitle.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
             }
             else
             {
-                var fullName = string.IsNullOrEmpty(contact.Contact.LastName) ? contact.Contact.FirstName : $"{contact.Contact.FirstName} {contact.Contact.LastName}";
+                Photo.Source = PlaceholderHelper.GetNameForUser(contact.Contact.FirstName, contact.Contact.LastName, 48);
 
-                Photo.Source = PlaceholderHelper.GetBadge(fullName, Colors.Red, 48, 48);
-
-                Title.Text = fullName;
+                Title.Text = contact.Contact.GetFullName();
                 Subtitle.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
             }
 

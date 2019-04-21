@@ -27,20 +27,14 @@ namespace Unigram.Views.Settings
             DataContext = TLContainer.Current.Resolve<SettingsNotificationsViewModel>();
         }
 
-        private async void Private_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.PrivateAlert = PrivateAlert.IsChecked == true;
-            ViewModel.PrivatePreview = PrivatePreview.IsChecked == true;
+        #region Binding
 
-            await ViewModel.UpdatePrivateAsync();
+        private string ConvertCountInfo(bool count)
+        {
+            return count ? "Switch off to show the number of unread chats instead of messages" : "Switch on to show the number of unread messages instead of chats";
         }
 
-        private async void Group_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.GroupAlert = GroupAlert.IsChecked == true;
-            ViewModel.GroupPreview = GroupPreview.IsChecked == true;
+        #endregion
 
-            await ViewModel.UpdateGroupAsync();
-        }
     }
 }

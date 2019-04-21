@@ -9,6 +9,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <DrillInNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -28,8 +36,7 @@
                         <controls:BadgeButton
                             Content="{CustomResource TerminateAllWebSessions}"
                             Foreground="Red"
-                            Click="TerminateOthers_Click"
-                            Style="{StaticResource BadgeButtonStyle}"/>
+                            Click="TerminateOthers_Click"/>
                         <TextBlock 
                             Text="{CustomResource ClearOtherWebSessionsHelp}"
                             Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

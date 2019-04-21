@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -44,32 +46,13 @@ namespace Unigram.Views.Settings
 
             if (proxy.Type is ProxyTypeMtproto || proxy.Type is ProxyTypeSocks5)
             {
-                CreateFlyoutItem(ref flyout, ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile);
+                flyout.CreateFlyoutItem(ViewModel.ShareCommand, proxy, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
             }
 
-            CreateFlyoutItem(ref flyout, ViewModel.EditCommand, proxy, Strings.Resources.Edit);
-            CreateFlyoutItem(ref flyout, ViewModel.RemoveCommand, proxy, Strings.Resources.Delete);
+            flyout.CreateFlyoutItem(ViewModel.EditCommand, proxy, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+            flyout.CreateFlyoutItem(ViewModel.RemoveCommand, proxy, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
-            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                flyout.ShowAt(sender, point);
-            }
-        }
-
-        private void CreateFlyoutItem(ref MenuFlyout flyout, ICommand command, object parameter, string text)
-        {
-            var flyoutItem = new MenuFlyoutItem();
-            flyoutItem.IsEnabled = command != null;
-            flyoutItem.Command = command;
-            flyoutItem.CommandParameter = parameter;
-            flyoutItem.Text = text;
-
-            flyout.Items.Add(flyoutItem);
+            args.ShowAt(flyout, element);
         }
 
         #endregion

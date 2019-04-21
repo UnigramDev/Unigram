@@ -455,7 +455,7 @@
                                     BorderBrush="{ThemeResource SystemControlBackgroundChromeWhiteBrush}">
                                 <TextBlock x:Name="MultiArrangeOverlayText"
                                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DragItemsCount}"
-                                           Style="{ThemeResource CaptionTextBlockStyle}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
                                            IsHitTestVisible="False"
                                            Opacity="0"
                                            VerticalAlignment="Center"
@@ -490,27 +490,22 @@
                 <controls:GlyphButton
                         Glyph="&#xE11A;"
                         Click="Search_Click"
-                        FontSize="18"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
 
                 <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
             </Grid>
 
-            <controls:SearchTextBox x:Name="SearchField"
-                                        Padding="12,4,6,4"
-                                        Background="{x:Null}"
-                                        BorderBrush="{x:Null}"
-                                        Style="{StaticResource SearchTextBoxStyle}"
-                                        PlaceholderText="{CustomResource Search}"
-                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                        Clean="Search_LostFocus"
-                                        GotFocus="Search_GotFocus"
-                                        LostFocus="Search_LostFocus"
-                                        TextChanged="Search_TextChanged"
-                                        KeyDown="Search_KeyDown"
-                                        Visibility="Collapsed"
-                                        Canvas.ZIndex="1"/>
+            <controls:SearchTextBox
+                x:Name="SearchField"
+                Style="{StaticResource QueryTextBoxStyle}"
+                PlaceholderText="{CustomResource Search}"
+                PreventKeyboardDisplayOnProgrammaticFocus="True"
+                Delete="Search_LostFocus"
+                GotFocus="Search_GotFocus"
+                TextChanged="Search_TextChanged"
+                KeyDown="Search_KeyDown"
+                Visibility="Collapsed"/>
         </Grid>
     </ContentDialog.Title>
     
@@ -602,7 +597,7 @@
                       Visibility="Collapsed">
                 <ListView.Header>
                     <StackPanel Visibility="{x:Bind ViewModel.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                             <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                         <ListView SelectionMode="None"
@@ -613,7 +608,7 @@
                                   Style="{StaticResource HorizontalListViewStyle}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Margin="0,12">
+                                    <StackPanel Width="72" Margin="0,12">
                                         <Grid Width="48" Height="48" Margin="12,0">
                                             <controls:ProfilePicture IsHitTestVisible="False"/>
                                             <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
@@ -624,7 +619,7 @@
                                                     HorizontalAlignment="Right"
                                                     Margin="0,-2,-2,0"
                                                     Visibility="Collapsed">
-                                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
                                                            Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
                                                            TextAlignment="Center"
                                                            Margin="4,2,4,0"/>
@@ -643,7 +638,7 @@
                             </ListView.ItemContainerStyle>
                         </ListView>
 
-                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                             <TextBlock Text="{CustomResource Recent}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                     </StackPanel>
@@ -705,7 +700,7 @@
                         </GroupStyle.HeaderTemplate>
                         <GroupStyle.HeaderContainerStyle>
                             <Style TargetType="ListViewHeaderItem">
-                                <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                 <Setter Property="Margin" Value="0,0,0,0"/>
@@ -744,8 +739,8 @@
         <Grid Grid.Row="1">
             <Border x:Name="LineBottom" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
 
-            <Border Visibility="{x:Bind ConvertCommentVisibility(ViewModel.SelectedItems.Count, ViewModel.IsCommentEnabled), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8,12,0" Grid.ColumnSpan="2">
-                <TextBox Text="{x:Bind ViewModel.Comment, Mode=TwoWay}" PlaceholderText="{CustomResource ShareComment}"/>
+            <Border x:Name="CommentPanel" Visibility="Collapsed" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8,12,0" Grid.ColumnSpan="2">
+                <TextBox Text="{x:Bind ViewModel.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="{CustomResource ShareComment}"/>
             </Border>
         </Grid>
     </Grid>

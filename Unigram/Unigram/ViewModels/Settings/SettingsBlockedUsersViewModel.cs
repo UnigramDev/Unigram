@@ -11,7 +11,6 @@ using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Settings;
@@ -33,8 +32,6 @@ namespace Unigram.ViewModels.Settings
 
             BlockCommand = new RelayCommand(BlockExecute);
             UnblockCommand = new RelayCommand<User>(UnblockExecute);
-
-            Aggregator.Subscribe(this);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)

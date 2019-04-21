@@ -18,6 +18,7 @@ using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Controls;
 using Unigram.Common;
+using System.Reactive.Linq;
 
 namespace Unigram.Views.Channels
 {
@@ -29,12 +30,25 @@ namespace Unigram.Views.Channels
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChannelCreateStep2ViewModel>();
+
+            Transitions = ApiInfo.CreateSlideTransition();
+
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                if (ViewModel.UpdateIsValid(Username.Text))
+                {
+                    ViewModel.CheckAvailability(Username.Text);
+                }
+            });
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
         }
+
+        #region Recycle
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -66,7 +80,7 @@ namespace Unigram.Views.Channels
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)
@@ -76,5 +90,7 @@ namespace Unigram.Views.Channels
 
             args.Handled = true;
         }
+
+        #endregion
     }
 }

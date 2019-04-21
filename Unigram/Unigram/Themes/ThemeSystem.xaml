@@ -1,0 +1,111 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Themes">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+            <Color x:Key="MessageForegroundColor">#FFFFFF</Color>
+            <Color x:Key="MessageForegroundOutColor">#FFFFFF</Color>
+
+            <Color x:Key="MessageForegroundLinkColor">#FFFFFF</Color>
+            <Color x:Key="MessageForegroundLinkOutColor">#FFFFFF</Color>
+
+            <Color x:Key="MessageBackgroundColor">#1F2C36</Color>
+            <StaticResource x:Key="MessageBackgroundOutColor" ResourceKey="SystemAccentColorDark2"/>
+
+            <Color x:Key="MessageSubtleLabelColor">#A0ACB6</Color>
+            <StaticResource x:Key="MessageSubtleLabelOutColor" ResourceKey="SystemAccentColorLight2"/>
+
+            <Color x:Key="MessageSubtleGlyphColor">#A0ACB6</Color>
+            <StaticResource x:Key="MessageSubtleGlyphOutColor" ResourceKey="SystemAccentColorLight1"/>
+
+            <StaticResource x:Key="MessageSubtleForegroundColor" ResourceKey="SystemChromeDisabledLowColor"/>
+            <StaticResource x:Key="MessageSubtleForegroundOutColor" ResourceKey="SystemAccentColorLight2"/>
+
+            <Color x:Key="MessageHeaderForegroundColor">#0E7ACD</Color>
+            <StaticResource x:Key="MessageHeaderForegroundOutColor" ResourceKey="SystemAccentColorLight2"/>
+
+            <Color x:Key="MessageHeaderBorderColor">#2FA9E2</Color>
+            <StaticResource x:Key="MessageHeaderBorderOutColor" ResourceKey="SystemAccentColorLight2"/>
+
+            <Color x:Key="MessageMediaForegroundColor">#FFFFFF</Color>
+            <StaticResource x:Key="MessageMediaForegroundOutColor" ResourceKey="SystemAccentColorDark3"/>
+
+            <Color x:Key="MessageMediaBackgroundColor">#007EE5</Color>
+            <StaticResource x:Key="MessageMediaBackgroundOutColor" ResourceKey="SystemAccentColor"/>
+
+            <Color x:Key="MessageHyperlinkForegroundColor">#70BAF5</Color>
+            <Color x:Key="MessageHyperlinkForegroundOutColor">#83CAFF</Color>
+
+            <Color x:Key="MessageOverlayBackgroundColor">#54000000</Color>
+            <Color x:Key="MessageOverlayBackgroundOutColor">#54000000</Color>
+
+            <Color x:Key="MessageCallForegroundColor">Green</Color>
+            <Color x:Key="MessageCallForegroundOutColor">Green</Color>
+
+            <Color x:Key="MessageCallMissedForegroundColor">Red</Color>
+            <Color x:Key="MessageCallMissedForegroundOutColor">Red</Color>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <Color x:Key="MessageForegroundColor">#000000</Color>
+            <Color x:Key="MessageForegroundOutColor">#000000</Color>
+
+            <Color x:Key="MessageForegroundLinkColor">#000000</Color>
+            <Color x:Key="MessageForegroundLinkOutColor">#000000</Color>
+
+            <Color x:Key="MessageBackgroundColor">#FFFFFF</Color>
+            <StaticResource x:Key="MessageBackgroundOutColor" ResourceKey="SystemAccentColorLight3"/>
+
+            <Color x:Key="MessageSubtleLabelColor">#A0ACB6</Color>
+            <StaticResource x:Key="MessageSubtleLabelOutColor" ResourceKey="SystemAccentColorLight1"/>
+
+            <Color x:Key="MessageSubtleGlyphColor">#A0ACB6</Color>
+            <StaticResource x:Key="MessageSubtleGlyphOutColor" ResourceKey="SystemAccentColorLight1"/>
+
+            <StaticResource x:Key="MessageSubtleForegroundColor" ResourceKey="SystemChromeDisabledLowColor"/>
+            <StaticResource x:Key="MessageSubtleForegroundOutColor" ResourceKey="SystemAccentColorLight2"/>
+
+            <Color x:Key="MessageHeaderForegroundColor">#0E7ACD</Color>
+            <StaticResource x:Key="MessageHeaderForegroundOutColor" ResourceKey="SystemAccentColorDark1"/>
+
+            <Color x:Key="MessageHeaderBorderColor">#2FA9E2</Color>
+            <StaticResource x:Key="MessageHeaderBorderOutColor" ResourceKey="SystemAccentColorDark1"/>
+
+            <Color x:Key="MessageMediaForegroundColor">#FFFFFF</Color>
+            <StaticResource x:Key="MessageMediaForegroundOutColor" ResourceKey="SystemAccentColorDark1"/>
+
+            <Color x:Key="MessageMediaBackgroundColor">#007EE5</Color>
+            <StaticResource x:Key="MessageMediaBackgroundOutColor" ResourceKey="SystemAccentColorLight2"/>
+
+            <Color x:Key="MessageHyperlinkForegroundColor">#158DCD</Color>
+            <Color x:Key="MessageHyperlinkForegroundOutColor">#158DCD</Color>
+
+            <Color x:Key="MessageOverlayBackgroundColor">#54000000</Color>
+            <Color x:Key="MessageOverlayBackgroundOutColor">#54000000</Color>
+
+            <Color x:Key="MessageCallForegroundColor">Green</Color>
+            <Color x:Key="MessageCallForegroundOutColor">Green</Color>
+
+            <Color x:Key="MessageCallMissedForegroundColor">Red</Color>
+            <Color x:Key="MessageCallMissedForegroundOutColor">Red</Color>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <SolidColorBrush x:Key="MessageForegroundBrush" Color="{ThemeResource MessageForegroundColor}" />
+    <SolidColorBrush x:Key="MessageForegroundLinkBrush" Color="{ThemeResource MessageForegroundLinkColor}" />
+    <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource MessageBackgroundColor}" />
+    <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource MessageSubtleLabelColor}" />
+    <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource MessageSubtleGlyphColor}" />
+    <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource MessageSubtleForegroundColor}" />
+    <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MessageHeaderForegroundColor}" />
+    <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderColor}" />
+    <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundColor}" />
+    <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundColor}" />
+    <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="{ThemeResource MessageHyperlinkForegroundColor}" />
+    <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MessageOverlayBackgroundColor}" />
+    <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="{ThemeResource MessageCallForegroundColor}" />
+    <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="{ThemeResource MessageCallMissedForegroundColor}" />
+
+</ResourceDictionary>
+    

@@ -1,6 +1,7 @@
 ﻿using Template10.Common;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

@@ -9,6 +9,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <EntranceNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,7 +28,7 @@
             Glyph="&#xE10B;"/>
 
         <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"
             Grid.Row="1"/>
@@ -29,7 +37,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,48">
-                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -38,19 +46,43 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+                    <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2">
+                        <FlyoutBase.AttachedFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Click="EditCamera_Click"
+                                                Text="{CustomResource FromCamera}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE722;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Click="EditPhoto_Click"
+                                                Text="{CustomResource FromGalley}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xEB9F;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.DeletePhotoCommand}"
+                                                Text="{CustomResource Delete}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE74D;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </FlyoutBase.AttachedFlyout>
+                    </controls:ProfilePicture>
 
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                        <controls:UpdateTextBox
+                        <TextBox
                             x:Name="Title"
-                            Text="{Binding Title, Mode=TwoWay}"
+                            Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             MaxLength="{StaticResource ChannelTitleMaxLength}"/>
                     </Border>
                 </Grid>
 
                 <StackPanel>
-                    <controls:UpdateTextBox
-                        Text="{Binding About, Mode=TwoWay}"
+                    <TextBox
+                        x:Name="About"
+                        Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         MaxLength="{StaticResource ChannelAboutMaxLength}"
                         PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
                         TextWrapping="Wrap"
@@ -59,178 +91,76 @@
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
                 </StackPanel>
 
-                <StackPanel x:Name="UsernamePanel"
-                            BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
-                            BorderThickness="0,0,0,1"
-                            Margin="12,18,0,0">
-                    <StackPanel BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
-                                BorderThickness="0,0,0,1"
-                                Padding="0,12,12,12">
-                        <RadioButton
-                            x:Name="Public"
-                            IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"/>
-                        <TextBlock
-                            x:Name="PublicInfo"
-                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Margin="28,-6,0,8"/>
-                        
-                        <RadioButton
-                            x:Name="Private"
-                            IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"/>
-                        <TextBlock
-                            x:Name="PrivateInfo"
-                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Margin="28,-6,0,0"/>
-                    </StackPanel>
+                <StackPanel>
+                    <controls:BadgeButton x:Name="ChatType"
+                                          Content="{CustomResource GroupType}"
+                                          Command="{x:Bind ViewModel.EditTypeCommand}"
+                                          Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
-                    <StackPanel Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <StackPanel Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                            <controls:UpdateTextBox
-                                x:Name="Username"
-                                Text="{Binding Username, Mode=TwoWay}"
-                                Header="{CustomResource ChannelLinkType}"
-                                PlaceholderText="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
-                                Style="{StaticResource InlinePlaceholderTextBoxStyle}"
-                                Margin="0,12,12,8"
-                                Grid.Row="1"/>
+                    <controls:BadgeButton x:Name="ChatDemocracy"
+                                          Content="{CustomResource WhoCanAddMembers}"
+                                          Command="{x:Bind ViewModel.EditDemocracyCommand}"
+                                          Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
-                            <TextBlock
-                                Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
-                                Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=LinkAvailable}"
-                                Foreground="Green"
-                                Margin="0,0,0,8"/>
-                            <TextBlock
-                                Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                Text="{CustomResource LinkChecking}"
-                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                Margin="0,0,0,8"/>
-                            <TextBlock
-                                Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                                Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-                                Foreground="Red"
-                                Margin="0,0,0,8"/>
+                    <controls:BadgeButton x:Name="ChatHistory"
+                                          Content="{CustomResource ChatHistory}"
+                                          Command="{x:Bind ViewModel.EditHistoryCommand}"
+                                          Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+                </StackPanel>
 
-                            <TextBlock
-                                x:Name="UsernameHelp"
-                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Margin="0,0,12,12"/>
-                        </StackPanel>
-
-                        <ListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                  ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}"
-                                  IsItemClickEnabled="True"
-                                  ItemClick="ListView_ItemClick"
-                                  ContainerContentChanging="OnContainerContentChanging"
-                                  SelectionMode="None"
-                                  Style="{StaticResource StaticListViewStyle}"
-                                  Margin="-12,0,0,0">
-                            <ListView.Header>
-                                <TextBlock Text="{CustomResource ChangePublicLimitReached}" Foreground="#FF0000" Margin="12,12,12,6" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            </ListView.Header>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,6">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" IsHitTestVisible="False" Grid.RowSpan="2"/>
-
-                                        <TextBlock Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                   VerticalAlignment="Top"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   TextWrapping="NoWrap"
-                                                   Grid.Column="1"
-                                                   Grid.Row="1"
-                                                   MaxLines="1"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </StackPanel>
-
-                    <StackPanel Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                        <TextBox
-                            Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}"
-                            Header="{CustomResource ChannelInviteLinkTitle}"
-                            IsReadOnly="True"
-                            Margin="0,12,12,8"
-                            Grid.Row="1"/>
-                        <TextBlock
-                            x:Name="PrivateLinkHelp"
-                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Margin="0,0,12,12"/>
-                    </StackPanel>
+                <StackPanel x:Name="InviteLinkPanel" Margin="0,24,0,0">
+                    <TextBlock Text="{CustomResource ChannelInviteLinkTitle}" Margin="12,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBox
+                        x:Name="InviteLink"
+                        IsReadOnly="True"
+                        Margin="12,8,12,0"
+                        Grid.Row="1"/>
+                    <controls:BadgeButton
+                        x:Name="RevokeLink"
+                        Content="{CustomResource RevokeLink}"
+                        Command="{x:Bind ViewModel.RevokeCommand}"/>
                 </StackPanel>
 
                 <StackPanel x:Name="ChannelSignMessagesPanel" Margin="0,24,0,0">
                     <ToggleSwitch
                         Header="{CustomResource ChannelSignMessages}"
                         IsOn="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <TextBlock
                         Text="{CustomResource ChannelSignMessagesInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>
                 </StackPanel>
-
-                <StackPanel x:Name="GroupInvitesPanel"
-                            BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
-                            BorderThickness="0,0,0,1"
-                            Padding="0,0,12,12"
-                            Margin="12,24,0,0">
-                    <TextBlock Text="{CustomResource WhoCanAddMembers}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <RadioButton
-                        IsChecked="{x:Bind ViewModel.IsDemocracy, Mode=TwoWay}"
-                        Content="{CustomResource WhoCanAddMembersAllMembers}"/>
-                    <RadioButton
-                        IsChecked="{x:Bind ViewModel.IsDemocracy, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                        Content="{CustomResource WhoCanAddMembersAdmins}"/>
-                </StackPanel>
-
-                <StackPanel x:Name="GroupHistoryPanel"
-                            BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
-                            BorderThickness="0,0,0,1"
-                            Padding="0,0,12,12"
-                            Margin="12,24,0,0">
-                    <TextBlock Text="{CustomResource ChatHistory}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    
-                    <RadioButton
-                        IsChecked="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=TwoWay}"
-                        Content="{CustomResource ChatHistoryVisible}"/>
-                    <TextBlock
-                        Text="{CustomResource ChatHistoryVisibleInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="28,-6,0,8"/>
-                    
-                    <RadioButton
-                        IsChecked="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                        Content="{CustomResource ChatHistoryHidden}"/>
-                    <TextBlock
-                        Text="{CustomResource ChatHistoryHiddenInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="28,-6,0,0"/>
+                
+                <StackPanel x:Name="GroupMembersPanel" Visibility="Collapsed" Margin="0,24,0,0">
+                    <controls:BadgeButton x:Name="Members"
+                                          Content="{CustomResource ChannelMembers}"
+                                          Command="{x:Bind ViewModel.MembersCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE902;"/>
+                    <controls:BadgeButton x:Name="Admins"
+                                          Content="{CustomResource ChannelAdministrators}"
+                                          Command="{x:Bind ViewModel.AdminsCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE734;"/>
+                    <controls:BadgeButton x:Name="Restricted"
+                                          Content="{CustomResource ChannelRestrictedUsers}"
+                                          Command="{x:Bind ViewModel.KickedCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE72E;"/>
+                    <controls:BadgeButton x:Name="Banned"
+                                          Content="{CustomResource ChannelBlockedUsers}"
+                                          Command="{x:Bind ViewModel.BannedCommand}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xF140;"/>
                 </StackPanel>
 
                 <StackPanel x:Name="GroupStickersPanel" Margin="0,24,0,0">
                     <controls:BadgeButton
                         x:Name="GroupStickers"
                         Content="{CustomResource GroupStickers}"
-                        Command="{x:Bind ViewModel.EditStickerSetCommand}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Command="{x:Bind ViewModel.EditStickerSetCommand}"/>
                     <TextBlock
                         Text="{CustomResource GroupStickersInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -242,8 +172,7 @@
                     <controls:BadgeButton
                         x:Name="Delete"
                         Foreground="Red"
-                        Command="{x:Bind ViewModel.DeleteCommand}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Command="{x:Bind ViewModel.DeleteCommand}"/>
                     <TextBlock
                         x:Name="DeleteInfo"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

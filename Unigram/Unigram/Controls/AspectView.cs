@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls.Messages.Content;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -50,11 +52,21 @@ namespace Unigram.Controls
             {
                 ttl = viewModel.Ttl > 0;
                 constraint = viewModel.Content;
+
+                if (viewModel.MediaAlbumId != 0 && Tag is GroupedMessagePosition)
+                {
+                    return base.MeasureOverride(availableSize);
+                }
             }
             else if (constraint is Message message)
             {
                 ttl = message.Ttl > 0;
                 constraint = message.Content;
+
+                if (message.MediaAlbumId != 0 && Tag is GroupedMessagePosition)
+                {
+                    return base.MeasureOverride(availableSize);
+                }
             }
 
             #region MessageContent
@@ -66,6 +78,17 @@ namespace Unigram.Controls
             else if (constraint is MessageInvoice invoiceMessage)
             {
                 constraint = invoiceMessage.Photo;
+            }
+            else if (constraint is MessageGame gameMessage)
+            {
+                if (gameMessage.Game.Animation != null)
+                {
+                    constraint = gameMessage.Game.Animation;
+                }
+                else if (gameMessage.Game.Photo != null)
+                {
+                    constraint = gameMessage.Game.Photo;
+                }
             }
             else if (constraint is MessageLocation locationMessage)
             {
@@ -117,6 +140,10 @@ namespace Unigram.Controls
             else if (constraint is MessageVideoNote videoNoteMessage)
             {
                 constraint = videoNoteMessage.VideoNote;
+            }
+            else if (constraint is MessageChatChangePhoto chatChangePhoto)
+            {
+                constraint = chatChangePhoto.Photo;
             }
 
             #endregion
@@ -200,6 +227,11 @@ namespace Unigram.Controls
                 width = 200;
                 height = 200;
             }
+            else if (constraint is WebPage webPage)
+            {
+                width = webPage.EmbedWidth;
+                height = webPage.EmbedHeight;
+            }
 
             if (constraint is PhotoSize photoSize)
             {
@@ -207,9 +239,21 @@ namespace Unigram.Controls
                 height = photoSize.Height;
             }
 
+            if (constraint is PageBlockMap map)
+            {
+                width = map.Width;
+                height = map.Height;
+            }
+
+            if (constraint is Wallpaper wallpaper)
+            {
+                width = 900;
+                height = 1600;
+            }
 
 
-            Calculate:
+
+        Calculate:
             if (width > availableWidth || height > availableHeight)
             {
                 var ratioX = availableWidth / width;

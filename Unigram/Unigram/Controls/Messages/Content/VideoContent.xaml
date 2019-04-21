@@ -17,9 +17,9 @@
 
     <Image x:Name="Texture" Stretch="UniformToFill"/>
 
-    <Border x:Name="Overlay" Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="8,4,8,4" Margin="4">
-        <TextBlock x:Name="Subtitle" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-    </Border>
+    <controls:FileButton x:Name="Button" Click="Play_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
 
-    <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
+    <controls:FileButton x:Name="Overlay" Click="Button_Click" Padding="8,4,8,4" Margin="4" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" Style="{StaticResource SmallImmersiveFileButtonStyle}">
+        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" />
+    </controls:FileButton>
 </controls:AspectView>

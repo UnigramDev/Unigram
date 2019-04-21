@@ -72,6 +72,17 @@ namespace Unigram.Controls
             {
                 constraint = invoiceMessage.Photo;
             }
+            else if (constraint is MessageGame gameMessage)
+            {
+                if (gameMessage.Game.Animation != null)
+                {
+                    constraint = gameMessage.Game.Animation;
+                }
+                else if (gameMessage.Game.Photo != null)
+                {
+                    constraint = gameMessage.Game.Photo;
+                }
+            }
             else if (constraint is MessageLocation locationMessage)
             {
                 constraint = locationMessage.Location;
@@ -122,6 +133,10 @@ namespace Unigram.Controls
             else if (constraint is MessageVideoNote videoNoteMessage)
             {
                 constraint = videoNoteMessage.VideoNote;
+            }
+            else if (constraint is MessageChatChangePhoto chatChangePhoto)
+            {
+                constraint = chatChangePhoto.Photo;
             }
 
             #endregion

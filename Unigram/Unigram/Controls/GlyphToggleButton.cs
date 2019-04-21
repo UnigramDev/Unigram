@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
@@ -39,6 +40,32 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty UncheckedGlyphProperty =
             DependencyProperty.Register("UncheckedGlyph", typeof(string), typeof(GlyphToggleButton), new PropertyMetadata(null));
+
+        #endregion
+
+        #region CheckedForeground
+
+        public Brush CheckedForeground
+        {
+            get { return (Brush)GetValue(CheckedForegroundProperty); }
+            set { SetValue(CheckedForegroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty CheckedForegroundProperty =
+            DependencyProperty.Register("CheckedForeground", typeof(Brush), typeof(GlyphToggleButton), new PropertyMetadata(null));
+
+        #endregion
+
+        #region UncheckedForeground
+
+        public Brush UncheckedForeground
+        {
+            get { return (Brush)GetValue(UncheckedForegroundProperty); }
+            set { SetValue(UncheckedForegroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty UncheckedForegroundProperty =
+            DependencyProperty.Register("UncheckedForeground", typeof(Brush), typeof(GlyphToggleButton), new PropertyMetadata(null));
 
         #endregion
 

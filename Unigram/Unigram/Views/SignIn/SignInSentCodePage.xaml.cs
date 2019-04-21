@@ -16,7 +16,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Common;
 using Telegram.Td.Api;
-using Telegram.Helpers;
 
 namespace Unigram.Views.SignIn
 {
@@ -28,6 +27,8 @@ namespace Unigram.Views.SignIn
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignInSentCodeViewModel>();
+
+            Transitions = ApiInfo.CreateSlideTransition();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

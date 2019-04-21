@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersPage : Page, ISupergroupDelegate, IMasterDetailPage
+    public sealed partial class SupergroupMembersPage : Page, ISupergroupDelegate, INavigablePage
     {
         public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
 
@@ -51,7 +51,7 @@ namespace Unigram.Views.Supergroups
             });
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(HandledRoutedEventArgs args)
         {
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {
@@ -77,6 +77,96 @@ namespace Unigram.Views.Supergroups
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var member = element.Tag as ChatMember;
+
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            ChatMemberStatus status = null;
+            if (chat.Type is ChatTypeBasicGroup basic)
+            {
+                status = ViewModel.ProtoService.GetBasicGroup(basic.BasicGroupId)?.Status;
+            }
+            else if (chat.Type is ChatTypeSupergroup super)
+            {
+                status = ViewModel.ProtoService.GetSupergroup(super.SupergroupId)?.Status;
+            }
+
+            if (status == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup)
+            {
+                flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.MemberPromoteCommand, chat.Type, status, member, Strings.Resources.SetAsAdmin, new FontIcon { Glyph = "\uE734" });
+                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.MemberRestrictCommand, chat.Type, status, member, Strings.Resources.KickFromSupergroup, new FontIcon { Glyph = "\uE72E" });
+            }
+
+            flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.MemberRemoveCommand, chat.Type, status, member, Strings.Resources.KickFromGroup, new FontIcon { Glyph = "\uF140" });
+
+            args.ShowAt(flyout, element);
+        }
+
+        private bool MemberPromote_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
+        {
+            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
+            {
+                return false;
+            }
+
+            if (member.UserId == ViewModel.CacheService.Options.MyId)
+            {
+                return false;
+            }
+
+            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanPromoteMembers;
+        }
+
+        private bool MemberRestrict_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
+        {
+            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusRestricted || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
+            {
+                return false;
+            }
+
+            if (member.UserId == ViewModel.CacheService.Options.MyId)
+            {
+                return false;
+            }
+
+            if (chatType is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            {
+                return false;
+            }
+
+            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanRestrictMembers;
+        }
+
+        private bool MemberRemove_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
+        {
+            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
+            {
+                return false;
+            }
+
+            if (member.UserId == ViewModel.CacheService.Options.MyId)
+            {
+                return false;
+            }
+
+            if (chatType is ChatTypeBasicGroup && status is ChatMemberStatusAdministrator)
+            {
+                return member.InviterUserId == ViewModel.CacheService.Options.MyId;
+            }
+
+            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.CanRestrictMembers;
         }
 
         #endregion
@@ -92,6 +182,8 @@ namespace Unigram.Views.Supergroups
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
+
+            content.Tag = args.Item;
 
             var user = ViewModel.ProtoService.GetUser(member.UserId);
             if (user == null)
@@ -112,7 +204,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -156,11 +248,16 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        #region Binding
+        #region Delegate
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            AddMore.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            Title.Text = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
+
+            AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;
+            AddNew.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+
+            Footer.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }

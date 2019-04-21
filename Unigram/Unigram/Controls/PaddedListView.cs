@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class PaddedListView : SelectListView
+    public class PaddedListView : LazoListView
     {
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {
@@ -49,11 +49,11 @@ namespace Unigram.Controls
                     {
                         if (message.Content is MessageSticker || message.Content is MessageVideoNote)
                         {
-                            container.Padding = new Thickness(50, 0, 12, 0);
+                            container.Padding = new Thickness(12, 0, 12, 0);
                         }
                         else
                         {
-                            container.Padding = new Thickness(50, 0, action ? 14 : 50, 0);
+                            container.Padding = new Thickness(12, 0, action ? 14 : 50, 0);
                         }
                     }
                 }

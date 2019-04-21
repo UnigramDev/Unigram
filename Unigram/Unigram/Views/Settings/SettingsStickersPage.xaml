@@ -17,7 +17,6 @@
         <controls:PageHeader x:Uid="SettingsStickersPage_Header" Text="Stickers"/>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  ItemTemplate="{StaticResource StickerSetItemTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   DragItemsCompleted="ListView_DragItemsCompleted"
@@ -32,14 +31,12 @@
                     <controls:BadgeButton
                         Content="{CustomResource SuggestStickers}"
                         Command="{x:Bind ViewModel.SuggestCommand}"
-                        Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"/>
                     <controls:BadgeButton
                         Content="{CustomResource FeaturedStickers}"
                         Click="FeaturedStickers_Click"
                         Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
-                        BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock
                         Text="{CustomResource FeaturedStickersInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -59,8 +56,7 @@
                         Content="{CustomResource ArchivedStickers}"
                         Click="ArchivedStickers_Click"
                         Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock
                         Text="{CustomResource ArchivedStickersInfo}"
                         Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -75,6 +71,25 @@
                     <Setter Property="Padding" Value="12,0,0,0"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,6" Background="Transparent" ContextRequested="StickerSet_ContextRequested">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+
+                        <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                        <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
             <ListView.Footer>
                 <TextBlock x:Uid="SettingsStickersPage_Footer" common:MessageHelper.Text="Artists are welcome to add their own sticker sets using our @stickers bot.&#10;&#10;Tap on a sticker to view and add the whole set." Margin="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
             </ListView.Footer>

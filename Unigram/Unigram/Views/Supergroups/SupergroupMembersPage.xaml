@@ -8,6 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <DrillInNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Page.Resources>
         <DataTemplate x:Key="MemberTemplate">
             <Grid Margin="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
@@ -45,39 +53,28 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock
+                        x:Name="Title"
                         Text="{CustomResource ChannelSubscribers}"
                         Style="{StaticResource BaseTextBlockStyle}"
                         VerticalAlignment="Center"
                         Margin="12,0"/>
 
                     <controls:GlyphButton
-                        x:Name="AddMore"
-                        Glyph="&#xE109;"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                        Grid.Column="1"/>
-
-                    <controls:GlyphButton
                         Glyph="&#xE11A;"
                         Click="Search_Click"
-                        FontSize="18"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                        Grid.Column="2"/>
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="1"/>
                 </Grid>
-                <controls:SearchTextBox x:Name="SearchField"
-                                        Padding="12,4,6,4"
-                                        Background="{x:Null}"
-                                        BorderBrush="{x:Null}"
-                                        Style="{StaticResource SearchTextBoxStyle}"
-                                        PlaceholderText="{CustomResource Search}"
-                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                        Clean="Search_LostFocus"
-                                        LostFocus="Search_LostFocus"
-                                        TextChanged="Search_TextChanged"
-                                        Visibility="Collapsed"
-                                        Canvas.ZIndex="1"/>
+                <TextBox x:Name="SearchField"
+                         Style="{StaticResource QueryTextBoxStyle}"
+                         PlaceholderText="{CustomResource Search}"
+                         PreventKeyboardDisplayOnProgrammaticFocus="True"
+                         LostFocus="Search_LostFocus"
+                         TextChanged="Search_TextChanged"
+                         Visibility="Collapsed"
+                         Canvas.ZIndex="1"/>
             </Grid>
         </controls:ContentPageHeader>
 
@@ -104,11 +101,29 @@
                       ContainerContentChanging="OnContainerContentChanging"
                       SelectionMode="None"
                       Grid.Row="1">
+                <ListView.Header>
+                    <StackPanel Margin="0,0,0,18">
+                        <controls:GlyphButton x:Name="AddNew"
+                                              Visibility="Collapsed"
+                                              Content="{CustomResource AddSubscriber}"
+                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Style="{StaticResource TextGlyphButtonStyle}"
+                                              Glyph="&#xE8FA;"/>
+                    </StackPanel>
+                </ListView.Header>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <ListView.Footer>
+                    <TextBlock
+                        x:Name="Footer"
+                        Text="{CustomResource ChannelMembersInfo}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12"/>
+                </ListView.Footer>
             </ListView>
         </Grid>
     </Grid>

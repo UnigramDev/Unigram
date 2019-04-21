@@ -1,0 +1,51 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.UndoView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="96"
+    d:DesignWidth="400"
+    RequestedTheme="Dark"
+    IsEnabled="False">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="48"/>
+        </Grid.RowDefinitions>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <RepositionThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        
+        <Grid x:Name="LayoutRoot" Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="48"/>
+            </Grid.ColumnDefinitions>
+            <ContentControl x:Name="Remaining" Content="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                <ContentControl.ContentTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition/>
+                    </TransitionCollection>
+                </ContentControl.ContentTransitions>
+                <ContentControl.ContentTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" TextLineBounds="TrimToBaseline,TrimToCapHeight" Style="{StaticResource BaseTextBlockStyle}"/>
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+            <local:ProgressBarRingSlice x:Name="Slice" Stroke="{ThemeResource SystemControlForegroundAccentBrush}" StrokeThickness="2" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="360"/>
+
+            <TextBlock x:Name="Text" Margin="6,0,0,0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+
+            <local:GlyphButton Click="Undo_Click" Glyph="&#xE7A7;" Grid.Column="3"/>
+        </Grid>
+    </Grid>
+</UserControl>

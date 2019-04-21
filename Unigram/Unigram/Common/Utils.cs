@@ -37,6 +37,19 @@ namespace Unigram.Common
             return digest;
         }
 
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public static byte[] ComputeHash(byte[] salt, byte[] passcode)
+        {
+            var array = Combine(salt, passcode, salt);
+            for (int i = 0; i < 1000; i++)
+            {
+                var data = Combine(BitConverter.GetBytes(i), array);
+                ComputeSHA1(data);
+            }
+            return ComputeSHA1(array);
+        }
+
+
         public static byte[] Combine(params byte[][] arrays)
         {
             var length = 0;
@@ -72,54 +85,6 @@ namespace Unigram.Common
                 flag &= a[i] == b[i];
             }
             return flag;
-        }
-
-        public static T OpenObjectFromMTProtoFile<T>(object syncRoot, string fileName)
-        {
-            try
-            {
-                if (!File.Exists(FileUtils.GetFileName(fileName)))
-                {
-                    return default(T);
-                }
-
-                lock (syncRoot)
-                {
-                    //using (var fileStream = FileUtils.GetLocalFileStreamForRead(fileName))
-                    //{
-                    //    if (fileStream.Length > 0)
-                    //    {
-                    //using (var from = TLObjectSerializer.CreateReader(FileUtils.GetFileName(fileName)))
-                    //{
-                    //    from.ReadUInt32();
-                    //    return (T)Activator.CreateInstance(typeof(T), from);
-                    //    //return TLFactory.Read<T>(from);
-                    //}
-                    //    }
-                    //}
-                }
-            }
-            catch (Exception e)
-            {
-
-            }
-
-            return default(T);
-        }
-
-        public static void SaveObjectToMTProtoFile<T>(object syncRoot, string fileName, T data)
-        {
-            try
-            {
-                lock (syncRoot)
-                {
-                    FileUtils.SaveWithTempFile(fileName, data);
-                }
-            }
-            catch (Exception e)
-            {
-
-            }
         }
 
         public static DateTime ToDateTime(int? date)

@@ -58,10 +58,10 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                var enabled = CacheService.GetOption<OptionValueBoolean>("use_storage_optimizer")?.Value ?? false;
-                var ttl = CacheService.GetOption<OptionValueInteger>("storage_max_time_from_last_access")?.Value ?? 0;
+                var enabled = CacheService.Options.UseStorageOptimizer;
+                var ttl = CacheService.Options.StorageMaxTimeFromLastAccess;
 
-                return enabled ? ttl / 60 / 60 / 24 : 0;
+                return CacheService.Options.UseStorageOptimizer ? ttl / 60 / 60 / 24 : 0;
             }
             //set
             //{
@@ -142,17 +142,15 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var dialog = new ContentDialogBase();
-            var page = new SettingsStorageOptimizationPage(ProtoService, dialog, byChat);
-            dialog.Content = page;
+            var dialog = new SettingsStorageOptimizationPage(ProtoService, byChat);
 
-            var confirm = await dialog.ShowAsync();
-            if (confirm != ContentDialogBaseResult.OK)
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var types = page.SelectedItems ?? new FileType[0];
+            var types = dialog.SelectedItems ?? new FileType[0];
             if (types.IsEmpty())
             {
                 return;
@@ -214,8 +212,8 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ChangeTtlCommand { get; }
         private async void ChangeTtlExecute()
         {
-            var enabled = CacheService.GetOption<OptionValueBoolean>("use_storage_optimizer")?.Value ?? false;
-            var ttl = CacheService.GetOption<OptionValueInteger>("storage_max_time_from_last_access")?.Value ?? 0;
+            var enabled = CacheService.Options.UseStorageOptimizer;
+            var ttl = CacheService.Options.StorageMaxTimeFromLastAccess;
 
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
             var stack = new StackPanel();
@@ -243,8 +241,8 @@ namespace Unigram.ViewModels.Settings
                     }
                 }
 
-                ProtoService.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(mode * 60 * 60 * 24)));
-                ProtoService.Send(new SetOption("use_storage_optimizer", new OptionValueBoolean(mode > 0)));
+                CacheService.Options.StorageMaxTimeFromLastAccess = mode * 60 * 60 * 24;
+                CacheService.Options.UseStorageOptimizer = mode > 0;
 
                 RaisePropertyChanged(() => FilesTtl);
             }

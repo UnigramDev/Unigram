@@ -95,14 +95,15 @@ namespace Unigram.ViewModels.SignIn
             {
                 if (error.TypeEquals(ErrorType.PASSWORD_HASH_INVALID))
                 {
-                    //await new MessageDialog(Resources.PasswordInvalidString, Resources.Error).ShowAsync();
+                    Password = string.Empty;
+                    RaisePropertyChanged("PASSWORD_INVALID");
                 }
                 else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
-                    //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
+                    AlertsService.ShowFloodWaitAlert(error.Message);
                 }
 
-                Execute.ShowDebugMessage("account.checkPassword error " + error);
+                Logs.Logger.Error(Logs.Target.API, "account.checkPassword error " + error);
             }
         }
 

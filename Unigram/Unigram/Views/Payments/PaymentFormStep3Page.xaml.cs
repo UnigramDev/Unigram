@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Common;
 using Unigram.ViewModels.Payments;
-using Unigram.Tasks;
+using Unigram.Native;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -26,6 +26,8 @@ namespace Unigram.Views.Payments
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentFormStep3ViewModel>();
+
+            Transitions = ApiInfo.CreateSlideTransition();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

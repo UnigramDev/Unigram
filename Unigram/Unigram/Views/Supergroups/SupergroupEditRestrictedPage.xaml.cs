@@ -33,23 +33,32 @@ namespace Unigram.Views.Supergroups
             DataContext = TLContainer.Current.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(this);
         }
 
-        public void UpdateChat(Chat chat)
+        #region Binding
+
+        private string ConvertUntilDate(int date)
         {
+            if (date == 0)
+            {
+                return Strings.Resources.UserRestrictionsUntilForever;
+            }
+
+            var dateTime = BindConvert.Current.DateTime(date);
+            return BindConvert.Current.ShortDate.Format(dateTime) + ", " + BindConvert.Current.ShortTime.Format(dateTime);
         }
 
-        public void UpdateChatTitle(Chat chat)
-        {
-        }
+        #endregion
 
-        public void UpdateChatPhoto(Chat chat)
-        {
-        }
+        #region Delegate
+
+        public void UpdateChat(Chat chat) { }
+        public void UpdateChatTitle(Chat chat) { }
+        public void UpdateChatPhoto(Chat chat) { }
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
             Title.Text = user.GetFullName();
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
-            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64, 64);
+            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -59,9 +68,7 @@ namespace Unigram.Views.Supergroups
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
         }
 
-        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
-        {
-        }
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken) { }
 
         public void UpdateMember(Chat chat, Supergroup group, User user, ChatMember member)
         {
@@ -83,5 +90,8 @@ namespace Unigram.Views.Supergroups
             //BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             //AddUsers.Header = group.AnyoneCanInvite ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
         }
+
+        #endregion
+
     }
 }

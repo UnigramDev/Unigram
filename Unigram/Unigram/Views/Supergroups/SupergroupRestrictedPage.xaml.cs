@@ -10,7 +10,7 @@ using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;
@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupRestrictedPage : Page, ISupergroupDelegate, IMasterDetailPage
+    public sealed partial class SupergroupRestrictedPage : Page, ISupergroupDelegate, INavigablePage
     {
         public SupergroupRestrictedViewModel ViewModel => DataContext as SupergroupRestrictedViewModel;
 
@@ -51,7 +51,7 @@ namespace Unigram.Views.Supergroups
             });
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(HandledRoutedEventArgs args)
         {
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {
@@ -90,7 +90,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNew.Visibility = group.CanRestrictMembers() ? Visibility.Visible : Visibility.Collapsed;
             Footer.Text = group.IsChannel ? Strings.Resources.NoBlockedChannel : Strings.Resources.NoBlockedGroup;
         }
 
@@ -132,7 +132,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)

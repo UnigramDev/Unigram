@@ -27,6 +27,10 @@ namespace Unigram.Collections
         private KeyedList<string, object> _remote;
         private KeyedList<string, object> _messages;
 
+        public KeyedList<string, object> Local => _local;
+        public KeyedList<string, object> Remote => _remote;
+        public KeyedList<string, object> Messages => _messages;
+
         public SearchChatsCollection(IProtoService protoService, string query, SearchChatsType type = SearchChatsType.All)
         {
             _protoService = protoService;
@@ -73,7 +77,7 @@ namespace Unigram.Collections
                 {
                     if (_type != SearchChatsType.BasicAndSupergroups && _query.Length > 0 && Strings.Resources.SavedMessages.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
                     {
-                        var savedMessages = await _protoService.SendAsync(new CreatePrivateChat(_protoService.GetMyId(), false));
+                        var savedMessages = await _protoService.SendAsync(new CreatePrivateChat(_protoService.Options.MyId, false));
                         if (savedMessages is Chat chat)
                         {
                             _chats.Add(chat.Id);

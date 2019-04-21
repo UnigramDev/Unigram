@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Telegram.Helpers;
+using Unigram.Common;
 using Unigram.Entities;
 using Unigram.ViewModels.Users;
 using Windows.Foundation;
@@ -29,6 +29,11 @@ namespace Unigram.Views.Users
             DataContext = TLContainer.Current.Resolve<UserCreateViewModel>();
         }
 
+        private void FirstName_Loaded(object sender, RoutedEventArgs e)
+        {
+            FirstName.Focus(FocusState.Keyboard);
+        }
+
         private void PrimaryInput_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(PrimaryInput.Text))
@@ -40,6 +45,11 @@ namespace Unigram.Views.Users
         }
 
         #region Binding
+
+        private ImageSource ConvertPhoto(string firstName, string lastName)
+        {
+            return PlaceholderHelper.GetNameForUser(firstName, lastName, 64);
+        }
 
         private string ConvertFormat(Country country)
         {
@@ -68,6 +78,5 @@ namespace Unigram.Views.Users
         }
 
         #endregion
-
     }
 }

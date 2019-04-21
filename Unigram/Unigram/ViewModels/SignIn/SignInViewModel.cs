@@ -8,7 +8,7 @@ using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Views;
@@ -169,17 +169,8 @@ namespace Unigram.ViewModels.SignIn
                     var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        var active = _lifetimeService.Remove(session);
-
-                        var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId(active.Id.ToString()) as NavigationService;
-                        if (service == null)
-                        {
-                            service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
-                            service.SerializationService = TLSerializationService.Current;
-                            service.Navigate(typeof(MainPage));
-                        }
-
-                        Window.Current.Content = service.Frame;
+                        _lifetimeService.PreviousItem = session;
+                        ProtoService.Send(new Destroy());
                     }
 
                     return;
@@ -198,15 +189,21 @@ namespace Unigram.ViewModels.SignIn
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                }
+                else if (error.TypeEquals(ErrorType.PHONE_PASSWORD_FLOOD))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-                //else if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_BANNED))
-                //{
-                //    needShowInvalidAlert(req.phone_number, true);
-                //}
+                else if (error.TypeEquals(ErrorType.PHONE_NUMBER_BANNED))
+                {
+                    //needShowInvalidAlert(req.phone_number, true);
+                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.BannedPhoneNumber, Strings.Resources.OK);
+                }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);

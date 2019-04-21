@@ -1,22 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using System.Threading.Tasks;
-using Template10.Mvvm;
 using Unigram.Common;
+using Unigram.Services.Settings;
+using Unigram.Services.Updates;
+using Unigram.Views;
 using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.DataProtection;
-using Windows.Storage;
-using TLPasscodeTuple = System.Tuple<byte[], byte[], bool, int, int, bool, bool, bool>;
 
 namespace Unigram.Services
 {
-    public interface IPasscodeService : INotifyPropertyChanged
+    public interface IPasscodeService
     {
         bool IsEnabled { get; }
         bool IsSimple { get; }
@@ -36,39 +30,20 @@ namespace Unigram.Services
         void Reset();
     }
 
-    public class PasscodeService : BindableBase, IPasscodeService
+    public class PasscodeService : IPasscodeService
     {
-        private readonly object _passcodeParamsFileSyncRoot = new object();
-        private TLPasscodeParams _cachedParams;
-        private bool _readOnce;
+        private readonly PasscodeLockSettings _settingsService;
 
-        private TLPasscodeParams GetParams()
+        public PasscodeService(PasscodeLockSettings settingsService)
         {
-            if (_cachedParams != null)
-            {
-                return _cachedParams;
-            }
-
-            if (!_readOnce)
-            {
-                _readOnce = true;
-                _cachedParams = new TLPasscodeParams();// new TLPasscodeParams(Utils.OpenObjectFromMTProtoFile<TLPasscodeTuple>(_passcodeParamsFileSyncRoot, "passcode_params.dat"));
-            }
-
-            return _cachedParams;
+            _settingsService = settingsService;
         }
 
         public bool IsEnabled
         {
             get
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    return data.Hash != null && data.Hash.Length > 0;
-                }
-
-                return false;
+                return _settingsService.Hash.Length > 0;
             }
         }
 
@@ -76,13 +51,7 @@ namespace Unigram.Services
         {
             get
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    return data.IsSimple;
-                }
-
-                return true;
+                return _settingsService.IsSimple;
             }
         }
 
@@ -90,13 +59,7 @@ namespace Unigram.Services
         {
             get
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    return data.IsLocked;
-                }
-
-                return false;
+                return _settingsService.IsLocked;
             }
         }
 
@@ -104,22 +67,11 @@ namespace Unigram.Services
         {
             get
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    return data.IsHelloEnabled;
-                }
-
-                return false;
+                return _settingsService.IsHelloEnabled;
             }
             set
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    data.IsHelloEnabled = value;
-                    Save();
-                }
+                _settingsService.IsHelloEnabled = value;
             }
         }
 
@@ -127,22 +79,11 @@ namespace Unigram.Services
         {
             get
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    return Utils.ToDateTime(data.CloseTime);
-                }
-
-                return DateTime.Now.AddYears(1);
+                return _settingsService.CloseTime;
             }
             set
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    data.CloseTime = value.ToTimestamp();
-                    Save();
-                }
+                _settingsService.CloseTime = value;
             }
         }
 
@@ -150,22 +91,11 @@ namespace Unigram.Services
         {
             get
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    return data.AutolockTimeout;
-                }
-
-                return 0;
+                return _settingsService.AutolockTimeout;
             }
             set
             {
-                var data = GetParams();
-                if (data != null)
-                {
-                    data.AutolockTimeout = value;
-                    Save();
-                }
+                _settingsService.AutolockTimeout = value;
             }
         }
 
@@ -173,66 +103,31 @@ namespace Unigram.Services
         {
             get
             {
-                return IsEnabled && ((AutolockTimeout > 0 && DateTime.Now > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
+                return IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && DateTime.Now > CloseTime.AddSeconds(AutolockTimeout)) || IsLocked);
             }
         }
 
         public void Lock()
         {
-            var data = GetParams();
-            if (data != null)
-            {
-                data.IsLocked = true;
-                Save();
-            }
-
-            RaisePropertyChanged(() => IsLocked);
+            _settingsService.IsLocked = true;
+            Publish(true, true);
         }
 
         public void Unlock()
         {
-            var data = GetParams();
-            if (data != null)
-            {
-                data.IsLocked = false;
-                Save();
-            }
-
-            RaisePropertyChanged(() => IsLocked);
+            _settingsService.IsLocked = false;
+            Publish(true, false);
         }
 
         public void ChangeLocked()
         {
-            var data = GetParams();
-            if (data != null)
+            if (_settingsService.IsLocked)
             {
-                if (data.IsLocked)
-                {
-                    Unlock();
-                }
-                else
-                {
-                    Lock();
-                }
+                Unlock();
             }
-        }
-
-        private async void Save()
-        {
-            var cached = _cachedParams;
-            if (cached != null && cached.Hash != null && cached.Salt != null)
+            else
             {
-                //try
-                //{
-                //    var provider = new DataProtectionProvider("LOCAL=user");
-                //    var encoding = BinaryStringEncoding.Utf8;
-                //    var message = CryptographicBuffer.ConvertStringToBinary(JsonConvert.SerializeObject(cached), encoding);
-                //    var protec = await provider.ProtectAsync(message);
-
-                //    var file = await FileUtils.CreateFileAsync("passcode.dat");
-                //    await FileIO.WriteBufferAsync(file, protec);
-                //}
-                //catch { }
+                Lock();
             }
         }
 
@@ -241,30 +136,28 @@ namespace Unigram.Services
             var salt = CryptographicBuffer.GenerateRandom(256).ToArray();
             var data = Utils.ComputeSHA1(Utils.Combine(salt, Encoding.UTF8.GetBytes(passcode), salt));
 
-            var cachedParams = new TLPasscodeParams
-            {
-                Hash = data,
-                Salt = salt,
-                IsSimple = simple,
-                AutolockTimeout = timeout,
-                CloseTime = 0,
-                IsLocked = false
-            };
-
-            _cachedParams = cachedParams;
-            Save();
-
-            RaisePropertyChanged(() => IsEnabled);
-            RaisePropertyChanged(() => IsLocked);
+            _settingsService.Hash = data;
+            _settingsService.Salt = salt;
+            _settingsService.IsSimple = simple;
+            _settingsService.AutolockTimeout = timeout;
+            _settingsService.CloseTime = DateTime.MaxValue;
+            _settingsService.IsLocked = false;
+            Publish(true, false);
         }
 
         public void Reset()
         {
-            _cachedParams = null;
-            FileUtils.Delete(_passcodeParamsFileSyncRoot, "passcode_params.dat");
+            _settingsService.Clear();
+            Publish(false, false);
+        }
 
-            RaisePropertyChanged(() => IsEnabled);
-            RaisePropertyChanged(() => IsLocked);
+        private void Publish(bool enabled, bool locked)
+        {
+            var update = new UpdatePasscodeLock(enabled, locked);
+            foreach (var aggregator in TLContainer.Current.ResolveAll<IEventAggregator>())
+            {
+                aggregator.Publish(update);
+            }
         }
 
         public bool CheckSimple(string passcode)
@@ -277,39 +170,9 @@ namespace Unigram.Services
             return false;
         }
 
-        [MethodImpl(MethodImplOptions.NoOptimization)]
-        public byte[] ComputeHash(byte[] salt, byte[] passcode)
-        {
-            var array = Utils.Combine(salt, passcode, salt);
-            for (int i = 0; i < 1000; i++)
-            {
-                var data = Utils.Combine(BitConverter.GetBytes(i), array);
-                Utils.ComputeSHA1(data);
-            }
-            return Utils.ComputeSHA1(array);
-        }
-
         public bool Check(string passcode)
         {
-            var cached = GetParams();
-            if (cached != null)
-            {
-                return Utils.ByteArraysEqual(ComputeHash(cached.Salt, Encoding.UTF8.GetBytes(passcode)), cached.Hash);
-            }
-
-            return true;
-        }
-
-        public class TLPasscodeParams
-        {
-            public byte[] Hash { get; set; }
-            public byte[] Salt { get; set; }
-            public bool IsSimple { get; set; }
-            public int CloseTime { get; set; }
-            public int AutolockTimeout { get; set; }
-            public bool IsLocked { get; set; }
-            public bool IsHelloEnabled { get; set; }
-            public bool IsScreenshotEnabled { get; set; }
+            return Utils.ByteArraysEqual(Utils.ComputeHash(_settingsService.Salt, Encoding.UTF8.GetBytes(passcode)), _settingsService.Hash);
         }
     }
 }

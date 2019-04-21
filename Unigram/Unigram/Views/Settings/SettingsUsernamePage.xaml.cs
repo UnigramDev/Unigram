@@ -39,6 +39,11 @@ namespace Unigram.Views.Settings
             });
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Username.Focus(FocusState.Keyboard);
+        }
+
         private void Copy_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             ViewModel.CopyCommand.Execute();
@@ -55,6 +60,5 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
-
     }
 }

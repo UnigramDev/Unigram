@@ -10,77 +10,9 @@
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       mc:Ignorable="d">
 
-    <Page.Resources>
-        <Style x:Key="GlyphButtonStyle" TargetType="controls:GlyphButton">
-            <Setter Property="Background" Value="Transparent"/>
-            <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>-->
-            <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="12,0,0,0"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
-            <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-            <Setter Property="UseSystemFocusVisuals" Value="True"/>
-            <Setter Property="Width" Value="Auto"/>
-            <Setter Property="Height" Value="Auto"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:GlyphButton">
-                        <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="48"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    Text="{TemplateBinding Glyph}"
-                                    FontFamily="{TemplateBinding FontFamily}"/>
-
-                                <ContentPresenter x:Name="ContentPresenter" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
-                            </Grid>
-                            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
-    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:ScrollViewerBackground
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"/>
         <ScrollViewer x:Name="ScrollingHost"
@@ -88,7 +20,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,24">
-                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -98,7 +30,13 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Click="Photo_Click"
+                                             AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                             Height="64"
+                                             Width="64"
+                                             Margin="12,6"
+                                             Grid.RowSpan="2"/>
 
                     <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
                         <Grid.ColumnDefinitions>
@@ -123,11 +61,27 @@
                         <Border.Background>
                             <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
                         </Border.Background>
-                        <controls:GlyphButton Glyph="&#xE114;" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Width="36" Height="36" CornerRadius="18" Padding="0,0,0,0" FontSize="16">
+                        <controls:GlyphButton Glyph="&#xE114;"
+                                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                              AutomationProperties.Name="{CustomResource AccDescrChangeProfilePicture}"
+                                              ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
+                                              Width="36"
+                                              Height="36"
+                                              CornerRadius="18"
+                                              Padding="0,0,0,0"
+                                              FontSize="16">
                             <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Click="EditCamera_Click" Text="{CustomResource FromCamera}"/>
-                                    <MenuFlyoutItem Click="EditPhoto_Click" Text="{CustomResource FromGalley}"/>
+                                <MenuFlyout x:Name="PhotoFlyout">
+                                    <MenuFlyoutItem Click="EditCamera_Click" Text="{CustomResource FromCamera}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE722;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="EditPhoto_Click" Text="{CustomResource FromGalley}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xEB9F;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </controls:GlyphButton>
@@ -135,64 +89,76 @@
                 </Grid>
 
                 <StackPanel>
-                    <Button x:Name="PhoneNumber"
-                            Tag="{CustomResource Phone}"
-                            Style="{StaticResource SubtitleButtonStyle}"
-                            Click="Phone_Click"/>
-                    <Button x:Name="Username"
-                            Tag="{CustomResource Username}"
-                            Style="{StaticResource SubtitleButtonStyle}"
-                            Click="Username_Click"/>
-                    <Button x:Name="Bio"
-                            Tag="{CustomResource UserBio}"
-                            Style="{StaticResource SubtitleButtonStyle}"
-                            Click="About_Click"/>
-                </StackPanel>
-
-                <StackPanel Margin="0,24,0,0">
-                    <controls:GlyphButton Content="{CustomResource General}"
-                                          Glyph="&#xE115;"
-                                          Click="General_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                    <controls:BadgeButton
+                        x:Name="PhoneNumber"
+                        Content="{CustomResource Phone}"
+                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                        Glyph="&#xE717;"
+                        Click="Phone_Click"/>
+                    <controls:BadgeButton
+                        x:Name="Username"
+                        Content="{CustomResource Username}"
+                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                        FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                        Glyph="&#xE91A;"
+                        FontSize="15"
+                        Click="Username_Click"/>
+                    <controls:BadgeButton
+                        x:Name="Bio"
+                        Content="{CustomResource UserBio}"
+                        Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                        Glyph="&#xE946;"
+                        Click="About_Click"/>
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">
                     <controls:GlyphButton Content="{CustomResource NotificationsAndSounds}"
-                                          Glyph="&#xE91C;"
+                                          Glyph="&#xEC42;"
                                           Click="Notifications_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource PrivacySettings}"
                                           Glyph="&#xE1F6;"
                                           Click="Privacy_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource DataSettings}"
-                                          Glyph="&#xEE94;"
+                                          Glyph="&#xEB05;"
                                           Click="Data_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource StickersName}"
-                                          Glyph="&#xE606;"
+                                          Glyph="&#xF4AA;"
                                           Click="Stickers_Click"
-                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="Appearance"
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:GlyphButton Content="{CustomResource Appearance}"
                                           Glyph="&#xE2B1;"
                                           Click="Appearance_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
-                    <!--<controls:GlyphButton Content="{CustomResource Language}"
-                         Glyph="&#xE164;"
-                         Click="Language_Click"
-                         Style="{StaticResource GlyphButtonStyle}"/>-->
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:GlyphButton Content="{CustomResource Language}"
+                                          Glyph="&#xE774;"
+                                          Click="Language_Click"
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:GlyphButton Content="{CustomResource PrivacyAdvanced}"
+                                          Glyph="&#xE9E9;"
+                                          Click="Advanced_Click"
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
+                </StackPanel>
+
+                <StackPanel Visibility="{x:Bind ViewModel.HasPassportData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Margin="0,24,0,0">
+                    <controls:GlyphButton Content="{CustomResource TelegramPassport}"
+                                          Glyph="&#xE8C7;"
+                                          Click="Passport_Click"
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                 </StackPanel>
                 
                 <StackPanel Margin="0,24,0,0">
                     <controls:GlyphButton Content="{CustomResource AskAQuestion}"
                                           Glyph="&#xED15;"
                                           Command="{x:Bind ViewModel.AskCommand}"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource TelegramFAQ}"
                                           Glyph="&#xE783;"
                                           Click="Questions_Click"
-                                          Style="{StaticResource GlyphButtonStyle}"/>
+                                          Style="{StaticResource TextGlyphButtonStyle}"/>
                     <Grid>
                         <TextBlock
                             x:Name="Diagnostics"
@@ -201,12 +167,6 @@
                             Margin="12,8,12,0"/>
                         <Button Click="Diagnostics_Click" Opacity="0" Style="{StaticResource EmptyButtonStyle}"/>
                     </Grid>
-                </StackPanel>
-
-                <StackPanel x:Name="OptionsGroup3" Margin="0,24,0,0">
-                    <!--<controls:HyperButton Content="Accounts management"
-                         Click="Accounts_Click"
-                         Style="{StaticResource HyperButtonStyle}"/>-->
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

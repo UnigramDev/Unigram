@@ -11,6 +11,8 @@ namespace Unigram.Controls.Messages
 {
     public interface IContent
     {
+        MessageViewModel Message { get; }
+
         void UpdateMessage(MessageViewModel message);
 
         bool IsValid(MessageContent content, bool primary);

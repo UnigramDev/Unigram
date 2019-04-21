@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Reflection;
 
 namespace Unigram.Views
 {
@@ -48,6 +49,16 @@ namespace Unigram.Views
             catch { }
 
             UseTestDC.IsOn = SettingsService.Current.UseTestDC;
+
+
+
+            var cache = TLContainer.Current.Resolve<ICacheService>();
+            var properties = typeof(IOptionsService).GetProperties();
+
+            foreach (var prop in properties)
+            {
+                Options.Items.Add($"{prop.Name}: {prop.GetValue(cache.Options)}");
+            }
         }
 
         private enum VerbosityLevel
@@ -93,7 +104,7 @@ namespace Unigram.Views
                 }
 
                 SettingsService.Current.VerbosityLevel = newLevel;
-                Telegram.Td.Log.SetVerbosityLevel(newLevel);
+                TLContainer.Current.Resolve<IProtoService>().Send(new SetLogVerbosityLevel(newLevel));
 
                 Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)SettingsService.Current.VerbosityLevel);
             }

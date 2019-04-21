@@ -28,6 +28,8 @@ namespace Unigram.Views.SignIn
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignInPasswordViewModel>();
 
+            Transitions = ApiInfo.CreateSlideTransition();
+
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
@@ -44,11 +46,6 @@ namespace Unigram.Views.SignIn
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             PrimaryInput.Focus(FocusState.Keyboard);
-        }
-
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            ((PasswordBox)sender).GetBindingExpression(PasswordBox.PasswordProperty)?.UpdateSource();
         }
 
         private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)

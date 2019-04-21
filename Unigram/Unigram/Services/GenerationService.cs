@@ -8,24 +8,33 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Core.Common;
-using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.Streams;
 
 namespace Unigram.Services
 {
-    public interface IGenerationService
+    public interface IGenerationService : IHandle<UpdateFileGenerationStart>, IHandle<UpdateFileGenerationStop>
     {
 
     }
 
-    public class GenerationService : IGenerationService, IHandle<UpdateFileGenerationStart>, IHandle<UpdateFileGenerationStop>
+    public enum ConversionType
+    {
+        Copy,
+        Compress,
+        Transcode,
+        TranscodeThumbnail,
+        // TDLib
+        Url
+    }
+
+    public class GenerationService : IGenerationService
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
@@ -40,31 +49,50 @@ namespace Unigram.Services
 
         public async void Handle(UpdateFileGenerationStart update)
         {
-            if (update.Conversion.StartsWith("copy"))
+            var args = update.Conversion.Split('#');
+            if (args.Length < 2)
             {
-                await CopyAsync(update);
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "Invalid generation arguments")));
+                return;
             }
-            else if (update.Conversion.StartsWith("compress"))
+
+            if (Enum.TryParse(args[1], true, out ConversionType conversion))
             {
-                await CompressAsync(update);
-            }
-            else if (update.Conversion.StartsWith("transcode"))
-            {
-                await TranscodeAsync(update);
-            }
-            else if (update.Conversion.StartsWith("thumbnail_transcode"))
-            {
-                await ThumbnailAsync(update);
-            }
-            else if (update.Conversion.Equals("#url#"))
-            {
-                await DownloadAsync(update);
+                if (conversion == ConversionType.Copy)
+                {
+                    await CopyAsync(update, args);
+                }
+                else if (conversion == ConversionType.Compress)
+                {
+                    await CompressAsync(update, args);
+                }
+                else if (conversion == ConversionType.Transcode)
+                {
+                    await TranscodeAsync(update, args);
+                }
+                else if (conversion == ConversionType.TranscodeThumbnail)
+                {
+                    await ThumbnailTranscodeAsync(update, args);
+                }
+                // TDLib
+                else if (conversion == ConversionType.Url)
+                {
+                    await DownloadAsync(update);
+                }
             }
         }
 
         public void Handle(UpdateFileGenerationStop update)
         {
             //throw new NotImplementedException();
+        }
+
+        private bool IsTemporary(StorageFile source)
+        {
+            var path1 = Path.GetDirectoryName(source.Path).TrimEnd('\\');
+            var path2 = ApplicationData.Current.TemporaryFolder.Path.TrimEnd('\\');
+
+            return string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase);
         }
 
         private async Task DownloadAsync(UpdateFileGenerationStart update)
@@ -127,16 +155,21 @@ namespace Unigram.Services
             }
         }
 
-        private async Task CopyAsync(UpdateFileGenerationStart update)
+        private async Task CopyAsync(UpdateFileGenerationStart update, string[] args)
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(update.OriginalPath);
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                 await file.CopyAndReplaceAsync(temp);
 
                 _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
+
+                if (IsTemporary(file))
+                {
+                    await file.DeleteAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -144,14 +177,52 @@ namespace Unigram.Services
             }
         }
 
-        private async Task CompressAsync(UpdateFileGenerationStart update)
+        private async Task CompressAsync(UpdateFileGenerationStart update, string[] args)
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(update.OriginalPath);
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
-                await ImageHelper.ScaleJpegAsync(file, temp, 1280, 0.77);
+                if (args.Length > 3)
+                {
+                    var rect = JsonConvert.DeserializeObject<Rect>(args[2]);
+                    await ImageHelper.CropAsync(file, temp, rect);
+                }
+                else
+                {
+                    await ImageHelper.ScaleJpegAsync(file, temp, 1280, 0.77);
+                }
+
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
+
+                if (IsTemporary(file))
+                {
+                    await file.DeleteAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+            }
+        }
+
+        private async Task ThumbnailAsync(UpdateFileGenerationStart update, string[] args)
+        {
+            try
+            {
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+
+                if (args.Length > 3)
+                {
+                    var rect = JsonConvert.DeserializeObject<Rect>(args[2]);
+                    await ImageHelper.CropAsync(file, temp, rect, 90);
+                }
+                else
+                {
+                    await ImageHelper.ScaleJpegAsync(file, temp, 90, 0.77);
+                }
 
                 _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
             }
@@ -161,17 +232,14 @@ namespace Unigram.Services
             }
         }
 
-        private async Task TranscodeAsync(UpdateFileGenerationStart update)
+        private async Task TranscodeAsync(UpdateFileGenerationStart update, string[] args)
         {
             try
             {
-                var args = update.Conversion.Substring("transcode#".Length);
-                args = args.Substring(0, args.LastIndexOf('#'));
-
-                var conversion = JsonConvert.DeserializeObject<VideoConversion>(args);
+                var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
                 if (conversion.Transcode)
                 {
-                    var file = await StorageFile.GetFileFromPathAsync(update.OriginalPath);
+                    var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                     var transcoder = new MediaTranscoder();
@@ -203,11 +271,11 @@ namespace Unigram.Services
                         var progress = prepare.TranscodeAsync();
                         progress.Progress = (result, delta) =>
                         {
-                            _protoService.Send(new SetFileGenerationProgress(update.GenerationId, (int)delta, 100));
+                            _protoService.Send(new SetFileGenerationProgress(update.GenerationId, 100, (int)delta));
                         };
                         progress.Completed = (result, delta) =>
                         {
-                            _protoService.Send(new FinishFileGeneration(update.GenerationId, prepare.FailureReason == TranscodeFailureReason.None ? null : new Error(406, prepare.FailureReason.ToString())));
+                            _protoService.Send(new FinishFileGeneration(update.GenerationId, prepare.FailureReason == TranscodeFailureReason.None ? null : new Error(500, prepare.FailureReason.ToString())));
                         };
                     }
                     else
@@ -217,7 +285,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    await CopyAsync(update);
+                    await CopyAsync(update, args);
                 }
             }
             catch (Exception ex)
@@ -226,17 +294,14 @@ namespace Unigram.Services
             }
         }
 
-        private async Task ThumbnailAsync(UpdateFileGenerationStart update)
+        private async Task ThumbnailTranscodeAsync(UpdateFileGenerationStart update, string[] args)
         {
             try
             {
-                var args = update.Conversion.Substring("thumbnail_transcode#".Length);
-                args = args.Substring(0, args.LastIndexOf('#'));
-
-                var conversion = JsonConvert.DeserializeObject<VideoConversion>(args);
+                var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
                 if (conversion.Transcode)
                 {
-                    var file = await StorageFile.GetFileFromPathAsync(update.OriginalPath);
+                    var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                     var props = await file.Properties.GetVideoPropertiesAsync();
@@ -246,7 +311,7 @@ namespace Unigram.Services
 
                     if (!conversion.CropRectangle.IsEmpty())
                     {
-                        file = await ImageHelper.CropAsync(file, conversion.CropRectangle);
+                        file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle);
                         originalWidth = conversion.CropRectangle.Width;
                         originalHeight = conversion.CropRectangle.Height;
                     }

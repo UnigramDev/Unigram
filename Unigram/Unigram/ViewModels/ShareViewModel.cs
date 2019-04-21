@@ -9,7 +9,6 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
@@ -69,7 +68,7 @@ namespace Unigram.ViewModels
 
                 if (_searchType != SearchChatsType.BasicAndSupergroups)
                 {
-                    var myId = ProtoService.GetMyId();
+                    var myId = CacheService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
                     if (self == null)
                     {
@@ -178,6 +177,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private string _inviteToken;
+        public string InviteToken
+        {
+            get
+            {
+                return _inviteToken;
+            }
+            set
+            {
+                Set(ref _inviteToken, value);
+            }
+        }
+
         private InputMessageContent _inputMedia;
         public InputMessageContent InputMedia
         {
@@ -268,8 +280,31 @@ namespace Unigram.ViewModels
             set { _switchInlineBot = value; }
         }
 
+        private DataPackageView _package;
+        public DataPackageView Package
+        {
+            get { return _package; }
+            set { _package = value; }
+        }
+
         public string SendMessage { get; set; }
         public bool SendMessageUrl { get; set; }
+
+        public void Clear()
+        {
+            Package = null;
+            SwitchInline = null;
+            SwitchInlineBot = null;
+            SendMessage = null;
+            SendMessageUrl = false;
+            Comment = null;
+            ShareLink = null;
+            ShareTitle = null;
+            Messages = null;
+            InviteBot = null;
+            InputMedia = null;
+            IsWithMyScore = false;
+        }
 
 
 
@@ -306,7 +341,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, false));
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, true));
                     }
                 }
 
@@ -343,6 +378,14 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, _inviteBot.Id, new ChatMemberStatusMember()));
                 if (response is Ok)
                 {
+                    if (_inviteToken != null)
+                    {
+                        var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                        if (service != null)
+                        {
+                            service.NavigateToChat(chat, accessToken: _inviteToken);
+                        }
+                    }
                     //NavigationService.GoBack();
                 }
             }
@@ -366,6 +409,22 @@ namespace Unigram.ViewModels
                     service.NavigateToChat(chat, state: state);
                 }
             }
+            else if (_package != null)
+            {
+                var chat = chats.FirstOrDefault();
+                if (chat == null)
+                {
+                    return;
+                }
+
+                App.DataPackages[chat.Id] = _package;
+
+                var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
+                if (service != null)
+                {
+                    service.NavigateToChat(chat);
+                }
+            }
 
             //App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
             //NavigationService.GoBackAt(0);
@@ -380,7 +439,7 @@ namespace Unigram.ViewModels
 
             text = text.Format();
 
-            var entities = Markdown.Parse(ProtoService, ref text);
+            var entities = Markdown.Parse(ref text);
             if (entities == null)
             {
                 entities = new List<TextEntity>();

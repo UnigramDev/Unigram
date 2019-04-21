@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Core.Services;
+using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -24,6 +25,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             ProfileCommand = new RelayCommand(ProfileExecute);
             SendCommand = new RelayCommand(SendExecute);
+            EditUntilCommand = new RelayCommand(EditUntilExecute);
             DismissCommand = new RelayCommand(DismissExecute);
         }
 
@@ -98,6 +100,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanSendMediaMessages = restricted.CanSendMediaMessages;
                     CanSendMessages = restricted.CanSendMessages;
                     CanViewMessages = true;
+                    UntilDate = restricted.RestrictedUntilDate;
                 }
                 else
                 {
@@ -106,6 +109,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanSendMediaMessages = false;
                     CanSendMessages = false;
                     CanViewMessages = !(member.Status is ChatMemberStatusBanned);
+                    UntilDate = member.Status is ChatMemberStatusBanned banned ? banned.BannedUntilDate : 0;
                 }
             }
         }
@@ -226,6 +230,13 @@ namespace Unigram.ViewModels.Supergroups
 
         #endregion
 
+        private int _untilDate;
+        public int UntilDate
+        {
+            get { return _untilDate; }
+            set { Set(ref _untilDate, value); }
+        }
+
         public RelayCommand ProfileCommand { get; }
         private async void ProfileExecute()
         {
@@ -269,7 +280,8 @@ namespace Unigram.ViewModels.Supergroups
                 CanAddWebPagePreviews = _canAddWebPagePreviews,
                 CanSendOtherMessages = _canSendOtherMessages,
                 CanSendMediaMessages = _canSendMediaMessages,
-                CanSendMessages = _canSendMessages
+                CanSendMessages = _canSendMessages,
+                RestrictedUntilDate = _untilDate
             };
 
             var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.UserId, status));
@@ -281,6 +293,21 @@ namespace Unigram.ViewModels.Supergroups
             else
             {
                 // TODO: ...
+            }
+        }
+
+        public RelayCommand EditUntilCommand { get; }
+        private async void EditUntilExecute()
+        {
+            var dialog = new SupergroupEditRestrictedUntilView(_untilDate);
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                UntilDate = dialog.Value <= DateTime.Now ? 0 : dialog.Value.ToTimestamp();
+            }
+            else if (confirm == ContentDialogResult.Secondary)
+            {
+                UntilDate = 0;
             }
         }
 

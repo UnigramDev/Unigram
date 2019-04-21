@@ -145,6 +145,17 @@ namespace Unigram.Controls
             {
                 constraint = invoiceMessage.Photo;
             }
+            else if (constraint is MessageGame gameMessage)
+            {
+                if (gameMessage.Game.Animation != null)
+                {
+                    constraint = gameMessage.Game.Animation;
+                }
+                else if (gameMessage.Game.Photo != null)
+                {
+                    constraint = gameMessage.Game.Photo;
+                }
+            }
             else if (constraint is MessageLocation locationMessage)
             {
                 constraint = locationMessage.Location;
@@ -195,6 +206,10 @@ namespace Unigram.Controls
             else if (constraint is MessageVideoNote videoNoteMessage)
             {
                 constraint = videoNoteMessage.VideoNote;
+            }
+            else if (constraint is MessageChatChangePhoto chatChangePhoto)
+            {
+                constraint = chatChangePhoto.Photo;
             }
 
             if (constraint is Animation animation)
@@ -256,6 +271,18 @@ namespace Unigram.Controls
             {
                 width = photoSize.Width;
                 height = photoSize.Height;
+            }
+
+            if (constraint is PageBlockMap map)
+            {
+                width = map.Width;
+                height = map.Height;
+            }
+
+            if (constraint is Wallpaper wallpaper)
+            {
+                width = 900;
+                height = 1600;
             }
 
 

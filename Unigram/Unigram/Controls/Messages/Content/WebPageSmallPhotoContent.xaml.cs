@@ -17,13 +17,12 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class WebPageSmallPhotoContent : WebPageContentBase, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public WebPageSmallPhotoContent(MessageViewModel message)
         {
@@ -88,11 +87,18 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                double ratioX = (double)48 / small.Width;
+                double ratioY = (double)48 / small.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(small.Width * ratio);
+                var height = (int)(small.Height * ratio);
+
+                Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.Send(new DownloadFile(file.Id, 1));
+                message.ProtoService.DownloadFile(file.Id, 1);
             }
         }
 

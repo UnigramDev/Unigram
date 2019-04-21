@@ -28,6 +28,7 @@ namespace Unigram.ViewModels.BasicGroups
         {
             SendCommand = new RelayCommand(SendExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            DeletePhotoCommand = new RelayCommand(DeletePhotoExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
         }
 
@@ -45,6 +46,7 @@ namespace Unigram.ViewModels.BasicGroups
         }
 
         private StorageFile _photo;
+        private bool _deletePhoto;
 
         private string _title;
         public string Title
@@ -178,6 +180,14 @@ namespace Unigram.ViewModels.BasicGroups
                         // TODO:
                     }
                 }
+                else if (_deletePhoto)
+                {
+                    var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputFileId(0)));
+                    if (response is Error)
+                    {
+                        // TODO:
+                    }
+                }
 
                 NavigationService.GoBack();
             }
@@ -187,6 +197,14 @@ namespace Unigram.ViewModels.BasicGroups
         private async void EditPhotoExecute(StorageFile file)
         {
             _photo = file;
+            _deletePhoto = false;
+        }
+
+        public RelayCommand DeletePhotoCommand { get; }
+        private async void DeletePhotoExecute()
+        {
+            _photo = null;
+            _deletePhoto = true;
         }
 
         public RelayCommand DeleteCommand { get; }
@@ -206,7 +224,7 @@ namespace Unigram.ViewModels.BasicGroups
                 {
                     await ProtoService.SendAsync(new LeaveChat(chat.Id));
 
-                    var response = await ProtoService.SendAsync(new DeleteChatHistory(chat.Id, true));
+                    var response = await ProtoService.SendAsync(new DeleteChatHistory(chat.Id, true, false));
                     if (response is Ok)
                     {
                         NavigationService.RemovePeerFromStack(chat.Id);

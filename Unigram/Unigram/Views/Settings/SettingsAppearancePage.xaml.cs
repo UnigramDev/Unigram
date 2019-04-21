@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Template10.Common;
 using Unigram.Common;
+using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -36,117 +38,146 @@ namespace Unigram.Views.Settings
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
 
-            Message1.Mockup("Ahh you kids today with techno music! Enjoy the classics, like Hasselhoff!", "Lucio", "Reinhardt, we need to find you some new tunes.", false, DateTime.Now.AddSeconds(-25));
-            Message2.Mockup("I can't take you seriously right now. Sorry..", true, DateTime.Now);
+            Message1.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
+            Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
 
-            UpdatePreview(true);
+            //UpdatePreview(true);
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
         }
 
         private void Wallpaper_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsWallPaperPage));
+            Frame.Navigate(typeof(SettingsWallpapersPage));
         }
+
+        private void NightMode_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsNightModePage));
+        }
+
+        #region Binding
+
+        private string ConvertNightMode(NightMode mode)
+        {
+            return mode == NightMode.Scheduled
+                ? Strings.Resources.AutoNightScheduled
+                : mode == NightMode.Automatic
+                ? Strings.Resources.AutoNightAutomatic
+                : Strings.Resources.AutoNightDisabled;
+        }
+
+        private Visibility ConvertNightModeVisibility(NightMode mode)
+        {
+            return mode == NightMode.Disabled ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        #endregion
 
         private int _advanced;
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
-            _advanced++;
+            //_advanced++;
 
-            if (_advanced >= 7)
-            {
-                Options.Opacity = 1;
+            //if (_advanced >= 7)
+            //{
+            //    Options.Opacity = 1;
 
-                var flyout = new MenuFlyout();
-                var import = new MenuFlyoutItem { Text = "Import palette" };
+            //    var flyout = new MenuFlyout();
+            //    var import = new MenuFlyoutItem { Text = "Import palette" };
 
-                import.Click += Import_Click;
+            //    import.Click += Import_Click;
 
-                flyout.Items.Add(import);
+            //    flyout.Items.Add(import);
 
-                var exists = File.Exists(FileUtils.GetFileName("colors.palette"));
-                if (exists)
-                {
-                    var export = new MenuFlyoutItem { Text = "Export palette" };
-                    var remove = new MenuFlyoutItem { Text = "Remove palette" };
+            //    var exists = File.Exists(FileUtils.GetFileName("colors.palette"));
+            //    if (exists)
+            //    {
+            //        var export = new MenuFlyoutItem { Text = "Export palette" };
+            //        var remove = new MenuFlyoutItem { Text = "Remove palette" };
 
-                    export.Click += Export_Click;
-                    remove.Click += Remove_Click;
+            //        export.Click += Export_Click;
+            //        remove.Click += Remove_Click;
 
-                    flyout.Items.Add(export);
-                    flyout.Items.Add(remove);
-                }
+            //        flyout.Items.Add(export);
+            //        flyout.Items.Add(remove);
+            //    }
 
-                flyout.ShowAt((Button)sender);
-            }
+            //    flyout.ShowAt((Button)sender);
+            //}
         }
 
         private async void Import_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileOpenPicker();
-            picker.FileTypeFilter.Add(".palette");
+            //var picker = new FileOpenPicker();
+            //picker.FileTypeFilter.Add(".palette");
 
-            var file = await picker.PickSingleFileAsync();
-            if (file == null)
-            {
-                return;
-            }
+            //var file = await picker.PickSingleFileAsync();
+            //if (file == null)
+            //{
+            //    return;
+            //}
 
-            var palette = await FileUtils.CreateFileAsync("colors.palette");
-            await file.CopyAndReplaceAsync(palette);
+            //var palette = await FileUtils.CreateFileAsync("colors.palette");
+            //await file.CopyAndReplaceAsync(palette);
 
-            Theme.Current.Update();
-            App.NotifyThemeChanged();
+            //Theme.Current.Update();
+            ////App.NotifyThemeChanged();
 
-            UpdatePreview(true);
+            //UpdatePreview(true);
         }
 
         private async void Export_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileSavePicker();
-            picker.FileTypeChoices.Add("Palette", new[] { ".palette" });
-            picker.SuggestedFileName = "colors.palette";
+            //var picker = new FileSavePicker();
+            //picker.FileTypeChoices.Add("Palette", new[] { ".palette" });
+            //picker.SuggestedFileName = "colors.palette";
 
-            var file = await picker.PickSaveFileAsync();
-            if (file == null)
-            {
-                return;
-            }
+            //var file = await picker.PickSaveFileAsync();
+            //if (file == null)
+            //{
+            //    return;
+            //}
 
-            var palette = await FileUtils.TryGetItemAsync("colors.palette");
-            if (palette == null)
-            {
-                return;
-            }
+            //var palette = await FileUtils.TryGetItemAsync("colors.palette");
+            //if (palette == null)
+            //{
+            //    return;
+            //}
 
-            await ((StorageFile)palette).CopyAndReplaceAsync(file);
+            //await ((StorageFile)palette).CopyAndReplaceAsync(file);
         }
 
         private async void Remove_Click(object sender, RoutedEventArgs e)
         {
-            var palette = await FileUtils.TryGetItemAsync("colors.palette");
-            if (palette == null)
-            {
-                return;
-            }
+            //var palette = await FileUtils.TryGetItemAsync("colors.palette");
+            //if (palette == null)
+            //{
+            //    return;
+            //}
 
-            await palette.DeleteAsync();
+            //await palette.DeleteAsync();
 
-            Theme.Current.Update();
-            App.NotifyThemeChanged();
+            //Theme.Current.Update();
+            ////App.NotifyThemeChanged();
 
-            UpdatePreview(true);
+            //UpdatePreview(true);
         }
 
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("FontSize") || e.PropertyName.Equals("RequestedTheme"))
+            if (e.PropertyName.Equals("FontSize"))
             {
-                UpdatePreview(false);
+                Message1.UpdateMockup();
+                Message2.UpdateMockup();
+            }
+            else if (e.PropertyName.Equals("RequestedTheme"))
+            {
+                //UpdatePreview(false);
             }
             else if (e.PropertyName.Equals("IsSystemTheme"))
             {
-                UpdatePreview(true);
+                //UpdatePreview(true);
             }
         }
 
@@ -154,22 +185,47 @@ namespace Unigram.Views.Settings
         {
             var current = App.Current as App;
             var theme = current.UISettings.GetColorValue(UIColorType.Background);
+            var value = ViewModel.GetElementTheme();
 
             if (extended)
             {
-                Preview.Resources.MergedDictionaries.Clear();
+                Theme.Current.Update();
 
-                if (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand))
-                {
-                    Preview.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Brand.xaml") });
-                }
+                //foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+                //{
+                //    window.UpdateTitleBar();
 
-                Message2.Resources.MergedDictionaries.Clear();
-                Message2.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/AccentOut.xaml?nocache=xxxxxxxx") });
+                //    if (window.Content is FrameworkElement element)
+                //    {
+                //        element.RequestedTheme = ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
+                //    }
+                //}
             }
 
-            Preview.RequestedTheme = ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-            Preview.RequestedTheme = ViewModel.GetElementTheme();
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            {
+                window.Dispatcher.Dispatch(() =>
+                {
+                    window.UpdateTitleBar();
+
+                    if (window.Content is FrameworkElement element)
+                    {
+                        if (value == element.RequestedTheme)
+                        {
+                            element.RequestedTheme = value == ElementTheme.Dark
+                                ? ElementTheme.Light
+                                : ElementTheme.Dark;
+                        }
+
+                        element.RequestedTheme = value;
+                    }
+                });
+            }
+        }
+
+        private void Switch_Click(object sender, RoutedEventArgs e)
+        {
+            UpdatePreview(true);
         }
     }
 }

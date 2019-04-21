@@ -10,8 +10,10 @@ using Template10.Services.NavigationService;
 using Unigram.Controls;
 using Unigram.Native;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.Views;
+using Unigram.Views.SignIn;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Contacts;
@@ -81,6 +83,25 @@ namespace Unigram.Common
 
         public int Id => _id;
 
+        public bool IsChatOpen(int session, long chatId)
+        {
+            return Dispatcher.Dispatch(() =>
+            {
+                var service = this.NavigationServices?.GetByFrameId("Main" + session);
+                if (service == null)
+                {
+                    return false;
+                }
+
+                if (ActivationMode != CoreWindowActivationMode.Deactivated && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chatId)
+                {
+                    return true;
+                }
+
+                return false;
+            });
+        }
+
         #region UI
 
         private async void UISettings_ColorValuesChanged(UISettings sender, object args)
@@ -102,14 +123,17 @@ namespace Unigram.Common
             var current = app.UISettings.GetColorValue(UIColorType.Background);
 
             // Apply buttons feedback based on Light or Dark theme
-            if (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && current == Colors.Black))
+            var theme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
+            //if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && current == Colors.Black))
+            if (theme == ElementTheme.Dark || (theme == ElementTheme.Default && current == Colors.Black))
             {
-                background = Color.FromArgb(255, 31, 31, 31);
+                background = Color.FromArgb(255, 43, 43, 43);
                 foreground = Colors.White;
                 buttonHover = Color.FromArgb(25, 255, 255, 255);
                 buttonPressed = Color.FromArgb(51, 255, 255, 255);
             }
-            else if (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Light) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && current == Colors.White))
+            //else if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light) || (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && current == Colors.White))
+            else if (theme == ElementTheme.Light || (theme == ElementTheme.Default && current == Colors.White))
             {
                 background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;
@@ -132,8 +156,9 @@ namespace Unigram.Common
 
             // Buttons
             //titleBar.ButtonBackgroundColor = background;
+            //titleBar.ButtonInactiveBackgroundColor = background;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveBackgroundColor = background;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
             // Buttons feedback
             titleBar.ButtonPressedBackgroundColor = buttonPressed;
@@ -151,7 +176,23 @@ namespace Unigram.Common
 
         #endregion
 
-        public CoreWindowActivationState ActivationState { get; private set; }
+        private bool? _apiAvailable;
+
+        private CoreWindowActivationMode _activationMode;
+        public CoreWindowActivationMode ActivationMode
+        {
+            get
+            {
+                _apiAvailable = _apiAvailable ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.UI.Core.CoreWindow", "ActivationMode");
+
+                if (_apiAvailable == true)
+                {
+                    return _window.CoreWindow.ActivationMode;
+                }
+
+                return _activationMode;
+            }
+        }
 
         public ContactPanel ContactPanel { get; private set; }
 
@@ -167,7 +208,9 @@ namespace Unigram.Common
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
-            ActivationState = e.WindowActivationState;
+            _activationMode = e.WindowActivationState == CoreWindowActivationState.Deactivated
+                ? CoreWindowActivationMode.Deactivated
+                : CoreWindowActivationMode.ActivatedInForeground;
         }
 
 
@@ -194,11 +237,10 @@ namespace Unigram.Common
                         UseActivatedArgs(args, service);
                         break;
                     case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                        Execute.Initialize();
-                        service.Navigate(service.CurrentPageType != null ? typeof(Views.SignIn.SignInPage) : typeof(Views.IntroPage));
+                        service.Navigate(service.CurrentPageType != null ? typeof(SignInPage) : typeof(IntroPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
-                        service.Navigate(waitCode.IsRegistered ? typeof(Views.SignIn.SignInSentCodePage) : typeof(Views.SignIn.SignUpPage));
+                        service.Navigate(waitCode.IsRegistered ? typeof(SignInSentCodePage) : typeof(SignUpPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -206,7 +248,7 @@ namespace Unigram.Common
                             await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                         }
 
-                        service.Navigate(typeof(Views.SignIn.SignInPasswordPage));
+                        service.Navigate(typeof(SignInPasswordPage));
                         break;
                 }
             }
@@ -229,11 +271,11 @@ namespace Unigram.Common
             {
                 var package = new DataPackage();
                 var operation = share.ShareOperation.Data;
-                if (operation.Contains(StandardDataFormats.ApplicationLink))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
                 {
                     package.SetApplicationLink(await operation.GetApplicationLinkAsync());
                 }
-                if (operation.Contains(StandardDataFormats.Bitmap))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
                     package.SetBitmap(await operation.GetBitmapAsync());
                 }
@@ -245,11 +287,11 @@ namespace Unigram.Common
                 //{
                 //    package.SetRtf(await operation.GetRtfAsync());
                 //}
-                if (operation.Contains(StandardDataFormats.StorageItems))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
                     package.SetStorageItems(await operation.GetStorageItemsAsync());
                 }
-                if (operation.Contains(StandardDataFormats.Text))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
                     package.SetText(await operation.GetTextAsync());
                 }
@@ -257,23 +299,49 @@ namespace Unigram.Common
                 //{
                 //    package.SetUri(await operation.GetUriAsync());
                 //}
-                if (operation.Contains(StandardDataFormats.WebLink))
+                if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
                 {
                     package.SetWebLink(await operation.GetWebLinkAsync());
                 }
 
+                var query = "tg://";
+
+                if (ApiInformation.IsPropertyPresent("Windows.ApplicationModel.DataTransfer.ShareTarget.ShareOperation", "Contacts"))
+                {
+                    var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
+                    if (contactId is int userId)
+                    {
+                        var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                        if (response is Chat chat)
+                        {
+                            query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
+                            App.DataPackages[chat.Id] = package.GetView();
+                        }
+                        else
+                        {
+                            App.DataPackages[0] = package.GetView();
+                        }
+                    }
+                    else
+                    {
+                        App.DataPackages[0] = package.GetView();
+                    }
+                }
+                else
+                {
+                    App.DataPackages[0] = package.GetView();
+                }
+
                 App.ShareOperation = share.ShareOperation;
-                App.DataPackage = package.GetView();
+                App.ShareWindow = _window;
 
                 var options = new Windows.System.LauncherOptions();
                 options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
 
-                await Windows.System.Launcher.LaunchUriAsync(new Uri("tg://"), options);
+                await Windows.System.Launcher.LaunchUriAsync(new Uri(query), options);
             }
             else if (args is VoiceCommandActivatedEventArgs voice)
             {
-                Execute.Initialize();
-
                 SpeechRecognitionResult speechResult = voice.Result;
                 string command = speechResult.RulePath[0];
 
@@ -298,50 +366,17 @@ namespace Unigram.Common
                 var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
                 contact.ContactPanel.HeaderColor = backgroundBrush.Color;
 
-                var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
-                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-                if (store != null && annotationStore != null)
+                var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
+                if (contactId is int userId)
                 {
-                    try
+                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+                    if (response is Chat chat)
                     {
-                        var full = await store.GetContactAsync(contact.Contact.Id);
-                        if (full == null)
-                        {
-                            ContactPanelFallback(service);
-                        }
-                        else
-                        {
-                            var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
-
-                            var first = annotations.FirstOrDefault();
-                            if (first == null)
-                            {
-                                ContactPanelFallback(service);
-                            }
-                            else
-                            {
-                                var remote = first.RemoteId;
-                                if (int.TryParse(remote.Substring(1), out int userId))
-                                {
-                                    var response = await _lifetime.ActiveItem.ProtoService.SendAsync(new CreatePrivateChat(userId, false));
-                                    if (response is Chat chat)
-                                    {
-                                        service.NavigateToChat(chat);
-                                    }
-                                }
-                                else
-                                {
-                                    ContactPanelFallback(service);
-                                }
-                            }
-                        }
+                        service.NavigateToChat(chat);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        if ((uint)ex.HResult == 0x80004004)
-                        {
-                            ContactPanelFallback(service);
-                        }
+                        ContactPanelFallback(service);
                     }
                 }
                 else
@@ -351,7 +386,14 @@ namespace Unigram.Common
             }
             else if (args is ProtocolActivatedEventArgs protocol)
             {
-                Execute.Initialize();
+                if (service?.Frame?.Content is MainPage page)
+                {
+                    page.Activate(protocol.Uri.ToString());
+                }
+                else
+                {
+                    service.NavigateToMain(protocol.Uri.ToString());
+                }
 
                 if (App.ShareOperation != null)
                 {
@@ -359,23 +401,21 @@ namespace Unigram.Common
                     App.ShareOperation = null;
                 }
 
-                if (service?.Frame?.Content is MainPage page)
+                if (App.ShareWindow != null)
                 {
-                    page.Activate(protocol.Uri);
-                }
-                else
-                {
-                    service.NavigateToMain(protocol.Uri.ToString());
+                    try
+                    {
+                        await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            App.ShareWindow.Close();
+                            App.ShareWindow = null;
+                        });
+                    }
+                    catch { }
                 }
             }
-            //else if (args is CommandLineActivatedEventArgs commandLine && TryParseCommandLine(commandLine, out int id, out bool test))
-            //{
-
-            //}
             else
             {
-                Execute.Initialize();
-
                 var activate = args as ToastNotificationActivatedEventArgs;
                 var launched = args as LaunchActivatedEventArgs;
                 var launch = activate?.Argument ?? launched?.Arguments;

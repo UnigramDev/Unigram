@@ -24,21 +24,38 @@ using Telegram.Td.Api;
 using Windows.Media.Capture;
 using Unigram.ViewModels.Delegates;
 using Windows.ApplicationModel;
+using Unigram.Views.Passport;
+using Unigram.Controls.Gallery;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Controls.Primitives;
+using Unigram.Converters;
 
 namespace Unigram.Views
 {
-    public sealed partial class SettingsPage : Page, IUserDelegate, IFileDelegate
+    public sealed partial class SettingsPage : Page, ISettingsDelegate, IDisposable
     {
         public SettingsViewModel ViewModel => DataContext as SettingsViewModel;
 
         public SettingsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsViewModel, IUserDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SettingsViewModel, ISettingsDelegate>(this);
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            Diagnostics.Text = $"Unigram X {GetVersion()}";
+            Diagnostics.Text = $"Unigram " + GetVersion();
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                PhotoFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
+        }
+
+        public void Dispose()
+        {
+            //DataContext = null;
+            //Bindings?.Update();
+            Bindings?.StopTracking();
         }
 
         private string GetVersion()
@@ -49,22 +66,36 @@ namespace Unigram.Views
             return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
-        public MasterDetailView MasterDetail { get; set; }
-
-
-        private void General_Click(object sender, RoutedEventArgs e)
+        private MasterDetailView _masterDetail;
+        public MasterDetailView MasterDetail
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsGeneralPage));
+            get
+            {
+                return _masterDetail;
+            }
+            set
+            {
+                _masterDetail = value;
+                ViewModel.NavigationService = value.NavigationService;
+            }
+        }
+
+        private void Advanced_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Phone_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneIntroPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         public async void EditName_Click(object sender, RoutedEventArgs e)
@@ -122,31 +153,49 @@ namespace Unigram.Views
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Data_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Appearance_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private void Language_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void Passport_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(PassportPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void Questions_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(InstantPage), "https://telegram.org/faq");
+            MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
@@ -186,7 +235,7 @@ namespace Unigram.Views
                     IsCropEnabled = false
                 };
                 var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
+                if (dialogResult == ContentDialogResult.Primary)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
@@ -198,7 +247,7 @@ namespace Unigram.Views
             var capture = new CameraCaptureUI();
             capture.PhotoSettings.AllowCropping = false;
             capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
-            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.MediumXga;
+            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
 
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (file != null)
@@ -209,74 +258,34 @@ namespace Unigram.Views
                     IsCropEnabled = false
                 };
                 var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
+                if (dialogResult == ContentDialogResult.Primary)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
             }
         }
 
-        private async void Questions_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(InstantPage), "https://telegram.org/faq");
-
-            //var response = await ViewModel.LegacyService.GetWebPageAsync("https://telegram.org/faq", 0);
-            //if (response.IsSucceeded && response.Result is TLWebPage webPage && webPage.HasCachedPage)
-            //{
-            //    MasterDetail.NavigationService.Navigate(typeof(InstantPage), response.Result);
-            //}
-            //else
-            //{
-            //    await Windows.System.Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
-            //}
-        }
-
         #region Binding
-
-        private string ConvertFullName(User user)
-        {
-            if (string.IsNullOrEmpty(user.LastName))
-            {
-                return user.FirstName;
-            }
-
-            return $"{user.FirstName} {user.LastName}";
-        }
-
-        private string ConvertUsername(string username)
-        {
-            if (string.IsNullOrEmpty(username))
-            {
-                return Strings.Resources.UsernameEmpty;
-            }
-
-            return "@" + username;
-        }
-
-        private string ConvertAbout(string about)
-        {
-            if (string.IsNullOrEmpty(about))
-            {
-                return Strings.Resources.UserBioEmpty;
-            }
-
-            return about;
-        }
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64, 64);
+            Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
             Title.Text = user.GetFullName();
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
-            PhoneNumber.Content = Telegram.Helpers.PhoneNumber.Format(user.PhoneNumber);
-            Username.Content = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"@{user.Username}";
+#if DEBUG
+            PhoneNumber.Badge = "+39 --- --- ----";
+#else
+            PhoneNumber.Badge = Common.PhoneNumber.Format(user.PhoneNumber);
+#endif
+
+            Username.Badge = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"{user.Username}";
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            Bio.Content = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Resources.UserBioEmpty : fullInfo.Bio;
+            Bio.Badge = string.IsNullOrEmpty(fullInfo.Bio) ? Strings.Resources.UserBioDetail : fullInfo.Bio;
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -300,13 +309,24 @@ namespace Unigram.Views
         public void UpdateFile(File file)
         {
             var chat = ViewModel.Chat;
-            if (chat != null && chat.UpdateFile(file))
+            if (chat == null)
             {
-                Photo.Source = PlaceholderHelper.GetChat(null, chat, 64, 64);
+                return;
+            }
+
+            var user = ViewModel.CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (user.UpdateFile(file))
+            {
+                Photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 64);
             }
         }
 
-        #endregion
+#endregion
 
         private int _advanced;
 

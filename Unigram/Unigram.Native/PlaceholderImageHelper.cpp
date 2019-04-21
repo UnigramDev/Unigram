@@ -227,9 +227,17 @@ HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(Platform::Strin
 {
 	auto lock = m_criticalSection.Lock();
 
+	HANDLE file = CreateFile2(fileName->Data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
+
+	if (file == INVALID_HANDLE_VALUE)
+	{
+		return ERROR_FILE_NOT_FOUND;
+	}
+
 	HRESULT result;
 	ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
-	ReturnIfFailed(result, m_wicFactory->CreateDecoderFromFilename(fileName->Data(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &wicBitmapDecoder));
+	//ReturnIfFailed(result, m_wicFactory->CreateDecoderFromFilename(fileName->Data(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &wicBitmapDecoder));
+	ReturnIfFailed(result, m_wicFactory->CreateDecoderFromFileHandle(reinterpret_cast<ULONG_PTR>(file), nullptr, WICDecodeMetadataCacheOnLoad, &wicBitmapDecoder));
 
 	ComPtr<IWICBitmapFrameDecode> wicFrameDecode;
 	ReturnIfFailed(result, wicBitmapDecoder->GetFrame(0, &wicFrameDecode));
@@ -238,7 +246,11 @@ HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(Platform::Strin
 	ReturnIfFailed(result, m_wicFactory->CreateFormatConverter(&wicFormatConverter));
 	ReturnIfFailed(result, wicFormatConverter->Initialize(wicFrameDecode.Get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom));
 
-	return InternalDrawThumbnailPlaceholder(wicFormatConverter.Get(), blurAmount, randomAccessStream);
+	ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.Get(), blurAmount, randomAccessStream));
+
+	CloseHandle(file);
+
+	return result;
 }
 
 HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream^ randomAccessStream)

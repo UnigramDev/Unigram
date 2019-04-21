@@ -62,7 +62,7 @@ namespace Unigram.Views.Users
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)
@@ -103,7 +103,7 @@ namespace Unigram.Views.Users
                         var content = container.ContentTemplateRoot as Grid;
 
                         var photo = content.Children[0] as ProfilePicture;
-                        photo.Source = PlaceholderHelper.GetChat(null, chat, 36, 36);
+                        photo.Source = PlaceholderHelper.GetChat(null, chat, 36);
                     }
                 }
             });

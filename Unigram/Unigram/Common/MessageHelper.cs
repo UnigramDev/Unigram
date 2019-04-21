@@ -32,6 +32,13 @@ using Unigram.Services;
 using Template10.Services.NavigationService;
 using Telegram.Td.Api;
 using Unigram.Entities;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Controls.Primitives;
+using Unigram.Views.Passport;
+using Windows.ApplicationModel;
+using Unigram.Views.Settings;
+using Windows.ApplicationModel.Resources.Core;
+using Unigram.Views.Host;
 
 namespace Unigram.Common
 {
@@ -84,6 +91,11 @@ namespace Unigram.Common
 
         public static bool IsAnyCharacterRightToLeft(string s)
         {
+            if (s == null)
+            {
+                return false;
+            }
+
             //if (s.Length > 2)
             //{
             //    s = s.Substring(s.Length - 2);
@@ -206,47 +218,255 @@ namespace Unigram.Common
             //    return uri.Host.Equals(meUri.Host, StringComparison.OrdinalIgnoreCase);
             //}
 
-            return false;
+            return IsTelegramScheme(uri);
         }
 
-        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, string url)
+        public static bool IsTelegramScheme(Uri uri)
         {
-            // TODO: in-app navigation
-            if (url.Contains("joinchat"))
+            return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static async void OpenTelegramScheme(IProtoService protoService, INavigationService navigation, Uri scheme)
+        {
+            string username = null;
+            string group = null;
+            string sticker = null;
+            string[] instantView = null;
+            Dictionary<string, object> auth = null;
+            string botUser = null;
+            string botChat = null;
+            string message = null;
+            string phone = null;
+            string game = null;
+            string phoneHash = null;
+            string post = null;
+            string server = null;
+            string port = null;
+            string user = null;
+            string pass = null;
+            string secret = null;
+            string phoneCode = null;
+            string lang = null;
+            string channel = null;
+            bool hasUrl = false;
+
+            var query = scheme.Query.ParseQueryString();
+            if (scheme.AbsoluteUri.StartsWith("tg:resolve") || scheme.AbsoluteUri.StartsWith("tg://resolve"))
             {
-                var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
-                if (index != -1)
+                username = query.GetParameter("domain");
+
+                if (string.Equals(username, "telegrampassport", StringComparison.OrdinalIgnoreCase))
                 {
-                    var text = url.Substring(index).Replace("/", string.Empty);
-                    if (!string.IsNullOrEmpty(text))
+                    username = null;
+                    auth = new Dictionary<string, object>();
+                    var scope = query.GetParameter("scope");
+                    if (!string.IsNullOrEmpty(scope) && scope.StartsWith("{") && scope.EndsWith("}"))
                     {
-                        NavigateToInviteLink(protoService, navigation, text);
+                        auth.Add("nonce", query.GetParameter("nonce"));
                     }
+                    else
+                    {
+                        auth.Add("payload", query.GetParameter("payload"));
+                    }
+
+                    auth.Add("bot_id", int.Parse(query.GetParameter("bot_id")));
+                    auth.Add("scope", scope);
+                    auth.Add("public_key", query.GetParameter("public_key"));
+                    auth.Add("callback_url", query.GetParameter("callback_url"));
+                }
+                else
+                {
+                    botUser = query.GetParameter("start");
+                    botChat = query.GetParameter("startgroup");
+                    game = query.GetParameter("game");
+                    post = query.GetParameter("post");
                 }
             }
-            else if (url.Contains("addstickers"))
+            else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
             {
-                var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
-                if (index != -1)
+                group = query.GetParameter("invite");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:addstickers") || scheme.AbsoluteUri.StartsWith("tg://addstickers"))
+            {
+                sticker = query.GetParameter("set");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:msg") || scheme.AbsoluteUri.StartsWith("tg://msg") || scheme.AbsoluteUri.StartsWith("tg://share") || scheme.AbsoluteUri.StartsWith("tg:share"))
+            {
+                message = query.GetParameter("url");
+                if (message == null)
                 {
-                    var text = url.Substring(index).Replace("/", string.Empty);
-                    if (!string.IsNullOrEmpty(text))
-                    {
-                        NavigateToStickerSet(text);
-                    }
+                    message = "";
                 }
+                if (query.GetParameter("text") != null)
+                {
+                    if (message.Length > 0)
+                    {
+                        hasUrl = true;
+                        message += "\n";
+                    }
+                    message += query.GetParameter("text");
+                }
+                if (message.Length > 4096 * 4)
+                {
+                    message = message.Substring(0, 4096 * 4);
+                }
+                while (message.EndsWith("\n"))
+                {
+                    message = message.Substring(0, message.Length - 1);
+                }
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:confirmphone") || scheme.AbsoluteUri.StartsWith("tg://confirmphone"))
+            {
+                phone = query.GetParameter("phone");
+                phoneHash = query.GetParameter("hash");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:passport") || scheme.AbsoluteUri.StartsWith("tg://passport") || scheme.AbsoluteUri.StartsWith("tg:secureid") || scheme.AbsoluteUri.StartsWith("tg://secureid"))
+            {
+                //url = url.replace("tg:passport", "tg://telegram.org").replace("tg://passport", "tg://telegram.org").replace("tg:secureid", "tg://telegram.org");
+                //data = Uri.parse(url);
+                //auth = new HashMap<>();
+                //String scope = data.getQueryParameter("scope");
+                //if (!TextUtils.isEmpty(scope) && scope.startsWith("{") && scope.endsWith("}"))
+                //{
+                //    auth.put("nonce", data.getQueryParameter("nonce"));
+                //}
+                //else
+                //{
+                //    auth.put("payload", data.getQueryParameter("payload"));
+                //}
+                //auth.put("bot_id", data.getQueryParameter("bot_id"));
+                //auth.put("scope", scope);
+                //auth.put("public_key", data.getQueryParameter("public_key"));
+                //auth.put("callback_url", data.getQueryParameter("callback_url"));
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks") || scheme.AbsoluteUri.StartsWith("tg:proxy") || scheme.AbsoluteUri.StartsWith("tg://proxy"))
+            {
+                server = query.GetParameter("server");
+                port = query.GetParameter("port");
+                user = query.GetParameter("user");
+                pass = query.GetParameter("pass");
+                secret = query.GetParameter("secret");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:login") || scheme.AbsoluteUri.StartsWith("tg://login"))
+            {
+                phoneCode = query.GetParameter("code");
+            }
+            //tg://setlanguage?lang=he-beta
+            else if (scheme.AbsoluteUri.StartsWith("tg:setlanguage") || scheme.AbsoluteUri.StartsWith("tg://setlanguage"))
+            {
+                lang = query.GetParameter("lang");
+            }
+            else if (scheme.AbsoluteUri.StartsWith("tg:privatepost") || scheme.AbsoluteUri.StartsWith("tg://privatepost"))
+            {
+                channel = query.GetParameter("channel");
+                post = query.GetParameter("post");
+            }
+
+            if (message != null && message.StartsWith("@"))
+            {
+                message = " " + message;
+            }
+
+            if (phone != null || phoneHash != null)
+            {
+                NavigateToConfirmPhone(protoService, phone, phoneHash);
+            }
+            if (server != null && int.TryParse(port, out int portCode))
+            {
+                NavigateToProxy(protoService, server, portCode, user, pass, secret);
+            }
+            else if (group != null)
+            {
+                NavigateToInviteLink(protoService, navigation, group);
+            }
+            else if (sticker != null)
+            {
+                NavigateToStickerSet(sticker);
+            }
+            else if (username != null)
+            {
+                NavigateToUsername(protoService, navigation, username, botUser ?? botChat, post, game);
+            }
+            else if (message != null)
+            {
+                NavigateToShare(message, hasUrl);
+            }
+            else if (phoneCode != null)
+            {
+                NavigateToSendCode(protoService, phoneCode);
+            }
+            else if (auth != null)
+            {
+                navigation.Navigate(typeof(PassportPage), state: auth);
+            }
+            else if (lang != null)
+            {
+                NavigateToLanguage(protoService, navigation, lang);
+            }
+            else if (channel != null && post != null)
+            {
+                NavigateToMessage(protoService, navigation, channel, post);
             }
             else
             {
-                var query = url.ParseQueryString();
-
-                var accessToken = GetAccessToken(query, out PageKind pageKind);
-                var post = query.GetParameter("post");
-                var game = query.GetParameter("game");
-                var result = url.StartsWith("http") ? url : ("https://" + url);
-
-                if (Uri.TryCreate(result, UriKind.Absolute, out Uri uri))
+                var response = await protoService.SendAsync(new GetDeepLinkInfo(scheme.ToString()));
+                if (response is DeepLinkInfo info)
                 {
+                    var confirm = await TLMessageDialog.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);
+                    if (confirm == ContentDialogResult.Secondary)
+                    {
+                        await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
+                    }
+                }
+            }
+        }
+
+        public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
+        {
+            if (IsTelegramScheme(uri))
+            {
+                OpenTelegramScheme(protoService, navigation, uri);
+            }
+            else
+            {
+                var url = uri.ToString();
+                if (url.Contains("telegra.ph"))
+                {
+                    navigation.Navigate(typeof(InstantPage), url);
+                }
+                else if (url.Contains("joinchat"))
+                {
+                    var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
+                    if (index != -1)
+                    {
+                        var text = url.Substring(index).Replace("/", string.Empty);
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            NavigateToInviteLink(protoService, navigation, text);
+                        }
+                    }
+                }
+                else if (url.Contains("addstickers"))
+                {
+                    var index = url.TrimEnd('/').LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
+                    if (index != -1)
+                    {
+                        var text = url.Substring(index).Replace("/", string.Empty);
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            NavigateToStickerSet(text);
+                        }
+                    }
+                }
+                else
+                {
+                    var query = url.ParseQueryString();
+
+                    var accessToken = GetAccessToken(query, out PageKind pageKind);
+                    var post = query.GetParameter("post");
+                    var game = query.GetParameter("game");
+                    var result = url.StartsWith("http") ? url : ("https://" + url);
+
                     if (uri.Segments.Length >= 2)
                     {
                         var username = uri.Segments[1].Replace("/", string.Empty);
@@ -262,6 +482,10 @@ namespace Unigram.Common
                                 var hash = query.GetParameter("hash");
 
                                 NavigateToConfirmPhone(null, phone, hash);
+                            }
+                            else if (username.Equals("login", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
+                            {
+                                NavigateToSendCode(protoService, post);
                             }
                             else if (username.Equals("iv", StringComparison.OrdinalIgnoreCase))
                             {
@@ -309,13 +533,174 @@ namespace Unigram.Common
 
                                 NavigateToShare(text, hasUrl);
                             }
+                            else if (username.Equals("setlanguage", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post))
+                            {
+                                NavigateToLanguage(protoService, navigation, post);
+                            }
+                            else if (username.Equals("c", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(post) && uri.Segments.Length >= 4)
+                            {
+                                NavigateToMessage(protoService, navigation, post, uri.Segments[3].Replace("/", string.Empty));
+                            }
                             else
                             {
-                                NavigateToUsername(protoService, navigation, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game);
+                                NavigateToUsername(protoService, navigation, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game, pageKind);
                             }
                         }
                     }
                 }
+            }
+        }
+
+        private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string post, string message)
+        {
+            if (int.TryParse(post, out int supergroup) && long.TryParse(message, out long msgId))
+            {
+                var response = await protoService.SendAsync(new CreateSupergroupChat(supergroup, false));
+                if (response is Chat chat)
+                {
+                    navigation.NavigateToChat(chat, msgId << 20);
+                }
+                else
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.LinkNotFound, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
+            else
+            {
+                // TODO: error
+            }
+        }
+
+        public static async void NavigateToLanguage(IProtoService protoService, INavigationService navigation, string languagePackId)
+        {
+            var response = await protoService.SendAsync(new GetLanguagePackInfo(languagePackId));
+            if (response is LanguagePackInfo info)
+            {
+                if (info.Id == SettingsService.Current.LanguagePackId)
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.LanguageSame, info.Name), Strings.Resources.Language, Strings.Resources.OK, Strings.Resources.Settings);
+                    if (confirm != ContentDialogResult.Secondary)
+                    {
+                        return;
+                    }
+
+                    navigation.Navigate(typeof(SettingsLanguagePage));
+                }
+                else if (info.TotalStringCount == 0)
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.LanguageUnknownCustomAlert, info.Name), Strings.Resources.LanguageUnknownTitle, Strings.Resources.OK);
+                }
+                else
+                {
+                    var message = info.IsOfficial
+                        ? Strings.Resources.LanguageAlert
+                        : Strings.Resources.LanguageCustomAlert;
+
+                    var start = message.IndexOf('[');
+                    var end = message.IndexOf(']');
+                    if (start != -1 && end != -1)
+                    {
+                        message = message.Insert(end + 1, $"({info.TranslationUrl})");
+                    }
+
+                    var confirm = await TLMessageDialog.ShowAsync(string.Format(message, info.Name, (int)Math.Ceiling(info.TranslatedStringCount / (float)info.TotalStringCount * 100)), Strings.Resources.LanguageTitle, Strings.Resources.Change, Strings.Resources.Cancel);
+                    if (confirm != ContentDialogResult.Primary)
+                    {
+                        return;
+                    }
+
+                    var set = await LocaleService.Current.SetLanguageAsync(info, true);
+                    if (set is Ok)
+                    {
+                        //ApplicationLanguages.PrimaryLanguageOverride = info.Id;
+                        //ResourceContext.GetForCurrentView().Reset();
+                        //ResourceContext.GetForViewIndependentUse().Reset();
+
+                        //TLWindowContext.GetForCurrentView().NavigationServices.Remove(NavigationService);
+                        //BootStrapper.Current.NavigationService.Reset();
+
+                        foreach (var window in WindowContext.ActiveWrappers)
+                        {
+                            window.Dispatcher.Dispatch(() =>
+                            {
+                                ResourceContext.GetForCurrentView().Reset();
+                                ResourceContext.GetForViewIndependentUse().Reset();
+
+                                if (window.Content is RootPage root)
+                                {
+                                    window.Dispatcher.Dispatch(() =>
+                                    {
+                                        root.UpdateComponent();
+                                    });
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        public static async void NavigateToSendCode(IProtoService protoService, string phoneCode)
+        {
+            var state = protoService.GetAuthorizationState();
+            if (state is AuthorizationStateWaitCode)
+            {
+                var firstName = string.Empty;
+                var lastName = string.Empty;
+
+                if (protoService.Options.TryGetValue("x_firstname", out string firstValue))
+                {
+                    firstName = firstValue;
+                }
+
+                if (protoService.Options.TryGetValue("x_lastname", out string lastValue))
+                {
+                    lastName = lastValue;
+                }
+
+                var response = await protoService.SendAsync(new CheckAuthenticationCode(phoneCode, firstName, lastName));
+                if (response is Error error)
+                {
+                    if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                    }
+                    else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
+                    }
+                    else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
+                    }
+                    else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
+                    }
+                    else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
+                    }
+                    else if (error.Message.StartsWith("FLOOD_WAIT"))
+                    {
+                        await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    }
+                    else if (error.Code != -1000)
+                    {
+                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    }
+
+                    Logs.Logger.Warning(Logs.Target.API, "account.signIn error " + error);
+                }
+            }
+            else
+            {
+                if (phoneCode.Length > 3)
+                {
+                    phoneCode = phoneCode.Substring(0, 3) + "-" + phoneCode.Substring(3);
+                }
+
+                await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OtherLoginCode, phoneCode), Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -375,7 +760,7 @@ namespace Unigram.Common
             //    //{
             //    //    return;
             //    //}
-            //    //Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("account.sendConfirmPhoneCode error {0}", error));
+            //    //Telegram.Api.Helpers.Logs.Log.Write(string.Format("account.sendConfirmPhoneCode error {0}", error));
             //};
         }
 
@@ -384,7 +769,7 @@ namespace Unigram.Common
             await StickerSetView.GetForCurrentView().ShowAsync(text);
         }
 
-        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string post, string game)
+        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string post, string game, PageKind kind = PageKind.Dialog)
         {
             if (username.StartsWith("@"))
             {
@@ -403,7 +788,14 @@ namespace Unigram.Common
                     var user = protoService.GetUser(privata.UserId);
                     if (user != null && user.Type is UserTypeBot)
                     {
-                        navigation.NavigateToChat(chat, accessToken: accessToken);
+                        if (kind == PageKind.Search)
+                        {
+                            await ShareView.GetForCurrentView().ShowAsync(user, accessToken);
+                        }
+                        else
+                        {
+                            navigation.NavigateToChat(chat, accessToken: accessToken);
+                        }
                     }
                     else
                     {
@@ -424,7 +816,7 @@ namespace Unigram.Common
             }
             else
             {
-                await new TLMessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
+                await TLMessageDialog.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -446,61 +838,44 @@ namespace Unigram.Common
                 {
                     var dialog = new JoinChatView(protoService, info);
 
-                    var confirm = await dialog.ShowAsync();
-                    if (confirm == ContentDialogBaseResult.OK)
+                    var confirm = await dialog.ShowQueuedAsync();
+                    if (confirm != ContentDialogResult.Primary)
                     {
-                        var import = await protoService.SendAsync(new JoinChatByInviteLink(link));
-                        if (import is Chat chat)
-                        {
-                            navigation.NavigateToChat(chat);
-                        }
-                        else if (import is Error error)
-                        {
-                            if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
-                            {
-                                Execute.ShowDebugMessage("messages.importChatInvite error " + error);
-                                return;
-                            }
-                            if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
-                            {
-                                //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
-                                return;
-                            }
-                            else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
-                            {
-                                //MessageBox.Show(Strings.Additional.UsersTooMuch, Strings.Additional.Error, 0);
-                                return;
-                            }
-                            else if (error.TypeEquals(ErrorType.BOTS_TOO_MUCH))
-                            {
-                                //MessageBox.Show(Strings.Additional.BotsTooMuch, Strings.Additional.Error, 0);
-                                return;
-                            }
-                            else if (error.TypeEquals(ErrorType.USER_ALREADY_PARTICIPANT))
-                            {
-                                return;
-                            }
+                        return;
+                    }
 
-                            Execute.ShowDebugMessage("messages.importChatInvite error " + error);
+                    var import = await protoService.SendAsync(new JoinChatByInviteLink(link));
+                    if (import is Chat chat)
+                    {
+                        navigation.NavigateToChat(chat);
+                    }
+                    else if (import is Error error)
+                    {
+                        if (error.TypeEquals(ErrorType.FLOOD_WAIT))
+                        {
+                            await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                        }
+                        else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
+                        {
+                            await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorFull, Strings.Resources.AppName, Strings.Resources.OK);
+                        }
+                        else
+                        {
+                            await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
                         }
                     }
                 }
             }
             else if (response is Error error)
             {
-                if (!error.CodeEquals(ErrorCode.BAD_REQUEST))
+                if (error.TypeEquals(ErrorType.FLOOD_WAIT))
                 {
-                    Execute.ShowDebugMessage("messages.checkChatInvite error " + error);
-                    return;
+                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-                if (error.TypeEquals(ErrorType.INVITE_HASH_EMPTY) || error.TypeEquals(ErrorType.INVITE_HASH_INVALID) || error.TypeEquals(ErrorType.INVITE_HASH_EXPIRED))
+                else
                 {
-                    //MessageBox.Show(Strings.Additional.GroupNotExistsError, Strings.Additional.Error, 0);
-                    await TLMessageDialog.ShowAsync("This invite link is broken or has expired.", "Warning", "OK");
-                    return;
+                    await TLMessageDialog.ShowAsync(Strings.Resources.JoinToGroupErrorNotExist, Strings.Resources.AppName, Strings.Resources.OK);
                 }
-
-                Execute.ShowDebugMessage("messages.checkChatInvite error " + error);
             }
         }
 
@@ -580,13 +955,21 @@ namespace Unigram.Common
                 {
                     var link = text.SelectedText;
 
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
-
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
                     copy.Click += LinkCopy_Click;
 
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(copy);
-                    flyout.ShowAt(sender, point);
+
+                    if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+                    {
+                        // We don't want to unfocus the text are when the context menu gets opened
+                        flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                    }
+                    else
+                    {
+                        flyout.ShowAt(sender, point);
+                    }
 
                     args.Handled = true;
                 }
@@ -595,17 +978,19 @@ namespace Unigram.Common
                     var hyperlink = text.GetHyperlinkFromPoint(point);
                     if (hyperlink == null)
                     {
+                        args.Handled = false;
                         return;
                     }
 
                     var link = GetEntity(hyperlink);
                     if (link == null)
                     {
+                        args.Handled = false;
                         return;
                     }
 
-                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link };
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link };
+                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
 
                     open.Click += LinkOpen_Click;
                     copy.Click += LinkCopy_Click;
@@ -613,10 +998,56 @@ namespace Unigram.Common
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(open);
                     flyout.Items.Add(copy);
-                    flyout.ShowAt(sender, point);
+
+                    if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+                    {
+                        // We don't want to unfocus the text are when the context menu gets opened
+                        flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                    }
+                    else
+                    {
+                        flyout.ShowAt(sender, point);
+                    }
 
                     args.Handled = true;
                 }
+            }
+            else
+            {
+                args.Handled = false;
+            }
+        }
+
+        public static void Hyperlink_ContextRequested(UIElement sender, string link, ContextRequestedEventArgs args)
+        {
+            if (args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
+
+                open.Click += LinkOpen_Click;
+                copy.Click += LinkCopy_Click;
+
+                var flyout = new MenuFlyout();
+                flyout.Items.Add(open);
+                flyout.Items.Add(copy);
+
+                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
+                {
+                    // We don't want to unfocus the text are when the context menu gets opened
+                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                }
+                else
+                {
+                    flyout.ShowAt(sender, point);
+                }
+
+                args.Handled = true;
             }
         }
 

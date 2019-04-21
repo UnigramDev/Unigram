@@ -63,20 +63,33 @@
             </Setter>
         </Style>
 
-        <Style x:Key="AuthorDateBlockStyle" TargetType="TextBlock">
+        <Style x:Key="BlockAuthorDateTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
             <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-            <Setter Property="FontSize" Value="14"/>
+            <!--<Setter Property="FontSize" Value="14"/>-->
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
 
-        <Style x:Key="AuthorDateTextBlockStyle" TargetType="TextBlock">
+        <Style x:Key="BlockHeaderTextBlockStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BodyRichTextBlockStyle}">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontFamily" Value="Times New Roman"/>
+        </Style>
+
+        <Style x:Key="BlockSubheaderTextBlockStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BodyRichTextBlockStyle}">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontFamily" Value="Times New Roman"/>
+        </Style>
+
+        <Style x:Key="BlockBodyTextBlockStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BodyRichTextBlockStyle}">
+            <Setter Property="FontSize" Value="{ThemeResource MessageFontSize}"/>
+            <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>-->
+        </Style>
+
+        <Style x:Key="BlockCaptionTextBlockStyle" TargetType="RichTextBlock" BasedOn="{StaticResource CaptionRichTextBlockStyle}">
             <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
 
         <Style x:Key="BlockPreformattedStyle" TargetType="StackPanel">
-            <Setter Property="Background" Value="{ThemeResource CommandBarOverflowPresenterBackground}"/>
+            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
             <Setter Property="Padding" Value="12,8,0,8"/>
         </Style>
 
@@ -88,21 +101,34 @@
         <Style x:Key="BlockBlockquoteStyle" TargetType="StackPanel">
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             <Setter Property="BorderThickness" Value="2,0,0,0"/>
-            <Setter Property="Padding" Value="12,0,0,0"/>
+            <Setter Property="Padding" Value="12,0,0,2"/>
         </Style>
 
         <Style x:Key="BlockPullquoteStyle" TargetType="StackPanel"/>
-        <Style x:Key="BlockPhotoStyle" TargetType="StackPanel"/>
-        <Style x:Key="BlockVideoStyle" TargetType="StackPanel"/>
+        <Style x:Key="BlockPhotoStyle" TargetType="StackPanel">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="BlockVideoStyle" TargetType="StackPanel">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
         <Style x:Key="BlockEmbedStyle" TargetType="StackPanel"/>
-        <Style x:Key="BlockSlideshowStyle" TargetType="StackPanel"/>
+        <Style x:Key="BlockSlideshowStyle" TargetType="StackPanel">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
         <Style x:Key="BlockCollageStyle" TargetType="StackPanel"/>
 
         <Style x:Key="BlockEmbedPostStyle" TargetType="StackPanel">
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             <Setter Property="BorderThickness" Value="2,0,0,0"/>
         </Style>
-        
+
+        <Style x:Key="BlockRelatedArticlesHeaderPanelStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+            <Setter Property="Margin" Value="-12,0"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+        <Style x:Key="BlockRelatedArticlesHeaderStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BaseRichTextBlockStyle}"/>
+
         <!--<DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
              <Grid>
              <Grid.ColumnDefinitions>
@@ -127,7 +153,7 @@
              </DataTemplate>-->
 
         <Style x:Key="ChannelBlockStyle" BasedOn="{StaticResource EmptyButtonStyle}" TargetType="Button">
-            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
             <Setter Property="ContentTemplate" Value="{StaticResource ChannelItemTemplate}"/>
         </Style>
 
@@ -152,15 +178,30 @@
                 </Grid.ColumnDefinitions>
                 <ProgressBar x:Name="Reading" VerticalAlignment="Stretch" Background="Transparent" Foreground="{ThemeResource SystemControlBackgroundBaseLowBrush}" Grid.ColumnSpan="3"/>
 
+                <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}" VerticalAlignment="Center" Margin="12,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+
                 <controls:GlyphButton
                      Glyph="&#xE72D;"
                      Command="{x:Bind ViewModel.ShareCommand}"
-                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                     Style="{StaticResource HeaderGlyphButtonStyle}"
                      Grid.Column="1"/>
-                <Button Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="2">
+                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="2">
                     <Button.Flyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInBrowser}"/>
+                        <MenuFlyout x:Name="EllipsisFlyout">
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE7AC;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.CopyCommand}" Text="{CustomResource CopyLink}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8C8;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                         </MenuFlyout>
                     </Button.Flyout>
                     <FontIcon x:Name="EllipsisIcon"

@@ -8,6 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <DrillInNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Page.Resources>
         <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
             <Setter Property="Padding" Value="0,8,0,8"/>
@@ -28,6 +36,7 @@
         <controls:ButtonPageHeader
             Text="{x:Bind ViewModel.Title, Mode=OneWay}"
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Done}"
             Glyph="&#xE10B;"/>
 
         <ScrollViewer x:Name="ScrollingHost"
@@ -40,19 +49,19 @@
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadContacts}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.PrivateChats, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadPrivateChats}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.Groups, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadGroupChats}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.Channels, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadChannels}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <Slider Header="{CustomResource AutodownloadSizeLimit}" Visibility="Collapsed"/>
                 </StackPanel>
             </StackPanel>

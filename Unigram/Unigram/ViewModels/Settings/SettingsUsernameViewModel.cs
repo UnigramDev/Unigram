@@ -93,12 +93,10 @@ namespace Unigram.ViewModels.Settings
 
         public async void CheckAvailability(string text)
         {
-            var myid = ProtoService.GetOption<OptionValueInteger>("my_id");
-
             var response = await ProtoService.SendAsync(new SearchPublicChat(text));
             if (response is Chat chat)
             {
-                if (chat.Type is ChatTypePrivate privata && privata.UserId == myid.Value)
+                if (chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
                 {
                     IsLoading = false;
                     IsAvailable = true;
@@ -263,7 +261,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     //this.HasError = true;
                     //this.Error = string.Empty;
-                    //Telegram.Api.Helpers.Execute.ShowDebugMessage("account.updateUsername error " + error);
+                    //Telegram.Api.Helpers.Logs.Log.Write("account.updateUsername error " + error);
                 }
             }
         }

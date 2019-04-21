@@ -74,7 +74,7 @@ namespace Unigram.Controls
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new ChatListViewItem(null);
+            return new ChatsListViewItem(null);
         }
 
         #region Drag & Drop

@@ -8,7 +8,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Views;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -35,9 +35,12 @@ using Unigram.ViewModels.Users;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages.Content;
 using Unigram.Controls.Messages;
-using Unigram.Services;
 using Unigram.ViewModels.Dialogs;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Gallery;
+using Unigram.Controls.Gallery;
+using Windows.UI.Xaml.Media.Imaging;
+using System.Globalization;
 
 namespace Unigram.Views
 {
@@ -48,12 +51,18 @@ namespace Unigram.Views
         private readonly string _injectedJs;
         private ScrollViewer _scrollingHost;
 
-        private FileContext<FrameworkElement> _filesMap = new FileContext<FrameworkElement>();
+        private FileContext<Tuple<IContentWithFile, MessageViewModel>> _filesMap = new FileContext<Tuple<IContentWithFile, MessageViewModel>>();
+        private FileContext<Image> _iconsMap = new FileContext<Image>();
 
         public InstantPage()
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<InstantViewModel>();
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                EllipsisFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = System.IO.File.ReadAllText(jsPath);
@@ -77,39 +86,47 @@ namespace Unigram.Views
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (sender is ScrollViewer scroll)
+            if (sender is ScrollViewer scroll && scroll.ScrollableHeight > 0)
             {
                 Reading.Value = scroll.VerticalOffset / scroll.ScrollableHeight * 100;
+            }
+            else
+            {
+                Reading.Value = 0;
             }
         }
 
         public void Handle(UpdateFile update)
         {
-            if (_filesMap.TryGetValue(update.File.Id, out List<FrameworkElement> elements))
+            if (_filesMap.TryGetValue(update.File.Id, out List<Tuple<IContentWithFile, MessageViewModel>> elements))
             {
                 this.BeginOnUIThread(() =>
                 {
                     foreach (var panel in elements)
                     {
-                        var message = panel.Tag as MessageViewModel;
-                        if (message == null)
-                        {
-                            return;
-                        }
-
-                        var content = panel as IContentWithFile;
-                        if (content == null)
-                        {
-                            return;
-                        }
-
-                        message.UpdateFile(update.File);
-                        content.UpdateFile(message, update.File);
+                        panel.Item2.UpdateFile(update.File);
+                        panel.Item1.UpdateFile(panel.Item2, update.File);
                     }
 
                     if (update.File.Local.IsDownloadingCompleted && !update.File.Remote.IsUploadingActive)
                     {
                         elements.Clear();
+                    }
+                });
+            }
+
+            if (_iconsMap.TryGetValue(update.File.Id, out List<Image> photos))
+            {
+                this.BeginOnUIThread(() =>
+                {
+                    if (update.File.Local.IsDownloadingCompleted && !update.File.Remote.IsUploadingActive)
+                    {
+                        foreach (var photo in photos)
+                        {
+                            photo.Source = new BitmapImage(new Uri("file:///" + update.File.Local.Path));
+                        }
+
+                        photos.Clear();
                     }
                 });
             }
@@ -131,12 +148,9 @@ namespace Unigram.Views
 
             ViewModel.IsLoading = true;
 
-            var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(url, false));
+            var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(url, true));
             if (response is WebPageInstantView instantView)
             {
-                UpdateView(instantView);
-                ViewModel.IsLoading = false;
-
                 if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                 {
                     ViewModel.ShareLink = uri;
@@ -147,6 +161,9 @@ namespace Unigram.Views
                     //    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
                     //}
                 }
+
+                UpdateView(instantView);
+                ViewModel.IsLoading = false;
             }
 
             //if (url.StartsWith("http") == false)
@@ -254,11 +271,16 @@ namespace Unigram.Views
             base.OnNavigatedTo(e);
         }
 
+        private WebPageInstantView _instantView;
+
         private void UpdateView(WebPageInstantView instantView)
         {
+            _instantView = instantView;
+
             var processed = 0;
             PageBlock previousBlock = null;
             FrameworkElement previousElement = null;
+            FrameworkElement firstElement = null;
             foreach (var block in instantView.PageBlocks)
             {
                 var element = ProcessBlock(block);
@@ -283,9 +305,25 @@ namespace Unigram.Views
                     }
                 }
 
+                if (firstElement == null)
+                {
+                    firstElement = element;
+                }
+
                 previousBlock = block;
                 previousElement = element;
                 processed++;
+            }
+
+            if (firstElement != null)
+            {
+                firstElement.Loaded += (s, args) =>
+                {
+                    if (ViewModel.ShareLink?.Fragment?.Length > 0)
+                    {
+                        Hyperlink_Click(new RichTextUrl { Url = ViewModel.ShareLink.ToString() });
+                    }
+                };
             }
         }
 
@@ -339,10 +377,261 @@ namespace Unigram.Views
                     return ProcessPreformatted(preformatted);
                 case PageBlockChatLink channel:
                     return ProcessChannel(channel);
+                case PageBlockDetails details:
+                    return ProcessDetails(details);
+                case PageBlockTable table:
+                    return ProcessTable(table);
+                case PageBlockRelatedArticles relatedArticles:
+                    return ProcessRelatedArticles(relatedArticles);
+                case PageBlockMap map:
+                    return ProcessMap(map);
+                default:
+                    return ProcessUnsupported(block);
             }
 
             return null;
         }
+
+        #region 2.0
+
+        private FrameworkElement ProcessMap(PageBlockMap map)
+        {
+            var latitude = map.Location.Latitude.ToString(CultureInfo.InvariantCulture);
+            var longitude = map.Location.Longitude.ToString(CultureInfo.InvariantCulture);
+
+            var image = new ImageView();
+            image.Source = new BitmapImage(new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3},{4}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, map.Zoom, map.Width, map.Height)));
+            image.Constraint = map;
+
+            var caption = ProcessCaption(map.Caption);
+            if (caption != null)
+            {
+                caption.Margin = new Thickness(12, 8, 0, 0);
+
+                var panel = new StackPanel { HorizontalAlignment = HorizontalAlignment.Center };
+                panel.Children.Add(image);
+                panel.Children.Add(caption);
+
+                return panel;
+            }
+
+            return image;
+        }
+
+        private FrameworkElement ProcessRelatedArticles(PageBlockRelatedArticles relatedArticles)
+        {
+            var panel = new StackPanel();
+
+            var header = ProcessText(relatedArticles, false);
+            if (header != null)
+            {
+                var border = new Border { Style = Resources["BlockRelatedArticlesHeaderPanelStyle"] as Style };
+                border.Child = header;
+
+                panel.Children.Add(border);
+            }
+
+            foreach (var article in relatedArticles.Articles)
+            {
+                var grid = new Grid();
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+
+                var title = new TextBlock { Text = article.Title };
+                var description = new TextBlock { TextWrapping = TextWrapping.Wrap, TextTrimming = TextTrimming.CharacterEllipsis, MaxLines = 2, Style = Resources["BlockAuthorDateTextBlockStyle"] as Style };
+
+                if (string.IsNullOrEmpty(article.Author))
+                {
+                    description.Text = article.Description;
+                }
+                else
+                {
+                    description.Text = article.Author;
+
+                    if (article.PublishDate > 0)
+                    {
+                        description.Text += " — " + BindConvert.Current.DayMonthFullYear.Format(BindConvert.Current.DateTime(article.PublishDate));
+                    }
+                }
+
+                if (article.Photo != null)
+                {
+                    var photo = new Image { Width = 36, Height = 36, Stretch = Stretch.UniformToFill, VerticalAlignment = VerticalAlignment.Top };
+
+                    var file = article.Photo.GetSmall()?.Photo;
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                    }
+                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        _iconsMap[file.Id].Add(photo);
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    }
+
+                    Grid.SetColumn(photo, 1);
+                    Grid.SetRowSpan(photo, 2);
+
+                    grid.Children.Add(photo);
+                }
+
+                Grid.SetRow(description, 1);
+
+                grid.Children.Add(title);
+                grid.Children.Add(description);
+
+                var button = new BadgeButton { HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Stretch, Margin = new Thickness(-12, 0, -12, 0) };
+                button.Content = grid;
+                button.Click += (s, args) => Hyperlink_Click(new RichTextUrl(null, article.Url));
+
+                panel.Children.Add(button);
+            }
+
+            return panel;
+        }
+
+        private FrameworkElement ProcessTable(PageBlockTable table)
+        {
+            var grid = new Grid();
+            grid.BorderThickness = new Thickness(table.IsBordered ? 1 : 0, table.IsBordered ? 1 : 0, 0, 0);
+            grid.BorderBrush = new SolidColorBrush(Colors.Green);
+
+            var columns = table.Cells.Max(x => x.Count);
+            var rows = table.Cells.Count;
+
+            for (int i = 0; i < columns; i++)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto), MaxWidth = 200 });
+            }
+
+            var row = 0;
+            var offset = new Dictionary<int, int>();
+
+            foreach (var rowz in table.Cells)
+            {
+                var column = 0;
+
+                if (offset.TryGetValue(row, out int adjust))
+                {
+                    column = adjust;
+                }
+
+                foreach (var cell in rowz)
+                {
+                    var textBlock = new RichTextBlock();
+                    var span = new Span();
+                    var paragraph = new Paragraph();
+                    paragraph.Inlines.Add(span);
+                    textBlock.Blocks.Add(paragraph);
+                    textBlock.TextWrapping = TextWrapping.Wrap;
+
+                    switch (cell.Align)
+                    {
+                        case PageBlockHorizontalAlignmentLeft left:
+                            textBlock.TextAlignment = TextAlignment.Left;
+                            break;
+                        case PageBlockHorizontalAlignmentCenter center:
+                            textBlock.TextAlignment = TextAlignment.Center;
+                            break;
+                        case PageBlockHorizontalAlignmentRight right:
+                            textBlock.TextAlignment = TextAlignment.Right;
+                            break;
+                    }
+
+                    switch (cell.Valign)
+                    {
+                        case PageBlockVerticalAlignmentTop top:
+                            textBlock.VerticalAlignment = VerticalAlignment.Top;
+                            break;
+                        case PageBlockVerticalAlignmentMiddle middle:
+                            textBlock.VerticalAlignment = VerticalAlignment.Center;
+                            break;
+                        case PageBlockVerticalAlignmentBottom bottom:
+                            textBlock.VerticalAlignment = VerticalAlignment.Bottom;
+                            break;
+                    }
+
+                    //textBlock.Margin = new Thickness(12, 0, 12, 12);
+                    ProcessRichText(cell.Text, span, textBlock);
+
+                    var border = new Border();
+                    border.Background = cell.IsHeader || (table.IsStriped && row % 2 == 0) ? new SolidColorBrush(Colors.LightGray) : null;
+                    border.BorderThickness = new Thickness(0, 0, table.IsBordered ? 1 : 0, table.IsBordered ? 1 : 0);
+                    border.BorderBrush = new SolidColorBrush(Colors.Green);
+                    border.Child = textBlock;
+                    border.Padding = new Thickness(8, 4, 8, 4);
+
+                    Grid.SetRow(border, row);
+                    Grid.SetRowSpan(border, cell.Rowspan);
+                    Grid.SetColumn(border, column);
+                    Grid.SetColumnSpan(border, cell.Colspan);
+
+                    if (cell.Rowspan > 1 && column == 0)
+                    {
+                        for (int i = 1; i < cell.Rowspan; i++)
+                        {
+                            offset[row + i] = cell.Colspan;
+                        }
+                    }
+
+                    grid.Children.Add(border);
+
+                    column += cell.Colspan;
+                }
+
+                grid.RowDefinitions.Add(new RowDefinition());
+
+                row++;
+            }
+
+            var scroll = new ScrollViewer();
+            scroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scroll.HorizontalScrollMode = ScrollMode.Auto;
+            scroll.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            scroll.VerticalScrollMode = ScrollMode.Disabled;
+
+            scroll.Content = grid;
+
+            var caption = ProcessText(table, true);
+            if (caption != null)
+            {
+                var panel = new StackPanel();
+                panel.Children.Add(caption);
+                panel.Children.Add(scroll);
+
+                return panel;
+            }
+
+            return scroll;
+        }
+
+        private FrameworkElement ProcessDetails(PageBlockDetails details)
+        {
+            var panel = new StackPanel();
+
+            var header = new BadgeButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? "\uE098" : "\uE099", Style = App.Current.Resources["GlyphBadgeButtonStyle"] as Style, Margin = new Thickness(-12, 0, -12, 0) };
+            var inner = new StackPanel { Padding = new Thickness(0, 12, 0, 12), Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
+
+            panel.Children.Add(header);
+            panel.Children.Add(inner);
+
+            foreach (var block in details.PageBlocks)
+            {
+                inner.Children.Add(ProcessBlock(block));
+            }
+
+            header.Click += (s, args) =>
+            {
+                inner.Visibility = inner.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                header.Glyph = inner.Visibility == Visibility.Visible ? "\uE098" : "\uE099";
+            };
+
+            return panel;
+        }
+
+        #endregion
 
         private FrameworkElement ProcessCover(PageBlockCover block)
         {
@@ -379,15 +668,14 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessAuthorDate(PageBlockAuthorDate block)
         {
-            var textBlock = new TextBlock { Style = Resources["AuthorDateBlockStyle"] as Style };
-            textBlock.FontSize = 15;
+            var textBlock = new TextBlock { Style = Resources["BlockAuthorDateTextBlockStyle"] as Style };
 
-            if (block.Author != null)
+            if (!block.Author.IsNullOrEmpty())
             {
                 var span = new Span();
                 textBlock.Inlines.Add(new Run { Text = string.Format(Strings.Resources.ArticleByAuthor, string.Empty) });
                 textBlock.Inlines.Add(span);
-                ProcessRichText(block.Author, span);
+                ProcessRichText(block.Author, span, null);
             }
 
             //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
@@ -398,7 +686,7 @@ namespace Unigram.Views
                     textBlock.Inlines.Add(new Run { Text = " — " });
                 }
 
-                textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DateTime(block.PublishDate).ToString("dd MMMM yyyy") });
+                textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DayMonthFullYear.Format(BindConvert.Current.DateTime(block.PublishDate)) });
             }
 
             return textBlock;
@@ -430,26 +718,20 @@ namespace Unigram.Views
                 case PageBlockPreformatted preformatted:
                     text = preformatted.Text;
                     break;
-                case PageBlockPhoto photo:
-                    text = photo.Caption;
-                    break;
-                case PageBlockVideo video:
-                    text = video.Caption;
-                    break;
-                case PageBlockSlideshow slideshow:
-                    text = slideshow.Caption;
-                    break;
-                case PageBlockEmbedded embed:
-                    text = embed.Caption;
-                    break;
-                case PageBlockEmbeddedPost embedPost:
-                    text = embedPost.Caption;
-                    break;
                 case PageBlockBlockQuote blockquote:
-                    text = caption ? blockquote.Caption : blockquote.Text;
+                    text = caption ? blockquote.Credit : blockquote.Text;
                     break;
                 case PageBlockPullQuote pullquote:
-                    text = caption ? pullquote.Caption : pullquote.Text;
+                    text = caption ? pullquote.Credit : pullquote.Text;
+                    break;
+                case PageBlockDetails details:
+                    text = details.Header;
+                    break;
+                case PageBlockTable table:
+                    text = table.Caption;
+                    break;
+                case PageBlockRelatedArticles relatedArticles:
+                    text = relatedArticles.Header;
                     break;
             }
 
@@ -466,7 +748,7 @@ namespace Unigram.Views
             textBlock.TextWrapping = TextWrapping.Wrap;
 
             //textBlock.Margin = new Thickness(12, 0, 12, 12);
-            ProcessRichText(text, span);
+            ProcessRichText(text, span, textBlock);
 
             switch (block)
             {
@@ -481,68 +763,111 @@ namespace Unigram.Views
                     //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                     break;
                 case PageBlockHeader header:
-                    textBlock.FontSize = 24;
-                    textBlock.FontFamily = new FontFamily("Times New Roman");
-                    //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                    textBlock.Style = Resources["BlockHeaderTextBlockStyle"] as Style;
                     break;
                 case PageBlockSubheader subheader:
-                    textBlock.FontSize = 19;
-                    textBlock.FontFamily = new FontFamily("Times New Roman");
-                    //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                    textBlock.Style = Resources["BlockSubheaderTextBlockStyle"] as Style;
                     break;
                 case PageBlockParagraph paragraphz:
-                    textBlock.FontSize = 17;
+                    textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
                     break;
                 case PageBlockPreformatted preformatted:
                     textBlock.FontSize = 16;
                     break;
                 case PageBlockFooter footer:
-                    textBlock.FontSize = 15;
-                    textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
                     //textBlock.TextAlignment = TextAlignment.Center;
                     break;
                 case PageBlockPhoto photo:
                 case PageBlockVideo video:
-                    textBlock.FontSize = 15;
-                    textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
                     textBlock.TextAlignment = TextAlignment.Center;
                     break;
                 case PageBlockSlideshow slideshow:
                 case PageBlockEmbedded embed:
                 case PageBlockEmbeddedPost embedPost:
-                    textBlock.FontSize = 15;
-                    textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
                     //textBlock.TextAlignment = TextAlignment.Center;
                     break;
                 case PageBlockBlockQuote blockquote:
-                    textBlock.FontSize = caption ? 15 : 17;
                     if (caption)
                     {
-                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                        textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
                         textBlock.Margin = new Thickness(0, 12, 0, 0);
-                    }
-                    break;
-                case PageBlockPullQuote pullquote:
-                    textBlock.FontSize = caption ? 15 : 17;
-                    if (caption)
-                    {
-                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
                     }
                     else
                     {
+                        textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
+                    }
+                    break;
+                case PageBlockPullQuote pullquote:
+                    if (caption)
+                    {
+                        textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
+                    }
+                    else
+                    {
+                        textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
                         //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         textBlock.TextAlignment = TextAlignment.Center;
                     }
+                    break;
+                case PageBlockDetails details:
+                    textBlock.IsTextSelectionEnabled = false;
+                    break;
+                case PageBlockRelatedArticles relatedArticles:
+                    textBlock.Style = Resources["BlockRelatedArticlesHeaderStyle"] as Style;
                     break;
             }
 
             return textBlock;
         }
 
+        private FrameworkElement ProcessCaption(PageBlockCaption caption)
+        {
+            var textEmpty = caption.Text == null || caption.Text is RichTextPlain plain1 && string.IsNullOrEmpty(plain1.Text);
+            var citeEmpty = caption.Credit == null || caption.Credit is RichTextPlain plain2 && string.IsNullOrEmpty(plain2.Text);
+
+            if (textEmpty && citeEmpty)
+            {
+                return null;
+            }
+
+            var textBlock = new RichTextBlock();
+            var span = new Span();
+            var paragraph = new Paragraph();
+            paragraph.Inlines.Add(span);
+            textBlock.Blocks.Add(paragraph);
+            textBlock.TextWrapping = TextWrapping.Wrap;
+
+            if (!textEmpty)
+            {
+                ProcessRichText(caption.Text, span, textBlock);
+            }
+
+            if (!citeEmpty)
+            {
+                if (!textEmpty)
+                {
+                    span.Inlines.Add(new LineBreak());
+                }
+
+                ProcessRichText(caption.Credit, span, textBlock);
+            }
+
+            return textBlock;
+        }
+
+        private FrameworkElement ProcessUnsupported(PageBlock block)
+        {
+            return new TextBlock { Text = block.ToString() };
+        }
+
         private FrameworkElement ProcessPreformatted(PageBlockPreformatted block)
         {
             var element = new StackPanel { Style = Resources["BlockPreformattedStyle"] as Style };
+
 
             var text = ProcessText(block, false);
             if (text != null) element.Children.Add(text);
@@ -558,25 +883,38 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessList(PageBlockList block)
         {
-            var textBlock = new RichTextBlock();
-            textBlock.FontSize = 17;
-            textBlock.TextWrapping = TextWrapping.Wrap;
+            var panel = new Grid();
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            panel.ColumnDefinitions.Add(new ColumnDefinition());
 
-            for (int i = 0; i < block.Items.Count; i++)
+            var row = 0;
+
+            foreach (var item in block.Items)
             {
-                var text = block.Items[i];
-                var par = new Paragraph();
-                par.TextIndent = -24;
-                par.Margin = new Thickness(24, 0, 0, 0);
+                var label = new TextBlock { Text = item.Label, TextAlignment = TextAlignment.Right, Margin = new Thickness(0, 0, 8, 0) };
+                var stack = new StackPanel();
 
-                var span = new Span();
-                par.Inlines.Add(new Run { Text = block.IsOrdered ? (i + 1) + ".\t" : "•\t" });
-                par.Inlines.Add(span);
-                ProcessRichText(text, span);
-                textBlock.Blocks.Add(par);
+                foreach (var inner in item.PageBlocks)
+                {
+                    var child = ProcessBlock(inner);
+                    if (child != null)
+                    {
+                        stack.Children.Add(child);
+                    }
+                }
+
+                Grid.SetRow(label, row);
+                Grid.SetRow(stack, row);
+                Grid.SetColumn(stack, 1);
+
+                panel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                panel.Children.Add(label);
+                panel.Children.Add(stack);
+
+                row++;
             }
 
-            return textBlock;
+            return panel;
         }
 
         private FrameworkElement ProcessBlockquote(PageBlockBlockQuote block)
@@ -607,29 +945,29 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessPhoto(PageBlockPhoto block)
         {
-            var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, block.Photo, GetPlainText(block.Caption));
+            var galleryItem = new GalleryPhoto(ViewModel.ProtoService, block.Photo, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessagePhoto(block.Photo, null, false));
             var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
             var content = new PhotoContent(message);
-            content.Tag = message;
+            content.Tag = galleryItem;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
 
             foreach (var size in block.Photo.Sizes)
             {
-                _filesMap[size.Photo.Id].Add(content);
+                _filesMap[size.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
             element.Children.Add(content);
 
-            var caption = ProcessText(block, true);
+            var caption = ProcessCaption(block.Caption);
             if (caption != null)
             {
-                caption.Margin = new Thickness(0, 8, 0, 0);
+                caption.Margin = new Thickness(12, 8, 0, 0);
                 element.Children.Add(caption);
             }
 
@@ -638,31 +976,31 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessVideo(PageBlockVideo block)
         {
-            var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, block.Video, GetPlainText(block.Caption));
+            var galleryItem = new GalleryVideo(ViewModel.ProtoService, block.Video, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageVideo(block.Video, null, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new VideoContent(message);
-            content.Tag = message;
+            content.Tag = galleryItem;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
 
             if (block.Video.Thumbnail != null)
             {
-                _filesMap[block.Video.Thumbnail.Photo.Id].Add(content);
+                _filesMap[block.Video.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
-            _filesMap[block.Video.VideoValue.Id].Add(content);
+            _filesMap[block.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
             element.Children.Add(content);
 
-            var caption = ProcessText(block, true);
+            var caption = ProcessCaption(block.Caption);
             if (caption != null)
             {
-                caption.Margin = new Thickness(0, 8, 0, 0);
+                caption.Margin = new Thickness(12, 8, 0, 0);
                 element.Children.Add(caption);
             }
 
@@ -671,31 +1009,31 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessAnimation(PageBlockAnimation block)
         {
-            var galleryItem = new GalleryAnimationItem(ViewModel.ProtoService, block.Animation, GetPlainText(block.Caption));
+            var galleryItem = new GalleryAnimation(ViewModel.ProtoService, block.Animation, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = GetMessage(new MessageAnimation(block.Animation, null, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new AnimationContent(message);
-            content.Tag = message;
+            content.Tag = galleryItem;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
 
             if (block.Animation.Thumbnail != null)
             {
-                _filesMap[block.Animation.Thumbnail.Photo.Id].Add(content);
+                _filesMap[block.Animation.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
-            _filesMap[block.Animation.AnimationValue.Id].Add(content);
+            _filesMap[block.Animation.AnimationValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
             element.Children.Add(content);
 
-            var caption = ProcessText(block, true);
+            var caption = ProcessCaption(block.Caption);
             if (caption != null)
             {
-                caption.Margin = new Thickness(0, 8, 0, 0);
+                caption.Margin = new Thickness(12, 8, 0, 0);
                 element.Children.Add(caption);
             }
 
@@ -704,39 +1042,7 @@ namespace Unigram.Views
 
         private MessageViewModel GetMessage(MessageContent content)
         {
-            return new MessageViewModel(ViewModel.ProtoService, this, new Message { Content = content });
-        }
-
-        private string GetPlainText(RichText text)
-        {
-            switch (text)
-            {
-                case RichTextPlain plainText:
-                    return plainText.Text;
-                case RichTexts concatText:
-                    var builder = new StringBuilder();
-                    foreach (var concat in concatText.Texts)
-                    {
-                        builder.Append(GetPlainText(concat));
-                    }
-                    return builder.ToString();
-                case RichTextBold boldText:
-                    return GetPlainText(boldText.Text);
-                case RichTextEmailAddress emailText:
-                    return GetPlainText(emailText.Text);
-                case RichTextFixed fixedText:
-                    return GetPlainText(fixedText.Text);
-                case RichTextItalic italicText:
-                    return GetPlainText(italicText.Text);
-                case RichTextStrikethrough strikeText:
-                    return GetPlainText(strikeText.Text);
-                case RichTextUnderline underlineText:
-                    return GetPlainText(underlineText.Text);
-                case RichTextUrl urlText:
-                    return GetPlainText(urlText.Text);
-                default:
-                    return null;
-            }
+            return ViewModel.CreateMessage(this, new Message { Content = content });
         }
 
         private FrameworkElement ProcessEmbed(PageBlockEmbedded block)
@@ -790,10 +1096,10 @@ namespace Unigram.Views
 
             element.Children.Add(child);
 
-            var caption = ProcessText(block, true);
+            var caption = ProcessCaption(block.Caption);
             if (caption != null)
             {
-                caption.Margin = new Thickness(0, _padding, 0, 0);
+                caption.Margin = new Thickness(12, 8, 0, 0);
                 element.Children.Add(caption);
             }
 
@@ -809,43 +1115,43 @@ namespace Unigram.Views
             {
                 if (item is PageBlockPhoto photoBlock)
                 {
-                    var galleryItem = new GalleryPhotoItem(ViewModel.ProtoService, photoBlock.Photo, GetPlainText(block.Caption));
+                    var galleryItem = new GalleryPhoto(ViewModel.ProtoService, photoBlock.Photo, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false));
 
                     var content = new PhotoContent(message);
-                    content.Tag = message;
+                    content.Tag = galleryItem;
                     content.HorizontalAlignment = HorizontalAlignment.Center;
                     content.ClearValue(MaxWidthProperty);
                     content.ClearValue(MaxHeightProperty);
 
                     foreach (var size in photoBlock.Photo.Sizes)
                     {
-                        _filesMap[size.Photo.Id].Add(content);
+                        _filesMap[size.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
                     }
 
                     items.Add(content);
                 }
                 else if (item is PageBlockVideo videoBlock)
                 {
-                    var galleryItem = new GalleryVideoItem(ViewModel.ProtoService, videoBlock.Video, GetPlainText(block.Caption));
+                    var galleryItem = new GalleryVideo(ViewModel.ProtoService, videoBlock.Video, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = GetMessage(new MessageVideo(videoBlock.Video, null, false));
 
                     var content = new VideoContent(message);
-                    content.Tag = message;
+                    content.Tag = galleryItem;
                     content.HorizontalAlignment = HorizontalAlignment.Center;
                     content.ClearValue(MaxWidthProperty);
                     content.ClearValue(MaxHeightProperty);
 
                     if (videoBlock.Video.Thumbnail != null)
                     {
-                        _filesMap[videoBlock.Video.Thumbnail.Photo.Id].Add(content);
+                        _filesMap[videoBlock.Video.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
                     }
 
-                    _filesMap[videoBlock.Video.VideoValue.Id].Add(content);
+                    _filesMap[videoBlock.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
 
                     items.Add(content);
                 }
@@ -857,10 +1163,10 @@ namespace Unigram.Views
 
             element.Children.Add(flip);
 
-            var caption = ProcessText(block, true);
+            var caption = ProcessCaption(block.Caption);
             if (caption != null)
             {
-                caption.Margin = new Thickness(0, _padding, 0, 0);
+                caption.Margin = new Thickness(12, 8, 0, 0);
                 element.Children.Add(caption);
             }
 
@@ -880,7 +1186,7 @@ namespace Unigram.Views
                     //ViewModel.Gallery.Items.Add(galleryItem);
 
                     var child = new ImageView();
-                    child.Source = (ImageSource)DefaultPhotoConverter.Convert(photoBlock.Photo, true);
+                    //child.Source = (ImageSource)DefaultPhotoConverter.Convert(photoBlock.Photo, true);
                     //child.DataContext = galleryItem;
                     child.Click += Image_Click;
                     child.Width = 72;
@@ -896,7 +1202,7 @@ namespace Unigram.Views
                     //ViewModel.Gallery.Items.Add(galleryItem);
 
                     var child = new ImageView();
-                    child.Source = (ImageSource)DefaultPhotoConverter.Convert(videoBlock.Video, true);
+                    //child.Source = (ImageSource)DefaultPhotoConverter.Convert(videoBlock.Video, true);
                     //child.DataContext = galleryItem;
                     child.Click += Image_Click;
                     child.Width = 72;
@@ -931,10 +1237,10 @@ namespace Unigram.Views
 
             element.Children.Add(grid);
 
-            var caption = ProcessText(block, true);
+            var caption = ProcessCaption(block.Caption);
             if (caption != null)
             {
-                caption.Margin = new Thickness(0, _padding, 0, 0);
+                caption.Margin = new Thickness(12, 8, 0, 0);
                 element.Children.Add(caption);
             }
 
@@ -959,7 +1265,7 @@ namespace Unigram.Views
                 ellipse.Width = 36;
                 ellipse.Height = 36;
                 ellipse.Margin = new Thickness(0, 0, _padding, 0);
-                ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, true), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                //ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, true), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
                 Grid.SetRowSpan(ellipse, 2);
 
                 header.Children.Add(ellipse);
@@ -1012,67 +1318,60 @@ namespace Unigram.Views
             return element;
         }
 
-        private void ProcessRichText(RichText text, Span span)
+        private void ProcessRichText(RichText text, Span span, RichTextBlock textBlock)
+        {
+            int offset = 0;
+            ProcessRichText(text, span, textBlock, TextEffects.None, ref offset);
+        }
+
+        private void ProcessRichText(RichText text, Span span, RichTextBlock textBlock, TextEffects effects, ref int offset)
         {
             switch (text)
             {
                 case RichTextPlain plainText:
-                    if (GetIsStrikethrough(span))
+                    span.Inlines.Add(new Run { Text = plainText.Text });
+
+                    if (effects.HasFlag(TextEffects.Marked))
                     {
-                        span.Inlines.Add(new Run { Text = StrikethroughFallback(plainText.Text) });
+                        var highlight = new TextHighlighter();
+                        highlight.Background = new SolidColorBrush(Colors.PaleGoldenrod);
+                        highlight.Ranges.Add(new TextRange { StartIndex = offset, Length = plainText.Text.Length });
+
+                        textBlock.TextHighlighters.Add(highlight);
                     }
-                    else
-                    {
-                        span.Inlines.Add(new Run { Text = plainText.Text });
-                    }
+
+                    offset += plainText.Text.Length;
                     break;
                 case RichTexts concatText:
                     foreach (var concat in concatText.Texts)
                     {
                         var concatRun = new Span();
                         span.Inlines.Add(concatRun);
-                        ProcessRichText(concat, concatRun);
+                        ProcessRichText(concat, concatRun, textBlock, effects, ref offset);
                     }
                     break;
                 case RichTextBold boldText:
                     span.FontWeight = FontWeights.SemiBold;
-                    ProcessRichText(boldText.Text, span);
+                    ProcessRichText(boldText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextEmailAddress emailText:
-                    ProcessRichText(emailText.Text, span);
+                    ProcessRichText(emailText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextFixed fixedText:
                     span.FontFamily = new FontFamily("Consolas");
-                    ProcessRichText(fixedText.Text, span);
+                    ProcessRichText(fixedText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextItalic italicText:
                     span.FontStyle |= FontStyle.Italic;
-                    ProcessRichText(italicText.Text, span);
+                    ProcessRichText(italicText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextStrikethrough strikeText:
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
-                    {
-                        span.TextDecorations |= TextDecorations.Strikethrough;
-                        ProcessRichText(strikeText.Text, span);
-                    }
-                    else
-                    {
-                        SetIsStrikethrough(span, true);
-                        ProcessRichText(strikeText.Text, span);
-                    }
+                    span.TextDecorations |= TextDecorations.Strikethrough;
+                    ProcessRichText(strikeText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextUnderline underlineText:
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
-                    {
-                        span.TextDecorations |= TextDecorations.Underline;
-                        ProcessRichText(underlineText.Text, span);
-                    }
-                    else
-                    {
-                        var underline = new Underline();
-                        span.Inlines.Add(underline);
-                        ProcessRichText(underlineText.Text, underline);
-                    }
+                    span.TextDecorations |= TextDecorations.Underline;
+                    ProcessRichText(underlineText.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextUrl urlText:
                     try
@@ -1080,20 +1379,80 @@ namespace Unigram.Views
                         var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
                         span.Inlines.Add(hyperlink);
                         hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                        ProcessRichText(urlText.Text, hyperlink);
+                        ProcessRichText(urlText.Text, hyperlink, textBlock, effects, ref offset);
                     }
                     catch
                     {
-                        ProcessRichText(urlText.Text, span);
+                        ProcessRichText(urlText.Text, span, textBlock, effects, ref offset);
                         Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
                     }
                     break;
+                case RichTextAnchor anchor:
+                    // ???
+                    ProcessRichText(anchor.Text, span, textBlock, effects, ref offset);
+                    break;
+                case RichTextIcon icon:
+                    var photo = new Image { Width = icon.Width, Height = icon.Height };
+
+                    var file = icon.Document.DocumentValue;
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                    }
+                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        _iconsMap[file.Id].Add(photo);
+                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                    }
+                    var inline = new InlineUIContainer();
+                    inline.Child = photo;
+                    span.Inlines.Add(inline);
+                    break;
+                case RichTextMarked marked:
+                    // ???
+                    ProcessRichText(marked.Text, span, textBlock, effects | TextEffects.Marked, ref offset);
+                    break;
+                case RichTextPhoneNumber phoneNumber:
+                    try
+                    {
+                        var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
+                        span.Inlines.Add(hyperlink);
+                        hyperlink.Click += (s, args) => Hyperlink_Click(phoneNumber);
+                        ProcessRichText(phoneNumber.Text, hyperlink, textBlock, effects, ref offset);
+                    }
+                    catch
+                    {
+                        ProcessRichText(phoneNumber.Text, span, textBlock, effects, ref offset);
+                        Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
+                    }
+                    break;
+                case RichTextSubscript subscript:
+                    Typography.SetVariants(span, FontVariants.Subscript);
+                    ProcessRichText(subscript.Text, span, textBlock, effects, ref offset);
+                    break;
+                case RichTextSuperscript superscript:
+                    Typography.SetVariants(span, FontVariants.Superscript);
+                    ProcessRichText(superscript.Text, span, textBlock, effects, ref offset);
+                    break;
             }
+        }
+
+        [Flags]
+        private enum TextEffects
+        {
+            None,
+            Link,
+            Marked
         }
 
         private double SpacingBetweenBlocks(PageBlock upper, PageBlock lower)
         {
             if (lower is PageBlockCover || lower is PageBlockChatLink)
+            {
+                return 0;
+            }
+
+            if (upper is PageBlockDetails && lower is PageBlockDetails)
             {
                 return 0;
             }
@@ -1226,7 +1585,7 @@ namespace Unigram.Views
         private async void Image_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as ImageView;
-            var item = image.DataContext as GalleryItem;
+            var item = image.DataContext as GalleryContent;
             if (item != null)
             {
                 ViewModel.Gallery.SelectedItem = item;
@@ -1238,11 +1597,11 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(RichTextUrl urlText)
         {
-            if (IsCurrentPage(ViewModel.ShareLink, urlText.Url, out string fragment))
+            if (_instantView != null && IsCurrentPage(_instantView.Url, urlText.Url, out string fragment))
             {
                 if (_anchors.TryGetValue(fragment, out Border anchor))
                 {
-                    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
+                    await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
                 }
             }
             else
@@ -1261,7 +1620,7 @@ namespace Unigram.Views
 
                     if (MessageHelper.IsTelegramUrl(uri))
                     {
-                        MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.NavigationService, urlText.Url);
+                        MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.NavigationService, uri);
                     }
                     else
                     {
@@ -1271,12 +1630,17 @@ namespace Unigram.Views
             }
         }
 
-        private bool IsCurrentPage(Uri current, string url, out string fragment)
+        private async void Hyperlink_Click(RichTextPhoneNumber phoneNumber)
         {
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri result))
+
+        }
+
+        private bool IsCurrentPage(string bae, string url, out string fragment)
+        {
+            if (Uri.TryCreate(bae, UriKind.Absolute, out Uri current) && Uri.TryCreate(url, UriKind.Absolute, out Uri result))
             {
                 fragment = result.Fragment.Length > 0 ? result.Fragment?.Substring(1) : null;
-                return Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
+                return fragment != null && Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
             }
 
             fragment = null;
@@ -1293,43 +1657,18 @@ namespace Unigram.Views
             catch { }
         }
 
-        #region Strikethrough
-
-        private string StrikethroughFallback(string text)
-        {
-            var sb = new StringBuilder(text.Length * 2);
-            foreach (var ch in text)
-            {
-                sb.Append((char)0x0336);
-                sb.Append(ch);
-            }
-
-            return sb.ToString();
-        }
-
-        public static bool GetIsStrikethrough(DependencyObject obj)
-        {
-            return (bool)obj.GetValue(IsStrikethroughProperty);
-        }
-
-        public static void SetIsStrikethrough(DependencyObject obj, bool value)
-        {
-            obj.SetValue(IsStrikethroughProperty, value);
-        }
-
-        public static readonly DependencyProperty IsStrikethroughProperty =
-            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(InstantPage), new PropertyMetadata(false));
-
-        #endregion
-
         #region Delegate
 
         public bool CanBeDownloaded(MessageViewModel message)
         {
-            return !ViewModel.ProtoService.Preferences.Disabled;
+            return !ViewModel.Settings.AutoDownload.Disabled;
         }
 
         public void DownloadFile(MessageViewModel message, File file)
+        {
+        }
+
+        public void ReplyToMessage(MessageViewModel message)
         {
         }
 
@@ -1353,16 +1692,25 @@ namespace Unigram.Views
         {
         }
 
+        public void OpenLiveLocation(MessageViewModel message)
+        {
+
+        }
+
         public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
         {
         }
 
         public async void OpenMedia(MessageViewModel message, FrameworkElement target)
         {
-            //ViewModel.Gallery.SelectedItem = item;
-            //ViewModel.Gallery.FirstItem = item;
-            ViewModel.Gallery.SelectedItem = ViewModel.Gallery.Items.FirstOrDefault();
-            ViewModel.Gallery.FirstItem = ViewModel.Gallery.Items.FirstOrDefault();
+            var content = target.Tag as GalleryContent;
+            if (content == null)
+            {
+                content = ViewModel.Gallery.Items.FirstOrDefault();
+            }
+
+            ViewModel.Gallery.SelectedItem = content;
+            ViewModel.Gallery.FirstItem = content;
 
             await GalleryView.GetForCurrentView().ShowAsync(ViewModel.Gallery, () => target);
         }
@@ -1409,6 +1757,11 @@ namespace Unigram.Views
         }
 
         public void Call(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VotePoll(MessageViewModel message, PollOption option)
         {
             throw new NotImplementedException();
         }

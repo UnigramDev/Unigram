@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
@@ -19,13 +18,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class GameContent : StackPanel, IContent
+    public sealed partial class GameContent : StackPanel, IContentWithFile
     {
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public GameContent(MessageViewModel message)
         {
@@ -44,8 +42,6 @@ namespace Unigram.Controls.Messages.Content
             }
 
             TitleLabel.Text = game.Game.Title;
-            Texture.Constraint = game.Game.Animation ?? (object)game.Game.Photo;
-            Texture.Source = DefaultPhotoConverter.Convert(game.Game.Animation ?? (object)game.Game.Photo, false) as ImageSource;
 
             if (game.Game.Text == null || string.IsNullOrEmpty(game.Game.Text.Text))
             {
@@ -56,6 +52,42 @@ namespace Unigram.Controls.Messages.Content
             {
                 Span.Inlines.Clear();
                 ReplaceEntities(Span, game.Game.Text);
+            }
+
+            UpdateContent(message, game.Game);
+        }
+
+        public void UpdateMessageContentOpened(MessageViewModel message) { }
+
+        private void UpdateContent(MessageViewModel message, Game game)
+        {
+            if (Media.Child is IContent content && content.IsValid(message.Content, false))
+            {
+                content.UpdateMessage(message);
+            }
+            else
+            {
+                if (game.Animation != null)
+                {
+                    Media.Child = new AnimationContent(message);
+                }
+                else if (game.Photo != null)
+                {
+                    // Photo at last: web page preview might have both a file and a thumbnail
+                    Media.Child = new PhotoContent(message);
+                }
+                else
+                {
+                    Media.Child = null;
+                }
+            }
+        }
+
+        public void UpdateFile(MessageViewModel message, File file)
+        {
+            if (Media.Child is IContentWithFile content && content.IsValid(message.Content, false))
+            {
+                content.UpdateFile(message, file);
             }
         }
 
@@ -167,7 +199,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.Send(new DownloadFile(file.Id, 1));
+                _message.ProtoService.DownloadFile(file.Id, 32);
             }
             else
             {

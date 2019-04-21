@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "NotificationTask.h"
-#include "VoIPCallTask.h"
 
 #include <ios>
 #include <fstream>
@@ -143,7 +142,8 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 		auto sound = data->GetNamedString("sound", "Default");
 		auto launch = GetLaunch(custom, loc_key);
 		auto group = GetGroup(custom);
-		auto picture = GetPicture(custom, group);
+		auto session = GetSession(data);
+		auto picture = GetPicture(custom, group, session);
 		auto date = GetDate(notification);
 
 		if (message == nullptr)
@@ -158,14 +158,30 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 		{
-			UpdateToast(caption, message, L"", L"0", sound, launch, L"phoneCall", group, picture, date, loc_key);
+			UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, nullptr, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
+			std::wstring key = loc_key->Data();
+			if ((key.find(L"CONTACT_JOINED") == 0 || key.find(L"PINNED") == 0) && ApplicationData::Current->LocalSettings->Values->HasKey(session))
+			{
+				auto settings = safe_cast<ApplicationDataCompositeValue^>(ApplicationData::Current->LocalSettings->Values->Lookup(session));
+				auto notifications = safe_cast<ApplicationDataCompositeValue^>(settings->Lookup(L"Notifications"));
+
+				if (key.find(L"CONTACT_JOINED") == 0 && notifications->HasKey(L"IsContactEnabled") && safe_cast<bool>(notifications->Lookup(L"IsContactEnabled")))
+				{
+					return;
+				}
+				else if (key.find(L"PINNED") == 0 && notifications->HasKey(L"IsPinnedEnabled") && safe_cast<bool>(notifications->Lookup(L"IsPinnedEnabled")))
+				{
+					return;
+				}
+			}
+
 			auto tag = GetTag(custom);
-			UpdateToast(caption, message, L"", L"0", sound, launch, tag, group, picture, date, loc_key);
-			UpdatePrimaryBadge(data->GetNamedNumber("badge"));
+			UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key);
+			//UpdatePrimaryBadge(data->GetNamedNumber(L"badge", 0));
 
 			if (loc_key != L"DC_UPDATE")
 			{
@@ -209,7 +225,7 @@ String^ NotificationTask::GetCaption(JsonArray^ loc_args, String^ loc_key)
 
 String^ NotificationTask::GetMessage(JsonArray^ loc_args, String^ loc_key)
 {
-	auto resourceLoader = ResourceLoader::GetForViewIndependentUse("Unigram.Tasks/Resources");
+	auto resourceLoader = ResourceLoader::GetForViewIndependentUse("Unigram.Native.Tasks/Resources");
 	auto text = resourceLoader->GetString(loc_key);
 	if (text->Length())
 	{
@@ -314,7 +330,7 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 	return nullptr;
 }
 
-String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
+String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group, String^ session)
 {
 	if (custom && custom->HasKey("mtpeer"))
 	{
@@ -322,6 +338,11 @@ String^ NotificationTask::GetPicture(JsonObject^ custom, String^ group)
 		if (mtpeer->HasKey("ph"))
 		{
 			auto ph = mtpeer->GetNamedObject("ph");
+			if (ph->HasKey("_layers") && ph->HasKey("1"))
+			{
+				ph = ph->GetNamedObject("1");
+			}
+
 			auto volume_id = ph->GetNamedString("volume_id");
 			auto local_id = ph->GetNamedString("local_id");
 
@@ -355,9 +376,22 @@ String^ NotificationTask::GetDate(JsonObject^ notification)
 	const time_t rawtime = notification->GetNamedNumber(L"date");
 	struct tm dt;
 	wchar_t buffer[30];
-	localtime_s(&dt, &rawtime);
-	wcsftime(buffer, sizeof(buffer), L"%FT%T%zZ", &dt);
+	gmtime_s(&dt, &rawtime);
+	wcsftime(buffer, sizeof(buffer), L"%FT%TZ", &dt);
 	return ref new String(buffer);
+}
+
+String^ NotificationTask::GetSession(JsonObject^ data)
+{
+	auto user_id = (int)data->GetNamedNumber(L"user_id", 0);
+	auto key = String::Concat(L"User", user_id);
+
+	if (ApplicationData::Current->LocalSettings->Values->HasKey(key))
+	{
+		return ApplicationData::Current->LocalSettings->Values->Lookup(key)->ToString();
+	}
+
+	return nullptr;
 }
 
 void NotificationTask::UpdatePrimaryBadge(int badgeNumber)
@@ -624,9 +658,9 @@ void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, Strin
 //	updater->Update(notification);
 //}
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
+void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key)
 {
-	bool allow = false;
+	bool allow = true;
 	//auto settings = ApplicationData::Current->LocalSettings;
 	//if (settings->Values->HasKey("SessionGuid"))
 	//{
@@ -653,9 +687,12 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 	std::wstring actions = L"";
 	if (group != nullptr && key.find(L"CHANNEL") && allow)
 	{
-		actions = L"<actions><input id='QuickMessage' type='text' placeHolderContent='Type a message...' /><action activationType='background' arguments='";
+		actions = L"<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
 		actions += launch->Data();
-		actions += L"' hint-inputId='QuickMessage' content='Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+		//actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+		actions += L"' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
+		actions += launch->Data();
+		actions += L"' content='ms-resource:Send'/></actions>";
 	}
 
 	std::wstring audio = L"";
@@ -666,7 +703,7 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 
 	std::wstring xml = L"<toast launch='";
 	xml += launch->Data();
-	xml += L"' displaytimestamp='";
+	xml += L"' displayTimestamp='";
 	xml += date->Data();
 	//xml += L"' hint-people='remoteid:";
 	//xml += group->Data();
@@ -688,7 +725,16 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 	xml += L"]]></text><text><![CDATA[";
 	xml += message->Data();
 	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
-	xml += L"]]></text><text placement='attribution'><![CDATA[";
+	xml += L"]]></text>";
+
+	if (hero != nullptr && hero->Length())
+	{
+		xml += L"<image src='";
+		xml += hero->Data();
+		xml += L"'/>";
+	}
+
+	xml += L"<text placement='attribution'><![CDATA[";
 	xml += attribution->Data();
 	xml += L"]]></text></binding></visual>";
 	xml += actions;

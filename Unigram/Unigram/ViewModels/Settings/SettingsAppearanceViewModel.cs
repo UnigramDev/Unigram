@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Windows.UI.Xaml;
 using Unigram.Services;
+using Unigram.Services.Settings;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -23,7 +25,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                var size = (int)Theme.Current.GetValueOrDefault("MessageFontSize", 15d);
+                var size = (int)Theme.Current.GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d);
                 if (_sizeToIndex.TryGetValue(size, out int index))
                 {
                     return (double)index;
@@ -75,7 +77,7 @@ namespace Unigram.ViewModels.Settings
                 Settings.Appearance.RequestedTheme = IsSystemTheme ? (TelegramTheme)value : ((TelegramTheme)value | TelegramTheme.Brand);
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => IsSystemTheme);
-                RaisePropertyChanged(() => IsThemeChanged);
+                RaisePropertyChanged(() => IsNightModeAvailable);
             }
         }
 
@@ -90,15 +92,63 @@ namespace Unigram.ViewModels.Settings
                 Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => RequestedTheme);
-                RaisePropertyChanged(() => IsThemeChanged);
             }
         }
 
-        public bool IsThemeChanged
+        public bool IsNightModeAvailable
         {
             get
             {
-                return Settings.Appearance.CurrentTheme != Settings.Appearance.RequestedTheme;
+                return Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light);
+            }
+        }
+
+        public NightMode NightMode
+        {
+            get
+            {
+                return Settings.Appearance.NightMode;
+            }
+        }
+
+
+
+        public bool AreAnimationsEnabled
+        {
+            get
+            {
+                return Settings.AreAnimationsEnabled;
+            }
+            set
+            {
+                Settings.AreAnimationsEnabled = value;
+                RaisePropertyChanged(() => AreAnimationsEnabled);
+            }
+        }
+
+        public bool IsSendByEnterEnabled
+        {
+            get
+            {
+                return Settings.IsSendByEnterEnabled;
+            }
+            set
+            {
+                Settings.IsSendByEnterEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsReplaceEmojiEnabled
+        {
+            get
+            {
+                return Settings.IsReplaceEmojiEnabled;
+            }
+            set
+            {
+                Settings.IsReplaceEmojiEnabled = value;
+                RaisePropertyChanged();
             }
         }
     }

@@ -46,10 +46,10 @@ namespace Unigram.Controls.Views
             {
                 if (string.IsNullOrWhiteSpace(TextFirstName.Text))
                 {
-                    return TextLastName.Text;
+                    return TextLastName.Text ?? string.Empty;
                 }
 
-                return TextFirstName.Text;
+                return TextFirstName.Text ?? string.Empty;
             }
             private set
             {
@@ -63,10 +63,10 @@ namespace Unigram.Controls.Views
             {
                 if (string.IsNullOrWhiteSpace(TextFirstName.Text))
                 {
-                    return null;
+                    return string.Empty;
                 }
 
-                return TextLastName.Text;
+                return TextLastName.Text ?? string.Empty;
             }
             private set
             {

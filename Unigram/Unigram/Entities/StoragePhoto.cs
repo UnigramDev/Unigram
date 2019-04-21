@@ -6,8 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
-using Unigram.Core.Common;
-using Unigram.Core.Helpers;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -57,24 +56,24 @@ namespace Unigram.Entities
         //    }
         //}
 
-        public Task<StorageFile> GetFileAsync()
-        {
-            if (IsCropped)
-            {
-                return ImageHelper.CropAsync(File, CropRectangle.Value);
-            }
-
-            return Task.FromResult(File);
-        }
-
         public ImageProperties Properties { get; private set; }
 
         public new static async Task<StoragePhoto> CreateAsync(StorageFile file, bool selected)
         {
             try
             {
+                if (!file.IsAvailable)
+                {
+                    return null;
+                }
+
                 var basic = await file.GetBasicPropertiesAsync();
                 var image = await file.Properties.GetImagePropertiesAsync();
+
+                if (image.Width >= 20 * image.Height || image.Height >= 20 * image.Width)
+                {
+                    return null;
+                }
 
                 if (image.Width > 0 && image.Height > 0)
                 {

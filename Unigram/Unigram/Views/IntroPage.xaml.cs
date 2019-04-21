@@ -45,6 +45,11 @@ namespace Unigram.Views
             SetIndex(_selectedIndex = 0);
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Start.Focus(FocusState.Keyboard);
+        }
+
         private void SwapChain_Loaded(object sender, RoutedEventArgs e)
         {
             //if (_renderer == null)

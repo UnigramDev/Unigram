@@ -5,6 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Services;
+using Unigram.Services.Settings;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -31,77 +34,66 @@ namespace Unigram.Common
                 this.Add("MessageServiceBackgroundBrush", GetBrushOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
                 this.Add("MessageServiceBackgroundPressedBrush", GetBrushOrDefault("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96)));
 
-                this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 15d));
+                this.Add("MessageServiceBackgroundColor", GetColorOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
+
+                this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d));
             }
             catch { }
         }
 
-        public void UpdateCustom()
-        {
-            try
-            {
-                var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
-                if (accent == null)
-                {
-                    return;
-                }
+        //public void UpdateCustom()
+        //{
+        //    try
+        //    {
+        //        var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
+        //        if (accent == null)
+        //        {
+        //            return;
+        //        }
 
-                var fileName = FileUtils.GetFileName("colors.palette");
-                if (File.Exists(fileName))
-                {
-                    var text = File.ReadAllText(fileName);
+        //        var fileName = FileUtils.GetFileName("colors.palette");
+        //        if (File.Exists(fileName))
+        //        {
+        //            var text = File.ReadAllText(fileName);
 
-                    try
-                    {
-                        var dictionary = XamlReader.Load(text) as ResourceDictionary;
-                        if (dictionary == null)
-                        {
-                            return;
-                        }
+        //            try
+        //            {
+        //                var dictionary = XamlReader.Load(text) as ResourceDictionary;
+        //                if (dictionary == null)
+        //                {
+        //                    return;
+        //                }
 
-                        accent.MergedDictionaries.Clear();
-                        accent.MergedDictionaries.Add(dictionary);
-                    }
-                    catch
-                    {
-                        File.Delete(fileName);
-                        Update();
-                    }
-                }
-                else
-                {
-                    accent.MergedDictionaries.Clear();
-                }
-            }
-            catch { }
-        }
+        //                accent.MergedDictionaries.Clear();
+        //                accent.MergedDictionaries.Add(dictionary);
+        //            }
+        //            catch
+        //            {
+        //                File.Delete(fileName);
+        //                Update();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            accent.MergedDictionaries.Clear();
+        //        }
+        //    }
+        //    catch { }
+        //}
 
         public void Update()
         {
             try
             {
-                var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
-                if (accent == null)
-                {
-                    return;
-                }
-
                 if (GetValueOrDefault("Theme", TelegramTheme.Default | TelegramTheme.Brand).HasFlag(TelegramTheme.Brand))
                 {
-                    try
-                    {
-                        accent.MergedDictionaries.Clear();
-                        accent.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/Brand.xaml") });
-                    }
-                    catch
-                    {
-                        // Turn off
-                        Update();
-                    }
+                    MergedDictionaries.Clear();
+                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
                 }
                 else
                 {
-                    accent.MergedDictionaries.Clear();
+                    MergedDictionaries.Clear();
+                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeSystem.xaml") });
                 }
             }
             catch { }

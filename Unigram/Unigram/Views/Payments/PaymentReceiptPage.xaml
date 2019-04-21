@@ -8,6 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <EntranceNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -16,7 +24,7 @@
         <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.Receipt.Invoice.IsTest), FallbackValue=Receipt}"/>
 
         <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"
             Grid.Row="1"/>
@@ -25,16 +33,16 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,48">
-                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="12" Margin="0,0,0,12">
+                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" Padding="12" Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
                     <Border Width="80" Height="80" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="3">
-                        <Border.Background>
+                        <!--<Border.Background>
                             <ImageBrush ImageSource="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                        </Border.Background>
+                        </Border.Background>-->
                     </Border>
 
                     <StackPanel Grid.Column="1">

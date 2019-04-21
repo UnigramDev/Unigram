@@ -49,7 +49,7 @@ namespace Unigram.Common
                 markdown = Regex.Replace(markdown, "<a href=\"(.*?)\">(.*?)<\\/a>", "[$2]($1)");
             }
 
-            var entities = Markdown.Parse(null, ref markdown);
+            var entities = Markdown.Parse(ref markdown);
             var text = markdown;
             var previous = 0;
 

@@ -1,4 +1,4 @@
-<local:MessageBubbleBase
+<StackPanel
     x:Class="Unigram.Controls.Messages.MessageBubble"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,17 +9,15 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Margin="{ThemeResource MessageContentMargin}"
-    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="{ThemeResource MessageMaxWidth}">
+    Margin="{StaticResource MessageContentMargin}"
+    MaxWidth="{StaticResource MessageMaxWidth}">
 
-    <UserControl x:Name="LayoutRoot">
+    <UserControl x:Name="LayoutRoot" IsTabStop="False">
         <Grid x:Name="ContentPanel"
-              Padding="{ThemeResource MessageContentPadding}"
-              CornerRadius="{ThemeResource MessageCornerRadius}"
-              Background="{ThemeResource MessageBackgroundBrush}"
-              BorderBrush="{ThemeResource MessageBackgroundBrush}"
-              BorderThickness="0,0,0,0">
+              MinHeight="30"
+              Padding="{StaticResource MessageContentPadding}"
+              CornerRadius="{StaticResource MessageCornerRadius}"
+              Background="{ThemeResource MessageBackgroundBrush}">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>
@@ -28,18 +26,17 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.Background" Value="Transparent"/>
+                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
                             <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
+                            <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
                             <Setter Target="Header.(Grid.Row)" Value="3"/>
-                            <Setter Target="Reply.Margin" Value="0,4,0,2"/>
-                            <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
-                            <Setter Target="Header.Margin" Value="-12,-4,12,0"/>
+                            <Setter Target="Header.Margin" Value="-14,-4,14,0"/>
                             <Setter Target="Header.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Message.(Grid.Column)" Value="2"/>
@@ -52,14 +49,13 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.Background" Value="Transparent"/>
+                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
                             <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
+                            <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
                             <Setter Target="Header.(Grid.Row)" Value="3"/>
-                            <Setter Target="Reply.Margin" Value="0,4,0,2"/>
-                            <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
@@ -107,7 +103,6 @@
                 <TextBlock x:Name="HeaderLabel"
                            Margin="0,0,0,2"
                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            TextTrimming="CharacterEllipsis"
                            TextWrapping="NoWrap"
@@ -117,7 +112,6 @@
                 <TextBlock x:Name="AdminLabel"
                            Text="{CustomResource ChatAdmin}"
                            Foreground="{ThemeResource MessageSubtleLabelBrush}"
-                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            HorizontalAlignment="Right"
                            Visibility="Collapsed"
@@ -128,25 +122,19 @@
 
             <RichTextBlock
                 x:Name="Message"
-                Style="{ThemeResource BodyRichTextBlockStyle}"
-                FontSize="{ThemeResource MessageFontSize}"
+                Style="{StaticResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
-                ContextRequested="Message_ContextRequested"
                 ContextMenuOpening="Message_ContextMenuOpening"
+                TextAlignment="DetectFromContent"
                 Grid.Column="1"
                 Grid.Row="2">
-                <RichTextBlock.Resources>
-                    <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                </RichTextBlock.Resources>
                 <Paragraph>
                     <Span x:Name="Span"/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
                 </Paragraph>
             </RichTextBlock>
 
-            <ContentControl
+            <Border
                 x:Name="Media"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch"
                 Grid.Column="1"
                 Grid.Row="3"/>
 
@@ -163,4 +151,5 @@
 
     <controls:ReplyMarkupPanel x:Name="Markup" InlineButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,0"/>
 
-</local:MessageBubbleBase>
+</StackPanel>
+    

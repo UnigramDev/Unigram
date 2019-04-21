@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="About" xml:space="preserve">
-    <value>Про програму</value>
-  </data>
   <data name="Chats" xml:space="preserve">
     <value>Чати</value>
   </data>
@@ -141,5 +138,8 @@
   </data>
   <data name="Select" xml:space="preserve">
     <value>Вибрати</value>
+  </data>
+  <data name="ShowInFolder" xml:space="preserve">
+    <value>Показати в теці</value>
   </data>
 </root>

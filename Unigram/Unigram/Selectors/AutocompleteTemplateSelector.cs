@@ -17,6 +17,7 @@ namespace Unigram.Selectors
         public DataTemplate CommandTemplate { get; set; }
         public DataTemplate HashtagTemplate { get; set; }
         public DataTemplate EmojiTemplate { get; set; }
+        public DataTemplate ItemTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -32,6 +33,8 @@ namespace Unigram.Selectors
             {
                 return EmojiTemplate;
             }
+
+            //return ItemTemplate;
 
             return base.SelectTemplateCore(item, container);
         }

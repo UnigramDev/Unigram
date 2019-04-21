@@ -10,15 +10,14 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Core.Common;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Native.Tasks;
 using Unigram.Entities;
-using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Dialogs;
 using Unigram.Views;
@@ -34,6 +33,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Services.Factories;
+using Windows.ApplicationModel.DataTransfer;
+using Unigram.Common.Chats;
+using Unigram.ViewModels.Chats;
+using Unigram.Controls.Chats;
 
 namespace Unigram.ViewModels
 {
@@ -60,21 +64,21 @@ namespace Unigram.ViewModels
         {
             var messages = vector.ToList();
 
-            //for (int i = 0; i < messages.Count; i++)
-            //{
-            //    if (messages[i] is TLMessage message && message.Media is TLMessageMediaGroup groupMedia)
-            //    {
-            //        messages.RemoveAt(i);
+            for (int i = 0; i < messages.Count; i++)
+            {
+                if (messages[i].Content is MessageAlbum album)
+                {
+                    messages.RemoveAt(i);
 
-            //        for (int j = 0; j < groupMedia.Layout.Messages.Count; j++)
-            //        {
-            //            messages.Insert(i, groupMedia.Layout.Messages[j]);
-            //            i++;
-            //        }
+                    for (int j = 0; j < album.Layout.Messages.Count; j++)
+                    {
+                        messages.Insert(i, album.Layout.Messages[j]);
+                        i++;
+                    }
 
-            //        i--;
-            //    }
-            //}
+                    i--;
+                }
+            }
 
             SelectedItems = messages;
         }
@@ -89,8 +93,10 @@ namespace Unigram.ViewModels
 
         private readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
-        private static readonly Dictionary<long, long> _scrollingIndex = new Dictionary<long, long>();
-        private static readonly Dictionary<long, double> _scrollingPixel = new Dictionary<long, double>();
+        private static readonly ConcurrentDictionary<long, long> _scrollingIndex = new ConcurrentDictionary<long, long>();
+        private static readonly ConcurrentDictionary<long, double> _scrollingPixel = new ConcurrentDictionary<long, double>();
+
+        private static readonly ConcurrentDictionary<long, IList<int>> _admins = new ConcurrentDictionary<long, IList<int>>();
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly DisposableMutex _insertLock = new DisposableMutex();
@@ -101,12 +107,16 @@ namespace Unigram.ViewModels
         private readonly INotificationsService _pushService;
         private readonly IPlaybackService _playbackService;
         private readonly IVoIPService _voipService;
+        private readonly INetworkService _networkService;
+        private readonly IMessageFactory _messageFactory;
+
+        public IPlaybackService PlaybackService => _playbackService;
 
         //private UserActivitySession _timelineSession;
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService, IVoIPService voipService)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, ILiveLocationService liveLocationService, INotificationsService pushService, IPlaybackService playbackService, IVoIPService voipService, INetworkService networkService, IMessageFactory messageFactory)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = locationService;
@@ -114,8 +124,11 @@ namespace Unigram.ViewModels
             _pushService = pushService;
             _playbackService = playbackService;
             _voipService = voipService;
+            _networkService = networkService;
+            _messageFactory = messageFactory;
 
-            _stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
+            //_stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
+            _stickers = DialogStickersViewModel.GetForCurrentView(protoService, cacheService, settingsService, aggregator);
 
             _informativeTimer = new DispatcherTimer();
             _informativeTimer.Interval = TimeSpan.FromSeconds(5);
@@ -128,7 +141,6 @@ namespace Unigram.ViewModels
             NextMentionCommand = new RelayCommand(NextMentionExecute);
             PreviousSliceCommand = new RelayCommand(PreviousSliceExecute);
             ClearReplyCommand = new RelayCommand(ClearReplyExecute);
-            PinnedCommand = new RelayCommand(PinnedExecute);
             JoinChannelCommand = new RelayCommand(JoinChannelExecute);
             ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
             MuteCommand = new RelayCommand(() => ToggleMuteExecute(false));
@@ -138,15 +150,13 @@ namespace Unigram.ViewModels
             ReportSpamCommand = new RelayCommand(ReportSpamExecute);
             ReportCommand = new RelayCommand(ReportExecute);
             OpenStickersCommand = new RelayCommand(OpenStickersExecute);
-            DialogDeleteCommand = new RelayCommand(DialogDeleteExecute);
-            DialogClearCommand = new RelayCommand(DialogClearExecute);
+            ChatDeleteCommand = new RelayCommand(ChatDeleteExecute);
+            ChatClearCommand = new RelayCommand(ChatClearExecute);
             CallCommand = new RelayCommand(CallExecute);
             UnpinMessageCommand = new RelayCommand(UnpinMessageExecute);
             UnblockCommand = new RelayCommand(UnblockExecute);
             ShareContactCommand = new RelayCommand(ShareContactExecute);
             AddContactCommand = new RelayCommand(AddContactExecute);
-            PinChatCommand = new RelayCommand(PinChatExecute, CanExecutePinChatCommand);
-            UnpinChatCommand = new RelayCommand(UnpinChatExecute, CanUnpinChatExecute);
             StartCommand = new RelayCommand(StartExecute);
             SearchCommand = new RelayCommand(SearchExecute);
             JumpDateCommand = new RelayCommand(JumpDateExecute);
@@ -156,13 +166,15 @@ namespace Unigram.ViewModels
             SwitchCommand = new RelayCommand<string>(SwitchExecute);
             SetTimerCommand = new RelayCommand(SetTimerExecute);
             ActionCommand = new RelayCommand(ActionExecute);
+            OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
             MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
             MessagesReportCommand = new RelayCommand(MessagesReportExecute, MessagesReportCanExecute);
 
-            MessageReplyLastCommand = new RelayCommand(MessageReplyLastExecute);
+            MessageReplyPreviousCommand = new RelayCommand(MessageReplyPreviousExecute);
+            MessageReplyNextCommand = new RelayCommand(MessageReplyNextExecute);
             MessageReplyCommand = new RelayCommand<MessageViewModel>(MessageReplyExecute);
             MessageDeleteCommand = new RelayCommand<MessageViewModel>(MessageDeleteExecute);
             MessageForwardCommand = new RelayCommand<MessageViewModel>(MessageForwardExecute);
@@ -175,35 +187,59 @@ namespace Unigram.ViewModels
             MessageEditCommand = new RelayCommand<MessageViewModel>(MessageEditExecute);
             MessagePinCommand = new RelayCommand<MessageViewModel>(MessagePinExecute);
             MessageReportCommand = new RelayCommand<MessageViewModel>(MessageReportExecute);
-            MessageStickerPackInfoCommand = new RelayCommand<MessageViewModel>(MessageStickerPackInfoExecute);
+            MessageAddStickerCommand = new RelayCommand<MessageViewModel>(MessageAddStickerExecute);
             MessageFaveStickerCommand = new RelayCommand<MessageViewModel>(MessageFaveStickerExecute);
             MessageUnfaveStickerCommand = new RelayCommand<MessageViewModel>(MessageUnfaveStickerExecute);
             MessageSaveMediaCommand = new RelayCommand<MessageViewModel>(MessageSaveMediaExecute);
             MessageSaveDownloadCommand = new RelayCommand<MessageViewModel>(MessageSaveDownloadExecute);
             MessageSaveAnimationCommand = new RelayCommand<MessageViewModel>(MessageSaveAnimationExecute);
+            MessageOpenFolderCommand = new RelayCommand<MessageViewModel>(MessageOpenFolderExecute);
             MessageAddContactCommand = new RelayCommand<MessageViewModel>(MessageAddContactExecute);
             MessageServiceCommand = new RelayCommand<MessageViewModel>(MessageServiceExecute);
+            MessageUnvotePollCommand = new RelayCommand<MessageViewModel>(MessageUnvotePollExecute);
+            MessageStopPollCommand = new RelayCommand<MessageViewModel>(MessageStopPollExecute);
 
             SendStickerCommand = new RelayCommand<Sticker>(SendStickerExecute);
             SendAnimationCommand = new RelayCommand<Animation>(SendAnimationExecute);
-            SendFileCommand = new RelayCommand(SendFileExecute);
+            SendDocumentCommand = new RelayCommand(SendDocumentExecute);
             SendMediaCommand = new RelayCommand(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
+            SendPollCommand = new RelayCommand(SendPollExecute);
+
+            EditDocumentCommand = new RelayCommand(EditDocumentExecute);
+            EditMediaCommand = new RelayCommand(EditMediaExecute);
+            EditCurrentCommand = new RelayCommand(EditCurrentExecute);
 
             //Items = new LegacyMessageCollection();
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
             Aggregator.Subscribe(this);
+            Window.Current.Activated += Window_Activated;
         }
 
         //~DialogViewModel()
         //{
         //    Debug.WriteLine("Finalizing DialogViewModel");
-        //    Aggregator.Unsubscribe(this);
-
         //    GC.Collect();
         //}
+
+        public void Dispose()
+        {
+            _groupedMessages.Clear();
+            _filesMap.Clear();
+            _photosMap.Clear();
+
+            Window.Current.Activated -= Window_Activated;
+        }
+
+        private void Window_Activated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
+            {
+                SaveDraft();
+            }
+        }
 
         public ItemClickEventHandler Sticker_Click;
 
@@ -217,15 +253,20 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool IsActive
+        public DialogStickersViewModel Stickers => _stickers;
+
+        private Chat _migratedChat;
+        public Chat MigratedChat
         {
             get
             {
-                return NavigationService?.IsPeerActive(_chatId) ?? false;
+                return _migratedChat;
+            }
+            set
+            {
+                Set(ref _migratedChat, value);
             }
         }
-
-        public DialogStickersViewModel Stickers => _stickers;
 
         private Chat _chat;
         public Chat Chat
@@ -240,35 +281,46 @@ namespace Unigram.ViewModels
             }
         }
 
-        private object _full;
-        public object Full
-        {
-            get
-            {
-                return _full;
-            }
-            set
-            {
-                Set(ref _full, value);
-                RaisePropertyChanged(() => IsSilentVisible);
-            }
-        }
-
         private string _lastSeen;
         public string LastSeen
         {
+            get { return _lastSeen; }
+            set { Set(ref _lastSeen, value); RaisePropertyChanged(() => Subtitle); }
+        }
+
+        private string _onlineCount;
+        public string OnlineCount
+        {
+            get { return _onlineCount; }
+            set { Set(ref _onlineCount, value); RaisePropertyChanged(() => Subtitle); }
+        }
+
+        public string Subtitle
+        {
             get
             {
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return null;
+                }
+
+                if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+                {
+                    return _lastSeen;
+                }
+
+                if (!string.IsNullOrEmpty(_onlineCount) && !string.IsNullOrEmpty(_lastSeen))
+                {
+                    return string.Format("{0}, {1}", _lastSeen, _onlineCount);
+                }
+
                 return _lastSeen;
-            }
-            set
-            {
-                Set(ref _lastSeen, value);
             }
         }
 
-        private DialogSearchViewModel _search;
-        public DialogSearchViewModel Search
+        private ChatSearchViewModel _search;
+        public ChatSearchViewModel Search
         {
             get
             {
@@ -278,6 +330,17 @@ namespace Unigram.ViewModels
             {
                 Set(ref _search, value);
             }
+        }
+
+        public void DisposeSearch()
+        {
+            var search = _search;
+            if (search != null)
+            {
+                search.Dispose();
+            }
+
+            Search = null;
         }
 
         private string _accessToken;
@@ -302,23 +365,10 @@ namespace Unigram.ViewModels
             }
         }
 
-        private Message _pinnedMessage;
-        public Message PinnedMessage
-        {
-            get
-            {
-                return _pinnedMessage;
-            }
-            set
-            {
-                Set(ref _pinnedMessage, value);
-            }
-        }
-
         private DispatcherTimer _informativeTimer;
 
-        private Message _informativeMessage;
-        public Message InformativeMessage
+        private MessageViewModel _informativeMessage;
+        public MessageViewModel InformativeMessage
         {
             get
             {
@@ -333,6 +383,16 @@ namespace Unigram.ViewModels
                 }
 
                 Set(ref _informativeMessage, value);
+                Delegate?.UpdateCallbackQueryAnswer(_chat, value);
+            }
+        }
+
+        private OutputChatActionManager _chatActionManager;
+        public OutputChatActionManager ChatActionManager
+        {
+            get
+            {
+                return _chatActionManager = _chatActionManager ?? new OutputChatActionManager(ProtoService, _chat);
             }
         }
 
@@ -357,32 +417,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private bool _canPinChat;
-        public bool CanPinChat
-        {
-            get
-            {
-                return _canPinChat;
-            }
-            set
-            {
-                Set(ref _canPinChat, value);
-            }
-        }
-
-        private bool _canUnpinChat;
-        public bool CanUnpinChat
-        {
-            get
-            {
-                return _canUnpinChat;
-            }
-            set
-            {
-                Set(ref _canUnpinChat, value);
-            }
-        }
-
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
         {
@@ -393,11 +427,16 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _selectionMode, value);
+
+                if (value != ListViewSelectionMode.None)
+                {
+                    DisposeSearch();
+                }
             }
         }
 
-        public BubbleTextBox TextField { get; set; }
-        public BubbleListView ListField { get; set; }
+        public ChatTextBox TextField { get; set; }
+        public ChatListView ListField { get; set; }
 
         public void SetSelection(int start)
         {
@@ -467,7 +506,7 @@ namespace Unigram.ViewModels
             field.SetScrollMode(mode, force);
         }
 
-        public string GetText()
+        public string GetText(TextGetOptions options = TextGetOptions.NoHidden)
         {
             var field = TextField;
             if (field == null)
@@ -475,8 +514,19 @@ namespace Unigram.ViewModels
                 return null;
             }
 
-            field.Document.GetText(TextGetOptions.NoHidden, out string text);
+            field.Document.GetText(options, out string text);
             return text;
+        }
+
+        public FormattedText GetFormattedText(bool clear = false)
+        {
+            var field = TextField;
+            if (field == null)
+            {
+                return new FormattedText(string.Empty, new TextEntity[0]);
+            }
+
+            return field.GetFormattedText(clear);
         }
 
         public bool IsEndReached()
@@ -488,6 +538,11 @@ namespace Unigram.ViewModels
             }
 
             var last = Items.LastOrDefault();
+            if (last?.Content is MessageAlbum album)
+            {
+                last = album.Layout.Messages.LastOrDefault();
+            }
+
             if (last == null)
             {
                 return true;
@@ -544,11 +599,27 @@ namespace Unigram.ViewModels
 
         private Stack<long> _goBackStack = new Stack<long>();
 
-        public async Task LoadNextSliceAsync(bool force = false)
+        public async Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null || Items.Count < 1)
+                try
+                {
+                    // We don't want to flood with requests when the chat gets initialized
+                    if (init && ListField?.ScrollingHost?.ScrollableHeight >= 200)
+                    {
+                        return;
+                    }
+                }
+                catch { }
+
+                var chat = _migratedChat ?? _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
@@ -565,7 +636,12 @@ namespace Unigram.ViewModels
                 //}
 
                 //var maxId = first?.Id ?? int.MaxValue;
-                var maxId = Items.FirstOrDefault().Id;
+                var maxId = Items.FirstOrDefault(x => x != null && x.Id != 0)?.Id;
+                if (maxId == null)
+                {
+                    return;
+                }
+
                 var limit = 50;
 
                 //for (int i = 0; i < Items.Count; i++)
@@ -580,25 +656,43 @@ namespace Unigram.ViewModels
 
                 //return;
 
-                var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, 0, limit, false));
-                if (response is Telegram.Td.Api.Messages messages)
+                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId.Value, 0, limit, false));
+                if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
-                    var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => GetMessage(x)).ToList();
-                    ProcessFiles(_chat, replied);
-                    ProcessReplies(replied);
-
-                    //Items.InsertRange(0, replied);
+                    var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    ProcessAlbums(chat, replied);
+                    ProcessFiles(chat, replied);
+                    ProcessReplies(chat, replied);
 
                     foreach (var message in replied)
                     {
-                        Items.Insert(0, message);
+                        if (message.Content is MessageChatUpgradeFrom chatUpgradeFrom)
+                        {
+                            var chatUpgradeTo = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
+                            if (chatUpgradeTo != null)
+                            {
+                                Items.Insert(0, chatUpgradeTo);
+                            }
+                        }
+                        else
+                        {
+                            Items.Insert(0, message);
+                        }
 
                         //var index = InsertMessageInOrder(Messages, message);
+                    }
+
+                    IsLastSliceLoaded = replied.IsEmpty();
+
+                    if (replied.IsEmpty())
+                    {
+                        await AddHeaderAsync();
                     }
                 }
 
@@ -607,11 +701,27 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task LoadPreviousSliceAsync(bool force = false, bool reserved = false)
+        public async Task LoadPreviousSliceAsync(bool force = false, bool init = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null || Items.Count < 1)
+                try
+                {
+                    // We don't want to flood with requests when the chat gets initialized
+                    if (init && ListField?.ScrollingHost?.ScrollableHeight >= 200)
+                    {
+                        return;
+                    }
+                }
+                catch { }
+
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
                 {
                     return;
                 }
@@ -631,7 +741,12 @@ namespace Unigram.ViewModels
 
                 Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
-                var maxId = Items.LastOrDefault().Id;
+                var maxId = Items.LastOrDefault(x => x != null && x.Id != 0)?.Id;
+                if (maxId == null)
+                {
+                    return;
+                }
+
                 var limit = 50;
 
                 //for (int i = 0; i < Messages.Count; i++)
@@ -642,23 +757,26 @@ namespace Unigram.ViewModels
                 //    }
                 //}
 
-                var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, -49, limit, false));
-                if (response is Telegram.Td.Api.Messages messages)
+                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId.Value, -49, limit, false));
+                if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Any(x => !Items.ContainsKey(x.Id)))
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepItemsInView");
                     }
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
                     var added = false;
 
-                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => GetMessage(x)).ToList();
-                    ProcessFiles(_chat, replied);
-                    ProcessReplies(replied);
+                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    ProcessAlbums(chat, replied);
+                    ProcessFiles(chat, replied);
+                    ProcessReplies(chat, replied);
 
                     foreach (var message in replied)
                     {
@@ -677,6 +795,93 @@ namespace Unigram.ViewModels
                 _isLoadingPreviousSlice = false;
                 IsLoading = false;
             }
+        }
+
+        private async Task AddHeaderAsync()
+        {
+            var previous = Items.FirstOrDefault();
+            if (previous != null && (previous.Content is MessageHeaderDate || previous.Id == 0))
+            {
+                return;
+            }
+
+            var chat = _chat;
+            if (chat == null)
+            {
+                goto AddDate;
+            }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null || !(user.Type is UserTypeBot))
+            {
+                goto AddDate;
+            }
+
+            var fullInfo = CacheService.GetUserFull(user.Id);
+            if (fullInfo == null)
+            {
+                fullInfo = await ProtoService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
+            }
+
+            if (fullInfo != null && fullInfo.BotInfo.Description.Length > 0)
+            {
+                var result = ProtoService.Execute(new GetTextEntities(fullInfo.BotInfo.Description)) as TextEntities;
+                var entities = result?.Entities ?? new List<TextEntity>();
+
+                foreach (var entity in entities)
+                {
+                    entity.Offset += Strings.Resources.BotInfoTitle.Length + Environment.NewLine.Length;
+                }
+
+                entities.Add(new TextEntity(0, Strings.Resources.BotInfoTitle.Length, new TextEntityTypeBold()));
+
+                var message = $"{Strings.Resources.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
+                var text = new FormattedText(message, entities);
+
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, user.Id, chat.Id, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(text, null), null)));
+                return;
+            }
+
+        AddDate:
+            if (previous != null)
+            {
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null)));
+            }
+        }
+
+        private async Task<MessageViewModel> PrepareMigratedAsync(int basicGroupId)
+        {
+            //if (_migratedChat != null)
+            //{
+            //    return null;
+            //}
+
+            var chat = _chat;
+            if (chat == null)
+            {
+                return null;
+            }
+
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup == null)
+            {
+                return null;
+            }
+
+            var response = await ProtoService.SendAsync(new CreateBasicGroupChat(basicGroupId, false));
+            if (response is Chat migrated)
+            {
+                var messages = await ProtoService.SendAsync(new GetChatHistory(migrated.Id, 0, 0, 1, false)) as Messages;
+                if (messages != null && messages.MessagesValue.Count > 0)
+                {
+                    MigratedChat = migrated;
+                    IsLastSliceLoaded = false;
+
+                    return _messageFactory.Create(this, messages.MessagesValue[0]);
+                }
+            }
+
+            return null;
         }
 
         private List<long> _mentions = new List<long>();
@@ -800,21 +1005,34 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
+                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8, disableAnimation: false);
             }
 
-            TextField?.FocusMaybe(FocusState.Keyboard);
+            TextField?.Focus(FocusState.Programmatic);
         }
 
-        public async Task LoadMessageSliceAsync(long? previousId, long maxId, SnapPointsAlignment alignment = SnapPointsAlignment.Center, double? pixel = null, bool second = false)
+        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, bool second = false)
         {
-            var already = Items.FirstOrDefault(x => x.Id == maxId);
+            if (direction == null)
+            {
+                var field = ListField;
+                if (field != null)
+                {
+                    var panel = field.ItemsPanelRoot as ItemsStackPanel;
+                    if (panel != null && panel.FirstVisibleIndex >= 0 && panel.FirstVisibleIndex < Items.Count && Items.Count > 0)
+                    {
+                        direction = Items[panel.FirstVisibleIndex].Id < maxId ? ScrollIntoViewAlignment.Default : ScrollIntoViewAlignment.Leading;
+                    }
+                }
+            }
+
+            var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Layout.Messages.ContainsKey(maxId));
             if (already != null)
             {
                 var field = ListField;
                 if (field != null)
                 {
-                    await field.ScrollToItem(already, alignment, alignment == SnapPointsAlignment.Center, pixel);
+                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
                 }
 
                 return;
@@ -834,7 +1052,13 @@ namespace Unigram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat == null)
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice)
                 {
                     return;
                 }
@@ -855,24 +1079,90 @@ namespace Unigram.ViewModels
                 var offset = -25;
                 var limit = 50;
 
-                var response = await ProtoService.SendAsync(new GetChatHistory(_chat.Id, maxId, offset, limit, false));
-                if (response is Telegram.Td.Api.Messages messages)
+                var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, offset, limit, false));
+                if (response is Messages messages)
                 {
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
 
-                    var lastRead = false;
+                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    ProcessAlbums(chat, replied);
+                    ProcessFiles(chat, replied);
+                    ProcessReplies(chat, replied);
 
-                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => GetMessage(x)).ToList();
-                    ProcessFiles(_chat, replied);
-                    ProcessReplies(replied);
+                    // If we're loading from the last read message
+                    // then we want to skip it to align first unread message at top
+                    if (chat.LastReadInboxMessageId != chat.LastMessage?.Id)
+                    {
+                        var target = default(MessageViewModel);
+                        var index = -1;
+
+                        for (int i = 0; i < replied.Count; i++)
+                        {
+                            var current = replied[i];
+                            if (current.Id > chat.LastReadInboxMessageId)
+                            {
+                                if (target == null && !current.IsOutgoing)
+                                {
+                                    target = current;
+                                    index = i;
+                                }
+                                else if (current.IsOutgoing)
+                                {
+                                    target = current;
+                                    index = -1;
+                                }
+                            }
+                        }
+
+                        if (target != null)
+                        {
+                            if (index != -1)
+                            {
+                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.ChatId, null, target.IsOutgoing, false, false, true, false, target.IsChannelPost, false, target.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
+                            }
+                            else if (maxId == chat.LastReadInboxMessageId)
+                            {
+                                Logs.Logger.Debug(Logs.Target.Chat, "Looking for first unread message, can't find it");
+                            }
+
+                            if (maxId == chat.LastReadInboxMessageId)
+                            {
+                                maxId = target.Id;
+                                pixel = 28 + 48 + 4;
+                            }
+                        }
+                    }
+
+                    // If we're loading the last message and it has been read already
+                    // then we want to align it at bottom, as it might be taller than the window height
+                    if (maxId == chat.LastReadInboxMessageId && maxId == chat.LastMessage?.Id && alignment != VerticalAlignment.Center)
+                    {
+                        alignment = VerticalAlignment.Bottom;
+                        pixel = 4;
+                    }
+
+                    if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
+                    {
+                        var chatUpgradeTo = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
+                        if (chatUpgradeTo != null)
+                        {
+                            replied[0] = chatUpgradeTo;
+                        }
+                    }
 
                     Items.ReplaceWith(replied);
 
                     IsLastSliceLoaded = null;
                     IsFirstSliceLoaded = IsEndReached();
+
+                    if (replied.IsEmpty())
+                    {
+                        await AddHeaderAsync();
+                    }
                 }
 
                 _isLoadingNextSlice = false;
@@ -880,9 +1170,7 @@ namespace Unigram.ViewModels
                 IsLoading = false;
             }
 
-            //await Task.Delay(200);
-            //await LoadNextSliceAsync(true);
-            await LoadMessageSliceAsync(null, maxId, alignment, pixel, true);
+            await LoadMessageSliceAsync(null, maxId, alignment, pixel, direction, disableAnimation, true);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -930,11 +1218,17 @@ namespace Unigram.ViewModels
 
         }
 
-        private void ProcessFiles(Chat chat, IList<MessageViewModel> messages)
+        private void ProcessFiles(Chat chat, IList<MessageViewModel> messages, MessageViewModel parent = null)
         {
             foreach (var message in messages)
             {
+                var target = parent ?? message;
                 var content = message.Content as object;
+                if (content is MessageAlbum albumMessage)
+                {
+                    ProcessFiles(chat, albumMessage.Layout.Messages, message);
+                    continue;
+                }
                 if (content is MessageAnimation animationMessage)
                 {
                     content = animationMessage.Animation;
@@ -976,25 +1270,33 @@ namespace Unigram.ViewModels
                 }
                 else if (content is MessageText textMessage)
                 {
-                    if (textMessage?.WebPage?.Animation != null)
+                    if (textMessage.WebPage?.Animation != null)
                     {
-                        content = textMessage?.WebPage?.Animation;
+                        content = textMessage.WebPage.Animation;
                     }
-                    else if (textMessage?.WebPage?.Document != null)
+                    else if (textMessage.WebPage?.Audio != null)
                     {
-                        content = textMessage?.WebPage?.Document;
+                        content = textMessage.WebPage.Audio;
                     }
-                    else if (textMessage?.WebPage?.Sticker != null)
+                    else if (textMessage.WebPage?.Document != null)
                     {
-                        content = textMessage?.WebPage?.Sticker;
+                        content = textMessage.WebPage.Document;
                     }
-                    else if (textMessage?.WebPage?.Video != null)
+                    else if (textMessage.WebPage?.Sticker != null)
                     {
-                        content = textMessage?.WebPage?.Video;
+                        content = textMessage.WebPage.Sticker;
                     }
-                    else if (textMessage?.WebPage?.VideoNote != null)
+                    else if (textMessage.WebPage?.Video != null)
                     {
-                        content = textMessage?.WebPage?.VideoNote;
+                        content = textMessage.WebPage.Video;
+                    }
+                    else if (textMessage.WebPage?.VideoNote != null)
+                    {
+                        content = textMessage.WebPage.VideoNote;
+                    }
+                    else if (textMessage.WebPage?.VoiceNote != null)
+                    {
+                        content = textMessage.WebPage.VoiceNote;
                     }
                     // PHOTO SHOULD ALWAYS BE AT THE END!
                     else if (textMessage?.WebPage?.Photo != null)
@@ -1019,140 +1321,221 @@ namespace Unigram.ViewModels
                 {
                     if (animation.Thumbnail != null)
                     {
-                        _filesMap[animation.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[animation.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[animation.AnimationValue.Id].Add(message);
+                    _filesMap[animation.AnimationValue.Id].Add(target);
                 }
                 else if (content is Audio audio)
                 {
                     if (audio.AlbumCoverThumbnail != null)
                     {
-                        _filesMap[audio.AlbumCoverThumbnail.Photo.Id].Add(message);
+                        _filesMap[audio.AlbumCoverThumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[audio.AudioValue.Id].Add(message);
+                    _filesMap[audio.AudioValue.Id].Add(target);
                 }
                 else if (content is Document document)
                 {
                     if (document.Thumbnail != null)
                     {
-                        _filesMap[document.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[document.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[document.DocumentValue.Id].Add(message);
+                    _filesMap[document.DocumentValue.Id].Add(target);
                 }
                 else if (content is Photo photo)
                 {
                     foreach (var size in photo.Sizes)
                     {
-                        _filesMap[size.Photo.Id].Add(message);
+                        _filesMap[size.Photo.Id].Add(target);
                     }
                 }
                 else if (content is Sticker sticker)
                 {
                     if (sticker.Thumbnail != null)
                     {
-                        _filesMap[sticker.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[sticker.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[sticker.StickerValue.Id].Add(message);
+                    _filesMap[sticker.StickerValue.Id].Add(target);
                 }
                 else if (content is Video video)
                 {
                     if (video.Thumbnail != null)
                     {
-                        _filesMap[video.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[video.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[video.VideoValue.Id].Add(message);
+                    _filesMap[video.VideoValue.Id].Add(target);
                 }
                 else if (content is VideoNote videoNote)
                 {
                     if (videoNote.Thumbnail != null)
                     {
-                        _filesMap[videoNote.Thumbnail.Photo.Id].Add(message);
+                        _filesMap[videoNote.Thumbnail.Photo.Id].Add(target);
                     }
 
-                    _filesMap[videoNote.Video.Id].Add(message);
+                    _filesMap[videoNote.Video.Id].Add(target);
                 }
                 else if (content is VoiceNote voiceNote)
                 {
-                    _filesMap[voiceNote.Voice.Id].Add(message);
+                    _filesMap[voiceNote.Voice.Id].Add(target);
                 }
 
-                if (message.IsSaved() || ((chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !message.IsOutgoing && !message.IsChannelPost))
+                if (target.IsSaved() || ((chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !target.IsOutgoing && !target.IsChannelPost))
                 {
-                    if (message.IsSaved())
+                    if (target.IsSaved())
                     {
-                        if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                        if (target.ForwardInfo is MessageForwardedFromUser fromUser)
                         {
-                            var user = message.ProtoService.GetUser(fromUser.SenderUserId);
+                            var user = target.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null && user.ProfilePhoto != null)
                             {
-                                _photosMap[user.ProfilePhoto.Small.Id].Add(message);
+                                _photosMap[user.ProfilePhoto.Small.Id].Add(target);
                             }
                         }
-                        else if (message.ForwardInfo is MessageForwardedPost post)
+                        else if (target.ForwardInfo is MessageForwardedPost post)
                         {
                             var fromChat = message.ProtoService.GetChat(post.ForwardedFromChatId);
                             if (fromChat != null && fromChat.Photo != null)
                             {
-                                _photosMap[fromChat.Photo.Small.Id].Add(message);
+                                _photosMap[fromChat.Photo.Small.Id].Add(target);
                             }
                         }
                     }
                     else
                     {
-                        var user = message.GetSenderUser();
+                        var user = target.GetSenderUser();
                         if (user != null && user.ProfilePhoto != null)
                         {
-                            _photosMap[user.ProfilePhoto.Small.Id].Add(message);
+                            _photosMap[user.ProfilePhoto.Small.Id].Add(target);
                         }
                     }
                 }
             }
         }
 
-        private async void ProcessReplies(IList<MessageViewModel> replied)
+        private void ProcessAlbums(Chat chat, IList<MessageViewModel> slice)
         {
-            var chat = _chat;
-            if (chat == null)
+            var groups = new Dictionary<long, Tuple<MessageViewModel, GroupedMessages>>();
+            var newGroups = new Dictionary<long, long>();
+
+            for (int i = 0; i < slice.Count; i++)
             {
-                return;
+                var message = slice[i];
+                if (message.MediaAlbumId != 0)
+                {
+                    var groupedId = message.MediaAlbumId;
+
+                    _groupedMessages.TryGetValue(groupedId, out MessageViewModel group);
+
+                    if (group == null)
+                    {
+                        var media = new MessageAlbum();
+
+                        var groupBase = new Message();
+                        groupBase.Content = media;
+                        groupBase.Date = message.Date;
+
+                        group = _messageFactory.Create(this, groupBase);
+
+                        slice[i] = group;
+                        newGroups[groupedId] = groupedId;
+                        _groupedMessages[groupedId] = group;
+                    }
+                    else
+                    {
+
+                        slice.RemoveAt(i);
+                        i--;
+                    }
+
+                    if (group.Content is MessageAlbum album)
+                    {
+                        groups[groupedId] = Tuple.Create(group, album.Layout);
+
+                        album.Layout.GroupedId = groupedId;
+                        album.Layout.Messages.Add(message);
+
+                        var first = album.Layout.Messages.FirstOrDefault();
+                        if (first != null)
+                        {
+                            group.UpdateWith(first);
+                        }
+                    }
+                }
             }
 
-            foreach (var message in replied)
+            foreach (var group in groups.Values)
             {
-                message.ReplyToMessageState = ReplyToMessageState.Loading;
-            }
+                group.Item2.Calculate();
 
+                if (newGroups.ContainsKey(group.Item1.MediaAlbumId))
+                {
+                    continue;
+                }
+
+                Handle(new UpdateMessageContent(chat.Id, group.Item1.Id, group.Item1.Content));
+                Handle(new UpdateMessageEdited(chat.Id, group.Item1.Id, group.Item1.EditDate, group.Item1.ReplyMarkup));
+            }
+        }
+
+        private async void ProcessReplies(Chat chat, IList<MessageViewModel> slice)
+        {
             var replies = new List<long>();
 
-            foreach (var message in replied)
+            foreach (var message in slice)
             {
-                if (message.Content is MessagePinMessage pinMessage && !replies.Contains(pinMessage.MessageId))
+                message.ReplyToMessageState = ReplyToMessageState.Loading;
+
+                var replyId = 0L;
+
+                if (message.Content is MessagePinMessage pinMessage)
                 {
-                    replies.Add(pinMessage.MessageId);
+                    replyId = pinMessage.MessageId;
                 }
-                else if (message.Content is MessageGameScore gameScore && !replies.Contains(gameScore.GameMessageId))
+                else if (message.Content is MessageGameScore gameScore)
                 {
-                    replies.Add(gameScore.GameMessageId);
+                    replyId = gameScore.GameMessageId;
                 }
-                else if (message.Content is MessagePaymentSuccessful paymentSuccessful && !replies.Contains(paymentSuccessful.InvoiceMessageId))
+                else if (message.Content is MessagePaymentSuccessful paymentSuccessful)
                 {
-                    replies.Add(paymentSuccessful.InvoiceMessageId);
+                    replyId = paymentSuccessful.InvoiceMessageId;
                 }
-                else if (message.ReplyToMessageId != 0 && !replies.Contains(message.ReplyToMessageId))
+                else if (message.ReplyToMessageId != 0)
                 {
-                    replies.Add(message.ReplyToMessageId);
+                    replyId = message.ReplyToMessageId;
+                }
+
+                if (replyId != 0)
+                {
+                    var enqueue = true;
+
+                    foreach (var reply in slice)
+                    {
+                        if (reply.Id == replyId)
+                        {
+                            message.ReplyToMessage = _messageFactory.Create(this, reply.Get());
+
+                            enqueue = false;
+                            break;
+                        }
+                    }
+
+                    if (enqueue && !replies.Contains(replyId))
+                    {
+                        replies.Add(replyId);
+                    }
                 }
             }
+
+
 
             var response = await ProtoService.SendAsync(new GetMessages(chat.Id, replies));
             if (response is Telegram.Td.Api.Messages messages)
             {
-                foreach (var message in replied)
+                foreach (var message in slice)
                 {
                     foreach (var result in messages.MessagesValue)
                     {
@@ -1163,22 +1546,22 @@ namespace Unigram.ViewModels
 
                         if (message.Content is MessagePinMessage pinMessage && pinMessage.MessageId == result.Id)
                         {
-                            message.ReplyToMessage = GetMessage(result);
+                            message.ReplyToMessage = _messageFactory.Create(this, result);
                             break;
                         }
                         else if (message.Content is MessageGameScore gameScore && gameScore.GameMessageId == result.Id)
                         {
-                            message.ReplyToMessage = GetMessage(result);
+                            message.ReplyToMessage = _messageFactory.Create(this, result);
                             break;
                         }
                         else if (message.Content is MessagePaymentSuccessful paymentSuccessful && paymentSuccessful.InvoiceMessageId == result.Id)
                         {
-                            message.ReplyToMessage = GetMessage(result);
+                            message.ReplyToMessage = _messageFactory.Create(this, result);
                             break;
                         }
                         else if (message.ReplyToMessageId == result.Id)
                         {
-                            message.ReplyToMessage = GetMessage(result);
+                            message.ReplyToMessage = _messageFactory.Create(this, result);
                             break;
                         }
                     }
@@ -1192,25 +1575,7 @@ namespace Unigram.ViewModels
                         message.ReplyToMessageState = ReplyToMessageState.None;
                     }
 
-                    var text = message.Content is MessageText tex2 ? tex2.Text : null;
                     Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
-
-                    //var container = ListField.ContainerFromItem(message) as ListViewItem;
-                    //if (container == null)
-                    //{
-                    //    return;
-                    //}
-
-                    //var content = container.ContentTemplateRoot as FrameworkElement;
-                    //if (content is Grid grid)
-                    //{
-                    //    content = grid.FindName("Bubble") as FrameworkElement;
-                    //}
-
-                    //if (content is MessageBubble bubble)
-                    //{
-                    //    bubble.UpdateMessageReply(message);
-                    //}
                 }
             }
         }
@@ -1219,6 +1584,8 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            //Aggregator.Subscribe(this);
+
             _chatId = (long)parameter;
 
             var chat = ProtoService.GetChat((long)parameter);
@@ -1251,25 +1618,39 @@ namespace Unigram.ViewModels
 #pragma warning disable CS4014
             if (state.TryGet("message_id", out long navigation))
             {
+                Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from specific id", chat.Id));
+
                 state.Remove("message_id");
                 LoadMessageSliceAsync(null, navigation);
             }
             else
             {
-                if (_scrollingIndex.TryGetValue(chat.Id, out long start))
+                if (_scrollingIndex.TryRemove(chat.Id, out long start) && start < chat.LastReadInboxMessageId)
                 {
-                    if (_scrollingPixel.TryGetValue(chat.Id, out double pixel))
+                    if (_scrollingPixel.TryRemove(chat.Id, out double pixel))
                     {
-                        LoadMessageSliceAsync(null, start, SnapPointsAlignment.Far, pixel);
+                        Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from specific pixel", chat.Id));
+
+                        LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
                     }
                     else
                     {
-                        LoadMessageSliceAsync(null, start, SnapPointsAlignment.Far);
+                        Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
+
+                        LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom);
                     }
+                }
+                else if (chat.UnreadCount > 0)
+                {
+                    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
+
+                    LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, VerticalAlignment.Top);
                 }
                 else
                 {
-                    LoadMessageSliceAsync(null, chat.LastReadInboxMessageId, SnapPointsAlignment.Near);
+                    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from LastMessageId: {1}", chat.Id, chat.LastMessage?.Id));
+
+                    LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
             }
 #pragma warning restore CS4014
@@ -1287,29 +1668,29 @@ namespace Unigram.ViewModels
 
             if (chat.Id == 10)
             {
-                Items.Add(GetMessage(new Message(0, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 58), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Hey Eileen", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(1, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("So, why is Telegram cool?", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(2, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Well, look. Telegram is superfast and you can use it on all your devices at the same time - phones, tablets, even desktops.", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(3, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("😴", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(4, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 00), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("And it has secret chats, like this one, with end-to-end encryption!", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(5, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(15, 00), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("End encryption to what end??", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(6, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Arrgh. Forget it. You can set a timer and send photos that will disappear when the time rush out. Yay!", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(7, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageChatSetTtl(15), null)));
-                Items.Add(GetMessage(new Message(8, 0, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 05), 0, null, 0, 15, 0, 0, string.Empty, 0, 0, new MessagePhoto(new Photo(0, false, new[] { new PhotoSize("t", new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\hot.png"), true, true, false, true, 0, 0), new RemoteFile()), 580, 596) }), new FormattedText(string.Empty, new TextEntity[0]), true), null)));
+                Items.Add(_messageFactory.Create(this, new Message(0, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 58), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Hey Eileen", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(1, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("So, why is Telegram cool?", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(2, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Well, look. Telegram is superfast and you can use it on all your devices at the same time - phones, tablets, even desktops.", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(3, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(14, 59), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("😴", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(4, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 00), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("And it has secret chats, like this one, with end-to-end encryption!", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(5, 0, chat.Id, null, true,  false, false, false, false, false, false, TodayDate(15, 00), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("End encryption to what end??", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(6, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Arrgh. Forget it. You can set a timer and send photos that will disappear when the time rush out. Yay!", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(7, 7, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0,  0, 0, string.Empty, 0, 0, new MessageChatSetTtl(15), null)));
+                Items.Add(_messageFactory.Create(this, new Message(8, 0, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 05), 0, null, 0, 15, 0, 0, string.Empty, 0, 0, new MessagePhoto(new Photo(false, new[] { new PhotoSize("t", new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\hot.png"), true, true, false, true, 0, 0, 0), new RemoteFile()), 580, 596) }), new FormattedText(string.Empty, new TextEntity[0]), true), null)));
 
                 SetText("😱🙈👍");
             }
             else
             {
                 //Items.Add(GetMessage(new Message(0, 11, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 25), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Yeah, that was my iPhone X", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(4, 11, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 25), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageSticker(new Sticker(0, 512, 512, "", false, null, null, new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\sticker0.webp"), true, true, false, true, 0, 0), null))), null)));
-                Items.Add(GetMessage(new Message(1, 9,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 26), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Are you sure it's safe here?", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(2, 7,  chat.Id, null, true,  false, false, false, false, false, false, TodayDate(15, 27), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Yes, sure, don't worry.", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(3, 13, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 27), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Hallo alle zusammen! Is the NSA reading this? 😀", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(4, 9,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 29), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageSticker(new Sticker(0, 512, 512, "", false, null, null, new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\sticker1.webp"), true, true, false, true, 0, 0), null))), null)));
-                Items.Add(GetMessage(new Message(5, 10, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 29), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Sorry, I'll have to publish this conversation on the web.", new TextEntity[0]), null), null)));
-                Items.Add(GetMessage(new Message(6, 10, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageChatDeleteMember(10), null)));
-                Items.Add(GetMessage(new Message(7, 8,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 30), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Wait, we could have made so much money on this!", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(4, 11, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 25), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageSticker(new Sticker(0, 512, 512, "", false, null, null, new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\sticker0.webp"), true, true, false, true, 0, 0, 0), null))), null)));
+                Items.Add(_messageFactory.Create(this, new Message(1, 9,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 26), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Are you sure it's safe here?", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(2, 7,  chat.Id, null, true,  false, false, false, false, false, false, TodayDate(15, 27), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Yes, sure, don't worry.", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(3, 13, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 27), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Hallo alle zusammen! Is the NSA reading this? 😀", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(4, 9,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 29), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageSticker(new Sticker(0, 512, 512, "", false, null, null, new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\sticker1.webp"), true, true, false, true, 0, 0, 0), null))), null)));
+                Items.Add(_messageFactory.Create(this, new Message(5, 10, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 29), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Sorry, I'll have to publish this conversation on the web.", new TextEntity[0]), null), null)));
+                Items.Add(_messageFactory.Create(this, new Message(6, 10, chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 01), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageChatDeleteMember(10), null)));
+                Items.Add(_messageFactory.Create(this, new Message(7, 8,  chat.Id, null, false, false, false, false, false, false, false, TodayDate(15, 30), 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText("Wait, we could have made so much money on this!", new TextEntity[0]), null), null)));
             }
 #endif
 
@@ -1321,6 +1702,7 @@ namespace Unigram.ViewModels
             ProtoService.Send(new OpenChat(chat.Id));
 
             Delegate?.UpdateChat(chat);
+            Delegate?.UpdateChatActions(chat, CacheService.GetChatActions(chat.Id));
 
             if (chat.Type is ChatTypePrivate privata)
             {
@@ -1371,6 +1753,14 @@ namespace Unigram.ViewModels
                 {
                     Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
                 }
+
+                ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
+                {
+                    if (result is Telegram.Td.Api.Users users)
+                    {
+                        _admins[chat.Id] = users.UserIds;
+                    }
+                });
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
@@ -1386,11 +1776,21 @@ namespace Unigram.ViewModels
                 else
                 {
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
+                    //Stickers?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
+
+                ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
+                {
+                    if (result is Telegram.Td.Api.Users users)
+                    {
+                        _admins[chat.Id] = users.UserIds;
+                    }
+                });
             }
 
             ShowReplyMarkup(chat);
             ShowDraftMessage(chat);
+            ShowPinnedMessage(chat);
             ShowSwitchInline(state);
 
             ProtoService.Send(new GetChatReportSpamState(chat.Id), result =>
@@ -1403,12 +1803,25 @@ namespace Unigram.ViewModels
 
 
 
-            RemoveNotifications();
+            if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
+            {
+                await HandlePackageAsync(package);
+            }
         }
+
+        //public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        //{
+        //    if (suspending)
+        //    {
+        //        await OnNavigatingFromAsync(new NavigatingEventArgs(null));
+        //        Items.Clear();
+        //    }
+        //}
 
         public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {
             Aggregator.Unsubscribe(this);
+            Window.Current.Activated -= Window_Activated;
 
             var chat = _chat;
             if (chat == null)
@@ -1430,33 +1843,62 @@ namespace Unigram.ViewModels
                 var field = ListField;
                 if (field == null)
                 {
+                    _scrollingIndex.TryRemove(chat.Id, out long index);
+                    _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
+
                     return Task.CompletedTask;
                 }
 
                 var panel = field.ItemsPanelRoot as ItemsStackPanel;
                 if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
                 {
-                    _scrollingIndex[chat.Id] = Items[panel.LastVisibleIndex].Id;
-
-                    var container = field.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
-                    if (container != null)
+                    var start = Items[panel.LastVisibleIndex].Id;
+                    if (start != chat.LastMessage?.Id)
                     {
-                        var transform = container.TransformToVisual(field);
-                        var position = transform.TransformPoint(new Point());
+                        var container = field.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
+                        if (container != null)
+                        {
+                            var transform = container.TransformToVisual(field);
+                            var position = transform.TransformPoint(new Point());
 
-                        _scrollingPixel[chat.Id] = field.ActualHeight - (position.Y + container.ActualHeight);
+                            _scrollingIndex[chat.Id] = start;
+                            _scrollingPixel[chat.Id] = field.ActualHeight - (position.Y + container.ActualHeight);
+
+                            Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, Items[panel.LastVisibleIndex].Id, field.ActualHeight - (position.Y + container.ActualHeight)));
+                        }
+                        else
+                        {
+                            _scrollingIndex[chat.Id] = start;
+                            _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                            Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, Items[panel.LastVisibleIndex].Id));
+                        }
+
+                    }
+                    else
+                    {
+                        _scrollingIndex.TryRemove(chat.Id, out long index);
+                        _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                        Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, as last item is chat.LastMessage", chat.Id));
                     }
                 }
                 else
                 {
-                    _scrollingIndex.Remove(chat.Id);
-                    _scrollingPixel.Remove(chat.Id);
+                    _scrollingIndex.TryRemove(chat.Id, out long index);
+                    _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
                 }
             }
             catch
             {
-                _scrollingIndex.Remove(chat.Id);
-                _scrollingPixel.Remove(chat.Id);
+                _scrollingIndex.TryRemove(chat.Id, out long index);
+                _scrollingPixel.TryRemove(chat.Id, out double pixel);
+
+                Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, exception", chat.Id));
             }
 
             if (Dispatcher != null)
@@ -1496,7 +1938,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new GetMessage(chat.Id, chat.ReplyMarkupMessageId));
                 if (response is Message message)
                 {
-                    Delegate?.UpdateChatReplyMarkup(chat, GetMessage(message));
+                    Delegate?.UpdateChatReplyMarkup(chat, _messageFactory.Create(this, message));
                 }
                 else
                 {
@@ -1505,26 +1947,27 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void ShowPinnedMessage(Chat chat, SupergroupFullInfo fullInfo)
+        public async void ShowPinnedMessage(Chat chat)
         {
-            if (fullInfo == null || fullInfo.PinnedMessageId == 0)
+            if (chat == null || chat.PinnedMessageId == 0)
             {
                 Delegate?.UpdatePinnedMessage(chat, null, false);
             }
             else
             {
-                Delegate?.UpdatePinnedMessage(chat, null, true);
-
                 var pinned = Settings.GetChatPinnedMessage(chat.Id);
-                if (pinned == fullInfo.PinnedMessageId)
+                if (pinned == chat.PinnedMessageId)
                 {
+                    Delegate?.UpdatePinnedMessage(chat, null, false);
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new GetMessage(chat.Id, fullInfo.PinnedMessageId));
+                Delegate?.UpdatePinnedMessage(chat, null, true);
+
+                var response = await ProtoService.SendAsync(new GetMessage(chat.Id, chat.PinnedMessageId));
                 if (response is Message message)
                 {
-                    Delegate?.UpdatePinnedMessage(chat, GetMessage(message), false);
+                    Delegate?.UpdatePinnedMessage(chat, _messageFactory.Create(this, message), false);
                 }
                 else
                 {
@@ -1539,6 +1982,7 @@ namespace Unigram.ViewModels
             if (draft == null)
             {
                 SetText(null as string);
+                ComposerHeader = null;
             }
             else
             {
@@ -1552,8 +1996,16 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new GetMessage(chat.Id, draft.ReplyToMessageId));
                     if (response is Message message)
                     {
-                        EmbedData = new MessageEmbedData { ReplyToMessage = GetMessage(message) };
+                        ComposerHeader = new MessageComposerHeader { ReplyToMessage = _messageFactory.Create(this, message) };
                     }
+                    else
+                    {
+                        ComposerHeader = null;
+                    }
+                }
+                else
+                {
+                    ComposerHeader = null;
                 }
             }
         }
@@ -1610,40 +2062,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void RemoveNotifications()
-        {
-            return;
-
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var group = string.Empty;
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                group = "u" + privata.UserId;
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                group = "s" + secret.SecretChatId;
-            }
-            else if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                group = "c" + supergroup.SupergroupId;
-            }
-            else if (chat.Type is ChatTypeBasicGroup basicGroup)
-            {
-                group = "c" + basicGroup.BasicGroupId;
-            }
-
-            Execute.BeginOnThreadPool(() =>
-            {
-                ToastNotificationManager.History.RemoveGroup(group, "App");
-            });
-        }
-
         public void SaveDraft()
         {
             if (_currentInlineBot != null)
@@ -1651,7 +2069,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var embedded = _embedData;
+            var embedded = _composerHeader;
             if (embedded != null && embedded.EditingMessage != null)
             {
                 return;
@@ -1672,7 +2090,12 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var messageText = GetText().Format();
+            var formattedText = GetFormattedText();
+            if (formattedText == null)
+            {
+                return;
+            }
+
             var reply = 0L;
 
             if (embedded != null && embedded.ReplyToMessage != null)
@@ -1681,128 +2104,32 @@ namespace Unigram.ViewModels
             }
 
             DraftMessage draft = null;
-            if (!string.IsNullOrWhiteSpace(messageText))
+            if (!string.IsNullOrWhiteSpace(formattedText.Text) || reply != 0)
             {
-                draft = new DraftMessage(reply, new InputMessageText(GetFormattedText(messageText), false, false));
+                if (formattedText.Text.Length > CacheService.Options.MessageTextLengthMax * 4)
+                {
+                    formattedText = formattedText.Substring(0, CacheService.Options.MessageTextLengthMax * 4);
+                }
+
+                draft = new DraftMessage(reply, new InputMessageText(formattedText, false, false));
             }
 
             ProtoService.Send(new SetChatDraftMessage(_chat.Id, draft));
         }
 
-        //public async void ProcessDraftReply(TLDraftMessage draft)
-        //{
-        //    var shouldFetch = false;
-
-        //    var replyId = draft.ReplyToMsgId;
-        //    if (replyId != null && replyId.Value != 0)
-        //    {
-        //        var channelId = new int?();
-        //        //var channel = message.ToId as TLPeerChat;
-        //        //if (channel != null)
-        //        //{
-        //        //    channelId = channel.Id;
-        //        //}
-        //        // TODO: verify
-        //        if (Peer is TLInputPeerChannel)
-        //        {
-        //            channelId = Peer.ToPeer().Id;
-        //        }
-
-        //        var reply = CacheService.GetMessage(replyId.Value, channelId);
-        //        if (reply != null)
-        //        {
-        //            Reply = reply;
-        //        }
-        //        else
-        //        {
-        //            shouldFetch = true;
-        //        }
-        //    }
-
-        //    if (shouldFetch)
-        //    {
-        //        Task<MTProtoResponse<TLMessagesMessagesBase>> task = null;
-
-        //        if (Peer is TLInputPeerChannel)
-        //        {
-        //            // TODO: verify
-        //            //var first = replyToMsgs.FirstOrDefault();
-        //            //if (first.ToId is TLPeerChat)
-        //            //{
-        //            //    task = ProtoService.GetMessagesAsync(new TLVector<int> { draft.ReplyToMsgId.Value });
-        //            //}
-        //            //else
-        //            {
-        //                var peer = Peer as TLInputPeerChannel;
-        //                task = LegacyService.GetMessagesAsync(new TLInputChannel { ChannelId = peer.ChannelId, AccessHash = peer.AccessHash }, new TLVector<int> { draft.ReplyToMsgId.Value });
-        //            }
-        //        }
-        //        else
-        //        {
-        //            task = LegacyService.GetMessagesAsync(new TLVector<int> { draft.ReplyToMsgId.Value });
-        //        }
-
-        //        var response = await task;
-        //        if (response.IsSucceeded && response.Result is ITLMessages result)
-        //        {
-        //            //CacheService.AddChats(result.Result.Chats, (results) => { });
-        //            //CacheService.AddUsers(result.Result.Users, (results) => { });
-        //            CacheService.SyncUsersAndChats(result.Users, result.Chats, tuple => { });
-
-        //            for (int j = 0; j < result.Messages.Count; j++)
-        //            {
-        //                if (draft.ReplyToMsgId.Value == result.Messages[j].Id)
-        //                {
-        //                    Reply = result.Messages[j];
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Execute.ShowDebugMessage("messages.getMessages error " + response.Error);
-        //        }
-        //    }
-        //}
-
-        private bool _isSilent;
-        public bool IsSilent
-        {
-            get
-            {
-                //return _isSilent && Chat != null && Chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
-                return false;
-            }
-            set
-            {
-                Set(ref _isSilent, value);
-            }
-        }
-
-        public bool IsSilentVisible
-        {
-            get
-            {
-                //return Chat != null && Chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
-                return false;
-            }
-        }
-
         #region Reply 
 
-        private MessageEmbedData _embedData;
-        public MessageEmbedData EmbedData
+        private MessageComposerHeader _composerHeader;
+        public MessageComposerHeader ComposerHeader
         {
             get
             {
-                return _embedData;
+                return _composerHeader;
             }
             set
             {
-                if (_embedData != value)
-                {
-                    _embedData = value;
-                    RaisePropertyChanged();
-                }
+                Set(ref _composerHeader, value);
+                Delegate?.UpdateComposerHeader(_chat, value);
             }
         }
 
@@ -1834,7 +2161,7 @@ namespace Unigram.ViewModels
         public RelayCommand ClearReplyCommand { get; }
         private void ClearReplyExecute()
         {
-            var container = _embedData;
+            var container = _composerHeader;
             if (container == null)
             {
                 return;
@@ -1842,24 +2169,46 @@ namespace Unigram.ViewModels
 
             if (container.WebPagePreview != null)
             {
-                EmbedData = new MessageEmbedData { EditingMessage = container.EditingMessage, ReplyToMessage = container.ReplyToMessage, WebPagePreview = null };
+                if (container.IsEmpty)
+                {
+                    ComposerHeader = null;
+                }
+                else
+                {
+                    ComposerHeader = new MessageComposerHeader { EditingMessage = container.EditingMessage, ReplyToMessage = container.ReplyToMessage, WebPagePreview = null };
+                }
+
                 DisableWebPagePreview = true;
             }
             else
             {
                 if (container.EditingMessage != null)
                 {
-                    SetText(null, false);
-                    //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
+                    if (container.EditingMessageFileId is int fileId)
+                    {
+                        ProtoService.Send(new CancelUploadFile(fileId));
+                    }
+
+                    var chat = _chat;
+                    if (chat != null)
+                    {
+                        ShowDraftMessage(chat);
+                    }
+                    else
+                    {
+                        SetText(null, false);
+                    }
                 }
 
-                EmbedData = null;
+                ComposerHeader = null;
             }
+
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         private long GetReply(bool clean)
         {
-            var embedded = _embedData;
+            var embedded = _composerHeader;
             if (embedded == null || embedded.ReplyToMessage == null)
             {
                 return 0;
@@ -1867,7 +2216,7 @@ namespace Unigram.ViewModels
 
             if (clean)
             {
-                EmbedData = null;
+                ComposerHeader = null;
             }
 
             return embedded.ReplyToMessage.Id;
@@ -1875,24 +2224,20 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public RelayCommand PinnedCommand { get; }
-        private async void PinnedExecute()
-        {
-            if (PinnedMessage != null)
-            {
-                await LoadMessageSliceAsync(null, PinnedMessage.Id);
-            }
-        }
-
         public RelayCommand<string> SendCommand { get; }
         private async void SendMessage(string args)
         {
             await SendMessageAsync(args);
         }
 
-        public async Task SendMessageAsync(string text)
+        public Task SendMessageAsync(FormattedText formattedText)
         {
-            text = text.Format();
+            return SendMessageAsync(formattedText.Text, formattedText.Entities);
+        }
+
+        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null)
+        {
+            text = text.Replace('\v', '\n').Replace('\r', '\n');
 
             var chat = _chat;
             if (chat == null)
@@ -1900,39 +2245,78 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            FormattedText formattedText;
+            if (entities == null)
+            {
+                formattedText = GetFormattedText(text);
+            }
+            else
+            {
+                formattedText = new FormattedText(text, entities);
+            }
+
             var disablePreview = DisableWebPagePreview;
             DisableWebPagePreview = false;
 
-            var embedded = EmbedData;
-            if (embedded != null && embedded.EditingMessage != null)
+            var header = _composerHeader;
+            if (header?.EditingMessage != null)
             {
-                var editing = embedded.EditingMessage;
-
-                Function function;
-                if (editing.Content is MessageText)
+                var editing = header.EditingMessage;
+                var factory = header.EditingMessageMedia;
+                if (factory != null)
                 {
-                    function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(GetFormattedText(text), disablePreview, true));
-                }
-                else
-                {
-                    function = new EditMessageCaption(chat.Id, editing.Id, null, GetFormattedText(text));
-                }
-
-                var response = await ProtoService.SendAsync(function);
-                if (response is Message message)
-                {
-                    EmbedData = null;
-                    Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
-                }
-                else if (response is Error error)
-                {
-                    if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                    var response = await ProtoService.SendAsync(new UploadFile(factory.InputFile, factory.Type, 32));
+                    if (response is File file)
                     {
-                        EmbedData = null;
+                        if (file.Remote.IsUploadingCompleted)
+                        {
+                            ComposerHeader = null;
+                            ProtoService.Send(new EditMessageMedia(chat.Id, header.EditingMessage.Id, null, header.EditingMessageMedia.Delegate(new InputFileId(file.Id), header.EditingMessageCaption)));
+                        }
+                        else
+                        {
+                            ComposerHeader = new MessageComposerHeader
+                            {
+                                EditingMessage = editing,
+                                EditingMessageMedia = factory,
+                                EditingMessageCaption = formattedText,
+                                EditingMessageFileId = file.Id
+                            };
+                        }
                     }
                     else
                     {
                         // TODO: ...
+                    }
+                }
+                else
+                {
+                    Function function;
+                    if (editing.Content is MessageText)
+                    {
+                        function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
+                    }
+                    else
+                    {
+                        function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
+                    }
+
+                    var response = await ProtoService.SendAsync(function);
+                    if (response is Message message)
+                    {
+                        ShowDraftMessage(chat);
+                        Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
+                    }
+                    else if (response is Error error)
+                    {
+                        if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                        {
+                            ShowDraftMessage(chat);
+                        }
+                        else
+                        {
+                            // TODO: ...
+                        }
                     }
                 }
             }
@@ -1940,16 +2324,22 @@ namespace Unigram.ViewModels
             {
                 var reply = GetReply(true);
 
-                if (text.Length > 0)
+                if (text.Length > CacheService.Options.MessageTextLengthMax)
                 {
-                    int count = (int)Math.Ceiling(text.Length / 4096.0);
-                    for (int a = 0; a < count; a++)
+                    foreach (var split in formattedText.Split(CacheService.Options.MessageTextLengthMax))
                     {
-                        var message = text.Substr(a * 4096, Math.Min((a + 1) * 4096, text.Length));
-                        var input = new InputMessageText(GetFormattedText(message), disablePreview, true);
-
-                        var boh = await SendMessageAsync(reply, input);
+                        var input = new InputMessageText(split, disablePreview, true);
+                        await SendMessageAsync(reply, input);
                     }
+                }
+                else if (text.Length > 0)
+                {
+                    var input = new InputMessageText(formattedText, disablePreview, true);
+                    await SendMessageAsync(reply, input);
+                }
+                else
+                {
+                    await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
             }
 
@@ -2002,7 +2392,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, unmute ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
+            _pushService.SetMuteFor(chat, unmute ? 0 : 632053052);
         }
 
         #endregion
@@ -2081,7 +2471,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+                ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
             }
         }
 
@@ -2092,7 +2482,7 @@ namespace Unigram.ViewModels
         public RelayCommand OpenStickersCommand { get; }
         private void OpenStickersExecute()
         {
-            _stickers.SyncStickers();
+            _stickers.SyncStickers(_chat);
             _stickers.SyncGifs();
         }
 
@@ -2100,8 +2490,8 @@ namespace Unigram.ViewModels
 
         #region Delete and Exit
 
-        public RelayCommand DialogDeleteCommand { get; }
-        private async void DialogDeleteExecute()
+        public RelayCommand ChatDeleteCommand { get; }
+        private async void ChatDeleteExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -2131,7 +2521,7 @@ namespace Unigram.ViewModels
                     await ProtoService.SendAsync(new LeaveChat(chat.Id));
                 }
 
-                ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+                ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
             }
         }
 
@@ -2139,8 +2529,8 @@ namespace Unigram.ViewModels
 
         #region Clear history
 
-        public RelayCommand DialogClearCommand { get; }
-        private async void DialogClearExecute()
+        public RelayCommand ChatClearCommand { get; }
+        private async void ChatClearExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -2151,7 +2541,7 @@ namespace Unigram.ViewModels
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistory, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new DeleteChatHistory(chat.Id, false));
+                ProtoService.Send(new DeleteChatHistory(chat.Id, false, false));
             }
         }
 
@@ -2221,14 +2611,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 74)));
+            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, libtgvoip.VoIPControllerWrapper.GetConnectionMaxLayer())));
             if (response is Error error)
             {
                 if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
                 {
                     await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
-                else if(error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
+                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
                 {
                     await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
@@ -2249,39 +2639,26 @@ namespace Unigram.ViewModels
             }
 
             var supergroupType = chat.Type as ChatTypeSupergroup;
-            if (supergroupType == null)
-            {
-                return;
-            }
+            var basicGroupType = chat.Type as ChatTypeBasicGroup;
 
-            var supergroup = ProtoService.GetSupergroup(supergroupType.SupergroupId);
-            if (supergroup == null)
-            {
-                return;
-            }
+            var supergroup = supergroupType != null ? CacheService.GetSupergroup(supergroupType.SupergroupId) : null;
+            var basicGroup = basicGroupType != null ? CacheService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
 
-            if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages))
+            if (supergroup != null && supergroup.CanPinMessages() ||
+                basicGroup != null && basicGroup.CanPinMessages() ||
+                chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
             {
                 var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    PinnedMessage = null;
-                    ProtoService.Send(new UnpinSupergroupMessage(supergroup.Id));
+                    Delegate?.UpdatePinnedMessage(chat, null, false);
+                    ProtoService.Send(new UnpinChatMessage(chat.Id));
                 }
             }
             else
             {
-                var fullInfo = CacheService.GetSupergroupFull(supergroup.Id);
-                if (fullInfo == null)
-                {
-                    return;
-                }
-
-                Settings.SetChatPinnedMessage(chat.Id, fullInfo.PinnedMessageId);
+                Settings.SetChatPinnedMessage(chat.Id, chat.PinnedMessageId);
                 Delegate?.UpdatePinnedMessage(chat, null, false);
-
-                //var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
-                //appData.Values["Pinned" + supergroup.Id] = _pinnedMessage.Id;
             }
         }
 
@@ -2386,110 +2763,6 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region Pin chat
-
-        public RelayCommand PinChatCommand { get; }
-        private async void PinChatExecute()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return;
-            //}
-
-            //var displayName = _pushService.GetTitle(this.With);
-            //var arguments = _pushService.GetLaunch(this.With);
-            //var picture = _pushService.GetPicture(this.With, group);
-
-            //var secondaryTile = new SecondaryTile(group, displayName, arguments, new Uri(picture), TileSize.Default);
-            //secondaryTile.VisualElements.Wide310x150Logo = new Uri(picture);
-            //secondaryTile.VisualElements.Square310x310Logo = new Uri(picture);
-
-            //var tileCreated = await secondaryTile.RequestCreateAsync();
-            //if (tileCreated)
-            //{
-            //    UpdatePinChatCommands();
-            //    ResetTile();
-            //}
-        }
-
-        private void ResetTile()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return;
-            //}
-
-            //var displayName = _pushService.GetTitle(this.With);
-            //var picture = _pushService.GetPicture(this.With, group);
-
-            //var existsSecondaryTile = SecondaryTile.Exists(group);
-            //if (existsSecondaryTile)
-            //{
-            //    NotificationTask.ResetSecondaryTile(displayName, picture, group);
-            //}
-        }
-
-        private bool CanExecutePinChatCommand()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return false;
-            //}
-
-            //return !SecondaryTile.Exists(group);
-
-            return false;
-        }
-
-        private void UpdatePinChatCommands()
-        {
-            CanPinChat = CanExecutePinChatCommand();
-            CanUnpinChat = !CanPinChat;
-        }
-
-        #endregion
-
-        #region Unpin chat
-
-        public RelayCommand UnpinChatCommand { get; }
-        private async void UnpinChatExecute()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return;
-            //}
-
-            //var secondaryTile = new SecondaryTile(group);
-            //if (secondaryTile == null)
-            //{
-            //    return;
-            //}
-
-            //var tileDeleted = await secondaryTile.RequestDeleteAsync();
-            //if (tileDeleted)
-            //{
-            //    UpdatePinChatCommands();
-            //}
-        }
-
-        private bool CanUnpinChatExecute()
-        {
-            //var group = _pushService.GetGroup(this.With);
-            //if (string.IsNullOrWhiteSpace(group))
-            //{
-            //    return false;
-            //}
-
-            //return SecondaryTile.Exists(group);
-            return false;
-        }
-
-        #endregion
-
         #region Start
 
         public RelayCommand StartCommand { get; }
@@ -2502,8 +2775,6 @@ namespace Unigram.ViewModels
             }
 
             var bot = GetStartingBot();
-            var command = chat.Type is ChatTypePrivate ? "/start" : "/start@" + bot.Username;
-
             if (bot == null)
             {
                 return;
@@ -2511,11 +2782,14 @@ namespace Unigram.ViewModels
 
             if (_accessToken == null)
             {
-                await SendMessageAsync(command);
+                await SendMessageAsync(chat.Type is ChatTypePrivate ? "/start" : "/start@" + bot.Username);
             }
             else
             {
-                ProtoService.Send(new SendBotStartMessage(bot.Id, chat.Id, _accessToken));
+                var token = _accessToken;
+
+                AccessToken = null;
+                ProtoService.Send(new SendBotStartMessage(bot.Id, chat.Id, token));
             }
         }
 
@@ -2555,7 +2829,7 @@ namespace Unigram.ViewModels
         public RelayCommand SearchCommand { get; }
         private void SearchExecute()
         {
-            Search = new DialogSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
+            Search = new ChatSearchViewModel(ProtoService, CacheService, Settings, Aggregator, this);
         }
 
         #endregion
@@ -2639,12 +2913,14 @@ namespace Unigram.ViewModels
             var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
             var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
             var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
+            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatChild, HorizontalAlignment = HorizontalAlignment.Stretch };
+            var opt5 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
             var stack = new StackPanel();
             stack.Children.Add(opt1);
             stack.Children.Add(opt2);
             stack.Children.Add(opt3);
             stack.Children.Add(opt4);
+            stack.Children.Add(opt5);
             stack.Margin = new Thickness(12, 16, 12, 0);
 
             var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
@@ -2667,7 +2943,9 @@ namespace Unigram.ViewModels
                     ? new ChatReportReasonViolence()
                     : (opt3.IsChecked == true
                         ? new ChatReportReasonPornography()
-                        : (ChatReportReason)new ChatReportReasonCustom()));
+                        : (opt4.IsChecked == true
+                            ? new ChatReportReasonChildAbuse()
+                            : (ChatReportReason)new ChatReportReasonCustom())));
 
             if (reason is ChatReportReasonCustom other)
             {
@@ -2770,7 +3048,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        ToggleMuteExecute(chat.NotificationSettings.MuteFor != 0);
+                        ToggleMuteExecute(CacheService.GetNotificationSettingsMuteFor(chat) > 0);
                     }
                 }
                 else
@@ -2781,7 +3059,7 @@ namespace Unigram.ViewModels
                     }
                     else if (group.Status is ChatMemberStatusBanned)
                     {
-                        DialogDeleteExecute();
+                        ChatDeleteExecute();
                     }
                 }
             }
@@ -2789,22 +3067,21 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        private MessageViewModel GetMessage(Message message)
+        #region Open message
+
+        public RelayCommand<Message> OpenMessageCommand { get; }
+        private void OpenMessageExecute(Message message)
         {
-            return new MessageViewModel(ProtoService, this, message);
+            var webPage = message.Content is MessageText text ? text.WebPage : null;
+
+            if (message.Content is MessageVoiceNote || webPage?.VoiceNote != null)
+            {
+                NavigationService.NavigateToChat(message.ChatId, message: message.Id);
+            }
         }
+
+        #endregion
     }
-
-    //public class TLMessageMediaGroup : TLMessageMediaBase
-    //{
-    //    public TLMessageMediaGroup()
-    //    {
-    //        Layout = new GroupedMessages();
-    //    }
-
-    //    public String Caption { get; set; }
-    //    public GroupedMessages Layout { get; private set; }
-    //}
 
     public class UserCommand
     {
@@ -2820,10 +3097,16 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : MvxObservableCollection<MessageViewModel>
     {
-        private readonly Dictionary<long, MessageViewModel> _messages = new Dictionary<long, MessageViewModel>();
+        private readonly Dictionary<long, long> _messages = new Dictionary<long, long>();
         private readonly HashSet<DateTime> _dates = new HashSet<DateTime>();
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
+
+        //~MessageCollection()
+        //{
+        //    Debug.WriteLine("Finalizing MessageCollection");
+        //    GC.Collect();
+        //}
 
         public bool ContainsKey(long id)
         {
@@ -2832,7 +3115,7 @@ namespace Unigram.ViewModels
 
         protected override void InsertItem(int index, MessageViewModel item)
         {
-            _messages[item.Id] = item;
+            _messages[item.Id] = item.Id;
 
             item.IsFirst = true;
             item.IsLast = true;
@@ -2897,10 +3180,7 @@ namespace Unigram.ViewModels
                 var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
                 if (previousDate.Date != itemDate.Date)
                 {
-                    var timestamp = previousDate.ToTimestamp();
-                    var service = new MessageViewModel(previous.ProtoService, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null));
-
-                    //base.InsertItem(index + 1, service);
+                    var service = new MessageViewModel(previous.ProtoService, previous.PlaybackService, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null));
                     return service;
                 }
             }
@@ -2990,39 +3270,30 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var oldFirst = item.IsFirst;
-
-            var itemPost = item.IsChannelPost;
-
-            if (!itemPost)
-            {
-                var attach = false;
-                if (previous != null)
-                {
-                    var previousPost = previous.IsChannelPost;
-
-                    attach = !previousPost &&
-                             //!(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
-                             !(previous.IsService()) &&
-                             AreTogether(item, previous) &&
-                             item.Date - previous.Date < 900;
-                }
-
-                item.IsFirst = !attach;
-
-                if (previous != null)
-                {
-                    previous.IsLast = item.IsFirst || item.IsService();
-                }
-            }
-            else
+            if (item.IsChannelPost)
             {
                 item.IsFirst = true;
+                item.IsLast = true;
+                return;
+            }
 
-                if (previous != null)
-                {
-                    previous.IsLast = false;
-                }
+            var attach = false;
+            if (previous != null)
+            {
+                var previousPost = previous.IsChannelPost;
+
+                attach = !previousPost &&
+                         //!(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
+                         !(previous.IsService()) &&
+                         AreTogether(item, previous) &&
+                         item.Date - previous.Date < 900;
+            }
+
+            item.IsFirst = !attach;
+
+            if (previous != null)
+            {
+                previous.IsLast = item.IsFirst || item.IsService();
             }
         }
 
@@ -3050,10 +3321,14 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class MessageEmbedData
+    public class MessageComposerHeader
     {
         public MessageViewModel ReplyToMessage { get; set; }
         public MessageViewModel EditingMessage { get; set; }
+
+        public int? EditingMessageFileId { get; set; }
+        public InputMessageFactory EditingMessageMedia { get; set; }
+        public FormattedText EditingMessageCaption { get; set; }
 
         public WebPage WebPagePreview { get; set; }
         public string WebPageUrl { get; set; }

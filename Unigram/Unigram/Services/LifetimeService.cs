@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Mvvm;
+using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Core.Common;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Host;
 using Windows.Storage;
 
-namespace Unigram.ViewModels
+namespace Unigram.Services
 {
     public interface ILifetimeService
     {
@@ -32,15 +33,31 @@ namespace Unigram.ViewModels
 
         bool Contains(string phoneNumber);
 
+        void Register(ISessionService item);
+        void Unregister(ISessionService item);
+
         MvxObservableCollection<ISessionService> Items { get; }
         ISessionService ActiveItem { get; set; }
+        ISessionService PreviousItem { get; set; }
     }
 
     public class LifetimeService : ViewModelBase, ILifetimeService
     {
+        private readonly Dictionary<int, ISessionService> _sessions = new Dictionary<int, ISessionService>();
+
         public LifetimeService()
         {
             Items = new MvxObservableCollection<ISessionService>();
+        }
+
+        public void Register(ISessionService item)
+        {
+            _sessions[item.Id] = item;
+        }
+
+        public void Unregister(ISessionService item)
+        {
+            _sessions[item.Id] = null;
         }
 
         public void Update()
@@ -58,7 +75,11 @@ namespace Unigram.ViewModels
         public MvxObservableCollection<ISessionService> Items { get; }
 
         private ISessionService _previousItem;
-        public ISessionService PreviousItem => _previousItem;
+        public ISessionService PreviousItem
+        {
+            get { return _previousItem; }
+            set { _previousItem = value; }
+        }
 
         private ISessionService _activeItem;
         public ISessionService ActiveItem

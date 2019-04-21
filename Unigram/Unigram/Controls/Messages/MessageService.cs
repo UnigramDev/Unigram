@@ -74,6 +74,8 @@ namespace Unigram.Controls.Messages
                     return UpdateCustomServiceAction(message, customServiceAction, active);
                 case MessageGameScore gameScore:
                     return UpdateGameScore(message, gameScore, active);
+                case MessagePassportDataSent passportDataSent:
+                    return UpdatePassportDataSent(message, passportDataSent, active);
                 case MessagePaymentSuccessful paymentSuccessful:
                     return UpdatePaymentSuccessful(message, paymentSuccessful, active);
                 case MessagePinMessage pinMessage:
@@ -103,13 +105,13 @@ namespace Unigram.Controls.Messages
                         case ChatEventMessageUnpinned messageUnpinned:
                             return UpdateMessageUnpinned(message, messageUnpinned, active);
                         case ChatEventMessageDeleted messageDeleted:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.Delegate, messageDeleted.Message), active) : UpdateMessageDeleted(message, messageDeleted, active);
+                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageDeleted.Message), active) : UpdateMessageDeleted(message, messageDeleted, active);
                         case ChatEventMessageEdited messageEdited:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.Delegate, messageEdited.NewMessage), active) : UpdateMessageEdited(message, messageEdited, active);
+                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageEdited.NewMessage), active) : UpdateMessageEdited(message, messageEdited, active);
                         case ChatEventDescriptionChanged descriptionChanged:
                             return UpdateDescriptionChanged(message, descriptionChanged, active);
                         case ChatEventMessagePinned messagePinned:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.Delegate, messagePinned.Message), active) : UpdateMessagePinned(message, messagePinned, active);
+                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message), active) : UpdateMessagePinned(message, messagePinned, active);
                         case ChatEventUsernameChanged usernameChanged:
                             return UpdateUsernameChanged(message, usernameChanged, active);
                         default:
@@ -118,7 +120,7 @@ namespace Unigram.Controls.Messages
                 case MessageHeaderDate headerDate:
                     return UpdateHeaderDate(message, headerDate, active);
                 default:
-                    return (null, null);
+                    return (string.Empty, null);
             }
         }
 
@@ -343,7 +345,7 @@ namespace Unigram.Controls.Messages
                     var supergroup = chat.Type as ChatTypeSupergroup;
                     if (supergroup != null && supergroup.IsChannel)
                     {
-                        if (singleUserId == message.ProtoService.GetMyId())
+                        if (singleUserId == message.ProtoService.Options.MyId)
                         {
                             content = Strings.Resources.ChannelJoined;
                         }
@@ -356,7 +358,7 @@ namespace Unigram.Controls.Messages
                     {
                         if (supergroup != null && !supergroup.IsChannel)
                         {
-                            if (singleUserId == message.ProtoService.GetMyId())
+                            if (singleUserId == message.ProtoService.Options.MyId)
                             {
                                 content = Strings.Resources.ChannelMegaJoined;
                             }
@@ -381,7 +383,7 @@ namespace Unigram.Controls.Messages
                     {
                         content = ReplaceWithLink(Strings.Resources.ActionYouAddUser, "un2", whoUser, ref entities);
                     }
-                    else if (singleUserId == message.ProtoService.GetMyId())
+                    else if (singleUserId == message.ProtoService.Options.MyId)
                     {
                         var chat = message.GetChat();
                         var supergroup = chat.Type as ChatTypeSupergroup;
@@ -506,7 +508,7 @@ namespace Unigram.Controls.Messages
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionYouKickUser, "un2", whoUser, ref entities);
                 }
-                else if (chatDeleteMember.UserId == message.ProtoService.GetMyId())
+                else if (chatDeleteMember.UserId == message.ProtoService.Options.MyId)
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionKickUserYou, "un1", fromUser, ref entities);
                 }
@@ -621,7 +623,7 @@ namespace Unigram.Controls.Messages
             var game = GetGame(message);
             if (game == null)
             {
-                if (message.SenderUserId == message.ProtoService.GetMyId())
+                if (message.SenderUserId == message.ProtoService.Options.MyId)
                 {
                     content = string.Format(Strings.Resources.ActionYouScored, Locale.Declension("Points", gameScore.Score));
                 }
@@ -632,7 +634,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                if (message.SenderUserId == message.ProtoService.GetMyId())
+                if (message.SenderUserId == message.ProtoService.Options.MyId)
                 {
                     content = string.Format(Strings.Resources.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
                 }
@@ -645,6 +647,78 @@ namespace Unigram.Controls.Messages
             }
 
             return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdatePassportDataSent(MessageViewModel message, MessagePassportDataSent passportDataSent, bool active)
+        {
+            var content = string.Empty;
+
+            StringBuilder str = new StringBuilder();
+            for (int a = 0, size = passportDataSent.Types.Count; a < size; a++)
+            {
+                var type = passportDataSent.Types[a];
+                if (str.Length > 0)
+                {
+                    str.Append(", ");
+                }
+                if (type is PassportElementTypePhoneNumber)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentPhone);
+                }
+                else if (type is PassportElementTypeEmailAddress)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentEmail);
+                }
+                else if (type is PassportElementTypeAddress)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentAddress);
+                }
+                else if (type is PassportElementTypePersonalDetails)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentIdentity);
+                }
+                else if (type is PassportElementTypePassport)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentPassport);
+                }
+                else if (type is PassportElementTypeDriverLicense)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentDriverLicence);
+                }
+                else if (type is PassportElementTypeIdentityCard)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentIdentityCard);
+                }
+                else if (type is PassportElementTypeUtilityBill)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentUtilityBill);
+                }
+                else if (type is PassportElementTypeBankStatement)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentBankStatement);
+                }
+                else if (type is PassportElementTypeRentalAgreement)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentRentalAgreement);
+                }
+                else if (type is PassportElementTypeInternalPassport)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentInternalPassport);
+                }
+                else if (type is PassportElementTypePassportRegistration)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentPassportRegistration);
+                }
+                else if (type is PassportElementTypeTemporaryRegistration)
+                {
+                    str.Append(Strings.Resources.ActionBotDocumentTemporaryRegistration);
+                }
+            }
+
+            var chat = message.ProtoService.GetChat(message.ChatId);
+            content = string.Format(Strings.Resources.ActionBotDocuments, chat?.Title ?? string.Empty, str.ToString());
+
+            return (content, null);
         }
 
         private static (string, IList<TextEntity>) UpdatePaymentSuccessful(MessageViewModel message, MessagePaymentSuccessful paymentSuccessful, bool active)
@@ -725,6 +799,10 @@ namespace Unigram.Controls.Messages
                 else if (reply.Content is MessagePhoto)
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionPinnedPhoto, "un1", sender ?? (BaseObject)chat, ref entities);
+                }
+                else if (reply.Content is MessagePoll)
+                {
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedPoll, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
                 else if (reply.Content is MessageGame game)
                 {

@@ -8,6 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <EntranceNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Page.Resources>
         <CollectionViewSource x:Name="SearchResults" Source="{x:Bind ViewModel.Search, Mode=OneWay}" IsSourceGrouped="True"/>
 
@@ -57,22 +65,17 @@
                     <controls:GlyphButton
                         Glyph="&#xE11A;"
                         Click="Search_Click"
-                        FontSize="18"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
                 </Grid>
-                <controls:SearchTextBox x:Name="SearchField"
-                                        Padding="12,4,6,4"
-                                        Background="{x:Null}"
-                                        BorderBrush="{x:Null}"
-                                        Style="{StaticResource SearchTextBoxStyle}"
-                                        PlaceholderText="{CustomResource Search}"
-                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                        Clean="Search_LostFocus"
-                                        LostFocus="Search_LostFocus"
-                                        TextChanged="Search_TextChanged"
-                                        Visibility="Collapsed"
-                                        Canvas.ZIndex="1"/>
+                <TextBox x:Name="SearchField"
+                         Style="{StaticResource QueryTextBoxStyle}"
+                         PlaceholderText="{CustomResource Search}"
+                         PreventKeyboardDisplayOnProgrammaticFocus="True"
+                         LostFocus="Search_LostFocus"
+                         TextChanged="Search_TextChanged"
+                         Visibility="Collapsed"
+                         Canvas.ZIndex="1"/>
             </Grid>
         </controls:ContentPageHeader>
 
@@ -98,7 +101,7 @@
                     </GroupStyle.HeaderTemplate>
                     <GroupStyle.HeaderContainerStyle>
                         <Style TargetType="ListViewHeaderItem">
-                            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
                             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                             <Setter Property="Margin" Value="0,0,0,0"/>

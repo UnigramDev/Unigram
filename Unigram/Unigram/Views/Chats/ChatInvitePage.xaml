@@ -9,20 +9,23 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <EntranceNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <views:UsersSelectionView>
         <views:UsersSelectionView.Header>
-            <Button
-                Click="Invite_Click"
-                Visibility="{x:Bind (Visibility)ViewModel.IsCreator, Mode=OneWay}"
-                Style="{StaticResource HyperButtonStyle}">
-                <StackPanel Orientation="Horizontal" Margin="0,-8">
-                    <Border Width="36" Height="36" Margin="0,0,12,0">
-                        <FontIcon Glyph="&#xE71B;" Margin="0,2,0,0"/>
-                    </Border>
-                    <TextBlock Text="{CustomResource InviteToGroupByLink}" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.IsGroup, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock Text="{CustomResource ChannelInviteViaLink}" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.IsGroup, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
-                </StackPanel>
-            </Button>
+            <controls:GlyphButton x:Name="Invite"
+                                  Click="Invite_Click"
+                                  Visibility="{x:Bind (Visibility)ViewModel.IsCreator, Mode=OneWay}"
+                                  Content="{x:Bind ConvertInviteText(ViewModel.IsGroup), Mode=OneWay}"
+                                  Style="{StaticResource TextGlyphButtonStyle}"
+                                  Glyph="&#xE71B;"/>
+
         </views:UsersSelectionView.Header>
     </views:UsersSelectionView>
 </Page>

@@ -21,6 +21,10 @@ using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Common;
 using Unigram.Native;
 using Windows.Storage;
+using System.Windows.Input;
+using Unigram.Services;
+using Unigram.Services.Settings;
+using Unigram.Converters;
 
 namespace Unigram.Views.Settings
 {
@@ -49,12 +53,9 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsMasksPage));
         }
 
-        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is StickerSetInfo stickerSet)
-            {
-                await StickerSetView.GetForCurrentView().ShowAsync(stickerSet.Id);
-            }
+            ViewModel.StickerSetOpenCommand.Execute(e.ClickedItem);
         }
 
         private void ListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
@@ -76,6 +77,8 @@ namespace Unigram.Views.Settings
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var stickerSet = args.Item as StickerSetInfo;
+
+            content.Tag = stickerSet;
 
             if (args.Phase == 0)
             {
@@ -100,15 +103,12 @@ namespace Unigram.Views.Settings
                 var file = cover.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var buffer = await FileIO.ReadBufferAsync(temp);
-
-                    photo.Source = WebPImage.DecodeFromBuffer(buffer);
+                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     photo.Source = null;
-                    ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1));
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
 
@@ -141,5 +141,35 @@ namespace Unigram.Views.Settings
 
         #endregion
 
+        #region Context menu
+
+        private void StickerSet_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var stickerSet = element.Tag as StickerSetInfo;
+
+            if (stickerSet == null || stickerSet.Id == 0)
+            {
+                return;
+            }
+
+            if (stickerSet.IsOfficial)
+            {
+                flyout.CreateFlyoutItem(ViewModel.StickerSetHideCommand, stickerSet, Strings.Resources.StickersHide, new FontIcon { Glyph = Icons.Archive });
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(ViewModel.StickerSetHideCommand, stickerSet, Strings.Resources.StickersHide, new FontIcon { Glyph = Icons.Archive });
+                flyout.CreateFlyoutItem(ViewModel.StickerSetRemoveCommand, stickerSet, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+                //CreateFlyoutItem(ref flyout, ViewModel.StickerSetShareCommand, stickerSet, Strings.Resources.StickersShare);
+                //CreateFlyoutItem(ref flyout, ViewModel.StickerSetCopyCommand, stickerSet, Strings.Resources.StickersCopy);
+            }
+
+            args.ShowAt(flyout, element);
+        }
+
+        #endregion
     }
 }

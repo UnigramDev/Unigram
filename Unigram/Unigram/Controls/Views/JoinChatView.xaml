@@ -1,4 +1,4 @@
-<controls:BottomSheet
+<ContentDialog
     x:Class="Unigram.Controls.Views.JoinChatView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,6 +6,9 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Style="{StaticResource ModernContentDialogStyle}"
+    Title="{x:Null}"
+    TitleTemplate="{x:Null}"
     mc:Ignorable="d">
 
     <Grid Padding="0,12,0,0">
@@ -54,16 +57,5 @@
                 </StackPanel>
             </ListView.Footer>
         </ListView>
-
-        <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Border x:Name="LineBottom" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-
-            <Button Click="Join_Click" Content="{CustomResource ChannelJoin}" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
-            <Button Click="Cancel_Click" Content="{CustomResource Cancel}" HorizontalAlignment="Stretch" Margin="4,8,12,8" Grid.Column="1"/>
-        </Grid>
     </Grid>
-</controls:BottomSheet>
+</ContentDialog>

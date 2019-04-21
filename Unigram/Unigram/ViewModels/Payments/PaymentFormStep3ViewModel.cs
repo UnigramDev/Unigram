@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Entities;
-using Unigram.Core.Stripe;
+using Unigram.Services.Stripe;
 using Unigram.Views.Payments;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;

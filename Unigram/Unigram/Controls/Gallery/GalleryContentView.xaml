@@ -1,0 +1,33 @@
+<Grid
+    x:Class="Unigram.Controls.Gallery.GalleryContentView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <ScrollViewer x:Name="ScrollingHost"
+                  ZoomMode="Enabled"
+                  MinZoomFactor="1"
+                  MaxZoomFactor="4"
+                  IsZoomInertiaEnabled="True"
+                  HorizontalContentAlignment="Stretch"
+                  VerticalContentAlignment="Stretch"
+                  VerticalScrollBarVisibility="Hidden"
+                  HorizontalScrollBarVisibility="Hidden"
+                  HorizontalScrollMode="Auto"
+                  ViewChanged="ScrollingHost_ViewChanged">
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center">
+            <controls:AspectView x:Name="Panel" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Image x:Name="Texture" Stretch="UniformToFill"/>
+
+                <controls:FileButton x:Name="Button" Click="Button_Click" ManipulationMode="System" Style="{StaticResource ImmersiveFileButtonStyle}"/>
+            </controls:AspectView>
+        </Border>
+    </ScrollViewer>
+</Grid>

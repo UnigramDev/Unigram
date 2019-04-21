@@ -11,14 +11,15 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
-using Unigram.Core.Common;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
+using Windows.Storage.FileProperties;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -27,11 +28,24 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using static Unigram.Services.GenerationService;
 
 namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static string ToQuery(this Dictionary<string, string> dictionary)
+        {
+            var result = string.Empty;
+
+            foreach (var item in dictionary)
+            {
+                result += $"{item.Key}={item.Value}&";
+            }
+
+            return result.TrimEnd('&');
+        }
+
         public static int ToTimestamp(this DateTime dateTime)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -53,6 +67,18 @@ namespace Unigram.Common
                 value = default(T);
             }
             return success;
+        }
+
+        public static void Put<T>(this IList<T> source, bool begin, T item)
+        {
+            if (begin)
+            {
+                source.Insert(0, item);
+            }
+            else
+            {
+                source.Add(item);
+            }
         }
 
         public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
@@ -78,6 +104,35 @@ namespace Unigram.Common
             {
                 return null;
             }
+        }
+
+        public static string RegexReplace(this string input, string pattern, string replacement)
+        {
+            return Regex.Replace(input, pattern, replacement);
+        }
+
+        public static uint GetHeight(this ImageProperties props)
+        {
+            return props.Height;
+            return props.Orientation == PhotoOrientation.Rotate180 ? props.Height : props.Width;
+        }
+
+        public static uint GetWidth(this ImageProperties props)
+        {
+            return props.Width;
+            return props.Orientation == PhotoOrientation.Rotate180 ? props.Width : props.Height;
+        }
+
+
+
+        public static uint GetHeight(this VideoProperties props)
+        {
+            return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Height : props.Width;
+        }
+
+        public static uint GetWidth(this VideoProperties props)
+        {
+            return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Width : props.Height;
         }
 
         /// <summary>
@@ -129,15 +184,15 @@ namespace Unigram.Common
             return relativePath;
         }
 
-        public static async Task<InputFileGenerated> ToGeneratedAsync(this StorageFile file, string conversion = "copy")
+        public static async Task<InputFileGenerated> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
             var props = await file.GetBasicPropertiesAsync();
 
-            return new InputFileGenerated(file.Path, conversion + "#" + props.DateModified.ToString("s"), (int)props.Size);
+            return new InputFileGenerated(file.Path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (int)props.Size);
         }
 
-        public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, DialogViewModel.VideoConversion video = null, string conversion = "copy")
+        public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             var props = await file.Properties.GetVideoPropertiesAsync();
 
@@ -157,7 +212,7 @@ namespace Unigram.Common
             int width = (int)(originalWidth * ratio);
             int height = (int)(originalHeight * ratio);
 
-            return new InputThumbnail(await file.ToGeneratedAsync(conversion), width, height);
+            return new InputThumbnail(await file.ToGeneratedAsync(conversion, arguments), width, height);
         }
 
         public static T RemoveLast<T>(this List<T> list)
@@ -171,6 +226,33 @@ namespace Unigram.Common
             }
 
             return default(T);
+        }
+
+        public static bool IsEmpty<T>(this ICollection<T> items)
+        {
+            return items.Count == 0;
+        }
+
+        public static void PutRange<TKey, TItem>(this IDictionary<TKey, TItem> list, IDictionary<TKey, TItem> source)
+        {
+            foreach (var item in source)
+            {
+                list[item.Key] = item.Value;
+            }
+        }
+
+
+        public static bool Equals(this string input, params string[] check)
+        {
+            foreach (var str in check)
+            {
+                if (input.Equals(str))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static bool IsEmpty(this Rect rect)
@@ -454,7 +536,7 @@ namespace Unigram.Common
             return GetHyperlink(parent.ElementStart.Parent as TextElement);
         }
 
-        public static void FocusMaybe(this RichEditBox textBox, FocusState focusState)
+        public static void FocusMaybe2(this Control textBox, FocusState focusState)
         {
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -595,13 +677,16 @@ namespace Unigram.Common
     // Modified from: https://stackoverflow.com/a/32559623/1680863
     public static class ListViewExtensions
     {
-        public async static Task ScrollToItem(this ListViewBase listViewBase, object item, SnapPointsAlignment alignment, bool highlight, double? pixel = null)
+        public async static Task ScrollToItem2(this ListViewBase listViewBase, object item, VerticalAlignment alignment, bool highlight, double? pixel = null)
         {
             var scrollViewer = listViewBase.GetScrollViewer();
             if (scrollViewer == null)
             {
                 return;
             }
+
+            //listViewBase.SelectionMode = ListViewSelectionMode.Single;
+            //listViewBase.SelectedItem = item;
 
             var selectorItem = listViewBase.ContainerFromItem(item) as SelectorItem;
             if (selectorItem == null)
@@ -622,18 +707,18 @@ namespace Unigram.Common
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
             var position = transform.TransformPoint(new Point(0, 0));
 
-            if (alignment == SnapPointsAlignment.Near)
+            if (alignment == VerticalAlignment.Top)
             {
                 if (pixel is double adjust)
                 {
                     position.Y -= adjust;
                 }
             }
-            else if (alignment == SnapPointsAlignment.Center)
+            else if (alignment == VerticalAlignment.Center)
             {
                 position.Y -= (listViewBase.ActualHeight - selectorItem.ActualHeight) / 2d;
             }
-            else if (alignment == SnapPointsAlignment.Far)
+            else if (alignment == VerticalAlignment.Bottom)
             {
                 position.Y -= listViewBase.ActualHeight - selectorItem.ActualHeight;
 
@@ -644,7 +729,7 @@ namespace Unigram.Common
             }
 
             // scroll to desired position with animation!
-            scrollViewer.ChangeView(position.X, position.Y, null, alignment != SnapPointsAlignment.Center);
+            scrollViewer.ChangeView(position.X, position.Y, null, alignment != VerticalAlignment.Center);
 
             if (highlight)
             {
@@ -658,7 +743,7 @@ namespace Unigram.Common
             }
         }
 
-        public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item)
+        public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item, ScrollIntoViewAlignment alignment = ScrollIntoViewAlignment.Leading)
         {
             var tcs = new TaskCompletionSource<object>();
             var scrollViewer = listViewBase.GetScrollViewer();
@@ -672,7 +757,7 @@ namespace Unigram.Common
             try
             {
                 scrollViewer.ViewChanged += viewChanged;
-                listViewBase.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+                listViewBase.ScrollIntoView(item, alignment);
                 await tcs.Task;
             }
             finally
@@ -707,7 +792,7 @@ namespace Unigram.Common
 
         public static ScrollViewer GetScrollViewer(this ListViewBase listViewBase)
         {
-            if (listViewBase is BubbleListView bubble)
+            if (listViewBase is ChatsListView bubble)
             {
                 return bubble.ScrollingHost;
             }

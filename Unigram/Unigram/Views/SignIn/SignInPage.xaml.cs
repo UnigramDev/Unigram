@@ -18,7 +18,6 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 using Unigram.Common;
 using Unigram.Entities;
-using Telegram.Helpers;
 using System.Text;
 
 namespace Unigram.Views.SignIn
@@ -31,6 +30,8 @@ namespace Unigram.Views.SignIn
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignInViewModel>();
+
+            Transitions = ApiInfo.CreateSlideTransition();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
@@ -57,7 +58,7 @@ namespace Unigram.Views.SignIn
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                ViewModel.SendCommand.Execute(sender);
+                ViewModel.SendCommand.Execute(null);
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(PrimaryInput.Text))

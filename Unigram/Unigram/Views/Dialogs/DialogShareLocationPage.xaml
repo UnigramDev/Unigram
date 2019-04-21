@@ -26,8 +26,7 @@
                     <controls:GlyphButton
                         Glyph="&#xE11A;"
                         Click="Search_Click"
-                        FontSize="18"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
                 </Grid>
 
@@ -35,11 +34,11 @@
                                         Padding="12,4,6,4"
                                         Background="{x:Null}"
                                         BorderBrush="{x:Null}"
-                                        Style="{StaticResource SearchTextBoxStyle}"
+                                        Style="{StaticResource QueryTextBoxStyle}"
                                         PlaceholderText="{CustomResource Search}"
                                         PreventKeyboardDisplayOnProgrammaticFocus="True"
                                         Visibility="Collapsed"
-                                        Clean="Search_LostFocus"
+                                        Delete="Search_LostFocus"
                                         GotFocus="Search_GotFocus"
                                         LostFocus="Search_LostFocus"
                                         TextChanged="Search_TextChanged"
@@ -193,7 +192,7 @@
                         </Button>
 
                         <!-- Nearby header -->
-                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                             <TextBlock Text="{CustomResource NearbyPlaces}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                     </StackPanel>

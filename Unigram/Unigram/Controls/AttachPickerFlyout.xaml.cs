@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Core.Models;
+using Unigram.Collections;
 using Unigram.Entities;
 using Unigram.ViewModels;
 using Unigram.Views;

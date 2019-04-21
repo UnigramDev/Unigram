@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Common;
 using Unigram.Controls;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
@@ -36,5 +37,14 @@ namespace Unigram.Views.Settings
                 Frame.BackStack.Remove(Frame.BackStack.Last());
             }
         }
+
+        #region Binding
+
+        private string ConvertPhoneNumber(string number)
+        {
+            return PhoneNumber.Format(number);
+        }
+
+        #endregion
     }
 }

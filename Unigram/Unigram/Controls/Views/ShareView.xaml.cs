@@ -34,7 +34,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Unigram.Controls.Cells;
 using System.Reactive.Linq;
-using Unigram.Core.Common;
+using System.Threading.Tasks;
 
 namespace Unigram.Controls.Views
 {
@@ -82,68 +82,53 @@ namespace Unigram.Controls.Views
             return context;
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
+        public Task<ContentDialogResult> ShowAsync(DataPackageView package)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
+            ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = false;
 
-            ViewModel.SwitchInline = switchInline;
-            ViewModel.SwitchInlineBot = bot;
-
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.Messages = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InputMedia = null;
-            ViewModel.IsWithMyScore = false;
+            ViewModel.Clear();
+            ViewModel.Package = package;
 
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(string message, bool hasUrl)
+        public Task<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
+        {
+            ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
+            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.IsCommentEnabled = false;
+
+            ViewModel.Clear();
+            ViewModel.SwitchInline = switchInline;
+            ViewModel.SwitchInlineBot = bot;
+
+            return ShowAsync();
+        }
+
+        public Task<ContentDialogResult> ShowAsync(string message, bool hasUrl)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.SendMessage = message;
             ViewModel.SendMessageUrl = hasUrl;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.Messages = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InputMedia = null;
-            ViewModel.IsWithMyScore = false;
 
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(Message message, bool withMyScore = false)
+        public Task<ContentDialogResult> ShowAsync(Message message, bool withMyScore = false)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.Messages = new[] { message };
             ViewModel.IsWithMyScore = withMyScore;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InputMedia = null;
 
             var chat = ViewModel.ProtoService.GetChat(message.ChatId);
             if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel && ViewModel.ProtoService.GetSupergroup(super.SupergroupId) is Supergroup supergroup && supergroup.Username.Length > 0)
@@ -181,68 +166,40 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
+        public Task<ContentDialogResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.Messages = messages;
             ViewModel.IsWithMyScore = withMyScore;
 
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InputMedia = null;
-
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(Uri link, string title)
+        public Task<ContentDialogResult> ShowAsync(Uri link, string title)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
 
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.Messages = null;
-            ViewModel.InviteBot = null;
-            ViewModel.InputMedia = null;
-            ViewModel.IsWithMyScore = false;
-
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(InputMessageContent inputMedia)
+        public Task<ContentDialogResult> ShowAsync(InputMessageContent inputMedia)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
 
+            ViewModel.Clear();
             ViewModel.InputMedia = inputMedia;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.Messages = null;
-            ViewModel.InviteBot = null;
-            ViewModel.IsWithMyScore = false;
 
             //if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
             //{
@@ -252,28 +209,20 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(User bot)
+        public Task<ContentDialogResult> ShowAsync(User bot, string token = null)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
             ViewModel.IsCommentEnabled = false;
 
+            ViewModel.Clear();
             ViewModel.InviteBot = bot;
-
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-            ViewModel.Comment = null;
-            ViewModel.ShareLink = null;
-            ViewModel.ShareTitle = null;
-            ViewModel.Messages = null;
-            ViewModel.IsWithMyScore = false;
+            ViewModel.InviteToken = token;
 
             return ShowAsync();
         }
 
-        private new IAsyncOperation<ContentDialogResult> ShowAsync()
+        private new Task<ContentDialogResult> ShowAsync()
         {
             ViewModel.Items.Clear();
 
@@ -285,7 +234,7 @@ namespace Unigram.Controls.Views
             });
 
             Loaded += handler;
-            return base.ShowAsync();
+            return this.ShowQueuedAsync();
         }
 
         #endregion
@@ -305,7 +254,7 @@ namespace Unigram.Controls.Views
             var photo = content.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48, 48);
+            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48);
             title.Text = ViewModel.ProtoService.GetTitle(chat);
         }
 
@@ -415,11 +364,11 @@ namespace Unigram.Controls.Views
                     var photo = content.Children[0] as ProfilePicture;
                     if (result.Chat != null)
                     {
-                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, result.Chat, 36, 36);
+                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, result.Chat, 36);
                     }
                     else if (result.User != null)
                     {
-                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, result.User, 36, 36);
+                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, result.User, 36);
                     }
                 }
 
@@ -447,16 +396,8 @@ namespace Unigram.Controls.Views
             var photo = grid.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
 
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == ViewModel.ProtoService.GetMyId())
-            {
-                photo.Source = PlaceholderHelper.GetChat(null, chat, 48, 48);
-                title.Text = Strings.Resources.SavedMessages;
-            }
-            else
-            {
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48, 48);
-                title.Text = ViewModel.ProtoService.GetTitle(chat, true);
-            }
+            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 48);
+            title.Text = ViewModel.ProtoService.GetTitle(chat, true);
 
             var badge = grid.Children[1] as Border;
             var text = badge.Child as TextBlock;
@@ -579,6 +520,8 @@ namespace Unigram.Controls.Views
             Subtitle.Visibility = ViewModel.SelectedItems.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
             Subtitle.Text = string.Join(", ", ViewModel.SelectedItems.Select(x => ViewModel.CacheService.GetTitle(x)));
 
+            CommentPanel.Visibility = ViewModel.SelectedItems.Count > 0 && ViewModel.IsCommentEnabled ? Visibility.Visible : Visibility.Collapsed;
+
             IsPrimaryButtonEnabled = ViewModel.SelectedItems.Count > 0;
         }
 
@@ -633,8 +576,14 @@ namespace Unigram.Controls.Views
                 items.Insert(1, chat);
             }
 
-
-            ChatsPanel.SelectedItems.Add(chat);
+            if (ChatsPanel.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                ChatsPanel.SelectedItems.Add(chat);
+            }
+            else
+            {
+                ChatsPanel.SelectedItem = chat;
+            }
         }
 
         private void List_SizeChanged(object sender, SizeChangedEventArgs e)

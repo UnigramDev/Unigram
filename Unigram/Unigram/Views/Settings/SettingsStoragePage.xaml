@@ -11,6 +11,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <DrillInNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -32,8 +40,7 @@
                         <controls:BadgeButton
                             Command="{x:Bind ViewModel.ChangeTtlCommand}"
                             Content="{CustomResource KeepMedia}"
-                            Badge="{x:Bind ConvertTtl(ViewModel.FilesTtl), Mode=OneWay}"
-                            Style="{StaticResource BadgeButtonStyle}"/>
+                            Badge="{x:Bind ConvertTtl(ViewModel.FilesTtl), Mode=OneWay}"/>
                         <TextBlock
                             common:TextBlockHelper.Markdown="{CustomResource KeepMediaInfo}"
                             Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -44,14 +51,12 @@
                     <StackPanel Margin="0,24">
                         <controls:BadgeButton
                             Content="{CustomResource LocalDatabase}"
-                            Badge="{x:Bind ViewModel.StatisticsFast.DatabaseSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
-                            Style="{StaticResource BadgeButtonStyle}"/>
+                            Badge="{x:Bind ViewModel.StatisticsFast.DatabaseSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"/>
                         <controls:BadgeButton
                             Command="{x:Bind ViewModel.ClearCacheCommand}"
                             Content="{CustomResource ClearMediaCache}"
                             Badge="{x:Bind ViewModel.Statistics.Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
-                            IsEnabled="{x:Bind ConvertEnabled(ViewModel.Statistics), Mode=OneWay}"
-                            Style="{StaticResource BadgeButtonStyle}"/>
+                            IsEnabled="{x:Bind ConvertEnabled(ViewModel.Statistics), Mode=OneWay}"/>
                     </StackPanel>
                 </StackPanel>
             </ListView.Header>

@@ -11,7 +11,6 @@ using Template10.Services.NavigationService;
 using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
 using Unigram.Controls;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.Views;
@@ -255,6 +254,14 @@ namespace Unigram.Common
 
             service.Frame.Navigated += handler;
             service.Navigate(typeof(MainPage));
+        }
+
+        public static void NavigateToPasscode(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToPasscode();
+            }
         }
 
         #region Payments

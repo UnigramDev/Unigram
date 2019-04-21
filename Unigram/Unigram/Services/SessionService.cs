@@ -28,7 +28,7 @@ namespace Unigram.Services
         IEventAggregator Aggregator { get; }
     }
 
-    public class SessionService : TLViewModelBase, ISessionService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
+    public class SessionService : TLViewModelBase, ISessionService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateUnreadChatCount>, IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
     {
         private readonly ILifetimeService _lifetimeService;
         private readonly int _id;
@@ -42,11 +42,12 @@ namespace Unigram.Services
             aggregator.Subscribe(this);
 
             IsActive = selected;
-            UnreadCount = ProtoService.UnreadCount;
+            Handle(cacheService.UnreadChatCount);
+            Handle(cacheService.UnreadMessageCount);
         }
 
         public int Id => _id;
-        public int UserId => ProtoService.GetMyId();
+        public int UserId => ProtoService.Options.MyId;
 
         private int _unreadCount;
         public int UnreadCount
@@ -72,19 +73,41 @@ namespace Unigram.Services
             {
                 //Set(ref _isActive, value);
                 _isActive = value;
-                //ProtoService.Send(new SetOption("online", new OptionValueBoolean(value)));
+                CacheService.Options.Online = value;
             }
         }
 
         public void Handle(UpdateUnreadMessageCount update)
         {
+            if (!Settings.Notifications.CountUnreadMessages)
+            {
+                return;
+            }
+
             if (Settings.Notifications.IncludeMutedChats)
             {
-                Execute.BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+                BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
             }
             else
             {
-                Execute.BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+                BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+            }
+        }
+
+        public void Handle(UpdateUnreadChatCount update)
+        {
+            if (Settings.Notifications.CountUnreadMessages)
+            {
+                return;
+            }
+
+            if (Settings.Notifications.IncludeMutedChats)
+            {
+                BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+            }
+            else
+            {
+                BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
             }
         }
 
@@ -101,6 +124,15 @@ namespace Unigram.Services
                 ProtoService.Send(new Destroy());
             }
 
+            //if (update.AuthorizationState is AuthorizationStateReady)
+            //{
+            //    _lifetimeService.Register(this);
+            //}
+            //else
+            //{
+            //    _lifetimeService.Unregister(this);
+            //}
+
             foreach (TLWindowContext window in WindowContext.ActiveWrappers)
             {
                 window.Handle(this, update);
@@ -116,12 +148,5 @@ namespace Unigram.Services
         }
 
         #endregion
-
-        protected override void BeginOnUIThread(Action action)
-        {
-            // This is somehow needed because this viewmodel requires a Dispatcher
-            // in some situations where base one might be null.
-            Execute.BeginOnUIThread(action);
-        }
     }
 }

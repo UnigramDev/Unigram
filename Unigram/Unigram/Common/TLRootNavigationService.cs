@@ -35,8 +35,6 @@ namespace Unigram.Common
                     Navigate(typeof(MainPage));
                     break;
                 case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                    Execute.Initialize();
-
                     if (_lifetimeService.Items.Count > 1)
                     {
                         Navigate(typeof(SignInPage));
@@ -56,7 +54,7 @@ namespace Unigram.Common
                         await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
-                    Navigate(typeof(SignInPasswordPage));
+                    Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern) ? typeof(SignInPasswordPage) : typeof(SignInRecoveryPage));
                     break;
             }
         }

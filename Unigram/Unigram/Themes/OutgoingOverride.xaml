@@ -1,0 +1,20 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="MessageForegroundBrush" Color="{ThemeResource MessageForegroundOutColor}" />
+    <SolidColorBrush x:Key="MessageForegroundLinkBrush" Color="{ThemeResource MessageForegroundLinkOutColor}" />
+    <SolidColorBrush x:Key="MessageBackgroundBrush" Color="{ThemeResource MessageBackgroundOutColor}" />
+    <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource MessageSubtleLabelOutColor}" />
+    <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource MessageSubtleGlyphOutColor}" />
+    <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource MessageSubtleForegroundOutColor}" />
+    <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MessageHeaderForegroundOutColor}" />
+    <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderOutColor}" />
+    <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundOutColor}" />
+    <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundOutColor}" />
+    <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="{ThemeResource MessageHyperlinkForegroundOutColor}" />
+    <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MessageOverlayBackgroundOutColor}" />
+    <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="{ThemeResource MessageCallForegroundOutColor}" />
+    <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="{ThemeResource MessageCallMissedForegroundOutColor}" />
+
+</ResourceDictionary>

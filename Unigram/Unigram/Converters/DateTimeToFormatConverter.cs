@@ -41,31 +41,28 @@ namespace Unigram.Converters
 
         public static string ConvertMonthGrouping(DateTime date)
         {
-            var formatted = new DateTimeFormatter("month.full", GlobalizationPreferences.Languages).Format(date).Trim('\u200E', '\u200F');
-            formatted = formatted.Substring(0, 1).ToUpper() + formatted.Substring(1);
+            var now = DateTime.Now;
 
-            if (date.Year != DateTime.Now.Year)
+            var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
+            if (difference >= 12)
             {
-                formatted += $" {date.Year}";
+                return BindConvert.Current.MonthFullYear.Format(date);
             }
 
-            return formatted;
+            return BindConvert.Current.MonthFull.Format(date);
         }
 
         public static string ConvertDayGrouping(DateTime date)
         {
             var now = DateTime.Now;
 
-            var formatted = new DateTimeFormatter("day month.full", GlobalizationPreferences.Languages).Format(date);
             var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
-
-            //if (date.Year != DateTime.Now.Year)
             if (difference >= 12)
             {
-                formatted += $" {date.Year}";
+                return BindConvert.Current.DayMonthFullYear.Format(date);
             }
 
-            return formatted;
+            return BindConvert.Current.DayMonthFull.Format(date);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

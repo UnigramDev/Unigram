@@ -1,0 +1,398 @@
+﻿{
+  "LightRegion": {
+    "Title": "Light Region",
+    "Color": "#FFFFFFFF"
+  },
+  "DarkRegion": {
+    "Title": "Dark Region",
+    "Color": "#FF282828"
+  },
+  "LightBase": {
+    "Steps": 11,
+    "BaseColor": {
+      "Title": "Light Base",
+      "Color": "#FFCCCCCC"
+    }
+  },
+  "DarkBase": {
+    "Steps": 11,
+    "BaseColor": {
+      "Title": "Dark Base",
+      "Color": "#FF333333"
+    }
+  },
+  "LightPrimary": {
+    "Steps": 11,
+    "BaseColor": {
+      "Title": "Light Primary",
+      "Color": "#FF1686AE"
+    }
+  },
+  "DarkPrimary": {
+    "Steps": 11,
+    "BaseColor": {
+      "Title": "Dark Primary",
+      "Color": "#FF1686AE"
+    }
+  },
+  "MessageForeground": {
+    "Title": "Light Region",
+    "Color": "#FF000000"
+  },
+  "MessageForegroundOut": {
+    "Title": "Light Region",
+    "Color": "#FF000000"
+  },
+  "MessageBackground": {
+    "Title": "Light Region",
+    "Color": "#FFFFFFFF"
+  },
+  "MessageBackgroundOut": {
+    "Title": "Light Region",
+    "Color": "#FFF0FDDF"
+  },
+  "MessageSubtleLabel": {
+    "Title": "Light Region",
+    "Color": "#FFA1ADB6"
+  },
+  "MessageSubtleLabelOut": {
+    "Title": "Light Region",
+    "Color": "#FF6DC264"
+  },
+  "MessageSubtleGlyph": {
+    "Title": "Light Region",
+    "Color": "#FFA1ADB6"
+  },
+  "MessageSubtleGlyphOut": {
+    "Title": "Light Region",
+    "Color": "#FF5DC452"
+  },
+  "MessageSubtleForeground": {
+    "Title": "Light Region",
+    "Color": "#FFA1ADB6"
+  },
+  "MessageSubtleForegroundOut": {
+    "Title": "Light Region",
+    "Color": "#FF6DC264"
+  },
+  "MessageHeaderForeground": {
+    "Title": "Light Region",
+    "Color": "#FF158DCD"
+  },
+  "MessageHeaderForegroundOut": {
+    "Title": "Light Region",
+    "Color": "#FF3A8E26"
+  },
+  "MessageHeaderBorder": {
+    "Title": "Light Region",
+    "Color": "#FF37A4DE"
+  },
+  "MessageHeaderBorderOut": {
+    "Title": "Light Region",
+    "Color": "#FF5DC452"
+  },
+  "MessageMediaForeground": {
+    "Title": "Light Region",
+    "Color": "#FFFFFFFF"
+  },
+  "MessageMediaForegroundOut": {
+    "Title": "Light Region",
+    "Color": "#FFF0FDDF"
+  },
+  "MessageMediaBackground": {
+    "Title": "Light Region",
+    "Color": "#FF40A7E3"
+  },
+  "MessageMediaBackgroundOut": {
+    "Title": "Light Region",
+    "Color": "#FF78C67F"
+  },
+  "LightPaletteMapping": [
+    {
+      "Target": "Accent",
+      "Source": "LightPrimary",
+      "SourceIndex": "5"
+    },
+    {
+      "Target": "AltHigh",
+      "Source": "White"
+    },
+    {
+      "Target": "AltLow",
+      "Source": "White"
+    },
+    {
+      "Target": "AltMedium",
+      "Source": "White"
+    },
+    {
+      "Target": "AltMediumHigh",
+      "Source": "White"
+    },
+    {
+      "Target": "AltMediumLow",
+      "Source": "White"
+    },
+    {
+      "Target": "BaseHigh",
+      "Source": "Black"
+    },
+    {
+      "Target": "BaseLow",
+      "Source": "LightBase",
+      "SourceIndex": "5"
+    },
+    {
+      "Target": "BaseMedium",
+      "Source": "LightBase",
+      "SourceIndex": "8"
+    },
+    {
+      "Target": "BaseMediumHigh",
+      "Source": "LightBase",
+      "SourceIndex": "10"
+    },
+    {
+      "Target": "BaseMediumLow",
+      "Source": "LightBase",
+      "SourceIndex": "9"
+    },
+    {
+      "Target": "ChromeAltLow",
+      "Source": "LightBase",
+      "SourceIndex": "10"
+    },
+    {
+      "Target": "ChromeBlackHigh",
+      "Source": "Black"
+    },
+    {
+      "Target": "ChromeBlackLow",
+      "Source": "LightBase",
+      "SourceIndex": "5"
+    },
+    {
+      "Target": "ChromeBlackMedium",
+      "Source": "LightBase",
+      "SourceIndex": "10"
+    },
+    {
+      "Target": "ChromeBlackMediumLow",
+      "Source": "LightBase",
+      "SourceIndex": "8"
+    },
+    {
+      "Target": "ChromeDisabledHigh",
+      "Source": "LightBase",
+      "SourceIndex": "5"
+    },
+    {
+      "Target": "ChromeDisabledLow",
+      "Source": "LightBase",
+      "SourceIndex": "8"
+    },
+    {
+      "Target": "ChromeGray",
+      "Source": "LightBase",
+      "SourceIndex": "9"
+    },
+    {
+      "Target": "ChromeHigh",
+      "Source": "LightBase",
+      "SourceIndex": "5"
+    },
+    {
+      "Target": "ChromeLow",
+      "Source": "LightBase",
+      "SourceIndex": "0"
+    },
+    {
+      "Target": "ChromeMedium",
+      "Source": "LightBase",
+      "SourceIndex": "1"
+    },
+    {
+      "Target": "ChromeMediumLow",
+      "Source": "LightBase",
+      "SourceIndex": "0"
+    },
+    {
+      "Target": "ChromeWhite",
+      "Source": "White"
+    },
+    {
+      "Target": "ListLow",
+      "Source": "LightBase",
+      "SourceIndex": "1"
+    },
+    {
+      "Target": "ListMedium",
+      "Source": "LightBase",
+      "SourceIndex": "5"
+    }
+  ],
+  "DarkPaletteMapping": [
+    {
+      "Target": "Accent",
+      "Source": "DarkPrimary",
+      "SourceIndex": "5"
+    },
+    {
+      "Target": "AltHigh",
+      "Source": "Black"
+    },
+    {
+      "Target": "AltLow",
+      "Source": "Black"
+    },
+    {
+      "Target": "AltMedium",
+      "Source": "Black"
+    },
+    {
+      "Target": "AltMediumHigh",
+      "Source": "Black"
+    },
+    {
+      "Target": "AltMediumLow",
+      "Source": "Black"
+    },
+    {
+      "Target": "BaseHigh",
+      "Source": "White"
+    },
+    {
+      "Target": "BaseLow",
+      "Source": "DarkBase",
+      "SourceIndex": "5"
+    },
+    {
+      "Target": "BaseMedium",
+      "Source": "DarkBase",
+      "SourceIndex": "1"
+    },
+    {
+      "Target": "BaseMediumHigh",
+      "Source": "DarkBase",
+      "SourceIndex": "0"
+    },
+    {
+      "Target": "BaseMediumLow",
+      "Source": "DarkBase",
+      "SourceIndex": "3"
+    },
+    {
+      "Target": "ChromeAltLow",
+      "Source": "DarkBase",
+      "SourceIndex": "0"
+    },
+    {
+      "Target": "ChromeBlackHigh",
+      "Source": "Black"
+    },
+    {
+      "Target": "ChromeBlackLow",
+      "Source": "DarkBase",
+      "SourceIndex": "0"
+    },
+    {
+      "Target": "ChromeBlackMedium",
+      "Source": "Black"
+    },
+    {
+      "Target": "ChromeBlackMediumLow",
+      "Source": "Black"
+    },
+    {
+      "Target": "ChromeDisabledHigh",
+      "Source": "DarkBase",
+      "SourceIndex": "5"
+    },
+    {
+      "Target": "ChromeDisabledLow",
+      "Source": "DarkBase",
+      "SourceIndex": "1"
+    },
+    {
+      "Target": "ChromeGray",
+      "Source": "DarkBase",
+      "SourceIndex": "2"
+    },
+    {
+      "Target": "ChromeHigh",
+      "Source": "DarkBase",
+      "SourceIndex": "2"
+    },
+    {
+      "Target": "ChromeLow",
+      "Source": "DarkBase",
+      "SourceIndex": "9"
+    },
+    {
+      "Target": "ChromeMedium",
+      "Source": "DarkBase",
+      "SourceIndex": "8"
+    },
+    {
+      "Target": "ChromeMediumLow",
+      "Source": "DarkBase",
+      "SourceIndex": "6"
+    },
+    {
+      "Target": "ChromeWhite",
+      "Source": "White"
+    },
+    {
+      "Target": "ListLow",
+      "Source": "DarkBase",
+      "SourceIndex": "8"
+    },
+    {
+      "Target": "ListMedium",
+      "Source": "DarkBase",
+      "SourceIndex": "5"
+    }
+  ],
+  "Presets": [
+    {
+      "Id": "Default",
+      "Name": "Default",
+      "LightRegionColor": "#FFFFFFFF",
+      "DarkRegionColor": "#FF000000",
+      "LightBaseColor": "#FFCCCCCC",
+      "DarkBaseColor": "#FF333333",
+      "LightPrimaryColor": "#FF0073CF",
+      "DarkPrimaryColor": "#FF0073CF"
+    },
+    {
+      "Id": "Lavender",
+      "Name": "Lavender",
+      "LightRegionColor": "#FFFEF6FF",
+      "DarkRegionColor": "#FF262738",
+      "LightBaseColor": "#FFEECEFF",
+      "DarkBaseColor": "#FF64576B",
+      "LightPrimaryColor": "#FF8961CC",
+      "DarkPrimaryColor": "#FF8961CC"
+    },
+    {
+      "Id": "Forest",
+      "Name": "Forest",
+      "LightRegionColor": "#FFF7FFFF",
+      "DarkRegionColor": "#FF353819",
+      "LightBaseColor": "#FFC2DB65",
+      "DarkBaseColor": "#FF784834",
+      "LightPrimaryColor": "#FF34854D",
+      "DarkPrimaryColor": "#FF34854D"
+    },
+    {
+      "Id": "Nighttime",
+      "Name": "Nighttime",
+      "LightRegionColor": "#FFCFEAFF",
+      "DarkRegionColor": "#FF0D2644",
+      "LightBaseColor": "#FF7CBEE0",
+      "DarkBaseColor": "#FF2F7BAD",
+      "LightPrimaryColor": "#FFCC4D11",
+      "DarkPrimaryColor": "#FFCC4D11"
+    }
+  ]
+}

@@ -17,7 +17,7 @@ namespace Unigram.ViewModels.Supergroups
             : base(protoService, cacheService, settingsService, aggregator, null, query => new SupergroupMembersFilterBanned(query))
         {
             AddCommand = new RelayCommand(AddExecute);
-            ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
+            MemberUnbanCommand = new RelayCommand<ChatMember>(MemberUnbanExecute);
         }
 
         public RelayCommand AddCommand { get; }
@@ -34,9 +34,24 @@ namespace Unigram.ViewModels.Supergroups
 
         #region Context menu
 
-        public RelayCommand<ChatMember> ParticipantDismissCommand { get; }
-        private async void ParticipantDismissExecute(ChatMember participant)
+        public RelayCommand<ChatMember> MemberUnbanCommand { get; }
+        private async void MemberUnbanExecute(ChatMember member)
         {
+            var chat = _chat;
+            if (chat == null || Members == null)
+            {
+                return;
+            }
+
+            var index = Members.IndexOf(member);
+
+            Members.Remove(member);
+
+            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.UserId, new ChatMemberStatusMember()));
+            if (response is Error)
+            {
+                Members.Insert(index, member);
+            }
         }
 
         #endregion

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Telegram.Helpers
+namespace Unigram.Common
 {
     public class PhoneNumber
     {

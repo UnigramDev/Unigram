@@ -1,10 +1,10 @@
-<controls:ContentDialogBase
+<controls:OverlayPage
     x:Class="Unigram.Controls.Views.SendMediaView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Views"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:models="using:Unigram.Entities"
+    xmlns:entities="using:Unigram.Entities"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -14,7 +14,7 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
 
-    <controls:ContentDialogBase.Resources>
+    <controls:OverlayPage.Resources>
         <SolidColorBrush x:Key="SliderInlineTickBarFill" Color="Purple"/>
 
         <Style x:Key="GroupingGlyphButtonStyle" TargetType="controls:GlyphToggleButton">
@@ -612,7 +612,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </controls:ContentDialogBase.Resources>
+    </controls:OverlayPage.Resources>
 
     <Grid x:Name="LayoutRoot" RequestedTheme="Dark">
         <VisualStateManager.VisualStateGroups>
@@ -667,10 +667,10 @@
                 Grid.RowSpan="4"
                 Grid.ColumnSpan="2">
                 <FlipView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="entities:StorageMedia">
                         <Border Tapped="Select_Tapped" Background="Transparent">
                             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" StretchDirection="DownOnly">
-                                <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+                                <Image Source="{x:Bind Preview, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
                             </Viewbox>
                         </Border>
                     </DataTemplate>
@@ -694,7 +694,7 @@
                 </Border>
             </StackPanel>
 
-            <Grid Background="#AA000000" Grid.ColumnSpan="2">
+            <Grid Visibility="{x:Bind IsMultipleSelection, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#AA000000" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -723,7 +723,7 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:StorageMedia">
+                        <DataTemplate x:DataType="entities:StorageMedia">
                             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                 <Image Source="{x:Bind Thumbnail, Mode=OneWay}" Width="40" Height="40"/>
                                 <Border BorderBrush="#26000000" BorderThickness="1"/>
@@ -748,6 +748,7 @@
                       AllowFocusOnInteraction="False"
                       IsItemClickEnabled="True"
                       ItemClick="Autocomplete_ItemClick"
+                      ContainerContentChanging="OnContainerContentChanging"
                       Grid.RowSpan="2">
                 <ListView.Header>
                     <Border x:Name="AutocompleteHeader"
@@ -782,7 +783,6 @@
                     Autocomplete="{x:Bind ListAutocomplete}"
                     DataContext="{x:Bind ViewModel}"
                     Paste="OnPaste"
-                    MaxLength="200"
                     InputScope="Chat"
                     PlaceholderText="{CustomResource AddCaption}"
                     Margin="12,8,12,8"
@@ -821,7 +821,10 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <controls:GlyphButton Click="Cancel_Click" Glyph="&#xE10A;"/>
+            <controls:GlyphButton Click="Cancel_Click"
+                                  Glyph="&#xE10A;"
+                                  AutomationProperties.Name="{CustomResource Cancel}"
+                                  ToolTipService.ToolTip="{CustomResource Cancel}"/>
 
             <Grid Visibility="{x:Bind IsEditingCompression, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1">
                 <TextBlock Text="{x:Bind ConvertCompression(SelectedItem, CompressionValue.Value), Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
@@ -836,19 +839,37 @@
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Click="Crop_Click" 
                                       Glyph="&#xE7A8;"
-                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
+                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                      AutomationProperties.Name="{CustomResource CropImage}"
+                                      ToolTipService.ToolTip="{CustomResource CropImage}"/>
                 <controls:GlyphButton Click="Crop_Click" 
                                       Glyph="&#xE7A8;"
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"  />
-                <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
+                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      AutomationProperties.Name="{CustomResource CropImage}"
+                                      ToolTipService.ToolTip="{CustomResource CropImage}"/>
+                <controls:GlyphButton
+                    Glyph="&#xEE56;"
+                    IsEnabled="False"
+                    AutomationProperties.Name="{CustomResource AccDescrPhotoEditor}"
+                    ToolTipService.ToolTip="{CustomResource AccDescrPhotoEditor}"
+                    Grid.Column="1"/>
                 <controls:GlyphButton Click="Compress_Click"
                                       Glyph="{Binding SelectedItem.Compression, Mode=OneWay, Converter={StaticResource CompressionToGlyphConverter}}"
                                       Visibility="{x:Bind SelectedItem.IsVideo, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                       IsEnabled="{Binding SelectedItem.CanCompress, Mode=OneWay}"
                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                      AutomationProperties.Name="{CustomResource AccDescrVideoQuality}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrVideoQuality}"
                                       Grid.Column="2"/>
-                <controls:GlyphButton Visibility="{x:Bind SelectedItem.IsPhoto, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Glyph="&#xE614;" IsEnabled="False" FontFamily="{StaticResource TelegramThemeFontFamily}" Grid.Column="2"/>
+                <controls:GlyphButton
+                    Visibility="{x:Bind SelectedItem.IsPhoto, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Glyph="&#xE614;"
+                    IsEnabled="False"
+                    FontFamily="{StaticResource TelegramThemeFontFamily}"
+                    AutomationProperties.Name="{CustomResource AccDescrPhotoAdjust}"
+                    ToolTipService.ToolTip="{CustomResource AccDescrPhotoAdjust}"
+                    Grid.Column="2"/>
                 <controls:GlyphButton
                     x:Name="TTLSeconds"
                     Click="TTLSeconds_Click"
@@ -856,6 +877,8 @@
                     Visibility="{x:Bind IsTTLEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
                     Style="{StaticResource SelfDestructButtonStyle}"
+                    AutomationProperties.Name="{CustomResource SetTimer}"
+                    ToolTipService.ToolTip="{CustomResource SetTimer}"
                     Grid.Column="3"/>
             </Grid>
 
@@ -865,30 +888,55 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:GlyphButton Glyph="&#xE909;" FontFamily="{StaticResource TelegramThemeFontFamily}" IsEnabled="False"/>
-                <controls:GlyphButton Glyph="&#xE908;" FontFamily="{StaticResource TelegramThemeFontFamily}" IsEnabled="False" Grid.Column="1"/>
+                <controls:GlyphButton Glyph="&#xE909;"
+                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                      AutomationProperties.Name="{CustomResource AccDescrRotate}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrRotate}"/>
+                <controls:GlyphButton Glyph="&#xE908;"
+                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                      IsEnabled="False"
+                                      Grid.Column="1"/>
                 <controls:GlyphButton Click="Proportions_Click"
                                       Glyph="&#xE90A;"
                                       Visibility="{x:Bind ConvertProportions(SelectedItem.CropProportions, x:False), Mode=OneWay}"
                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                      AutomationProperties.Name="{CustomResource AccDescrAspectRatio}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrAspectRatio}"
                                       Grid.Column="2"/>
                 <controls:GlyphButton Click="Proportions_Click"
                                       Glyph="&#xE90A;"
                                       Visibility="{x:Bind ConvertProportions(SelectedItem.CropProportions, x:True), Mode=OneWay}"
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                      AutomationProperties.Name="{CustomResource AccDescrAspectRatio}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrAspectRatio}"
                                       Grid.Column="2"/>
 
                 <ComboBox x:Name="ProportionsBox" Visibility="Collapsed" Grid.ColumnSpan="4"/>
             </Grid>
 
             <controls:GlyphButton Click="Accept_Click"
-                                  Glyph="{x:Bind ConvertAccept(IsEditing), Mode=OneWay}"
+                                  Glyph="&#xE10B;"
+                                  Visibility="{x:Bind IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}"
                                   AllowFocusOnInteraction="False"
                                   Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                   HorizontalAlignment="Right"
-                                  Padding="4,2,0,0"
+                                  Padding="0,2,0,0"
+                                  AutomationProperties.Name="{CustomResource Done}"
+                                  ToolTipService.ToolTip="{CustomResource Done}"
+                                  Grid.Column="7"/>
+
+            <controls:GlyphButton Click="Accept_Click"
+                                  Glyph="&#xE919;"
+                                  Visibility="{x:Bind IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                  AllowFocusOnInteraction="False"
+                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                  HorizontalAlignment="Right"
+                                  Padding="4,0,0,0"
+                                  AutomationProperties.Name="{CustomResource Send}"
+                                  ToolTipService.ToolTip="{CustomResource Send}"
                                   Grid.Column="7"/>
         </Grid>
     </Grid>
-</controls:ContentDialogBase>
+</controls:OverlayPage>

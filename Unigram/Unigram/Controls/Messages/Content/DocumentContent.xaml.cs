@@ -7,6 +7,7 @@ using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,13 +16,26 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Messages.Content
 {
+    public enum MessageContentState
+    {
+        None,
+        Download,
+        Downloading,
+        Uploading,
+        Open,
+        Ttl,
+        Play,
+        Pause,
+    }
+
     public sealed partial class DocumentContent : Grid, IContentWithFile
     {
+        private MessageContentState _oldState;
+
         private MessageViewModel _message;
+        public MessageViewModel Message => _message;
 
         public DocumentContent(MessageViewModel message)
         {
@@ -78,37 +92,48 @@ namespace Unigram.Controls.Messages.Content
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+
+                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
+
+                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                Button.Glyph = "\uE118";
+                //Button.Glyph = Icons.Download;
+                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
                 Button.Progress = 0;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
 
                 if (message.Delegate.CanBeDownloaded(message))
                 {
-                    _message.ProtoService.Send(new DownloadFile(file.Id, 32));
+                    _message.ProtoService.DownloadFile(file.Id, 32);
                 }
+
+                _oldState = MessageContentState.Download;
             }
             else
             {
-                Button.Glyph = "\uE160";
+                //Button.Glyph = Icons.Document;
+                Button.SetGlyph(Icons.Document, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
+
+                _oldState = MessageContentState.Open;
             }
         }
 
@@ -123,7 +148,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.Send(new DownloadFile(file.Id, 1));
+                message.ProtoService.DownloadFile(file.Id, 1);
             }
         }
 
@@ -174,11 +199,30 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.Send(new DownloadFile(file.Id, 32));
+                _message.ProtoService.DownloadFile(file.Id, 32);
             }
             else
             {
                 _message.Delegate.OpenFile(file);
+            }
+        }
+
+        private async void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            var document = GetContent(_message.Content);
+            if (document == null)
+            {
+                return;
+            }
+
+            var file = document.DocumentValue;
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+
+                args.AllowedOperations = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+                args.Data.SetStorageItems(new[] { item });
+                args.DragUI.SetContentFromDataPackage();
             }
         }
     }

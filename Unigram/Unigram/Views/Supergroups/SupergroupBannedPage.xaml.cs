@@ -10,7 +10,7 @@ using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;
@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupBannedPage : Page, ISupergroupDelegate, IMasterDetailPage
+    public sealed partial class SupergroupBannedPage : Page, ISupergroupDelegate, INavigablePage
     {
         public SupergroupBannedViewModel ViewModel => DataContext as SupergroupBannedViewModel;
 
@@ -51,7 +51,7 @@ namespace Unigram.Views.Supergroups
             });
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public void OnBackRequested(HandledRoutedEventArgs args)
         {
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {
@@ -82,6 +82,14 @@ namespace Unigram.Views.Supergroups
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var member = element.Tag as ChatMember;
+
+            flyout.CreateFlyoutItem(ViewModel.MemberUnbanCommand, member, Strings.Resources.Unban);
+
+            args.ShowAt(flyout, element);
         }
 
         #endregion
@@ -90,7 +98,8 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNew.Visibility = group.CanRestrictMembers() ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Text = group.IsChannel ? Strings.Resources.NoBlockedChannel : Strings.Resources.NoBlockedGroup;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }
@@ -112,6 +121,9 @@ namespace Unigram.Views.Supergroups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
 
+            args.ItemContainer.Tag = args.Item;
+            content.Tag = args.Item;
+
             var user = ViewModel.ProtoService.GetUser(member.UserId);
             if (user == null)
             {
@@ -131,7 +143,7 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)

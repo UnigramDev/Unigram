@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class PhoneTextBox : UpdateTextBox
+    public class PhoneTextBox : TextBox
     {
         private string previousText = string.Empty;
         private int selectionStart;

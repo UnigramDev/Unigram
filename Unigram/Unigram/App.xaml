@@ -15,7 +15,7 @@
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="SystemChromeMediumHighColor">#FF323232</Color>
 
-                    <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+                    <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
                     <SolidColorBrush x:Key="TelegramSeparatorBrush" Color="Transparent"/>
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
@@ -35,8 +35,6 @@
                     <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPressed" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
-                    <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
-                    <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlForegroundAccentBrush" />
                     <StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
                     <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
@@ -59,6 +57,23 @@
                     <StaticResource x:Key="NavigationViewItemBorderBrushSelectedPressed" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
+
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FF232323" />
+                    <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
+                    <SolidColorBrush x:Key="ContentSpacerBrush" Color="#FF1F1F1F" />
+
+                    <SolidColorBrush x:Key="ExpanderButtonStyleNormalForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStylePointerOverForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStylePressedForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleDisabledForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleCheckedForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleCheckedPointerOverForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleCheckedPressedForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleCheckedDisabledForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminateForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminatePointerOverForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminatePressedForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminateDisabledForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="SystemChromeMediumHighColor">#FFE6E6E6</Color>
@@ -83,8 +98,6 @@
                     <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPressed" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
-                    <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
-                    <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlForegroundAccentBrush" />
                     <StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
                     <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
@@ -107,9 +120,26 @@
                     <StaticResource x:Key="NavigationViewItemBorderBrushSelectedPressed" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
+
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
+                    <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="ContentSpacerBrush" Color="#FFD4D4D4" />
+
+                    <SolidColorBrush x:Key="ExpanderButtonStyleNormalForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStylePointerOverForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStylePressedForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleDisabledForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleCheckedForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleCheckedPointerOverForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleCheckedPressedForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleCheckedDisabledForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminateForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminatePointerOverForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminatePressedForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
+                    <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminateDisabledForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-
+            
             <SolidColorBrush x:Key="GridViewItemCheckBrush" Color="White"/>
 
             <x:Double x:Key="PaneToggleButtonSize">48</x:Double>
@@ -129,8 +159,13 @@
                 <Setter Property="Margin" Value="0" />
             </Style>
 
+            <FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/SEGMDL2.TTF#Segoe MDL2 Assets</FontFamily>
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
+            <Style TargetType="FontIcon">
+                <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
+            </Style>
+            
             <x:Double x:Key="TelegramLightMediaMaxWidth">200</x:Double>
             <x:Double x:Key="TelegramLightMediaMaxHeight">200</x:Double>
 
@@ -157,12 +192,10 @@
             <converters:PrivacyRuleToUsersConverter x:Key="PrivacyRuleToUsersConverter"/>
             <converters:StickerToEmojiConverter x:Key="StickerToEmojiConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
-            <converters:DefaultPhotoConverter x:Key="DefaultPhotoConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <converters:InitialNameStringConverter x:Key="InitialNameStringConverter" />
             <converters:DateTimeToFormatConverter x:Key="DateTimeToFormatConverter" />
-            <converters:ReplyInfoToGlyphConverter x:Key="ReplyInfoToGlyphConverter"/>
             <converters:EditToVisibilityConverter x:Key="EditToVisibilityConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
 
@@ -199,16 +232,20 @@
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </Style>
 
+            <Style x:Key="InfoCaptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+            </Style>
+
             <Style x:Key="SiteNameTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
                 <Setter Property="MaxLines" Value="1"/>
             </Style>
             
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
-                <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
-                <common:Fluent/>
+                <themes:Fluent/>
                 <common:Theme/>
+                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <themes:Messages/>
+                <!--<ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Core.Common;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 

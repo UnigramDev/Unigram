@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        private ChatMemberCollection _members;
+        protected ChatMemberCollection _members;
         public ChatMemberCollection Members
         {
             get
@@ -88,7 +88,7 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        private ChatMemberCollection _search;
+        protected ChatMemberCollection _search;
         public ChatMemberCollection Search
         {
             get

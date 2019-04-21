@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Template10.Mvvm;
+using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -63,8 +64,8 @@ namespace Unigram.Entities
             }
         }
 
-        protected string _caption;
-        public string Caption
+        protected FormattedText _caption;
+        public FormattedText Caption
         {
             get
             {
@@ -76,8 +77,8 @@ namespace Unigram.Entities
             }
         }
 
-        protected int? _ttl;
-        public int? Ttl
+        protected int _ttl;
+        public int Ttl
         {
             get
             {
@@ -206,6 +207,7 @@ namespace Unigram.Entities
             IsForceFile = false;
             Caption = null;
             CropRectangle = null;
+            Ttl = 0;
 
             //_thumbnail = null;
             _preview = null;
@@ -221,6 +223,48 @@ namespace Unigram.Entities
             {
                 return await StoragePhoto.CreateAsync(file, selected);
             }
+        }
+
+        public static async Task<IEnumerable<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
+        {
+            var results = new List<StorageMedia>();
+
+            foreach (StorageFile file in items.OfType<StorageFile>())
+            {
+                if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
+                    file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                    file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
+                    file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
+                {
+                    var photo = await StoragePhoto.CreateAsync(file, true);
+                    if (photo != null)
+                    {
+                        results.Add(photo);
+                    }
+                    else
+                    {
+                        results.Add(new StorageDocument(file));
+                    }
+                }
+                else if (file.ContentType == "video/mp4")
+                {
+                    var video = await StorageVideo.CreateAsync(file, true);
+                    if (video != null)
+                    {
+                        results.Add(video);
+                    }
+                    else
+                    {
+                        results.Add(new StorageDocument(file));
+                    }
+                }
+                else
+                {
+                    results.Add(new StorageDocument(file));
+                }
+            }
+
+            return results;
         }
     }
 }

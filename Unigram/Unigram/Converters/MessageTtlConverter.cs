@@ -12,18 +12,18 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var seconds = (int?)value;
-            if (seconds == 0 || seconds == null)
+            var seconds = (int)value;
+            if (seconds == 0)
             {
                 return parameter == null ? (object)seconds ?? 0 : Strings.Resources.ShortMessageLifetimeForever;
             }
             else if (seconds >= 1 && seconds < 21)
             {
-                return parameter == null ? (object)seconds : GetString(seconds ?? 0, parameter);
+                return parameter == null ? (object)seconds : GetString(seconds, parameter);
             }
             else
             {
-                return parameter == null ? (object)(((seconds ?? 0) / 5) + 16) : GetString(seconds ?? 0, parameter);
+                return parameter == null ? (object)((seconds / 5) + 16) : GetString(seconds, parameter);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Unigram.Converters
             var seconds = (int)value;
             if (seconds == 0)
             {
-                return null;
+                return 0;
             }
             else if (seconds >= 1 && seconds < 21)
             {

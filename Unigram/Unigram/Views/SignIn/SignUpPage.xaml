@@ -16,6 +16,7 @@
         <controls:ButtonPageHeader
             x:Name="Header"
             Command="{x:Bind ViewModel.SendCommand}"
+            CommandToolTip="{CustomResource Next}"
             Text="{CustomResource YourName}"
             Glyph="&#xE10B;"/>
 
@@ -33,24 +34,24 @@
                 x:Name="TitleLabel"
                 Visibility="Collapsed"
                 Text="{CustomResource YourName}"
-                Style="{ThemeResource TitleTextBlockStyle}"/>
+                Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
                 Text="{CustomResource RegisterText}"
                 Style="{StaticResource BodyTextBlockStyle}"
                 Padding="0,8,0,16"
                 Grid.Row="1"/>
 
-            <controls:UpdateTextBox
+            <TextBox
                 x:Name="PrimaryInput"
-                Text="{Binding FirstName, Mode=TwoWay}"
+                Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Margin="0,12,0,8"
                 InputScope="PersonalFullName"
                 IsTextPredictionEnabled="False"
                 PlaceholderText="{CustomResource FirstName}"
                 Grid.Row="3"/>
 
-            <controls:UpdateTextBox
-                Text="{Binding LastName, Mode=TwoWay}"
+            <TextBox
+                Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Margin="0,0,0,4"
                 InputScope="PersonalFullName"
                 IsTextPredictionEnabled="False"

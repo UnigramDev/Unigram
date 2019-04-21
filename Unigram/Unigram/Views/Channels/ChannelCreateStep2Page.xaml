@@ -24,7 +24,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Padding="12" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+            <StackPanel Padding="12" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                 <RadioButton
                     IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
                     Content="{CustomResource ChannelPublic}"/>
@@ -49,35 +49,35 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                    <controls:UpdateTextBox
+                    <TextBox
                         x:Name="Username"
-                        Text="{Binding Username, Mode=TwoWay}"
-                        Header="{CustomResource ChannelLinkType}"
+                        Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Header="{CustomResource ChannelLinkTitle}"
                         PlaceholderText="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"
-                        Margin="0,12,12,8"/>
+                        Margin="12,12,12,8"/>
 
                     <TextBlock
                         Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
                         Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=LinkAvailable}"
                         Foreground="Green"
-                        Margin="0,0,0,8"/>
+                        Margin="12,0,0,8"/>
                     <TextBlock
                         Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                         Text="{CustomResource LinkChecking}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Margin="0,0,0,8"/>
+                        Margin="12,0,0,8"/>
                     <TextBlock
                         Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
                         Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
                         Foreground="Red"
-                        Margin="0,0,0,8"/>
+                        Margin="12,0,0,8"/>
 
                     <TextBlock
                         Text="{CustomResource ChannelUsernameHelp}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="0,0,12,12"/>
+                        Margin="12,0,12,12"/>
                 </StackPanel>
 
                 <ListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"

@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.Settings
             var authState = GetAuthorizationState();
             if (authState is AuthenticationCodeInfo codeInfo)
             {
-                _phoneNumber = ProtoService.GetOption<OptionValueString>("x_phonenumber").Value;
+                _phoneNumber = CacheService.Options.GetValue<string>("x_phonenumber");
                 _codeInfo = codeInfo;
 
                 RaisePropertyChanged(() => CodeInfo);
@@ -169,7 +169,7 @@ namespace Unigram.ViewModels.Settings
                     //}
                     //else
                     //{
-                    //    Execute.ShowDebugMessage("account.getPassword error " + password.Error);
+                    //    Logs.Log.Write("account.getPassword error " + password.Error);
                     //}
                 }
                 else if (error.CodeEquals(ErrorCode.FLOOD))
@@ -177,7 +177,7 @@ namespace Unigram.ViewModels.Settings
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
                 }
 
-                Execute.ShowDebugMessage("account.signIn error " + error);
+                Logs.Logger.Error(Logs.Target.API, "account.signIn error " + error);
             }
         }
 

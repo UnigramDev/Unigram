@@ -54,10 +54,10 @@ namespace Unigram.Controls.Messages
 
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((MessageReference)d).UpdateEmbedData(e.NewValue as MessageEmbedData);
+            ((MessageReference)d).UpdateEmbedData(e.NewValue as MessageComposerHeader);
         }
 
-        private void UpdateEmbedData(MessageEmbedData embedded)
+        private void UpdateEmbedData(MessageComposerHeader embedded)
         {
             if (embedded == null)
             {
@@ -70,6 +70,7 @@ namespace Unigram.Controls.Messages
                 Visibility = Visibility.Visible;
 
                 TitleLabel.Text = embedded.WebPagePreview.SiteName;
+                ServiceLabel.Text = string.Empty;
 
                 if (!string.IsNullOrEmpty(embedded.WebPagePreview.Title))
                 {
@@ -104,215 +105,6 @@ namespace Unigram.Controls.Messages
             ServiceLabel.Text = string.Empty;
             MessageLabel.Text = message;
         }
-
-        //private bool SetTemplateCore(object item)
-        //{
-        //    if (item == null)
-        //    {
-        //        return SetUnsupportedTemplate(null, null);
-        //    }
-
-        //    var replyInfo = item as ReplyInfo;
-        //    if (replyInfo == null)
-        //    {
-        //        if (item is TLMessageBase)
-        //        {
-        //            return GetMessageTemplate(item as TLObject);
-        //        }
-
-        //        return SetLoadingTemplate(null, null);
-
-        //        return SetUnsupportedTemplate(null, null);
-        //    }
-        //    else
-        //    {
-        //        if (replyInfo.Reply == null)
-        //        {
-        //            //return ReplyLoadingTemplate;
-        //            return SetLoadingTemplate(null, null);
-        //        }
-
-        //        var contain = replyInfo.Reply as TLMessagesContainter;
-        //        if (contain != null)
-        //        {
-        //            return GetMessagesContainerTemplate(contain);
-        //        }
-
-        //        if (replyInfo.ReplyToMsgId == null || replyInfo.ReplyToMsgId.Value == 0)
-        //        {
-        //            return SetUnsupportedTemplate(null, null);
-        //        }
-
-        //        return GetMessageTemplate(replyInfo.Reply);
-        //    }
-        //}
-
-        #region Container
-
-        //private bool GetMessagesContainerTemplate(TLMessagesContainter container)
-        //{
-        //    //if (container.WebPageMedia != null)
-        //    //{
-        //    //    var webpageMedia = container.WebPageMedia as TLMessageMediaWebPage;
-        //    //    if (webpageMedia != null)
-        //    //    {
-        //    //        var pendingWebpage = webpageMedia.Webpage as TLWebPagePending;
-        //    //        if (pendingWebpage != null)
-        //    //        {
-        //    //            return WebPagePendingTemplate;
-        //    //        }
-
-        //    //        var webpage = webpageMedia.Webpage as TLWebPage;
-        //    //        if (webpage != null)
-        //    //        {
-        //    //            return WebPageTemplate;
-        //    //        }
-
-        //    //        var emptyWebpage = webpageMedia.Webpage as TLWebPageEmpty;
-        //    //        if (emptyWebpage != null)
-        //    //        {
-        //    //            return WebPageEmptyTemplate;
-        //    //        }
-        //    //    }
-        //    //}
-
-        //    if (container.FwdMessages != null)
-        //    {
-        //        if (container.FwdMessages.Count == 1)
-        //        {
-        //            var forwardMessage = container.FwdMessages[0];
-        //            if (forwardMessage != null)
-        //            {
-        //                if (!string.IsNullOrEmpty(forwardMessage.Message) && (forwardMessage.Media == null || forwardMessage.Media is TLMessageMediaEmpty || forwardMessage.Media is TLMessageMediaWebPage))
-        //                {
-        //                    return SetTextTemplate(forwardMessage, "forward");
-        //                }
-
-        //                var media = container.FwdMessages[0].Media;
-        //                if (media != null)
-        //                {
-        //                    switch (media.TypeId)
-        //                    {
-        //                        case TLType.MessageMediaPhoto:
-        //                            return SetPhotoTemplate(forwardMessage, "forward");
-        //                        case TLType.MessageMediaGeo:
-        //                            return SetGeoTemplate(forwardMessage, "forward");
-        //                        case TLType.MessageMediaGeoLive:
-        //                            return SetGeoLiveTemplate(forwardMessage, "forward");
-        //                        case TLType.MessageMediaVenue:
-        //                            return SetVenueTemplate(forwardMessage, "forward");
-        //                        case TLType.MessageMediaContact:
-        //                            return SetContactTemplate(forwardMessage, "forward");
-        //                        case TLType.MessageMediaGame:
-        //                            return SetGameTemplate(forwardMessage, "forward");
-        //                        case TLType.MessageMediaEmpty:
-        //                            return SetUnsupportedTemplate(forwardMessage, "forward");
-        //                        case TLType.MessageMediaDocument:
-        //                            if (forwardMessage.IsSticker())
-        //                            {
-        //                                return SetStickerTemplate(forwardMessage, "forward");
-        //                            }
-        //                            else if (forwardMessage.IsGif())
-        //                            {
-        //                                return SetGifTemplate(forwardMessage, "forward");
-        //                            }
-        //                            else if (forwardMessage.IsVoice())
-        //                            {
-        //                                return SetVoiceMessageTemplate(forwardMessage, "forward");
-        //                            }
-        //                            else if (forwardMessage.IsVideo())
-        //                            {
-        //                                return SetVideoTemplate(forwardMessage, "forward");
-        //                            }
-        //                            else if (forwardMessage.IsRoundVideo())
-        //                            {
-        //                                return SetRoundVideoTemplate(forwardMessage, "forward");
-        //                            }
-        //                            else if (forwardMessage.IsAudio())
-        //                            {
-        //                                return SetAudioTemplate(forwardMessage, "forward");
-        //                            }
-
-        //                            return SetDocumentTemplate(forwardMessage, "forward");
-        //                        case TLType.MessageMediaUnsupported:
-        //                            return SetUnsupportedMediaTemplate(forwardMessage, "forward");
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        //        return SetForwardedMessagesTemplate(container.FwdMessages);
-        //    }
-
-        //    if (container.EditMessage != null)
-        //    {
-        //        var editMessage = container.EditMessage;
-        //        if (editMessage != null)
-        //        {
-        //            if (!string.IsNullOrEmpty(editMessage.Message) && (editMessage.Media == null || editMessage.Media is TLMessageMediaEmpty || editMessage.Media is TLMessageMediaWebPage))
-        //            {
-        //                return SetTextTemplate(editMessage, Strings.Resources.Edit);
-        //            }
-
-        //            var media = editMessage.Media;
-        //            if (media != null)
-        //            {
-        //                switch (media.TypeId)
-        //                {
-        //                    case TLType.MessageMediaPhoto:
-        //                        return SetPhotoTemplate(editMessage, Strings.Resources.Edit);
-        //                    case TLType.MessageMediaGeo:
-        //                        return SetGeoTemplate(editMessage, Strings.Resources.Edit);
-        //                    case TLType.MessageMediaGeoLive:
-        //                        return SetGeoLiveTemplate(editMessage, Strings.Resources.Edit);
-        //                    case TLType.MessageMediaVenue:
-        //                        return SetVenueTemplate(editMessage, Strings.Resources.Edit);
-        //                    case TLType.MessageMediaContact:
-        //                        return SetContactTemplate(editMessage, Strings.Resources.Edit);
-        //                    case TLType.MessageMediaGame:
-        //                        return SetGameTemplate(editMessage, Strings.Resources.Edit);
-        //                    case TLType.MessageMediaEmpty:
-        //                        return SetUnsupportedTemplate(editMessage, Strings.Resources.Edit);
-        //                    case TLType.MessageMediaDocument:
-        //                        if (editMessage.IsSticker())
-        //                        {
-        //                            return SetStickerTemplate(editMessage, Strings.Resources.Edit);
-        //                        }
-        //                        else if (editMessage.IsGif())
-        //                        {
-        //                            return SetGifTemplate(editMessage, Strings.Resources.Edit);
-        //                        }
-        //                        else if (editMessage.IsVoice())
-        //                        {
-        //                            return SetVoiceMessageTemplate(editMessage, Strings.Resources.Edit);
-        //                        }
-        //                        else if (editMessage.IsVideo())
-        //                        {
-        //                            return SetVideoTemplate(editMessage, Strings.Resources.Edit);
-        //                        }
-        //                        else if (editMessage.IsRoundVideo())
-        //                        {
-        //                            return SetRoundVideoTemplate(editMessage, Strings.Resources.Edit);
-        //                        }
-        //                        else if (editMessage.IsAudio())
-        //                        {
-        //                            return SetAudioTemplate(editMessage, Strings.Resources.Edit);
-        //                        }
-
-        //                        return SetDocumentTemplate(editMessage, Strings.Resources.Edit);
-        //                    case TLType.MessageMediaUnsupported:
-        //                        return SetUnsupportedMediaTemplate(editMessage, Strings.Resources.Edit);
-        //                }
-        //            }
-        //        }
-
-        //        return SetUnsupportedTemplate(editMessage, Strings.Resources.Edit);
-        //    }
-
-        //    return SetUnsupportedTemplate(null, Strings.Resources.Edit);
-        //}
-
-        #endregion
 
         public void UpdateMessageReply(MessageViewModel message)
         {
@@ -368,7 +160,8 @@ namespace Unigram.Controls.Messages
             }
             else if (photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
             {
-                message.ProtoService.Send(new DownloadFile(photoSize.Photo.Id, 1));
+                ThumbImage.ImageSource = null;
+                message.ProtoService.DownloadFile(photoSize.Photo.Id, 1);
             }
         }
 
@@ -398,6 +191,8 @@ namespace Unigram.Controls.Messages
                     return SetLocationTemplate(message, location, title);
                 case MessagePhoto photo:
                     return SetPhotoTemplate(message, photo, title);
+                case MessagePoll poll:
+                    return SetPollTemplate(message, poll, title);
                 case MessageSticker sticker:
                     return SetStickerTemplate(message, sticker, title);
                 case MessageUnsupported unsupported:
@@ -644,11 +439,16 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = $"🎮 {game.Game.Title}";
+            ServiceLabel.Text = $"\uD83C\uDFAE {game.Game.Title}";
             MessageLabel.Text = string.Empty;
 
             ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
-            //ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(gameMedia.Game.Photo, true);
+
+            var thumbnail = game.Game.Photo?.GetSmall();
+            if (thumbnail != null)
+            {
+                UpdateThumbnail(message, thumbnail);
+            }
 
             return true;
         }
@@ -689,6 +489,20 @@ namespace Unigram.Controls.Messages
                 ServiceLabel.Text += ", ";
                 MessageLabel.Text += audio.Caption.Text.Replace('\n', ' ');
             }
+
+            return true;
+        }
+
+        private bool SetPollTemplate(MessageViewModel message, MessagePoll poll, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = $"\uD83D\uDCCA {poll.Poll.Question}";
+            MessageLabel.Text = string.Empty;
 
             return true;
         }
@@ -994,11 +808,6 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
-        //private string GetFromLabel(TLMessage message, string title)
-        //{
-        //    return GetFromLabelInternal(message, title) + Environment.NewLine;
-        //}
-
         private string GetFromLabel(MessageViewModel message, string title)
         {
             if (!string.IsNullOrWhiteSpace(title))
@@ -1024,6 +833,10 @@ namespace Unigram.Controls.Messages
                 {
                     return message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
+                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                {
+                    return fromHiddenUser.SenderName;
+                }
             }
 
             var user = message.GetSenderUser();
@@ -1032,28 +845,7 @@ namespace Unigram.Controls.Messages
                 return user.GetFullName();
             }
 
-            //if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
-            //{
-            //    return message.Parent?.DisplayName ?? string.Empty;
-            //}
-            //else if (message.IsSaved() && message.FwdFromUser is TLUser user)
-            //{
-            //    return user.FullName;
-            //}
-
-            //var from = message.From?.FullName ?? string.Empty;
-            //if (message.ViaBot != null && message.FwdFrom == null)
-            //{
-            //    from += $" via @{message.ViaBot.Username}";
-            //}
-
-            //return from;
             return title ?? string.Empty;
         }
-
-        //private string GetFromLabel(TLMessageService message, string title)
-        //{
-        //    return GetFromLabelInternal(message, title) + Environment.NewLine;
-        //}
     }
 }

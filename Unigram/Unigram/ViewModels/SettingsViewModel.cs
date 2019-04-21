@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Core.Helpers;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Storage;
@@ -17,46 +15,59 @@ using Telegram.Td.Api;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation.Metadata;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Settings;
+using Unigram.Collections;
+using System.Text.RegularExpressions;
+using Unigram.Views.Settings.Privacy;
+using System.Diagnostics;
 
 namespace Unigram.ViewModels
 {
-   public class SettingsViewModel : TLViewModelBase,
-        IDelegable<IUserDelegate>,
-        IHandle<UpdateUser>,
-        IHandle<UpdateUserFullInfo>
+    public class SettingsViewModel : TLViewModelBase,
+         IDelegable<ISettingsDelegate>,
+         IHandle<UpdateUser>,
+         IHandle<UpdateUserFullInfo>,
+         IHandle<UpdateFile>
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
+        private readonly ISettingsSearchService _searchService;
 
-        public IUserDelegate Delegate { get; set; }
+        public ISettingsDelegate Delegate { get; set; }
 
-        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService) 
+        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, ISettingsSearchService searchService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
             _contactsService = contactsService;
+            _searchService = searchService;
 
             AskCommand = new RelayCommand(AskExecute);
-            LogoutCommand = new RelayCommand(LogoutExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            NavigateCommand = new RelayCommand<SettingsSearchEntry>(NavigateExecute);
+
+            Results = new MvxObservableCollection<SettingsSearchEntry>();
         }
 
         private Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get { return _chat; }
+            set { Set(ref _chat, value); }
         }
+
+        private bool _hasPassportData;
+        public bool HasPassportData
+        {
+            get { return _hasPassportData; }
+            set { Set(ref _hasPassportData, value); }
+        }
+
+        public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(ProtoService.GetMyId(), false));
+            var response = await ProtoService.SendAsync(new CreatePrivateChat(CacheService.Options.MyId, false));
             if (response is Chat chat)
             {
                 Chat = chat;
@@ -80,6 +91,12 @@ namespace Unigram.ViewModels
                         Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                     }
                 }
+            }
+
+            var passport = await ProtoService.SendAsync(new GetPasswordState());
+            if (passport is PasswordState passwordState)
+            {
+                HasPassportData = passwordState.HasPassportData;
             }
         }
 
@@ -116,6 +133,26 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(UpdateFile update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (user.UpdateFile(update.File))
+            {
+                BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
+            }
+        }
+
 
 
         public RelayCommand<StorageFile> EditPhotoCommand { get; }
@@ -128,7 +165,9 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            var text = Regex.Replace(Strings.Resources.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
+
+            var confirm = await TLMessageDialog.ShowAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new GetSupportUser());
@@ -143,32 +182,37 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand LogoutCommand { get; }
-        private async void LogoutExecute()
+        public void Search(string query)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureLogout, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm != ContentDialogResult.Primary)
+            Results.ReplaceWith(_searchService.Search(query));
+        }
+
+        public RelayCommand<SettingsSearchEntry> NavigateCommand { get; }
+        private void NavigateExecute(SettingsSearchEntry entry)
+        {
+            if (entry is SettingsSearchPage page && page.Page != null)
             {
-                return;
+                if (page.Page == typeof(SettingsPasscodePage))
+                {
+                    NavigationService.NavigateToPasscode();
+                }
+                else if (page.Page == typeof(InstantPage))
+                {
+                    NavigationService.Navigate(typeof(InstantPage), Strings.Resources.TelegramFaqUrl);
+                }
+                else
+                {
+                    NavigationService.Navigate(page.Page);
+                }
             }
-
-            await _pushService.UnregisterAsync();
-            await _contactsService.RemoveAsync();
-
-            var response = await ProtoService.SendAsync(new LogOut());
-            if (response is Error error)
+            else if (entry is SettingsSearchFaq faq)
             {
-                // TODO:
+                NavigationService.Navigate(typeof(InstantPage), faq.Url);
             }
-
-            //if (ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "RequestRestartAsync"))
-            //{
-            //    await CoreApplication.RequestRestartAsync(string.Empty);
-            //}
-            //else
-            //{
-            //    App.Current.Exit();
-            //}
+            else if (entry is SettingsSearchAction action)
+            {
+                action.Action();
+            }
         }
     }
 }

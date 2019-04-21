@@ -46,6 +46,11 @@ namespace Unigram.Controls.Views
             });
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            SearchField.FocusInput(FocusState.Keyboard);
+        }
+
         public void Attach()
         {
             ViewModel.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
@@ -226,7 +231,7 @@ namespace Unigram.Controls.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)
@@ -299,7 +304,7 @@ namespace Unigram.Controls.Views
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
 
             if (args.Phase < 2)

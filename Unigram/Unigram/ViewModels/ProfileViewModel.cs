@@ -21,7 +21,6 @@ using Unigram.Controls.Views;
 using Unigram.Views.Users;
 using Unigram.Converters;
 using System.Runtime.CompilerServices;
-using Unigram.Views.Dialogs;
 using Unigram.Services;
 using Telegram.Td.Api;
 using Unigram.Views.Channels;
@@ -29,7 +28,6 @@ using Unigram.Collections;
 using Unigram.ViewModels.Chats;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Chats;
-using Unigram.Core.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Windows.ApplicationModel.DataTransfer;
@@ -54,11 +52,17 @@ namespace Unigram.ViewModels
 
         public IProfileDelegate Delegate { get; set; }
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IVoIPService _voipService;
+        private readonly INotificationsService _notificationsService;
+
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService, INotificationsService notificationsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _voipService = voipService;
+            _notificationsService = notificationsService;
+
             SendMessageCommand = new RelayCommand(SendMessageExecute);
-            MediaCommand = new RelayCommand(MediaExecute);
+            MediaCommand = new RelayCommand<int>(MediaExecute);
             CommonChatsCommand = new RelayCommand(CommonChatsExecute);
             SystemCallCommand = new RelayCommand(SystemCallExecute);
             BlockCommand = new RelayCommand(BlockExecute);
@@ -66,6 +70,7 @@ namespace Unigram.ViewModels
             ReportCommand = new RelayCommand(ReportExecute);
             CallCommand = new RelayCommand(CallExecute);
             CopyPhoneCommand = new RelayCommand(CopyPhoneExecute);
+            CopyDescriptionCommand = new RelayCommand(CopyDescriptionExecute);
             CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
             AddCommand = new RelayCommand(AddExecute);
             EditCommand = new RelayCommand(EditExecute);
@@ -76,42 +81,38 @@ namespace Unigram.ViewModels
             IdenticonCommand = new RelayCommand(IdenticonExecute);
             MigrateCommand = new RelayCommand(MigrateExecute);
             InviteCommand = new RelayCommand(InviteExecute);
-            ToggleMuteCommand = new RelayCommand<bool>(ToggleMuteExecute);
+            ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
+            SetAdminsCommand = new RelayCommand(SetAdminsExecute);
+            StatisticsCommand = new RelayCommand(StatisticsExecute);
             MemberPromoteCommand = new RelayCommand<ChatMember>(MemberPromoteExecute);
             MemberRestrictCommand = new RelayCommand<ChatMember>(MemberRestrictExecute);
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
 
+            MembersCommand = new RelayCommand(MembersExecute);
             AdminsCommand = new RelayCommand(AdminsExecute);
             BannedCommand = new RelayCommand(BannedExecute);
             KickedCommand = new RelayCommand(KickedExecute);
-            ParticipantsCommand = new RelayCommand(ParticipantsExecute);
-            AdminLogCommand = new RelayCommand(AdminLogExecute);
         }
 
         protected Chat _chat;
         public Chat Chat
         {
-            get
-            {
-                return _chat;
-            }
-            set
-            {
-                Set(ref _chat, value);
-            }
+            get { return _chat; }
+            set { Set(ref _chat, value); }
+        }
+
+        private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
+        public int[] SharedCount
+        {
+            get { return _sharedCount; }
+            set { Set(ref _sharedCount, value); }
         }
 
         protected ObservableCollection<ChatMember> _members;
         public ObservableCollection<ChatMember> Members
         {
-            get
-            {
-                return _members;
-            }
-            set
-            {
-                Set(ref _members, value);
-            }
+            get { return _members; }
+            set { Set(ref _members, value); }
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -196,7 +197,34 @@ namespace Unigram.ViewModels
                 }
             }
 
+            UpdateSharedCount(chat);
+
             return Task.CompletedTask;
+        }
+
+        private void UpdateSharedCount(Chat chat)
+        {
+            var filters = new SearchMessagesFilter[]
+            {
+                new SearchMessagesFilterPhotoAndVideo(),
+                new SearchMessagesFilterDocument(),
+                new SearchMessagesFilterUrl(),
+                new SearchMessagesFilterAudio(),
+                new SearchMessagesFilterVoiceNote()
+            };
+
+            for (int i = 0; i < filters.Length; i++)
+            {
+                int index = i + 0;
+                ProtoService.Send(new SearchChatMessages(chat.Id, string.Empty, 0, 0, 0, 1, filters[index]), result =>
+                {
+                    if (result is Messages messages)
+                    {
+                        SharedCount[index] = messages.TotalCount;
+                        BeginOnUIThread(() => RaisePropertyChanged(() => SharedCount));
+                    }
+                });
+            }
         }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
@@ -333,7 +361,7 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                BeginOnUIThread(() => RaisePropertyChanged(() => Chat));
+                BeginOnUIThread(() => Delegate?.UpdateChatNotificationSettings(_chat));
             }
         }
 
@@ -360,8 +388,8 @@ namespace Unigram.ViewModels
             NavigationService.NavigateToChat(chat);
         }
 
-        public RelayCommand MediaCommand { get; }
-        private void MediaExecute()
+        public RelayCommand<int> MediaCommand { get; }
+        private void MediaExecute(int selectedIndex)
         {
             var chat = _chat;
             if (chat == null)
@@ -369,7 +397,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(DialogSharedMediaPage), chat.Id);
+            NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id, new Dictionary<string, object> { { "selectedIndex", selectedIndex } });
         }
 
         public RelayCommand CommonChatsCommand { get; }
@@ -389,6 +417,42 @@ namespace Unigram.ViewModels
             {
                 NavigationService.Navigate(typeof(UserCommonChatsPage), secret.UserId);
             }
+        }
+
+        public RelayCommand SetAdminsCommand { get; }
+        private void SetAdminsExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(BasicGroupEditAdministratorsPage), chat.Id);
+        }
+
+        public RelayCommand StatisticsCommand { get; }
+        private void StatisticsExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChatStatisticsPage), chat.Id);
+
+            //var fullInfo = CacheService.GetSupergroupFull(chat);
+            //if (fullInfo == null || !fullInfo.CanViewStatistics)
+            //{
+            //    return;
+            //}
+
+            //var response = await ProtoService.SendAsync(new GetChatStatisticsUrl(chat.Id, string.Empty));
+            //if (response is ChatStatisticsUrl url)
+            //{
+            //    await Launcher.LaunchUriAsync(new Uri(url.Url));
+            //}
         }
 
         public RelayCommand SystemCallCommand { get; }
@@ -544,7 +608,7 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand CopyPhoneCommand { get; }
-        private async void CopyPhoneExecute()
+        private void CopyPhoneExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -561,12 +625,45 @@ namespace Unigram.ViewModels
             var dataPackage = new DataPackage();
             dataPackage.SetText($"+{user.PhoneNumber}");
             ClipboardEx.TrySetContent(dataPackage);
+        }
 
-            await TLMessageDialog.ShowAsync(Strings.Resources.PhoneCopied, Strings.Resources.AppName, Strings.Resources.OK);
+        public RelayCommand CopyDescriptionCommand { get; }
+        private void CopyDescriptionExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup super)
+            {
+                var supergroup = CacheService.GetSupergroupFull(super.SupergroupId);
+                if (supergroup == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText($"@{supergroup.Description}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+            else
+            {
+                var user = CacheService.GetUserFull(chat);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText($"@{user.Bio}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
         }
 
         public RelayCommand CopyUsernameCommand { get; }
-        private async void CopyUsernameExecute()
+        private void CopyUsernameExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -598,8 +695,6 @@ namespace Unigram.ViewModels
                 dataPackage.SetText($"@{user.Username}");
                 ClipboardEx.TrySetContent(dataPackage);
             }
-
-            await TLMessageDialog.ShowAsync(Strings.Resources.TextCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
 
         public RelayCommand SecretChatCommand { get; }
@@ -705,8 +800,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<bool> ToggleMuteCommand { get; }
-        private void ToggleMuteExecute(bool unmute)
+        public RelayCommand ToggleMuteCommand { get; }
+        private void ToggleMuteExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -714,7 +809,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetChatNotificationSettings(chat.Id, new ChatNotificationSettings(false, unmute ? 0 : 632053052, false, chat.NotificationSettings.Sound, false, chat.NotificationSettings.ShowPreview)));
+            _notificationsService.SetMuteFor(chat, CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? 0 : 632053052);
         }
 
         #region Call
@@ -722,27 +817,63 @@ namespace Unigram.ViewModels
         public RelayCommand CallCommand { get; }
         private async void CallExecute()
         {
-            //if (_item == null || _full == null)
-            //{
-            //    return;
-            //}
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-            //if (_full.IsPhoneCallsAvailable && !_item.IsSelf && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1))
-            //{
-            //    try
-            //    {
-            //        var coordinator = VoipCallCoordinator.GetDefault();
-            //        var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
-            //        if (result == VoipPhoneCallResourceReservationStatus.Success)
-            //        {
-            //            await VoIPConnection.Current.SendRequestAsync("voip.startCall", _item);
-            //        }
-            //    }
-            //    catch
-            //    {
-            //        await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
-            //    }
-            //}
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            var full = CacheService.GetUserFull(chat);
+            if (full == null || !full.CanBeCalled)
+            {
+                return;
+            }
+
+            var call = _voipService.ActiveCall;
+            if (call != null)
+            {
+                var callUser = CacheService.GetUser(call.UserId);
+                if (callUser != null && callUser.Id != user.Id)
+                {
+                    var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+
+                    }
+                }
+                else
+                {
+                    _voipService.Show();
+                }
+
+                return;
+            }
+
+            var fullInfo = CacheService.GetUserFull(user.Id);
+            if (fullInfo != null && fullInfo.HasPrivateCalls)
+            {
+                await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 74)));
+            if (response is Error error)
+            {
+                if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                }
+                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
+                {
+                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
         }
 
         #endregion
@@ -821,7 +952,7 @@ namespace Unigram.ViewModels
             var message = Strings.Resources.AreYouSureDeleteAndExit;
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                message = Strings.Resources.AreYouSureDeleteThisChat;
+                message = Strings.Resources.AreYouSureDeleteContact;
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
@@ -846,7 +977,7 @@ namespace Unigram.ViewModels
                         await ProtoService.SendAsync(new LeaveChat(chat.Id));
                     }
 
-                    ProtoService.Send(new DeleteChatHistory(chat.Id, true));
+                    ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
                 }
             }
 
@@ -964,8 +1095,8 @@ namespace Unigram.ViewModels
             NavigationService.Navigate(typeof(SupergroupRestrictedPage), chat.Id);
         }
 
-        public RelayCommand ParticipantsCommand { get; }
-        private void ParticipantsExecute()
+        public RelayCommand MembersCommand { get; }
+        private void MembersExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -974,18 +1105,6 @@ namespace Unigram.ViewModels
             }
 
             NavigationService.Navigate(typeof(SupergroupMembersPage), chat.Id);
-        }
-
-        public RelayCommand AdminLogCommand { get; }
-        private void AdminLogExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            NavigationService.Navigate(typeof(SupergroupEventLogPage), chat.Id);
         }
 
         public virtual ChatMemberCollection CreateMembers(int supergroupId)
@@ -1123,7 +1242,7 @@ namespace Unigram.ViewModels
             {
                 if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, url);
+                    MessageHelper.OpenTelegramUrl(ProtoService, NavigationService, uri);
                 }
                 else
                 {
@@ -1197,6 +1316,11 @@ namespace Unigram.ViewModels
                 {
                     _hasMore = false;
 
+                    if (_filter2 == null || _filter2 is ChatMembersFilterMembers)
+                    {
+                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
+                    }
+
                     return members.Members;
                 }
             }
@@ -1210,9 +1334,9 @@ namespace Unigram.ViewModels
                         _hasMore = false;
                     }
 
-                    if (_filter == null && members.TotalCount <= 200)
+                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && members.TotalCount <= 200)
                     {
-                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
+                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
                     }
 
                     return members.Members;

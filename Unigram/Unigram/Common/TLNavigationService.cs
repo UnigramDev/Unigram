@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
+using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Settings;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -17,6 +21,7 @@ namespace Unigram.Common
     public class TLNavigationService : NavigationService
     {
         private readonly IProtoService _protoService;
+        private readonly IPasscodeService _passcodeService;
 
         private ViewLifetimeControl _instantLifetime;
 
@@ -24,9 +29,11 @@ namespace Unigram.Common
             : base(frame, session, id)
         {
             _protoService = protoService;
+            _passcodeService = TLContainer.Current.Passcode;
         }
 
         public int SessionId => _protoService.SessionId;
+        public IProtoService ProtoService => _protoService;
 
         public async void NavigateToInstant(string url)
         {
@@ -59,13 +66,31 @@ namespace Unigram.Common
                     return;
                 }
 
-                //user.RestrictionReason
+                var reason = user.GetRestrictionReason();
+                if (reason != null && reason.Length > 0)
+                {
+                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
                 var supergroup = _protoService.GetSupergroup(super.SupergroupId);
                 if (supergroup == null)
                 {
+                    return;
+                }
+
+                if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username))
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
+
+                var reason = supergroup.GetRestrictionReason();
+                if (reason != null && reason.Length > 0)
+                {
+                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -78,10 +103,15 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, SnapPointsAlignment.Far, 8);
+                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
                 }
 
-                page.ViewModel.TextField?.FocusMaybe(FocusState.Keyboard);
+                page.ViewModel.TextField?.Focus(FocusState.Programmatic);
+
+                if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
+                {
+                    await page.ViewModel.HandlePackageAsync(package);
+                }
             }
             else
             {
@@ -116,8 +146,9 @@ namespace Unigram.Common
                     }
                 }
 
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-                if (shift)
+                if (shift && !ctrl)
                 {
                     await OpenAsync(typeof(ChatPage), chat.Id);
                 }
@@ -146,6 +177,25 @@ namespace Unigram.Common
             }
 
             NavigateToChat(chat, message, accessToken, state);
+        }
+
+        public async void NavigateToPasscode()
+        {
+            if (_passcodeService.IsEnabled)
+            {
+                var dialog = new SettingsPasscodeConfirmView(_passcodeService);
+                dialog.IsSimple = _passcodeService.IsSimple;
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    Navigate(typeof(SettingsPasscodePage));
+                }
+            }
+            else
+            {
+                Navigate(typeof(SettingsPasscodePage));
+            }
         }
     }
 }

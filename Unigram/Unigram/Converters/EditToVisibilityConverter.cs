@@ -13,7 +13,7 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var replyInfo = value as MessageEmbedData;
+            var replyInfo = value as MessageComposerHeader;
             if (replyInfo != null)
             {
                 if (replyInfo.EditingMessage != null)

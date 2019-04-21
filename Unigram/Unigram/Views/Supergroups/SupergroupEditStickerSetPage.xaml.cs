@@ -34,7 +34,7 @@ namespace Unigram.Views.Supergroups
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(ShortName, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
-                //ViewModel.CheckAvailability(ShortName.Text);
+                ViewModel.CheckAvailability(ShortName.Text);
             });
         }
 
@@ -73,15 +73,12 @@ namespace Unigram.Views.Supergroups
                 var file = cover.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var buffer = await FileIO.ReadBufferAsync(temp);
-
-                    photo.Source = WebPImage.DecodeFromBuffer(buffer);
+                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     photo.Source = null;
-                    ViewModel.ProtoService.Send(new DownloadFile(file.Id, 1));
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
 
@@ -93,7 +90,44 @@ namespace Unigram.Views.Supergroups
             args.Handled = true;
         }
 
-        #endregion
+        private async void Grid_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            var content = sender as Grid;
+            var stickerSet = args.NewValue as StickerSetInfo;
 
+            var title = content.Children[1] as TextBlock;
+            var subtitle = content.Children[2] as TextBlock;
+            var photo = content.Children[0] as Image;
+
+            if (stickerSet == null)
+            {
+                title.Text = Strings.Resources.ChooseStickerSetNotFound;
+                subtitle.Text = Strings.Resources.ChooseStickerSetNotFoundInfo;
+                photo.Source = null;
+                return;
+            }
+
+            title.Text = stickerSet.Title;
+            subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
+
+            var cover = stickerSet.Covers.FirstOrDefault();
+            if (cover == null || cover.Thumbnail == null)
+            {
+                return;
+            }
+
+            var file = cover.Thumbnail.Photo;
+            if (file.Local.IsDownloadingCompleted)
+            {
+                photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                photo.Source = null;
+                ViewModel.ProtoService.DownloadFile(file.Id, 1);
+            }
+        }
+
+        #endregion
     }
 }

@@ -34,7 +34,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            Photo.Source = PlaceholderHelper.GetUser(protoService, bot, 18, 18);
+            Photo.Source = PlaceholderHelper.GetUser(protoService, bot, 18);
 
             Domain.Text = session.DomainName;
             Title.Text = string.Format("{0}, {1}, {2}", bot.FirstName, session.Browser, session.Platform);

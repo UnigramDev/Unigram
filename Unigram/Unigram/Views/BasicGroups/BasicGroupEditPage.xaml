@@ -8,6 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <EntranceNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,7 +27,7 @@
             Glyph="&#xE10B;"/>
 
         <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"
             Grid.Row="1"/>
@@ -28,7 +36,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -37,12 +45,35 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
-             
+                    <controls:ProfilePicture x:Name="Photo" Click="Photo_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2">
+                        <FlyoutBase.AttachedFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Click="EditCamera_Click"
+                                                Text="{CustomResource FromCamera}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE722;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Click="EditPhoto_Click"
+                                                Text="{CustomResource FromGalley}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xEB9F;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.DeletePhotoCommand}"
+                                                Text="{CustomResource Delete}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE74D;"/>
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </FlyoutBase.AttachedFlyout>
+                    </controls:ProfilePicture>
+
                     <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                        <controls:UpdateTextBox
+                        <TextBox
                             x:Name="Title"
-                            Text="{Binding Title, Mode=TwoWay}"
+                            Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             MaxLength="{StaticResource ChannelTitleMaxLength}"
                             PlaceholderText="{CustomResource GroupName}"/>
                     </Border>
@@ -52,8 +83,7 @@
                     <controls:BadgeButton
                         Content="{CustomResource DeleteMega}"
                         Foreground="Red"
-                        Command="{x:Bind ViewModel.DeleteCommand}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Command="{x:Bind ViewModel.DeleteCommand}"/>
                     <TextBlock
                         Text="{CustomResource MegaDeleteInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

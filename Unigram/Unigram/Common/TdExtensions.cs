@@ -1,9 +1,11 @@
-﻿using System;
+﻿using libtgvoip;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Selectors;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
@@ -12,6 +14,399 @@ namespace Unigram.Common
 {
     public static class TdExtensions
     {
+        #region Passport
+
+        public static PersonalDocument GetPersonalDocument(this PassportElement element)
+        {
+            switch (element)
+            {
+                case PassportElementBankStatement bankStatement:
+                    return bankStatement.BankStatement;
+                case PassportElementPassportRegistration passportRegistration:
+                    return passportRegistration.PassportRegistration;
+                case PassportElementRentalAgreement rentalAgreement:
+                    return rentalAgreement.RentalAgreement;
+                case PassportElementTemporaryRegistration temporaryRegistration:
+                    return temporaryRegistration.TemporaryRegistration;
+                case PassportElementUtilityBill utilityBill:
+                    return utilityBill.UtilityBill;
+                default:
+                    return null;
+            }
+        }
+
+        public static void SetPersonalDocument(this InputPassportElement element, InputPersonalDocument document)
+        {
+            switch (element)
+            {
+                case InputPassportElementBankStatement bankStatement:
+                    bankStatement.BankStatement = document;
+                    break;
+                case InputPassportElementPassportRegistration passportRegistration:
+                    passportRegistration.PassportRegistration = document;
+                    break;
+                case InputPassportElementRentalAgreement rentalAgreement:
+                    rentalAgreement.RentalAgreement = document;
+                    break;
+                case InputPassportElementTemporaryRegistration temporaryRegistration:
+                    temporaryRegistration.TemporaryRegistration = document;
+                    break;
+                case InputPassportElementUtilityBill utilityBill:
+                    utilityBill.UtilityBill = document;
+                    break;
+            }
+        }
+
+        public static IdentityDocument GetIdentityDocument(this PassportElement element)
+        {
+            switch (element)
+            {
+                case PassportElementDriverLicense driverLicense:
+                    return driverLicense.DriverLicense;
+                case PassportElementIdentityCard identityCard:
+                    return identityCard.IdentityCard;
+                case PassportElementInternalPassport internalPassport:
+                    return internalPassport.InternalPassport;
+                case PassportElementPassport passport:
+                    return passport.Passport;
+                default:
+                    return null;
+            }
+        }
+
+        public static InputPassportElement ToInputElement(this PassportElement element)
+        {
+            switch (element)
+            {
+                case PassportElementAddress address:
+                    return new InputPassportElementAddress();
+                case PassportElementPersonalDetails personalDetails:
+                    return new InputPassportElementPersonalDetails();
+                case PassportElementEmailAddress emailAddress:
+                    return new InputPassportElementEmailAddress();
+                case PassportElementPhoneNumber phoneNumber:
+                    return new InputPassportElementPhoneNumber();
+                case PassportElementBankStatement bankStatement:
+                    return new InputPassportElementBankStatement();
+                case PassportElementPassportRegistration passportRegistration:
+                    return new InputPassportElementPassportRegistration();
+                case PassportElementRentalAgreement rentalAgreement:
+                    return new InputPassportElementRentalAgreement();
+                case PassportElementTemporaryRegistration temporaryRegistration:
+                    return new InputPassportElementTemporaryRegistration();
+                case PassportElementUtilityBill utilityBill:
+                    return new InputPassportElementUtilityBill();
+                case PassportElementDriverLicense driverLicense:
+                    return new InputPassportElementDriverLicense();
+                case PassportElementIdentityCard identityCard:
+                    return new InputPassportElementIdentityCard();
+                case PassportElementInternalPassport internalPassport:
+                    return new InputPassportElementInternalPassport();
+                case PassportElementPassport passport:
+                    return new InputPassportElementPassport();
+                default:
+                    return null;
+            }
+        }
+
+        public static PassportElementType ToElementType(this PassportElement element)
+        {
+            switch (element)
+            {
+                case PassportElementAddress address:
+                    return new PassportElementTypeAddress();
+                case PassportElementPersonalDetails personalDetails:
+                    return new PassportElementTypePersonalDetails();
+                case PassportElementEmailAddress emailAddress:
+                    return new PassportElementTypeEmailAddress();
+                case PassportElementPhoneNumber phoneNumber:
+                    return new PassportElementTypePhoneNumber();
+                case PassportElementBankStatement bankStatement:
+                    return new PassportElementTypeBankStatement();
+                case PassportElementPassportRegistration passportRegistration:
+                    return new PassportElementTypePassportRegistration();
+                case PassportElementRentalAgreement rentalAgreement:
+                    return new PassportElementTypeRentalAgreement();
+                case PassportElementTemporaryRegistration temporaryRegistration:
+                    return new PassportElementTypeTemporaryRegistration();
+                case PassportElementUtilityBill utilityBill:
+                    return new PassportElementTypeUtilityBill();
+                case PassportElementDriverLicense driverLicense:
+                    return new PassportElementTypeDriverLicense();
+                case PassportElementIdentityCard identityCard:
+                    return new PassportElementTypeIdentityCard();
+                case PassportElementInternalPassport internalPassport:
+                    return new PassportElementTypeInternalPassport();
+                case PassportElementPassport passport:
+                    return new PassportElementTypePassport();
+                default:
+                    return null;
+            }
+        }
+
+        public static PassportElement GetElementForType(this PassportElementsWithErrors authorizationForm, PassportElementType type)
+        {
+            foreach (var element in authorizationForm.Elements)
+            {
+                if (element is PassportElementAddress && type is PassportElementTypeAddress)
+                {
+                    return element;
+                }
+                else if (element is PassportElementPersonalDetails && type is PassportElementTypePersonalDetails)
+                {
+                    return element;
+                }
+                else if (element is PassportElementEmailAddress && type is PassportElementTypeEmailAddress)
+                {
+                    return element;
+                }
+                else if (element is PassportElementPhoneNumber && type is PassportElementTypePhoneNumber)
+                {
+                    return element;
+                }
+                else if (element is PassportElementBankStatement && type is PassportElementTypeBankStatement)
+                {
+                    return element;
+                }
+                else if (element is PassportElementPassportRegistration && type is PassportElementTypePassportRegistration)
+                {
+                    return element;
+                }
+                else if (element is PassportElementRentalAgreement && type is PassportElementTypeRentalAgreement)
+                {
+                    return element;
+                }
+                else if (element is PassportElementTemporaryRegistration && type is PassportElementTypeTemporaryRegistration)
+                {
+                    return element;
+                }
+                else if (element is PassportElementUtilityBill && type is PassportElementTypeUtilityBill)
+                {
+                    return element;
+                }
+                else if (element is PassportElementDriverLicense && type is PassportElementTypeDriverLicense)
+                {
+                    return element;
+                }
+                else if (element is PassportElementIdentityCard && type is PassportElementTypeIdentityCard)
+                {
+                    return element;
+                }
+                else if (element is PassportElementInternalPassport && type is PassportElementTypeInternalPassport)
+                {
+                    return element;
+                }
+                else if (element is PassportElementPassport && type is PassportElementTypePassport)
+                {
+                    return element;
+                }
+            }
+
+            return null;
+        }
+
+        public static IEnumerable<PassportElementError> GetErrorsForType(this PassportElementsWithErrors authorizationForm, PassportElementType type)
+        {
+            foreach (var error in authorizationForm.Errors)
+            {
+                if (error.Type is PassportElementTypeAddress && type is PassportElementTypeAddress)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypePersonalDetails && type is PassportElementTypePersonalDetails)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypeEmailAddress && type is PassportElementTypeEmailAddress)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypePhoneNumber && type is PassportElementTypePhoneNumber)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypeBankStatement && type is PassportElementTypeBankStatement)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypePassportRegistration && type is PassportElementTypePassportRegistration)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypeRentalAgreement && type is PassportElementTypeRentalAgreement)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypeTemporaryRegistration && type is PassportElementTypeTemporaryRegistration)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypeUtilityBill && type is PassportElementTypeUtilityBill)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypeDriverLicense && type is PassportElementTypeDriverLicense)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypeIdentityCard && type is PassportElementTypeIdentityCard)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypeInternalPassport && type is PassportElementTypeInternalPassport)
+                {
+                    yield return error;
+                }
+                else if (error.Type is PassportElementTypePassport && type is PassportElementTypePassport)
+                {
+                    yield return error;
+                }
+            }
+        }
+
+        #endregion
+
+        public static Endpoint ToEndpoint(this CallConnection connection)
+        {
+            return new Endpoint
+            {
+                id = connection.Id,
+                ipv4 = connection.Ip,
+                ipv6 = connection.Ipv6,
+                peerTag = connection.PeerTag.ToArray(),
+                port = (ushort)connection.Port
+            };
+        }
+
+        public static bool IsInstantGallery(this WebPage webPage)
+        {
+            return webPage.InstantViewVersion != 0 && 
+                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || 
+                 string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static InputThumbnail ToInputThumbnail(this PhotoSize photo)
+        {
+            return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
+        }
+
+        public static IEnumerable<FormattedText> Split(this FormattedText text, int maxLength)
+        {
+            int count = (int)Math.Ceiling(text.Text.Length / (double)maxLength);
+            for (int a = 0; a < count; a++)
+            {
+                yield return text.Substring(a * maxLength, maxLength);
+            }
+        }
+
+        public static FormattedText Substring(this FormattedText text, int startIndex, int length)
+        {
+            if (text.Text.Length < length)
+            {
+                return text;
+            }
+
+            var message = text.Text.Substring(startIndex, Math.Min(text.Text.Length - startIndex, length));
+            var sub = new List<TextEntity>();
+
+            foreach (var entity in text.Entities)
+            {
+                // Included, Included
+                if (entity.Offset >= startIndex && entity.Offset + entity.Length <= startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = entity.Offset - startIndex, Length = entity.Length };
+                    sub.Add(replace);
+                }
+                // Before, Included
+                else if (entity.Offset < startIndex && entity.Offset + entity.Length > startIndex && entity.Offset + entity.Length <= startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = 0, Length = entity.Length - (startIndex - entity.Offset) };
+                    sub.Add(replace);
+                }
+                // Included, After
+                else if (entity.Offset >= startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
+                {
+                    var difference = (entity.Offset + entity.Length) - startIndex + length;
+
+                    var replace = new TextEntity { Offset = entity.Offset - startIndex, Length = entity.Length - difference };
+                    sub.Add(replace);
+                }
+                // Before, After
+                else if (entity.Offset < startIndex && entity.Offset + entity.Length > startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = 0, Length = message.Length };
+                    sub.Add(replace);
+                }
+            }
+
+            return new FormattedText(message, sub);
+        }
+
+        public static string ToPlainText(this PageBlockCaption caption)
+        {
+            return caption.Text.ToPlainText();
+        }
+
+        public static string ToPlainText(this RichText text)
+        {
+            switch (text)
+            {
+                case RichTextPlain plainText:
+                    return plainText.Text;
+                case RichTexts concatText:
+                    var builder = new StringBuilder();
+                    foreach (var concat in concatText.Texts)
+                    {
+                        builder.Append(ToPlainText(concat));
+                    }
+                    return builder.ToString();
+                case RichTextBold boldText:
+                    return ToPlainText(boldText.Text);
+                case RichTextEmailAddress emailText:
+                    return ToPlainText(emailText.Text);
+                case RichTextFixed fixedText:
+                    return ToPlainText(fixedText.Text);
+                case RichTextItalic italicText:
+                    return ToPlainText(italicText.Text);
+                case RichTextStrikethrough strikeText:
+                    return ToPlainText(strikeText.Text);
+                case RichTextUnderline underlineText:
+                    return ToPlainText(underlineText.Text);
+                case RichTextUrl urlText:
+                    return ToPlainText(urlText.Text);
+                default:
+                    return null;
+            }
+        }
+
+        public static bool IsNullOrEmpty(this RichText text)
+        {
+            if (text == null)
+            {
+                return true;
+            }
+
+            return string.IsNullOrEmpty(text.ToPlainText());
+        }
+
+        public static bool IsEditable(this TextEntity entity)
+        {
+            switch (entity.Type)
+            {
+                case TextEntityTypeBold bold:
+                case TextEntityTypeItalic italic:
+                case TextEntityTypeCode code:
+                case TextEntityTypePre pre:
+                case TextEntityTypePreCode preCode:
+                case TextEntityTypeTextUrl textUrl:
+                case TextEntityTypeMentionName mentionName:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static Photo GetPhoto(this Message message)
         {
             switch (message.Content)
@@ -24,6 +419,8 @@ namespace Unigram.Common
                     return photo.Photo;
                 case MessageText text:
                     return text.WebPage?.Photo;
+                case MessageChatChangePhoto chatChangePhoto:
+                    return chatChangePhoto.Photo;
                 default:
                     return null;
             }
@@ -245,6 +642,8 @@ namespace Unigram.Common
         {
             switch (content)
             {
+                case MessageAlbum album:
+                    return album.Caption;
                 case MessageAnimation animation:
                     return animation.Caption;
                 case MessageAudio audio:
@@ -301,7 +700,7 @@ namespace Unigram.Common
                     var photo = webPage.Photo;
                     var big = photo.GetBig();
 
-                    return big != null && big.Width > 400 && webPage.HasInstantView;
+                    return big != null && big.Width > 400 && webPage.InstantViewVersion != 0;
                 }
             }
 
@@ -330,6 +729,10 @@ namespace Unigram.Common
                     return video.IsSecret;
                 case MessageVideoNote videoNote:
                     return videoNote.IsSecret;
+
+                //case MessageExpiredPhoto expiredPhoto:
+                //case MessageExpiredVideo expiredVideo:
+                //    return true;
                 default:
                     return false;
             }
@@ -352,6 +755,7 @@ namespace Unigram.Common
                 case MessageContactRegistered contactRegistered:
                 case MessageCustomServiceAction customServiceAction:
                 case MessageGameScore gameScore:
+                case MessagePassportDataSent passportDataSent:
                 case MessagePaymentSuccessful paymentSuccessful:
                 case MessagePinMessage pinMessage:
                 case MessageScreenshotTaken screenshotTaken:
@@ -377,6 +781,7 @@ namespace Unigram.Common
                     }
                     return true;
                 case MessageHeaderDate headerDate:
+                case MessageHeaderUnread headerUnread:
                     return true;
                 default:
                     return false;
@@ -437,6 +842,43 @@ namespace Unigram.Common
             }
         }
 
+        public static string GetRestrictionReason(this User user)
+        {
+            return GetRestrictionReason(user.RestrictionReason);
+        }
+
+        public static string GetRestrictionReason(this Supergroup supergroup)
+        {
+            return GetRestrictionReason(supergroup.RestrictionReason);
+        }
+
+        public static string GetRestrictionReason(string reason)
+        {
+            if (reason.Length > 0)
+            {
+                var fullTypeEnd = reason.IndexOf(':');
+                if (fullTypeEnd <= 0)
+                {
+                    return null;
+                }
+
+                // {fulltype} is in "{type}-{tag}-{tag}-{tag}" format
+                // if we find "all" tag we return the restriction string
+                var typeTags = reason.Substring(0, fullTypeEnd).Split('-');
+#if STORE_RESTRICTIVE
+                var restrictionApplies = typeTags.Contains("all") || typeTags.Contains("ios");
+#else
+                var restrictionApplies = typeTags.Contains("all");
+#endif
+                if (restrictionApplies)
+                {
+                    return reason.Substring(fullTypeEnd + 1).Trim();
+                }
+            }
+
+            return null;
+        }
+
         public static bool IsUnread(this Chat chat)
         {
             if (chat.IsMarkedAsUnread)
@@ -449,12 +891,12 @@ namespace Unigram.Common
 
         public static bool IsForever(this ChatMemberStatusRestricted restricted)
         {
-            return restricted.RestrictedUntilDate == 0 || Math.Abs(restricted.RestrictedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
+            return restricted.RestrictedUntilDate == 0 || Math.Abs((restricted.RestrictedUntilDate - DateTime.Now.ToTimestamp()) / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
         public static bool IsForever(this ChatMemberStatusBanned banned)
         {
-            return banned.BannedUntilDate == 0 || Math.Abs(banned.BannedUntilDate - DateTime.Now.ToTimestamp() / 1000) > 5 * 365 * 24 * 60 * 60;
+            return banned.BannedUntilDate == 0 || Math.Abs((banned.BannedUntilDate - DateTime.Now.ToTimestamp()) / 1000) > 5 * 365 * 24 * 60 * 60;
         }
 
 
@@ -511,7 +953,7 @@ namespace Unigram.Common
             return TdNetworkType.Other;
         }
 
-        public static bool IsSaved(this Message message)
+        public static bool IsSaved(this Message message, int savedMessagesId)
         {
             if (message.ForwardInfo is MessageForwardedFromUser fromUser)
             {
@@ -520,6 +962,10 @@ namespace Unigram.Common
             else if (message.ForwardInfo is MessageForwardedPost post)
             {
                 return post.ForwardedFromChatId != 0;
+            }
+            else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+            {
+                return message.ChatId == savedMessagesId;
             }
 
             return false;
@@ -532,12 +978,30 @@ namespace Unigram.Common
                 return Strings.Resources.HiddenName;
             }
 
-            return string.IsNullOrEmpty(user.LastName) ? user.FirstName : $"{user.FirstName} {user.LastName}";
+            if (user.FirstName.Length > 0 && user.LastName.Length > 0)
+            {
+                return $"{user.FirstName} {user.LastName}";
+            }
+            else if (user.FirstName.Length > 0)
+            {
+                return user.FirstName;
+            }
+
+            return user.LastName;
         }
 
         public static string GetFullName(this Contact user)
         {
-            return string.IsNullOrEmpty(user.LastName) ? user.FirstName : $"{user.FirstName} {user.LastName}";
+            if (user.FirstName.Length > 0 && user.LastName.Length > 0)
+            {
+                return $"{user.FirstName} {user.LastName}";
+            }
+            else if (user.FirstName.Length > 0)
+            {
+                return user.FirstName;
+            }
+
+            return user.LastName;
         }
 
         public static PhotoSize GetSize(this Wallpaper wallpaper, bool thumbnail)
@@ -548,6 +1012,21 @@ namespace Unigram.Common
         public static PhotoSize GetSize(this Photo photo, bool thumbnail)
         {
             return thumbnail ? photo.GetSmall() : photo.GetBig();
+        }
+
+        public static bool UpdateFile(this Wallpaper wallpaper, File file)
+        {
+            var any = false;
+            foreach (var size in wallpaper.Sizes)
+            {
+                if (size.Photo.Id == file.Id)
+                {
+                    size.Photo = file;
+                    any = true;
+                }
+            }
+
+            return any;
         }
 
         public static PhotoSize GetSmall(this Wallpaper wallpaper)
@@ -878,6 +1357,26 @@ namespace Unigram.Common
                 supergroup.Status is ChatMemberStatusRestricted;
         }
 
+        public static bool CanPinMessages(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages;
+        }
+
+        public static bool CanPinMessages(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
+
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPinMessages;
+        }
+
         public static bool CanChangeInfo(this Supergroup supergroup)
         {
             if (supergroup.Status == null)
@@ -901,7 +1400,7 @@ namespace Unigram.Common
             }
             else
             {
-                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages || supergroup.Status is ChatMemberStatusMember;
+                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator || supergroup.Status is ChatMemberStatusMember;
             }
         }
 
@@ -967,7 +1466,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPostMessages || basicGroup.Status is ChatMemberStatusMember;
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator || basicGroup.Status is ChatMemberStatusMember;
         }
 
 
@@ -1040,6 +1539,8 @@ namespace Unigram.Common
         {
             switch (message.Content)
             {
+                case MessageAlbum album:
+                    return album.UpdateFile(file);
                 case MessageAnimation animation:
                     return animation.UpdateFile(file);
                 case MessageAudio audio:
@@ -1062,6 +1563,8 @@ namespace Unigram.Common
                     return videoNote.UpdateFile(file);
                 case MessageVoiceNote voiceNote:
                     return voiceNote.UpdateFile(file);
+                case MessageChatChangePhoto chatChangePhoto:
+                    return chatChangePhoto.UpdateFile(file);
                 default:
                     return false;
             }
@@ -1175,6 +1678,22 @@ namespace Unigram.Common
             }
 
             return false;
+        }
+
+
+
+        public static bool UpdateFile(this MessageAlbum album, File file)
+        {
+            var any = false;
+            foreach (var message in album.Layout.Messages)
+            {
+                if (message.UpdateFile(file))
+                {
+                    any = true;
+                }
+            }
+
+            return any;
         }
 
 
@@ -1366,11 +1885,45 @@ namespace Unigram.Common
 
             return false;
         }
+
+
+
+        public static bool UpdateFile(this MessageChatChangePhoto chatChangePhoto, File file)
+        {
+            return chatChangePhoto.Photo.UpdateFile(file);
+        }
+
+
+
+        public static void Update(this File file, File update)
+        {
+            file.ExpectedSize = update.ExpectedSize;
+            file.Size = update.Size;
+            file.Local = update.Local;
+            file.Remote = update.Remote;
+        }
     }
 }
 
 namespace Telegram.Td.Api
 {
+    public class MessageAlbum : MessageContent
+    {
+        public FormattedText Caption { get; set; }
+
+        public GroupedMessages Layout { get; private set; }
+
+        public MessageAlbum()
+        {
+            Layout = new GroupedMessages();
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class MessageChatEvent : MessageContent
     {
         public ChatEvent Event { get; set; }
@@ -1389,6 +1942,14 @@ namespace Telegram.Td.Api
     }
 
     public class MessageHeaderDate : MessageContent
+    {
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MessageHeaderUnread : MessageContent
     {
         public NativeObject ToUnmanaged()
         {

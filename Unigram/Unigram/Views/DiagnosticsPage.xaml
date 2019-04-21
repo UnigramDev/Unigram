@@ -10,8 +10,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}"/>
-
         <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
             <Setter Property="Padding" Value="0,8,0,8"/>
         </Style>
@@ -64,6 +62,17 @@
                         Header="Use test data centers"
                         Toggled="UseTestDC_Toggled"
                         Style="{StaticResource CheckButtonStyle}"/>
+                </StackPanel>
+                
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="Options" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ItemsControl x:Name="Options">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Padding" Value="12,8"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

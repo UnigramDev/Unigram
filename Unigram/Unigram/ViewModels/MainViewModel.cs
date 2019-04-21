@@ -6,9 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.Common;
-using Unigram.Common.Dialogs;
 using Unigram.Controls.Views;
-using Unigram.Core.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Media.Playback;
@@ -25,6 +23,7 @@ namespace Unigram.ViewModels
     public class MainViewModel : TLMultipleViewModelBase, IHandle<UpdateServiceNotification>, IHandle<UpdateUnreadMessageCount>
     {
         private readonly INotificationsService _pushService;
+        private readonly IContactsService _contactsService;
         private readonly IVibrationService _vibrationService;
         private readonly ILiveLocationService _liveLocationService;
         private readonly IPasscodeService _passcodeService;
@@ -32,15 +31,13 @@ namespace Unigram.ViewModels
         private readonly ISessionService _sessionService;
         private readonly IVoIPService _voipService;
 
-        private readonly ConcurrentDictionary<int, InputTypingManager> _typingManagers;
-        private readonly ConcurrentDictionary<int, InputTypingManager> _chatTypingManagers;
-
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
+            _contactsService = contactsService;
             _vibrationService = vibrationService;
             _liveLocationService = liveLocationService;
             _passcodeService = passcodeService;
@@ -48,20 +45,16 @@ namespace Unigram.ViewModels
             _sessionService = session;
             _voipService = voipService;
 
-            _typingManagers = new ConcurrentDictionary<int, InputTypingManager>();
-            _chatTypingManagers = new ConcurrentDictionary<int, InputTypingManager>();
-
-            //Dialogs = new DialogCollection(protoService, cacheService);
-            Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator);
+            Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService);
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
-            Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService);
+            Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService, settingsSearchService);
 
-            ChildViewModels.Add(Chats);
-            ChildViewModels.Add(Contacts);
-            ChildViewModels.Add(Calls);
-            ChildViewModels.Add(Settings);
-            ChildViewModels.Add(_voipService as TLViewModelBase);
+            Children.Add(Chats);
+            Children.Add(Contacts);
+            Children.Add(Calls);
+            Children.Add(Settings);
+            Children.Add(_voipService as TLViewModelBase);
 
             aggregator.Subscribe(this);
 
@@ -87,6 +80,13 @@ namespace Unigram.ViewModels
         private void StopLiveLocationExecute()
         {
             _liveLocationService.StopTracking();
+        }
+
+        private int _unreadCount;
+        public int UnreadCount
+        {
+            get { return _unreadCount; }
+            set { Set(ref _unreadCount, value); }
         }
 
         private int _unreadMutedCount;
@@ -115,97 +115,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        #region Typing
-
-        //public void Handle(TLUpdateUserTyping update)
-        //{
-        //    var user = CacheService.GetUser(update.UserId) as TLUser;
-        //    if (user == null)
-        //    {
-        //        return;
-        //    }
-
-        //    if (user.IsSelf)
-        //    {
-        //        return;
-        //    }
-
-        //    //var dialog = CacheService.GetDialog(user.ToPeer());
-        //    //if (dialog == null)
-        //    //{
-        //    //    return;
-        //    //}
-
-        //    //_typingManagers.TryGetValue(update.UserId, out InputTypingManager typingManager);
-        //    //if (typingManager == null)
-        //    //{
-        //    //    typingManager = new InputTypingManager(users =>
-        //    //    {
-        //    //        dialog.TypingSubtitle = DialogViewModel.GetTypingString(user.ToPeer(), users, CacheService.GetUser, null);
-        //    //        dialog.IsTyping = true;
-        //    //    },
-        //    //    () =>
-        //    //    {
-        //    //        dialog.TypingSubtitle = null;
-        //    //        dialog.IsTyping = false;
-        //    //    });
-
-        //    //    _typingManagers[update.UserId] = typingManager;
-        //    //}
-
-        //    //var action = update.Action;
-        //    //if (action is TLSendMessageCancelAction)
-        //    //{
-        //    //    typingManager.RemoveTypingUser(update.UserId);
-        //    //    return;
-        //    //}
-
-        //    //typingManager.AddTypingUser(update.UserId, action);
-        //}
-
-        //public void Handle(TLUpdateChatUserTyping update)
-        //{
-        //    var chat = CacheService.GetChat(update.ChatId) as TLChatBase;
-        //    if (chat == null)
-        //    {
-        //        return;
-        //    }
-
-        //    //var dialog = CacheService.GetDialog(chat.ToPeer());
-        //    //if (dialog == null)
-        //    //{
-        //    //    return;
-        //    //}
-
-        //    //_typingManagers.TryGetValue(update.ChatId, out InputTypingManager typingManager);
-        //    //if (typingManager == null)
-        //    //{
-        //    //    typingManager = new InputTypingManager(users =>
-        //    //    {
-        //    //        dialog.TypingSubtitle = DialogViewModel.GetTypingString(chat.ToPeer(), users, CacheService.GetUser, null);
-        //    //        dialog.IsTyping = true;
-        //    //    },
-        //    //    () =>
-        //    //    {
-        //    //        dialog.TypingSubtitle = null;
-        //    //        dialog.IsTyping = false;
-        //    //    });
-
-        //    //    _typingManagers[update.ChatId] = typingManager;
-        //    //}
-
-        //    //var action = update.Action;
-        //    //if (action is TLSendMessageCancelAction)
-        //    //{
-        //    //    typingManager.RemoveTypingUser(update.UserId);
-        //    //    return;
-        //    //}
-
-        //    //typingManager.AddTypingUser(update.UserId, action);
-        //}
-
-        #endregion
-
         public RelayCommand ReturnToCallCommand { get; }
         private void ReturnToCallExecute()
         {
@@ -221,6 +130,7 @@ namespace Unigram.ViewModels
         {
             BeginOnUIThread(() =>
             {
+                UnreadCount = update.UnreadCount;
                 UnreadUnmutedCount = update.UnreadUnmutedCount;
                 UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
             });
@@ -230,7 +140,8 @@ namespace Unigram.ViewModels
         {
             if (mode == NavigationMode.New)
             {
-                Execute.BeginOnThreadPool(() => _pushService.RegisterAsync());
+                Task.Run(() => _pushService.RegisterAsync());
+                Task.Run(() => _contactsService.JumpListAsync());
             }
 
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
@@ -239,7 +150,8 @@ namespace Unigram.ViewModels
             //Dispatch(() => Contacts.getTLContacts());
             //Dispatch(() => Contacts.GetSelfAsync());
 
-            UnreadMutedCount = CacheService.UnreadCount - CacheService.UnreadUnmutedCount;
+            UnreadCount = CacheService.UnreadMessageCount.UnreadCount;
+            UnreadMutedCount = CacheService.UnreadMessageCount.UnreadCount - CacheService.UnreadMessageCount.UnreadUnmutedCount;
 
             return base.OnNavigatedToAsync(parameter, mode, state);
         }

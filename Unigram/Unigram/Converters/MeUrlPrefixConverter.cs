@@ -27,10 +27,10 @@ namespace Unigram.Converters
 
             if (cacheService != null)
             {
-                var option = cacheService.GetOption<OptionValueString>("t_me_url");
-                if (option != null)
+                var option = cacheService.Options.TMeUrl;
+                if (!string.IsNullOrEmpty(option))
                 {
-                    linkPrefix = option.Value;
+                    linkPrefix = option;
                 }
             }
 

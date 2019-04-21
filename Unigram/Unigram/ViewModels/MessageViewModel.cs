@@ -9,24 +9,22 @@ namespace Unigram.ViewModels
     public class MessageViewModel
     {
         private readonly IProtoService _protoService;
+        private readonly IPlaybackService _playbackService;
         private readonly IMessageDelegate _delegate;
 
         private Message _message;
 
-        public MessageViewModel(IProtoService protoService, IMessageDelegate delegato, Message message)
+        public MessageViewModel(IProtoService protoService, IPlaybackService playbackService, IMessageDelegate delegato, Message message)
         {
             _protoService = protoService;
+            _playbackService = playbackService;
             _delegate = delegato;
 
             _message = message;
         }
 
-        public MessageViewModel(Message message)
-        {
-            _message = message;
-        }
-
         public IProtoService ProtoService => _protoService;
+        public IPlaybackService PlaybackService => _playbackService;
         public IMessageDelegate Delegate => _delegate;
 
         public bool IsFirst { get; set; }
@@ -63,7 +61,7 @@ namespace Unigram.ViewModels
         public File GetFile() => _message.GetFile();
 
         public bool IsService() => _message.IsService();
-        public bool IsSaved() => _message.IsSaved();
+        public bool IsSaved() => _message.IsSaved(_protoService.Options.MyId);
         public bool IsSecret() => _message.IsSecret();
 
         public MessageViewModel ReplyToMessage { get; set; }
@@ -177,5 +175,70 @@ namespace Unigram.ViewModels
             return false;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Message y)
+            {
+                return Id == y.Id && ChatId == y.ChatId;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode() ^ ChatId.GetHashCode();
+        }
+
+        public void UpdateWith(MessageViewModel message)
+        {
+            _message.AuthorSignature = message.AuthorSignature;
+            _message.CanBeDeletedForAllUsers = message.CanBeDeletedForAllUsers;
+            _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
+            _message.CanBeEdited = message.CanBeEdited;
+            _message.CanBeForwarded = message.CanBeForwarded;
+            _message.ChatId = message.ChatId;
+            _message.ContainsUnreadMention = message.ContainsUnreadMention;
+            //_message.Content = message.Content;
+            //_message.Date = message.Date;
+            _message.EditDate = message.EditDate;
+            _message.ForwardInfo = message.ForwardInfo;
+            _message.Id = message.Id;
+            _message.IsChannelPost = message.IsChannelPost;
+            _message.IsOutgoing = message.IsOutgoing;
+            _message.MediaAlbumId = message.MediaAlbumId;
+            _message.ReplyMarkup = message.ReplyMarkup;
+            _message.ReplyToMessageId = message.ReplyToMessageId;
+            _message.SenderUserId = message.SenderUserId;
+            _message.SendingState = message.SendingState;
+            _message.Ttl = message.Ttl;
+            _message.TtlExpiresIn = message.TtlExpiresIn;
+            _message.ViaBotUserId = message.ViaBotUserId;
+            _message.Views = message.Views;
+
+            if (_message.Content is MessageAlbum album)
+            {
+                FormattedText caption = null;
+
+                foreach (var child in album.Layout.Messages)
+                {
+                    var childCaption = child.Content?.GetCaption();
+                    if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))
+                    {
+                        if (caption == null || string.IsNullOrEmpty(caption.Text))
+                        {
+                            caption = childCaption;
+                        }
+                        else
+                        {
+                            caption = null;
+                            break;
+                        }
+                    }
+                }
+
+                album.Caption = caption ?? new FormattedText();
+            }
+        }
     }
 }

@@ -12,7 +12,7 @@
     Margin="0,8,0,6">
 
     <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
-        <RichTextBlock x:Name="Label" Margin="0,0,0,8" MaxLines="6" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionRichTextBlockStyle}">
+        <RichTextBlock x:Name="Label" TextAlignment="DetectFromContent" IsTextSelectionEnabled="False" Margin="0,0,0,8" MaxLines="6" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionRichTextBlockStyle}">
             <Paragraph>
                 <Run x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/>
                 <Run x:Name="SubtitleLabel" FontWeight="SemiBold"/>
@@ -20,7 +20,13 @@
             </Paragraph>
         </RichTextBlock>
 
-        <ContentControl x:Name="Media"/>
+        <Grid HorizontalAlignment="Left">
+            <Border x:Name="Media"/>
+            
+            <Border x:Name="Overlay" Visibility="Collapsed" Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="8,4,8,4" Margin="4">
+                <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+            </Border>
+        </Grid>
     </StackPanel>
 
     <Button x:Name="Button" Click="Button_Click" Style="{StaticResource InstantViewButtonStyle}">

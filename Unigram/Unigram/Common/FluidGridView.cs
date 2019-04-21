@@ -310,8 +310,24 @@ namespace Unigram.Common
             DependencyProperty.Register("RowsOrColumns", typeof(int), typeof(FluidGridViewTrigger), new PropertyMetadata(0, OnPropertyChanged));
         #endregion
 
+        #region MaxLength
+        public double MaxLength
+        {
+            get { return (double)GetValue(MaxLengthProperty); }
+            set { SetValue(MaxLengthProperty, value); }
+        }
+
+        public static readonly DependencyProperty MaxLengthProperty =
+            DependencyProperty.Register("MaxLength", typeof(double), typeof(FluidGridViewTrigger), new PropertyMetadata(0d));
+        #endregion
+
         public override double GetItemLength(double parentLength)
         {
+            if (MaxLength > 0)
+            {
+                return Math.Min(MaxLength, parentLength / RowsOrColumns);
+            }
+
             return parentLength / RowsOrColumns;
         }
 

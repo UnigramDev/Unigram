@@ -8,9 +8,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}"/>
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <DrillInNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
 
+    <Page.Resources>
         <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
             <Setter Property="Padding" Value="0,8,0,8"/>
         </Style>

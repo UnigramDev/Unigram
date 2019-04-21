@@ -1,4 +1,5 @@
 <HyperlinkButton
+    x:Name="LayoutRoot"
     x:Class="Unigram.Controls.Messages.MessageReference"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -44,6 +45,9 @@
                             <Setter Target="TitleLabel.Foreground" Value="#FFFFFF"/>
                             <Setter Target="ServiceLabel.Foreground" Value="#FFFFFF"/>
                             <Setter Target="MessageLabel.Foreground" Value="#FFFFFF"/>
+
+                            <Setter Target="LayoutRoot.Margin" Value="0,4,0,2"/>
+                            <Setter Target="LayoutRoot.BorderBrush" Value="#FFFFFF"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -52,7 +56,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Border x:Name="ThumbRoot" x:DeferLoadStrategy="Lazy" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Margin="6,0,0,0">
+            <Border x:Name="ThumbRoot" x:DeferLoadStrategy="Lazy" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Margin="8,0,0,0">
                 <Border x:Name="ThumbEllipse">
                     <Border.Background>
                         <ImageBrush x:Name="ThumbImage" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
@@ -60,7 +64,7 @@
                 </Border>
             </Border>
 
-            <TextBlock x:Name="Label" Margin="8,0,0,2" VerticalAlignment="Center" MaxLines="2" Foreground="{ThemeResource MessageForegroundBrush}" Style="{ThemeResource ReplyBodyTextBlockStyle}" Grid.Column="1">
+            <TextBlock x:Name="Label" Margin="8,0,0,2" VerticalAlignment="Center" MaxLines="2" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource ReplyBodyTextBlockStyle}" Grid.Column="1">
                 <Run x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}"/>
                 <LineBreak/>
                 <Run x:Name="ServiceLabel" Foreground="{ThemeResource MessageSubtleForegroundBrush}"/><Run x:Name="MessageLabel" Foreground="{ThemeResource MessageForegroundBrush}"/>

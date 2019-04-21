@@ -6,17 +6,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Core.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.UserDataAccounts;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
+using Windows.UI.StartScreen;
 
 namespace Unigram.Services
 {
     public interface IContactsService
     {
+        Task JumpListAsync();
+
         Task SyncAsync(Telegram.Td.Api.Users result);
 
         Task<Telegram.Td.Api.BaseObject> ImportAsync();
@@ -25,10 +27,11 @@ namespace Unigram.Services
         Task RemoveAsync();
     }
 
-    public class ContactsService : IContactsService
+    public class ContactsService : IContactsService, IHandle<Telegram.Td.Api.UpdateAuthorizationState>
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
         private readonly DisposableMutex _syncLock;
@@ -36,14 +39,48 @@ namespace Unigram.Services
 
         private CancellationTokenSource _syncToken;
 
-        public ContactsService(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator)
+        public ContactsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _cacheService = cacheService;
+            _settingsService = settingsService;
             _aggregator = aggregator;
 
             _syncLock = new DisposableMutex();
             _importedPhonesRoot = new object();
+
+            _aggregator.Subscribe(this);
+        }
+
+        public void Handle(Telegram.Td.Api.UpdateAuthorizationState update)
+        {
+            if (update.AuthorizationState is Telegram.Td.Api.AuthorizationStateReady && _settingsService.IsContactsSyncEnabled)
+            {
+                _protoService.Send(new Telegram.Td.Api.GetContacts(), async result =>
+                {
+                    if (result is Telegram.Td.Api.Users users)
+                    {
+                        await SyncAsync(users);
+                    }
+                });
+            }
+        }
+
+        public async Task JumpListAsync()
+        {
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
+            {
+                var current = await JumpList.LoadCurrentAsync();
+                current.SystemGroupKind = JumpListSystemGroupKind.None;
+                current.Items.Clear();
+
+                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", _cacheService.Options.MyId), Strings.Resources.SavedMessages);
+                cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
+
+                current.Items.Add(cloud);
+
+                await current.SaveAsync();
+            }
         }
 
         public async Task SyncAsync(Telegram.Td.Api.Users result)
@@ -63,7 +100,7 @@ namespace Unigram.Services
             }
             catch
             {
-                Logs.Log.Write("Sync contacts canceled");
+                Logs.Logger.Warning(Logs.Target.Contacts, "Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
         }
@@ -86,7 +123,7 @@ namespace Unigram.Services
             }
             catch
             {
-                Logs.Log.Write("Sync contacts canceled");
+                Logs.Logger.Warning(Logs.Target.Contacts, "Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
 
@@ -97,7 +134,7 @@ namespace Unigram.Services
         {
             Telegram.Td.Api.BaseObject result = null;
 
-            Logs.Log.Write("Importing contacts");
+            Logs.Logger.Info(Logs.Target.Contacts, "Importing contacts");
             Debug.WriteLine("» Importing contacts");
 
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
@@ -106,7 +143,7 @@ namespace Unigram.Services
                 result = await ImportAsync(store);
             }
 
-            Logs.Log.Write("Importing contacts completed");
+            Logs.Logger.Info(Logs.Target.Contacts, "Importing contacts completed");
             Debug.WriteLine("» Importing contacts completed");
 
             return result;
@@ -127,7 +164,7 @@ namespace Unigram.Services
 
             var importingContacts = new List<Telegram.Td.Api.Contact>();
 
-            foreach (var phone in importedPhones.Keys.Take(1300).ToList())
+            foreach (var phone in importedPhones.Keys.ToList())
             {
                 var contact = importedPhones[phone];
                 var firstName = contact.FirstName ?? string.Empty;
@@ -179,14 +216,14 @@ namespace Unigram.Services
             }
             catch
             {
-                Logs.Log.Write("Sync contacts canceled");
+                Logs.Logger.Warning(Logs.Target.Contacts, "Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
         }
 
         private async Task ExportAsyncInternal(Telegram.Td.Api.Users result)
         {
-            Logs.Log.Write("Exporting contacts");
+            Logs.Logger.Info(Logs.Target.Contacts, "Exporting contacts");
             Debug.WriteLine("» Exporting contacts");
 
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
@@ -205,7 +242,7 @@ namespace Unigram.Services
                 await ExportAsync(contactList, annotationList, result);
             }
 
-            Logs.Log.Write("Exporting contacts completed");
+            Logs.Logger.Info(Logs.Target.Contacts, "Exporting contacts completed");
             Debug.WriteLine("» Exporting contacts completed");
         }
 
@@ -288,15 +325,14 @@ namespace Unigram.Services
             var store = await UserDataAccountManager.RequestStoreAsync(UserDataAccountStoreAccessType.AppAccountsReadWrite);
 
             UserDataAccount userDataAccount = null;
-            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_user_data_account");
-            if (id != null)
+            if (_cacheService.Options.TryGetValue("x_user_data_account", out string id))
             {
-                userDataAccount = await store.GetAccountAsync(id.Value);
+                userDataAccount = await store.GetAccountAsync(id);
             }
             
             if (userDataAccount == null)
             {
-                userDataAccount = await store.CreateAccountAsync($"{_cacheService.GetMyId()}");
+                userDataAccount = await store.CreateAccountAsync($"{_cacheService.Options.MyId}");
                 await _protoService.SendAsync(new Telegram.Td.Api.SetOption("x_user_data_account", new Telegram.Td.Api.OptionValueString(userDataAccount.Id)));
             }
 
@@ -305,14 +341,13 @@ namespace Unigram.Services
 
         private async Task<ContactList> GetContactListAsync(UserDataAccount userDataAccount, ContactStore store)
         {
-            var user = _cacheService.GetUser(_cacheService.GetMyId());
+            var user = _cacheService.GetUser(_cacheService.Options.MyId);
             var displayName = user?.GetFullName() ?? "Unigram";
 
             ContactList contactList = null;
-            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_contact_list");
-            if (id != null)
+            if (_cacheService.Options.TryGetValue("x_contact_list", out string id))
             {
-                contactList = await store.GetContactListAsync(id.Value);
+                contactList = await store.GetContactListAsync(id);
             }
             
             if (contactList == null)
@@ -337,10 +372,9 @@ namespace Unigram.Services
             }
 
             ContactAnnotationList contactList = null;
-            var id = _cacheService.GetOption<Telegram.Td.Api.OptionValueString>("x_annotation_list");
-            if (id != null)
+            if (_cacheService.Options.TryGetValue("x_annotation_list", out string id))
             {
-                contactList = await store.GetAnnotationListAsync(id.Value);
+                contactList = await store.GetAnnotationListAsync(id);
             }
             
             if (contactList == null)
@@ -375,6 +409,56 @@ namespace Unigram.Services
 
                 Debug.WriteLine("UNSYNCED CONTACTS");
             }
+        }
+
+        public static Task<int?> GetContactIdAsync(Contact contact)
+        {
+            if (contact == null)
+            {
+                return Task.FromResult<int?>(null);
+            }
+
+            return GetContactIdAsync(contact.Id);
+        }
+
+        public static async Task<int?> GetContactIdAsync(string contactId)
+        {
+            var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
+            var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+            if (store != null && annotationStore != null)
+            {
+                try
+                {
+                    var full = await store.GetContactAsync(contactId);
+                    if (full == null)
+                    {
+                        return null;
+                    }
+
+                    var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+
+                    var first = annotations.FirstOrDefault();
+                    if (first == null)
+                    {
+                        return null;
+                    }
+
+                    var remote = first.RemoteId;
+                    if (int.TryParse(remote.Substring(1), out int userId))
+                    {
+                        return userId;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if ((uint)ex.HResult == 0x80004004)
+                    {
+                        return null;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

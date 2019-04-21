@@ -42,13 +42,16 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using LinqToVisualTree;
 using Telegram.Td.Api;
+using Windows.Foundation.Metadata;
+using Unigram.Controls.Chats;
+using Unigram.ViewModels.Gallery;
+using Unigram.Controls.Gallery;
+using Windows.Devices.Input;
 
 namespace Unigram.Views
 {
     public partial class ChatPage : Page
     {
-        private ItemsStackPanel _panel;
-
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (Messages.ScrollingHost.ScrollableHeight > 0)
@@ -73,7 +76,7 @@ namespace Unigram.Views
             }
 
             ViewVisibleMessages(e.IsIntermediate);
-            //UpdateHeaderDate();
+            //UpdateHeaderDate(e.IsIntermediate);
         }
 
         private void ViewVisibleMessages(bool intermediate)
@@ -84,15 +87,16 @@ namespace Unigram.Views
                 return;
             }
 
-            if (_panel == null || _panel.FirstVisibleIndex < 0)
+            var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null || panel.FirstVisibleIndex < 0)
             {
                 return;
             }
 
-            var messages = new List<long>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
-            var animations = new List<MessageViewModel>(_panel.LastVisibleIndex - _panel.FirstVisibleIndex);
+            var messages = new List<long>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
+            var animations = new List<MessageViewModel>(panel.LastVisibleIndex - panel.FirstVisibleIndex);
 
-            for (int i = _panel.FirstVisibleIndex; i <= _panel.LastVisibleIndex; i++)
+            for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
             {
                 var container = Messages.ContainerFromIndex(i) as SelectorItem;
                 if (container == null)
@@ -111,18 +115,26 @@ namespace Unigram.Views
                     ViewModel.SetLastViewedMention(message.Id);
                 }
 
-                messages.Add(message.Id);
-                animations.Add(message);
+                if (message.Content is MessageAlbum album)
+                {
+                    messages.AddRange(album.Layout.Messages.Keys);
+                    animations.Add(message);
+                }
+                else
+                {
+                    messages.Add(message.Id);
+                    animations.Add(message);
+                }
             }
 
-            if (messages.Count > 0 && _windowContext.ActivationState != CoreWindowActivationState.Deactivated)
+            if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 ViewModel.ProtoService.Send(new ViewMessages(chat.Id, messages, false));
             }
 
             if (animations.Count > 0 && !intermediate)
             {
-                Play(animations, ViewModel.Settings.IsAutoPlayEnabled);
+                Play(animations, ViewModel.Settings.IsAutoPlayAnimationsEnabled, false);
             }
         }
 
@@ -133,18 +145,28 @@ namespace Unigram.Views
                 var presenter = item.Presenter;
                 if (presenter != null && presenter.MediaPlayer != null)
                 {
-                    presenter.MediaPlayer.Source = null;
-                    presenter.MediaPlayer.Dispose();
-                    presenter.MediaPlayer = null;
+                    try
+                    {
+                        presenter.MediaPlayer.Dispose();
+                        presenter.MediaPlayer = null;
+                    }
+                    catch { }
+
+                    try
+                    {
+                        item.Container.Children.Remove(presenter);
+                    }
+                    catch { }
                 }
             }
 
             _old.Clear();
         }
 
-        private void UpdateHeaderDate()
+        private void UpdateHeaderDate(bool intermediate)
         {
-            if (_panel == null || _panel.FirstVisibleIndex < 0)
+            var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null || panel.FirstVisibleIndex < 0)
             {
                 return;
             }
@@ -152,7 +174,7 @@ namespace Unigram.Views
             var minItem = true;
             var minDate = true;
 
-            for (int i = _panel.FirstVisibleIndex; i <= _panel.LastVisibleIndex; i++)
+            for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
             {
                 var container = Messages.ContainerFromIndex(i) as SelectorItem;
                 if (container == null)
@@ -166,24 +188,27 @@ namespace Unigram.Views
                     continue;
                 }
 
-                //if (i == _panel.FirstVisibleIndex)
-                //{
-                //    DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
-                //}
-
-                var transform = container.TransformToVisual(DateHeaderRelative);
-                var point = transform.TransformPoint(new Point());
-                var height = (float)DateHeader.ActualHeight;
-                var offset = (float)point.Y + height;
-
-                if (point.Y + container.ActualHeight >= 0 && minItem)
+                if (minItem)
                 {
-                    minItem = false;
-                    DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                    var transform = container.TransformToVisual(DateHeaderRelative);
+                    var point = transform.TransformPoint(new Point());
+                    var height = (float)DateHeader.ActualHeight;
+                    var offset = (float)point.Y + height;
+
+                    if (point.Y + container.ActualHeight >= 0)
+                    {
+                        minItem = false;
+                        DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                    }
                 }
 
                 if (message.Content is MessageHeaderDate && minDate)
                 {
+                    var transform = container.TransformToVisual(DateHeaderRelative);
+                    var point = transform.TransformPoint(new Point());
+                    var height = (float)DateHeader.ActualHeight;
+                    var offset = (float)point.Y + height;
+
                     minDate = false;
 
                     if (offset >= 0 && offset < height)
@@ -217,30 +242,86 @@ namespace Unigram.Views
             public Grid Container { get; set; }
             public MediaPlayerView Presenter { get; set; }
             public bool Watermark { get; set; }
+            public bool Clip { get; set; }
         }
 
         private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
 
-        public void PlayMessage(MessageViewModel message)
+        public async void PlayMessage(MessageViewModel message, FrameworkElement target)
         {
-            //var document = message.GetDocument();
-            //if (document == null || !TLMessage.IsGif(document))
-            //{
-            //    return;
-            //}
+            var text = message.Content as MessageText;
 
-            //var fileName = FileUtils.GetTempFileUrl(document.GetFileName());
-            if (_old.ContainsKey(message.Id))
+            // If autoplay is enabled and the message contains a video note, then we want a different behavior
+            if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageVideoNote || text?.WebPage != null && text.WebPage.Video != null))
             {
-                Play(new MessageViewModel[0], false);
+                if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
+                {
+                    if (item.Presenter == null || item.Presenter.MediaPlayer == null)
+                    {
+                        return;
+                    }
+
+                    // If the video player is muted, then let's play the video again with audio turned on
+                    if (item.Presenter.MediaPlayer.IsMuted)
+                    {
+                        TypedEventHandler<MediaPlayer, object> handler = null;
+                        handler = (player, args) =>
+                        {
+                            player.MediaEnded -= handler;
+                            player.IsMuted = true;
+                            player.IsLoopingEnabled = true;
+                            player.Play();
+                        };
+
+                        item.Presenter.MediaPlayer.MediaEnded += handler;
+                        item.Presenter.MediaPlayer.IsMuted = false;
+                        item.Presenter.MediaPlayer.IsLoopingEnabled = false;
+                        item.Presenter.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+
+                        // Mark it as viewed if needed
+                        if (message.Content is MessageVideoNote videoNote && !message.IsOutgoing && !videoNote.IsViewed)
+                        {
+                            ViewModel.ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                        }
+                    }
+                    // If the video player is paused, then resume playback
+                    else if (item.Presenter.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
+                    {
+                        item.Presenter.MediaPlayer.Play();
+                    }
+                    // And last, if the video player can be pause, then pause it
+                    else if (item.Presenter.MediaPlayer.PlaybackSession.CanPause)
+                    {
+                        item.Presenter.MediaPlayer.Pause();
+                    }
+                }
+            }
+            else if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
+            {
+                if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
+                {
+                    var viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
+                    await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
+                }
+                else
+                {
+                    ViewVisibleMessages(false);
+                }
             }
             else
             {
-                Play(new[] { message }, true);
+                if (_old.ContainsKey(message.Id))
+                {
+                    Play(new MessageViewModel[0], false, false);
+                }
+                else
+                {
+                    Play(new[] { message }, true, true);
+                }
             }
         }
 
-        public void Play(IEnumerable<MessageViewModel> items, bool auto)
+        public void Play(IEnumerable<MessageViewModel> items, bool auto, bool audio)
         {
             var news = new Dictionary<long, MediaPlayerItem>();
 
@@ -266,31 +347,68 @@ namespace Unigram.Views
                         root = grid.FindName("Bubble") as FrameworkElement;
                     }
 
-                    var media = root.FindName("Media") as ContentControl;
-                    var panel = media.ContentTemplateRoot as Panel;
+                    var target = message.Content as object;
+                    var media = root.FindName("Media") as Border;
+                    var panel = media.Child as Panel;
 
-                    if (message.Content is MessageText)
+                    if (target is MessageText messageText && messageText.WebPage != null)
                     {
-                        media = panel.FindName("Media") as ContentControl;
-                        panel = media.ContentTemplateRoot as Panel;
+                        if (messageText.WebPage.Animation != null)
+                        {
+                            target = messageText.WebPage.Animation;
+                        }
+                        else if (messageText.WebPage.Audio != null)
+                        {
+                            target = messageText.WebPage.Audio;
+                        }
+                        else if (messageText.WebPage.Document != null)
+                        {
+                            target = messageText.WebPage.Document;
+                        }
+                        else if (messageText.WebPage.Sticker != null)
+                        {
+                            target = messageText.WebPage.Sticker;
+                        }
+                        else if (messageText.WebPage.Video != null)
+                        {
+                            target = messageText.WebPage.Video;
+                        }
+                        else if (messageText.WebPage.VideoNote != null)
+                        {
+                            target = messageText.WebPage.VideoNote;
+                        }
+                        else if (messageText.WebPage.VoiceNote != null)
+                        {
+                            target = messageText.WebPage.VoiceNote;
+                        }
+                        else if (messageText.WebPage.Photo != null)
+                        {
+                            // Photo at last: web page preview might have both a file and a thumbnail
+                            target = messageText.WebPage.Photo;
+                        }
+
+                        media = panel?.FindName("Media") as Border;
+                        panel = media?.Child as Panel;
                     }
-                    else if (message.Content is MessageGame)
+                    else if (target is MessageGame)
                     {
-                        panel = panel.FindName("Media") as Panel;
+                        media = panel?.FindName("Media") as Border;
+                        panel = media?.Child as Panel;
                     }
-                    //else if (message.Media is TLMessageMediaGame)
-                    //{
-                    //    panel = panel.FindName("Media") as FrameworkElement;
-                    //}
-                    //else if (message.IsRoundVideo())
-                    //{
-                    //    panel = panel.FindName("Inner") as FrameworkElement;
-                    //}
+                    else if (target is MessageVideoNote messageVideoNote)
+                    {
+                        target = messageVideoNote.VideoNote;
+                    }
+
+                    if (target is VideoNote)
+                    {
+                        panel = panel?.FindName("Presenter") as Panel;
+                    }
 
                     if (panel is Grid final)
                     {
                         final.Tag = message;
-                        news[message.Id] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame };
+                        news[message.Id] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame, Clip = target is VideoNote };
                     }
                 }
             }
@@ -300,7 +418,6 @@ namespace Unigram.Views
                 var presenter = _old[item].Presenter;
                 if (presenter != null && presenter.MediaPlayer != null)
                 {
-                    presenter.MediaPlayer.Source = null;
                     presenter.MediaPlayer.Dispose();
                     presenter.MediaPlayer = null;
                 }
@@ -326,24 +443,41 @@ namespace Unigram.Views
                     continue;
                 }
 
-                var container = news[item].Container;
-                if (container != null && container.Children.Count < 5)
+                if (news.TryGetValue(item, out MediaPlayerItem data) && data.Container != null && data.Container.Children.Count < 5)
                 {
                     var player = new MediaPlayer();
                     player.AutoPlay = true;
-                    player.IsMuted = auto;
+                    player.IsMuted = !audio;
                     player.IsLoopingEnabled = true;
                     player.CommandManager.IsEnabled = false;
-                    player.Source = MediaSource.CreateFromUri(new Uri("file:///" + news[item].File.Local.Path));
+                    player.Source = MediaSource.CreateFromUri(new Uri("file:///" + data.File.Local.Path));
 
                     var presenter = new MediaPlayerView();
                     presenter.MediaPlayer = player;
                     presenter.IsHitTestVisible = false;
-                    presenter.Constraint = container.Tag;
+                    presenter.Constraint = data.Container.Tag;
 
-                    news[item].Presenter = presenter;
+                    //if (data.Clip && ApiInformation.IsTypePresent("Windows.UI.Composition.CompositionGeometricClip"))
+                    //{
+                    //    var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
+                    //    ellipse.Center = new Vector2(100, 100);
+                    //    ellipse.Radius = new Vector2(100, 100);
+
+                    //    var clip = ellipse.Compositor.CreateGeometricClip();
+                    //    clip.ViewBox = ellipse.Compositor.CreateViewBox();
+                    //    clip.ViewBox.Size = new Vector2(200, 200);
+                    //    clip.ViewBox.Stretch = CompositionStretch.UniformToFill;
+                    //    clip.Geometry = ellipse;
+
+                    //    var visual = ElementCompositionPreview.GetElementVisual(presenter);
+                    //    visual.Clip = clip;
+                    //}
+
+                    data.Presenter = presenter;
                     //container.Children.Insert(news[item].Watermark ? 2 : 2, presenter);
-                    container.Children.Add(presenter);
+                    //container.Children.Add(presenter);
+
+                    data.Container.Children.Add(presenter);
                 }
 
                 _old[item] = news[item];
@@ -369,8 +503,6 @@ namespace Unigram.Views
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             var typeName = SelectTemplateCore(args.Item);
-
-            Debug.Assert(_typeToItemHashSetMapping.ContainsKey(typeName), "The type of the item used with DataTemplateSelectorBehavior must have a DataTemplate mapping");
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
@@ -382,9 +514,6 @@ namespace Unigram.Views
                 {
                     // Suggestion matches what we want, so remove it from the recycle queue
                     relevantHashSet.Remove(args.ItemContainer);
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Removing (suggested) {args.ItemContainer.GetHashCode()} from {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
                 else
                 {
@@ -407,9 +536,6 @@ namespace Unigram.Views
                     // because you can't remove a specific element (which is needed in the block above).
                     args.ItemContainer = relevantHashSet.First();
                     relevantHashSet.Remove(args.ItemContainer);
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Removing (reused) {args.ItemContainer.GetHashCode()} from {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
                 else
                 {
@@ -418,9 +544,6 @@ namespace Unigram.Views
                     var item = CreateSelectorItem(typeName);
                     item.Style = Messages.ItemContainerStyleSelector.SelectStyle(args.Item, item);
                     args.ItemContainer = item;
-#if ENABLE_DEBUG_SPEW
-                    Debug.WriteLine($"Creating {args.ItemContainer.GetHashCode()} for {typeName}");
-#endif // ENABLE_DEBUG_SPEW
                 }
             }
 
@@ -434,16 +557,7 @@ namespace Unigram.Views
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
                 var tag = args.ItemContainer.Tag as string;
-
-#if ENABLE_DEBUG_SPEW
-                Debug.WriteLine($"Adding {args.ItemContainer.GetHashCode()} to {tag}");
-#endif // ENABLE_DEBUG_SPEW
-
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
-
-#if ENABLE_DEBUG_SPEW
-                Debug.Assert(added == true, "Recycle queue should never have dupes. If so, we may be incorrectly reusing a container that is already in use!");
-#endif // ENABLE_DEBUG_SPEW
 
                 return;
             }
@@ -452,6 +566,11 @@ namespace Unigram.Views
 
             var content = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
             content.Tag = message;
+
+            if (args.ItemContainer is ChatListViewItem selector)
+            {
+                selector.PrepareForItemOverride(message);
+            }
 
             if (content is Grid grid)
             {
@@ -468,16 +587,20 @@ namespace Unigram.Views
                             var user = message.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null)
                             {
-                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30, 30);
+                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
                             }
                         }
                         else if (message.ForwardInfo is MessageForwardedPost post)
                         {
-                            var chat = message.ProtoService.GetChat(post.ForwardedFromChatId);
+                            var chat = message.ProtoService.GetChat(post.ChatId);
                             if (chat != null)
                             {
-                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30, 30);
+                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
                             }
+                        }
+                        else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                        {
+                            photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
                         }
                     }
                     else
@@ -485,7 +608,7 @@ namespace Unigram.Views
                         var user = message.GetSenderUser();
                         if (user != null)
                         {
-                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30, 30);
+                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
                         }
                     }
                 }
@@ -498,13 +621,24 @@ namespace Unigram.Views
 
                     if (message.IsSaved())
                     {
-                        button.Glyph = "\uE72A";
-                        action.Visibility = Visibility.Visible;
+                        if (message.ForwardInfo is MessageForwardedFromHiddenUser)
+                        {
+                            action.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            button.Glyph = "\uE72A";
+                            action.Visibility = Visibility.Visible;
+
+                            Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
+                        }
                     }
                     else if (message.IsShareable())
                     {
-                        button.Glyph = "\uEE35";
+                        button.Glyph = "\uE72D";
                         action.Visibility = Visibility.Visible;
+
+                        Automation.SetToolTip(button, Strings.Resources.ShareFile);
                     }
                     else
                     {
@@ -517,6 +651,27 @@ namespace Unigram.Views
             else if (content is StackPanel panel && !(content is MessageBubble))
             {
                 content = panel.FindName("Service") as FrameworkElement;
+
+                if (message.Content is MessageChatChangePhoto chatChangePhoto)
+                {
+                    var photo = panel.FindName("Photo") as ProfilePicture;
+                    if (photo != null)
+                    {
+                        var file = chatChangePhoto.Photo.GetSmall();
+                        if (file != null)
+                        {
+                            if (file.Photo.Local.IsDownloadingCompleted)
+                            {
+                                photo.Source = new BitmapImage(new Uri("file:///" + file.Photo.Local.Path)) { DecodePixelWidth = 96, DecodePixelHeight = 96, DecodePixelType = DecodePixelType.Logical };
+                            }
+                            else if (file.Photo.Local.CanBeDownloaded && !file.Photo.Local.IsDownloadingActive)
+                            {
+                                photo.Source = null;
+                                ViewModel.ProtoService.DownloadFile(file.Photo.Id, 1);
+                            }
+                        }
+                    }
+                }
             }
 
             if (content is MessageBubble bubble)
@@ -533,11 +688,21 @@ namespace Unigram.Views
 
         private SelectorItem CreateSelectorItem(string typeName)
         {
-            SelectorItem item = new ListViewItem();
-            //item.ContextRequested += Message_ContextRequested;
-            //item.ContentTemplate = _typeToTemplateMapping[typeName];
+            SelectorItem item = new ChatListViewItem(Messages);
             item.ContentTemplate = Resources[typeName] as DataTemplate;
             item.Tag = typeName;
+
+            // For some reason the event is available since Anniversary Update,
+            // but the property has been added in April Update.
+            if (ApiInfo.CanAddContextRequestedEvent)
+            {
+                item.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
+            }
+            else
+            {
+                item.ContextRequested += Message_ContextRequested;
+            }
+
             return item;
         }
 
@@ -559,6 +724,10 @@ namespace Unigram.Views
                 if (message.Content is MessageChatChangePhoto)
                 {
                     return "ServiceMessagePhotoTemplate";
+                }
+                else if (message.Content is MessageHeaderUnread)
+                {
+                    return "ServiceMessageUnreadTemplate";
                 }
 
                 return "ServiceMessageTemplate";

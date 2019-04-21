@@ -4,13 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:settings="using:Unigram.ViewModels.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}"/>
-
         <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
             <Setter Property="Padding" Value="0,8,0,8"/>
         </Style>
@@ -35,45 +34,44 @@
                       Grid.Row="1">
             <StackPanel Margin="0,0,0,48">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource MessageNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <CheckBox
-                        x:Name="PrivateAlert"
-                        Click="Private_Click"
-                        IsChecked="{x:Bind ViewModel.PrivateAlert, Mode=OneWay}"
-                        Content="{CustomResource Alert}"
-                        Margin="12,8,12,8"/>
-                    <CheckBox
-                        x:Name="PrivatePreview"
-                        Click="Private_Click"
-                        IsChecked="{x:Bind ViewModel.PrivatePreview, Mode=OneWay}"
-                        Content="{CustomResource MessagePreview}"
-                        Margin="12,0,12,0"/>
-                    <controls:BadgeButton
-                        IsEnabled="False"
-                        Content="{CustomResource Sound}"
-                        Badge="{CustomResource SoundDefault}"/>
+                    <TextBlock Text="{CustomResource ShowNotificationsFor}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsAllAccountsNotifications, Mode=TwoWay}"
+                        Header="{CustomResource AllAccounts}"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    <TextBlock Text="{CustomResource ShowNotificationsForInfo}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource GroupNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <CheckBox
-                        x:Name="GroupAlert"
-                        Click="Group_Click"
-                        IsChecked="{x:Bind ViewModel.GroupAlert, Mode=OneWay}"
-                        Content="{CustomResource Alert}"
-                        Margin="12,8,12,8"/>
-                    <CheckBox
-                        x:Name="GroupPreview"
-                        Click="Group_Click"
-                        IsChecked="{x:Bind ViewModel.GroupPreview, Mode=OneWay}"
-                        Content="{CustomResource MessagePreview}"
-                        Margin="12,0,12,0"/>
-                    <controls:BadgeButton
-                        IsEnabled="False"
-                        Content="{CustomResource Sound}"
-                        Badge="{CustomResource SoundDefault}"/>
-                </StackPanel>
-
+                <ItemsControl ItemsSource="{x:Bind ViewModel.Scopes}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="settings:SettingsNotificationsScope">
+                            <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                                <TextBlock Text="{x:Bind Title}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                <CheckBox
+                                    x:Name="Alert"
+                                    Click="{x:Bind SendExecute}"
+                                    IsChecked="{x:Bind Alert, Mode=TwoWay}"
+                                    Content="{CustomResource Alert}"
+                                    Margin="12,8,12,8"/>
+                                <CheckBox
+                                    x:Name="Preview"
+                                    Click="{x:Bind SendExecute}"
+                                    IsChecked="{x:Bind Preview, Mode=TwoWay}"
+                                    Content="{CustomResource MessagePreview}"
+                                    Margin="12,0,12,0"/>
+                                <controls:BadgeButton
+                                    IsEnabled="False"
+                                    Content="{CustomResource Sound}"
+                                    Badge="{CustomResource SoundDefault}"/>
+                                <controls:BadgeButton
+                                    Click="{x:Bind ExceptionsExecute}"
+                                    Content="{CustomResource NotificationsExceptions}"
+                                    Badge="{x:Bind ExceptionsCount}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource InAppNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <CheckBox
@@ -96,31 +94,33 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource Events}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <ToggleSwitch
-                        IsEnabled="False"
-                        IsOn="True"
+                        IsOn="{x:Bind ViewModel.IsContactEnabled, Mode=TwoWay}"
                         Header="{CustomResource ContactJoined}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
-                        IsEnabled="False"
-                        IsOn="True"
+                        IsOn="{x:Bind ViewModel.IsPinnedEnabled, Mode=TwoWay}"
                         Header="{CustomResource PinnedMessages}"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource NotificationsOther}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource BadgeNumber}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IncludeMutedChats, Mode=TwoWay}"
-                        Header="Include muted chats"
-                        Style="{ThemeResource CheckButtonStyle}"/>
+                        Header="{CustomResource BadgeNumberMutedChats}"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.CountUnreadMessages, Mode=TwoWay}"
+                        Header="{CustomResource BadgeNumberUnread}"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    <!--<TextBlock Text="{x:Bind ConvertCountInfo(ViewModel.CountUnreadMessages),Mode=OneWay}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>-->
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">
                     <controls:BadgeButton
                         Content="{CustomResource ResetAllNotifications}"
                         Foreground="Red"
-                        Command="{x:Bind ViewModel.ResetCommand}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                        Command="{x:Bind ViewModel.ResetCommand}"/>
                     <TextBlock Text="{CustomResource UndoAllCustom}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>

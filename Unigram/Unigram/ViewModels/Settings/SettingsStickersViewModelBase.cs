@@ -6,14 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Core.Common;
+using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Services;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public abstract class SettingsStickersViewModelBase : TLViewModelBase, IHandle<UpdateInstalledStickerSets>, IHandle<UpdateTrendingStickerSets>
+    public abstract class SettingsStickersViewModelBase : TLViewModelBase, IHandle<UpdateInstalledStickerSets>, IHandle<UpdateTrendingStickerSets>, IHandle<UpdateRecentStickers>
     {
         private readonly bool _masks;
 
@@ -28,6 +31,12 @@ namespace Unigram.ViewModels.Settings
             Items = new MvxObservableCollection<StickerSetInfo>();
             ReorderCommand = new RelayCommand<StickerSetInfo>(ReorderExecute);
 
+            StickerSetOpenCommand = new RelayCommand<StickerSetInfo>(StickerSetOpenExecute);
+            StickerSetHideCommand = new RelayCommand<StickerSetInfo>(StickerSetHideExecute);
+            StickerSetRemoveCommand = new RelayCommand<StickerSetInfo>(StickerSetRemoveExecute);
+            //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
+            //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
+
             Aggregator.Subscribe(this);
         }
 
@@ -37,7 +46,17 @@ namespace Unigram.ViewModels.Settings
             {
                 if (result is StickerSets stickerSets)
                 {
-                    BeginOnUIThread(() => Items.ReplaceWith(stickerSets.Sets));
+                    ProtoService.Send(new GetRecentStickers(_masks), resultRecent =>
+                    {
+                        if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
+                        {
+                            BeginOnUIThread(() => Items.ReplaceWith(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", false, false, false, _masks, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                        }
+                        else
+                        {
+                            BeginOnUIThread(() => Items.ReplaceWith(stickerSets.Sets));
+                        }
+                    });
                 }
             });
 
@@ -84,9 +103,9 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        public void Handle(UpdateInstalledStickerSets e)
+        public void Handle(UpdateInstalledStickerSets update)
         {
-            if (e.IsMasks != _masks)
+            if (update.IsMasks != _masks)
             {
                 return;
             }
@@ -95,19 +114,55 @@ namespace Unigram.ViewModels.Settings
             {
                 if (result is StickerSets stickerSets)
                 {
-                    BeginOnUIThread(() => Items.ReplaceWith(stickerSets.Sets));
+                    ProtoService.Send(new GetRecentStickers(_masks), resultRecent =>
+                    {
+                        if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
+                        {
+                            BeginOnUIThread(() => Items.ReplaceWith(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", false, false, false, _masks, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                        }
+                        else
+                        {
+                            BeginOnUIThread(() => Items.ReplaceWith(stickerSets.Sets));
+                        }
+                    });
                 }
             });
         }
 
-        public void Handle(UpdateTrendingStickerSets e)
+        public void Handle(UpdateTrendingStickerSets update)
         {
             if (_masks)
             {
                 return;
             }
 
-            BeginOnUIThread(() => FeaturedStickersCount = e.StickerSets.TotalCount);
+            BeginOnUIThread(() => FeaturedStickersCount = update.StickerSets.TotalCount);
+        }
+
+        public void Handle(UpdateRecentStickers update)
+        {
+            if (update.IsAttached != _masks)
+            {
+                return;
+            }
+
+            ProtoService.Send(new GetInstalledStickerSets(_masks), result =>
+            {
+                if (result is StickerSets stickerSets)
+                {
+                    ProtoService.Send(new GetRecentStickers(_masks), resultRecent =>
+                    {
+                        if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
+                        {
+                            BeginOnUIThread(() => Items.ReplaceWith(new[] { new StickerSetInfo(0, Strings.Resources.RecentStickers, "tg/recentlyUsed", false, false, false, _masks, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                        }
+                        else
+                        {
+                            BeginOnUIThread(() => Items.ReplaceWith(stickerSets.Sets));
+                        }
+                    });
+                }
+            });
         }
 
         private int _featuredStickersCount;
@@ -142,7 +197,49 @@ namespace Unigram.ViewModels.Settings
         private void ReorderExecute(StickerSetInfo set)
         {
             _needReorder = true;
-            _newOrder = Items.Select(x => x.Id).ToList();
+            _newOrder = Items.Where(x => x.Id != 0).Select(x => x.Id).ToList();
         }
+
+        #region Context menu
+
+        public RelayCommand<StickerSetInfo> StickerSetOpenCommand { get; }
+        private async void StickerSetOpenExecute(StickerSetInfo stickerSet)
+        {
+            if (stickerSet.Name.Equals("tg/recentlyUsed"))
+            {
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                ProtoService.Send(new ClearRecentStickers(_masks));
+            }
+            else
+            {
+                await StickerSetView.GetForCurrentView().ShowAsync(stickerSet.Id);
+            }
+        }
+
+        public RelayCommand<StickerSetInfo> StickerSetHideCommand { get; }
+        private async void StickerSetHideExecute(StickerSetInfo stickerSet)
+        {
+            await ProtoService.SendAsync(new ChangeStickerSet(stickerSet.Id, false, true));
+            ProtoService.Send(new GetArchivedStickerSets(_masks, 0, 1), result =>
+            {
+                if (result is StickerSets stickerSets)
+                {
+                    BeginOnUIThread(() => ArchivedStickersCount = stickerSets.TotalCount);
+                }
+            });
+        }
+
+        public RelayCommand<StickerSetInfo> StickerSetRemoveCommand { get; }
+        private void StickerSetRemoveExecute(StickerSetInfo stickerSet)
+        {
+            ProtoService.Send(new ChangeStickerSet(stickerSet.Id, false, false));
+        }
+
+        #endregion
     }
 }

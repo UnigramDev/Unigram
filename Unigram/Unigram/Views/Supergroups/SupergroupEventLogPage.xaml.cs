@@ -298,7 +298,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36, 36);
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
         }
 
         #endregion

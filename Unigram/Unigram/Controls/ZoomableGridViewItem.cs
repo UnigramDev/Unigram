@@ -13,48 +13,21 @@ namespace Unigram.Controls
     {
         private readonly ZoomableGridView _parent;
 
-        private Pointer _lastPointer;
-
         public ZoomableGridViewItem(ZoomableGridView parent)
         {
             _parent = parent;
             IsHoldingEnabled = true;
         }
 
-        protected override void OnHolding(HoldingRoutedEventArgs e)
-        {
-            if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
-            {
-                if (_lastPointer != null && _lastPointer.IsInContact)
-                {
-                    _parent.CapturePointer(_lastPointer);
-                    _lastPointer = null;
-                }
-
-                _parent.OnItemHolding(this, Content);
-            }
-
-            base.OnHolding(e);
-        }
-
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            _lastPointer = e.Pointer;
-
-            if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
-            {
-                _parent.CapturePointer(e.Pointer);
-                _parent.OnItemHolding(this, Content);
-            }
-
+            _parent.OnPointerPressed(this, e);
             base.OnPointerPressed(e);
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
-            //if (_parent.capt)
-            _parent.OnItemPointerEntered(this, Content);
-
+            _parent.OnItemPointerEntered(this, Tag);
             base.OnPointerEntered(e);
         }
     }

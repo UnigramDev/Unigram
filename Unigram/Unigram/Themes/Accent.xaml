@@ -6,81 +6,20 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="MessageForegroundOutBrush" Color="#FFFFFF"/>
-
-            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="MessageHyperlinkForegroundOutBrush" Color="#FFFFFF"/>
-
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#1F2C36"/>
-            <SolidColorBrush x:Key="MessageBackgroundOutBrush" Color="{ThemeResource SystemAccentColorDark2}"/>
-
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="#144D7B29"/>
-            <SolidColorBrush x:Key="MessageBorderOutBrush" Color="{ThemeResource SystemAccentColorDark3}"/>
-
-            
-            
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
-            <SolidColorBrush x:Key="MessageSubtleLabelOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
-            <SolidColorBrush x:Key="MessageSubtleGlyphOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
-            
-            
-            <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="SystemControlDisabledChromeDisabledLowBrush"/>
-            <SolidColorBrush x:Key="MessageSubtleForegroundOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
-            
-            
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
-            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush2" Color="#0e7acd"/>
-            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush2" Color="{StaticResource SystemAccentColorLight2}"/>
-
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
-            <SolidColorBrush x:Key="MessageHeaderBorderOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
-            
-            
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
-            <SolidColorBrush x:Key="MessageMediaForegroundOutBrush" Color="{ThemeResource SystemAccentColorDark3}"/>
-
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundOutBrush" Color="{ThemeResource SystemAccentColor}"/>
-
-            
-            
-            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
-            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#54000000"/>
-
-
-
-            <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
-            <SolidColorBrush x:Key="MessageCallForegroundOutBrush" Color="Green"/>
-
-            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
-            <SolidColorBrush x:Key="MessageCallMissedForegroundOutBrush" Color="Red"/>
-
-
-
-
-
-
-
-
-
-
-
-            <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
-
-            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="CommandBarBackground"/>
-            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
+            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource SystemChromeLowColor}"/>
+            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            
             <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#444444"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelMutedBrush" Color="#000000"/>
+
+            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeFailedBrush" Color="#FF0000"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelFailedBrush" Color="#FFFFFF"/>
+
+            <SolidColorBrush x:Key="TelegramDialogOnlineBadge" Color="#89DF9E"/>
 
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-dark.png"/>
 
@@ -88,85 +27,29 @@
             
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageForegroundOutBrush" Color="#000000"/>
-
-            <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageHyperlinkForegroundOutBrush" Color="#000000"/>
-            
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="MessageBackgroundOutBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
-
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
-            <SolidColorBrush x:Key="MessageBorderOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
-            <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
-            <SolidColorBrush x:Key="MessageSubtleLabelOutBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
-
-            <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
-            <SolidColorBrush x:Key="MessageSubtleGlyphOutBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
-
-
-
-            <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="SystemControlDisabledChromeDisabledLowBrush"/>
-            <SolidColorBrush x:Key="MessageSubtleForegroundOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
-
-
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
-            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
-
-            <SolidColorBrush x:Key="MessageHeaderForegroundBrush2" Color="#0e7acd"/>
-            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush2" Color="{StaticResource SystemAccentColorDark1}"/>
-
-            <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
-            <SolidColorBrush x:Key="MessageHeaderBorderOutBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
-
-
-
-            <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
-            <SolidColorBrush x:Key="MessageMediaForegroundOutBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
-
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-
-
-
-            <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
-            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#54000000"/>
-
-
-
-            <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
-            <SolidColorBrush x:Key="MessageCallForegroundOutBrush" Color="Green"/>
-
-            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
-            <SolidColorBrush x:Key="MessageCallMissedForegroundOutBrush" Color="Red"/>
-
-
-
-
-
-
-
-
-
             <!--<SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="#000000"/>-->
 
-            <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
-
-            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="CommandBarBackground"/>
-            <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
+            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+            <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
             <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+
             <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelMutedBrush" Color="#FFFFFF"/>
+
+            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeFailedBrush" Color="#FF0000"/>
+            <SolidColorBrush x:Key="TelegramDialogUnreadLabelFailedBrush" Color="#FFFFFF"/>
+
+            <SolidColorBrush x:Key="TelegramDialogOnlineBadge" Color="#00B12C"/>
 
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-light.png"/>
 
             <x:Boolean x:Key="IsDarkTheme">false</x:Boolean>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
+    <!--<Thickness x:Key="EllipsisButtonPadding">16,23,16,0</Thickness>-->
 
     <Style x:Key="MessageBubbleStyle" TargetType="ContentControl"/>
     <Style x:Key="MessageBubbleOutStyle" TargetType="ContentControl"/>
@@ -183,7 +66,7 @@
     <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
     <HorizontalAlignment x:Key="MessageHorizontalAlignmentOut">Right</HorizontalAlignment>
 
-    <x:Double x:Key="MessageFontSize">15</x:Double>
+    <!--<x:Double x:Key="MessageFontSize">15</x:Double>-->
     
     <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#667A8A96"/>
     <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
@@ -203,6 +86,7 @@
     <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>
 
     <x:Double x:Key="TelegramToolBarSmallHeight">44</x:Double>
+    <x:Double x:Key="TelegramToolBarHeight">48</x:Double>
 
     <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
@@ -219,7 +103,7 @@
 
     <Style x:Name="InlineFileButtonStyle" TargetType="controls:FileButton">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource MessageMediaForegroundBrush}" />
+        <!--<Setter Property="Foreground" Value="{ThemeResource MessageMediaForegroundBrush}" />-->
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
@@ -246,8 +130,11 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MessageMediaForegroundBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MessageMediaForegroundBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -256,14 +143,20 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MessageMediaForegroundBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MessageMediaForegroundBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -272,12 +165,19 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <TextBlock
-                            x:Name="ContentPresenter"
+                            x:Name="ContentPresenter1"
+                            Foreground="{ThemeResource MessageMediaForegroundBrush}"
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Text="{TemplateBinding Glyph}"/>
+                            AutomationProperties.AccessibilityView="Raw"/>
+                        <TextBlock
+                            x:Name="ContentPresenter2"
+                            Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"/>
 
                         <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{TemplateBinding Progress}" IsHitTestVisible="False"/>
                     </Grid>
@@ -287,7 +187,7 @@
     </Style>
 
     <Style x:Name="ImmersiveFileButtonStyle" TargetType="controls:FileButton">
-        <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}" />
+        <!--<Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}" />-->
         <Setter Property="Foreground" Value="#FFFFFF" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderThickness" Value="0" />
@@ -316,7 +216,10 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -326,14 +229,20 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -350,18 +259,139 @@
                         </VisualStateManager.VisualStateGroups>
                         <!--<controls:BackDrop BlurAmount="5"/>-->
 
-                        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Width="48" Height="48">
-                            <Border x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}" Width="48" Height="48">
+                            <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
                                 <TextBlock
-                                    x:Name="ContentPresenter"
+                                    x:Name="ContentPresenter1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    Text="{TemplateBinding Glyph}"/>
-                            </Border>
+                                    AutomationProperties.AccessibilityView="Raw"/>
+                                <TextBlock
+                                    x:Name="ContentPresenter2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.AccessibilityView="Raw"/>
+                            </Grid>
                         </Border>
 
                         <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{TemplateBinding Progress}" IsHitTestVisible="False"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Name="SmallImmersiveFileButtonStyle" TargetType="controls:FileButton">
+        <!--<Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}" />-->
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="FontFamily" Value="{StaticResource TelegramThemeFontFamily}" />
+        <Setter Property="Glyph" Value="&#xE700;" />
+        <Setter Property="Height" Value="Auto" />
+        <Setter Property="Width" Value="Auto" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="RequestedTheme" Value="Dark" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:FileButton">
+                    <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid.Resources>
+                            <Style x:Key="SmallProgressBarRingStyle" TargetType="controls:ProgressBarRing">
+                                <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                                <Setter Property="Foreground" Value="#FFFFFFFF"/>
+                                <Setter Property="Minimum" Value="0"/>
+                                <Setter Property="Maximum" Value="1"/>
+                                <Setter Property="Width" Value="40"/>
+                                <Setter Property="Height" Value="40"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="controls:ProgressBarRing">
+                                            <Grid Background="{TemplateBinding Background}" CornerRadius="20">
+                                                <controls:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="0">
+                                                    <Path.RenderTransform>
+                                                        <RotateTransform x:Name="Rotation" CenterX="18" CenterY="18" Angle="0"/>
+                                                    </Path.RenderTransform>
+                                                </controls:ProgressBarRingSlice>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="TransferStates">
+                                <VisualState x:Name="PendingState"/>
+                                <VisualState x:Name="CompletedState">
+                                    <VisualState.Setters>
+                                        <Setter Target="TransferPresenter.Visibility" Value="Collapsed"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <!--<controls:BackDrop BlurAmount="5"/>-->
+
+                        <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Width="40" Margin="0,0,-4,0" Visibility="{TemplateBinding ProgressVisibility}">
+                                <TextBlock
+                                        x:Name="ContentPresenter1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        AutomationProperties.AccessibilityView="Raw"
+                                        Text="{TemplateBinding Glyph}"/>
+                                <TextBlock
+                                        x:Name="ContentPresenter2"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        AutomationProperties.AccessibilityView="Raw"
+                                        Text="{TemplateBinding Glyph}"/>
+                                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{TemplateBinding Progress}" IsHitTestVisible="False" Style="{StaticResource SmallProgressBarRingStyle}"/>
+                            </Grid>
+
+                            <ContentPresenter Padding="{TemplateBinding Padding}" Grid.Column="1"/>
+                        </Grid>
+
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

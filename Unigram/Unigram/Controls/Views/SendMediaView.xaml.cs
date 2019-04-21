@@ -9,35 +9,37 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Template10.Common;
+using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls.Chats;
 using Unigram.Converters;
-using Unigram.Core.Common;
-using Unigram.Core.Models;
 using Unigram.Entities;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SendMediaView : ContentDialogBase, INotifyPropertyChanged
+    public sealed partial class SendMediaView : OverlayPage, IViewWithAutocomplete, INotifyPropertyChanged
     {
         public DialogViewModel ViewModel { get; set; }
 
@@ -53,6 +55,12 @@ namespace Unigram.Controls.Views
             }
             set
             {
+                if (_selectedItem != null && value != null)
+                {
+                    value.Caption = CaptionInput.GetFormattedText()
+                        .Substring(0, ViewModel.CacheService.Options.MessageCaptionLengthMax);
+                }
+
                 if (_selectedItem != value)
                 {
                     _selectedItem = value;
@@ -61,7 +69,8 @@ namespace Unigram.Controls.Views
 
                 if (_selectedItem != null)
                 {
-                    CaptionInput.Text = _selectedItem.Caption ?? string.Empty;
+                    CaptionInput.SetText(_selectedItem.Caption
+                        .Substring(0, ViewModel.CacheService.Options.MessageCaptionLengthMax));
                 }
             }
         }
@@ -97,11 +106,13 @@ namespace Unigram.Controls.Views
             }
         }
 
+        public bool IsMultipleSelection { get; set; } = true;
+
         public bool IsGroupingEnabled
         {
             get
             {
-                return SelectedItems.Count > 1 && !SelectedItems.Any(x => x.Ttl.HasValue);
+                return SelectedItems.Count > 1 && !SelectedItems.Any(x => x.Ttl > 0);
             }
         }
 
@@ -241,7 +252,7 @@ namespace Unigram.Controls.Views
             Unloaded += OnUnloaded;
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
         {
             if (IsEditingCompression)
             {
@@ -256,7 +267,7 @@ namespace Unigram.Controls.Views
             else
             {
                 e.Handled = true;
-                Hide(ContentDialogBaseResult.None);
+                Hide(ContentDialogResult.None);
             }
         }
 
@@ -265,7 +276,12 @@ namespace Unigram.Controls.Views
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-            IsGrouped = SettingsService.Current.IsSendGrouped;
+            IsGrouped = ViewModel.Settings.IsSendGrouped;
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "MaxLength"))
+            {
+                CaptionInput.MaxLength = ViewModel.CacheService.Options.MessageCaptionLengthMax;
+            }
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
@@ -300,7 +316,7 @@ namespace Unigram.Controls.Views
         {
             if (Items == null)
             {
-                Hide(ContentDialogBaseResult.Cancel);
+                Hide(ContentDialogResult.Secondary);
                 return;
             }
 
@@ -317,6 +333,8 @@ namespace Unigram.Controls.Views
                 media.CropRectangle = Cropper.CropRectangle;
                 media.Refresh();
 
+                Select_Click(null, null);
+
                 IsEditingCropping = false;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
                 return;
@@ -329,10 +347,13 @@ namespace Unigram.Controls.Views
 
             if (IsGroupingEnabled)
             {
-                SettingsService.Current.IsSendGrouped = IsGrouped;
+                ViewModel.Settings.IsSendGrouped = IsGrouped;
             }
 
-            Hide(ContentDialogBaseResult.OK);
+            SelectedItem.Caption = CaptionInput.GetFormattedText()
+                .Substring(0, ViewModel.CacheService.Options.MessageCaptionLengthMax);
+
+            Hide(ContentDialogResult.Primary);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -349,7 +370,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            Hide(ContentDialogBaseResult.Cancel);
+            Hide(ContentDialogResult.Secondary);
         }
 
         private void TextBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -396,11 +417,11 @@ namespace Unigram.Controls.Views
 
         private void OnSecondsChanged(DependencyObject sender, DependencyProperty dp)
         {
-            VisualStateManager.GoToState(TTLSeconds, SelectedItem.Ttl == null ? "Unselected" : "Selected", false);
+            VisualStateManager.GoToState(TTLSeconds, SelectedItem.Ttl == 0 ? "Unselected" : "Selected", false);
             //VisualStateManager.GoToState(this, SelectedItem.TTLSeconds == null ? "Unselected" : "Selected", false);
 
             // TODO: WRONG!!!
-            if (SelectedItem.Ttl == null)
+            if (SelectedItem.Ttl == 0)
             {
                 TTLSeconds.ClearValue(Button.ForegroundProperty);
             }
@@ -413,11 +434,16 @@ namespace Unigram.Controls.Views
         private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new MessageTtlView(SelectedItem.IsPhoto);
-            dialog.Value = SelectedItem.Ttl;
+            dialog.Value = SelectedItem.Ttl > 0 ? SelectedItem.Ttl : ViewModel.Settings.LastMessageTtl;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
+                if (dialog.Value > 0)
+                {
+                    ViewModel.Settings.LastMessageTtl = dialog.Value;
+                }
+
                 SelectedItem.Ttl = dialog.Value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
@@ -425,32 +451,54 @@ namespace Unigram.Controls.Views
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var text = CaptionInput.Text.ToString();
-
-            if (e.ClickedItem is User user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string username, out int index))
+            var chat = ViewModel.Chat;
+            if (chat == null)
             {
-                var insert = $"@{user.Username} ";
-                var start = CaptionInput.SelectionStart - 1 - username.Length;
-                var part1 = text.Substring(0, start);
-                var part2 = text.Substring(start + 1 + username.Length);
-
-                CaptionInput.Text = part1 + insert + part2;
-                CaptionInput.SelectionStart = start + insert.Length;
-
-                Autocomplete = null;
+                return;
             }
-            else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string replacement))
+
+            CaptionInput.Document.GetText(TextGetOptions.None, out string hidden);
+            CaptionInput.Document.GetText(TextGetOptions.NoHidden, out string text);
+
+            if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out int index))
+            {
+                var insert = string.Empty;
+                var adjust = 0;
+
+                if (string.IsNullOrEmpty(user.Username))
+                {
+                    insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+                    adjust = 1;
+                }
+                else
+                {
+                    insert = user.Username;
+                }
+
+                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - username.Length - adjust, CaptionInput.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
+
+                if (string.IsNullOrEmpty(user.Username))
+                {
+                    range.Link = $"\"tg-user://{user.Id}\"";
+                }
+
+                CaptionInput.Document.GetRange(range.EndPosition, range.EndPosition).SetText(TextSetOptions.None, " ");
+                CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
+            }
+            else if (e.ClickedItem is EmojiSuggestion emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
                 var insert = $"{emoji.Emoji} ";
-                var start = CaptionInput.SelectionStart - 1 - replacement.Length;
-                var part1 = text.Substring(0, start);
-                var part2 = text.Substring(start + 1 + replacement.Length);
+                var start = CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
+                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - replacement.Length, CaptionInput.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
 
-                CaptionInput.Text = part1 + insert + part2;
-                CaptionInput.SelectionStart = start + insert.Length;
-
-                Autocomplete = null;
+                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
+                //TextField.Document.Selection.StartPosition = start + 1;
+                CaptionInput.Document.Selection.StartPosition = start;
             }
+
+            Autocomplete = null;
         }
 
         private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -626,28 +674,20 @@ namespace Unigram.Controls.Views
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             var package = Clipboard.GetContent();
-            if (package.Contains(StandardDataFormats.Bitmap))
+            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
             {
                 e.Handled = true;
 
                 var bitmap = await package.GetBitmapAsync();
                 var media = new ObservableCollection<StorageMedia>();
-                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
                 using (var stream = await bitmap.OpenReadAsync())
-                using (var reader = new DataReader(stream))
                 {
-                    await reader.LoadAsync((uint)stream.Size);
-                    var buffer = new byte[(int)stream.Size];
-                    reader.ReadBytes(buffer);
-                    await FileIO.WriteBytesAsync(cache, buffer);
-
-                    var photo = await StoragePhoto.CreateAsync(cache, true) as StorageMedia;
-                    if (photo == null)
-                    {
-                        photo = await StorageVideo.CreateAsync(cache, true);
-                    }
-
+                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
+                    var photo = await StoragePhoto.CreateAsync(result, true);
                     if (photo == null)
                     {
                         return;
@@ -656,19 +696,21 @@ namespace Unigram.Controls.Views
                     media.Add(photo);
                 }
 
-                if (package.Contains(StandardDataFormats.Text))
+                if (package.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
-                    media[0].Caption = await package.GetTextAsync();
+                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
                 }
 
                 foreach (var item in media)
                 {
+                    SelectedItems.Add(item);
                     Items.Add(item);
                 }
 
                 SelectedItem = media[0];
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
             }
-            else if (package.Contains(StandardDataFormats.StorageItems))
+            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
                 e.Handled = true;
 
@@ -683,11 +725,19 @@ namespace Unigram.Controls.Views
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                     {
-                        media.Add(await StoragePhoto.CreateAsync(file, true));
+                        var photo = await StoragePhoto.CreateAsync(file, true);
+                        if (photo != null)
+                        {
+                            media.Add(photo);
+                        }
                     }
                     else if (file.ContentType == "video/mp4")
                     {
-                        media.Add(await StorageVideo.CreateAsync(file, true));
+                        var video = await StorageVideo.CreateAsync(file, true);
+                        if (video != null)
+                        {
+                            media.Add(video);
+                        }
                     }
 
                     files.Add(file);
@@ -698,15 +748,41 @@ namespace Unigram.Controls.Views
                 {
                     foreach (var item in media)
                     {
+                        SelectedItems.Add(item);
                         Items.Add(item);
                     }
 
                     SelectedItem = media[0];
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
                 }
                 else if (files.Count > 0)
                 {
                     // Not supported here!
                 }
+            }
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            if (args.Item is User user)
+            {
+                var photo = content.Children[0] as ProfilePicture;
+                var title = content.Children[1] as TextBlock;
+
+                var name = title.Inlines[0] as Run;
+                var username = title.Inlines[1] as Run;
+
+                name.Text = user.GetFullName();
+                username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
+
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
         }
     }

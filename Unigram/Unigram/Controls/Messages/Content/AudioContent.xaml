@@ -19,7 +19,7 @@
         <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource InlineFileButtonStyle}"/>
     </Border>
     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-        <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-        <TextBlock x:Name="Subtitle" Style="{ThemeResource DisabledCaptionTextBlockStyle}"/>
+        <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+        <TextBlock x:Name="Subtitle" Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
     </StackPanel>
 </Grid>

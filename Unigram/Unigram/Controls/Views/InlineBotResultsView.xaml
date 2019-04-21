@@ -95,7 +95,6 @@
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               BorderThickness="0,1,0,0"
-              Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
               Grid.Row="1">
             <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
             <!--<Grid.Visibility>

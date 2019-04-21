@@ -14,25 +14,41 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="{CustomResource Language}" />
+        <controls:PageHeader Text="{CustomResource Language}" IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
-                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
                   Grid.Row="1">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="td:LanguagePackInfo">
-                    <Grid Margin="0,6" Background="Transparent">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind NativeName}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="{x:Bind Name}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Row="1"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <ListView.ItemTemplateSelector>
+                <local:SettingsLanguageSelector>
+                    <local:SettingsLanguageSelector.LanguageTemplate>
+                        <DataTemplate x:DataType="td:LanguagePackInfo">
+                            <Grid Padding="12,6" Background="Transparent" ContextRequested="Language_ContextRequested" Tag="{x:Bind}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{x:Bind Name}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{x:Bind NativeName}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Row="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </local:SettingsLanguageSelector.LanguageTemplate>
+                    <local:SettingsLanguageSelector.SeparatorTemplate>
+                        <DataTemplate>
+                            <Border Height="18"/>
+                        </DataTemplate>
+                    </local:SettingsLanguageSelector.SeparatorTemplate>
+                </local:SettingsLanguageSelector>
+            </ListView.ItemTemplateSelector>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MinHeight" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
 </Page>

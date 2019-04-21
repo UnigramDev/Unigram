@@ -30,7 +30,7 @@ using Unigram.Controls;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Unigram.Common;
-using Unigram.Core.Services;
+using Unigram.Services;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Dialogs;
 using Telegram.Td.Api;
@@ -45,7 +45,7 @@ namespace Unigram.Views.Dialogs
         private Geoposition _lastPosition;
 
         public InputMessageContent Media { get; private set; }
-        public ContentDialogBase Dialog { get; set; }
+        public OverlayPage Dialog { get; set; }
 
         private bool? _liveLocation;
         public bool? LiveLocation
@@ -221,7 +221,7 @@ namespace Unigram.Views.Dialogs
         private void CurrentLocation_Click(object sender, RoutedEventArgs e)
         {
             Media = new InputMessageLocation(new Location(mMap.Center.Position.Latitude, mMap.Center.Position.Longitude), 0);
-            Dialog.Hide(ContentDialogBaseResult.OK);
+            Dialog.Hide(ContentDialogResult.Primary);
         }
 
         private async void LiveLocation_Click(object sender, RoutedEventArgs e)
@@ -233,13 +233,13 @@ namespace Unigram.Views.Dialogs
                 if (confirm == ContentDialogResult.Primary && _lastPosition != null)
                 {
                     Media = new InputMessageLocation(new Location(_lastPosition.Coordinate.Point.Position.Latitude, _lastPosition.Coordinate.Point.Position.Longitude), dialog.Period);
-                    Dialog.Hide(ContentDialogBaseResult.OK);
+                    Dialog.Hide(ContentDialogResult.Primary);
                 }
             }
             else if (LiveLocation == false)
             {
                 //Media = new TLMessageMediaGeoLive();
-                Dialog.Hide(ContentDialogBaseResult.OK);
+                Dialog.Hide(ContentDialogResult.Primary);
             }
         }
 
@@ -248,7 +248,7 @@ namespace Unigram.Views.Dialogs
             if (e.ClickedItem is Venue venue)
             {
                 Media = new InputMessageVenue(venue);
-                Dialog.Hide(ContentDialogBaseResult.OK);
+                Dialog.Hide(ContentDialogResult.Primary);
             }
         }
 
