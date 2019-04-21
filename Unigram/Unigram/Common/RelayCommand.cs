@@ -20,9 +20,85 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Unigram.Common
 {
+    public class RelayCommand : ICommand
+    {
+        private readonly Action _execute;
+        private readonly Func<bool> _canExecute;
+        public event EventHandler CanExecuteChanged;
+
+        public RelayCommand(Action execute, Func<bool> canexecute = null)
+        {
+            if (execute == null)
+                throw new ArgumentNullException(nameof(execute));
+            _execute = execute;
+            _canExecute = canexecute ?? (() => true);
+        }
+
+        [DebuggerStepThrough]
+        public bool CanExecute(object p = null)
+        {
+            try { return _canExecute(); }
+            catch { return false; }
+        }
+
+        public void Execute(object p = null)
+        {
+            if (!CanExecute(p))
+                return;
+            try { _execute(); }
+            catch { Debugger.Break(); }
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public class RelayCommand<T> : ICommand
+    {
+        private readonly Action<T> _execute;
+        private readonly Func<T, bool> _canExecute;
+        public event EventHandler CanExecuteChanged;
+
+        public RelayCommand(Action<T> execute, Func<T, bool> canexecute = null)
+        {
+            if (execute == null)
+                throw new ArgumentNullException(nameof(execute));
+            _execute = execute;
+            _canExecute = canexecute ?? (e => true);
+        }
+
+        [DebuggerStepThrough]
+        public bool CanExecute(object p)
+        {
+            try { return _canExecute(ConvertParameterValue(p)); }
+            catch { return false; }
+        }
+
+        public void Execute(object p)
+        {
+            if (!this.CanExecute(p))
+                return;
+            _execute(ConvertParameterValue(p));
+        }
+
+        private static T ConvertParameterValue(object parameter)
+        {
+            //parameter = parameter is T ? parameter : Convert.ChangeType(parameter, typeof(T));
+            return (T)parameter;
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     /// <summary>
     /// A command whose sole purpose is to relay its functionality to other
     /// objects by invoking delegates. The default return value for the CanExecute
@@ -39,7 +115,7 @@ namespace Unigram.Common
     ////  Description = "A command whose sole purpose is to relay its functionality to other objects by invoking delegates.",
     ////  UrlContacts = "http://www.galasoft.ch/contact_en.html",
     ////  Email = "laurent@galasoft.ch")]
-    public class RelayCommand : ICommand
+    public class RelayCommand2 : ICommand
     {
         private readonly WeakAction _execute;
 
@@ -52,7 +128,7 @@ namespace Unigram.Common
         /// <param name="execute">The execution logic. IMPORTANT: Note that closures are not supported at the moment
         /// due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </param>
         /// <exception cref="ArgumentNullException">If the execute argument is null.</exception>
-        public RelayCommand(Action execute)
+        public RelayCommand2(Action execute)
             : this(execute, null)
         {
         }
@@ -65,7 +141,7 @@ namespace Unigram.Common
         /// <param name="canExecute">The execution status logic.</param>
         /// <exception cref="ArgumentNullException">If the execute argument is null. IMPORTANT: Note that closures are not supported at the moment
         /// due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </exception>
-        public RelayCommand(Action execute, Func<bool> canExecute)
+        public RelayCommand2(Action execute, Func<bool> canExecute)
         {
             if (execute == null)
             {
@@ -152,7 +228,7 @@ namespace Unigram.Common
     /// This will enable (or restore) the CommandManager class which handles
     /// automatic enabling/disabling of controls based on the CanExecute delegate.</remarks>
     ////[ClassInfo(typeof(RelayCommand))]
-    public class RelayCommand<T> : ICommand
+    public class RelayCommand2<T> : ICommand
     {
         private readonly WeakAction<T> _execute;
 
@@ -165,7 +241,7 @@ namespace Unigram.Common
         /// <param name="execute">The execution logic. IMPORTANT: Note that closures are not supported at the moment
         /// due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </param>
         /// <exception cref="ArgumentNullException">If the execute argument is null.</exception>
-        public RelayCommand(Action<T> execute)
+        public RelayCommand2(Action<T> execute)
             : this(execute, null)
         {
         }
@@ -178,7 +254,7 @@ namespace Unigram.Common
         /// <param name="canExecute">The execution status logic. IMPORTANT: Note that closures are not supported at the moment
         /// due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </param>
         /// <exception cref="ArgumentNullException">If the execute argument is null.</exception>
-        public RelayCommand(Action<T> execute, Func<T, bool> canExecute)
+        public RelayCommand2(Action<T> execute, Func<T, bool> canExecute)
         {
             if (execute == null)
             {
