@@ -52,6 +52,12 @@ namespace Unigram.Controls.Messages
 
             Footer.UpdateMessage(message);
             Markup.Update(message, message.ReplyMarkup);
+
+            if (_highlight != null)
+            {
+                _highlight.StopAnimation("Opacity");
+                _highlight.Opacity = 0;
+            }
         }
 
         public string GetAutomationName()
@@ -1039,6 +1045,8 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        private SpriteVisual _highlight;
+
         public void Highlight()
         {
             var message = _message;
@@ -1047,14 +1055,34 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var target = Media.Content is IContentWithMask ? Media : (FrameworkElement)ContentPanel;
-
-            var overlay = ElementCompositionPreview.GetElementChildVisual(target) as SpriteVisual;
+            var overlay = _highlight;
             if (overlay == null)
             {
-                overlay = ElementCompositionPreview.GetElementVisual(this).Compositor.CreateSpriteVisual();
-                ElementCompositionPreview.SetElementChildVisual(target, overlay);
+                _highlight = overlay = ElementCompositionPreview.GetElementVisual(this).Compositor.CreateSpriteVisual();
             }
+
+            FrameworkElement target;
+            if (Media.Child is IContentWithMask)
+            {
+                ElementCompositionPreview.SetElementChildVisual(ContentPanel, null);
+                ElementCompositionPreview.SetElementChildVisual(Media, overlay);
+                target = Media;
+            }
+            else
+            {
+                ElementCompositionPreview.SetElementChildVisual(Media, null);
+                ElementCompositionPreview.SetElementChildVisual(ContentPanel, overlay);
+                target = ContentPanel;
+            }
+
+            //Media.Content is IContentWithMask ? Media : (FrameworkElement)ContentPanel;
+
+            //var overlay = ElementCompositionPreview.GetElementChildVisual(target) as SpriteVisual;
+            //if (overlay == null)
+            //{
+            //    overlay = ElementCompositionPreview.GetElementVisual(this).Compositor.CreateSpriteVisual();
+            //    ElementCompositionPreview.SetElementChildVisual(target, overlay);
+            //}
 
             var settings = new UISettings();
             var fill = overlay.Compositor.CreateColorBrush(settings.GetColorValue(UIColorType.Accent));
