@@ -842,6 +842,43 @@ namespace Unigram.Common
             }
         }
 
+        public static string GetRestrictionReason(this User user)
+        {
+            return GetRestrictionReason(user.RestrictionReason);
+        }
+
+        public static string GetRestrictionReason(this Supergroup supergroup)
+        {
+            return GetRestrictionReason(supergroup.RestrictionReason);
+        }
+
+        public static string GetRestrictionReason(string reason)
+        {
+            if (reason.Length > 0)
+            {
+                var fullTypeEnd = reason.IndexOf(':');
+                if (fullTypeEnd <= 0)
+                {
+                    return null;
+                }
+
+                // {fulltype} is in "{type}-{tag}-{tag}-{tag}" format
+                // if we find "all" tag we return the restriction string
+                var typeTags = reason.Substring(0, fullTypeEnd).Split('-');
+#if STORE_RESTRICTIVE
+                var restrictionApplies = typeTags.Contains("all") || typeTags.Contains("ios");
+#else
+                var restrictionApplies = typeTags.Contains("all");
+#endif
+                if (restrictionApplies)
+                {
+                    return reason.Substring(fullTypeEnd + 1).Trim();
+                }
+            }
+
+            return null;
+        }
+
         public static bool IsUnread(this Chat chat)
         {
             if (chat.IsMarkedAsUnread)

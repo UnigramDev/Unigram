@@ -66,7 +66,12 @@ namespace Unigram.Common
                     return;
                 }
 
-                //user.RestrictionReason
+                var reason = user.GetRestrictionReason();
+                if (reason != null && reason.Length > 0)
+                {
+                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
@@ -79,6 +84,13 @@ namespace Unigram.Common
                 if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username))
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
+
+                var reason = supergroup.GetRestrictionReason();
+                if (reason != null && reason.Length > 0)
+                {
+                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
