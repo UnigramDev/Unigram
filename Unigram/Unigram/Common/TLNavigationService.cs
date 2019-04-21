@@ -146,8 +146,9 @@ namespace Unigram.Common
                     }
                 }
 
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
-                if (shift)
+                if (shift && !ctrl)
                 {
                     await OpenAsync(typeof(ChatPage), chat.Id);
                 }
