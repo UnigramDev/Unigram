@@ -502,30 +502,34 @@ namespace Unigram.Controls.Chats
                         _file = cache;
                         _recorder = new OpusRecorder(cache, mode == ChatRecordMode.Video);
 
-                        var cameraDevice = await _recorder.FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Front);
-                        if (cameraDevice == null)
-                        {
-                            // TODO: ...
-                        }
-
                         _recorder.m_mediaCapture = new MediaCapture();
 
-                        // Figure out where the camera is located
-                        if (cameraDevice.EnclosureLocation == null || cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Unknown)
+                        if (mode == ChatRecordMode.Video)
                         {
-                            // No information on the location of the camera, assume it's an external camera, not integrated on the device
-                            _recorder._externalCamera = true;
-                        }
-                        else
-                        {
-                            // Camera is fixed on the device
-                            _recorder._externalCamera = false;
+                            var cameraDevice = await _recorder.FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Front);
+                            if (cameraDevice == null)
+                            {
+                                // TODO: ...
+                            }
 
-                            // Only mirror the preview if the camera is on the front panel
-                            _recorder._mirroringPreview = cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front;
+                            // Figure out where the camera is located
+                            if (cameraDevice.EnclosureLocation == null || cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Unknown)
+                            {
+                                // No information on the location of the camera, assume it's an external camera, not integrated on the device
+                                _recorder._externalCamera = true;
+                            }
+                            else
+                            {
+                                // Camera is fixed on the device
+                                _recorder._externalCamera = false;
+
+                                // Only mirror the preview if the camera is on the front panel
+                                _recorder._mirroringPreview = cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front;
+                            }
+
+                            _recorder.settings.VideoDeviceId = cameraDevice.Id;
                         }
 
-                        _recorder.settings.VideoDeviceId = cameraDevice.Id;
                         await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
 
                         Logger.Debug(Target.Recording, "Devices initialized, starting");
