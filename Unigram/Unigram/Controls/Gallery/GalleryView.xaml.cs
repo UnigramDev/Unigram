@@ -136,7 +136,7 @@ namespace Unigram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
-                    OnBackRequestedOverride(this, new HandledEventArgs());
+                    OnBackRequestedOverride(this, new HandledRoutedEventArgs());
                 }
             });
         }
@@ -343,7 +343,7 @@ namespace Unigram.Controls.Gallery
             }
         }
 
-        public void OnBackRequesting(HandledEventArgs e)
+        public void OnBackRequesting(HandledRoutedEventArgs e)
         {
             Unload();
             Dispose();
@@ -351,7 +351,7 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
         {
             //var container = GetContainer(0);
             //var root = container.Presenter;
@@ -1110,7 +1110,7 @@ namespace Unigram.Controls.Gallery
                 });
             };
 
-            OnBackRequestedOverride(this, new HandledEventArgs());
+            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
         }
 
         #endregion
