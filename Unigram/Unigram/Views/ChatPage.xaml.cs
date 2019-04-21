@@ -745,6 +745,11 @@ namespace Unigram.Views
                 ViewModel.MessagesDeleteCommand.Execute();
                 args.Handled = true;
             }
+            else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
+            {
+                ViewModel.MessagesCopyCommand.Execute();
+                args.Handled = true;
+            }
             else if (args.VirtualKey == Windows.System.VirtualKey.R && ctrl && !alt && !shift)
             {
                 btnVoiceMessage.ToggleRecording();
