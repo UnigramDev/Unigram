@@ -104,6 +104,15 @@ namespace Unigram.Controls.Messages
                 builder.AppendLine($"{title}. ");
             }
 
+            if (message.ReplyToMessage != null)
+            {
+                var user = message.ProtoService.GetUser(message.ReplyToMessage.SenderUserId);
+                if (user != null)
+                {
+                    builder.AppendLine($"{Strings.Resources.AccDescrReplying} {user.GetFullName()}. ");
+                }
+            }
+
             builder.Append(Automation.GetSummary(message.ProtoService, message.Get()));
 
             var date = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
