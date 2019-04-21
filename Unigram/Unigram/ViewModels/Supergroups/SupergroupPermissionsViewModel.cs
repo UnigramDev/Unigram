@@ -16,6 +16,8 @@ namespace Unigram.ViewModels.Supergroups
             : base(protoService, cacheService, settingsService, aggregator, null, query => new SupergroupMembersFilterRestricted(query))
         {
             AddCommand = new RelayCommand(AddExecute);
+            BannedCommand = new RelayCommand(BannedExecute);
+
             ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
         }
 
@@ -180,6 +182,18 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             NavigationService.Navigate(typeof(SupergroupAddRestrictedPage), chat.Id);
+        }
+
+        public RelayCommand BannedCommand { get; }
+        private void BannedExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(SupergroupBannedPage), chat.Id);
         }
 
         #region Context menu

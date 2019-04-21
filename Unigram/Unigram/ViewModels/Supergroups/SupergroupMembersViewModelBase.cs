@@ -52,8 +52,18 @@ namespace Unigram.ViewModels.Supergroups
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 var item = ProtoService.GetSupergroup(supergroup.SupergroupId);
+                var cache = ProtoService.GetSupergroupFull(supergroup.SupergroupId);
 
                 Delegate?.UpdateSupergroup(chat, item);
+
+                if (cache == null)
+                {
+                    ProtoService.Send(new GetSupergroupFullInfo(supergroup.SupergroupId));
+                }
+                else
+                {
+                    Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
+                }
 
                 Members = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _filter ?? _find(string.Empty));
             }

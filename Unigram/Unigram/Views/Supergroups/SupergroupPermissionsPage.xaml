@@ -140,7 +140,7 @@
 
                         <controls:BadgeButton x:Name="Blacklist"
                                               Content="{CustomResource ChannelBlacklist}"
-                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Command="{x:Bind ViewModel.BannedCommand}"
                                               Margin="0,18"/>
 
                         <controls:BadgeButton x:Name="AddNew"
