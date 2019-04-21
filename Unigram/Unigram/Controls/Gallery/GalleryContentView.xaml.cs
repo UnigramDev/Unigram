@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Messages.Content;
+using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -25,6 +27,8 @@ namespace Unigram.Controls.Gallery
     {
         private IGalleryDelegate _delegate;
         private GalleryContent _item;
+
+        private MessageContentState _oldState;
 
         public GalleryContent Item => _item;
         public Grid Presenter => Panel;
@@ -83,19 +87,26 @@ namespace Unigram.Controls.Gallery
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
                 Button.Opacity = 1;
+
+                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive)
             {
-                Button.Glyph = "\uE10A";
+                Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
                 Button.Opacity = 1;
+
+                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                Button.Glyph = "\uE118";
+                Button.Glyph = Icons.Download;
+                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
                 Button.Progress = 0;
                 Button.Opacity = 1;
 
@@ -103,19 +114,26 @@ namespace Unigram.Controls.Gallery
                 {
                     item.ProtoService.DownloadFile(file.Id, 1);
                 }
+
+                _oldState = MessageContentState.Download;
             }
             else
             {
                 if (item.IsVideo)
                 {
-                    Button.Glyph = "\uE102";
+                    Button.Glyph = Icons.Play;
+                    Button.SetGlyph(Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Play);
                     Button.Progress = 1;
                     Button.Opacity = 1;
+
+                    _oldState = MessageContentState.Play;
                 }
                 else if (item.IsPhoto)
                 {
                     Button.Opacity = 0;
                     Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+
+                    _oldState = MessageContentState.Open;
                 }
             }
         }

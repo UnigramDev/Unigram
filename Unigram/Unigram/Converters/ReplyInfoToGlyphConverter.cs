@@ -28,8 +28,11 @@ namespace Unigram.Converters
         public const string Download = "\uE118";
         public const string Cancel = "\uE10A";
         public const string Play = "\uE102";
+        public const string Pause = "\uE103";
         public const string Confirm = "\uE10B";
         public const string Ttl = "\uE60E";
+        public const string Document = "\uE160";
+        public const string Animation = "\uE906";
 
         public const string Undo = "\uE7A7";
         public const string Redo = "\uE7A6";
