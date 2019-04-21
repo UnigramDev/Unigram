@@ -218,6 +218,21 @@ namespace Unigram.ViewModels
             Window.Current.Activated += Window_Activated;
         }
 
+        //~DialogViewModel()
+        //{
+        //    Debug.WriteLine("Finalizing DialogViewModel");
+        //    GC.Collect();
+        //}
+
+        public void Dispose()
+        {
+            _groupedMessages.Clear();
+            _filesMap.Clear();
+            _photosMap.Clear();
+
+            Window.Current.Activated -= Window_Activated;
+        }
+
         private void Window_Activated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
         {
             if (e.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
@@ -225,12 +240,6 @@ namespace Unigram.ViewModels
                 SaveDraft();
             }
         }
-
-        //~DialogViewModel()
-        //{
-        //    Debug.WriteLine("Finalizing DialogViewModel");
-        //    GC.Collect();
-        //}
 
         public ItemClickEventHandler Sticker_Click;
 
@@ -996,13 +1005,13 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
+                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8, disableAnimation: false);
             }
 
             TextField?.Focus(FocusState.Programmatic);
         }
 
-        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool second = false)
+        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, bool second = false)
         {
             if (direction == null)
             {
@@ -1023,7 +1032,7 @@ namespace Unigram.ViewModels
                 var field = ListField;
                 if (field != null)
                 {
-                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel, direction ?? ScrollIntoViewAlignment.Leading);
+                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
                 }
 
                 return;
@@ -1161,7 +1170,7 @@ namespace Unigram.ViewModels
                 IsLoading = false;
             }
 
-            await LoadMessageSliceAsync(null, maxId, alignment, pixel, direction, true);
+            await LoadMessageSliceAsync(null, maxId, alignment, pixel, direction, disableAnimation, true);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)

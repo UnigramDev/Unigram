@@ -442,6 +442,8 @@ namespace Unigram.Views
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
                 ViewModel.ListField = null;
+
+                ViewModel.Dispose();
             }
 
             DataContext = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);

@@ -115,7 +115,7 @@ namespace Unigram.Controls.Chats
             //if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
             using (await _loadMoreLock.WaitAsync())
             {
-                if (ItemsStack.FirstVisibleIndex == 0 && !e.IsIntermediate)
+                if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
                 {
                     await ViewModel.LoadNextSliceAsync(true);
                 }
@@ -203,7 +203,7 @@ namespace Unigram.Controls.Chats
             return -1;
         }
 
-        public async Task ScrollToItem(object item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading)
+        public async Task ScrollToItem(object item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
             var scrollViewer = ScrollingHost;
             if (scrollViewer == null)
@@ -262,7 +262,7 @@ namespace Unigram.Controls.Chats
             }
 
             // scroll to desired position with animation!
-            scrollViewer.ChangeView(position.X, position.Y, null, alignment != VerticalAlignment.Center);
+            scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
 
             if (highlight)
             {
