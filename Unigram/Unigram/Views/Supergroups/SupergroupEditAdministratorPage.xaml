@@ -107,9 +107,9 @@
                 </UserControl>
 
                 <StackPanel x:Name="DismissPanel" Visibility="Collapsed" Margin="0,24">
-                    <Button Command="{x:Bind ViewModel.DismissCommand}"
-                            Style="{StaticResource HyperButtonStyle}"
-                            Content="{CustomResource EditAdminRemoveAdmin}"/>
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.DismissCommand}"
+                        Content="{CustomResource EditAdminRemoveAdmin}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

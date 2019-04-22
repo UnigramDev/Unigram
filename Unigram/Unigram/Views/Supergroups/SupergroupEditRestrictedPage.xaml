@@ -85,10 +85,10 @@
                                       Command="{x:Bind ViewModel.EditUntilCommand}"/>
 
                 <StackPanel x:Name="DismissPanel" Visibility="Collapsed" Margin="0,24">
-                    <Button Command="{x:Bind ViewModel.DismissCommand}"
-                            Content="{CustomResource ChannelBlockUser}"
-                            Style="{StaticResource HyperButtonStyle}"
-                            Foreground="Red"/>
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.DismissCommand}"
+                        Content="{CustomResource ChannelBlockUser}"
+                        Foreground="Red"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

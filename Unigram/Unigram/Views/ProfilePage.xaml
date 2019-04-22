@@ -475,19 +475,19 @@
                                      </controls:BadgeButton.Badge>-->
                             </controls:BadgeButton>
 
-                            <Button x:Name="UserStartSecret"
-                                    Visibility="Collapsed"
-                                    Content="{CustomResource StartEncryptedChat}"
-                                    Command="{x:Bind ViewModel.SecretChatCommand}"
-                                    Style="{StaticResource HyperButtonStyle}"
-                                    Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
+                            <controls:BadgeButton
+                                x:Name="UserStartSecret"
+                                Visibility="Collapsed"
+                                Content="{CustomResource StartEncryptedChat}"
+                                Command="{x:Bind ViewModel.SecretChatCommand}"
+                                Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
 
-                            <Button x:Name="GroupLeave"
-                                    Visibility="Collapsed"
-                                    Content="{CustomResource LeaveChannel}"
-                                    Command="{x:Bind ViewModel.DeleteCommand}"
-                                    Style="{StaticResource HyperButtonStyle}"
-                                    Foreground="Red"/>
+                            <controls:BadgeButton
+                                x:Name="GroupLeave"
+                                Visibility="Collapsed"
+                                Content="{CustomResource LeaveChannel}"
+                                Command="{x:Bind ViewModel.DeleteCommand}"
+                                Foreground="Red"/>
                         </StackPanel>
 
                         <StackPanel x:Name="MembersPanel" Visibility="Collapsed" Margin="0,24,0,0">

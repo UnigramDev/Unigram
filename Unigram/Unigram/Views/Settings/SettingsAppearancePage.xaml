@@ -65,11 +65,9 @@
                     </StackPanel>
                 </Grid>
 
-                <Button
+                <controls:BadgeButton
                     Content="{CustomResource ChatBackground}"
-                    Click="Wallpaper_Click"
-                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                    Style="{StaticResource HyperButtonStyle}"/>
+                    Click="Wallpaper_Click"/>
                 <controls:BadgeButton
                     Content="{CustomResource AutoNightTheme}"
                     Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"

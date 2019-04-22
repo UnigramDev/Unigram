@@ -42,11 +42,9 @@
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,24"/>
-                    <Button
+                    <controls:BadgeButton
                         Content="{CustomResource Masks}"
-                        Click="Masks_Click"
-                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                        Style="{StaticResource HyperButtonStyle}"/>
+                        Click="Masks_Click"/>
                     <TextBlock
                         Text="{CustomResource MasksInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
