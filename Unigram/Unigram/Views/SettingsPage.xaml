@@ -67,7 +67,7 @@
                                               ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
                                               Width="36"
                                               Height="36"
-                                              CornerRadius="18"
+                                              Radius="18"
                                               Padding="0,0,0,0"
                                               FontSize="16">
                             <Button.Flyout>

@@ -117,11 +117,11 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
-        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="Radius" Value="24" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -202,7 +202,7 @@
         <Setter Property="Width" Value="Auto" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
-        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="Radius" Value="24" />
         <Setter Property="RequestedTheme" Value="Dark" />
         <Setter Property="Template">
             <Setter.Value>
@@ -259,8 +259,8 @@
                         </VisualStateManager.VisualStateGroups>
                         <!--<controls:BackDrop BlurAmount="5"/>-->
 
-                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}" Width="48" Height="48">
-                            <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding Radius}" Width="48" Height="48">
+                            <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding Radius}">
                                 <TextBlock
                                     x:Name="ContentPresenter1"
                                     HorizontalAlignment="Center"
@@ -297,12 +297,12 @@
         <Setter Property="Width" Value="Auto" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
-        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Radius" Value="12" />
         <Setter Property="RequestedTheme" Value="Dark" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
-                    <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding Radius}">
                         <Grid.Resources>
                             <Style x:Key="SmallProgressBarRingStyle" TargetType="controls:ProgressBarRing">
                                 <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
@@ -368,7 +368,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <!--<controls:BackDrop BlurAmount="5"/>-->
 
-                        <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding Radius}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
@@ -409,11 +409,11 @@
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-        <Setter Property="CornerRadius" Value="{ThemeResource MessageServiceCornerRadius}"/>
+        <Setter Property="Radius" Value="{ThemeResource MessageServiceCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SimpleButton">
-                    <Grid x:Name="RootGrid" Margin="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid x:Name="RootGrid" Margin="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding Radius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -443,7 +443,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

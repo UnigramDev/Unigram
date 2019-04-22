@@ -281,7 +281,7 @@
                         CornerRadius="15"
                         Margin="8,0,0,2"
                         Grid.Column="2">
-                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" CornerRadius="15"/>
+                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" Radius="15"/>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -306,10 +306,10 @@
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
                         VerticalAlignment="Bottom"
-                        CornerRadius="14"
+                        CornerRadius="15"
                         Margin="8,0,0,2"
                         Grid.Column="2">
-                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" CornerRadius="15"/>
+                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" Radius="15"/>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -785,7 +785,7 @@
                                                   Width="36"
                                                   Height="36"
                                                   Glyph="@"
-                                                  CornerRadius="24"
+                                                  Radius="24"
                                                   Padding="0,0,0,4"
                                                   AutomationProperties.Name="{CustomResource AccDescrMentionDown}"
                                                   ToolTipService.ToolTip="{CustomResource AccDescrMentionDown}"/>
@@ -821,7 +821,7 @@
                                                   Width="36"
                                                   Height="36"
                                                   Glyph="&#xE74B;"
-                                                  CornerRadius="24"
+                                                  Radius="24"
                                                   AutomationProperties.Name="{CustomResource AccDescrPageDown}"
                                                   ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"/>
                         </Border>

@@ -28,11 +28,11 @@
             <Setter Property="Width" Value="48" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="FontSize" Value="20" />
-            <Setter Property="CornerRadius" Value="24" />
+            <Setter Property="Radius" Value="24" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:GlyphHyperlinkButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />

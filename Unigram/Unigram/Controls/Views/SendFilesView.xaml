@@ -140,7 +140,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:PivotRadioButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -227,7 +227,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:GlyphButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -360,7 +360,7 @@
                                       Visibility="{x:Bind IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                       AutomationProperties.Name="{CustomResource CropImage}"
                                       ToolTipService.ToolTip="{CustomResource CropImage}"
-                        CornerRadius="12,0,0,12"/>
+                        Radius="12,0,0,12"/>
                     <controls:GlyphButton
                         Click="Crop_Click" 
                                       Glyph="&#xE7A8;"
@@ -371,7 +371,7 @@
                                       Visibility="{x:Bind IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                       AutomationProperties.Name="{CustomResource CropImage}"
                                       ToolTipService.ToolTip="{CustomResource CropImage}"
-                        CornerRadius="12,0,0,12"/>
+                        Radius="12,0,0,12"/>
 
                     <local:GlyphTtlButton
                         x:Name="TTLSeconds"
@@ -394,7 +394,7 @@
                         FontSize="{StaticResource GlyphButtonFontSize}"
                         AutomationProperties.Name="{CustomResource CropImage}"
                         ToolTipService.ToolTip="{CustomResource CropImage}"
-                        CornerRadius="0,12,12,0"
+                        Radius="0,12,12,0"
                         Grid.Column="2"/>
                 </Grid>
             </Grid>

@@ -15,16 +15,16 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(SimpleButton);
         }
 
-        #region CornerRadius
+        #region Radius
 
-        public CornerRadius CornerRadius
+        public CornerRadius Radius
         {
-            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
-            set { SetValue(CornerRadiusProperty, value); }
+            get { return (CornerRadius)GetValue(RadiusProperty); }
+            set { SetValue(RadiusProperty, value); }
         }
 
-        public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(SimpleButton), new PropertyMetadata(default(CornerRadius)));
+        public static readonly DependencyProperty RadiusProperty =
+            DependencyProperty.Register("Radius", typeof(CornerRadius), typeof(SimpleButton), new PropertyMetadata(default(CornerRadius)));
 
         #endregion
     }
@@ -36,16 +36,16 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(SimpleHyperlinkButton);
         }
 
-        #region CornerRadius
+        #region Radius
 
-        public CornerRadius CornerRadius
+        public CornerRadius Radius
         {
-            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
-            set { SetValue(CornerRadiusProperty, value); }
+            get { return (CornerRadius)GetValue(RadiusProperty); }
+            set { SetValue(RadiusProperty, value); }
         }
 
-        public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(SimpleHyperlinkButton), new PropertyMetadata(default(CornerRadius)));
+        public static readonly DependencyProperty RadiusProperty =
+            DependencyProperty.Register("Radius", typeof(CornerRadius), typeof(SimpleHyperlinkButton), new PropertyMetadata(default(CornerRadius)));
 
         #endregion
     }

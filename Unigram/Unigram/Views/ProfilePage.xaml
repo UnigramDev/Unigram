@@ -253,7 +253,7 @@
                                                       ToolTipService.ToolTip="{CustomResource AccDescrOpenChat}"
                                                       Width="36"
                                                       Height="36"
-                                                      CornerRadius="18"
+                                                      Radius="18"
                                                       Padding="0,0,0,-2"
                                                       FontSize="16"/>
                             </Border>

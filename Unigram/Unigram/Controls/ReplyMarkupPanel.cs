@@ -194,7 +194,7 @@ namespace Unigram.Controls
                             }
                         }
 
-                        button.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
+                        button.Radius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
                     }
 
                     SetRow(panel, j);

@@ -380,6 +380,6 @@
             </Grid>
         </StackPanel>
 
-        <controls:GlyphButton x:Name="Biometrics" Click="OnLoaded" Visibility="Collapsed" Glyph="&#xE928;" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,24" CornerRadius="24"/>
+        <controls:GlyphButton x:Name="Biometrics" Click="OnLoaded" Visibility="Collapsed" Glyph="&#xE928;" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,24" Radius="24"/>
     </Grid>
 </ContentDialog>

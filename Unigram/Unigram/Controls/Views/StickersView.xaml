@@ -46,7 +46,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:PivotRadioButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -643,13 +643,13 @@
                                                                        Style="{StaticResource GlyphPivotRadioButton}"
                                                                        AutomationProperties.Name="{CustomResource FeaturedStickers}"
                                                                        ToolTipService.ToolTip="{CustomResource FeaturedStickers}">
-                                                <Grid Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                                <Grid Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                       CornerRadius="10"
                                                       MinWidth="20"
                                                       Height="20">
                                                     <TextBlock Text="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay}"
                                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                                TextAlignment="Center"
                                                                VerticalAlignment="Center"
                                                                TextLineBounds="TrimToBaseline,TrimToCapHeight"
