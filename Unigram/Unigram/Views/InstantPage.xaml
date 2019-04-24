@@ -89,7 +89,7 @@
         </Style>
 
         <Style x:Key="BlockPreformattedStyle" TargetType="StackPanel">
-            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}"/>
             <Setter Property="Padding" Value="12,8,0,8"/>
         </Style>
 
@@ -123,7 +123,7 @@
         </Style>
 
         <Style x:Key="BlockRelatedArticlesHeaderPanelStyle" TargetType="Border">
-            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}"/>
             <Setter Property="Margin" Value="-12,0"/>
             <Setter Property="Padding" Value="12,8"/>
         </Style>
@@ -153,7 +153,7 @@
              </DataTemplate>-->
 
         <Style x:Key="ChannelBlockStyle" BasedOn="{StaticResource EmptyButtonStyle}" TargetType="Button">
-            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}"/>
             <Setter Property="ContentTemplate" Value="{StaticResource ChannelItemTemplate}"/>
         </Style>
 
@@ -178,14 +178,19 @@
                 </Grid.ColumnDefinitions>
                 <ProgressBar x:Name="Reading" VerticalAlignment="Stretch" Background="Transparent" Foreground="{ThemeResource SystemControlBackgroundBaseLowBrush}" Grid.ColumnSpan="3"/>
 
-                <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}" VerticalAlignment="Center" Margin="12,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}"
+                           VerticalAlignment="Center"
+                           Margin="12,0,0,0"
+                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                           Style="{StaticResource BaseTextBlockStyle}"/>
 
                 <controls:GlyphButton
                      Glyph="&#xE72D;"
                      Command="{x:Bind ViewModel.ShareCommand}"
                      Style="{StaticResource HeaderGlyphButtonStyle}"
                      Grid.Column="1"/>
-                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                        Padding="{StaticResource EllipsisButtonPadding}"
                         Style="{StaticResource EllipsisButton}"
                         AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
                         ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
@@ -216,7 +221,7 @@
 
 
         <ListView x:Name="ScrollingHost"
-                  Background="{ThemeResource TelegramTitleBarBackgroundBrush}"
+                  Background="{ThemeResource PageHeaderBackgroundBrush}"
                   SelectionMode="None"
                   Grid.Row="1">
             <ListView.ItemContainerStyle>
@@ -239,7 +244,7 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.Footer>
-                <Border Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
+                <Border Background="{ThemeResource PageHeaderBackgroundBrush}">
                     <Button
                         Command="{x:Bind ViewModel.FeedbackCommand}"
                         Content="{CustomResource PreviewFeedback}"
@@ -255,7 +260,7 @@
         </ListView>
 
         <!--<ScrollViewer x:Name="ScrollingHost"
-             Background="{ThemeResource TelegramTitleBarBackgroundBrush}"
+             Background="{ThemeResource PageHeaderBackgroundBrush}"
              VerticalScrollBarVisibility="Auto"
              VerticalScrollMode="Auto"
              Grid.Row="1">
@@ -266,7 +271,7 @@
              </Grid.RowDefinitions>
              <StackPanel x:Name="LayoutRoot" Margin="0,0,0,20"/>
              
-             <Border Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Grid.Row="1">
+             <Border Background="{ThemeResource PageHeaderBackgroundBrush}" Grid.Row="1">
              <Button Command="{x:Bind ViewModel.FeedbackCommand}" Content="Leave feedback about this preview" HorizontalContentAlignment="Center" VerticalAlignment="Center" Padding="8,6" Style="{StaticResource EmptyButtonStyle}"/>
              </Border>
              </Grid>

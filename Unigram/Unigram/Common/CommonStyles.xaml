@@ -2479,7 +2479,7 @@
 
     <Style x:Key="HeaderGlyphToggleButtonStyle" TargetType="controls:GlyphToggleButton">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource PageHeaderHighlightBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
@@ -2608,7 +2608,7 @@
 
     <Style x:Key="HeaderGlyphButtonStyle" TargetType="controls:GlyphButton">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource PageHeaderHighlightBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
@@ -4750,7 +4750,7 @@
     </Style>
 
     <Style x:Key="ReplyKeyboardMarkupButtonStyle" TargetType="controls:GlyphButton">
-        <!--<Setter Property="Background" Value="{ThemeResource TelegramTitleBarBackgroundBrush}" />
+        <!--<Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}" />
              <Setter Property="Foreground" Value="#FFFFFFFF" />
              <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderBrush}" />
              <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />

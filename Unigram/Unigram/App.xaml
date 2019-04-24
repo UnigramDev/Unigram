@@ -15,7 +15,6 @@
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="SystemChromeMediumHighColor">#FF323232</Color>
 
-                    <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
                     <SolidColorBrush x:Key="TelegramSeparatorBrush" Color="Transparent"/>
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
@@ -78,7 +77,6 @@
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="SystemChromeMediumHighColor">#FFE6E6E6</Color>
 
-                    <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
                     <SolidColorBrush x:Key="TelegramSeparatorBrush" Color="Transparent"/>
                     <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
 
@@ -147,7 +145,15 @@
             <Thickness x:Key="NavigationViewItemBorderThickness">2,1</Thickness>
 
             <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}"/>
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            </Style>
+
+            <Style x:Key="BodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            </Style>
+
+            <Style x:Key="CaptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             </Style>
 
             <Style x:Key="CaptionRichTextBlockStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BaseRichTextBlockStyle}">
@@ -239,7 +245,7 @@
             <Style x:Key="SiteNameTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
                 <Setter Property="MaxLines" Value="1"/>
             </Style>
-            
+
             <ResourceDictionary.MergedDictionaries>
                 <themes:Fluent/>
                 <common:Theme/>

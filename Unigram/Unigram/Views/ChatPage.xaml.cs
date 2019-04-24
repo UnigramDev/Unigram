@@ -2596,7 +2596,7 @@ namespace Unigram.Views
         private void MaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
+            var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
             var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
             var overlayBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x00, 0x00, 0x00));
 

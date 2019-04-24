@@ -21,7 +21,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border Margin="0,0,0,24" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+            <Border Margin="0,0,0,24" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                 <Image x:Name="Texture" Width="160" Height="160" Margin="12,6"/>
             </Border>
             <TextBlock x:Name="Hash" FontFamily="Consolas" HorizontalAlignment="Center" Grid.Row="1"/>

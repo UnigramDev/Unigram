@@ -32,7 +32,6 @@
                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                 Grid.Column="1"
                 Visibility="Collapsed"/>
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
     </ContentDialog.Title>
     

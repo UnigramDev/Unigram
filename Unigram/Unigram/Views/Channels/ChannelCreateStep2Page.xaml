@@ -24,7 +24,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Padding="12" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+            <StackPanel Padding="12" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                 <RadioButton
                     IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
                     Content="{CustomResource ChannelPublic}"/>

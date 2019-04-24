@@ -22,7 +22,7 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         
-        <Grid x:Name="LayoutRoot" Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Grid.Row="1">
+        <Grid x:Name="LayoutRoot" Background="{ThemeResource PageHeaderBackgroundBrush}" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48"/>
                 <ColumnDefinition/>

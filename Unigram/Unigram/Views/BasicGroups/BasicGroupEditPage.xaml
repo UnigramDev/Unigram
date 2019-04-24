@@ -27,7 +27,7 @@
             Glyph="&#xE10B;"/>
 
         <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"
             Grid.Row="1"/>
@@ -36,7 +36,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>

@@ -57,6 +57,7 @@
                     <TextBlock
                         x:Name="Title"
                         Text="{CustomResource ChannelSubscribers}"
+                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
                         Style="{StaticResource BaseTextBlockStyle}"
                         VerticalAlignment="Center"
                         Margin="12,0"/>

@@ -40,8 +40,6 @@
                       Grid.Row="1">
             <StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}"
-                            BorderBrush="{ThemeResource TelegramSeparatorBrush}"
-                            BorderThickness="0,0,0,1"
                             Padding="0,8,12,8">
                     <TextBlock Text="{CustomResource P2PEnabledWith}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:PrivacyRadioButton

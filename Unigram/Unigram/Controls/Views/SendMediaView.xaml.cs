@@ -501,18 +501,6 @@ namespace Unigram.Controls.Views
             Autocomplete = null;
         }
 
-        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var height = e.NewSize.Height;
-            var padding = ListAutocomplete.ActualHeight - Math.Min(154, ListAutocomplete.Items.Count * 44);
-
-            //ListAutocomplete.Padding = new Thickness(0, padding, 0, 0);
-            AutocompleteHeader.Margin = new Thickness(0, padding, 0, -height);
-            AutocompleteHeader.Height = height;
-
-            Debug.WriteLine("Autocomplete size changed");
-        }
-
         private void Compress_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedItem is StorageVideo video)

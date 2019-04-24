@@ -109,7 +109,7 @@
                                 </selectors:MessageContentTemplateSelector.VideoTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -156,7 +156,7 @@
                                 </selectors:MessageContentTemplateSelector.DocumentTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -198,7 +198,7 @@
                                 </selectors:MessageContentTemplateSelector.TextTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -240,7 +240,7 @@
                                 </selectors:MessageContentTemplateSelector.DocumentTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -282,7 +282,7 @@
                                 </selectors:MessageContentTemplateSelector.DocumentTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -324,7 +324,11 @@
                     </ContentControl.Clip>
                 </ContentControl>
 
-                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="4"/>
+                <controls:GlyphButton Click="Manage_Click"
+                                      Glyph="&#xE10A;"
+                                      Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                      Style="{StaticResource HeaderGlyphButtonStyle}"
+                                      Grid.Column="4"/>
             </Grid>
         </controls:ContentPageHeader>
     </Grid>

@@ -48,14 +48,14 @@
                 <VisualState x:Name="Unmuted"/>
                 <VisualState x:Name="Muted">
                     <VisualState.Setters>
-                        <Setter Target="UnreadBadge.Background" Value="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
-                        <Setter Target="UnreadLabel.Foreground" Value="{ThemeResource TelegramDialogUnreadLabelMutedBrush}"/>
+                        <Setter Target="UnreadBadge.Background" Value="{ThemeResource ChatUnreadBadgeMutedBrush}"/>
+                        <Setter Target="UnreadLabel.Foreground" Value="{ThemeResource ChatUnreadLabelMutedBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
                 <!--<VisualState x:Name="Failed">
                     <VisualState.Setters>
-                        <Setter Target="UnreadBadge.Background" Value="{ThemeResource TelegramDialogUnreadBadgeFailedBrush}"/>
-                        <Setter Target="UnreadLabel.Foreground" Value="{ThemeResource TelegramDialogUnreadLabelFailedBrush}"/>
+                        <Setter Target="UnreadBadge.Background" Value="{ThemeResource ChatFailedBadgeBrush}"/>
+                        <Setter Target="UnreadLabel.Foreground" Value="{ThemeResource ChatFailedLabelBrush}"/>
                     </VisualState.Setters>
                 </VisualState>-->
             </VisualStateGroup>
@@ -91,7 +91,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Margin="0,0,1,1">
-                <Border Background="{ThemeResource TelegramDialogOnlineBadge}"
+                <Border Background="{ThemeResource ChatOnlineBadgeBrush}"
                         Width="9"
                         Height="9"
                         CornerRadius="4.5"/>
@@ -124,10 +124,9 @@
                            MaxLines="1"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
-                           Style="{StaticResource BaseTextBlockStyle}"/>
+                           Style="{StaticResource BodyTextBlockStyle}"/>
                 <Grid x:Name="VerifiedIcon" Margin="4,0,0,-2" Grid.Column="2">
-                    <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
-                    <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                    <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
                 </Grid>
                 <FontIcon x:Name="MutedIcon"
                           Glyph="&#xE198;"
@@ -141,7 +140,7 @@
                       FontFamily="{StaticResource TelegramThemeFontFamily}"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Bottom"
-                      Foreground="{ThemeResource TelegramDialogGlyphStateBrush}"
+                      Foreground="{ThemeResource ChatLastMessageStateBrush}"
                       FontSize="10"
                       Height="10"
                       Width="18"
@@ -160,14 +159,15 @@
                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                    TextTrimming="CharacterEllipsis"
                    TextWrapping="NoWrap"
+                   VerticalAlignment="Top"
                    MaxLines="1"
-                   Margin="12,0,0,0"
+                   Margin="12,2,0,0"
                    Grid.Column="2"
                    Grid.Row="1">
             <ToolTipService.ToolTip>
                 <ToolTip Opened="ToolTip_Opened"/>
             </ToolTipService.ToolTip>
-            <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="DraftLabel" Foreground="Red"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+            <Run x:Name="FromLabel" Foreground="{ThemeResource ChatFromLabelBrush}"/><Run x:Name="DraftLabel" Foreground="{ThemeResource ChatDraftLabelBrush}"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
         </TextBlock>
 
         <TextBlock x:Name="TypingLabel"
@@ -193,7 +193,7 @@
             <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
         <Border x:Name="UnreadMentionsBadge"
-                Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                Background="{ThemeResource ChatUnreadBadgeBrush}"
                 MinWidth="20"
                 Height="20"
                 CornerRadius="10"
@@ -207,12 +207,12 @@
                        Text="&#xE168;"
                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                        Style="{StaticResource CaptionTextBlockStyle}"
-                       Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                       Foreground="{ThemeResource ChatUnreadLabelBrush}"
                        VerticalAlignment="Center"
                        TextAlignment="Center"/>
         </Border>
         <Border x:Name="UnreadBadge"
-                Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                Background="{ThemeResource ChatUnreadBadgeBrush}"
                 MinWidth="20"
                 Height="20"
                 CornerRadius="10"
@@ -224,13 +224,13 @@
                 Grid.Row="1">
             <TextBlock x:Name="UnreadLabel"
                        Style="{StaticResource CaptionTextBlockStyle}"
-                       Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                       Foreground="{ThemeResource ChatUnreadLabelBrush}"
                        TextAlignment="Center"
                        Margin="6,2,6,0"/>
         </Border>
 
         <Border x:Name="FailedBadge"
-                Background="{ThemeResource TelegramDialogUnreadBadgeFailedBrush}"
+                Background="{ThemeResource ChatFailedBadgeBrush}"
                 MinWidth="20"
                 Height="20"
                 CornerRadius="10"
@@ -244,7 +244,7 @@
                        Text="&#xE171;"
                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                        Style="{StaticResource CaptionTextBlockStyle}"
-                       Foreground="{ThemeResource TelegramDialogUnreadLabelFailedBrush}"
+                       Foreground="{ThemeResource ChatFailedLabelBrush}"
                        VerticalAlignment="Center"
                        TextAlignment="Center"/>
         </Border>

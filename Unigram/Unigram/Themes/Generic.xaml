@@ -24,6 +24,7 @@
                             <Grid x:Name="TogglePaneTopPadding" Padding="{TemplateBinding Padding}" />
                             <local:GlyphButton x:Name="TogglePaneButton"
                                                Grid.Row="1"
+                                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                                Height="{ThemeResource AppBarThemeCompactHeight}"
                                                AutomationProperties.LandmarkType="Navigation"
                                                AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
@@ -1414,7 +1415,8 @@
 
     <Style TargetType="local:ButtonPageHeader">
         <Setter Property="IsTabStop" Value="False"/>
-        <Setter Property="Background" Value="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ButtonPageHeader">
@@ -1424,7 +1426,7 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
                             <local:GlyphButton Glyph="{TemplateBinding Glyph}"
                                                Command="{TemplateBinding Command}"
                                                CommandParameter="{TemplateBinding CommandParameter}"
@@ -1434,7 +1436,6 @@
                                                ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
                                                Grid.Column="1"/>
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -1450,15 +1451,15 @@
     </Style>
 
     <Style TargetType="local:ContentPageHeader">
-        <Setter Property="Background" Value="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
+        <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
                     <Border Background="{TemplateBinding Background}">
                         <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                            <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
                             <Border BorderThickness="0,0,0,1" BorderBrush="{TemplateBinding BorderBrush}" IsHitTestVisible="False"/>
                         </Grid>
@@ -1477,15 +1478,15 @@
 
     <Style TargetType="local:PageHeader">
         <Setter Property="IsTabStop" Value="False"/>
-        <Setter Property="Background" Value="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageHeader">
                     <Border Background="{TemplateBinding Background}">
                         <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
-                            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -1600,8 +1601,6 @@
     <Style TargetType="chats:ChatBottomButton">
         <Setter Property="Foreground" Value="{ThemeResource TelegramForegroundAccentBrush}"/>
         <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
-        <Setter Property="BorderThickness" Value="0,1,0,0"/>
         <Setter Property="Padding" Value="0,0,0,2"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
@@ -1886,7 +1885,6 @@
     </Style>
 
     <Style TargetType="local:MasterDetailView">
-        <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MasterDetailView">

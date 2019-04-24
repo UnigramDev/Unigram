@@ -363,7 +363,7 @@ namespace Unigram.Common
             {
                 SetContactPanel(contact.ContactPanel);
 
-                var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
+                var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
                 contact.ContactPanel.HeaderColor = backgroundBrush.Color;
 
                 var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);

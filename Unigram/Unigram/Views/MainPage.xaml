@@ -31,7 +31,6 @@
 
         <Style TargetType="controls:MasterDetailView">
             <Setter Property="IsTabStop" Value="False"/>
-            <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorBrush}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
@@ -84,7 +83,7 @@
                 <VisualState x:Name="Normal"/>
                 <VisualState x:Name="TitleBar">
                     <VisualState.Setters>
-                        <Setter Target="MasterDetail.BorderBrush" Value="{ThemeResource TelegramTitleBarBackgroundBrush}"/>
+                        <Setter Target="MasterDetail.BorderBrush" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -96,13 +95,20 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Grid x:Name="TitleBarrr" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
+            <Grid x:Name="TitleBarrr" Background="{ThemeResource PageHeaderBackgroundBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-                <TextBlock x:Name="StatusLabel" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight" Margin="6,0,0,0" AutomationProperties.LiveSetting="Assertive" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
+                <TextBlock x:Name="StatusLabel"
+                           VerticalAlignment="Center"
+                           TextLineBounds="TrimToCapHeight"
+                           Margin="6,0,0,0"
+                           AutomationProperties.LiveSetting="Assertive"
+                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Grid.Column="1"/>
             </Grid>
             <controls:ContentPageHeader x:Name="PageHeader" Grid.Row="1">
                 <Grid x:Name="Header">
@@ -111,7 +117,12 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="54,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock x:Name="DefaultHeader"
+                                   Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}"
+                                   VerticalAlignment="Center"
+                                   Margin="54,0,0,0"
+                                   Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                   Style="{StaticResource BaseTextBlockStyle}"/>
 
                         <Button x:Name="ChatsFilters" Content="All chats" Margin="13,0,0,0">
                             <Button.Template>
@@ -155,6 +166,7 @@
                                                           Grid.Column="1"
                                                           FontWeight="SemiBold"
                                                           Margin="41,4,0,4"
+                                                          Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
@@ -222,7 +234,8 @@
                                 AutomationProperties.LandmarkType="Search"
                                 AutomationProperties.Name="{CustomResource Search}"
                                 ToolTipService.ToolTip="{CustomResource Search}"/>
-                            <Button Padding="{StaticResource EllipsisButtonPadding}"
+                            <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                    Padding="{StaticResource EllipsisButtonPadding}"
                                     Style="{StaticResource EllipsisButton}"
                                     AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
                                     ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}">
@@ -305,7 +318,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
+                    <Grid x:Name="ManagePanel" Background="{ThemeResource PageHeaderBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
@@ -379,7 +392,7 @@
                 </Grid>
             </controls:ContentPageHeader>
 
-            <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" Grid.Row="2">
+            <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}" Grid.Row="2">
                  <Grid.ColumnDefinitions>
                  <ColumnDefinition />
                  <ColumnDefinition Width="48"/>
@@ -416,7 +429,7 @@
                                   SelectionChanged="ListView_SelectionChanged">
                             <ListView.Header>
                                 <StackPanel Visibility="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                                    <Border Visibility="{x:Bind ViewModel.Chats.TopChats.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                    <Border Visibility="{x:Bind ViewModel.Chats.TopChats.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                         <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                     </Border>
                                     <ListView SelectionMode="None"
@@ -430,7 +443,7 @@
                                                 <StackPanel Width="72" Padding="0,12" Background="Transparent" ContextRequested="TopChat_ContextRequested">
                                                     <Grid Width="48" Height="48" Margin="12,0">
                                                         <controls:ProfilePicture IsHitTestVisible="False"/>
-                                                        <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                                        <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                                 MinWidth="20"
                                                                 Height="20"
                                                                 CornerRadius="10"
@@ -439,7 +452,7 @@
                                                                 Margin="0,-2,-2,0"
                                                                 Visibility="Collapsed">
                                                             <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                                                       Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                                       Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                                        TextAlignment="Center"
                                                                        Margin="4,2,4,0"/>
                                                         </Border>
@@ -450,7 +463,7 @@
                                                                 HorizontalAlignment="Right"
                                                                 VerticalAlignment="Bottom"
                                                                 Margin="0,0,1,1">
-                                                            <Border Background="{ThemeResource TelegramDialogOnlineBadge}"
+                                                            <Border Background="{ThemeResource ChatOnlineBadgeBrush}"
                                                                     Width="9"
                                                                     Height="9"
                                                                     CornerRadius="4.5"/>
@@ -469,7 +482,7 @@
                                         </ListView.ItemContainerStyle>
                                     </ListView>
 
-                                    <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                    <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
                                             <ColumnDefinition Width="Auto"/>
@@ -501,8 +514,7 @@
                                                     </Grid.ColumnDefinitions>
                                                     <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
                                                     <Grid Margin="4,0,0,-2" Grid.Column="1">
-                                                        <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
-                                                        <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                                                        <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
                                                     </Grid>
                                                 </Grid>
                                                 <TextBlock VerticalAlignment="Top"
@@ -541,7 +553,7 @@
                                     </GroupStyle.HeaderTemplate>
                                     <GroupStyle.HeaderContainerStyle>
                                         <Style TargetType="ListViewHeaderItem">
-                                            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
+                                            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
                                             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                             <Setter Property="Margin" Value="0,0,0,0"/>
@@ -601,7 +613,7 @@
                                         <selectors:DialogStyleSelector.PinnedStyle>
                                             <Style TargetType="ListViewItem">
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
+                                                <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
                                                 <Setter Property="Padding" Value="0"/>
                                                 <Setter Property="MinHeight" Value="0"/>
                                             </Style>
@@ -627,7 +639,7 @@
 
                                                 <TextBlock Text="All chats" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
 
-                                                <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                                <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                         MinWidth="20"
                                                         Height="20"
                                                         CornerRadius="10"
@@ -637,7 +649,7 @@
                                                         Grid.Column="2">
                                                     <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
                                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                                TextAlignment="Center"
                                                                Margin="4,2,4,0"/>
                                                 </Border>
@@ -658,7 +670,7 @@
 
                             <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                  --><!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"--><!--
-                                 <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                 <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                                          MinWidth="20"
                                          Height="20"
                                          CornerRadius="10"
@@ -668,11 +680,11 @@
                                      <TextBlock x:Name="UnreadCount"
                                                 Text="{x:Bind ViewModel.UnreadUnmutedCount, Mode=OneWay}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                                Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                 TextAlignment="Center"
                                                 Margin="4,2,4,0"/>
                                  </Border>
-                                 <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                                 <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                                          BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                                          BorderThickness="1"
                                          CornerRadius="24"
@@ -737,7 +749,7 @@
                                     </GroupStyle.HeaderTemplate>
                                     <GroupStyle.HeaderContainerStyle>
                                         <Style TargetType="ListViewHeaderItem">
-                                            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
+                                            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
                                             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                             <Setter Property="Margin" Value="0,0,0,0"/>
@@ -805,7 +817,7 @@
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.Header>
-                                    <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                    <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                         <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                     </Border>
                                 </ListView.Header>

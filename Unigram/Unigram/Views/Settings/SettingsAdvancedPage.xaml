@@ -34,7 +34,6 @@
             <controls:TablePanel>
                 <StackPanel x:Name="SwitchGroup1"
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                             Margin="0,0,0,0">
                     <controls:BadgeButton Content="Call Settings"
                                           Click="VoIP_Click"/>

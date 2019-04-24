@@ -73,7 +73,7 @@
         <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.PaymentForm.Invoice.IsTest), FallbackValue=Checkout}"/>
 
         <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"
             Grid.Row="1"/>
@@ -82,7 +82,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,48">
-                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" Padding="12" Margin="0,0,0,12">
+                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}" Padding="12" Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -152,11 +152,10 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Grid Background="{ThemeResource TelegramTitleBarBackgroundBrush}"
+        <Grid Background="{ThemeResource PageHeaderBackgroundBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}"
               Grid.Row="3">
             <Button Content="{x:Bind ConvertPay(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), FallbackValue=Empty}" Command="{x:Bind ViewModel.SendCommand}" Style="{StaticResource SendButtonStyle}"/>
-            <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
     </Grid>
 </Page>

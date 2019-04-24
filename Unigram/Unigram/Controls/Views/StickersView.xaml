@@ -423,7 +423,7 @@
                             <Grid x:Name="ToolbarContainer">
                                 <Border x:Name="Separator"/>
                                 <!--
-                                     Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"-->
+                                     Background="{ThemeResource PageSubHeaderBackgroundBrush}"-->
                                 <ListView x:Name="Toolbar"
                                           ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
                                           Height="{ThemeResource AppBarThemeCompactHeight}"
@@ -668,8 +668,6 @@
                                         <TransitionCollection/>
                                     </ListView.ItemContainerTransitions>
                                 </ListView>
-
-                                <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.Row="2"/>
                             </Grid>
                         </Grid>
                     </PivotItem>

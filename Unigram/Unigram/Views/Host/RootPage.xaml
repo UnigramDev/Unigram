@@ -87,7 +87,7 @@
 
                 <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.Column="1"/>
 
-                <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                         Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
                         MinWidth="20"
                         Height="20"
@@ -97,7 +97,7 @@
                         Grid.Column="2">
                     <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
                                Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                TextAlignment="Center"
                                Margin="4,2,4,0"/>
                 </Border>

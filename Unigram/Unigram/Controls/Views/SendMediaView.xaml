@@ -749,18 +749,8 @@
                       IsItemClickEnabled="True"
                       ItemClick="Autocomplete_ItemClick"
                       ContainerContentChanging="OnContainerContentChanging"
+                      VerticalAlignment="Bottom"
                       Grid.RowSpan="2">
-                <ListView.Header>
-                    <Border x:Name="AutocompleteHeader"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Top" Height="1"/>
-                    </Border>
-                </ListView.Header>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
                 <ListView.ItemContainerTransitions>
                     <TransitionCollection/>
                 </ListView.ItemContainerTransitions>

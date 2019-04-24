@@ -207,7 +207,7 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="BottomPanel.Visibility" Value="Collapsed"/>
-                        <Setter Target="TopPanel.Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+                        <Setter Target="TopPanel.Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}"/>
                         <Setter Target="TopPanel.Height" Value="{StaticResource TelegramToolBarHeight}"/>
                         <Setter Target="TopPanel.(Grid.Row)" Value="1"/>
                         <Setter Target="SearchPanel.Margin" Value="0,0,0,8"/>
@@ -225,7 +225,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="TopPanel" Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
+        <Grid x:Name="TopPanel" Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource PageHeaderBackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>

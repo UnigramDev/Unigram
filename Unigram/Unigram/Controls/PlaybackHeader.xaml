@@ -10,7 +10,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+    <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="48"/>
             <ColumnDefinition />
@@ -58,7 +58,5 @@
             Grid.Column="3"
             AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
             ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}"/>
-
-        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
     </Grid>
 </UserControl>
