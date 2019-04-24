@@ -11,7 +11,7 @@
     d:DesignWidth="400"
     AllowDrop="True">
 
-    <Grid Padding="0,8,12,8" Background="Transparent">
+    <Grid Padding="0,8,12,0" Background="Transparent">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Normal"/>
@@ -59,6 +59,19 @@
                     </VisualState.Setters>
                 </VisualState>-->
             </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState x:Name="Default"/>
+                <VisualState x:Name="ThreeLines">
+                    <VisualState.Setters>
+                        <Setter Target="PhotoPanel.Margin" Value="12,0,0,-8"/>
+                        <Setter Target="TitlePanel.Margin" Value="12,-3,0,0"/>
+                        <Setter Target="BriefInfo.Style" Value="{StaticResource CaptionTextBlockStyle}"/>
+                        <Setter Target="BriefInfo.Margin" Value="12,0,0,0"/>
+                        <Setter Target="BriefInfo.TextWrapping" Value="Wrap"/>
+                        <Setter Target="BriefInfo.MaxLines" Value="2"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -69,12 +82,13 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Grid Width="48"
+        <Grid x:Name="PhotoPanel"
+              Width="48"
               Height="48"
-              Margin="12,0,0,0"
+              Margin="12,0,0,-14"
               VerticalAlignment="Top"
               Grid.RowSpan="2"
               Grid.ColumnSpan="2">
@@ -98,7 +112,7 @@
             </Border>
         </Grid>
 
-        <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="2" Grid.ColumnSpan="3">
+        <Grid x:Name="TitlePanel" VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="2" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -184,9 +198,9 @@
         <Border x:Name="PinnedIcon"
                 Width="20"
                 Height="20"
-                VerticalAlignment="Top"
+                VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="8,2,0,-22"
+                Margin="8,0,0,8"
                 Grid.ColumnSpan="2"
                 Grid.Column="3"
                 Grid.Row="1">
@@ -197,9 +211,9 @@
                 MinWidth="20"
                 Height="20"
                 CornerRadius="10"
-                VerticalAlignment="Top"
+                VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="8,1,0,-22"
+                Margin="8,0,0,8"
                 Visibility="Collapsed"
                 Grid.Column="3"
                 Grid.Row="1">
@@ -216,9 +230,9 @@
                 MinWidth="20"
                 Height="20"
                 CornerRadius="10"
-                VerticalAlignment="Top"
+                VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="8,1,0,-22"
+                Margin="8,0,0,8"
                 Visibility="Collapsed"
                 Grid.Column="4"
                 Grid.Row="1">
@@ -234,9 +248,9 @@
                 MinWidth="20"
                 Height="20"
                 CornerRadius="10"
-                VerticalAlignment="Top"
+                VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="8,1,0,-22"
+                Margin="8,0,0,8"
                 Visibility="Collapsed"
                 Grid.Column="4"
                 Grid.Row="1">

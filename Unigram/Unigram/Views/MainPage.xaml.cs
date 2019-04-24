@@ -74,7 +74,8 @@ namespace Unigram.Views
         IHandle<UpdateFile>,
         IHandle<UpdateConnectionState>,
         IHandle<UpdateOption>,
-        IHandle<UpdateCallDialog>
+        IHandle<UpdateCallDialog>,
+        IHandle<UpdateChatListLayout>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
@@ -414,6 +415,11 @@ namespace Unigram.Views
             {
                 CallBanner.Visibility = update.IsOpen ? Visibility.Collapsed : Visibility.Visible;
             });
+        }
+
+        public void Handle(UpdateChatListLayout update)
+        {
+            this.BeginOnUIThread(() => ChatsList.UpdateViewState(MasterDetail.CurrentState));
         }
 
         private void Handle(long chatId, long messageId, Action<Chat> update, Action<ChatCell, Chat> action)

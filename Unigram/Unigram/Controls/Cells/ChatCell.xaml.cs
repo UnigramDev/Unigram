@@ -36,6 +36,8 @@ namespace Unigram.Controls.Cells
 
         private Visual _onlineBadge;
 
+        private bool _expanded = false;
+
         public ChatCell()
         {
             InitializeComponent();
@@ -332,10 +334,20 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateViewState(Chat chat, bool selected, bool compact)
+        public void UpdateViewState(Chat chat, bool selected, bool compact, bool threeLines)
         {
             VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
             VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
+            VisualStateManager.GoToState(this, threeLines ? "ThreeLines" : "Default", false);
+
+            if (threeLines != _expanded && _protoService != null)
+            {
+                _expanded = threeLines;
+
+                DraftLabel.Text = UpdateDraftLabel(chat);
+                FromLabel.Text = UpdateFromLabel(chat);
+                BriefLabel.Text = UpdateBriefLabel(chat);
+            }
         }
 
         private Visibility UpdateIsPinned(bool isPinned, int unreadCount)
@@ -433,7 +445,7 @@ namespace Unigram.Controls.Cells
                 switch (chat.DraftMessage.InputMessageText)
                 {
                     case InputMessageText text:
-                        return $"{Strings.Resources.Draft}: ";
+                        return string.Format(_expanded ? "{0}\r\n" : "{0}: ", Strings.Resources.Draft);
                 }
             }
 
@@ -467,6 +479,7 @@ namespace Unigram.Controls.Cells
                 return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, null, message));
             }
 
+            var format = _expanded ? "{0}\r\n" : "{0}: ";
             var result = string.Empty;
 
             if (ShowFrom(chat, message))
@@ -475,7 +488,7 @@ namespace Unigram.Controls.Cells
                 {
                     if (!(chat.Type is ChatTypePrivate priv && priv.UserId == message.SenderUserId) && !message.IsChannelPost)
                     {
-                        result = $"{Strings.Resources.FromYou}: ";
+                        result = string.Format(format, Strings.Resources.FromYou);
                     }
                 }
                 else
@@ -485,23 +498,23 @@ namespace Unigram.Controls.Cells
                     {
                         if (!string.IsNullOrEmpty(from.FirstName))
                         {
-                            result = $"{from.FirstName.Trim()}: ";
+                            result = string.Format(format, from.FirstName.Trim());
                         }
                         else if (!string.IsNullOrEmpty(from.LastName))
                         {
-                            result = $"{from.LastName.Trim()}: ";
+                            result = string.Format(format, from.LastName.Trim());
                         }
                         else if (!string.IsNullOrEmpty(from.Username))
                         {
-                            result = $"{from.Username.Trim()}: ";
+                            result = string.Format(format, from.Username.Trim());
                         }
                         else if (from.Type is UserTypeDeleted)
                         {
-                            result = $"{Strings.Resources.HiddenName}: ";
+                            result = string.Format(format, Strings.Resources.HiddenName);
                         }
                         else
                         {
-                            result = $"{from.Id}: ";
+                            result = string.Format(format, from.Id);
                         }
                     }
                 }

@@ -500,6 +500,7 @@
     <Compile Include="Services\Stripe\StripeToken.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
+    <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
     <Compile Include="Services\Updates\UpdateWallpaper.cs" />

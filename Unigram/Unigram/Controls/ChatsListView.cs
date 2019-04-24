@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Cells;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -36,7 +37,7 @@ namespace Unigram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(args.Item as Chat, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                content.UpdateViewState(args.Item as Chat, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
                 content.UpdateChat(ViewModel.ProtoService, args.Item as Chat);
                 args.Handled = true;
             }
@@ -72,7 +73,7 @@ namespace Unigram.Controls
                 var content = container.ContentTemplateRoot as ChatCell;
                 if (content != null)
                 {
-                    content.UpdateViewState(ItemFromContainer(container) as Chat, container.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                    content.UpdateViewState(ItemFromContainer(container) as Chat, container.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
                 }
             }
         }
@@ -108,7 +109,7 @@ namespace Unigram.Controls
             var content = ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact);
+                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact, SettingsService.Current.UseThreeLinesLayout);
             }
         }
     }
