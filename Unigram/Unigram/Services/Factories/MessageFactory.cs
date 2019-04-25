@@ -174,7 +174,7 @@ namespace Unigram.Services.Factories
         public async Task<InputMessageFactory> CreateDocumentAsync(StorageFile file)
         {
             var generated = await file.ToGeneratedAsync();
-            var thumbnail = default(InputThumbnail);
+            var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);
 
             if (file.FileType.Equals(".webp", StringComparison.OrdinalIgnoreCase))
             {
@@ -186,12 +186,17 @@ namespace Unigram.Services.Factories
                     var width = webp.PixelWidth;
                     var height = webp.PixelHeight;
 
-                    return new InputMessageFactory { InputFile = generated, Type = new FileTypeSticker(), Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, thumbnail, width, height) };
+                    return new InputMessageFactory { InputFile = generated, Type = new FileTypeSticker(), Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height) };
                 }
                 catch
                 {
                     // Not really a sticker, go on sending as a file
                 }
+            }
+            else if (file.FileType.Equals(".mp3", StringComparison.OrdinalIgnoreCase))
+            {
+                var props = await file.Properties.GetMusicPropertiesAsync();
+                return new InputMessageFactory { InputFile = generated, Type = new FileTypeAudio(), Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, (int)props.Duration.TotalSeconds, props.Title, props.Artist, caption) };
             }
 
             return new InputMessageFactory { InputFile = generated, Type = new FileTypeDocument(), Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption) };
