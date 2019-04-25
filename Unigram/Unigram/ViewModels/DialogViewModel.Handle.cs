@@ -344,7 +344,11 @@ namespace Unigram.ViewModels
                 var user = CacheService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
-                    BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(_chat, user, CacheService.GetUserFull(user.Id), false, _accessToken != null));
+                    var fullInfo = CacheService.GetUserFull(user.Id);
+                    if (fullInfo != null)
+                    {
+                        BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(_chat, user, fullInfo, false, _accessToken != null));
+                    }
                 }
             }
         }
