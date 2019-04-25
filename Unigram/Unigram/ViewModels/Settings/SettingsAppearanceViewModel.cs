@@ -8,6 +8,8 @@ using Windows.UI.Xaml;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Foundation.Metadata;
+using Template10.Services.NavigationService;
+using Unigram.Services.Updates;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -19,6 +21,19 @@ namespace Unigram.ViewModels.Settings
         public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            UseDefaultLayout = !Settings.UseThreeLinesLayout;
+            UseThreeLinesLayout = Settings.UseThreeLinesLayout;
+        }
+
+        public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
+        {
+            if (UseThreeLinesLayout != Settings.UseThreeLinesLayout)
+            {
+                Settings.UseThreeLinesLayout = UseThreeLinesLayout;
+                Aggregator.Publish(new UpdateChatListLayout(UseThreeLinesLayout));
+            }
+
+            return base.OnNavigatingFromAsync(args);
         }
 
         public double FontSize
@@ -151,5 +166,23 @@ namespace Unigram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
+
+        #region Layouts
+
+        private bool _useDefaultLayout;
+        public bool UseDefaultLayout
+        {
+            get { return _useDefaultLayout; }
+            set { Set(ref _useDefaultLayout, value); }
+        }
+
+        private bool _useThreeLinesLayout;
+        public bool UseThreeLinesLayout
+        {
+            get { return _useThreeLinesLayout; }
+            set { Set(ref _useThreeLinesLayout, value); }
+        }
+
+        #endregion
     }
 }

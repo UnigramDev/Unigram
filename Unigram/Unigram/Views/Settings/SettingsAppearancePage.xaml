@@ -102,7 +102,84 @@
                               Click="Switch_Click"
                               IsChecked="{x:Bind ViewModel.IsSystemTheme, Mode=TwoWay}"
                               Content="Use system accent color"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,0"/>
+                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,0"/>
+
+                <StackPanel>
+                    <TextBlock Text="{CustomResource ChatList}" Margin="12,18,12,12" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+
+                    <controls:WrapPanel Margin="12,0" Orientation="Horizontal">
+                        <StackPanel Margin="0,0,12,12">
+                            <RadioButton IsChecked="{x:Bind ViewModel.UseDefaultLayout, Mode=TwoWay}" GroupName="Layout" Style="{StaticResource ChatListRadioButtonStyle}">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundLowBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
+                                        <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
+                                        <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
+                                    </Grid>
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundHighBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
+                                        <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
+                                        <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
+                                    </Grid>
+                                </StackPanel>
+                            </RadioButton>
+                            <TextBlock Text="{CustomResource ChatListDefault}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,12">
+                            <RadioButton IsChecked="{x:Bind ViewModel.UseThreeLinesLayout, Mode=TwoWay}" GroupName="Layout" Style="{StaticResource ChatListRadioButtonStyle}">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundLowBrush}" Margin="0,0,4,0" Grid.RowSpan="3"/>
+                                        <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="1" RadiusY="1" Margin="0,0,24,0" Grid.Column="1"/>
+                                        <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="1" RadiusY="1" Grid.Column="1" Grid.Row="1"/>
+                                        <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="1" RadiusY="1" Grid.Column="1" Grid.Row="2"/>
+                                    </Grid>
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundHighBrush}" Margin="0,0,4,0" Grid.RowSpan="3"/>
+                                        <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="1" RadiusY="1" Margin="0,0,24,0" Grid.Column="1"/>
+                                        <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="1" RadiusY="1" Grid.Column="1" Grid.Row="1"/>
+                                        <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="1" RadiusY="1" Grid.Column="1" Grid.Row="2"/>
+                                    </Grid>
+                                </StackPanel>
+                            </RadioButton>
+                            <TextBlock Text="{CustomResource ChatListExpanded}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </controls:WrapPanel>
                 </StackPanel>
 
                 <StackPanel>
