@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
@@ -57,6 +58,11 @@ namespace Unigram.Controls.Messages.Content
             if (document.Thumbnail != null)
             {
                 UpdateThumbnail(message, document.Thumbnail.Photo);
+            }
+            else
+            {
+                Texture.Background = null;
+                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
             UpdateFile(message, document.DocumentValue);
@@ -141,14 +147,15 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                //if (Texture.Source == null)
-                //{
-                //    Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
-                //}
+                Texture.Background = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = 48, DecodePixelHeight = 48 } };
+                Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
+
+                Texture.Background = null;
+                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 
