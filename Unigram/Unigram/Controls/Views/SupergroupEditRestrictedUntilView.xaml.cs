@@ -38,6 +38,9 @@ namespace Unigram.Controls.Views
             Title = Strings.Resources.UserRestrictionsUntil;
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.UserRestrictionsUntilForever;
+            CloseButtonText = Strings.Resources.Cancel;
+
+            DefaultButton = ContentDialogButton.Primary;
         }
 
         public DateTime Value
