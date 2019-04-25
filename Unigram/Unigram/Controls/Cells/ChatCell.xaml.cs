@@ -48,6 +48,11 @@ namespace Unigram.Controls.Cells
             _onlineBadge.Scale = new System.Numerics.Vector3(0);
         }
 
+        public void UpdateService(IProtoService protoService)
+        {
+            _protoService = protoService;
+        }
+
         public void UpdateChat(IProtoService protoService, Chat chat)
         {
             _protoService = protoService;
@@ -816,6 +821,34 @@ namespace Unigram.Controls.Cells
             }
 
             base.OnDrop(e);
+        }
+
+        public void Mockup(ChatType type, int color, string title, string from, string message, bool sent, int unread, bool muted, bool pinned, DateTime date, bool online = false)
+        {
+            TitleLabel.Text = title;
+            Photo.Source = type is ChatTypeSupergroup ? PlaceholderHelper.GetNameForChat(title, 48, color) : PlaceholderHelper.GetNameForUser(title, 48, color);
+            //UpdateChatType(chat);
+            TypeIcon.Text = type is ChatTypeSupergroup ? Icons.Group : string.Empty;
+            TypeIcon.Visibility = type is ChatTypeSupergroup ? Visibility.Visible : Visibility.Collapsed;
+
+            MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
+            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
+
+            VerifiedIcon.Visibility = Visibility.Collapsed;
+
+            PinnedIcon.Visibility = pinned ? Visibility.Visible : Visibility.Collapsed;
+            UnreadBadge.Visibility = unread > 0 ? Visibility.Visible : Visibility.Collapsed;
+            UnreadLabel.Text = unread.ToString();
+            UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+
+            DraftLabel.Text = string.Empty;
+            FromLabel.Text = from;
+            BriefLabel.Text = message;
+            TimeLabel.Text = BindConvert.Current.ShortTime.Format(date);
+            StateIcon.Glyph = sent ? "\uE601" : string.Empty;
+
+            _onlineBadge.Opacity = online ? 1 : 0;
+            _onlineBadge.Scale = new System.Numerics.Vector3(online ? 1 : 0);
         }
     }
 

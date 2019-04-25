@@ -37,6 +37,7 @@ namespace Unigram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null)
             {
+                content.UpdateService(ViewModel.ProtoService);
                 content.UpdateViewState(args.Item as Chat, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
                 content.UpdateChat(ViewModel.ProtoService, args.Item as Chat);
                 args.Handled = true;
