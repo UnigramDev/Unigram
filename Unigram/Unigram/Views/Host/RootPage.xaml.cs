@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Template10.Common;
@@ -80,6 +81,12 @@ namespace Unigram.Views.Host
             InitializeLocalization();
 
             Navigation.Content = _navigationService.Frame;
+
+            var shadow = DropShadowEx.Attach(ThemeShadow, 20, 0.25f);
+            ThemeShadow.SizeChanged += (s, args) =>
+            {
+                shadow.Size = args.NewSize.ToVector2();
+            };
         }
 
         public void UpdateComponent()
@@ -495,6 +502,35 @@ namespace Unigram.Views.Host
         }
 
         #endregion
+
+        public void ShowEditor(ThemeCustomInfo theme)
+        {
+            var resize = ThemePage == null;
+
+            FindName("ThemePage");
+            ThemePage.Load(theme);
+
+            if (resize)
+            {
+                MainColumn.Width = new GridLength(ActualWidth, GridUnitType.Pixel);
+
+                var view = ApplicationView.GetForCurrentView();
+                var size = view.VisibleBounds;
+
+                view.TryResizeView(new Size(size.Width + 320, size.Height));
+                ApplicationView.PreferredLaunchViewSize = new Size(size.Width, size.Height);
+
+                MainColumn.Width = new GridLength(1, GridUnitType.Star);
+            }
+        }
+
+        public void HideEditor()
+        {
+            UnloadObject(ThemePage);
+
+            var view = ApplicationView.GetForCurrentView();
+            view.TryResizeView(ApplicationView.PreferredLaunchViewSize);
+        }
     }
 
     public interface IRootContentPage

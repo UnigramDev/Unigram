@@ -1885,45 +1885,47 @@
     </Style>
 
     <Style TargetType="local:MasterDetailView">
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MasterDetailView">
-                    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="AdaptiveStates">
-                                <VisualState x:Name="FilledState">
-                                    <VisualState.StateTriggers>
-                                        <AdaptiveTrigger MinWindowWidth="820"/>
-                                    </VisualState.StateTriggers>
-                                    <VisualState.Setters>
-                                        <Setter Target="MasterColumn.Width" Value="260*" />
-                                        <Setter Target="DetailColumn.Width" Value="540*" />
-                                        <Setter Target="MasterColumn.MinWidth" Value="260" />
-                                        <Setter Target="MasterColumn.MaxWidth" Value="540" />
-                                        <Setter Target="DetailPresenter.(Grid.Column)" Value="1" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="NarrowState">
-                                    <VisualState.StateTriggers>
-                                        <AdaptiveTrigger MinWindowWidth="0"/>
-                                    </VisualState.StateTriggers>
-                                </VisualState>
-                                <VisualState x:Name="ResetState"/>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition x:Name="MasterColumn"/>
-                            <ColumnDefinition x:Name="DetailColumn" Width="0"/>
-                        </Grid.ColumnDefinitions>
+                    <local:MasterDetailPanel x:Name="AdaptivePanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <!--<Border x:Name="DropShadow" Loaded="DropShadow_Loaded"/>-->
+                            <chats:ChatBackgroundPresenter Opacity="{TemplateBinding BackgroundOpacity}"/>
+                            <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}">
+                                <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
+                            </Grid>
+                            <!--<Grid.RowDefinitions>
+                                     <RowDefinition Height="Auto"/>
+                                     <RowDefinition/>
+                                     </Grid.RowDefinitions>
+                                     <ContentControl Content="{TemplateBinding PageHeader}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                                     </Grid>-->
+                        </Grid>
                         <ContentPresenter x:Name="MasterFrame"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          HorizontalContentAlignment="Stretch"
-                                          VerticalContentAlignment="Stretch"/>
-                        <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}"/>
-                    </Grid>
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              HorizontalContentAlignment="Stretch"
+                                              VerticalContentAlignment="Stretch"/>
+
+                        <UserControl Canvas.ZIndex="2">
+                            <Border x:Name="Grip" Width="12" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,6,0">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup>
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Target="Grip.Background" Value="{ThemeResource ScrollBarThumbBackground}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Border>
+                        </UserControl>
+                    </local:MasterDetailPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

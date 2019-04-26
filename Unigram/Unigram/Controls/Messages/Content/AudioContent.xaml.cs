@@ -32,6 +32,11 @@ namespace Unigram.Controls.Messages.Content
             UpdateMessage(message);
         }
 
+        public AudioContent()
+        {
+            InitializeComponent();
+        }
+
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
@@ -54,6 +59,14 @@ namespace Unigram.Controls.Messages.Content
             }
 
             UpdateFile(message, audio.AudioValue);
+        }
+
+        public void Mockup(MessageAudio audio)
+        {
+            Title.Text = audio.Audio.GetTitle();
+            Subtitle.Text = audio.Audio.GetDuration() + ", " + FileSizeConverter.Convert(4190000);
+
+            Button.SetGlyph(Icons.Download, false);
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -177,7 +190,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var audio = GetContent(_message.Content);
+            var audio = GetContent(_message?.Content);
             if (audio == null)
             {
                 return;

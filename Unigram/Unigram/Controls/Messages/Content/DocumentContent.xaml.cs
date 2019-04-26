@@ -29,6 +29,7 @@ namespace Unigram.Controls.Messages.Content
         Ttl,
         Play,
         Pause,
+        Theme,
     }
 
     public sealed partial class DocumentContent : Grid, IContentWithFile
@@ -133,13 +134,15 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
+                var theme = document.FileName.EndsWith(".unigram-theme");
+
                 //Button.Glyph = Icons.Document;
-                Button.SetGlyph(Icons.Document, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
+                Button.SetGlyph(theme ? Icons.Theme : Icons.Document, _oldState != MessageContentState.None && _oldState != (theme ? MessageContentState.Theme : MessageContentState.Open));
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
 
-                _oldState = MessageContentState.Open;
+                _oldState = theme ? MessageContentState.Theme : MessageContentState.Open;
             }
         }
 

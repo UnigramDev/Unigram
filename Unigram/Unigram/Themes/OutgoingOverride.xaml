@@ -12,7 +12,6 @@
     <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderOutColor}" />
     <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundOutColor}" />
     <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundOutColor}" />
-    <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="{ThemeResource MessageHyperlinkForegroundOutColor}" />
     <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MessageOverlayBackgroundOutColor}" />
     <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="{ThemeResource MessageCallForegroundOutColor}" />
     <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="{ThemeResource MessageCallMissedForegroundOutColor}" />

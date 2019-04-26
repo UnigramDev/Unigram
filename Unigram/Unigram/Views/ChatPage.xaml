@@ -412,19 +412,19 @@
                                     <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                                         <TextBlock x:Name="Subtitle"
                                                    Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
-                                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                   Foreground="{ThemeResource PageHeaderDisabledBrush}"
                                                    Style="{StaticResource CaptionTextBlockStyle}"
                                                    TextWrapping="NoWrap"
                                                    TextTrimming="CharacterEllipsis"/>
                                         <StackPanel x:Name="ChatActionPanel" Orientation="Horizontal" Visibility="Collapsed">
                                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                                       Fill="{ThemeResource SystemAccentColor}"
+                                                                       Fill="{ThemeResource PageHeaderHighlightBrush}"
                                                                        VerticalAlignment="Bottom"
                                                                        Margin="0,0,0,-2"/>
                                             <TextBlock x:Name="ChatActionLabel"
                                                        TextWrapping="NoWrap"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                       Foreground="{ThemeResource PageHeaderHighlightBrush}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"
                                                        VerticalAlignment="Top"/>
                                         </StackPanel>

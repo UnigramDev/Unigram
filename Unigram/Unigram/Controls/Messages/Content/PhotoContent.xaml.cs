@@ -32,6 +32,11 @@ namespace Unigram.Controls.Messages.Content
             UpdateMessage(message);
         }
 
+        public PhotoContent()
+        {
+            InitializeComponent();
+        }
+
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
@@ -57,6 +62,18 @@ namespace Unigram.Controls.Messages.Content
             }
 
             UpdateFile(message, big.Photo);
+        }
+
+        public void Mockup(MessagePhoto photo)
+        {
+            var big = photo.Photo.GetBig();
+
+            Constraint = photo;
+            Background = null;
+            Texture.Source = new BitmapImage(new Uri(big.Photo.Local.Path));
+
+            Overlay.Opacity = 0;
+            Button.Opacity = 0;
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -218,7 +235,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var photo = GetContent(_message.Content);
+            var photo = GetContent(_message?.Content);
             if (photo == null)
             {
                 return;

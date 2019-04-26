@@ -908,17 +908,20 @@ namespace Unigram.Controls.Messages
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
+                Message.FlowDirection = FlowDirection.RightToLeft;
                 adjust = true;
             }
             else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
+                Message.FlowDirection = FlowDirection.LeftToRight;
                 adjust = true;
             }
             else
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Right;
+                Message.FlowDirection = ApiInfo.FlowDirection;
                 adjust = false;
             }
 
@@ -1140,10 +1143,9 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
-        public void Mockup(string message, bool outgoing, DateTime date)
+        public void Mockup(string message, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
-            ContentPanel.CornerRadius = new CornerRadius(15);
-            Margin = new Thickness(0, 2, 0, 2);
+            UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Collapsed;
 
@@ -1170,10 +1172,9 @@ namespace Unigram.Controls.Messages
             UpdateMockup();
         }
 
-        public void Mockup(string message, string sender, string reply, bool outgoing, DateTime date)
+        public void Mockup(string message, string sender, string reply, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
-            ContentPanel.CornerRadius = new CornerRadius(15);
-            Margin = new Thickness(0, 2, 0, 2);
+            UpdateMockup(outgoing, first, last);
 
             Header.Visibility = Visibility.Visible;
             HeaderLabel.Visibility = Visibility.Collapsed;
@@ -1207,11 +1208,132 @@ namespace Unigram.Controls.Messages
             UpdateMockup();
         }
 
+        public void Mockup(MessageContent content, bool outgoing, DateTime date, bool first = true, bool last = true)
+        {
+            UpdateMockup(outgoing, first, last);
+
+            Header.Visibility = Visibility.Collapsed;
+            Message.Visibility = Visibility.Collapsed;
+
+            Footer.Mockup(outgoing, date);
+
+            Media.Margin = new Thickness(0, 4, 0, 2);
+            Placeholder.Visibility = Visibility.Collapsed;
+            FooterToNormal();
+            Grid.SetRow(Footer, 3);
+            Grid.SetRow(Message, 2);
+
+            if (content is MessageVoiceNote voiceNote)
+            {
+                var presenter = new VoiceNoteContent();
+                presenter.Mockup(voiceNote);
+
+                Media.Child = presenter;
+            }
+            else if (content is MessageAudio audio)
+            {
+                var presenter = new AudioContent();
+                presenter.Mockup(audio);
+
+                Media.Child = presenter;
+            }
+
+            Span.Inlines.Clear();
+
+            UpdateMockup();
+        }
+
+        public void Mockup(MessageContent content, string caption, bool outgoing, DateTime date, bool first = true, bool last = true)
+        {
+            UpdateMockup(outgoing, first, last);
+
+            Header.Visibility = Visibility.Collapsed;
+
+            Footer.Mockup(outgoing, date);
+
+            Media.Margin = new Thickness(-10, -4, -10, 4);
+            Placeholder.Visibility = Visibility.Visible;
+            FooterToNormal();
+            Grid.SetRow(Footer, 4);
+            Grid.SetRow(Message, 4);
+
+            if (content is MessagePhoto photo)
+            {
+                var presenter = new PhotoContent();
+                presenter.Mockup(photo);
+
+                Media.Child = presenter;
+            }
+
+            Span.Inlines.Clear();
+            Span.Inlines.Add(new Run { Text = caption });
+
+            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(caption))
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
+            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(caption))
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
+
+            UpdateMockup();
+        }
+
         public void UpdateMockup()
         {
             Span.FontSize = (double)App.Current.Resources["MessageFontSize"];
         }
 
+        private void UpdateMockup(bool outgoing, bool first, bool last)
+        {
+            var topLeft = 15d;
+            var topRight = 15d;
+            var bottomRight = 15d;
+            var bottomLeft = 15d;
+
+            if (outgoing)
+            {
+                if (first && last)
+                {
+                }
+                else if (first)
+                {
+                    bottomRight = 4;
+                }
+                else if (last)
+                {
+                    topRight = 4;
+                }
+                else
+                {
+                    topRight = 4;
+                    bottomRight = 4;
+                }
+            }
+            else
+            {
+                if (first && last)
+                {
+                }
+                else if (first)
+                {
+                    bottomLeft = 4;
+                }
+                else if (last)
+                {
+                    topLeft = 4;
+                }
+                else
+                {
+                    topLeft = 4;
+                    bottomLeft = 4;
+                }
+            }
+
+            ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
+            Margin = new Thickness(outgoing ? 50 : 12, first ? 2 : 1, outgoing ? 12 : 50, last ? 2 : 1);
+        }
 
 
 

@@ -58,7 +58,7 @@ namespace Unigram.Controls.Chats
 
         private void OnOpacityChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (Opacity > 0 && _settings.Wallpaper.IsMotionEnabled && _parallaxEffect.IsSupported)
+            if (Opacity > 0 && _settings != null && _settings.Wallpaper.IsMotionEnabled && _parallaxEffect.IsSupported)
             {
                 _parallaxEffect.ValueChanged += OnParallaxChanged;
             }
@@ -77,7 +77,7 @@ namespace Unigram.Controls.Chats
         {
             _motionVisual.Size = e.NewSize.ToVector2();
 
-            if (_settings.Wallpaper.IsMotionEnabled && _parallaxEffect.IsSupported)
+            if (_settings != null && _settings.Wallpaper.IsMotionEnabled && _parallaxEffect.IsSupported)
             {
                 _motionVisual.CenterPoint = new Vector3((float)e.NewSize.Width / 2, (float)e.NewSize.Height / 2, 0);
                 _motionVisual.Scale = new Vector3(_parallaxEffect.getScale(e.NewSize.Width, e.NewSize.Height));

@@ -8,21 +8,51 @@ using Windows.UI.Xaml;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Foundation.Metadata;
+using Unigram.Controls;
+using Windows.UI.Xaml.Controls;
+using Unigram.Views.Settings;
+using Unigram.Collections;
+using Windows.UI.Xaml.Navigation;
+using Telegram.Td;
+using Telegram.Td.Api;
+using Windows.Storage;
 using Template10.Services.NavigationService;
 using Unigram.Services.Updates;
+using Unigram.Controls.Views;
+using Template10.Common;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsAppearanceViewModel : TLViewModelBase
     {
+        private readonly IThemeService _themeService;
+
         private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
         private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
 
-        public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _themeService = themeService;
+
+            Items = new MvxObservableCollection<ThemeInfoBase>();
+
             UseDefaultLayout = !Settings.UseThreeLinesLayout;
             UseThreeLinesLayout = Settings.UseThreeLinesLayout;
+
+            NewThemeCommand = new RelayCommand(NewThemeExecute);
+
+            ThemeCreateCommand = new RelayCommand<ThemeInfoBase>(ThemeCreateExecute);
+            ThemeShareCommand = new RelayCommand<ThemeCustomInfo>(ThemeShareExecute);
+            ThemeEditCommand = new RelayCommand<ThemeCustomInfo>(ThemeEditExecute);
+            ThemeDeleteCommand = new RelayCommand<ThemeCustomInfo>(ThemeDeleteExecute);
+        }
+
+        public MvxObservableCollection<ThemeInfoBase> Items { get; private set; }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            Items.ReplaceWith(await _themeService.GetThemesAsync());
         }
 
         public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
@@ -60,55 +90,27 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public TelegramTheme GetRawTheme()
+        public async Task SetThemeAsync(ThemeInfoBase info)
         {
-            var theme = Settings.Appearance.RequestedTheme;
-            if (theme.HasFlag(TelegramTheme.Brand))
-            {
-                return theme & ~TelegramTheme.Brand;
-            }
+            await _themeService.SetThemeAsync(info);
+            RaisePropertyChanged(() => IsNightModeAvailable);
 
-            return theme;
+            Items.ReplaceWith(await _themeService.GetThemesAsync());
         }
 
-        public ElementTheme GetElementTheme()
-        {
-            var theme = Settings.Appearance.RequestedTheme;
-            return theme.HasFlag(TelegramTheme.Default)
-                ? ElementTheme.Default
-                : theme.HasFlag(TelegramTheme.Dark)
-                ? ElementTheme.Dark
-                : ElementTheme.Light;
-        }
-
-        public int RequestedTheme
-        {
-            get
-            {
-                return (int)GetRawTheme();
-            }
-            set
-            {
-                Settings.Appearance.RequestedTheme = IsSystemTheme ? (TelegramTheme)value : ((TelegramTheme)value | TelegramTheme.Brand);
-                RaisePropertyChanged();
-                RaisePropertyChanged(() => IsSystemTheme);
-                RaisePropertyChanged(() => IsNightModeAvailable);
-            }
-        }
-
-        public bool IsSystemTheme
-        {
-            get
-            {
-                return !Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand);
-            }
-            set
-            {
-                Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
-                RaisePropertyChanged();
-                RaisePropertyChanged(() => RequestedTheme);
-            }
-        }
+        //public bool IsSystemTheme
+        //{
+        //    get
+        //    {
+        //        return !Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Brand);
+        //    }
+        //    set
+        //    {
+        //        Settings.Appearance.RequestedTheme = value ? GetRawTheme() : (GetRawTheme() | TelegramTheme.Brand);
+        //        RaisePropertyChanged();
+        //        RaisePropertyChanged(() => RequestedTheme);
+        //    }
+        //}
 
         public bool IsNightModeAvailable
         {
@@ -166,6 +168,113 @@ namespace Unigram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
+
+
+
+        public RelayCommand NewThemeCommand { get; }
+        private void NewThemeExecute()
+        {
+            var existing = Items.FirstOrDefault(x =>
+            {
+                if (x is ThemeCustomInfo custom)
+                {
+                    return string.Equals(SettingsService.Current.Appearance.RequestedThemePath, custom.Path, StringComparison.OrdinalIgnoreCase);
+                }
+                else
+                {
+                    return SettingsService.Current.Appearance.RequestedTheme == x.Parent;
+                }
+            });
+
+            if (existing != null)
+            {
+                ThemeCreateExecute(existing);
+            }
+        }
+
+        #region Themes
+
+        public RelayCommand<ThemeInfoBase> ThemeCreateCommand { get; }
+        private async void ThemeCreateExecute(ThemeInfoBase theme)
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var input = new InputDialog();
+            input.Title = Strings.Resources.NewTheme;
+            input.Header = Strings.Resources.EnterThemeName;
+            input.Text = $"{theme.Name} #2";
+            input.IsPrimaryButtonEnabled = true;
+            input.IsSecondaryButtonEnabled = true;
+            input.PrimaryButtonText = Strings.Resources.OK;
+            input.SecondaryButtonText = Strings.Resources.Cancel;
+
+            confirm = await input.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var preparing = new ThemeCustomInfo { Name = input.Text, Parent = theme.Parent };
+            var fileName = Client.Execute(new CleanFileName(theme.Name)) as Text;
+
+            if (theme is ThemeCustomInfo custom)
+            {
+                foreach (var item in custom.Values)
+                {
+                    preparing.Values[item.Key] = item.Value;
+                }
+            }
+
+            var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("themes\\" + fileName.TextValue + ".unigram-theme", CreationCollisionOption.GenerateUniqueName);
+            await _themeService.SerializeAsync(file, preparing);
+
+            preparing.Path = file.Path;
+
+            ThemeEditExecute(preparing);
+        }
+
+        public RelayCommand<ThemeCustomInfo> ThemeShareCommand { get; }
+        private async void ThemeShareExecute(ThemeCustomInfo theme)
+        {
+            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, null));
+        }
+
+        public RelayCommand<ThemeCustomInfo> ThemeEditCommand { get; }
+        private async void ThemeEditExecute(ThemeCustomInfo theme)
+        {
+            await SetThemeAsync(theme);
+
+            //NavigationService.Navigate(typeof(SettingsThemePage), theme.Path);
+            if (Window.Current.Content is Views.Host.RootPage root)
+            {
+                root.ShowEditor(theme);
+            }
+        }
+
+        public RelayCommand<ThemeCustomInfo> ThemeDeleteCommand { get; }
+        private async void ThemeDeleteExecute(ThemeCustomInfo theme)
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            Items.Remove(theme);
+
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(theme.Path);
+                await file.DeleteAsync();
+            }
+            catch { }
+        }
+
+        #endregion
 
         #region Layouts
 

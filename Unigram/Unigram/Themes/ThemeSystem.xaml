@@ -10,6 +10,7 @@
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}"/>
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
+            <StaticResource x:Key="PageHeaderDisabledBrush" ResourceKey="SystemControlForegroundBaseMediumBrush"/>
 
             <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
@@ -65,9 +66,6 @@
             <Color x:Key="MessageMediaBackgroundColor">#007EE5</Color>
             <StaticResource x:Key="MessageMediaBackgroundOutColor" ResourceKey="SystemAccentColor"/>
 
-            <Color x:Key="MessageHyperlinkForegroundColor">#70BAF5</Color>
-            <Color x:Key="MessageHyperlinkForegroundOutColor">#83CAFF</Color>
-
             <Color x:Key="MessageOverlayBackgroundColor">#54000000</Color>
             <Color x:Key="MessageOverlayBackgroundOutColor">#54000000</Color>
 
@@ -80,6 +78,31 @@
 
 
             <!-- Begin Windows.UI.Xaml.Controls.dll resources - DO NOT MANUALLY EDIT BELOW THIS LINE! -->
+            <Color x:Key="SystemAltHighColor">#FF000000</Color>
+            <Color x:Key="SystemAltLowColor">#33000000</Color>
+            <Color x:Key="SystemAltMediumColor">#99000000</Color>
+            <Color x:Key="SystemAltMediumHighColor">#CC000000</Color>
+            <Color x:Key="SystemAltMediumLowColor">#66000000</Color>
+            <Color x:Key="SystemBaseHighColor">#FFFFFFFF</Color>
+            <Color x:Key="SystemBaseLowColor">#33FFFFFF</Color>
+            <Color x:Key="SystemBaseMediumColor">#99FFFFFF</Color>
+            <Color x:Key="SystemBaseMediumHighColor">#CCFFFFFF</Color>
+            <Color x:Key="SystemBaseMediumLowColor">#66FFFFFF</Color>
+            <Color x:Key="SystemChromeAltLowColor">#FFF2F2F2</Color>
+            <Color x:Key="SystemChromeBlackHighColor">#FF000000</Color>
+            <Color x:Key="SystemChromeBlackLowColor">#33000000</Color>
+            <Color x:Key="SystemChromeBlackMediumLowColor">#66000000</Color>
+            <Color x:Key="SystemChromeBlackMediumColor">#CC000000</Color>
+            <Color x:Key="SystemChromeDisabledHighColor">#FF333333</Color>
+            <Color x:Key="SystemChromeDisabledLowColor">#FF858585</Color>
+            <Color x:Key="SystemChromeHighColor">#FF767676</Color>
+            <Color x:Key="SystemChromeLowColor">#FF171717</Color>
+            <Color x:Key="SystemChromeMediumColor">#FF1F1F1F</Color>
+            <Color x:Key="SystemChromeMediumLowColor">#FF2B2B2B</Color>
+            <Color x:Key="SystemChromeWhiteColor">#FFFFFFFF</Color>
+            <Color x:Key="SystemChromeGrayColor">#FF767676</Color>
+            <Color x:Key="SystemListLowColor">#19FFFFFF</Color>
+            <Color x:Key="SystemListMediumColor">#33FFFFFF</Color>
             <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltMediumHighBrush" Color="{StaticResource SystemAltMediumHighColor}" />
@@ -462,26 +485,8 @@
             <StaticResource x:Key="ScrollBarPanningThumbBackgroundColor" ResourceKey="SystemChromeDisabledLowColor" />
             <SolidColorBrush x:Key="ScrollBarThumbBackground" Color="{StaticResource ScrollBarThumbBackgroundColor}" />
             <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="{StaticResource ScrollBarPanningThumbBackgroundColor}" />
-            <x:String x:Key="ScrollBarExpandDuration">00:00:00.1</x:String>
-            <x:String x:Key="ScrollBarExpandBeginTime">00:00:00.40</x:String>
-            <x:String x:Key="ScrollBarContractBeginTime">00:00:02.00</x:String>
-            <x:String x:Key="ScrollBarContractDelay">00:00:02</x:String>
-            <x:String x:Key="ScrollBarContractDuration">00:00:00.1</x:String>
-            <x:String x:Key="ScrollBarContractFinalKeyframe">00:00:02.1</x:String>
-            <x:Double x:Key="ScrollBarSize">16</x:Double>
-            <x:Double x:Key="SmallScrollThumbScale">0.125</x:Double>
-            <x:Double x:Key="SmallScrollThumbOffset">-2</x:Double>
-            <x:Double x:Key="ScrollBarButtonArrowIconFontSize">8</x:Double>
-            <!-- Resources for Windows.UI.Xaml.Controls.HandwritingView -->
-            <x:String x:Key="HandwritingViewGestureTipsElementEaseInDuration">00:00:00.1</x:String>
             <!-- Resource for Windows.UI.Xaml.Controls.ScrollViewer -->
             <SolidColorBrush x:Key="ScrollViewerScrollBarSeparatorBackground" Color="{StaticResource SystemChromeMediumColor}" Opacity="0.9" />
-            <x:String x:Key="ScrollViewerSeparatorExpandBeginTime">00:00:00.40</x:String>
-            <x:String x:Key="ScrollViewerSeparatorExpandDuration">00:00:00.1</x:String>
-            <x:String x:Key="ScrollViewerSeparatorContractBeginTime">00:00:02.00</x:String>
-            <x:String x:Key="ScrollViewerSeparatorContractDelay">00:00:02</x:String>
-            <x:String x:Key="ScrollViewerSeparatorContractDuration">00:00:00.1</x:String>
-            <x:String x:Key="ScrollViewerSeparatorContractFinalKeyframe">00:00:02.1</x:String>
             <!-- Resources for Windows.UI.Xaml.Controls.ListViewHeaderItem -->
             <StaticResource x:Key="ListViewHeaderItemBackground" ResourceKey="SystemControlTransparentBrush" />
             <StaticResource x:Key="ListViewHeaderItemDividerStroke" ResourceKey="SystemControlForegroundBaseLowBrush" />
@@ -584,8 +589,6 @@
             <StaticResource x:Key="ToolTipForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
             <StaticResource x:Key="ToolTipBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
             <StaticResource x:Key="ToolTipBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
-            <Thickness x:Key="ToolTipBorderThemeThickness">1</Thickness>
-            <Thickness x:Key="ToolTipBorderThemePadding">8,5,8,7</Thickness>
             <!-- Resources for CalendarDatePicker -->
             <StaticResource x:Key="CalendarDatePickerForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
             <StaticResource x:Key="CalendarDatePickerForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
@@ -1211,6 +1214,7 @@
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}"/>
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
+            <StaticResource x:Key="PageHeaderDisabledBrush" ResourceKey="SystemControlForegroundBaseMediumBrush"/>
 
             <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
             <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
@@ -1266,9 +1270,6 @@
             <Color x:Key="MessageMediaBackgroundColor">#007EE5</Color>
             <StaticResource x:Key="MessageMediaBackgroundOutColor" ResourceKey="SystemAccentColorLight2"/>
 
-            <Color x:Key="MessageHyperlinkForegroundColor">#158DCD</Color>
-            <Color x:Key="MessageHyperlinkForegroundOutColor">#158DCD</Color>
-
             <Color x:Key="MessageOverlayBackgroundColor">#54000000</Color>
             <Color x:Key="MessageOverlayBackgroundOutColor">#54000000</Color>
 
@@ -1281,6 +1282,31 @@
 
 
             <!-- Begin Windows.UI.Xaml.Controls.dll resources - DO NOT MANUALLY EDIT BELOW THIS LINE! -->
+            <Color x:Key="SystemAltHighColor">#FFFFFFFF</Color>
+            <Color x:Key="SystemAltLowColor">#33FFFFFF</Color>
+            <Color x:Key="SystemAltMediumColor">#99FFFFFF</Color>
+            <Color x:Key="SystemAltMediumHighColor">#CCFFFFFF</Color>
+            <Color x:Key="SystemAltMediumLowColor">#66FFFFFF</Color>
+            <Color x:Key="SystemBaseHighColor">#FF000000</Color>
+            <Color x:Key="SystemBaseLowColor">#33000000</Color>
+            <Color x:Key="SystemBaseMediumColor">#99000000</Color>
+            <Color x:Key="SystemBaseMediumHighColor">#CC000000</Color>
+            <Color x:Key="SystemBaseMediumLowColor">#66000000</Color>
+            <Color x:Key="SystemChromeAltLowColor">#FF171717</Color>
+            <Color x:Key="SystemChromeBlackHighColor">#FF000000</Color>
+            <Color x:Key="SystemChromeBlackLowColor">#33000000</Color>
+            <Color x:Key="SystemChromeBlackMediumLowColor">#66000000</Color>
+            <Color x:Key="SystemChromeBlackMediumColor">#CC000000</Color>
+            <Color x:Key="SystemChromeDisabledHighColor">#FFCCCCCC</Color>
+            <Color x:Key="SystemChromeDisabledLowColor">#FF7A7A7A</Color>
+            <Color x:Key="SystemChromeHighColor">#FFCCCCCC</Color>
+            <Color x:Key="SystemChromeLowColor">#FFF2F2F2</Color>
+            <Color x:Key="SystemChromeMediumColor">#FFE6E6E6</Color>
+            <Color x:Key="SystemChromeMediumLowColor">#FFF2F2F2</Color>
+            <Color x:Key="SystemChromeWhiteColor">#FFFFFFFF</Color>
+            <Color x:Key="SystemChromeGrayColor">#FF767676</Color>
+            <Color x:Key="SystemListLowColor">#19000000</Color>
+            <Color x:Key="SystemListMediumColor">#33000000</Color>
             <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource SystemAltHighColor}" />
             <SolidColorBrush x:Key="SystemControlBackgroundAltMediumHighBrush" Color="{StaticResource SystemAltMediumHighColor}" />
@@ -2396,7 +2422,6 @@
     <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderColor}" />
     <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundColor}" />
     <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundColor}" />
-    <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="{ThemeResource MessageHyperlinkForegroundColor}" />
     <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MessageOverlayBackgroundColor}" />
     <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="{ThemeResource MessageCallForegroundColor}" />
     <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="{ThemeResource MessageCallMissedForegroundColor}" />

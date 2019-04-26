@@ -169,6 +169,7 @@ namespace Unigram
 
             //args.Window.CoreWindow.FlowDirection = flowDirectionSetting == "RTL" ? CoreWindowFlowDirection.RightToLeft : CoreWindowFlowDirection.LeftToRight;
 
+            Theme.Current.Initialize();
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
         }
@@ -341,9 +342,6 @@ namespace Unigram
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
                 TLWindowContext.GetForCurrentView().UpdateTitleBar();
-
-                Theme.Current.Update();
-                //NotifyThemeChanged();
             }
 
             return base.OnInitializeAsync(args);
@@ -392,9 +390,6 @@ namespace Unigram
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-
-            //Theme.Current.Update();
-            //NotifyThemeChanged();
 
             var dispatcher = Window.Current.Dispatcher;
             Task.Run(() => OnStartSync(dispatcher));
@@ -523,31 +518,5 @@ namespace Unigram
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
-
-
-        //private void Window_Activated(object sender, WindowActivatedEventArgs e)
-        //{
-        //    ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrushDeactivated"]).Color;
-        //}
-
-        //public static void NotifyThemeChanged()
-        //{
-        //    var frame = Window.Current.Content as Frame;
-        //    if (frame == null)
-        //    {
-        //        return;
-        //    }
-
-        //    var current = App.Current as App;
-        //    var theme = current.UISettings.GetColorValue(UIColorType.Background);
-
-        //    frame.RequestedTheme = SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-        //    //frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
-
-        //    //var dark = (bool)App.Current.Resources["IsDarkTheme"];
-
-        //    //frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
-        //    //frame.RequestedTheme = ElementTheme.Default;
-        //}
     }
 }

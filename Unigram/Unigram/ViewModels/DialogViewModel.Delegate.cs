@@ -222,6 +222,12 @@ namespace Unigram.ViewModels
         {
             if (file.Local.IsDownloadingCompleted)
             {
+                if (file.Local.Path.EndsWith(".unigram-theme"))
+                {
+                    await new ThemePreviewView(file.Local.Path).ShowQueuedAsync();
+                    return;
+                }
+
                 try
                 {
                     var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);

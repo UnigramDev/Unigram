@@ -131,6 +131,7 @@ namespace Unigram
                 //builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
                 builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
                 builder.RegisterType<HockeyUpdateService>().As<IHockeyUpdateService>().SingleInstance();
+                builder.RegisterType<ThemeService>().As<IThemeService>().SingleInstance();
 
                 builder.RegisterType<MessageFactory>().As<IMessageFactory>().SingleInstance();
 

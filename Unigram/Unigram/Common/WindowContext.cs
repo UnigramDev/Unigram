@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -106,7 +107,11 @@ namespace Unigram.Common
 
         private async void UISettings_ColorValuesChanged(UISettings sender, object args)
         {
-            await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateTitleBar);
+            try
+            {
+                await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateTitleBar);
+            }
+            catch { }
         }
 
         /// <summary>
@@ -413,6 +418,19 @@ namespace Unigram.Common
                     }
                     catch { }
                 }
+            }
+            else if (args is FileActivatedEventArgs file)
+            {
+                if (service?.Frame?.Content is MainPage page)
+                {
+                    //page.Activate(launch);
+                }
+                else
+                {
+                    service.NavigateToMain(string.Empty);
+                }
+
+                await new ThemePreviewView(file.Files[0].Path).ShowQueuedAsync();
             }
             else
             {

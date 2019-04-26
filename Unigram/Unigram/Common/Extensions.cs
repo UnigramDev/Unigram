@@ -54,6 +54,21 @@ namespace Unigram.Common
             return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
         }
 
+        public static bool TryGet<T>(this ResourceDictionary dict, string key, out T value)
+        {
+            object tryGetValue;
+            bool success = false;
+            if (success = dict.TryGetValue(key, out tryGetValue))
+            {
+                value = (T)tryGetValue;
+            }
+            else
+            {
+                value = default(T);
+            }
+            return success;
+        }
+
         public static bool TryGet<T>(this IDictionary<string, object> dict, string key, out T value)
         {
             object tryGetValue;

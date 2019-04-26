@@ -118,6 +118,23 @@ namespace Unigram.Services.Settings
             }
         }
 
+        private string _requestedThemePath;
+        public string RequestedThemePath
+        {
+            get
+            {
+                if (_requestedThemePath == null)
+                    _requestedThemePath = GetValueOrDefault(_container, "ThemePath", string.Empty);
+
+                return _requestedThemePath ?? string.Empty;
+            }
+            set
+            {
+                _requestedThemePath = value ?? string.Empty;
+                AddOrUpdateValue(_container, "ThemePath", value);
+            }
+        }
+
         private TelegramTheme? _requestedTheme;
         public TelegramTheme RequestedTheme
         {

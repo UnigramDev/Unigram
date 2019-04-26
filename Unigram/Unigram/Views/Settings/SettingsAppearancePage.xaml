@@ -6,6 +6,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:chats="using:Unigram.Controls.Chats"
+    xmlns:services="using:Unigram.Services"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -15,22 +16,39 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="{CustomResource Appearance}"/>
-        <Button x:Name="Options"
-                Click="Menu_ContextRequested"
-                Padding="{StaticResource EllipsisButtonPadding}"
-                Style="{StaticResource EllipsisButton}"
-                AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                HorizontalAlignment="Right"
-                Opacity="0">
-            <FontIcon x:Name="EllipsisIcon"
-                      VerticalAlignment="Center"
-                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                      FontSize="16"
-                      Glyph="&#xE10C;"
-                      Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-        </Button>
+        <controls:ContentPageHeader>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{CustomResource Appearance}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+
+                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="1">
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem Text="{CustomResource CreateNewThemeMenu}"
+                                    Command="{x:Bind ViewModel.NewThemeCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE2B1;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <FontIcon x:Name="EllipsisIcon"
+                                VerticalAlignment="Center"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Glyph="&#xE10C;"
+                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </controls:ContentPageHeader>
 
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -77,32 +95,27 @@
 
                 <StackPanel Padding="12" Margin="0,18,0,0">
                     <TextBlock Text="{CustomResource ColorTheme}" Margin="0,0,0,6" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:PivotRadioButton x:Uid="SettingsAppearance_Light"
-                                               Click="Switch_Click"
-                                               SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}"
-                                               Index="2"
-                                               Content="Light"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,6"/>
-                    
-                    <controls:PivotRadioButton x:Uid="SettingsAppearance_Dark"
-                                               Click="Switch_Click"
-                                               SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}"
-                                               Index="4"
-                                               Content="Dark"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,6"/>
-                    
-                    <controls:PivotRadioButton x:Uid="SettingsAppearance_UseSystemSettings"
-                                               Click="Switch_Click"
-                                               SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}"
-                                               Index="1"
-                                               Content="Use system setting"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,6"/>
-
-                    <CheckBox x:Uid="SettingsAppearance_TelegramColors"
-                              Click="Switch_Click"
-                              IsChecked="{x:Bind ViewModel.IsSystemTheme, Mode=TwoWay}"
-                              Content="Use system accent color"/>
-                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,0"/>
+                    <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                              SelectionMode="None"
+                              ContainerContentChanging="OnContainerContentChanging"
+                              Style="{StaticResource StaticListViewStyle}"
+                              ItemContainerTransitions="{x:Null}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="services:ThemeInfoBase">
+                                <StackPanel>
+                                    <RadioButton Click="Switch_Click" Content="{x:Bind Name}" Tag="{x:Bind}" GroupName="Theme" ContextRequested="Theme_ContextRequested"/>
+                                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,6"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ListView>
+                </StackPanel>
 
                 <StackPanel>
                     <TextBlock Text="{CustomResource ChatList}" Margin="12,18,12,12" Style="{StaticResource SettingsGroupTextBlockStyle}"/>

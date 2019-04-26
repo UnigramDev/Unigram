@@ -32,6 +32,11 @@ namespace Unigram.Controls.Messages.Content
             UpdateMessage(message);
         }
 
+        public VoiceNoteContent()
+        {
+            InitializeComponent();
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             var message = _message;
@@ -64,6 +69,18 @@ namespace Unigram.Controls.Messages.Content
 
             //UpdateDuration();
             UpdateFile(message, voiceNote.Voice);
+        }
+
+        public void Mockup(MessageVoiceNote voiceNote)
+        {
+            Progress.UpdateWave(voiceNote.VoiceNote);
+            Progress.Minimum = 0;
+            Progress.Maximum = 1;
+            Progress.Value = 0.3;
+
+            Subtitle.Text = FormatTime(TimeSpan.FromSeconds(1)) + " / " + FormatTime(TimeSpan.FromSeconds(3));
+
+            Button.SetGlyph(Icons.Pause, false);
         }
 
         #region Playback
@@ -266,7 +283,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var voiceNote = GetContent(_message.Content);
+            var voiceNote = GetContent(_message?.Content);
             if (voiceNote == null)
             {
                 return;

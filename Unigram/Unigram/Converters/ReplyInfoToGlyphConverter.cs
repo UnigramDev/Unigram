@@ -33,6 +33,7 @@ namespace Unigram.Converters
         public const string Ttl = "\uE60E";
         public const string Document = "\uE160";
         public const string Animation = "\uE906";
+        public const string Theme = "\uE2B1";
 
         public const string Undo = "\uE7A7";
         public const string Redo = "\uE7A6";
