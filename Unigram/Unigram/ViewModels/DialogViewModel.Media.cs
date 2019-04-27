@@ -862,7 +862,8 @@ namespace Unigram.ViewModels
 
                 if (package.Contains(StandardDataFormats.WebLink))
                 {
-                    text += Environment.NewLine + await package.GetWebLinkAsync();
+                    var link = await package.GetWebLinkAsync();
+                    text += Environment.NewLine + link.AbsoluteUri;
                 }
 
                 field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
@@ -875,8 +876,8 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var text = await package.GetWebLinkAsync();
-                field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text.ToString());
+                var link = await package.GetWebLinkAsync();
+                field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, link.AbsoluteUri);
             }
         }
 
@@ -956,7 +957,7 @@ namespace Unigram.ViewModels
             await EditMediaAsync(file);
         }
 
-        private async Task EditMediaAsync(StorageFile file)
+        public async Task EditMediaAsync(StorageFile file)
         {
             var header = _composerHeader;
             if (header?.EditingMessage == null)

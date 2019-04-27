@@ -98,7 +98,7 @@ namespace Unigram.ViewModels
         private async void CopyExecute()
         {
             var dataPackage = new DataPackage();
-            dataPackage.SetText(ShareLink.ToString());
+            dataPackage.SetText(ShareLink.AbsoluteUri);
             ClipboardEx.TrySetContent(dataPackage);
 
             await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
