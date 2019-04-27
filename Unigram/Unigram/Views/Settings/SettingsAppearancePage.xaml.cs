@@ -12,6 +12,7 @@ using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.ViewManagement;
@@ -45,6 +46,11 @@ namespace Unigram.Views.Settings
 
             //UpdatePreview(true);
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
         }
 
         private void Wallpaper_Click(object sender, RoutedEventArgs e)

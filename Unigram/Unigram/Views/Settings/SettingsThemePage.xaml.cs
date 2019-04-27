@@ -7,11 +7,13 @@ using Template10.Common;
 using Template10.Mvvm;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -32,6 +34,11 @@ namespace Unigram.Views.Settings
         public SettingsThemePage()
         {
             this.InitializeComponent();
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -48,6 +55,8 @@ namespace Unigram.Views.Settings
 
         public void Load(ThemeCustomInfo theme)
         {
+            TitleLabel.Text = theme.Name;
+
             _theme = theme;
 
             ResourceDictionary baseTheme;
@@ -154,6 +163,26 @@ namespace Unigram.Views.Settings
             collection.ItemsPath = new PropertyPath("Values");
 
             List.ItemsSource = collection.View;
+        }
+
+        private async void Rename_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new InputDialog();
+            dialog.Title = Strings.Resources.EditName;
+            dialog.Text = _theme.Name;
+
+            var confirm = await dialog.ShowAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            _theme.Name = dialog.Text;
+
+            TitleLabel.Text = _theme.Name;
+
+            var file = await StorageFile.GetFileFromPathAsync(_theme.Path);
+            await TLContainer.Current.Resolve<IThemeService>().SerializeAsync(file, _theme);
         }
 
         private async void Done_Click(object sender, RoutedEventArgs e)

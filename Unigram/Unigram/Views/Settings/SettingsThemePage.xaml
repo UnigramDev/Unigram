@@ -1059,7 +1059,47 @@
             AppBarButtonSubItemChevronForegroundSubMenuOpened="{ThemeResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" 
             AppBarButtonSubItemChevronForegroundDisabled="{ThemeResource AppBarButtonSubItemChevronForegroundDisabled}" />
 
-        <controls:ButtonPageHeader x:Name="Header"/>
+        <controls:ContentPageHeader x:Name="Header">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+
+                <controls:GlyphButton
+                        Click="Done_Click"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Glyph="&#xE10B;"
+                        AutomationProperties.Name="{CustomResource Done}"
+                        ToolTipService.ToolTip="{CustomResource Done}"
+                        Grid.Column="1"/>
+
+                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="2">
+                    <Button.Flyout>
+                        <MenuFlyout x:Name="MenuFlyout">
+                            <MenuFlyoutItem Text="{CustomResource EditName}" Click="Rename_Click">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE104;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <FontIcon x:Name="EllipsisIcon"
+                                VerticalAlignment="Center"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Glyph="&#xE10C;"
+                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </controls:ContentPageHeader>
 
         <ListView x:Name="List"
                   ContainerContentChanging="List_ContainerContentChanging"

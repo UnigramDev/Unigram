@@ -31,7 +31,7 @@
                         ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
                         Grid.Column="1">
                     <Button.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyout x:Name="MenuFlyout">
                             <MenuFlyoutItem Text="{CustomResource CreateNewThemeMenu}"
                                     Command="{x:Bind ViewModel.NewThemeCommand}">
                                 <MenuFlyoutItem.Icon>
