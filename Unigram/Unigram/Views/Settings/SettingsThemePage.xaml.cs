@@ -22,13 +22,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Views.Settings
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class SettingsThemePage : Page
     {
         private ThemeGroup _group;
@@ -77,10 +72,12 @@ namespace Unigram.Views.Settings
                 baseTheme = baseTheme.MergedDictionaries[0].ThemeDictionaries["Dark"] as ResourceDictionary;
             }
 
-            var group = _group = new ThemeGroup("All", theme, baseTheme);
+            var service = TLContainer.Current.Resolve<IThemeService>();
+
+            var group = _group = new ThemeGroup("All", service, theme, baseTheme);
             var groups = new List<ThemeGroup>();
 
-            var items = new ThemeGroup("Header", theme, baseTheme);
+            var items = new ThemeGroup("Header", service, theme, baseTheme);
             items.Add("PageHeaderHighlightBrush", group.AddBrush("PageHeaderHighlightBrush"));
             items.Add("PageHeaderDisabledBrush", group.AddBrush("PageHeaderDisabledBrush"));
             items.Add("PageHeaderForegroundBrush", group.AddBrush("PageHeaderForegroundBrush"));
@@ -88,7 +85,7 @@ namespace Unigram.Views.Settings
             items.Add("PageSubHeaderBackgroundBrush", group.AddBrush("PageSubHeaderBackgroundBrush"));
             groups.Add(items);
 
-            items = new ThemeGroup("Content", theme, baseTheme);
+            items = new ThemeGroup("Content", service, theme, baseTheme);
             items.Add("SystemAccentColor", group.AddColor("SystemAccentColor"));
             items.Add("SystemControlBackgroundAccentBrush", group.AddBrush("SystemControlBackgroundAccentBrush"));
             items.Add("SystemControlDisabledAccentBrush", group.AddBrush("SystemControlDisabledAccentBrush"));
@@ -97,7 +94,7 @@ namespace Unigram.Views.Settings
             items.Add("SystemControlHighlightAltAccentBrush", group.AddBrush("SystemControlHighlightAltAccentBrush"));
             groups.Add(items);
 
-            items = new ThemeGroup("Content", theme, baseTheme);
+            items = new ThemeGroup("Content", service, theme, baseTheme);
             items.Add("ApplicationPageBackgroundThemeBrush", group.AddBrush("ApplicationPageBackgroundThemeBrush"));
             items.Add("TelegramSeparatorMediumBrush", group.AddBrush("TelegramSeparatorMediumBrush"));
             //items.Add("SystemControlPageTextBaseHighBrush", group.AddBrush("SystemControlPageTextBaseHighBrush"));;
@@ -105,7 +102,7 @@ namespace Unigram.Views.Settings
             items.Add("SystemControlDisabledChromeDisabledLowBrush", group.AddBrush("SystemControlDisabledChromeDisabledLowBrush"));
             groups.Add(items);
 
-            items = new ThemeGroup("Chats", theme, baseTheme);
+            items = new ThemeGroup("Chats", service, theme, baseTheme);
             items.Add("ChatOnlineBadgeBrush", group.AddBrush("ChatOnlineBadgeBrush"));
             items.Add("ChatVerifiedBadgeBrush", group.AddBrush("ChatVerifiedBadgeBrush"));
             items.Add("ChatLastMessageStateBrush", group.AddBrush("ChatLastMessageStateBrush"));
@@ -119,7 +116,7 @@ namespace Unigram.Views.Settings
             items.Add("ChatFailedLabelBrush", group.AddBrush("ChatFailedLabelBrush", "ChatFailedBadgeBrush"));
             groups.Add(items);
 
-            items = new ThemeGroup("Incoming messages", theme, baseTheme);
+            items = new ThemeGroup("Incoming messages", service, theme, baseTheme);
             items.Add("MessageForegroundColor", group.AddColor("MessageForegroundColor"));
             items.Add("MessageForegroundLinkColor", group.AddColor("MessageForegroundLinkColor"));
             items.Add("MessageBackgroundColor", group.AddColor("MessageBackgroundColor"));
@@ -135,7 +132,7 @@ namespace Unigram.Views.Settings
             items.Add("MessageCallMissedForegroundColor", group.AddColor("MessageCallMissedForegroundColor"));
             groups.Add(items);
 
-            items = new ThemeGroup("Outgoing messages", theme, baseTheme);
+            items = new ThemeGroup("Outgoing messages", service, theme, baseTheme);
             items.Add("MessageForegroundOutColor", group.AddColor("MessageForegroundOutColor"));
             items.Add("MessageForegroundLinkOutColor", group.AddColor("MessageForegroundLinkOutColor"));
             items.Add("MessageBackgroundOutColor", group.AddColor("MessageBackgroundOutColor"));
@@ -157,34 +154,31 @@ namespace Unigram.Views.Settings
             collection.ItemsPath = new PropertyPath("Values");
 
             List.ItemsSource = collection.View;
-
-            Header.Command = new RelayCommand(SaveExecute);
-            Header.Glyph = Icons.Confirm;
         }
 
-        private async void SaveExecute()
+        private async void Done_Click(object sender, RoutedEventArgs e)
         {
             if (Window.Current.Content is Host.RootPage root)
             {
                 root.HideEditor();
             }
 
-            _theme.Values.Clear();
+            //_theme.Values.Clear();
 
-            foreach (var item in _group.Values)
-            {
-                if (item is ThemeBrushPart brush && !brush.IsDefault)
-                {
-                    _theme.Values[brush.Key] = brush.Value;
-                }
-                else if (item is ThemeColorPart color && !color.IsDefault)
-                {
-                    _theme.Values[color.Key] = color.Value;
-                }
-            }
+            //foreach (var item in _group.Values)
+            //{
+            //    if (item is ThemeBrushPart brush && !brush.IsDefault)
+            //    {
+            //        _theme.Values[brush.Key] = brush.Value;
+            //    }
+            //    else if (item is ThemeColorPart color && !color.IsDefault)
+            //    {
+            //        _theme.Values[color.Key] = color.Value;
+            //    }
+            //}
 
-            var file = await StorageFile.GetFileFromPathAsync(_theme.Path);
-            await TLContainer.Current.Resolve<IThemeService>().SerializeAsync(file, _theme);
+            //var file = await StorageFile.GetFileFromPathAsync(_theme.Path);
+            //await TLContainer.Current.Resolve<IThemeService>().SerializeAsync(file, _theme);
         }
 
         private void List_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -259,9 +253,11 @@ namespace Unigram.Views.Settings
                 var value = SettingsService.Current.Appearance.GetElementTheme();
                 var mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(_theme.Parent);
 
+                _theme.Values.Clear();
+
                 foreach (TLWindowContext window in WindowContext.ActiveWrappers)
                 {
-                    window.Dispatcher.Dispatch(() =>
+                    await window.Dispatcher.DispatchAsync(() =>
                     {
                         var dict = new ResourceDictionary();
                         foreach (var item in _group.Values)
@@ -304,17 +300,22 @@ namespace Unigram.Views.Settings
                         }
                     });
                 }
+
+                var file = await StorageFile.GetFileFromPathAsync(_theme.Path);
+                await TLContainer.Current.Resolve<IThemeService>().SerializeAsync(file, _theme);
             }
         }
     }
 
     public class ThemeGroup : Dictionary<string, ThemePartBase>
     {
+        private readonly IThemeService _service;
         private readonly ThemeCustomInfo _model;
         private readonly ResourceDictionary _super;
 
-        public ThemeGroup(string key, ThemeCustomInfo model, ResourceDictionary super)
+        public ThemeGroup(string key, IThemeService service, ThemeCustomInfo model, ResourceDictionary super)
         {
+            _service = service;
             _super = super;
             _model = model;
 
@@ -326,14 +327,14 @@ namespace Unigram.Views.Settings
         public ThemeBrushPart AddBrush(string key, string dependsUpon = null)
         {
             ThemeBrushPart item;
-            Add(key, item = new ThemeBrushPart(key, dependsUpon, this, _model, _super));
+            Add(key, item = new ThemeBrushPart(key, dependsUpon, _service, this, _model, _super));
             return item;
         }
 
         public ThemeColorPart AddColor(string key, string dependsUpon = null)
         {
             ThemeColorPart item;
-            Add(key, item = new ThemeColorPart(key, dependsUpon, this, _model, _super));
+            Add(key, item = new ThemeColorPart(key, dependsUpon, _service, this, _model, _super));
             return item;
         }
     }
@@ -346,21 +347,18 @@ namespace Unigram.Views.Settings
 
     public class ThemeBrushPart : ThemeColorPart
     {
-        public ThemeBrushPart(string key, string dependsUpon, ThemeGroup group, ThemeCustomInfo model, ResourceDictionary super)
+        public ThemeBrushPart(string key, string dependsUpon, IThemeService service, ThemeGroup group, ThemeCustomInfo model, ResourceDictionary super)
             : base(key, dependsUpon, group)
         {
-            if (super.TryGet(key, out SolidColorBrush brush))
-            {
-                _super = _value = brush.Color;
-            }
-            else if (App.Current.Resources.TryGet(key, out SolidColorBrush abrush))
-            {
-                _super = _value = abrush.Color;
-            }
+            _super = service.GetDefaultColor(model.Parent, key);
 
             if (model.Values.TryGet(key, out Color mcolor))
             {
                 _value = mcolor;
+            }
+            else if (super.TryGet(key, out SolidColorBrush brush))
+            {
+                _value = brush.Color;
             }
         }
     }
@@ -378,25 +376,21 @@ namespace Unigram.Views.Settings
             _group = group;
         }
 
-        public ThemeColorPart(string key, string dependsUpon, ThemeGroup group, ThemeCustomInfo model, ResourceDictionary super)
+        public ThemeColorPart(string key, string dependsUpon, IThemeService service, ThemeGroup group, ThemeCustomInfo model, ResourceDictionary super)
         {
             Key = key;
             DependsUpon = dependsUpon;
 
             _group = group;
+            _super = service.GetDefaultColor(model.Parent, key);
 
-            if (super.TryGet(key, out Color color))
-            {
-                _super = _value = color;
-            }
-            else if (App.Current.Resources.TryGet(key, out Color acolor))
-            {
-                _super = _value = acolor;
-            }
-
-            if (model.Values.TryGet<Color>(key, out Color mcolor))
+            if (model.Values.TryGet(key, out Color mcolor))
             {
                 _value = mcolor;
+            }
+            else if (super.TryGet(key, out Color color))
+            {
+                _value = color;
             }
         }
 
@@ -463,8 +457,6 @@ namespace Unigram.Views.Settings
 
     public class ResourcesMapper : Control
     {
-
-
         public object PageHeaderDisabledBrush
         {
             get { return (object)GetValue(PageHeaderDisabledBrushProperty); }
