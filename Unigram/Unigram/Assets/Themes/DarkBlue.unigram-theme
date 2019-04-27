@@ -1,0 +1,27 @@
+!
+name: Dark Blue
+parent: 12
+#
+PageHeaderHighlightBrush: #FF59A8E2
+PageHeaderBackgroundBrush: #FF222E3C
+PageSubHeaderBackgroundBrush: #FF1C2733
+SystemAccentColor: #FF59A8E2
+ApplicationPageBackgroundThemeBrush: #FF151D26
+TelegramSeparatorMediumBrush: #FF10171E
+SystemControlDisabledChromeDisabledLowBrush: #FF7D8E98
+ChatVerifiedBadgeBrush: #FF59A8E2
+ChatLastMessageStateBrush: #FF59A8E2
+ChatFromLabelBrush: #FF59A8E2
+ChatUnreadBadgeBrush: #FF59A8E2
+ChatUnreadBadgeMutedBrush: #FF7D8E98
+ChatFailedBadgeBrush: #FFD32F2F
+MessageBackgroundColor: #FF1C2733
+MessageSubtleLabelColor: #FF7D8E98
+MessageSubtleGlyphColor: #FF7D8E98
+MessageHeaderForegroundColor: #FF61A9E1
+MessageHeaderBorderColor: #FF538EBD
+MessageBackgroundOutColor: #FF456A93
+MessageSubtleLabelOutColor: #FF91AFC8
+MessageSubtleGlyphOutColor: #FF86CAFF
+MessageHeaderForegroundOutColor: #FF86CAFF
+MessageHeaderBorderOutColor: #FF86CAFF

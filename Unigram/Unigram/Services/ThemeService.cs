@@ -9,6 +9,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Services.Settings;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -85,12 +86,20 @@ namespace Unigram.Services
                 new ThemeBundledInfo { Name = "Windows 10 Dark", Parent = TelegramTheme.Dark },
             };
 
+            var package = await Package.Current.InstalledLocation.GetFolderAsync("Assets\\Themes");
+            var official = await package.GetFilesAsync();
+
+            foreach (var file in official)
+            {
+                result.Add(await DeserializeAsync(file, true));
+            }
+
             var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("themes", CreationCollisionOption.OpenIfExists);
             var files = await folder.GetFilesAsync();
 
             foreach (var file in files)
             {
-                result.Add(await DeserializeAsync(file));
+                result.Add(await DeserializeAsync(file, false));
             }
 
             return result;
@@ -124,10 +133,15 @@ namespace Unigram.Services
             await FileIO.WriteTextAsync(file, lines.ToString());
         }
 
-        public async Task<ThemeCustomInfo> DeserializeAsync(StorageFile file)
+        public Task<ThemeCustomInfo> DeserializeAsync(StorageFile file)
+        {
+            return DeserializeAsync(file, false);
+        }
+
+        private async Task<ThemeCustomInfo> DeserializeAsync(StorageFile file, bool official)
         {
             var lines = await FileIO.ReadLinesAsync(file);
-            var theme = new ThemeCustomInfo();
+            var theme = new ThemeCustomInfo(official);
             theme.Path = file.Path;
 
             foreach (var line in lines)
@@ -4859,16 +4873,17 @@ namespace Unigram.Services
 
     public class ThemeCustomInfo : ThemeInfoBase
     {
-        public ThemeCustomInfo()
+        public ThemeCustomInfo(bool official = false)
         {
             Values = new Dictionary<string, object>();
+            IsOfficial = official;
         }
 
         public Dictionary<string, object> Values { get; private set; }
 
         public string Path { get; set; }
 
-
+        public override bool IsOfficial { get; }
 
         public static bool Equals(ThemeCustomInfo x, ThemeCustomInfo y)
         {
@@ -4907,12 +4922,14 @@ namespace Unigram.Services
 
     public class ThemeBundledInfo : ThemeInfoBase
     {
-
+        public override bool IsOfficial => true;
     }
 
     public abstract class ThemeInfoBase
     {
         public string Name { get; set; }
         public TelegramTheme Parent { get; set; }
+
+        public abstract bool IsOfficial { get; }
     }
 }

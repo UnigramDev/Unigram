@@ -109,7 +109,7 @@ namespace Unigram.Views.Settings
 
             flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Theme });
 
-            if (theme is ThemeCustomInfo)
+            if (!theme.IsOfficial)
             {
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
