@@ -273,6 +273,13 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _isSendCopyEnabled;
+        public bool IsSendAsCopyEnabled
+        {
+            get { return _isSendCopyEnabled; }
+            set { Set(ref _isSendCopyEnabled, value); }
+        }
+
         private SearchChatsType _searchType;
         public SearchChatsType SearchType
         {
@@ -394,7 +401,7 @@ namespace Unigram.ViewModels
             }
             else if (_shareLink != null)
             {
-                var formatted = new FormattedText(_shareLink.ToString(), new TextEntity[0]);
+                var formatted = new FormattedText(_shareLink.AbsoluteUri, new TextEntity[0]);
 
                 foreach (var chat in chats)
                 {

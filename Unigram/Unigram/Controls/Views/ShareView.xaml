@@ -490,10 +490,11 @@
 
                 <controls:GlyphButton
                         Glyph="&#xF0E3;"
+                        Visibility="{x:Bind ViewModel.IsSendAsCopyEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1">
                     <controls:GlyphButton.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyout x:Name="MenuFlyout">
                             <ToggleMenuFlyoutItem Text="Send as copy" IsChecked="{x:Bind ViewModel.SendAsCopy, Mode=TwoWay}"/>
                             <ToggleMenuFlyoutItem Text="Remove captions in copies" IsChecked="{x:Bind ViewModel.RemoveCaptions, Mode=TwoWay}"/>
                         </MenuFlyout>
@@ -535,6 +536,7 @@
                 Padding="12,0"
                 SizeChanged="List_SizeChanged"
                 SelectionChanged="List_SelectionChanged"
+                ChoosingItemContainer="OnChoosingItemContainer"
                 ContainerContentChanging="OnContainerContentChanging"
                 common:FluidGridView.OrientationOnly="True">
                 <common:FluidGridView.Triggers>
