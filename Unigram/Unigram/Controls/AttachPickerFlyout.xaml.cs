@@ -64,7 +64,7 @@ namespace Unigram.Controls
         private async void Camera_Click(object sender, RoutedEventArgs e)
         {
             var capture = new CameraCaptureUI();
-            capture.PhotoSettings.AllowCropping = true;
+            //capture.PhotoSettings.AllowCropping = true;
             capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
             capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
             capture.VideoSettings.Format = CameraCaptureUIVideoFormat.Mp4;

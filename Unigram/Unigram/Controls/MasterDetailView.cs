@@ -261,18 +261,21 @@ namespace Unigram.Controls
                 }
 
                 //Grid.SetRow(DetailFrame, 1);
-
-                DetailFrame.Navigated += OnNavigated;
-                DetailPresenter.Children.Add(DetailFrame);
-
-                if (DetailFrame.CurrentSourcePageType == null)
+                try
                 {
-                    DetailFrame.Navigate(BlankPageType);
+                    DetailFrame.Navigated += OnNavigated;
+                    DetailPresenter.Children.Add(DetailFrame);
+
+                    if (DetailFrame.CurrentSourcePageType == null)
+                    {
+                        DetailFrame.Navigate(BlankPageType);
+                    }
+                    else
+                    {
+                        DetailFrame.BackStack.Insert(0, new PageStackEntry(BlankPageType, null, null));
+                    }
                 }
-                else
-                {
-                    DetailFrame.BackStack.Insert(0, new PageStackEntry(BlankPageType, null, null));
-                }
+                catch { }
             }
 
             if (ActualWidth > 0)
