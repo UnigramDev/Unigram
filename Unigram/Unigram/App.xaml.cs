@@ -479,8 +479,6 @@ namespace Unigram
             }
             catch { }
 
-            return;
-
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {
                 var session = new ExtendedExecutionSession { Reason = ExtendedExecutionReason.Unspecified };

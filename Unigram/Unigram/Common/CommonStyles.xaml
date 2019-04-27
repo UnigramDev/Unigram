@@ -2134,7 +2134,13 @@
                                 Text="{TemplateBinding Glyph}"
                                 FontFamily="{TemplateBinding FontFamily}"/>
 
-                            <ContentPresenter x:Name="ContentPresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Badge}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                            <ContentPresenter x:Name="ContentPresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Badge}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1">
+                                <ContentPresenter.ContentTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+                                    </DataTemplate>
+                                </ContentPresenter.ContentTemplate>
+                            </ContentPresenter>
                             <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Content}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="0,-12,12,12" IsTabStop="False" Grid.Column="1" Grid.Row="1">
                                 <ContentControl.ContentTemplate>
                                     <DataTemplate>
