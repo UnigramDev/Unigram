@@ -261,7 +261,7 @@ namespace Unigram.ViewModels.Chats
             {
                 var dialog = new TLMessageDialog();
                 dialog.Title = Strings.Resources.Message;
-                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", 1));
+                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("messages", 1));
                 dialog.PrimaryButtonText = Strings.Resources.OK;
                 dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -391,7 +391,7 @@ namespace Unigram.ViewModels.Chats
             {
                 var dialog = new TLMessageDialog();
                 dialog.Title = Strings.Resources.Message;
-                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
+                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("messages", messages.Count));
                 dialog.PrimaryButtonText = Strings.Resources.OK;
                 dialog.SecondaryButtonText = Strings.Resources.Cancel;
 

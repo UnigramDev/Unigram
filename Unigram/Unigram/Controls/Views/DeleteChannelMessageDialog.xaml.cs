@@ -26,7 +26,7 @@ namespace Unigram.Controls.Views
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            Message.Text = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", count));
+            Message.Text = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("messages", count));
             DeleteAllCheck.Content = string.Format(Strings.Resources.DeleteAllFrom, fullName ?? string.Empty);
         }
 

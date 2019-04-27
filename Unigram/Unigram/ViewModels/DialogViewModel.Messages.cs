@@ -154,7 +154,7 @@ namespace Unigram.ViewModels
             {
                 var dialog = new TLMessageDialog();
                 dialog.Title = Strings.Resources.Message;
-                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", 1));
+                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("messages", 1));
                 dialog.PrimaryButtonText = Strings.Resources.OK;
                 dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -254,8 +254,8 @@ namespace Unigram.ViewModels
             var user = CacheService.GetUser(chat);
 
             var dialog = new TLMessageDialog();
-            dialog.Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("Messages", messages.Count));
-            dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("Messages", messages.Count));
+            dialog.Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("messages", messages.Count));
+            dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("messages", messages.Count));
             dialog.PrimaryButtonText = Strings.Resources.Delete;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -268,8 +268,8 @@ namespace Unigram.ViewModels
                 if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                 {
                     dialog.Message = chat.Type is ChatTypePrivate && user != null
-                        ? string.Format(Strings.Resources.DeleteMessagesText, Locale.Declension("Messages", messages.Count), user.FirstName)
-                        : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("Messages", messages.Count));
+                        ? string.Format(Strings.Resources.DeleteMessagesText, Locale.Declension("messages", messages.Count), user.FirstName)
+                        : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("messages", messages.Count));
 
                     dialog.CheckBoxLabel = Strings.Resources.DeleteMessagesOption;
                 }
