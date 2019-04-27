@@ -2203,7 +2203,7 @@ namespace Unigram.Views
 
         private void Chats_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            if (e.Items.Count > 1 || e.Items[0] is Chat chat && !chat.IsPinned || ResetFilters.Visibility == Visibility.Visible)
+            if (e.Items.Count > 1 || e.Items[0] is Chat chat && !chat.IsPinned || ResetFilters.Visibility == Visibility.Visible || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 ChatsList.CanReorderItems = false;
                 e.Cancel = true;
