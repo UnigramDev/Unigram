@@ -52,6 +52,8 @@ namespace Unigram.Controls.Views
                 {
                     flags = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
                     mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(flags);
+
+                    dict["MessageForegroundBrush"] = new SolidColorBrush(TLContainer.Current.Resolve<IThemeService>().GetDefaultColor(flags, "MessageForegroundColor"));
                 }
                 else if (line.Equals("!") || line.Equals("#"))
                 {
@@ -85,11 +87,7 @@ namespace Unigram.Controls.Views
                         else if (key.EndsWith("Color"))
                         {
                             dict[key] = Color.FromArgb(a, r, g, b);
-                            Message1.Resources.ThemeDictionaries.Clear();
-
-                            Message1.Resources[key.Substring(0, key.Length - 5) + "Brush"] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
-                            Message4.Resources[key.Substring(0, key.Length - 5) + "Brush"] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
-                            Message5.Resources[key.Substring(0, key.Length - 5) + "Brush"] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+                            dict[key.Substring(0, key.Length - 5) + "Brush"] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
                         }
                     }
                 }
@@ -99,17 +97,7 @@ namespace Unigram.Controls.Views
             LayoutRoot.Resources.MergedDictionaries.Clear();
             LayoutRoot.Resources.MergedDictionaries.Add(dict);
 
-            //if (theme == RequestedTheme)
-            //{
-            //    RequestedTheme = theme == ElementTheme.Dark
-            //        ? ElementTheme.Light
-            //        : ElementTheme.Dark;
-            //}
-
-            //RequestedTheme = theme;
-            //Message1.Resources.MergedDictionaries.Add(dict);
-            //Message4.Resources.MergedDictionaries.Add(dict);
-            //Message5.Resources.MergedDictionaries.Add(dict);
+            LayoutRoot.RequestedTheme = flags.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark;
 
             Chat1.Mockup(new ChatTypePrivate(), 0, "Eva Summer", string.Empty, "Reminds me of a Chinese proverb...", false, 0, false, true, DateTime.Now);
             Chat2.Mockup(new ChatTypePrivate(), 1, "Alexandra Smith", string.Empty, "This is amazing!", false, 2, false, false, DateTime.Now.AddHours(-1));

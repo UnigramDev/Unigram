@@ -170,6 +170,8 @@ namespace Unigram.Views.Settings
             var dialog = new InputDialog();
             dialog.Title = Strings.Resources.EditName;
             dialog.Text = _theme.Name;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowAsync();
             if (confirm != ContentDialogResult.Primary)
