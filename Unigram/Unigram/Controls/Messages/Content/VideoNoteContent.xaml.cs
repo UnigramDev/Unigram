@@ -38,6 +38,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessage(MessageViewModel message)
         {
+            _oldState = message.Id != _message?.Id ? MessageContentState.None : _oldState;
             _message = message;
 
             var videoNote = GetContent(message.Content);
