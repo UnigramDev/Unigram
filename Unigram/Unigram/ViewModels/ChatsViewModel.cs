@@ -232,31 +232,34 @@ namespace Unigram.ViewModels
 
                 Delegate?.DeleteChat(new[] { chat }, false, async items =>
                 {
-                    foreach (var delete in items)
+                    var delete = items.FirstOrDefault();
+                    if (delete == null)
                     {
-                        if (delete.Type is ChatTypeSecret secret)
+                        return;
+                    }
+
+                    if (delete.Type is ChatTypeSecret secret)
+                    {
+                        await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                    }
+                    else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                    {
+                        await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                    }
+
+                    var user = CacheService.GetUser(delete);
+                    if (user != null && user.Type is UserTypeRegular)
+                    {
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, true, check));
+                    }
+                    else
+                    {
+                        if (delete.Type is ChatTypePrivate privata && check)
                         {
-                            await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-                        }
-                        else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
-                        {
-                            await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                            await ProtoService.SendAsync(new BlockUser(privata.UserId));
                         }
 
-                        var user = CacheService.GetUser(delete);
-                        if (user != null && user.Type is UserTypeRegular)
-                        {
-                            ProtoService.Send(new DeleteChatHistory(delete.Id, true, check));
-                        }
-                        else
-                        {
-                            if (delete.Type is ChatTypePrivate privata && check)
-                            {
-                                await ProtoService.SendAsync(new BlockUser(privata.UserId));
-                            }
-
-                            ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
-                        }
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
                     }
                 }, items =>
                 {
@@ -292,22 +295,19 @@ namespace Unigram.ViewModels
 
                 Delegate?.DeleteChat(chats, false, async items =>
                 {
-                    var delete = items.FirstOrDefault();
-                    if (delete == null)
+                    foreach (var delete in items)
                     {
-                        return;
-                    }
+                        if (delete.Type is ChatTypeSecret secret)
+                        {
+                            await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                        }
+                        else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                        {
+                            await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                        }
 
-                    if (delete.Type is ChatTypeSecret secret)
-                    {
-                        await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
                     }
-                    else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
-                    {
-                        await ProtoService.SendAsync(new LeaveChat(delete.Id));
-                    }
-
-                    ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
                 }, items =>
                 {
                     foreach (var undo in items)
