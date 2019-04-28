@@ -118,6 +118,14 @@ namespace Unigram.Controls.Chats
 
         #endregion
 
+        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (string.Equals(Field.Text, Strings.Resources.SearchFrom) && ViewModel.IsFromEnabled && Field.State == ChatSearchState.Text)
+            {
+                SetState(ChatSearchState.Members);
+            }
+        }
+
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             if (Field.State == ChatSearchState.Members)
@@ -161,10 +169,7 @@ namespace Unigram.Controls.Chats
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel?.Dialog?.Search != null)
-            {
-                ViewModel.Dialog.DisposeSearch();
-            }
+            OnBackRequested();
         }
 
         private void FilterByMember_Click(object sender, RoutedEventArgs e)
@@ -257,6 +262,8 @@ namespace Unigram.Controls.Chats
 
         public bool OnBackRequested()
         {
+            SetState(ChatSearchState.Text);
+
             if (ViewModel?.Dialog?.Search != null)
             {
                 ViewModel.Dialog.DisposeSearch();

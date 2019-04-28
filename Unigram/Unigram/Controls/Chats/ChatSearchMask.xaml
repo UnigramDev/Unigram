@@ -247,6 +247,7 @@
                     x:Name="Field"
                     Text="{x:Bind ViewModel.Query, Mode=OneWay}"
                     InputScope="Search"
+                    TextChanged="OnTextChanged"
                     SelectionChanged="OnSelectionChanged"
                     GotFocus="Field_GotFocus"
                     LostFocus="Field_LostFocus"
