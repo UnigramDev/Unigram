@@ -3170,7 +3170,7 @@ namespace Unigram.Views
             {
                 ShowAction(user.Type is UserTypeBot ? Strings.Resources.BotUnblock : Strings.Resources.Unblock, true);
             }
-            else if (user.Type is UserTypeBot && accessToken || chat?.LastMessage == null)
+            else if (user.Type is UserTypeBot && (accessToken || chat?.LastMessage == null))
             {
                 ShowAction(Strings.Resources.BotStart, true);
             }
