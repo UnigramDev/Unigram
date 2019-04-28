@@ -625,46 +625,89 @@
                                         <cells:ChatCell/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
-                                <ListView.Header>
-                                    <StackPanel>
-                                        <HyperlinkButton x:Name="ResetFilters" Click="ResetFilters_Click" Visibility="Collapsed" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
-                                            <Grid Margin="0,3">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="48"/>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <FontIcon Glyph="&#xE751;" HorizontalAlignment="Center"/>
-
-                                                <TextBlock Text="All chats" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
-
-                                                <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                        MinWidth="20"
-                                                        Height="20"
-                                                        CornerRadius="10"
-                                                        VerticalAlignment="Center"
-                                                        HorizontalAlignment="Right"
-                                                        Margin="0,0,12,0"
-                                                        Grid.Column="2">
-                                                    <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
-                                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                               TextAlignment="Center"
-                                                               Margin="4,2,4,0"/>
-                                                </Border>
-
-                                            </Grid>
-                                        </HyperlinkButton>
-                                    </StackPanel>
-                                </ListView.Header>
-                                <ListView.Footer>
-                                    <Border Height="6"/>
-                                </ListView.Footer>
                                 <ListView.ItemContainerTransitions>
                                     <TransitionCollection/>
                                 </ListView.ItemContainerTransitions>
                             </controls:ChatsListView>
+
+                            <Grid x:Name="FolderPanel" Visibility="Collapsed">
+                                <Border x:Name="FolderShadow" Background="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                                <controls:ChatsListView x:Name="FolderList"
+                                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                        AutomationProperties.LandmarkType="Main"
+                                                        ItemsSource="{x:Bind ViewModel.Folder.Items, Mode=OneWay}"
+                                                        IsItemClickEnabled="True"
+                                                        SelectionMode="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"
+                                                        ItemClick="ListView_ItemClick"
+                                                        SelectionChanged="ListView_SelectionChanged"
+                                                        ChoosingItemContainer="ChatsList_ChoosingItemContainer"
+                                                        CanDragItems="True"
+                                                        CanReorderItems="False"
+                                                        DragItemsStarting="Chats_DragItemsStarting"
+                                                        DragItemsCompleted="Chats_DragItemsCompleted"
+                                                        AllowDrop="True">
+                                    <ListView.ItemContainerStyleSelector>
+                                        <selectors:DialogStyleSelector CacheService="{x:Bind ViewModel.CacheService}">
+                                            <selectors:DialogStyleSelector.DialogStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    <Setter Property="Padding" Value="0"/>
+                                                    <Setter Property="MinHeight" Value="0"/>
+                                                </Style>
+                                            </selectors:DialogStyleSelector.DialogStyle>
+                                            <selectors:DialogStyleSelector.PinnedStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
+                                                    <Setter Property="Padding" Value="0"/>
+                                                    <Setter Property="MinHeight" Value="0"/>
+                                                </Style>
+                                            </selectors:DialogStyleSelector.PinnedStyle>
+                                        </selectors:DialogStyleSelector>
+                                    </ListView.ItemContainerStyleSelector>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <cells:ChatCell/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.Header>
+                                        <StackPanel>
+                                            <HyperlinkButton x:Name="ResetFilters" Click="ResetFilters_Click" Visibility="Collapsed" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                <Grid Margin="0,3">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="48"/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <FontIcon Glyph="&#xE751;" HorizontalAlignment="Center"/>
+
+                                                    <TextBlock Text="All chats" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
+
+                                                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                            MinWidth="20"
+                                                            Height="20"
+                                                            CornerRadius="10"
+                                                            VerticalAlignment="Center"
+                                                            HorizontalAlignment="Right"
+                                                            Margin="0,0,12,0"
+                                                            Grid.Column="2">
+                                                        <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
+                                                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                                   TextAlignment="Center"
+                                                                   Margin="4,2,4,0"/>
+                                                    </Border>
+
+                                                </Grid>
+                                            </HyperlinkButton>
+                                        </StackPanel>
+                                    </ListView.Header>
+                                    <ListView.ItemContainerTransitions>
+                                        <TransitionCollection/>
+                                    </ListView.ItemContainerTransitions>
+                                </controls:ChatsListView>
+                            </Grid>
 
                             <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48"/>
 

@@ -31,12 +31,12 @@ namespace Unigram.ViewModels
 
         public IChatsDelegate Delegate { get; set; }
 
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService)
+        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IChatFilter filter = null)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _notificationsService = notificationsService;
 
-            Items = new ItemsCollection(protoService, aggregator, this);
+            Items = new ItemsCollection(protoService, aggregator, this, filter);
 
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
             ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
@@ -554,12 +554,6 @@ namespace Unigram.ViewModels
             //}
 
             return ProtoService.GetChat(chatId);
-        }
-
-        public void SetFilter(IChatFilter filter)
-        {
-            Items = new ItemsCollection(ProtoService, Aggregator, this, filter);
-            RaisePropertyChanged(() => Items);
         }
 
         public class ItemsCollection : SortedObservableCollection<Chat>, IGroupSupportIncrementalLoading

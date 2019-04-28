@@ -160,6 +160,16 @@ namespace Unigram.ViewModels
         public ContactsViewModel Contacts { get; private set; }
         public CallsViewModel Calls { get; private set; }
         public SettingsViewModel Settings { get; private set; }
+
+        public ChatsViewModel Folder { get; private set; }
+
+        public void SetFolder(IChatFilter filter)
+        {
+            Folder = new ChatsViewModel(ProtoService, CacheService, base.Settings, Aggregator, _pushService, filter);
+            Folder.Dispatcher = Dispatcher;
+            Folder.NavigationService = NavigationService;
+            RaisePropertyChanged(() => Folder);
+        }
     }
 
     public class YoloTimer

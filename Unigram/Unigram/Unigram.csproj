@@ -684,6 +684,9 @@
     <Compile Include="Views\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatsPage.xaml.cs">
+      <DependentUpon>ChatsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
       <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
     </Compile>
@@ -2037,6 +2040,10 @@
     <Page Include="Views\ChatPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\ChatInviteLinkPage.xaml">
       <SubType>Designer</SubType>

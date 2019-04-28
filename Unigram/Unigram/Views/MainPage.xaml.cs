@@ -119,6 +119,12 @@ namespace Unigram.Views
                 visual.Size = new Vector2(20, (float)args.NewSize.Height);
             };
 
+            //var shadow = DropShadowEx.Attach(FolderShadow, 20, 0.25f);
+            //FolderShadow.SizeChanged += (s, args) =>
+            //{
+            //    shadow.Size = args.NewSize.ToVector2();
+            //};
+
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
                 SettingsFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
@@ -1123,21 +1129,36 @@ namespace Unigram.Views
 
         private void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            Chat_ContextRequested(sender, args, ViewModel.Chats);
+        }
+
+        private void FolderChat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            Chat_ContextRequested(sender, args, ViewModel.Folder);
+        }
+
+        private void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args, ChatsViewModel viewModel)
+        {
+            if (viewModel == null)
+            {
+                return;
+            }
+
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
             var chat = element.Tag as Chat;
 
             var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
-            flyout.CreateFlyoutItem(DialogPin_Loaded, ViewModel.Chats.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = chat.IsPinned ? Icons.Unpin : Icons.Pin });
-            flyout.CreateFlyoutItem(DialogNotify_Loaded, ViewModel.Chats.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
-            flyout.CreateFlyoutItem(DialogMark_Loaded, ViewModel.Chats.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
-            flyout.CreateFlyoutItem(DialogClear_Loaded, ViewModel.Chats.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
-            flyout.CreateFlyoutItem(DialogDelete_Loaded, ViewModel.Chats.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = chat.IsPinned ? Icons.Unpin : Icons.Pin });
+            flyout.CreateFlyoutItem(DialogNotify_Loaded, viewModel.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
+            flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+            flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
+            flyout.CreateFlyoutItem(DialogDelete_Loaded, viewModel.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
 
             flyout.CreateFlyoutSeparator();
 
-            flyout.CreateFlyoutItem(ViewModel.Chats.ChatSelectCommand, chat, Strings.Resources.AccActionEnterSelectionMode, new FontIcon { Glyph = Icons.Select });
+            flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Resources.AccActionEnterSelectionMode, new FontIcon { Glyph = Icons.Select });
 
             args.ShowAt(flyout, element);
         }
@@ -1387,7 +1408,7 @@ namespace Unigram.Views
 
         private async void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(SearchField.Text))
+            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrWhiteSpace(SearchField.Text))
             {
                 return;
             }
@@ -1669,7 +1690,15 @@ namespace Unigram.Views
             {
                 args.ItemContainer = new ChatsListViewItem(ChatsList);
                 args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
-                args.ItemContainer.ContextRequested += Chat_ContextRequested;
+
+                if (sender == FolderList)
+                {
+                    args.ItemContainer.ContextRequested += Chat_ContextRequested;
+                }
+                else
+                {
+                    args.ItemContainer.ContextRequested += Chat_ContextRequested;
+                }
             }
 
             args.ItemContainer.Style = ChatsList.ItemContainerStyleSelector.SelectStyle(args.Item, null);
@@ -2013,13 +2042,75 @@ namespace Unigram.Views
 
             if (filter == ChatTypeFilterMode.None)
             {
-                ResetFilters.Visibility = Visibility.Collapsed;
-                ViewModel.Chats.SetFilter(null);
+                //ResetFilters.Visibility = Visibility.Collapsed;
+                ChatsList.Visibility = Visibility.Visible;
+                FolderList.Visibility = Visibility.Visible;
+                ViewModel.SetFolder(null);
+
+                var chats = ElementCompositionPreview.GetElementVisual(ChatsList);
+                var folder = ElementCompositionPreview.GetElementVisual(FolderList);
+                var shadow = ElementCompositionPreview.GetElementVisual(FolderShadow);
+
+                var anim1 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                anim1.InsertKeyFrame(1, 0);
+                anim1.InsertKeyFrame(0, -(float)(DialogsPanel.ActualWidth / 3));
+
+                var anim2 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                anim2.InsertKeyFrame(1, (float)DialogsPanel.ActualWidth);
+                anim2.InsertKeyFrame(0, 0);
+
+                var anim3 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                anim3.InsertKeyFrame(1, 0);
+                anim3.InsertKeyFrame(0, 1);
+
+                var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += (s, args) =>
+                {
+                    ChatsList.Visibility = Visibility.Visible;
+                    ResetFilters.Visibility = Visibility.Collapsed;
+                    FolderPanel.Visibility = Visibility.Collapsed;
+                };
+
+                chats.StartAnimation("Offset.X", anim1);
+                folder.StartAnimation("Offset.X", anim2);
+                shadow.StartAnimation("Opacity", anim3);
+                batch.End();
             }
             else
             {
                 ResetFilters.Visibility = Visibility.Visible;
-                ViewModel.Chats.SetFilter(new ChatTypeFilter(ViewModel.CacheService, filter));
+                ChatsList.Visibility = Visibility.Visible;
+                FolderPanel.Visibility = Visibility.Visible;
+                ViewModel.SetFolder(new ChatTypeFilter(ViewModel.CacheService, filter));
+
+                var chats = ElementCompositionPreview.GetElementVisual(ChatsList);
+                var folder = ElementCompositionPreview.GetElementVisual(FolderList);
+                var shadow = ElementCompositionPreview.GetElementVisual(FolderShadow);
+
+                var anim1 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                anim1.InsertKeyFrame(0, 0);
+                anim1.InsertKeyFrame(1, -(float)(DialogsPanel.ActualWidth / 3));
+
+                var anim2 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                anim2.InsertKeyFrame(0, (float)DialogsPanel.ActualWidth);
+                anim2.InsertKeyFrame(1, 0);
+
+                var anim3 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                anim3.InsertKeyFrame(0, 0);
+                anim3.InsertKeyFrame(1, 1);
+
+                var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += (s, args) =>
+                {
+                    ChatsList.Visibility = Visibility.Collapsed;
+                    ResetFilters.Visibility = Visibility.Visible;
+                    FolderPanel.Visibility = Visibility.Visible;
+                };
+
+                chats.StartAnimation("Offset.X", anim1);
+                folder.StartAnimation("Offset.X", anim2);
+                shadow.StartAnimation("Opacity", anim3);
+                batch.End();
             }
 
             ChatsFilters.Content = text;
