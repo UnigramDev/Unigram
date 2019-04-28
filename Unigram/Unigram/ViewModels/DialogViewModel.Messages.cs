@@ -64,17 +64,17 @@ namespace Unigram.ViewModels
             var data = _composerHeader;
             if (data != null && data.ReplyToMessage != null)
             {
-                last = Items.FirstOrDefault(x => x.Id != 0 && x.Id > data.ReplyToMessage.Id) ?? Items.LastOrDefault();
-            }
-            else
-            {
-                last = Items.LastOrDefault();
+                last = Items.FirstOrDefault(x => x.Id != 0 && x.Id > data.ReplyToMessage.Id);
             }
 
             if (last != null)
             {
                 MessageReplyCommand.Execute(last);
                 await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
+            }
+            else
+            {
+                ClearReplyCommand.Execute();
             }
         }
 
