@@ -158,10 +158,8 @@ namespace Unigram.ViewModels.Dialogs
                 return;
             }
 
-            ProtoService.Send(new GetInstalledStickerSets(false), result =>
-            {
-
-            });
+            _stickers = false;
+            SyncStickers(null);
         }
 
         public void Handle(UpdateSavedAnimations update)
