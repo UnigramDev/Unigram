@@ -140,7 +140,8 @@ namespace Unigram.Controls.Messages.Content
                     Button.SetGlyph(Icons.Animation, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
                     Button.Progress = 1;
 
-                    Overlay.Opacity = 0;
+                    Subtitle.Text = Strings.Resources.AttachGif;
+                    Overlay.Opacity = 1;
 
                     _oldState = MessageContentState.Open;
                 }
