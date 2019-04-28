@@ -4,7 +4,9 @@
 #include <ios>
 #include <fstream>
 
+#include <experimental\resumable>
 #include <ppltasks.h>
+#include <pplawait.h>
 #include <iostream>  
 #include <iomanip>
 #include <sstream>
@@ -53,9 +55,11 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 	{
 		try
 		{
-			UpdateToastAndTiles(details->Content /*, &log*/);
+			UpdateToastAndTiles(details->Content /*, &log*/).then([=]() {
+				deferral->Complete();
+			});;
 		}
-		catch (Exception^ ex)
+		catch (Exception ^ ex)
 		{
 			//time(&rawtime);
 			//localtime_s(&timeinfo, &rawtime);
@@ -66,6 +70,8 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 			//log << L"[";
 			//log << str3;
 			//log << "] Exception while processing notification";
+
+			deferral->Complete();
 		}
 	}
 
@@ -78,11 +84,9 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 	//log << L"[";
 	//log << str2;
 	//log << L"] Quitting background task\n\n";
-
-	deferral->Complete();
 }
 
-void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* log*/)
+task<void> NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* log*/)
 {
 	auto notification = JsonValue::Parse(content)->GetObject();
 	auto data = notification->GetNamedObject("data");
@@ -158,8 +162,8 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 		{
-			UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, nullptr, date, loc_key);
-			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			co_await UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, nullptr, date, loc_key);
+			//UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
 		{
@@ -180,7 +184,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 			}
 
 			auto tag = GetTag(custom);
-			UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key);
+			co_await UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key);
 			//UpdatePrimaryBadge(data->GetNamedNumber(L"badge", 0));
 
 			if (loc_key != L"DC_UPDATE")
@@ -412,7 +416,7 @@ void NotificationTask::UpdatePrimaryBadge(int badgeNumber)
 
 		updater->Update(ref new BadgeNotification(document));
 	}
-	catch (Exception^ e) { }
+	catch (Exception ^ e) {}
 }
 
 //void NotificationTask::UpdateSecondaryBadge(String^ group, bool resetBadge)
@@ -591,7 +595,7 @@ void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, Strin
 
 		updater->Update(notification);
 	}
-	catch (Exception^ e) { }
+	catch (Exception ^ e) {}
 }
 
 //void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group)
@@ -658,7 +662,15 @@ void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, Strin
 //	updater->Update(notification);
 //}
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key)
+Windows::Foundation::IAsyncAction^ NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key)
+{
+	return create_async([=]()
+	{
+		return UpdateToastInternal(caption, message, attribution, account, sound, launch, tag, group, picture, hero, date, loc_key);
+	});
+}
+
+task<void> NotificationTask::UpdateToastInternal(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key)
 {
 	bool allow = true;
 	//auto settings = ApplicationData::Current->LocalSettings;
@@ -734,16 +746,24 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 		xml += L"'/>";
 	}
 
-	xml += L"<text placement='attribution'><![CDATA[";
-	xml += attribution->Data();
-	xml += L"]]></text></binding></visual>";
+	//xml += L"<text placement='attribution'><![CDATA[";
+	//xml += attribution->Data();
+	//xml += L"]]></text>";
+	xml += L"</binding></visual>";
 	xml += actions;
 	xml += audio;
 	xml += L"</toast>";
 
 	try
 	{
-		auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+		auto account2 = account->Data();
+
+		//auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+		auto notifier = co_await ToastNotificationManager::GetDefault()->GetToastNotifierForToastCollectionIdAsync(account);
+		
+		if (notifier == nullptr) {
+			notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+		}
 
 		auto document = ref new XmlDocument();
 		document->LoadXml(ref new String(xml.c_str()));
@@ -770,15 +790,16 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ att
 
 		notifier->Show(notification);
 	}
-	catch (Exception^ e) { }
+	catch (Exception ^ e) {}
 }
 
-void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
-{
-	auto coordinator = VoipCallCoordinator::GetDefault();
-	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask")).then([this, coordinator, caption, message, sound, launch, tag, group, picture, date, loc_key](VoipPhoneCallResourceReservationStatus status)
-	{
-		Sleep(1000000);
-		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
-	});
-}
+//
+//void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
+//{
+//	auto coordinator = VoipCallCoordinator::GetDefault();
+//	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask")).then([this, coordinator, caption, message, sound, launch, tag, group, picture, date, loc_key](VoipPhoneCallResourceReservationStatus status)
+//	{
+//		Sleep(1000000);
+//		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
+//	});
+//}

@@ -45,6 +45,7 @@ namespace Unigram.Services
         IHandle<UpdateServiceNotification>,
         IHandle<UpdateTermsOfService>,
         IHandle<UpdateAuthorizationState>,
+        IHandle<UpdateUser>,
         IHandle<UpdateNotification>,
         IHandle<UpdateNotificationGroup>,
         IHandle<UpdateHavePendingNotifications>,
@@ -215,6 +216,14 @@ namespace Unigram.Services
             }
         }
 
+        public void Handle(UpdateUser update)
+        {
+            if (update.User.Id == _protoService.Options.MyId)
+            {
+                CreateToastCollection(update.User);
+            }
+        }
+
         public void Handle(UpdateActiveNotifications update)
         {
             foreach (var group in update.Groups)
@@ -315,9 +324,9 @@ namespace Unigram.Services
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
 
-            Update(chat, () =>
+            Update(chat, async () =>
             {
-                NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, user?.Id.ToString() ?? string.Empty, sound, launch, tag, group, picture, string.Empty, date, loc_key);
+                await NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, $"{_sessionService.Id}", sound, launch, tag, group, picture, string.Empty, date, loc_key);
 
                 if (_sessionService.IsActive)
                 {
@@ -468,6 +477,16 @@ namespace Unigram.Services
             {
                 args.Cancel = true;
             }
+        }
+
+        private async void CreateToastCollection(User user)
+        {
+            var displayName = user.GetFullName();
+            var launchArg = $"session={_sessionService.Id}&user_id={user.Id}";
+            var icon = new Uri("ms-appx:///Assets/Logos/Square44x44Logo/Square44x44Logo.png");
+
+            var collection = new ToastCollection($"{_sessionService.Id}", displayName, launchArg, icon);
+            await ToastNotificationManager.GetDefault().GetToastCollectionManager().SaveToastCollectionAsync(collection);
         }
 
         public async Task UnregisterAsync()
