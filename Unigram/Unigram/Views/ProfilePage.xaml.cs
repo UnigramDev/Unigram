@@ -32,6 +32,7 @@ using System.Reactive.Linq;
 using Unigram.Controls.Gallery;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Hosting;
+using System.Numerics;
 
 namespace Unigram.Views
 {
@@ -49,19 +50,6 @@ namespace Unigram.Views
                 DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
                 DescriptionPanel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Description_ContextRequested), true);
             }
-
-            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
-            {
-                if (string.IsNullOrWhiteSpace(SearchField.Text))
-                {
-                    ViewModel.Search?.Clear();
-                }
-                else
-                {
-                    ViewModel.Find(SearchField.Text);
-                }
-            });
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
@@ -558,14 +546,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(new RelayCommand(() =>
-                    {
-                        flyout.Closed += (s, args) =>
-                        {
-                            Search_Click(null, null);
-                        };
-
-                    }), Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
+                    flyout.CreateFlyoutItem(ViewModel.MembersCommand, Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
 
                     if (!(supergroup.Status is ChatMemberStatusCreator) && !(supergroup.Status is ChatMemberStatusLeft) && !(supergroup.Status is ChatMemberStatusBanned))
                     {
@@ -595,14 +576,7 @@ namespace Unigram.Views
                     flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ChannelEdit, new FontIcon { Glyph = Icons.Edit });
                 }
 
-                flyout.CreateFlyoutItem(new RelayCommand(() =>
-                {
-                    flyout.Closed += (s, args) =>
-                    {
-                        Search_Click(null, null);
-                    };
-
-                }), Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
+                flyout.CreateFlyoutItem(ViewModel.MembersCommand, Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
 
                 if (basicGroup.Status is ChatMemberStatusCreator && basicGroup.MemberCount > 0)
                 {
@@ -938,37 +912,6 @@ namespace Unigram.Views
             }
         }
 
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
-
-            SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-
-                Focus(FocusState.Programmatic);
-            }
-        }
-
-        private void Search_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                ContentPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ContentPanel.Visibility = Visibility.Collapsed;
-            }
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var scrollViewer = ScrollingHost.GetScrollViewer();
@@ -978,21 +921,81 @@ namespace Unigram.Views
             }
 
             var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
-            var header = ElementCompositionPreview.GetElementVisual(ScrollingHeader);
+            var header = ElementCompositionPreview.GetElementVisual(HeaderPanel);
             var info = ElementCompositionPreview.GetElementVisual(ScrollingInfo);
 
-            var animShow = header.Compositor.CreateExpressionAnimation("40 -(Min(76, -scrollViewer.Translation.Y) / 76 * 40)");
-            animShow.SetReferenceParameter("scrollViewer", properties);
+            var photo = ElementCompositionPreview.GetElementVisual(Photo);
+            var title = ElementCompositionPreview.GetElementVisual(LabelTitle);
+            var subtitle = ElementCompositionPreview.GetElementVisual(Subtitle);
+            var action = ElementCompositionPreview.GetElementVisual(SendMessage);
 
-            var animHide = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 40)");
-            animHide.SetReferenceParameter("scrollViewer", properties);
+            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateLinearGradientBrush"))
+            {
+                var overlay = photo.Compositor.CreateSpriteVisual();
+                var gradient = overlay.Compositor.CreateLinearGradientBrush();
+                gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(0, ((SolidColorBrush)App.Current.Resources["PageHeaderBackgroundBrush"]).Color));
+                gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(1, ((SolidColorBrush)App.Current.Resources["PageSubHeaderBackgroundBrush"]).Color));
+                gradient.StartPoint = new Vector2();
+                gradient.EndPoint = new Vector2(0, 1);
+                overlay.Brush = gradient;
+                overlay.Size = new Vector2((float)HeaderOverlay.ActualWidth, (float)HeaderOverlay.ActualHeight);
+
+                HeaderOverlay.SizeChanged += (s, args) =>
+                {
+                    overlay.Size = args.NewSize.ToVector2();
+                };
+
+                ElementCompositionPreview.SetElementChildVisual(HeaderOverlay, overlay);
+
+                var animOverlay = header.Compositor.CreateExpressionAnimation("Min(76, -scrollViewer.Translation.Y) / 38");
+                animOverlay.SetReferenceParameter("scrollViewer", properties);
+
+                overlay.StartAnimation("Scale.Y", animOverlay);
+            }
+
+            var animClip = header.Compositor.CreateExpressionAnimation("Min(76, -scrollViewer.Translation.Y)");
+            animClip.SetReferenceParameter("scrollViewer", properties);
+
+            header.Clip = header.Compositor.CreateInsetClip(0, -32, -12, 0);
+            header.Clip.StartAnimation("BottomInset", animClip);
+
+
+            var animPhotoOffset = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 41)");
+            animPhotoOffset.SetReferenceParameter("scrollViewer", properties);
+
+            var animPhotoScale = header.Compositor.CreateExpressionAnimation("1 -(Min(76, -scrollViewer.Translation.Y) / 76 * (34 / 64))");
+            animPhotoScale.SetReferenceParameter("scrollViewer", properties);
+
+            photo.StartAnimation("Offset.Y", animPhotoOffset);
+            photo.StartAnimation("Scale.X", animPhotoScale);
+            photo.StartAnimation("Scale.Y", animPhotoScale);
+
+
+            var animTitleY = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 58)");
+            animTitleY.SetReferenceParameter("scrollViewer", properties);
+
+            var animTitleX = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 34)");
+            animTitleX.SetReferenceParameter("scrollViewer", properties);
+
+            title.StartAnimation("Offset.Y", animTitleY);
+            title.StartAnimation("Offset.X", animTitleX);
+            subtitle.StartAnimation("Offset.Y", animTitleY);
+            subtitle.StartAnimation("Offset.X", animTitleX);
+
+
+            var animInfoY = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 40)");
+            animInfoY.SetReferenceParameter("scrollViewer", properties);
 
             var animOpacity = header.Compositor.CreateExpressionAnimation("1 -(Min(76, -scrollViewer.Translation.Y) / 76)");
             animOpacity.SetReferenceParameter("scrollViewer", properties);
 
-            header.StartAnimation("Offset.Y", animShow);
-            info.StartAnimation("Offset.Y", animHide);
+            info.StartAnimation("Offset.Y", animInfoY);
             info.StartAnimation("Opacity", animOpacity);
+
+            action.CenterPoint = new Vector3(18);
+            action.StartAnimation("Opacity", animOpacity);
+            action.StartAnimation("Scale.X", animOpacity);
+            action.StartAnimation("Scale.Y", animOpacity);
         }
     }
 }
