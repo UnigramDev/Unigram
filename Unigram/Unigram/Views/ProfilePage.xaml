@@ -8,7 +8,8 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="OnLoaded">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -118,11 +119,35 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{CustomResource Info}"
-                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                               Style="{StaticResource BaseTextBlockStyle}"
-                               VerticalAlignment="Center"
-                               Margin="12,0"/>
+                    <Border x:Name="ScrollingInfo">
+                        <TextBlock Text="{CustomResource Info}"
+                                   Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0"/>
+                    </Border>
+
+                    <Grid x:Name="ScrollingHeader">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture x:Name="ScrollingPhoto" Width="{ThemeResource ChatPhotoSize}" Height="{ThemeResource ChatPhotoSize}" Margin="12,0" IsEnabled="False"/>
+
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
+                            <TextBlock x:Name="ScrollingTitle"
+                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       MaxLines="1"/>
+                            <TextBlock x:Name="ScrollingSubtitle"
+                                       Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </Grid>
 
                     <controls:GlyphButton
                         x:Name="Call"

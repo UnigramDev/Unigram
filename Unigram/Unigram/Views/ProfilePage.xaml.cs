@@ -31,6 +31,7 @@ using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
 using Unigram.Controls.Gallery;
 using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Views
 {
@@ -119,12 +120,12 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ViewModel.ProtoService.GetTitle(chat);
+            Title.Text = ScrollingTitle.Text = ViewModel.ProtoService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
+            Photo.Source = ScrollingPhoto.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
         }
 
         public void UpdateChatNotificationSettings(Chat chat)
@@ -135,7 +136,7 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
+            Subtitle.Text = ScrollingSubtitle.Text = LastSeenConverter.GetLabel(user, true);
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
@@ -217,7 +218,7 @@ namespace Unigram.Views
 
         public void UpdateUserStatus(Chat chat, User user)
         {
-            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
+            Subtitle.Text = ScrollingSubtitle.Text = LastSeenConverter.GetLabel(user, true);
         }
 
 
@@ -245,7 +246,7 @@ namespace Unigram.Views
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Subtitle.Text = Locale.Declension("Members", group.MemberCount);
+            Subtitle.Text = ScrollingSubtitle.Text = Locale.Declension("Members", group.MemberCount);
 
             GroupInvite.Visibility = group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || group.EveryoneIsAdministrator ? Visibility.Visible : Visibility.Collapsed;
 
@@ -290,7 +291,7 @@ namespace Unigram.Views
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+            Subtitle.Text = ScrollingSubtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
 
             DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
 
@@ -966,6 +967,32 @@ namespace Unigram.Views
             {
                 ContentPanel.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var scrollViewer = ScrollingHost.GetScrollViewer();
+            if (scrollViewer == null)
+            {
+                return;
+            }
+
+            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
+            var header = ElementCompositionPreview.GetElementVisual(ScrollingHeader);
+            var info = ElementCompositionPreview.GetElementVisual(ScrollingInfo);
+
+            var animShow = header.Compositor.CreateExpressionAnimation("40 -(Min(76, -scrollViewer.Translation.Y) / 76 * 40)");
+            animShow.SetReferenceParameter("scrollViewer", properties);
+
+            var animHide = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 40)");
+            animHide.SetReferenceParameter("scrollViewer", properties);
+
+            var animOpacity = header.Compositor.CreateExpressionAnimation("1 -(Min(76, -scrollViewer.Translation.Y) / 76)");
+            animOpacity.SetReferenceParameter("scrollViewer", properties);
+
+            header.StartAnimation("Offset.Y", animShow);
+            info.StartAnimation("Offset.Y", animHide);
+            info.StartAnimation("Opacity", animOpacity);
         }
     }
 }
