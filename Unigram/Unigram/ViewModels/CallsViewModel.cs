@@ -33,6 +33,7 @@ namespace Unigram.ViewModels
             private readonly ICacheService _cacheService;
 
             private long _lastMaxId;
+            private bool _hasMoreItems = true;
 
             public ItemsCollection(IProtoService protoService, ICacheService cacheService)
             {
@@ -48,6 +49,10 @@ namespace Unigram.ViewModels
                     if (messages.MessagesValue.Count > 0)
                     {
                         _lastMaxId = messages.MessagesValue.Min(x => x.Id);
+                    }
+                    else
+                    {
+                        _hasMoreItems = false;
                     }
 
                     List<TLCallGroup> groups = new List<TLCallGroup>();
@@ -109,6 +114,11 @@ namespace Unigram.ViewModels
                 }
 
                 return new TLCallGroup[0];
+            }
+
+            protected override bool GetHasMoreItems()
+            {
+                return _hasMoreItems;
             }
         }
 
