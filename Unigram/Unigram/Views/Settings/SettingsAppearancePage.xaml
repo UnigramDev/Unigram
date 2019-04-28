@@ -93,7 +93,7 @@
                     Click="NightMode_Click"
                     Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                <StackPanel Padding="12" Margin="0,18,0,0">
+                <StackPanel Padding="12,12,0,12" Margin="0,18,0,0">
                     <TextBlock Text="{CustomResource ColorTheme}" Margin="0,0,0,6" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <ListView ItemsSource="{x:Bind ViewModel.Items}"
                               SelectionMode="None"

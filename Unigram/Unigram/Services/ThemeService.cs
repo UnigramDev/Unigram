@@ -81,9 +81,7 @@ namespace Unigram.Services
             var result = new List<ThemeInfoBase>
             {
                 new ThemeBundledInfo { Name = "Light", Parent = TelegramTheme.Light | TelegramTheme.Brand },
-                new ThemeBundledInfo { Name = "Dark", Parent = TelegramTheme.Dark | TelegramTheme.Brand },
-                new ThemeBundledInfo { Name = "Windows 10 Light", Parent = TelegramTheme.Light },
-                new ThemeBundledInfo { Name = "Windows 10 Dark", Parent = TelegramTheme.Dark },
+                new ThemeBundledInfo { Name = "Dark", Parent = TelegramTheme.Dark | TelegramTheme.Brand }
             };
 
             var package = await Package.Current.InstalledLocation.GetFolderAsync("Assets\\Themes");
@@ -93,6 +91,9 @@ namespace Unigram.Services
             {
                 result.Add(await DeserializeAsync(file, true));
             }
+
+            result.Add(new ThemeBundledInfo { Name = "Windows 10 Light", Parent = TelegramTheme.Light });
+            result.Add(new ThemeBundledInfo { Name = "Windows 10 Dark", Parent = TelegramTheme.Dark });
 
             var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("themes", CreationCollisionOption.OpenIfExists);
             var files = await folder.GetFilesAsync();

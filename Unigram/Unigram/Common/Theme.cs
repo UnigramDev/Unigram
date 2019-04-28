@@ -45,7 +45,7 @@ namespace Unigram.Common
         public void Initialize()
         {
             var path = SettingsService.Current.Appearance.RequestedThemePath;
-            if (string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
             {
                 Update();
                 return;
