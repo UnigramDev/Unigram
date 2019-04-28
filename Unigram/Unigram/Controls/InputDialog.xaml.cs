@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -57,11 +60,41 @@ namespace Unigram.Controls
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (string.IsNullOrEmpty(Label.Text))
+            {
+                args.Cancel = true;
+                return;
+            }
+
             Text = Label.Text;
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+        }
+
+        private void Label_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key != Windows.System.VirtualKey.Enter)
+            {
+                return;
+            }
+
+            var button = this.Descendants<Button>().FirstOrDefault(x => x is Button btn && string.Equals(btn.Name, "PrimaryButton"));
+            if (button == null)
+            {
+                return;
+            }
+
+            var peer = ButtonAutomationPeer.CreatePeerForElement(button as Button);
+            var pattern = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+
+            pattern.Invoke();
+        }
+
+        private void Label_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            IsPrimaryButtonEnabled = !string.IsNullOrEmpty(Label.Text);
         }
     }
 }

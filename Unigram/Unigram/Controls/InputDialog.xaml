@@ -13,5 +13,5 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <TextBox x:Name="Label" Margin="12,12,12,0"/>
+    <TextBox x:Name="Label" Margin="12,12,12,0" VerticalAlignment="Top" TextChanged="Label_TextChanged" KeyDown="Label_KeyDown"/>
 </ContentDialog>
