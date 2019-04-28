@@ -1375,74 +1375,69 @@ namespace Unigram.Views
 
         private void Search_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
-                UpdatePaneToggleButtonVisibility();
-            }
+            MainHeader.Visibility = Visibility.Visible;
+            SearchField.Visibility = Visibility.Collapsed;
+            UpdatePaneToggleButtonVisibility();
 
-            Search_TextChanged(null, null);
+            rpMasterTitlebar.IsLocked = false;
+            MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
+
+            SearchReset();
         }
 
         private async void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrWhiteSpace(SearchField.Text))
+            if (string.IsNullOrWhiteSpace(SearchField.Text))
             {
-                rpMasterTitlebar.IsLocked = false;
-                MasterDetail.AllowCompact = MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage) && rpMasterTitlebar.SelectedIndex == 0;
-
-                SearchReset();
+                return;
             }
-            else if (SearchField.FocusState != FocusState.Unfocused)
+
+            rpMasterTitlebar.IsLocked = true;
+            MasterDetail.AllowCompact = false;
+
+            if (rpMasterTitlebar.SelectedIndex == 0)
             {
-                rpMasterTitlebar.IsLocked = true;
-                MasterDetail.AllowCompact = false;
+                DialogsPanel.Visibility = Visibility.Collapsed;
 
-                if (rpMasterTitlebar.SelectedIndex == 0)
+                if (string.IsNullOrEmpty(SearchField.Text))
                 {
-                    DialogsPanel.Visibility = Visibility.Collapsed;
+                    var top = ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ProtoService, new TopChatCategoryUsers(), 30);
+                    await top.LoadMoreItemsAsync(0);
+                }
+                else
+                {
+                    ViewModel.Chats.TopChats = null;
+                }
 
-                    if (string.IsNullOrEmpty(SearchField.Text))
-                    {
-                        var top = ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ProtoService, new TopChatCategoryUsers(), 30);
-                        await top.LoadMoreItemsAsync(0);
-                    }
-                    else
-                    {
-                        ViewModel.Chats.TopChats = null;
-                    }
+                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text);
+                await items.LoadMoreItemsAsync(0);
+                await items.LoadMoreItemsAsync(1);
+            }
+            else if (rpMasterTitlebar.SelectedIndex == 1)
+            {
+                if (string.IsNullOrWhiteSpace(SearchField.Text))
+                {
+                    SearchReset();
+                }
+                else
+                {
+                    ContactsPanel.Visibility = Visibility.Collapsed;
 
-                    var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text);
+                    var items = ViewModel.Contacts.Search = new SearchUsersCollection(ViewModel.ProtoService, SearchField.Text);
                     await items.LoadMoreItemsAsync(0);
-                    await items.LoadMoreItemsAsync(1);
                 }
-                else if (rpMasterTitlebar.SelectedIndex == 1)
+            }
+            else if (rpMasterTitlebar.SelectedIndex == 3)
+            {
+                if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {
-                    if (string.IsNullOrWhiteSpace(SearchField.Text))
-                    {
-                        SearchReset();
-                    }
-                    else
-                    {
-                        ContactsPanel.Visibility = Visibility.Collapsed;
-
-                        var items = ViewModel.Contacts.Search = new SearchUsersCollection(ViewModel.ProtoService, SearchField.Text);
-                        await items.LoadMoreItemsAsync(0);
-                    }
+                    SearchReset();
                 }
-                else if (rpMasterTitlebar.SelectedIndex == 3)
+                else
                 {
-                    if (string.IsNullOrWhiteSpace(SearchField.Text))
-                    {
-                        SearchReset();
-                    }
-                    else
-                    {
-                        SettingsView.Visibility = Visibility.Collapsed;
+                    SettingsView.Visibility = Visibility.Collapsed;
 
-                        ViewModel.Settings.Search(SearchField.Text);
-                    }
+                    ViewModel.Settings.Search(SearchField.Text);
                 }
             }
         }
