@@ -264,14 +264,21 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            Items.Remove(theme);
-
             try
             {
                 var file = await StorageFile.GetFileFromPathAsync(theme.Path);
                 await file.DeleteAsync();
             }
             catch { }
+
+            if (Settings.Appearance.RequestedThemePath == theme.Path)
+            {
+                await SetThemeAsync(new ThemeBundledInfo { Parent = theme.Parent });
+            }
+            else
+            {
+                Items.ReplaceWith(await _themeService.GetThemesAsync());
+            }
         }
 
         #endregion
