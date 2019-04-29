@@ -33,7 +33,6 @@ namespace Unigram
 
 			private:
 				concurrency::task<void> UpdateToastAndTiles(String^ content /*, std::wofstream* log*/);
-				static concurrency::task<void> UpdateToastInternal(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key);
 				String^ GetCaption(JsonArray^ loc_args, String^ loc_key);
 				String^ GetMessage(JsonArray^ loc_args, String^ loc_key);
 				String^ GetLaunch(JsonObject^ custom, String^ loc_key);

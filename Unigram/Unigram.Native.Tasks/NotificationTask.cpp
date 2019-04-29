@@ -95,6 +95,7 @@ task<void> NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstr
 		return;
 	}
 
+	auto session = GetSession(data);
 	if (data->HasKey("loc_key") == false)
 	{
 		//time_t rawtime = time(NULL);
@@ -146,7 +147,6 @@ task<void> NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstr
 		auto sound = data->GetNamedString("sound", "Default");
 		auto launch = GetLaunch(custom, loc_key);
 		auto group = GetGroup(custom);
-		auto session = GetSession(data);
 		auto picture = GetPicture(custom, group, session);
 		auto date = GetDate(notification);
 
@@ -666,131 +666,124 @@ Windows::Foundation::IAsyncAction^ NotificationTask::UpdateToast(String^ caption
 {
 	return create_async([=]()
 	{
-		return UpdateToastInternal(caption, message, attribution, account, sound, launch, tag, group, picture, hero, date, loc_key);
-	});
-}
+		bool allow = true;
+		//auto settings = ApplicationData::Current->LocalSettings;
+		//if (settings->Values->HasKey("SessionGuid"))
+		//{
+		//	auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
 
-task<void> NotificationTask::UpdateToastInternal(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key)
-{
-	bool allow = true;
-	//auto settings = ApplicationData::Current->LocalSettings;
-	//if (settings->Values->HasKey("SessionGuid"))
-	//{
-	//	auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
+		//	std::wstringstream path;
+		//	path << temp->Data()
+		//		<< L"\\"
+		//		<< guid->Data()
+		//		<< L"\\passcode_params.dat";
 
-	//	std::wstringstream path;
-	//	path << temp->Data()
-	//		<< L"\\"
-	//		<< guid->Data()
-	//		<< L"\\passcode_params.dat";
+		//	WIN32_FIND_DATA FindFileData;
+		//	HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
+		//	int found = handle != INVALID_HANDLE_VALUE;
+		//	if (found)
+		//	{
+		//		FindClose(handle);
 
-	//	WIN32_FIND_DATA FindFileData;
-	//	HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
-	//	int found = handle != INVALID_HANDLE_VALUE;
-	//	if (found)
-	//	{
-	//		FindClose(handle);
+		//		allow = false;
+		//	}
+		//}
 
-	//		allow = false;
-	//	}
-	//}
-
-	std::wstring key = loc_key->Data();
-	std::wstring actions = L"";
-	if (group != nullptr && key.find(L"CHANNEL") && allow)
-	{
-		actions = L"<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
-		actions += launch->Data();
-		//actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
-		actions += L"' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
-		actions += launch->Data();
-		actions += L"' content='ms-resource:Send'/></actions>";
-	}
-
-	std::wstring audio = L"";
-	if (sound->Equals("silent"))
-	{
-		audio = L"<audio silent='true'/>";
-	}
-
-	std::wstring xml = L"<toast launch='";
-	xml += launch->Data();
-	xml += L"' displayTimestamp='";
-	xml += date->Data();
-	//xml += L"' hint-people='remoteid:";
-	//xml += group->Data();
-	xml += L"'>";
-	//xml += L"<header id='";
-	//xml += account->Data();
-	//xml += L"' title='Camping!!' arguments='action = openConversation & amp; id = 6289'/>";
-	xml += L"<visual><binding template='ToastGeneric'>";
-
-	if (picture != nullptr)
-	{
-		xml += L"<image placement='appLogoOverride' hint-crop='circle' src='";
-		xml += picture->Data();
-		xml += L"'/>";
-	}
-
-	xml += L"<text><![CDATA[";
-	xml += caption->Data();
-	xml += L"]]></text><text><![CDATA[";
-	xml += message->Data();
-	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
-	xml += L"]]></text>";
-
-	if (hero != nullptr && hero->Length())
-	{
-		xml += L"<image src='";
-		xml += hero->Data();
-		xml += L"'/>";
-	}
-
-	//xml += L"<text placement='attribution'><![CDATA[";
-	//xml += attribution->Data();
-	//xml += L"]]></text>";
-	xml += L"</binding></visual>";
-	xml += actions;
-	xml += audio;
-	xml += L"</toast>";
-
-	try
-	{
-		auto account2 = account->Data();
-
-		//auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
-		auto notifier = co_await ToastNotificationManager::GetDefault()->GetToastNotifierForToastCollectionIdAsync(account);
-		
-		if (notifier == nullptr) {
-			notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+		std::wstring key = loc_key->Data();
+		std::wstring actions = L"";
+		if (group != nullptr && key.find(L"CHANNEL") && allow)
+		{
+			actions = L"<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
+			actions += launch->Data();
+			//actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+			actions += L"' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
+			actions += launch->Data();
+			actions += L"' content='ms-resource:Send'/></actions>";
 		}
 
-		auto document = ref new XmlDocument();
-		document->LoadXml(ref new String(xml.c_str()));
-
-		auto notification = ref new ToastNotification(document);
-
-		if (tag != nullptr)
+		std::wstring audio = L"";
+		if (sound->Equals("silent"))
 		{
-			notification->Tag = tag;
-			notification->RemoteId = tag;
+			audio = L"<audio silent='true'/>";
 		}
 
-		if (group != nullptr)
+		std::wstring xml = L"<toast launch='";
+		xml += launch->Data();
+		xml += L"' displayTimestamp='";
+		xml += date->Data();
+		//xml += L"' hint-people='remoteid:";
+		//xml += group->Data();
+		xml += L"'>";
+		//xml += L"<header id='";
+		//xml += account->Data();
+		//xml += L"' title='Camping!!' arguments='action = openConversation & amp; id = 6289'/>";
+		xml += L"<visual><binding template='ToastGeneric'>";
+
+		if (picture != nullptr)
 		{
-			notification->Group = group;
+			xml += L"<image placement='appLogoOverride' hint-crop='circle' src='";
+			xml += picture->Data();
+			xml += L"'/>";
+		}
+
+		xml += L"<text><![CDATA[";
+		xml += caption->Data();
+		xml += L"]]></text><text><![CDATA[";
+		xml += message->Data();
+		//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
+		xml += L"]]></text>";
+
+		if (hero != nullptr && hero->Length())
+		{
+			xml += L"<image src='";
+			xml += hero->Data();
+			xml += L"'/>";
+		}
+
+		//xml += L"<text placement='attribution'><![CDATA[";
+		//xml += attribution->Data();
+		//xml += L"]]></text>";
+		xml += L"</binding></visual>";
+		xml += actions;
+		xml += audio;
+		xml += L"</toast>";
+
+		try
+		{
+			//auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+			auto notifier = create_task(ToastNotificationManager::GetDefault()->GetToastNotifierForToastCollectionIdAsync(account)).get();
+
+			if (notifier == nullptr) {
+				notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+			}
+
+			auto document = ref new XmlDocument();
+			document->LoadXml(ref new String(xml.c_str()));
+
+			auto notification = ref new ToastNotification(document);
 
 			if (tag != nullptr)
 			{
-				notification->RemoteId += "_";
+				notification->Tag = tag;
+				notification->RemoteId = tag;
 			}
 
-			notification->RemoteId += group;
-		}
+			if (group != nullptr)
+			{
+				notification->Group = group;
 
-		notifier->Show(notification);
-	}
-	catch (Exception ^ e) {}
+				if (tag != nullptr)
+				{
+					notification->RemoteId += "_";
+				}
+
+				notification->RemoteId += group;
+			}
+
+			notifier->Show(notification);
+		}
+		catch (Exception ^ e) {}
+	});
 }
 
 //
