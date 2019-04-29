@@ -96,10 +96,6 @@ namespace Unigram
 
         public ViewModelLocator Locator { get; } = new ViewModelLocator();
 
-        public static MediaPlayer Playback { get; } = new MediaPlayer();
-
-        private BackgroundTaskDeferral appServiceDeferral = null;
-
         private MediaExtensionManager m_mediaExtensionManager;
 
         /// <summary>
@@ -318,6 +314,11 @@ namespace Unigram
                 }
 
                 await service.SendAsync(new ProcessPushNotification(notification.Content));
+
+                foreach (var item in TLContainer.Current.ResolveAll<IProtoService>())
+                {
+                    await item.SendAsync(new Close());
+                }
             }
 
             deferral.Complete();
@@ -470,14 +471,6 @@ namespace Unigram
             //{
             //    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
             //}
-
-            try
-            {
-                // Prepare stuff for Cortana
-                var localVoiceCommands = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///VoiceCommands/VoiceCommands.xml"));
-                await VoiceCommandDefinitionManager.InstallCommandDefinitionsFromStorageFileAsync(localVoiceCommands);
-            }
-            catch { }
 
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {

@@ -1637,7 +1637,6 @@
     <Content Include="Assets\Sounds\Sound6.wav" />
     <Content Include="Assets\Webviews\injected.js" />
     <None Include="Package.StoreAssociation.xml" />
-    <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
