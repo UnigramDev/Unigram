@@ -113,15 +113,26 @@ namespace Unigram.Services
 
         #region Lifecycle
 
+        private bool _loggingOut;
+
         public void Handle(UpdateAuthorizationState update)
         {
-            if (update.AuthorizationState is AuthorizationStateClosed)
+            if (update.AuthorizationState is AuthorizationStateLoggingOut)
             {
+                _loggingOut = true;
+            }
+            if (update.AuthorizationState is AuthorizationStateClosed && _loggingOut)
+            {
+                _loggingOut = false;
                 _lifetimeService.Destroy(this);
             }
             else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && !_isActive && _lifetimeService.Items.Count > 1)
             {
                 ProtoService.Send(new Destroy());
+            }
+            else
+            {
+                _loggingOut = false;
             }
 
             //if (update.AuthorizationState is AuthorizationStateReady)
