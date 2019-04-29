@@ -152,6 +152,7 @@
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
+    <Compile Include="Controls\Brushes\TiledBrush.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>
@@ -183,9 +184,6 @@
     <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\ChatsListView.cs" />
     <Compile Include="Controls\Chats\ChatActionIndicator.cs" />
-    <Compile Include="Controls\Chats\ChatBackground.xaml.cs">
-      <DependentUpon>ChatBackground.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Chats\ChatBackgroundPresenter.cs" />
     <Compile Include="Controls\Chats\ChatBottomButton.cs" />
     <Compile Include="Controls\Chats\ChatListView.cs" />
@@ -199,6 +197,9 @@
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
+    <Compile Include="Controls\Gallery\EmbedUrlView.xaml.cs">
+      <DependentUpon>EmbedUrlView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
       <DependentUpon>GalleryContentView.xaml</DependentUpon>
     </Compile>
@@ -1689,13 +1690,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Chats\ChatBackground.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\Chats\ChatSearchMask.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Gallery\EmbedUrlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Gallery\GalleryContentView.xaml">
       <Generator>MSBuild:Compile</Generator>

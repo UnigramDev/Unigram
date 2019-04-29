@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Controls.Brushes;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Services.Updates;
@@ -29,7 +30,6 @@ namespace Unigram.Controls.Chats
 
         private ContentControl _container;
 
-        private ChatBackground _defaultBackground;
         private Rectangle _imageBackground;
         private Rectangle _colorBackground;
 
@@ -130,10 +130,11 @@ namespace Unigram.Controls.Chats
                     }
                     else
                     {
-                        if (_defaultBackground == null)
-                            _defaultBackground = new ChatBackground();
+                        if (_colorBackground == null)
+                            _colorBackground = new Rectangle();
 
-                        _container.Content = _defaultBackground;
+                        _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
+                        _container.Content = _colorBackground;
                     }
                 }
                 else
@@ -153,10 +154,11 @@ namespace Unigram.Controls.Chats
             }
             catch
             {
-                if (_defaultBackground == null)
-                    _defaultBackground = new ChatBackground();
+                if (_colorBackground == null)
+                    _colorBackground = new Rectangle();
 
-                _container.Content = _defaultBackground;
+                _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
+                _container.Content = _colorBackground;
             }
         }
 
