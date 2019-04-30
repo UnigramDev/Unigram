@@ -1,7 +1,6 @@
 ﻿using Microsoft.HockeyApp;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -12,65 +11,28 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Unigram.ViewModels;
-using Unigram.ViewModels.BasicGroups;
-using Unigram.ViewModels.Channels;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Dialogs;
-using Unigram.ViewModels.Payments;
-using Unigram.ViewModels.SecretChats;
-using Unigram.ViewModels.Settings;
-using Unigram.ViewModels.Settings.Privacy;
-using Unigram.ViewModels.SignIn;
-using Unigram.ViewModels.Supergroups;
-using Unigram.ViewModels.Users;
 using Unigram.Views;
-using Unigram.Views.BasicGroups;
-using Unigram.Views.Channels;
-using Unigram.Views.Chats;
-using Unigram.Views.Dialogs;
 using Unigram.Views.Host;
-using Unigram.Views.Payments;
-using Unigram.Views.SecretChats;
-using Unigram.Views.Settings;
-using Unigram.Views.Settings.Privacy;
-using Unigram.Views.SignIn;
-using Unigram.Views.Supergroups;
-using Unigram.Views.Users;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
-using Windows.ApplicationModel.Background;
-using Windows.ApplicationModel.Contacts;
-using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
-using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Media;
-using Windows.Media.Playback;
-using Windows.Media.SpeechRecognition;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.System.Profile;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
-using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Resources;
 
 namespace Unigram
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
     sealed partial class App : BootStrapper
     {
         public static ShareOperation ShareOperation { get; set; }
@@ -85,18 +47,9 @@ namespace Unigram
         public UISettings UISettings => _uiSettings;
 
         private ExtendedExecutionSession _extendedSession;
-
-        //public ViewModelLocator Locator
-        //{
-        //    get
-        //    {
-        //        return Resources["Locator"] as ViewModelLocator;
-        //    }
-        //}
+        private MediaExtensionManager _mediaExtensionManager;
 
         public ViewModelLocator Locator { get; } = new ViewModelLocator();
-
-        private MediaExtensionManager m_mediaExtensionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -120,8 +73,8 @@ namespace Unigram
 
             _uiSettings = new UISettings();
 
-            m_mediaExtensionManager = new MediaExtensionManager();
-            m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
+            _mediaExtensionManager = new MediaExtensionManager();
+            _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
 
             InactivityHelper.Detected += Inactivity_Detected;
 
@@ -137,7 +90,6 @@ namespace Unigram
             };
 
 #if !DEBUG
-
             HockeyClient.Current.Configure(Constants.HockeyAppId,
                 new TelemetryConfiguration()
                 {
@@ -155,7 +107,6 @@ namespace Unigram
 
             HockeyClient.Current.TrackEvent($"{major}.{minor}.{build}");
             HockeyClient.Current.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
-
 #endif
         }
 
