@@ -279,7 +279,7 @@ namespace Unigram.Services.Factories
 
             foreach (var message in messageIds)
             {
-                if (message.MediaAlbumId != albumId && chunk.Count > 0)
+                if (chunk.Count == _protoService.Options.ForwardedMessageCountMax || (chunk.Count > 0 && message.MediaAlbumId != albumId))
                 {
                     await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk.Select(x => x.Id).ToList(), false, false, albumId != 0));
 
