@@ -709,7 +709,7 @@
                                 </controls:ChatsListView>
                             </Grid>
 
-                            <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48"/>
+                            <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom"/>
 
                             <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                  --><!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"--><!--

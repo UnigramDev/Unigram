@@ -6,30 +6,31 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="96"
+    d:DesignHeight="120"
     d:DesignWidth="400"
     RequestedTheme="Dark"
-    IsEnabled="False">
+    IsEnabled="False"
+    Margin="0,0,0,-60">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
-            <RowDefinition Height="48"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <RepositionThemeTransition/>
             </TransitionCollection>
         </Grid.ChildrenTransitions>
-        
-        <Grid x:Name="LayoutRoot" Background="{ThemeResource PageHeaderBackgroundBrush}" Grid.Row="1">
+
+        <Grid x:Name="LayoutRoot" Background="{ThemeResource UndoViewBackgroundBrush}" Margin="12,0,12,12" CornerRadius="12" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="48"/>
             </Grid.ColumnDefinitions>
-            <ContentControl x:Name="Remaining" Content="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+            <ContentControl x:Name="Remaining" Content="5" Height="32" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                 <ContentControl.ContentTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition/>
@@ -40,8 +41,11 @@
                         <TextBlock Text="{Binding}" TextLineBounds="TrimToBaseline,TrimToCapHeight" Style="{StaticResource BaseTextBlockStyle}"/>
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
+                <ContentControl.Clip>
+                    <RectangleGeometry Rect="0,0,48,32"/>
+                </ContentControl.Clip>
             </ContentControl>
-            <local:ProgressBarRingSlice x:Name="Slice" Stroke="{ThemeResource SystemControlForegroundAccentBrush}" StrokeThickness="2" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="360"/>
+            <local:ProgressBarRingSlice x:Name="Slice" Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}" StrokeThickness="2" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="360"/>
 
             <TextBlock x:Name="Text" Margin="6,0,0,0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
 
