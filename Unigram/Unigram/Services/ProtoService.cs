@@ -327,8 +327,6 @@ namespace Unigram.Services
 
         public void CleanUp()
         {
-            _settings.Clear();
-
             _options.Clear();
 
             _chats.Clear();
@@ -870,9 +868,11 @@ namespace Unigram.Services
             {
                 switch (updateAuthorizationState.AuthorizationState)
                 {
+                    case AuthorizationStateLoggingOut loggingOut:
+                        _settings.Clear();
+                        break;
                     case AuthorizationStateClosed closed:
                         CleanUp();
-                        //Initialize();
                         break;
                     case AuthorizationStateReady ready:
                         UpdateVersion();
