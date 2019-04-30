@@ -338,7 +338,7 @@ namespace Unigram.ViewModels
                 {
                     foreach (var delete in items)
                     {
-                        ProtoService.Send(new DeleteChatHistory(delete.Id, false, false));
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, false, dialog.IsChecked));
                     }
                 }, items =>
                 {
