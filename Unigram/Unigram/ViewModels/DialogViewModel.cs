@@ -537,13 +537,18 @@ namespace Unigram.ViewModels
                 return false;
             }
 
+            if (chat.LastMessage == null)
+            {
+                return true;
+            }
+
             var last = Items.LastOrDefault();
             if (last?.Content is MessageAlbum album)
             {
                 last = album.Layout.Messages.LastOrDefault();
             }
 
-            if (last == null)
+            if (last == null || last.Id == 0)
             {
                 return true;
             }
@@ -639,6 +644,9 @@ namespace Unigram.ViewModels
                 var maxId = Items.FirstOrDefault(x => x != null && x.Id != 0)?.Id;
                 if (maxId == null)
                 {
+                    _isLoadingNextSlice = false;
+                    IsLoading = false;
+
                     return;
                 }
 
@@ -744,6 +752,9 @@ namespace Unigram.ViewModels
                 var maxId = Items.LastOrDefault(x => x != null && x.Id != 0)?.Id;
                 if (maxId == null)
                 {
+                    _isLoadingPreviousSlice = false;
+                    IsLoading = false;
+
                     return;
                 }
 
