@@ -128,13 +128,23 @@ namespace Unigram.Controls.Chats
                             _container.Content = _imageBackground;
                         }
                     }
-                    else
+                    else if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light))
                     {
                         if (_colorBackground == null)
                             _colorBackground = new Rectangle();
 
                         _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
                         _container.Content = _colorBackground;
+                    }
+                    else
+                    {
+                        if (_colorBackground == null)
+                            _colorBackground = new Rectangle();
+
+                        _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
+                        _container.Content = _colorBackground;
+
+                        //_container.Content = null;
                     }
                 }
                 else
@@ -154,11 +164,24 @@ namespace Unigram.Controls.Chats
             }
             catch
             {
-                if (_colorBackground == null)
-                    _colorBackground = new Rectangle();
+                if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light))
+                {
+                    if (_colorBackground == null)
+                        _colorBackground = new Rectangle();
 
-                _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
-                _container.Content = _colorBackground;
+                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
+                    _container.Content = _colorBackground;
+                }
+                else
+                {
+                    if (_colorBackground == null)
+                        _colorBackground = new Rectangle();
+
+                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
+                    _container.Content = _colorBackground;
+
+                    //_container.Content = null;
+                }
             }
         }
 
