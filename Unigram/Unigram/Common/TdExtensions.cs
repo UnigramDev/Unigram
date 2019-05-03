@@ -960,15 +960,15 @@ namespace Unigram.Common
 
         public static bool IsSaved(this Message message, int savedMessagesId)
         {
-            if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
             {
-                return fromUser.ForwardedFromChatId != 0;
+                return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo is MessageForwardedPost post)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
             {
-                return post.ForwardedFromChatId != 0;
+                return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
             {
                 return message.ChatId == savedMessagesId;
             }
