@@ -112,7 +112,7 @@ namespace Unigram.Controls.Cells
                     if (user.Type is UserTypeBot)
                     {
                         builder.Append(Strings.Resources.Bot);
-                        builder.Append(". ");
+                        builder.Append(", ");
                     }
                     if (user.Id == protoService.Options.MyId)
                     {
@@ -123,7 +123,7 @@ namespace Unigram.Controls.Cells
                         builder.Append(user.GetFullName());
                     }
 
-                    builder.Append(". ");
+                    builder.Append(", ");
                 }
             }
             else
@@ -137,21 +137,48 @@ namespace Unigram.Controls.Cells
                     builder.Append(Strings.Resources.AccDescrGroup);
                 }
 
-                builder.Append(". ");
+                builder.Append(", ");
                 builder.Append(protoService.GetTitle(chat));
-                builder.Append(". ");
+                builder.Append(", ");
             }
 
             if (chat.UnreadCount > 0)
             {
                 builder.Append(Locale.Declension("NewMessages", chat.UnreadCount));
-                builder.Append(". ");
+                builder.Append(", ");
             }
 
             if (message == null)
             {
                 //AutomationProperties.SetName(this, builder.ToString());
                 return builder.ToString();
+            }
+
+            //if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
+            if (ShowFrom(chat, message))
+            {
+                var fromUser = protoService.GetUser(message.SenderUserId);
+                if (fromUser != null)
+                {
+                    if (message.IsOutgoing)
+                    {
+                        if (!(chat.Type is ChatTypePrivate priv && priv.UserId == message.SenderUserId) && !message.IsChannelPost)
+                        {
+                            builder.Append(Strings.Resources.FromYou);
+                            builder.Append(": ");
+                        }
+                    }
+                    else
+                    {
+                        builder.Append(fromUser.GetFullName());
+                        builder.Append(": ");
+                    }
+                }
+            }
+
+            if (chat.Type is ChatTypeSecret == false)
+            {
+                builder.Append(Automation.GetSummary(protoService, message));
             }
 
             var date = Locale.FormatDateAudio(message.Date);
@@ -162,23 +189,6 @@ namespace Unigram.Controls.Cells
             else
             {
                 builder.Append(string.Format(Strings.Resources.AccDescrReceivedDate, date));
-            }
-
-            builder.Append(". ");
-
-            if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
-            {
-                var fromUser = protoService.GetUser(message.SenderUserId);
-                if (fromUser != null)
-                {
-                    builder.Append(fromUser.GetFullName());
-                    builder.Append(". ");
-                }
-            }
-
-            if (chat.Type is ChatTypeSecret == false)
-            {
-                builder.Append(Automation.GetSummary(protoService, message));
             }
 
             //AutomationProperties.SetName(this, builder.ToString());
