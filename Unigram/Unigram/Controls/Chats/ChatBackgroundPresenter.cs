@@ -56,15 +56,15 @@ namespace Unigram.Controls.Chats
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
         }
 
-        private void OnOpacityChanged(DependencyObject sender, DependencyProperty dp)
+        private async void OnOpacityChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (Opacity > 0 && _settings != null && _settings.Wallpaper.IsMotionEnabled && _parallaxEffect.IsSupported)
+            if (Opacity > 0 && _settings != null && _settings.Wallpaper.IsMotionEnabled && await _parallaxEffect.IsSupportedAsync())
             {
-                _parallaxEffect.ValueChanged += OnParallaxChanged;
+                await _parallaxEffect.RegisterAsync(OnParallaxChanged);
             }
             else
             {
-                _parallaxEffect.ValueChanged -= OnParallaxChanged;
+                await _parallaxEffect.UnregisterAsync(OnParallaxChanged);
             }
         }
 
@@ -73,11 +73,11 @@ namespace Unigram.Controls.Chats
             _motionVisual.Offset = new Vector3(e.x, e.y, 0);
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private async void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             _motionVisual.Size = e.NewSize.ToVector2();
 
-            if (_settings != null && _settings.Wallpaper.IsMotionEnabled && _parallaxEffect.IsSupported)
+            if (_settings != null && _settings.Wallpaper.IsMotionEnabled && await _parallaxEffect.IsSupportedAsync())
             {
                 _motionVisual.CenterPoint = new Vector3((float)e.NewSize.Width / 2, (float)e.NewSize.Height / 2, 0);
                 _motionVisual.Scale = new Vector3(_parallaxEffect.getScale(e.NewSize.Width, e.NewSize.Height));
@@ -185,21 +185,21 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private void InitializeMotion(WallpaperSettings settings)
+        private async void InitializeMotion(WallpaperSettings settings)
         {
-            if (settings.IsMotionEnabled && _parallaxEffect.IsSupported)
+            if (settings.IsMotionEnabled && await _parallaxEffect.IsSupportedAsync())
             {
                 _motionVisual.CenterPoint = new Vector3((float)ActualWidth / 2, (float)ActualHeight / 2, 0);
                 _motionVisual.Scale = new Vector3(_parallaxEffect.getScale(ActualWidth, ActualHeight));
 
-                _parallaxEffect.ValueChanged += OnParallaxChanged;
+                await _parallaxEffect.RegisterAsync(OnParallaxChanged);
             }
             else
             {
                 _motionVisual.CenterPoint = new Vector3(0);
                 _motionVisual.Scale = new Vector3(1);
 
-                _parallaxEffect.ValueChanged -= OnParallaxChanged;
+                await _parallaxEffect.UnregisterAsync(OnParallaxChanged);
             }
         }
     }

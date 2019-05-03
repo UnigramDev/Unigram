@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -82,11 +83,11 @@ namespace Unigram.Views
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
         }
 
-        private void InitializeMotion()
+        private async void InitializeMotion()
         {
             _parallaxEffect = new WallpaperParallaxEffect();
 
-            Motion.Visibility = _parallaxEffect.IsSupported ? Visibility.Visible : Visibility.Collapsed;
+            Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -122,20 +123,20 @@ namespace Unigram.Views
             _blurBrush.Properties.StartAnimation("Blur.BlurAmount", animation);
         }
 
-        private void Motion_Click(object sender, RoutedEventArgs e)
+        private async void Motion_Click(object sender, RoutedEventArgs e)
         {
             var animation = _compositor.CreateVector3KeyFrameAnimation();
             animation.Duration = TimeSpan.FromMilliseconds(300);
 
             if (sender is CheckBox check && check.IsChecked == true)
             {
-                _parallaxEffect.ValueChanged += OnParallaxChanged;
                 animation.InsertKeyFrame(1, new Vector3(_parallaxEffect.getScale(ActualWidth, ActualHeight)));
+                await _parallaxEffect.RegisterAsync(OnParallaxChanged);
             }
             else
             {
-                _parallaxEffect.ValueChanged -= OnParallaxChanged;
                 animation.InsertKeyFrame(1, new Vector3(1));
+                await _parallaxEffect.UnregisterAsync(OnParallaxChanged);
             }
 
             _motionVisual.StartAnimation("Scale", animation);
@@ -199,7 +200,7 @@ namespace Unigram.Views
 
         #region Delegates
 
-        public void UpdateWallpaper(Wallpaper wallpaper)
+        public async void UpdateWallpaper(Wallpaper wallpaper)
         {
             if (wallpaper == null)
             {
@@ -209,7 +210,7 @@ namespace Unigram.Views
             if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Sizes.Count > 0)
             {
                 Blur.Visibility = Visibility.Visible;
-                Motion.Visibility = _parallaxEffect.IsSupported ? Visibility.Visible : Visibility.Collapsed;
+                Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
@@ -247,7 +248,9 @@ namespace Unigram.Views
         /** Earth's gravity in SI units (m/s^2) */
         public const float GRAVITY_EARTH = 9.80665f;
 
-        private readonly Accelerometer _accelerometer;
+        private Accelerometer _accelerometer;
+        private DisposableMutex _registerMutex;
+        private bool _loaded;
 
         private float[] _rollBuffer = new float[3];
         private float[] _pitchBuffer = new float[3];
@@ -255,7 +258,8 @@ namespace Unigram.Views
 
         public WallpaperParallaxEffect()
         {
-            _accelerometer = Accelerometer.GetDefault();
+            //_accelerometer = Accelerometer.GetDefault();
+            _registerMutex = new DisposableMutex();
         }
 
         private void Initialize()
@@ -269,20 +273,27 @@ namespace Unigram.Views
             }
         }
 
-        public bool IsSupported => _accelerometer != null;
+        public async Task<bool> IsSupportedAsync()
+        {
+            using (await _registerMutex.WaitAsync())
+            {
+                if (_accelerometer == null && !_loaded)
+                {
+                    _loaded = true;
+                    _accelerometer = await Task.Run(() => Accelerometer.GetDefault());
+                }
+
+                return _accelerometer != null;
+            }
+        }
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
             //int rotation = wm.getDefaultDisplay().getRotation();
             var rotation = DisplayOrientations.Portrait; //DisplayInformation.GetForCurrentView().CurrentOrientation;
-
             double x = args.Reading.AccelerationX / GRAVITY_EARTH;
-
             double y = args.Reading.AccelerationY / GRAVITY_EARTH;
-
             double z = args.Reading.AccelerationZ / GRAVITY_EARTH;
-
-
 
             float pitch = (float)(Math.Atan2(x, Math.Sqrt(y * y + z * z)) / Math.PI * 2.0);
             float roll = (float)(Math.Atan2(y, Math.Sqrt(x * x + z * z)) / Math.PI * 2.0);
@@ -340,25 +351,32 @@ namespace Unigram.Views
         }
 
         private event EventHandler<(int, int)> _valueChanged;
-        public event EventHandler<(int, int)> ValueChanged
+
+        public async Task RegisterAsync(EventHandler<(int, int)> handler)
         {
-            add
+            using (await _registerMutex.WaitAsync())
             {
-                _valueChanged += value;
-
-                if (_accelerometer != null)
+                if (_accelerometer == null && !_loaded)
                 {
-                    _accelerometer.ReadingChanged += new TypedEventHandler<Accelerometer, AccelerometerReadingChangedEventArgs>(ReadingChanged);
+                    _loaded = true;
+                    _accelerometer = await Task.Run(() => Accelerometer.GetDefault());
                 }
+
+                _valueChanged += handler;
+                _accelerometer.ReadingChanged += ReadingChanged;
             }
-            remove
-            {
-                _valueChanged -= value;
+        }
 
+        public async Task UnregisterAsync(EventHandler<(int, int)> handler)
+        {
+            using (await _registerMutex.WaitAsync())
+            {
                 if (_accelerometer != null)
                 {
-                    _accelerometer.ReadingChanged -= new TypedEventHandler<Accelerometer, AccelerometerReadingChangedEventArgs>(ReadingChanged);
+                    _accelerometer.ReadingChanged -= ReadingChanged;
                 }
+
+                _valueChanged -= handler;
             }
         }
 
