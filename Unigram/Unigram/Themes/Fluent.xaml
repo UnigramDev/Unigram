@@ -11,10 +11,14 @@
         <ResourceDictionary x:Key="Default">
             <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlAccentAcrylicElementAccentMediumHighBrush" />
+
+            <StaticResource x:Key="UndoViewBackgroundBrush" ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlAccentAcrylicElementAccentMediumHighBrush" />
+
+            <StaticResource x:Key="UndoViewBackgroundBrush" ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

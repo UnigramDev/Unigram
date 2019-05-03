@@ -1,0 +1,2766 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Themes">
+
+    <DataTemplate x:Key="PageHeaderDisabledBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PageHeaderDisabledBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PageHeaderBackgroundBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PageHeaderBackgroundBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PageSubHeaderBackgroundBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PageSubHeaderBackgroundBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TelegramSeparatorMediumBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TelegramSeparatorMediumBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageBackgroundOutColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageBackgroundOutColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageSubtleLabelOutColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageSubtleLabelOutColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageSubtleGlyphOutColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageSubtleGlyphOutColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageSubtleForegroundColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageSubtleForegroundColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageSubtleForegroundOutColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageSubtleForegroundOutColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageHeaderForegroundOutColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageHeaderForegroundOutColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageHeaderBorderOutColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageHeaderBorderOutColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageMediaForegroundOutColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageMediaForegroundOutColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageMediaBackgroundOutColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MessageMediaBackgroundOutColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SystemControlDescriptionTextForegroundBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SystemControlDescriptionTextForegroundBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderThumbBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderThumbBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderThumbBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderThumbBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderThumbBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderThumbBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderThumbBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderThumbBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTrackFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTrackFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTrackFillPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTrackFillPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTrackFillPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTrackFillPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTrackFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTrackFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTrackValueFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTrackValueFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTrackValueFillPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTrackValueFillPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTrackValueFillPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTrackValueFillPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTrackValueFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTrackValueFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderHeaderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderHeaderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderHeaderForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderHeaderForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTickBarFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTickBarFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderTickBarFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderTickBarFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SliderInlineTickBarFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SliderInlineTickBarFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ButtonBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ButtonBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseStrokeTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseStroke}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseStrokePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseStrokePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseStrokePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseStrokePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseStrokeDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseStrokeDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseCheckedStrokeTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseCheckedStroke}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseCheckedStrokePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseCheckedStrokePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseCheckedStrokePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseCheckedStrokePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseCheckedStrokeDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseCheckedStrokeDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseCheckedFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseCheckedFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseCheckedFillPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseCheckedFillPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonOuterEllipseCheckedFillPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonOuterEllipseCheckedFillPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonCheckGlyphFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonCheckGlyphFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonCheckGlyphFillPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonCheckGlyphFillPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonCheckGlyphFillPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonCheckGlyphFillPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RadioButtonCheckGlyphFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RadioButtonCheckGlyphFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundUncheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundUnchecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundUncheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundUncheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundUncheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundUncheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundUncheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundUncheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundIndeterminateTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundIndeterminate}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundIndeterminatePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundIndeterminatePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundIndeterminatePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundIndeterminatePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxForegroundIndeterminateDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxForegroundIndeterminateDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeUncheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeUncheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeIndeterminateTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminate}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundStrokeIndeterminateDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundFillUncheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundFillCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundFillChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundFillCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundFillCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundFillCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundFillCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundFillIndeterminateTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundFillIndeterminate}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckBackgroundFillIndeterminatePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundUncheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundUncheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundUncheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundUncheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundIndeterminateTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminate}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundIndeterminatePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminatePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundIndeterminatePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminatePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CheckBoxCheckGlyphForegroundIndeterminateDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminateDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HyperlinkButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HyperlinkButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HyperlinkButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HyperlinkButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HyperlinkButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HyperlinkButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HyperlinkButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HyperlinkButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HyperlinkButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HyperlinkButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HyperlinkButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HyperlinkButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HyperlinkButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HyperlinkButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HyperlinkButtonBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HyperlinkButtonBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RepeatButtonBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RepeatButtonBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchContentForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchContentForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchContentForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchContentForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchHeaderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchHeaderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchHeaderForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchHeaderForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchFillOffPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchFillOffPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchStrokeOffTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchStrokeOff}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchStrokeOffPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchStrokeOffPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchStrokeOffPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchStrokeOffPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchStrokeOffDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchStrokeOffDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchFillOnTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchFillOn}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchFillOnPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchFillOnPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchFillOnPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchFillOnPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchFillOnDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchFillOnDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchStrokeOnTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchStrokeOn}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchStrokeOnPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchStrokeOnPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchStrokeOnPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchStrokeOnPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchStrokeOnDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchStrokeOnDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchKnobFillOffTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchKnobFillOff}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchKnobFillOffPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchKnobFillOffPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchKnobFillOffPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchKnobFillOffPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchKnobFillOffDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchKnobFillOffDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchKnobFillOnTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchKnobFillOn}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchKnobFillOnPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchKnobFillOnPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchKnobFillOnPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchKnobFillOnPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleSwitchKnobFillOnDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleSwitchKnobFillOnDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ThumbBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ThumbBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ThumbBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ThumbBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ThumbBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ThumbBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ThumbBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ThumbBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ThumbBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ThumbBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ThumbBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ThumbBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundIndeterminateTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundIndeterminate}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundIndeterminatePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundIndeterminatePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundIndeterminatePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundIndeterminatePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBackgroundIndeterminateDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBackgroundIndeterminateDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundIndeterminateTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundIndeterminate}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundIndeterminatePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundIndeterminatePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundIndeterminatePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundIndeterminatePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonForegroundIndeterminateDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonForegroundIndeterminateDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushIndeterminateTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushIndeterminate}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushIndeterminatePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushIndeterminatePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushIndeterminatePressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushIndeterminatePressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleButtonBorderBrushIndeterminateDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleButtonBorderBrushIndeterminateDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarButtonArrowForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarButtonArrowForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarButtonArrowForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarButtonArrowForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarButtonArrowForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarButtonArrowForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarButtonArrowForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarButtonArrowForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarThumbFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarThumbFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarThumbFillPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarThumbFillPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarThumbFillPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarThumbFillPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarThumbFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarThumbFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarTrackFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarTrackFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarTrackStrokeTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarTrackStroke}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarTrackStrokePointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarTrackStrokePointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarTrackStrokeDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarTrackStrokeDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarPanningThumbBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarPanningThumbBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarThumbBackgroundColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarThumbBackgroundColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScrollBarPanningThumbBackgroundColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ScrollBarPanningThumbBackgroundColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewHeaderItemDividerStrokeTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewHeaderItemDividerStroke}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundSelectedUnfocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForegroundSelectedUnfocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundSelectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForegroundSelectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundSelectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForegroundSelectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemForegroundSelectedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemForegroundSelectedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemBackgroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemBackgroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemBackgroundSelectedUnfocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemBackgroundSelectedUnfocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemBackgroundSelectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemBackgroundSelectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxItemBackgroundSelectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxItemBackgroundSelectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBackgroundUnfocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBackgroundUnfocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBackgroundBorderBrushFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBackgroundBorderBrushFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBackgroundBorderBrushUnfocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBackgroundBorderBrushUnfocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxForegroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxForegroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxForegroundFocusedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxForegroundFocusedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxPlaceHolderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxPlaceHolderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxPlaceHolderForegroundFocusedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxPlaceHolderForegroundFocusedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownBackgroundPointerPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownBackgroundPointerPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxFocusedDropDownBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxFocusedDropDownBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxFocusedDropDownBackgroundPointerPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxFocusedDropDownBackgroundPointerPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownGlyphForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownGlyphForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxEditableDropDownGlyphForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxEditableDropDownGlyphForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownGlyphForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownGlyphForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownGlyphForegroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownGlyphForegroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownGlyphForegroundFocusedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownGlyphForegroundFocusedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxDropDownBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxDropDownBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarSeparatorForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarSeparatorForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarEllipsisButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarEllipsisButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarEllipsisButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarEllipsisButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarEllipsisButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarEllipsisButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarEllipsisButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarEllipsisButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarEllipsisButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarEllipsisButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarEllipsisButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarEllipsisButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarHighContrastBorderTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarHighContrastBorder}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ContentDialogForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ContentDialogForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ContentDialogBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ContentDialogBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ContentDialogBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ContentDialogBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AccentButtonBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AccentButtonBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToolTipForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToolTipForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToolTipBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToolTipBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToolTipBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToolTipBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerCalendarGlyphForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerCalendarGlyphForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerCalendarGlyphForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerCalendarGlyphForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerTextForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerTextForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerTextForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerTextForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerTextForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerTextForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerHeaderForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerHeaderForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBackgroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBackgroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewFocusBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewFocusBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewSelectedHoverBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewSelectedHoverBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewSelectedPressedBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewSelectedPressedBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewSelectedBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewSelectedBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewHoverBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewHoverBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewPressedBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewPressedBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewTodayForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewTodayForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewBlackoutForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewBlackoutForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewSelectedForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewSelectedForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewPressedForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewPressedForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewOutOfScopeForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewOutOfScopeForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewCalendarItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewCalendarItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewOutOfScopeBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewOutOfScopeBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewCalendarItemBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewCalendarItemBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewWeekDayForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewWeekDayForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewNavigationButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewNavigationButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewNavigationButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewNavigationButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewNavigationButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewNavigationButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarViewNavigationButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarViewNavigationButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HubForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HubForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HubSectionHeaderButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HubSectionHeaderButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HubSectionHeaderButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HubSectionHeaderButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HubSectionHeaderButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HubSectionHeaderButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HubSectionHeaderButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HubSectionHeaderButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="HubSectionHeaderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource HubSectionHeaderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousArrowForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousArrowForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousArrowForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousArrowForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousArrowForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousArrowForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlipViewNextPreviousButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlipViewNextPreviousButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DateTimePickerFlyoutButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DateTimePickerFlyoutButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DateTimePickerFlyoutButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DateTimePickerFlyoutButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DateTimePickerFlyoutButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DateTimePickerFlyoutButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DateTimePickerFlyoutButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DateTimePickerFlyoutButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DateTimePickerFlyoutButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DateTimePickerFlyoutButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DateTimePickerFlyoutButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DateTimePickerFlyoutButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DateTimePickerFlyoutButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DateTimePickerFlyoutButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerSpacerFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerSpacerFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerSpacerFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerSpacerFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerHeaderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerHeaderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerHeaderForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerHeaderForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonBackgroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonBackgroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerButtonForegroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerButtonForegroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerFlyoutPresenterBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerFlyoutPresenterBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerFlyoutPresenterBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerFlyoutPresenterBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerFlyoutPresenterSpacerFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerFlyoutPresenterSpacerFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerFlyoutPresenterHighlightFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerFlyoutPresenterHighlightFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerSpacerFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerSpacerFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerSpacerFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerSpacerFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerHeaderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerHeaderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerHeaderForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerHeaderForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonBackgroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonBackgroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerButtonForegroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerButtonForegroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerFlyoutPresenterBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerFlyoutPresenterBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerFlyoutPresenterBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerFlyoutPresenterBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerFlyoutPresenterSpacerFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerFlyoutPresenterSpacerFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerFlyoutPresenterHighlightFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerFlyoutPresenterHighlightFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LoopingSelectorButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource LoopingSelectorButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LoopingSelectorItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource LoopingSelectorItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LoopingSelectorItemForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource LoopingSelectorItemForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LoopingSelectorItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource LoopingSelectorItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LoopingSelectorItemForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource LoopingSelectorItemForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LoopingSelectorItemBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource LoopingSelectorItemBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LoopingSelectorItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource LoopingSelectorItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlForegroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlForegroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlBackgroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlBackgroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlBorderBrushFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlBorderBrushFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlPlaceholderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlPlaceholderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlPlaceholderForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlPlaceholderForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlPlaceholderForegroundFocusedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlPlaceholderForegroundFocused}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlPlaceholderForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlPlaceholderForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlHeaderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlHeaderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlHeaderForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlHeaderForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlSelectionHighlightColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlSelectionHighlightColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ContentLinkForegroundColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ContentLinkForegroundColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ContentLinkBackgroundColorTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ContentLinkBackgroundColor}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextControlHighlighterForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TextControlHighlighterForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlyoutPresenterBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlyoutPresenterBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlyoutBorderThemeBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlyoutBorderThemeBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemCheckGlyphForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemCheckGlyphForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemCheckGlyphForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemCheckGlyphForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemCheckGlyphForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToggleMenuFlyoutItemCheckGlyphForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ToggleMenuFlyoutItemCheckGlyphForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotNextButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotNextButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotPreviousButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotPreviousButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemBackgroundUnselectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemBackgroundUnselectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemBackgroundUnselectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemBackgroundUnselectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemBackgroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemBackgroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemBackgroundSelectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemBackgroundSelectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemBackgroundSelectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemBackgroundSelectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemForegroundUnselectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemForegroundUnselected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemForegroundUnselectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemForegroundUnselectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemForegroundUnselectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemForegroundUnselectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemForegroundSelectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemForegroundSelectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemForegroundSelectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemForegroundSelectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemFocusPipeFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemFocusPipeFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PivotHeaderItemSelectedPipeFillTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PivotHeaderItemSelectedPipeFill}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewHeaderItemDividerStrokeTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewHeaderItemDividerStroke}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemBackgroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemBackgroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemBackgroundSelectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemBackgroundSelectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemBackgroundSelectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemBackgroundSelectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemFocusVisualPrimaryBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemFocusVisualPrimaryBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemFocusVisualSecondaryBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemFocusVisualSecondaryBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemFocusBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemFocusBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemFocusSecondaryBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemFocusSecondaryBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemCheckBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemCheckBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemCheckBoxBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemCheckBoxBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemDragForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemDragForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="GridViewItemPlaceholderBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource GridViewItemPlaceholderBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaTransportControlsPanelBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MediaTransportControlsPanelBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaTransportControlsFlyoutBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MediaTransportControlsFlyoutBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CalendarDatePickerLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CalendarDatePickerLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ComboBoxLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ComboBoxLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DatePickerLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource DatePickerLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlyoutLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource FlyoutLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PopupLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource PopupLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitViewLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitViewLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TimePickerLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TimePickerLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="JumpListDefaultEnabledBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource JumpListDefaultEnabledBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="JumpListDefaultEnabledForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource JumpListDefaultEnabledForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="JumpListDefaultDisabledBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource JumpListDefaultDisabledBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="JumpListDefaultDisabledForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource JumpListDefaultDisabledForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="KeyTipForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource KeyTipForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="KeyTipBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource KeyTipBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="KeyTipBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource KeyTipBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutPresenterBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutPresenterBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutPresenterBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutPresenterBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemBackgroundSubMenuOpenedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemBackgroundSubMenuOpened}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemForegroundSubMenuOpenedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemForegroundSubMenuOpened}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemChevronTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemChevron}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemChevronPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemChevronPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemChevronPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemChevronPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemChevronSubMenuOpenedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemChevronSubMenuOpened}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutSubItemChevronDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutSubItemChevronDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RatingControlUnselectedForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RatingControlUnselectedForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RatingControlSelectedForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RatingControlSelectedForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RatingControlPlaceholderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RatingControlPlaceholderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RatingControlPointerOverPlaceholderForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RatingControlPointerOverPlaceholderForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RatingControlPointerOverUnselectedForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RatingControlPointerOverUnselectedForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RatingControlPointerOverSelectedForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RatingControlPointerOverSelectedForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RatingControlDisabledSelectedForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RatingControlDisabledSelectedForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RatingControlCaptionForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource RatingControlCaptionForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundSelectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundSelectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundSelectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundSelectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewItemForegroundSelectedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewItemForegroundSelectedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavigationViewSelectionIndicatorForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TopNavigationViewItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TopNavigationViewItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TopNavigationViewItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TopNavigationViewItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TopNavigationViewItemForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TopNavigationViewItemForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TopNavigationViewItemForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TopNavigationViewItemForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TopNavigationViewItemForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TopNavigationViewItemForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ColorPickerSliderThumbBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ColorPickerSliderThumbBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ColorPickerSliderThumbBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ColorPickerSliderThumbBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ColorPickerSliderThumbBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ColorPickerSliderThumbBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ColorPickerSliderThumbBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ColorPickerSliderThumbBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ColorPickerSliderTrackFillDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ColorPickerSliderTrackFillDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuBarItemBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuBarItemBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuBarItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuBarItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuBarItemBackgroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuBarItemBackgroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuBarItemBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuBarItemBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuBarItemBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuBarItemBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuBarItemBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuBarItemBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuBarItemBorderBrushSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuBarItemBorderBrushSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonBackgroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonBackgroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonBackgroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonBackgroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonBackgroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonBackgroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonBackgroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonBackgroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonBackgroundHighLightOverlayPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonBackgroundHighLightOverlayPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonBackgroundHighLightOverlayPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonBackgroundHighLightOverlayPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonBackgroundHighLightOverlayCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonForegroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonForegroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonCheckGlyphForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonCheckGlyphForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonCheckGlyphForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonCheckGlyphForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonCheckGlyphForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonCheckGlyphForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonCheckGlyphForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonCheckGlyphForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonCheckGlyphForegroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonCheckGlyphForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonCheckGlyphForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonOverflowLabelForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonOverflowLabelForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonOverflowLabelForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonOverflowLabelForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonOverflowLabelForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonOverflowLabelForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonOverflowLabelForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonOverflowLabelForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CommandBarBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CommandBarBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CommandBarForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CommandBarForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CommandBarHighContrastBorderTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CommandBarHighContrastBorder}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CommandBarEllipsisIconForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CommandBarEllipsisIconForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CommandBarOverflowPresenterBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CommandBarOverflowPresenterBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CommandBarOverflowPresenterBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CommandBarOverflowPresenterBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CommandBarLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource CommandBarLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemBackgroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemBackgroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemBackgroundSelectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemBackgroundSelectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemBackgroundSelectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemFocusVisualPrimaryBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemFocusVisualSecondaryBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemFocusBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemFocusBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemFocusSecondaryBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemFocusSecondaryBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemCheckBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemCheckBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemCheckBoxBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemCheckBoxBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemDragForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemDragForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ListViewItemPlaceholderBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource ListViewItemPlaceholderBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AutoSuggestBoxSuggestionsListBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AutoSuggestBoxSuggestionsListBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AutoSuggestBoxSuggestionsListBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AutoSuggestBoxLightDismissOverlayBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AutoSuggestBoxLightDismissOverlayBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemBackgroundSelectedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemBackgroundSelectedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemForegroundSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemForegroundSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemForegroundSelectedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemForegroundSelectedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemForegroundSelectedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemForegroundSelectedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemForegroundSelectedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemCheckBoxBorderSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemCheckBoxBorderSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TreeViewItemCheckGlyphSelectedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource TreeViewItemCheckGlyphSelected}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SwipeItemBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SwipeItemBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SwipeItemForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SwipeItemForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SwipeItemBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SwipeItemBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SwipeItemPreThresholdExecuteForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SwipeItemPreThresholdExecuteForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SwipeItemPreThresholdExecuteBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SwipeItemPreThresholdExecuteBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SwipeItemPostThresholdExecuteForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SwipeItemPostThresholdExecuteForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SwipeItemPostThresholdExecuteBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SwipeItemPostThresholdExecuteBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBackgroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBackground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBackgroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBackgroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBackgroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBackgroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBackgroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBackgroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBackgroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBackgroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBackgroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBackgroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBackgroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBackgroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBackgroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBackgroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonForegroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonForegroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBorderBrushTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBorderBrush}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBorderBrushPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBorderBrushPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBorderBrushPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBorderBrushPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBorderBrushDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBorderBrushDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBorderBrushCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBorderBrushChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBorderBrushCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBorderBrushCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBorderBrushCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBorderBrushCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SplitButtonBorderBrushCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource SplitButtonBorderBrushCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonKeyboardAcceleratorTextForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonKeyboardAcceleratorTextForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonKeyboardAcceleratorTextForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonKeyboardAcceleratorTextForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonKeyboardAcceleratorTextForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonKeyboardAcceleratorTextForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonBackgroundSubMenuOpenedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonBackgroundSubMenuOpened}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonForegroundSubMenuOpenedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonForegroundSubMenuOpened}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpenedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonSubItemChevronForegroundTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonSubItemChevronForeground}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonSubItemChevronForegroundPointerOverTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonSubItemChevronForegroundPointerOver}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonSubItemChevronForegroundPressedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonSubItemChevronForegroundPressed}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonSubItemChevronForegroundSubMenuOpenedTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AppBarButtonSubItemChevronForegroundDisabledTemplate">
+        <Ellipse Width="24" Height="24" Fill="{ThemeResource AppBarButtonSubItemChevronForegroundDisabled}" Stroke="White" StrokeThickness="1"/>
+    </DataTemplate>
+
+</ResourceDictionary>

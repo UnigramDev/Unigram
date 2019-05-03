@@ -2023,7 +2023,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
-                    <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2050,7 +2050,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="48"/>
                                 <ColumnDefinition/>
@@ -2090,7 +2090,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
-                    <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2117,7 +2117,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="48"/>
                                 <ColumnDefinition/>
@@ -2174,7 +2174,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
-                    <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2201,7 +2201,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="48"/>
                                 <ColumnDefinition/>
@@ -2250,7 +2250,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
-                    <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}">
+                    <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2277,22 +2277,24 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter" TextWrapping="Wrap" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,0" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        <ContentControl x:Name="BadgePresenter" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" IsTabStop="False" Padding="12,0,0,12">
-                            <ContentControl.ContentTransitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition/>
-                                </TransitionCollection>
-                            </ContentControl.ContentTransitions>
-                            <ContentControl.Clip>
-                                <RectangleGeometry Rect="0,0,3600,28"/>
-                            </ContentControl.Clip>
-                            <ContentControl.ContentTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-                                </DataTemplate>
-                            </ContentControl.ContentTemplate>
-                        </ContentControl>
+                        <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}">
+                            <ContentPresenter x:Name="ContentPresenter" TextWrapping="Wrap" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,0" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentControl x:Name="BadgePresenter" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" IsTabStop="False" Padding="12,0,0,12">
+                                <ContentControl.ContentTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition/>
+                                    </TransitionCollection>
+                                </ContentControl.ContentTransitions>
+                                <ContentControl.Clip>
+                                    <RectangleGeometry Rect="0,0,3600,28"/>
+                                </ContentControl.Clip>
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
+                        </StackPanel>
                         <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
                     </StackPanel>
                 </ControlTemplate>
@@ -2318,7 +2320,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
-                    <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2345,7 +2347,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="48"/>
                                 <ColumnDefinition/>
@@ -2546,7 +2548,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}">
+                    <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2573,7 +2575,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <StackPanel>
+                        <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}">
                             <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Tag}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,0" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             <ContentPresenter x:Name="DetailPresenter" AutomationProperties.AccessibilityView="Raw" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" Padding="12,4,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
                                 <ContentPresenter.ContentTemplate>

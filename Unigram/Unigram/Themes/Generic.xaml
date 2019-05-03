@@ -1548,7 +1548,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:BadgeButton">
-                    <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}">
+                    <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -1578,7 +1578,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                             <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             <ContentControl x:Name="BadgePresenter" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Height="44" Padding="12,11,12,12" HorizontalContentAlignment="Right" IsTabStop="False">
                                 <ContentControl.ContentTransitions>

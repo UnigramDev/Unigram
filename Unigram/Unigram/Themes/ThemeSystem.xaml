@@ -7,6 +7,7 @@
         <ResourceDictionary x:Key="Dark">
             <!-- Common -->
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FF000000"/>
+            <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}"/>
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
@@ -27,7 +28,7 @@
             <SolidColorBrush x:Key="ChatDraftLabelBrush" Color="#DD4B39"/>
 
             <SolidColorBrush x:Key="ChatUnreadBadgeMutedBrush" Color="#444444"/>
-            <SolidColorBrush x:Key="ChatUnreadLabelMutedBrush" Color="#000000"/>
+            <SolidColorBrush x:Key="ChatUnreadLabelMutedBrush" Color="#FFFFFF"/>
 
             <SolidColorBrush x:Key="ChatFailedBadgeBrush" Color="#FF0000"/>
             <SolidColorBrush x:Key="ChatFailedLabelBrush" Color="#FFFFFF"/>
@@ -1225,6 +1226,7 @@
         <ResourceDictionary x:Key="Light">
             <!-- Common -->
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FFFFFFFF"/>
+            <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}"/>
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
