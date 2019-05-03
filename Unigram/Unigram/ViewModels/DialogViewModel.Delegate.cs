@@ -479,6 +479,8 @@ namespace Unigram.ViewModels
 
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
             }
+
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         public void PlayMessage(MessageViewModel message)
