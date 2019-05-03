@@ -556,6 +556,12 @@ namespace Unigram.ViewModels
             return ProtoService.GetChat(chatId);
         }
 
+        public void SetFilter(IChatFilter filter)
+        {
+            Items = new ItemsCollection(ProtoService, Aggregator, this, filter);
+            RaisePropertyChanged(() => Items);
+        }
+
         public class ItemsCollection : SortedObservableCollection<Chat>, IGroupSupportIncrementalLoading
         {
             class ChatComparer : IComparer<Chat>

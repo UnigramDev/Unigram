@@ -2042,75 +2042,81 @@ namespace Unigram.Views
 
             if (filter == ChatTypeFilterMode.None)
             {
-                //ResetFilters.Visibility = Visibility.Collapsed;
-                ChatsList.Visibility = Visibility.Visible;
-                FolderList.Visibility = Visibility.Visible;
-                ViewModel.SetFolder(null);
+                ResetFilters.Visibility = Visibility.Collapsed;
+                ViewModel.Chats.SetFilter(null);
 
-                var chats = ElementCompositionPreview.GetElementVisual(ChatsList);
-                var folder = ElementCompositionPreview.GetElementVisual(FolderList);
-                var shadow = ElementCompositionPreview.GetElementVisual(FolderShadow);
+                ////////ResetFilters.Visibility = Visibility.Collapsed;
+                //////ChatsList.Visibility = Visibility.Visible;
+                //////FolderList.Visibility = Visibility.Visible;
+                //////ViewModel.SetFolder(null);
 
-                var anim1 = chats.Compositor.CreateScalarKeyFrameAnimation();
-                anim1.InsertKeyFrame(1, 0);
-                anim1.InsertKeyFrame(0, -(float)(DialogsPanel.ActualWidth / 3));
+                //////var chats = ElementCompositionPreview.GetElementVisual(ChatsList);
+                //////var folder = ElementCompositionPreview.GetElementVisual(FolderList);
+                //////var shadow = ElementCompositionPreview.GetElementVisual(FolderShadow);
 
-                var anim2 = chats.Compositor.CreateScalarKeyFrameAnimation();
-                anim2.InsertKeyFrame(1, (float)DialogsPanel.ActualWidth);
-                anim2.InsertKeyFrame(0, 0);
+                //////var anim1 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                //////anim1.InsertKeyFrame(1, 0);
+                //////anim1.InsertKeyFrame(0, -(float)(DialogsPanel.ActualWidth / 3));
 
-                var anim3 = chats.Compositor.CreateScalarKeyFrameAnimation();
-                anim3.InsertKeyFrame(1, 0);
-                anim3.InsertKeyFrame(0, 1);
+                //////var anim2 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                //////anim2.InsertKeyFrame(1, (float)DialogsPanel.ActualWidth);
+                //////anim2.InsertKeyFrame(0, 0);
 
-                var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                batch.Completed += (s, args) =>
-                {
-                    ChatsList.Visibility = Visibility.Visible;
-                    ResetFilters.Visibility = Visibility.Collapsed;
-                    FolderPanel.Visibility = Visibility.Collapsed;
-                };
+                //////var anim3 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                //////anim3.InsertKeyFrame(1, 0);
+                //////anim3.InsertKeyFrame(0, 1);
 
-                chats.StartAnimation("Offset.X", anim1);
-                folder.StartAnimation("Offset.X", anim2);
-                shadow.StartAnimation("Opacity", anim3);
-                batch.End();
+                //////var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                //////batch.Completed += (s, args) =>
+                //////{
+                //////    ChatsList.Visibility = Visibility.Visible;
+                //////    ResetFilters.Visibility = Visibility.Collapsed;
+                //////    FolderPanel.Visibility = Visibility.Collapsed;
+                //////};
+
+                //////chats.StartAnimation("Offset.X", anim1);
+                //////folder.StartAnimation("Offset.X", anim2);
+                //////shadow.StartAnimation("Opacity", anim3);
+                //////batch.End();
             }
             else
             {
                 ResetFilters.Visibility = Visibility.Visible;
-                ChatsList.Visibility = Visibility.Visible;
-                FolderPanel.Visibility = Visibility.Visible;
-                ViewModel.SetFolder(new ChatTypeFilter(ViewModel.CacheService, filter));
+                ViewModel.Chats.SetFilter(new ChatTypeFilter(ViewModel.CacheService, filter));
 
-                var chats = ElementCompositionPreview.GetElementVisual(ChatsList);
-                var folder = ElementCompositionPreview.GetElementVisual(FolderList);
-                var shadow = ElementCompositionPreview.GetElementVisual(FolderShadow);
+                //////ResetFilters.Visibility = Visibility.Visible;
+                //////ChatsList.Visibility = Visibility.Visible;
+                //////FolderPanel.Visibility = Visibility.Visible;
+                //////ViewModel.SetFolder(new ChatTypeFilter(ViewModel.CacheService, filter));
 
-                var anim1 = chats.Compositor.CreateScalarKeyFrameAnimation();
-                anim1.InsertKeyFrame(0, 0);
-                anim1.InsertKeyFrame(1, -(float)(DialogsPanel.ActualWidth / 3));
+                //////var chats = ElementCompositionPreview.GetElementVisual(ChatsList);
+                //////var folder = ElementCompositionPreview.GetElementVisual(FolderList);
+                //////var shadow = ElementCompositionPreview.GetElementVisual(FolderShadow);
 
-                var anim2 = chats.Compositor.CreateScalarKeyFrameAnimation();
-                anim2.InsertKeyFrame(0, (float)DialogsPanel.ActualWidth);
-                anim2.InsertKeyFrame(1, 0);
+                //////var anim1 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                //////anim1.InsertKeyFrame(0, 0);
+                //////anim1.InsertKeyFrame(1, -(float)(DialogsPanel.ActualWidth / 3));
 
-                var anim3 = chats.Compositor.CreateScalarKeyFrameAnimation();
-                anim3.InsertKeyFrame(0, 0);
-                anim3.InsertKeyFrame(1, 1);
+                //////var anim2 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                //////anim2.InsertKeyFrame(0, (float)DialogsPanel.ActualWidth);
+                //////anim2.InsertKeyFrame(1, 0);
 
-                var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                batch.Completed += (s, args) =>
-                {
-                    ChatsList.Visibility = Visibility.Collapsed;
-                    ResetFilters.Visibility = Visibility.Visible;
-                    FolderPanel.Visibility = Visibility.Visible;
-                };
+                //////var anim3 = chats.Compositor.CreateScalarKeyFrameAnimation();
+                //////anim3.InsertKeyFrame(0, 0);
+                //////anim3.InsertKeyFrame(1, 1);
 
-                chats.StartAnimation("Offset.X", anim1);
-                folder.StartAnimation("Offset.X", anim2);
-                shadow.StartAnimation("Opacity", anim3);
-                batch.End();
+                //////var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                //////batch.Completed += (s, args) =>
+                //////{
+                //////    ChatsList.Visibility = Visibility.Collapsed;
+                //////    ResetFilters.Visibility = Visibility.Visible;
+                //////    FolderPanel.Visibility = Visibility.Visible;
+                //////};
+
+                //////chats.StartAnimation("Offset.X", anim1);
+                //////folder.StartAnimation("Offset.X", anim2);
+                //////shadow.StartAnimation("Opacity", anim3);
+                //////batch.End();
             }
 
             ChatsFilters.Content = text;
