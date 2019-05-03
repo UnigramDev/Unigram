@@ -300,19 +300,19 @@ namespace Unigram.ViewModels
                     var date = BindConvert.Current.DateTime(message.Date);
                     builder.AppendLine(string.Format("{0}, [{1} {2}]", title, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date)));
 
-                    if (message.ForwardInfo is MessageForwardedPost forwardedPost)
+                    if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost)
                     {
                         var from = ProtoService.GetChat(forwardedPost.ChatId);
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.Resources.From} {ProtoService.GetTitle(from)}]");
                     }
-                    else if (message.ForwardInfo is MessageForwardedFromUser forwardedFromUser)
+                    else if (message.ForwardInfo?.Origin is MessageForwardOriginUser forwardedFromUser)
                     {
                         var from = ProtoService.GetUser(forwardedFromUser.SenderUserId);
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.Resources.From} {from.GetFullName()}]");
                     }
-                    else if (message.ForwardInfo is MessageForwardedFromHiddenUser forwardedFromHiddenUser)
+                    else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser forwardedFromHiddenUser)
                     {
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.Resources.From} {forwardedFromHiddenUser.SenderName}]");

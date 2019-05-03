@@ -90,15 +90,15 @@ namespace Unigram.Controls.Messages
             }
             else if (!light && message.IsFirst && message.IsSaved())
             {
-                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
                 }
-                else if (message.ForwardInfo is MessageForwardedPost post)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                 {
                     title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
-                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
                     title = fromHiddenUser.SenderName;
                 }
@@ -285,15 +285,15 @@ namespace Unigram.Controls.Messages
             else if (!light && message.IsFirst && message.IsSaved())
             {
                 var title = string.Empty;
-                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
                 }
-                else if (message.ForwardInfo is MessageForwardedPost post)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                 {
                     title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
-                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
                     title = fromHiddenUser.SenderName;
                 }
@@ -328,15 +328,15 @@ namespace Unigram.Controls.Messages
                 paragraph.Inlines.Add(new Run { Text = Strings.Resources.From + " ", FontWeight = FontWeights.Normal });
 
                 var title = string.Empty;
-                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
                 }
-                else if (message.ForwardInfo is MessageForwardedPost post)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                 {
                     title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
-                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
                     title = fromHiddenUser.SenderName;
                 }
@@ -406,16 +406,16 @@ namespace Unigram.Controls.Messages
 
         private async void FwdFrom_Click(MessageViewModel message)
         {
-            if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
             {
                 message.Delegate.OpenUser(fromUser.SenderUserId);
             }
-            else if (message.ForwardInfo is MessageForwardedPost post)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
             {
                 // TODO: verify if this is sufficient
                 message.Delegate.OpenChat(post.ChatId, post.MessageId);
             }
-            else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
             {
                 await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
             }

@@ -77,7 +77,7 @@ namespace Unigram.Controls.Messages
             {
                 number += $"{message.AuthorSignature}, ";
             }
-            else if (message.ForwardInfo is MessageForwardedPost forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
             {
                 number += $"{forwardedPost.AuthorSignature}, ";
             }
@@ -178,17 +178,9 @@ namespace Unigram.Controls.Messages
             }
 
             DateTime? original = null;
-            if (message.ForwardInfo is MessageForwardedPost forwardedPost)
+            if (message.ForwardInfo != null)
             {
-                original = BindConvert.Current.DateTime(forwardedPost.Date);
-            }
-            else if (message.ForwardInfo is MessageForwardedFromUser forwardedFromUser)
-            {
-                original = BindConvert.Current.DateTime(forwardedFromUser.Date);
-            }
-            else if (message.ForwardInfo is MessageForwardedFromHiddenUser forwardedFromHiddenUser)
-            {
-                original = BindConvert.Current.DateTime(forwardedFromHiddenUser.Date);
+                original = BindConvert.Current.DateTime(message.ForwardInfo.Date);
             }
 
             if (original != null)

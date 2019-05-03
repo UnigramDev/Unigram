@@ -567,6 +567,32 @@ namespace Unigram.Views
             var content = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
             content.Tag = message;
 
+            //var brushes = new string[]
+            //{
+            //    "MessageForeground",
+            //    "MessageForegroundLink",
+            //    "MessageBackground",
+            //    "MessageSubtleLabel",
+            //    "MessageSubtleGlyph",
+            //    "MessageSubtleForeground",
+            //    "MessageHeaderForeground",
+            //    "MessageHeaderBorder",
+            //    "MessageMediaForeground",
+            //    "MessageMediaBackground",
+            //    "MessageHyperlinkForeground",
+            //    "MessageOverlayBackground",
+            //    "MessageCallForeground",
+            //    "MessageCallMissedForeground"
+            //};
+
+            //foreach (var color in brushes)
+            //{
+            //    if (content.Resources.TryGetValue($"{color}Brush", out object brush) && brush is SolidColorBrush abrush)
+            //    {
+            //        abrush.Color = (Color)App.Current.Resources[color + (message.IsOutgoing ? "OutColor" : "Color")];
+            //    }
+            //}
+
             if (args.ItemContainer is ChatListViewItem selector)
             {
                 selector.PrepareForItemOverride(message);
@@ -582,7 +608,7 @@ namespace Unigram.Views
 
                     if (message.IsSaved())
                     {
-                        if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                        if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                         {
                             var user = message.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null)
@@ -590,7 +616,7 @@ namespace Unigram.Views
                                 photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
                             }
                         }
-                        else if (message.ForwardInfo is MessageForwardedPost post)
+                        else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                         {
                             var chat = message.ProtoService.GetChat(post.ChatId);
                             if (chat != null)
@@ -598,7 +624,7 @@ namespace Unigram.Views
                                 photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
                             }
                         }
-                        else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                        else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                         {
                             photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
                         }
@@ -621,7 +647,7 @@ namespace Unigram.Views
 
                     if (message.IsSaved())
                     {
-                        if (message.ForwardInfo is MessageForwardedFromHiddenUser)
+                        if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
                         {
                             action.Visibility = Visibility.Collapsed;
                         }

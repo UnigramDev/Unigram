@@ -1398,7 +1398,7 @@ namespace Unigram.ViewModels
                 {
                     if (target.IsSaved())
                     {
-                        if (target.ForwardInfo is MessageForwardedFromUser fromUser)
+                        if (target.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                         {
                             var user = target.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null && user.ProfilePhoto != null)
@@ -1406,9 +1406,9 @@ namespace Unigram.ViewModels
                                 _photosMap[user.ProfilePhoto.Small.Id].Add(target);
                             }
                         }
-                        else if (target.ForwardInfo is MessageForwardedPost post)
+                        else if (target.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                         {
-                            var fromChat = message.ProtoService.GetChat(post.ForwardedFromChatId);
+                            var fromChat = message.ProtoService.GetChat(post.ChatId);
                             if (fromChat != null && fromChat.Photo != null)
                             {
                                 _photosMap[fromChat.Photo.Small.Id].Add(target);
@@ -3314,13 +3314,13 @@ namespace Unigram.ViewModels
             var saved2 = message2.IsSaved();
             if (saved1 && saved2)
             {
-                if (message1.ForwardInfo is MessageForwardedFromUser fromUser1 && message2.ForwardInfo is MessageForwardedFromUser fromUser2)
+                if (message1.ForwardInfo?.Origin is MessageForwardOriginUser fromUser1 && message2.ForwardInfo?.Origin is MessageForwardOriginUser fromUser2)
                 {
-                    return fromUser1.SenderUserId == fromUser2.SenderUserId && fromUser1.ForwardedFromChatId == fromUser2.ForwardedFromChatId;
+                    return fromUser1.SenderUserId == fromUser2.SenderUserId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
                 }
-                else if (message1.ForwardInfo is MessageForwardedPost post1 && message2.ForwardInfo is MessageForwardedPost post2)
+                else if (message1.ForwardInfo?.Origin is MessageForwardOriginChannel post1 && message2.ForwardInfo?.Origin is MessageForwardOriginChannel post2)
                 {
-                    return post1.ChatId == post2.ChatId && post1.ForwardedFromChatId == post2.ForwardedFromChatId;
+                    return post1.ChatId == post2.ChatId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
                 }
             }
             else if (saved1 || saved2)
