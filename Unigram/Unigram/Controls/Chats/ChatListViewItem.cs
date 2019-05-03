@@ -48,11 +48,6 @@ namespace Unigram.Controls.Chats
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
-        ~ChatListViewItem()
-        {
-            DetachEventHandlers();
-        }
-
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new ChatListViewAutomationPeer(this);
