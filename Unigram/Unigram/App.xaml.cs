@@ -75,6 +75,7 @@ namespace Unigram
 
             _mediaExtensionManager = new MediaExtensionManager();
             _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
+            _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".oga", "audio/ogg");
 
             InactivityHelper.Detected += Inactivity_Detected;
 
