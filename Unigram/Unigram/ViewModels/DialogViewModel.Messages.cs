@@ -102,7 +102,7 @@ namespace Unigram.ViewModels
         #region Delete
 
         public RelayCommand<MessageViewModel> MessageDeleteCommand { get; }
-        private async void MessageDeleteExecute(MessageViewModel message)
+        private void MessageDeleteExecute(MessageViewModel message)
         {
             if (message == null)
             {
@@ -122,66 +122,48 @@ namespace Unigram.ViewModels
             //    return;
             //}
 
-            if (message != null && !message.IsOutgoing && !message.IsChannelPost && chat.Type is ChatTypeSupergroup super && !super.IsChannel)
+            MessagesDelete(chat, new[] { message });
+
+            TextField?.Focus(FocusState.Programmatic);
+        }
+
+        private async void MessagesDelete(Chat chat, IList<MessageViewModel> messages)
+        {
+            var first = messages.FirstOrDefault();
+            if (first == null)
             {
-                var sender = message.GetSenderUser();
-                var dialog = new DeleteChannelMessageDialog(1, sender?.GetFullName());
+                return;
+            }
 
-                var result = await dialog.ShowQueuedAsync();
-                if (result == ContentDialogResult.Primary)
-                {
-                    if (dialog.DeleteAll)
-                    {
-                        ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, message.SenderUserId));
-                    }
-                    else
-                    {
-                        ProtoService.Send(new DeleteMessages(chat.Id, new[] { message.Id }, true));
-                    }
+            var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
+            var dialog = new DeleteMessagesView(CacheService, messages.Select(x => x.Get()).ToArray());
 
-                    if (dialog.BanUser)
-                    {
-                        ProtoService.Send(new SetChatMemberStatus(chat.Id, message.SenderUserId, new ChatMemberStatusBanned()));
-                    }
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
 
-                    if (dialog.ReportSpam && chat.Type is ChatTypeSupergroup supertype)
-                    {
-                        ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, message.SenderUserId, new[] { message.Id }));
-                    }
-                }
+            SelectionMode = ListViewSelectionMode.None;
+
+            if (dialog.DeleteAll && sameUser)
+            {
+                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, first.SenderUserId));
             }
             else
             {
-                var dialog = new TLMessageDialog();
-                dialog.Title = Strings.Resources.Message;
-                dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("messages", 1));
-                dialog.PrimaryButtonText = Strings.Resources.OK;
-                dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-                if (message.CanBeDeletedForAllUsers && message.CanBeDeletedOnlyForSelf)
-                {
-                    if (chat.Type is ChatTypePrivate privata)
-                    {
-                        var user = ProtoService.GetUser(privata.UserId);
-                        if (user != null && !(user.Type is UserTypeBot))
-                        {
-                            dialog.CheckBoxLabel = string.Format(Strings.Resources.DeleteForUser, ProtoService.GetTitle(chat));
-                        }
-                    }
-                    else if (chat.Type is ChatTypeBasicGroup)
-                    {
-                        dialog.CheckBoxLabel = Strings.Resources.DeleteForAll;
-                    }
-                }
-
-                var result = await dialog.ShowQueuedAsync();
-                if (result == ContentDialogResult.Primary)
-                {
-                    ProtoService.Send(new DeleteMessages(chat.Id, new[] { message.Id }, dialog.IsChecked == true));
-                }
+                ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), true));
             }
 
-            TextField?.Focus(FocusState.Programmatic);
+            if (dialog.BanUser && sameUser)
+            {
+                ProtoService.Send(new SetChatMemberStatus(chat.Id, first.SenderUserId, new ChatMemberStatusBanned()));
+            }
+
+            if (dialog.ReportSpam && sameUser && chat.Type is ChatTypeSupergroup supertype)
+            {
+                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, first.SenderUserId, messages.Select(x => x.Id).ToList()));
+            }
         }
 
         #endregion
@@ -236,77 +218,23 @@ namespace Unigram.ViewModels
         #region Multiple Delete
 
         public RelayCommand MessagesDeleteCommand { get; }
-        private async void MessagesDeleteExecute()
+        private void MessagesDeleteExecute()
         {
             var messages = new List<MessageViewModel>(SelectedItems);
-            var message = messages.FirstOrDefault();
-            if (message == null)
+
+            var first = messages.FirstOrDefault();
+            if (first == null)
             {
                 return;
             }
 
-            var chat = message.GetChat();
+            var chat = first.GetChat();
             if (chat == null)
             {
                 return;
             }
 
-            var user = CacheService.GetUser(chat);
-
-            var dialog = new TLMessageDialog();
-            dialog.Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("messages", messages.Count));
-            dialog.Message = string.Format(Strings.Resources.AreYouSureDeleteMessages, Locale.Declension("messages", messages.Count));
-            dialog.PrimaryButtonText = Strings.Resources.Delete;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
-            var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
-            var anyCanBeDeletedForAllUsers = messages.Any(x => x.IsOutgoing && x.CanBeDeletedForAllUsers);
-
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeBasicGroup)
-            {
-                if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
-                {
-                    dialog.Message = chat.Type is ChatTypePrivate && user != null
-                        ? string.Format(Strings.Resources.DeleteMessagesText, Locale.Declension("messages", messages.Count), user.FirstName)
-                        : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("messages", messages.Count));
-
-                    dialog.CheckBoxLabel = Strings.Resources.DeleteMessagesOption;
-                }
-                else
-                {
-                    dialog.Message = messages.Count == 1
-                        ? Strings.Resources.AreYouSureDeleteSingleMessage
-                        : Strings.Resources.AreYouSureDeleteFewMessages;
-
-                    if (canBeDeletedForAllUsers)
-                    {
-                        dialog.CheckBoxLabel = chat.Type is ChatTypePrivate && user != null
-                            ? string.Format(Strings.Resources.DeleteMessagesOptionAlso, user.FirstName)
-                            : Strings.Resources.DeleteForAll;
-                    }
-                }
-            }
-            else if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
-            {
-                dialog.Message = messages.Count == 1
-                    ? Strings.Resources.AreYouSureDeleteSingleMessageMega
-                    : Strings.Resources.AreYouSureDeleteFewMessagesMega;
-            }
-            else
-            {
-                dialog.Message = messages.Count == 1
-                    ? Strings.Resources.AreYouSureDeleteSingleMessage
-                    : Strings.Resources.AreYouSureDeleteFewMessages;
-            }
-
-            var result = await dialog.ShowQueuedAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                SelectionMode = ListViewSelectionMode.None;
-
-                ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.IsChecked == true));
-            }
+            MessagesDelete(chat, messages);
         }
 
         private bool MessagesDeleteCanExecute()
