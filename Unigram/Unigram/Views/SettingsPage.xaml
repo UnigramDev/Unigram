@@ -125,8 +125,8 @@
                                           Glyph="&#xF4AA;"
                                           Click="Stickers_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource Appearance}"
-                                          Glyph="&#xE2B1;"
+                    <controls:GlyphButton Content="{CustomResource ChatSettings}"
+                                          Glyph="&#xE8BD;"
                                           Click="Appearance_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:GlyphButton Content="{CustomResource Language}"

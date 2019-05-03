@@ -22,7 +22,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{CustomResource Appearance}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                <TextBlock Text="{CustomResource ChatSettings}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
 
                 <Button Padding="{StaticResource EllipsisButtonPadding}"
                         Style="{StaticResource EllipsisButton}"
