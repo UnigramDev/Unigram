@@ -16,7 +16,6 @@
         <Grid x:Name="ContentPanel"
               MinHeight="30"
               Padding="{StaticResource MessageContentPadding}"
-              CornerRadius="{StaticResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
@@ -72,7 +71,7 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
+                            <!--<Setter Target="ContentPanel.BorderThickness" Value="0"/>-->
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="HiddenState">
