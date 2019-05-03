@@ -9,6 +9,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Services.Settings;
+using Unigram.Services.Updates;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
@@ -33,10 +34,12 @@ namespace Unigram.Services
     public class ThemeService : IThemeService
     {
         private readonly ISettingsService _settingsService;
+        private readonly IEventAggregator _aggregator;
 
-        public ThemeService(ISettingsService settingsService)
+        public ThemeService(ISettingsService settingsService, IEventAggregator aggregator)
         {
             _settingsService = settingsService;
+            _aggregator = aggregator;
         }
 
         public Dictionary<string, string[]> GetMapping(TelegramTheme flags)
@@ -245,6 +248,8 @@ namespace Unigram.Services
                     }
                 });
             }
+
+            _aggregator.Publish(new UpdateWallpaper(0, 0));
         }
 
         public ElementTheme GetElementTheme()
