@@ -118,6 +118,40 @@ namespace Unigram.Services.Settings
             }
         }
 
+        private string _emojiSet;
+        public string EmojiSet
+        {
+            get
+            {
+                if (_emojiSet == null)
+                    _emojiSet = GetValueOrDefault(_container, "EmojiSet", "Apple");
+
+                return _emojiSet ?? "Apple";
+            }
+            set
+            {
+                _emojiSet = value ?? "Apple";
+                AddOrUpdateValue(_container, "EmojiSet", value);
+            }
+        }
+
+        private string _emojiSetId;
+        public string EmojiSetId
+        {
+            get
+            {
+                if (_emojiSetId == null)
+                    _emojiSetId = GetValueOrDefault(_container, "EmojiSetId", "apple");
+
+                return _emojiSetId ?? "apple";
+            }
+            set
+            {
+                _emojiSetId = value ?? "apple";
+                AddOrUpdateValue(_container, "EmojiSetId", value);
+            }
+        }
+
         private string _requestedThemePath;
         public string RequestedThemePath
         {

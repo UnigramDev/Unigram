@@ -86,6 +86,17 @@
                 <controls:BadgeButton
                     Content="{CustomResource ChatBackground}"
                     Click="Wallpaper_Click"/>
+
+                <controls:BadgeButtonWithImage
+                    Content="Emoji Set"
+                    Badge="{x:Bind ViewModel.EmojiSet, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.EmojiSetCommand}"
+                    Style="{StaticResource ImageSubbadgeBadgeButtonStyle}">
+                    <controls:BadgeButtonWithImage.ImageSource>
+                        <BitmapImage UriSource="{x:Bind ViewModel.EmojiSetId, Mode=OneWay}" DecodePixelWidth="40" DecodePixelHeight="40"/>
+                    </controls:BadgeButtonWithImage.ImageSource>
+                </controls:BadgeButtonWithImage>
+
                 <controls:BadgeButton
                     Content="{CustomResource AutoNightTheme}"
                     Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"

@@ -40,6 +40,8 @@ namespace Unigram.ViewModels.Settings
             UseDefaultLayout = !Settings.UseThreeLinesLayout;
             UseThreeLinesLayout = Settings.UseThreeLinesLayout;
 
+            EmojiSetCommand = new RelayCommand(EmojiSetExecute);
+
             NewThemeCommand = new RelayCommand(NewThemeExecute);
 
             ThemeCreateCommand = new RelayCommand<ThemeInfoBase>(ThemeCreateExecute);
@@ -52,6 +54,20 @@ namespace Unigram.ViewModels.Settings
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            var emojiSet = Settings.Appearance.EmojiSet;
+            var emojiSetId = Settings.Appearance.EmojiSetId;
+
+            if (emojiSet.Length > 0 && emojiSetId.Length > 0)
+            {
+                EmojiSet = emojiSet;
+                EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSetId}.png";
+            }
+            else
+            {
+                EmojiSet = "Microsoft";
+                EmojiSetId = $"ms-appx:///Assets/Emoji/microsoft.png";
+            }
+
             Items.ReplaceWith(await _themeService.GetThemesAsync());
         }
 
@@ -64,6 +80,20 @@ namespace Unigram.ViewModels.Settings
             }
 
             return base.OnNavigatingFromAsync(args);
+        }
+
+        private string _emojiSet;
+        public string EmojiSet
+        {
+            get { return _emojiSet; }
+            set { Set(ref _emojiSet, value); }
+        }
+
+        private string _emojiSetId;
+        public string EmojiSetId
+        {
+            get { return _emojiSetId; }
+            set { Set(ref _emojiSetId, value); }
         }
 
         public double FontSize
@@ -170,6 +200,26 @@ namespace Unigram.ViewModels.Settings
         }
 
 
+
+        public RelayCommand EmojiSetCommand { get; }
+        private async void EmojiSetExecute()
+        {
+            await new SettingsEmojiSetView().ShowQueuedAsync();
+
+            var emojiSet = Settings.Appearance.EmojiSet;
+            var emojiSetId = Settings.Appearance.EmojiSetId;
+
+            if (emojiSet.Length > 0 && emojiSetId.Length > 0)
+            {
+                EmojiSet = emojiSet;
+                EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSetId}.png";
+            }
+            else
+            {
+                EmojiSet = "Microsoft";
+                EmojiSetId = $"ms-appx:///Assets/Emoji/microsoft.png";
+            }
+        }
 
         public RelayCommand NewThemeCommand { get; }
         private void NewThemeExecute()

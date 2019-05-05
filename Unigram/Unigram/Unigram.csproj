@@ -387,6 +387,9 @@
     <Compile Include="Controls\Views\PlaybackView.xaml.cs">
       <DependentUpon>PlaybackView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\SettingsEmojiSetView.xaml.cs">
+      <DependentUpon>SettingsEmojiSetView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ThemePreviewView.xaml.cs">
       <DependentUpon>ThemePreviewView.xaml</DependentUpon>
     </Compile>
@@ -1268,6 +1271,8 @@
     <Content Include="Assets\Emojis\2744.png" />
     <Content Include="Assets\Emojis\2753.png" />
     <Content Include="Assets\Emojis\2757.png" />
+    <Content Include="Assets\Emoji\apple.png" />
+    <Content Include="Assets\Emoji\microsoft.png" />
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <Compile Include="Controls\GlyphToggleButton.cs" />
     <Compile Include="Controls\ProgressShape.cs" />
@@ -1419,6 +1424,7 @@
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
     <Content Include="Assets\Fonts\SegMVR2.ttf" />
     <Content Include="Assets\Fonts\SEGMDL2.TTF" />
+    <Content Include="Assets\Emoji\apple.ttf" />
     <None Include="Assets\Fonts\Telegram.json" />
     <PRIResource Include="Strings\uk\Additional.resw">
       <SubType>Designer</SubType>
@@ -1906,6 +1912,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\PlaybackView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SettingsEmojiSetView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

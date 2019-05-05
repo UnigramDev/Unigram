@@ -224,7 +224,7 @@
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8">
-                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" Style="{StaticResource ServiceButtonStyle}">
+                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource ServiceButtonStyle}">
                     <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
@@ -235,7 +235,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <messages:MessageService Click="ServiceMessage_Click" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
+            <messages:MessageService Click="ServiceMessage_Click" Margin="0,4,0,6" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource ServiceButtonStyle}">
                 <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
             </messages:MessageService>
         </DataTemplate>
@@ -406,6 +406,7 @@
                                     <TextBlock x:Name="Title"
                                                Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                                Style="{StaticResource BaseTextBlockStyle}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                TextWrapping="NoWrap"
                                                TextTrimming="CharacterEllipsis"
                                                MaxLines="1"/>
@@ -943,6 +944,7 @@
                 <Grid Grid.ColumnSpan="2" Grid.Row="1">
                     <chats:ChatTextBox
                         x:Name="TextField"
+                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                         Background="Transparent"
                         Messages="{x:Bind Messages}"
                         Autocomplete="{x:Bind ListAutocomplete}"

@@ -29,6 +29,8 @@ namespace Unigram.Services
 
         Task InstallThemeAsync(StorageFile file);
         Task SetThemeAsync(ThemeInfoBase info);
+
+        void Refresh();
     }
 
     public class ThemeService : IThemeService
@@ -250,6 +252,29 @@ namespace Unigram.Services
             }
 
             _aggregator.Publish(new UpdateWallpaper(0, 0));
+        }
+
+        public async void Refresh()
+        {
+            var flags = GetElementTheme();
+
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            {
+                await window.Dispatcher.DispatchAsync(() =>
+                {
+                    if (window.Content is FrameworkElement element)
+                    {
+                        if (flags == element.RequestedTheme)
+                        {
+                            element.RequestedTheme = flags == ElementTheme.Dark
+                                ? ElementTheme.Light
+                                : ElementTheme.Dark;
+                        }
+
+                        element.RequestedTheme = flags;
+                    }
+                });
+            }
         }
 
         public ElementTheme GetElementTheme()

@@ -47,7 +47,7 @@
                             </common:FluidGridView.Triggers>
                             <GridView.ItemTemplate>
                                 <DataTemplate x:DataType="x:String">
-                                    <TextBlock x:Phase="0" Text="{x:Bind}" FontSize="22"/>
+                                    <TextBlock x:Phase="0" Text="{x:Bind}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
                                 </DataTemplate>
                             </GridView.ItemTemplate>
                             <GridView.ItemContainerStyle>

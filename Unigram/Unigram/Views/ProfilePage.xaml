@@ -603,6 +603,7 @@
                                                ContextMenuOpening="About_ContextMenuOpening"
                                                Padding="0,11,12,12"
                                                Style="{StaticResource BodyRichTextBlockStyle}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                Grid.Column="1">
                                     <Paragraph>
                                         <Span x:Name="DescriptionSpan"/>

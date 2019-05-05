@@ -38,6 +38,19 @@ namespace Unigram.Common
                 this.Add("MessageServiceBackgroundColor", GetColorOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
 
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d));
+
+                var emojiSet = SettingsService.Current.Appearance.EmojiSet;
+                var emojiSetId = SettingsService.Current.Appearance.EmojiSetId;
+
+                if (emojiSet.Length > 0 && emojiSetId.Length > 0)
+                {
+                    //this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSetId}.ttf#Segoe UI Emoji"));
+                    this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/{emojiSetId}.ttf#Segoe UI Emoji"));
+                }
+                else
+                {
+                    this.Add("EmojiThemeFontFamily", new FontFamily("XamlAutoFontFamily"));
+                }
             }
             catch { }
         }
@@ -289,5 +302,11 @@ namespace Unigram.Common
         }
 
         #endregion
+    }
+
+    public class ThemeProperties
+    {
+        public int MessageCorner { get; set; }
+        public int MessageCornerMerged { get; set; }
     }
 }
