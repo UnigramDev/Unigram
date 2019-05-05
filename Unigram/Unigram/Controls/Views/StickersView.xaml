@@ -699,6 +699,7 @@
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource Emoji}"
                             ToolTipService.ToolTip="{CustomResource Emoji}"
+                            GroupName="StickersView"
                             Grid.Column="2"/>
 
                         <controls:PivotRadioButton
@@ -711,6 +712,7 @@
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource AccDescrGIFs}"
                             ToolTipService.ToolTip="{CustomResource AccDescrGIFs}"
+                            GroupName="StickersView"
                             Grid.Column="3"/>
                             
                         <controls:PivotRadioButton
@@ -722,6 +724,7 @@
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource AccDescrStickers}"
                             ToolTipService.ToolTip="{CustomResource AccDescrStickers}"
+                            GroupName="StickersView"
                             Grid.Column="4"/>
                     </Grid>
                 </Grid>
