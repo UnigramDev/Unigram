@@ -4,9 +4,37 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 
 namespace Unigram.Common
 {
+    public class EmojiSet
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+
+        public File Thumbnail { get; set; }
+        public File Document { get; set; }
+
+        public bool IsDefault { get; set; }
+
+        public bool UpdateFile(File file)
+        {
+            if (Thumbnail.Id == file.Id)
+            {
+                Thumbnail = file;
+                return true;
+            }
+            else if (Document.Id == file.Id)
+            {
+                Document = file;
+                return true;
+            }
+
+            return false;
+        }
+    }
+
     public class EmojiGroup
     {
         public string Title { get; set; }
