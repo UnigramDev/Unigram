@@ -14,9 +14,8 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <!-- desktop4:SupportsMultipleInstances="true" -->
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Unigram.App">
-      <uap:VisualElements DisplayName="Unigram" Square150x150Logo="Assets\Logos\Square150x150Logo\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo\Square44x44Logo.png" Description="Unigram" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="Telegram" Square150x150Logo="Assets\Logos\Square150x150Logo\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo\Square44x44Logo.png" Description="Unigram" BackgroundColor="transparent">
         <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="Assets\Logos\LockScreenLogo\LockScreenLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Logos\Wide310x150Logo\Wide310x150Logo.png" Square71x71Logo="Assets\Logos\Square71x71Logo\Square71x71Logo.png" Square310x310Logo="Assets\Logos\Square310x310Logo\Square310x310Logo.png">
           <uap:ShowNameOnTiles>
@@ -28,7 +27,6 @@
         <uap:SplashScreen uap5:Optional="true" Image="Assets\Logos\SplashScreen\SplashScreen.png" BackgroundColor="transparent" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.voipCall" />
         <uap3:Extension Category="windows.appUriHandler">
           <uap3:AppUriHandler>
             <uap3:Host Name="t.me" />
@@ -45,20 +43,6 @@
             <uap5:ExecutionAlias Alias="Unigram.exe" />
           </uap5:AppExecutionAlias>
         </uap5:Extension>
-        <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />
-        <uap:Extension Category="windows.appService" EntryPoint="Unigram.Tasks.VoIPServiceTask">
-          <uap:AppService Name="VoIPServiceTask" ServerName="BackgroundHost" />
-        </uap:Extension>-->
-        <!--<Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>-->
         <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
           <BackgroundTasks>
             <Task Type="pushNotification" />
@@ -95,6 +79,14 @@
             <uap:DataFormat>Bitmap</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="theme">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.unigram-theme</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Unigram Theme</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -111,21 +103,14 @@
         <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
-    <!--<Extension Category="windows.activatableClass.outOfProcessServer">
-      <OutOfProcessServer ServerName="BackgroundHost">
-        <Path>UnigramHost.exe</Path>
-        <Instancing>singleInstance</Instancing>
-        <ActivatableClass ActivatableClassId="UnigramHost.Server" />
-      </OutOfProcessServer>
-    </Extension>-->
   </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />
+	  <Capability Name="privateNetworkClientServer" />
     <uap:Capability Name="removableStorage" />
     <uap:Capability Name="picturesLibrary" />
     <uap:Capability Name="voipCall" />
     <uap:Capability Name="contacts" />
-    <!--<rescap:Capability Name="runFullTrust" />-->
     <DeviceCapability Name="location" />
     <DeviceCapability Name="microphone" />
     <DeviceCapability Name="webcam" />
