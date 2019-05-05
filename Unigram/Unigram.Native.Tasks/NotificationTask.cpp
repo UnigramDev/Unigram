@@ -57,7 +57,7 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 		{
 			UpdateToastAndTiles(details->Content /*, &log*/).then([=]() {
 				deferral->Complete();
-			});;
+			});
 		}
 		catch (Exception ^ ex)
 		{
@@ -88,111 +88,113 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 
 task<void> NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* log*/)
 {
-	auto notification = JsonValue::Parse(content)->GetObject();
-	auto data = notification->GetNamedObject("data");
-	if (data == nullptr)
-	{
-		return;
-	}
-
-	auto session = GetSession(data);
-	if (data->HasKey("loc_key") == false)
-	{
-		//time_t rawtime = time(NULL);
-		//struct tm timeinfo;
-		//wchar_t buffer[80];
-
-		//time(&rawtime);
-		//localtime_s(&timeinfo, &rawtime);
-
-		//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-		//std::wstring str(buffer);
-
-		//*log << L"[";
-		//*log << str;
-		//*log << L"] Removing a toast notification\n";
-
-		auto custom = data->GetNamedObject("custom");
-		auto group = GetGroup(custom);
-
-		ToastNotificationManager::History->RemoveGroup(group, L"App");
-		return;
-	}
-
-	auto muted = data->GetNamedString("mute", "0") == L"1";
-	if (!muted)
-	{
-		auto loc_key = data->GetNamedString("loc_key");
-		auto loc_args = data->GetNamedArray("loc_args");
-		auto custom = data->GetNamedObject("custom", nullptr);
-
-		//time_t rawtime = time(NULL);
-		//struct tm timeinfo;
-		//wchar_t buffer[80];
-
-		//time(&rawtime);
-		//localtime_s(&timeinfo, &rawtime);
-
-		//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-		//std::wstring str(buffer);
-
-		//*log << L"[";
-		//*log << str;
-		//*log << L"] Received notification with loc_key ";
-		//*log << loc_key->Data();
-		//*log << L"\n";
-
-		auto caption = GetCaption(loc_args, loc_key);
-		auto message = GetMessage(loc_args, loc_key);
-		auto sound = data->GetNamedString("sound", "Default");
-		auto launch = GetLaunch(custom, loc_key);
-		auto group = GetGroup(custom);
-		auto picture = GetPicture(custom, group, session);
-		auto date = GetDate(notification);
-
-		if (message == nullptr)
+	return create_task([=] {
+		auto notification = JsonValue::Parse(content)->GetObject();
+		auto data = notification->GetNamedObject("data");
+		if (data == nullptr)
 		{
-			message = data->GetNamedString("text", "New Notification");
+			return;
 		}
 
-		//if (loc_key->Equals(L"PHONE_CALL_MISSED"))
-		//{
-		//	ToastNotificationManager::History->Remove(L"phoneCall");
-		//}
+		auto session = GetSession(data);
+		if (data->HasKey("loc_key") == false)
+		{
+			//time_t rawtime = time(NULL);
+			//struct tm timeinfo;
+			//wchar_t buffer[80];
 
-		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
-		{
-			co_await UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, nullptr, date, loc_key);
-			//UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			//time(&rawtime);
+			//localtime_s(&timeinfo, &rawtime);
+
+			//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+			//std::wstring str(buffer);
+
+			//*log << L"[";
+			//*log << str;
+			//*log << L"] Removing a toast notification\n";
+
+			auto custom = data->GetNamedObject("custom");
+			auto group = GetGroup(custom);
+
+			ToastNotificationManager::History->RemoveGroup(group, L"App");
+			return;
 		}
-		else
+
+		auto muted = data->GetNamedString("mute", "0") == L"1";
+		if (!muted)
 		{
-			std::wstring key = loc_key->Data();
-			if ((key.find(L"CONTACT_JOINED") == 0 || key.find(L"PINNED") == 0) && ApplicationData::Current->LocalSettings->Values->HasKey(session))
+			auto loc_key = data->GetNamedString("loc_key");
+			auto loc_args = data->GetNamedArray("loc_args");
+			auto custom = data->GetNamedObject("custom", nullptr);
+
+			//time_t rawtime = time(NULL);
+			//struct tm timeinfo;
+			//wchar_t buffer[80];
+
+			//time(&rawtime);
+			//localtime_s(&timeinfo, &rawtime);
+
+			//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+			//std::wstring str(buffer);
+
+			//*log << L"[";
+			//*log << str;
+			//*log << L"] Received notification with loc_key ";
+			//*log << loc_key->Data();
+			//*log << L"\n";
+
+			auto caption = GetCaption(loc_args, loc_key);
+			auto message = GetMessage(loc_args, loc_key);
+			auto sound = data->GetNamedString("sound", "Default");
+			auto launch = GetLaunch(custom, loc_key);
+			auto group = GetGroup(custom);
+			auto picture = GetPicture(custom, group, session);
+			auto date = GetDate(notification);
+
+			if (message == nullptr)
 			{
-				auto settings = safe_cast<ApplicationDataCompositeValue^>(ApplicationData::Current->LocalSettings->Values->Lookup(session));
-				auto notifications = safe_cast<ApplicationDataCompositeValue^>(settings->Lookup(L"Notifications"));
-
-				if (key.find(L"CONTACT_JOINED") == 0 && notifications->HasKey(L"IsContactEnabled") && safe_cast<bool>(notifications->Lookup(L"IsContactEnabled")))
-				{
-					return;
-				}
-				else if (key.find(L"PINNED") == 0 && notifications->HasKey(L"IsPinnedEnabled") && safe_cast<bool>(notifications->Lookup(L"IsPinnedEnabled")))
-				{
-					return;
-				}
+				message = data->GetNamedString("text", "New Notification");
 			}
 
-			auto tag = GetTag(custom);
-			co_await UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key);
-			//UpdatePrimaryBadge(data->GetNamedNumber(L"badge", 0));
+			//if (loc_key->Equals(L"PHONE_CALL_MISSED"))
+			//{
+			//	ToastNotificationManager::History->Remove(L"phoneCall");
+			//}
 
-			if (loc_key != L"DC_UPDATE")
+			if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 			{
-				UpdatePrimaryTile(L"0", caption, message, picture);
+				create_task(UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, nullptr, date, loc_key)).get();
+				//UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			}
+			else
+			{
+				std::wstring key = loc_key->Data();
+				if ((key.find(L"CONTACT_JOINED") == 0 || key.find(L"PINNED") == 0) && ApplicationData::Current->LocalSettings->Values->HasKey(session))
+				{
+					auto settings = safe_cast<ApplicationDataCompositeValue^>(ApplicationData::Current->LocalSettings->Values->Lookup(session));
+					auto notifications = safe_cast<ApplicationDataCompositeValue^>(settings->Lookup(L"Notifications"));
+
+					if (key.find(L"CONTACT_JOINED") == 0 && notifications->HasKey(L"IsContactEnabled") && safe_cast<bool>(notifications->Lookup(L"IsContactEnabled")))
+					{
+						return;
+					}
+					else if (key.find(L"PINNED") == 0 && notifications->HasKey(L"IsPinnedEnabled") && safe_cast<bool>(notifications->Lookup(L"IsPinnedEnabled")))
+					{
+						return;
+					}
+				}
+
+				auto tag = GetTag(custom);
+				create_task(UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key)).get();
+				//UpdatePrimaryBadge(data->GetNamedNumber(L"badge", 0));
+
+				if (loc_key != L"DC_UPDATE")
+				{
+					UpdatePrimaryTile(L"0", caption, message, picture);
+				}
 			}
 		}
-	}
+	});
 }
 
 String^ NotificationTask::GetCaption(JsonArray^ loc_args, String^ loc_key)
