@@ -32,7 +32,7 @@ using System.Threading.Tasks;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class StickerSetView : ContentDialog, IHandle<UpdateFile>
+    public sealed partial class StickerSetView : TLContentDialog, IHandle<UpdateFile>
     {
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 
