@@ -63,7 +63,7 @@ namespace Unigram.Controls.Views
             }
             else
             {
-                RevokeCheck.Visibility = Visibility.Visible;
+                RevokeCheck.Visibility = Visibility.Collapsed;
                 BanUserCheck.Visibility = Visibility.Collapsed;
                 ReportSpamCheck.Visibility = Visibility.Collapsed;
                 DeleteAllCheck.Visibility = Visibility.Collapsed;
@@ -80,6 +80,7 @@ namespace Unigram.Controls.Views
                             ? string.Format(Strings.Resources.DeleteMessagesText, Locale.Declension("messages", messages.Count), user.FirstName)
                             : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("messages", messages.Count));
 
+                        RevokeCheck.Visibility = Visibility.Visible;
                         RevokeCheck.Content = Strings.Resources.DeleteMessagesOption;
                     }
                     else
@@ -90,6 +91,7 @@ namespace Unigram.Controls.Views
 
                         if (canBeDeletedForAllUsers)
                         {
+                            RevokeCheck.Visibility = Visibility.Visible;
                             RevokeCheck.Content = chat.Type is ChatTypePrivate && user != null
                                 ? string.Format(Strings.Resources.DeleteMessagesOptionAlso, user.FirstName)
                                 : Strings.Resources.DeleteForAll;
