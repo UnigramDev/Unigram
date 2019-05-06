@@ -14,7 +14,9 @@ using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Native.Tasks;
 using Unigram.Views;
+using Windows.ApplicationModel.AppService;
 using Windows.Data.Json;
+using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.System.Threading;
@@ -163,7 +165,7 @@ namespace Unigram.Services
             });
         }
 
-        public void Handle(UpdateChatReadInbox update)
+        public async void Handle(UpdateChatReadInbox update)
         {
             if (update.UnreadCount == 0)
             {
@@ -176,7 +178,8 @@ namespace Unigram.Services
                 try
                 {
                     // Notifications APIs like to crash
-                    ToastNotificationManager.History.RemoveGroup(GetGroup(chat), "App");
+                    var collectionHistory = await GetCollectionHistoryAsync();
+                    collectionHistory.RemoveGroup(GetGroup(chat));
                 }
                 catch { }
             }
@@ -238,7 +241,7 @@ namespace Unigram.Services
             //_suppress = update.HavePendingNotifications;
         }
 
-        public void Handle(UpdateNotificationGroup update)
+        public async void Handle(UpdateNotificationGroup update)
         {
             if (_suppress)
             {
@@ -258,10 +261,15 @@ namespace Unigram.Services
                 return;
             }
 
-            foreach (var removed in update.RemovedNotificationIds)
+            try
             {
-                ToastNotificationManager.History.Remove($"{removed}", $"{update.NotificationGroupId}");
+                var collectionHistory = await GetCollectionHistoryAsync();
+                foreach (var removed in update.RemovedNotificationIds)
+                {
+                    collectionHistory.Remove($"{removed}", $"{update.NotificationGroupId}");
+                }
             }
+            catch { }
 
             foreach (var notification in update.AddedNotifications)
             {
@@ -291,20 +299,20 @@ namespace Unigram.Services
                 case NotificationTypeNewMessage newMessage:
                     ProcessNewMessage(group, notification.Id, newMessage.Message);
                     break;
-                //case NotificationTypeNewPushMessage newPushMessage:
-                //    ProcessNewPushMessage(group, notification.Id, newPushMessage);
-                //    break;
+                case NotificationTypeNewPushMessage newPushMessage:
+                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage);
+                    break;
                 case NotificationTypeNewSecretChat newSecretChat:
                     break;
             }
         }
 
-        private void ProcessNewPushMessage(int group, int id, NotificationTypeNewPushMessage newPushMessage)
+        private void ProcessNewPushMessage(int group, int id, long chatId, NotificationTypeNewPushMessage newPushMessage)
         {
-            throw new NotImplementedException();
+            UpdateFromLabel(_protoService.GetChat(chatId), newPushMessage);
         }
 
-        private void ProcessNewMessage(int gId, int id, Message message)
+        private async void ProcessNewMessage(int gId, int id, Message message)
         {
             var chat = _protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -333,6 +341,11 @@ namespace Unigram.Services
                     NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
                 }
             });
+
+            if (App.Connection is AppServiceConnection connection)
+            {
+                await connection.SendMessageAsync(new ValueSet { { "FlashWindow", string.Empty } });
+            }
         }
 
         private void Update(Chat chat, Action action)
@@ -481,12 +494,31 @@ namespace Unigram.Services
 
         private async void CreateToastCollection(User user)
         {
-            var displayName = user.GetFullName();
-            var launchArg = $"session={_sessionService.Id}&user_id={user.Id}";
-            var icon = new Uri("ms-appx:///Assets/Logos/Square44x44Logo/Square44x44Logo.png");
+            try
+            {
+                var displayName = user.GetFullName();
+                var launchArg = $"session={_sessionService.Id}&user_id={user.Id}";
+                var icon = new Uri("ms-appx:///Assets/Logos/Square44x44Logo/Square44x44Logo.png");
 
-            var collection = new ToastCollection($"{_sessionService.Id}", displayName, launchArg, icon);
-            await ToastNotificationManager.GetDefault().GetToastCollectionManager().SaveToastCollectionAsync(collection);
+#if DEBUG
+                displayName += " BETA";
+#endif
+
+                var collection = new ToastCollection($"{_sessionService.Id}", displayName, launchArg, icon);
+                await ToastNotificationManager.GetDefault().GetToastCollectionManager().SaveToastCollectionAsync(collection);
+            }
+            catch { }
+        }
+
+        private async Task<ToastNotificationHistory> GetCollectionHistoryAsync()
+        {
+            var collectionHistory = await ToastNotificationManager.GetDefault().GetHistoryForToastCollectionIdAsync($"{_sessionService.Id}");
+            if (collectionHistory == null)
+            {
+                collectionHistory = ToastNotificationManager.History;
+            }
+
+            return collectionHistory;
         }
 
         public async Task UnregisterAsync()
@@ -796,6 +828,265 @@ namespace Unigram.Services
             return result;
         }
 
+        private string UpdateFromLabel(Chat chat, NotificationTypeNewPushMessage message)
+        {
+            //if (message.IsService())
+            //{
+            //return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, null, message));
+            //}
+
+            var result = string.Empty;
+
+            var from = _protoService.GetUser(message.SenderUserId);
+            if (from != null && ShowFrom(chat))
+            {
+                if (!string.IsNullOrEmpty(from.FirstName))
+                {
+                    result = $"{from.FirstName.Trim()}: ";
+                }
+                else if (!string.IsNullOrEmpty(from.LastName))
+                {
+                    result = $"{from.LastName.Trim()}: ";
+                }
+                else if (!string.IsNullOrEmpty(from.Username))
+                {
+                    result = $"{from.Username.Trim()}: ";
+                }
+                else if (from.Type is UserTypeDeleted)
+                {
+                    result = $"{Strings.Resources.HiddenName}: ";
+                }
+                else
+                {
+                    result = $"{from.Id}: ";
+                }
+            }
+
+            string FormatPinned(string key)
+            {
+                if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                {
+                    return string.Format(key, string.Empty).Trim(' ');
+                }
+                else if (from != null)
+                {
+                    return string.Format(key, from.GetFullName());
+                }
+
+                return key;
+            }
+
+            if (message.Content is PushMessageContentGame gameMedia)
+            {
+                if (gameMedia.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedGameChannel);
+                }
+
+                return result + "\uD83C\uDFAE " + gameMedia.Title;
+            }
+            else if (message.Content is PushMessageContentVideoNote videoNote)
+            {
+                if (videoNote.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedRoundChannel);
+                }
+
+                return result + Strings.Resources.AttachRound;
+            }
+            else if (message.Content is PushMessageContentSticker sticker)
+            {
+                if (sticker.IsPinned)
+                {
+                    if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
+                    {
+                        return FormatPinned(Strings.Resources.NotificationActionPinnedStickerChannel);
+                    }
+
+                    return FormatPinned(string.Format(Strings.Resources.NotificationActionPinnedStickerEmojiChannel, "{0}", sticker.Emoji));
+                }
+
+                if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
+                {
+                    return result + Strings.Resources.AttachSticker;
+                }
+
+                return result + $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
+            }
+
+            string GetCaption(string caption)
+            {
+                return string.IsNullOrEmpty(caption) ? string.Empty : $", {caption}";
+            }
+
+            if (message.Content is PushMessageContentVoiceNote voiceNote)
+            {
+                if (voiceNote.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedVoiceChannel);
+                }
+
+                return result + Strings.Resources.AttachAudio;
+            }
+            else if (message.Content is PushMessageContentVideo video)
+            {
+                if (video.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedVideoChannel);
+                }
+
+                return result + (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption);
+            }
+            else if (message.Content is PushMessageContentAnimation animation)
+            {
+                if (animation.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedGifChannel);
+                }
+
+                return result + Strings.Resources.AttachGif + GetCaption(animation.Caption);
+            }
+            else if (message.Content is PushMessageContentAudio audio)
+            {
+                if (audio.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedMusicChannel);
+                }
+
+                var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio?.Performer;
+                var title = string.IsNullOrEmpty(audio.Audio?.Title) ? null : audio.Audio?.Title;
+
+                if (performer == null && title == null)
+                {
+                    return result + Strings.Resources.AttachMusic;
+                }
+                else
+                {
+                    return $"{result}{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}";
+                }
+            }
+            else if (message.Content is PushMessageContentDocument document)
+            {
+                if (document.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedFileChannel);
+                }
+
+                if (string.IsNullOrEmpty(document.Document.FileName))
+                {
+                    return result + Strings.Resources.AttachDocument;
+                }
+
+                return result + document.Document.FileName;
+            }
+            else if (message.Content is PushMessageContentInvoice invoice)
+            {
+                if (invoice.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedInvoiceChannel);
+                }
+
+                return result + invoice.Price;
+            }
+            else if (message.Content is PushMessageContentContact contact)
+            {
+                if (contact.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedContactChannel);
+                }
+
+                return result + Strings.Resources.AttachContact;
+            }
+            else if (message.Content is PushMessageContentLocation location)
+            {
+                if (location.IsPinned)
+                {
+                    return FormatPinned(location.IsLive ? Strings.Resources.NotificationActionPinnedGeoLiveChannel : Strings.Resources.NotificationActionPinnedGeoChannel);
+                }
+
+                return result + (location.IsLive ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
+            }
+            else if (message.Content is PushMessageContentPhoto photo)
+            {
+                if (photo.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedPhotoChannel);
+                }
+
+                return result + (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption);
+            }
+            else if (message.Content is PushMessageContentPoll poll)
+            {
+                if (poll.IsPinned)
+                {
+                    return FormatPinned(Strings.Resources.NotificationActionPinnedPollChannel);
+                }
+
+                return result + "\uD83D\uDCCA " + poll.Question;
+            }
+            // Service messages
+            else if (message.Content is PushMessageContentBasicGroupChatCreate)
+            {
+                return Strings.Resources.NotificationInvitedToGroup;
+            }
+            else if (message.Content is PushMessageContentChatAddMembers)
+            {
+
+            }
+            else if (message.Content is PushMessageContentChatChangePhoto)
+            {
+                if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                {
+                    return Strings.Resources.ActionChannelChangedPhoto;
+                }
+
+                return Strings.Resources.ActionChangedPhoto.Replace("un1", from.GetFullName());
+            }
+            else if (message.Content is PushMessageContentChatChangeTitle chatChangeTitle)
+            {
+                if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                {
+                    return Strings.Resources.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
+                }
+
+                return Strings.Resources.ActionChangedTitle.Replace("un1", from.GetFullName()).Replace("un2", chatChangeTitle.Title);
+            }
+            else if (message.Content is PushMessageContentChatDeleteMember)
+            {
+
+            }
+            else if (message.Content is PushMessageContentChatJoinByLink)
+            {
+                return Strings.Resources.ActionInviteUser.Replace("un1", from.GetFullName());
+            }
+            else if (message.Content is PushMessageContentContactRegistered)
+            {
+                return string.Format(Strings.Resources.NotificationContactJoined, from.GetFullName());
+            }
+            else if (message.Content is PushMessageContentGameScore)
+            {
+
+            }
+            else if (message.Content is PushMessageContentHidden)
+            {
+                return Strings.Resources.YouHaveNewMessage;
+            }
+            else if (message.Content is PushMessageContentMediaAlbum)
+            {
+
+            }
+            else if (message.Content is PushMessageContentMessageForwards forwards)
+            {
+                return string.Format(Strings.Resources.NotificationMessageForwardFew, Locale.Declension("messages", forwards.TotalCount));
+            }
+            else if (message.Content is PushMessageContentScreenshotTaken)
+            {
+                return Strings.Resources.ActionTakeScreenshoot;
+            }
+
+            return result;
+        }
+
         private bool ShowFrom(Chat chat, Message message)
         {
             if (message.IsService())
@@ -808,6 +1099,21 @@ namespace Unigram.Services
                 return true;
             }
 
+            if (chat.Type is ChatTypeBasicGroup)
+            {
+                return true;
+            }
+
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                return !supergroup.IsChannel;
+            }
+
+            return false;
+        }
+
+        private bool ShowFrom(Chat chat)
+        {
             if (chat.Type is ChatTypeBasicGroup)
             {
                 return true;

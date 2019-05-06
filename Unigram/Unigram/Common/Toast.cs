@@ -17,13 +17,13 @@ namespace Unigram.Common
         {
             //BackgroundExecutionManager.RemoveAccess();
 
-            //foreach (var t in BackgroundTaskRegistration.AllTasks)
-            //{
-            //    if (t.Value.Name == "NotificationTask")
-            //    {
-            //        t.Value.Unregister(false);
-            //    }
-            //}
+            foreach (var t in BackgroundTaskRegistration.AllTasks)
+            {
+                if (t.Value.Name == "NotificationTask" /*|| t.Value.Name == "NewNotificationTask"*/)
+                {
+                    t.Value.Unregister(false);
+                }
+            }
 
             var access = await BackgroundExecutionManager.RequestAccessAsync();
             if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
@@ -32,6 +32,7 @@ namespace Unigram.Common
             }
 
             Register("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", () => new PushNotificationTrigger());
+            //Register("NewNotificationTask2", null, () => new PushNotificationTrigger());
             Register("NewInteractiveTask", null, () => new ToastNotificationActionTrigger());
             //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
         }
