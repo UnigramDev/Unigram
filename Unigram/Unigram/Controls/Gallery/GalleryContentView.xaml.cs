@@ -160,6 +160,11 @@ namespace Unigram.Controls.Gallery
             }
 
             var file = item.GetFile();
+            if (file == null)
+            {
+                return;
+            }
+
             if (file.Local.IsDownloadingActive)
             {
                 item.ProtoService.Send(new CancelDownloadFile(file.Id, false));
