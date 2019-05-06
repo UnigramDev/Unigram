@@ -319,7 +319,8 @@
                                            Value="{TemplateBinding VerticalOffset}"
                                            ViewportSize="{TemplateBinding ViewportHeight}"
                                            HorizontalAlignment="Right"
-                                           Margin="0,40,0,0"/>
+                                           Margin="0,40,0,0"
+                                           Canvas.ZIndex="2"/>
                                 <ScrollBar x:Name="HorizontalScrollBar"
                                            IsTabStop="False"
                                            Maximum="{TemplateBinding ScrollableWidth}"
