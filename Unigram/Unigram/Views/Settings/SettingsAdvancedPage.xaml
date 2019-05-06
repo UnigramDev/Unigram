@@ -47,7 +47,12 @@
                         IsOn="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
                         Header="Try connecting through IPv6"
                         Style="{StaticResource CheckButtonStyle}"/>
-                    
+
+                    <!--<ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"
+                        Header="Show tray icon"
+                        Style="{StaticResource CheckButtonStyle}"/>-->
+
                     <controls:StartupSwitch Margin="0,24"/>
                 </StackPanel>
             </controls:TablePanel>

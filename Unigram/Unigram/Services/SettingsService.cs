@@ -33,6 +33,7 @@ namespace Unigram.Services
 
         bool UseThreeLinesLayout { get; set; }
         bool IsAdaptiveWideEnabled { get; set; }
+        bool IsTrayVisible { get; set; }
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
@@ -165,8 +166,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (6UL << 32) | (2263UL << 16);
-        public const string CurrentChangelog = "• Search for Stickers. Scroll up in the sticker panel and use the new search field to quickly locate your sticker sets or discover new ones, enjoy improved GIF search.\r\n• Delete any message on both ends in any private chat, anytime.\r\n• Swipe to reply/forward using your laptop touchpad.";
+        public const ulong CurrentVersion = (3UL << 48) | (7UL << 32) | (2309UL << 16);
+        public const string CurrentChangelog = "• Custom Themes (beta)\r\nYou can now install and share custom themes, as well as create them using the new Theme Editor in Settings > Appearance.\r\n• A new way to display the chat list (You can enable it in settings).\r\n• Forward messages as copy.\r\n• Added a lot of tiny animations.\r\n• Bug fixes and improvements.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -369,6 +370,23 @@ namespace Unigram.Services
             {
                 _isAdaptiveWideEnabled = value;
                 AddOrUpdateValue(_local, "IsAdaptiveWideEnabled", value);
+            }
+        }
+
+        private static bool? _isTrayVisible;
+        public bool IsTrayVisible
+        {
+            get
+            {
+                if (_isTrayVisible == null)
+                    _isTrayVisible = GetValueOrDefault(_local, "IsTrayVisible", true);
+
+                return _isTrayVisible ?? true;
+            }
+            set
+            {
+                _isTrayVisible = value;
+                AddOrUpdateValue(_local, "IsTrayVisible", value);
             }
         }
 
@@ -616,9 +634,9 @@ namespace Unigram.Services
             get
             {
                 if (_volumeLevel == null)
-                    _volumeLevel = GetValueOrDefault("VolumeLevel", 1);
+                    _volumeLevel = GetValueOrDefault("VolumeLevel", 1d);
 
-                return _volumeLevel ?? 1;
+                return _volumeLevel ?? 1d;
             }
             set
             {
