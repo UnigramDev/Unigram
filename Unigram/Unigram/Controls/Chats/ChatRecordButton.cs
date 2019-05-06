@@ -358,6 +358,7 @@ namespace Unigram.Controls.Chats
                         : StreamingCaptureMode.Audio;
                     await capture.InitializeAsync(settings);
                 }
+                catch { }
                 finally
                 {
                     if (capture != null)
