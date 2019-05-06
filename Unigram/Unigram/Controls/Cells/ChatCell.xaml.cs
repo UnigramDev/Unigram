@@ -337,7 +337,7 @@ namespace Unigram.Controls.Cells
             UpdateChatActions(chat, _protoService.GetChatActions(chat.Id));
 
             var user = _protoService.GetUser(chat);
-            if (user != null && user.Type is UserTypeRegular && user.Id != _protoService.Options.MyId)
+            if (user != null && user.Type is UserTypeRegular && user.Id != _protoService.Options.MyId && user.Id != 777000)
             {
                 UpdateUserStatus(chat, user.Status);
             }

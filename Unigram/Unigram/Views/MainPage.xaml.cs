@@ -256,7 +256,7 @@ namespace Unigram.Views
             if (_cacheService.TryGetChatFromUser(update.UserId, out Chat result))
             {
                 var user = _cacheService.GetUser(update.UserId);
-                if (user != null && user.Type is UserTypeRegular && user.Id != _cacheService.Options.MyId)
+                if (user != null && user.Type is UserTypeRegular && user.Id != _cacheService.Options.MyId && user.Id != 777000)
                 {
                     Handle(result.Id, (chatView, chat) => chatView.UpdateUserStatus(chat, update.Status));
                 }
