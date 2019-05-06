@@ -60,14 +60,14 @@ namespace Unigram.Common
             var path = SettingsService.Current.Appearance.RequestedThemePath;
             if (string.IsNullOrEmpty(path) || !File.Exists(path))
             {
-                Update();
+                ThemeDictionaries.Clear();
                 return;
             }
 
             var lines = File.ReadAllLines(path);
             var dict = new ResourceDictionary();
 
-            var flags = GetValueOrDefault("Theme", TelegramTheme.Default | TelegramTheme.Brand);
+            var flags = GetValueOrDefault("Theme", ElementTheme.Default) == ElementTheme.Light ? TelegramTheme.Light : TelegramTheme.Dark;
 
             foreach (var line in lines)
             {
@@ -108,62 +108,22 @@ namespace Unigram.Common
                 }
             }
 
-            Update(flags);
-
-            MergedDictionaries[0].MergedDictionaries.Clear();
-            MergedDictionaries[0].MergedDictionaries.Add(dict);
-        }
-
-        public void Update()
-        {
-            Update(GetValueOrDefault("Theme", TelegramTheme.Default | TelegramTheme.Brand));
-        }
-
-        public void Update(TelegramTheme flags)
-        {
-            try
-            {
-                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
-                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
-                ThemeDictionaries.Clear();
-                MergedDictionaries.Clear();
-
-                if (flags.HasFlag(TelegramTheme.Brand))
-                {
-                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
-                }
-                else
-                {
-                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeSystem.xaml") });
-                }
-            }
-            catch { }
+            // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
+            // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
+            //ThemeDictionaries.Clear();
+            ThemeDictionaries[flags.HasFlag(TelegramTheme.Light) ? "Light" : "Dark"] = dict;
         }
 
         public void Update(ThemeCustomInfo custom)
         {
             if (custom == null)
             {
-                Update();
+                ThemeDictionaries.Clear();
                 return;
             }
 
             try
             {
-                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
-                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
-                ThemeDictionaries.Clear();
-                MergedDictionaries.Clear();
-
-                if (custom.Parent.HasFlag(TelegramTheme.Brand))
-                {
-                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
-                }
-                else
-                {
-                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeSystem.xaml") });
-                }
-
                 var dict = new ResourceDictionary();
 
                 foreach (var item in custom.Values)
@@ -178,8 +138,10 @@ namespace Unigram.Common
                     }
                 }
 
-                MergedDictionaries[0].MergedDictionaries.Clear();
-                MergedDictionaries[0].MergedDictionaries.Add(dict);
+                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
+                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
+                //ThemeDictionaries.Clear();
+                ThemeDictionaries[custom.Parent.HasFlag(TelegramTheme.Light) ? "Light" : "Dark"] = dict;
             }
             catch { }
         }
@@ -302,11 +264,5 @@ namespace Unigram.Common
         }
 
         #endregion
-    }
-
-    public class ThemeProperties
-    {
-        public int MessageCorner { get; set; }
-        public int MessageCornerMerged { get; set; }
     }
 }
