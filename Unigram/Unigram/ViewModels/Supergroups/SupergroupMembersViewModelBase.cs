@@ -57,6 +57,40 @@ namespace Unigram.ViewModels.Supergroups
 
                 Members = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _filter ?? _find(string.Empty));
             }
+            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                var item = ProtoService.GetBasicGroup(basicGroup.BasicGroupId);
+
+                if (Delegate is IBasicGroupDelegate basicDelegate)
+                {
+                    basicDelegate.UpdateBasicGroup(chat, item);
+                }
+
+                var filter = default(ChatMembersFilter);
+                switch (_filter)
+                {
+                    case SupergroupMembersFilterAdministrators administrators:
+                        filter = new ChatMembersFilterAdministrators();
+                        break;
+                    case SupergroupMembersFilterBanned banned:
+                        filter = new ChatMembersFilterBanned();
+                        break;
+                    case SupergroupMembersFilterBots bots:
+                        filter = new ChatMembersFilterBots();
+                        break;
+                    case SupergroupMembersFilterRecent recent:
+                        filter = null;
+                        break;
+                    case SupergroupMembersFilterRestricted restricted:
+                        filter = new ChatMembersFilterRestricted();
+                        break;
+                    case SupergroupMembersFilterSearch search:
+                        filter = null;
+                        break;
+                }
+
+                Members = new ChatMemberCollection(ProtoService, chat.Id, string.Empty, filter);
+            }
 
             return Task.CompletedTask;
         }
@@ -72,6 +106,33 @@ namespace Unigram.ViewModels.Supergroups
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
                 Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _find(query));
+            }
+            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                var filter = default(ChatMembersFilter);
+                switch (_filter)
+                {
+                    case SupergroupMembersFilterAdministrators administrators:
+                        filter = new ChatMembersFilterAdministrators();
+                        break;
+                    case SupergroupMembersFilterBanned banned:
+                        filter = new ChatMembersFilterBanned();
+                        break;
+                    case SupergroupMembersFilterBots bots:
+                        filter = new ChatMembersFilterBots();
+                        break;
+                    case SupergroupMembersFilterRecent recent:
+                        filter = null;
+                        break;
+                    case SupergroupMembersFilterRestricted restricted:
+                        filter = new ChatMembersFilterRestricted();
+                        break;
+                    case SupergroupMembersFilterSearch search:
+                        filter = null;
+                        break;
+                }
+
+                Search = new ChatMemberCollection(ProtoService, chat.Id, query, filter);
             }
         }
 

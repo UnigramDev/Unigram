@@ -1309,7 +1309,7 @@ namespace Unigram.ViewModels
 
         public override async Task<IList<ChatMember>> LoadDataAsync()
         {
-            if (_filter2 != null)
+            if (_chatId != 0)
             {
                 var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 200, _filter2));
                 if (response is ChatMembers members)
@@ -1334,7 +1334,86 @@ namespace Unigram.ViewModels
                         _hasMore = false;
                     }
 
-                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && members.TotalCount <= 200)
+                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && Count == 0 && members.TotalCount <= 200)
+                    {
+                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
+                    }
+
+                    return members.Members;
+                }
+            }
+
+            return new ChatMember[0];
+        }
+
+        protected override bool GetHasMoreItems()
+        {
+            return _hasMore;
+        }
+    }
+
+    public class ChatMemberGroupedCollection : IncrementalCollection<ChatMember>
+    {
+        private readonly IProtoService _protoService;
+        private readonly long _chatId;
+        private readonly string _query;
+
+        private readonly int _supergroupId;
+        private SupergroupMembersFilter _filter;
+        private int _offset;
+
+        private bool _hasMore;
+
+        public ChatMemberGroupedCollection(IProtoService protoService, long chatId, string query)
+        {
+            _protoService = protoService;
+            _chatId = chatId;
+            _query = query;
+            _hasMore = true;
+        }
+
+        public ChatMemberGroupedCollection(IProtoService protoService, int supergroupId)
+        {
+            _protoService = protoService;
+            _supergroupId = supergroupId;
+            _filter = new SupergroupMembersFilterBots();
+            _hasMore = true;
+        }
+
+        public override async Task<IList<ChatMember>> LoadDataAsync()
+        {
+            if (_chatId != 0)
+            {
+                var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 200, null));
+                if (response is ChatMembers members)
+                {
+                    _hasMore = false;
+
+                    return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
+                }
+            }
+            else
+            {
+                var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, _offset, 200));
+                if (response is ChatMembers members)
+                {
+                    _offset += members.Members.Count;
+
+                    if (members.Members.Count < 200)
+                    {
+                        switch (_filter)
+                        {
+                            case SupergroupMembersFilterBots bots:
+                                _filter = new SupergroupMembersFilterRecent();
+                                _offset = 0;
+                                break;
+                            case SupergroupMembersFilterRecent recent:
+                                _hasMore = false;
+                                break;
+                        }
+                    }
+
+                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && _offset == 0 && members.TotalCount <= 200)
                     {
                         return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
                     }

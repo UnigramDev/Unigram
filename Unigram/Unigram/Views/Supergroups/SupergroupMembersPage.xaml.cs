@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersPage : Page, ISupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupMembersPage : Page, IBasicAndSupergroupDelegate, INavigablePage
     {
         public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
 
@@ -260,7 +260,18 @@ namespace Unigram.Views.Supergroups
             Footer.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        public void UpdateBasicGroup(Chat chat, BasicGroup group)
+        {
+            Title.Text = Strings.Resources.ChannelMembers;
+
+            AddNew.Content = Strings.Resources.AddMember;
+            AddNew.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+
+            Footer.Visibility = Visibility.Collapsed;
+        }
+
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }
+        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo) { }
         public void UpdateChat(Chat chat) { }
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
