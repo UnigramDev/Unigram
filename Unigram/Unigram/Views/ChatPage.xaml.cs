@@ -3071,11 +3071,6 @@ namespace Unigram.Views
                 return;
             }
 
-            if ((show && ComposerHeader.Visibility == Visibility.Visible) || (!show && (ComposerHeader.Visibility == Visibility.Collapsed || _composerHeaderCollapsed)))
-            {
-                return;
-            }
-
             var composer = ElementCompositionPreview.GetElementVisual(ComposerHeader);
             var messages = ElementCompositionPreview.GetElementVisual(Messages);
             var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
@@ -3085,6 +3080,11 @@ namespace Unigram.Views
             composer.Clip?.StopAnimation("BottomInset");
             messages.StopAnimation("Offset");
             composer.StopAnimation("Offset");
+
+            if ((show && ComposerHeader.Visibility == Visibility.Visible) || (!show && (ComposerHeader.Visibility == Visibility.Collapsed || _composerHeaderCollapsed)))
+            {
+                return;
+            }
 
             var value = show ? 48 : 0;
 
@@ -3142,6 +3142,7 @@ namespace Unigram.Views
 
             if (show)
             {
+                _composerHeaderCollapsed = false;
                 ComposerHeader.Visibility = Visibility.Visible;
             }
             else
