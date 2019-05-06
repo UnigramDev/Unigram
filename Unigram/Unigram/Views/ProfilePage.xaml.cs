@@ -108,12 +108,12 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ScrollingTitle.Text = ViewModel.ProtoService.GetTitle(chat);
+            Title.Text = ViewModel.ProtoService.GetTitle(chat);
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = ScrollingPhoto.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
+            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
         }
 
         public void UpdateChatNotificationSettings(Chat chat)
@@ -124,7 +124,7 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Subtitle.Text = ScrollingSubtitle.Text = LastSeenConverter.GetLabel(user, true);
+            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
@@ -206,7 +206,7 @@ namespace Unigram.Views
 
         public void UpdateUserStatus(Chat chat, User user)
         {
-            Subtitle.Text = ScrollingSubtitle.Text = LastSeenConverter.GetLabel(user, true);
+            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
         }
 
 
@@ -234,7 +234,7 @@ namespace Unigram.Views
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Subtitle.Text = ScrollingSubtitle.Text = Locale.Declension("Members", group.MemberCount);
+            Subtitle.Text = Locale.Declension("Members", group.MemberCount);
 
             GroupInvite.Visibility = group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || group.EveryoneIsAdministrator ? Visibility.Visible : Visibility.Collapsed;
 
@@ -279,7 +279,7 @@ namespace Unigram.Views
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Subtitle.Text = ScrollingSubtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+            Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
 
             DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
 
