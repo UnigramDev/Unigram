@@ -361,7 +361,7 @@ namespace Unigram.Views
                         ShowStatus(Strings.Resources.Updating);
                         break;
                     case ConnectionStateReady ready:
-                        ShowStatus(Strings.Resources.Connected);
+                        //ShowStatus(Strings.Resources.Connected);
                         HideStatus();
                         return;
                 }
@@ -603,6 +603,11 @@ namespace Unigram.Views
             }
             else if ((args.VirtualKey == Windows.System.VirtualKey.Q || args.VirtualKey == Windows.System.VirtualKey.W) && ctrl && !alt && !shift)
             {
+                if (args.VirtualKey == Windows.System.VirtualKey.Q && App.Connection != null)
+                {
+                    await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
+                }
+
                 Application.Current.Exit();
             }
             else if (args.VirtualKey == Windows.System.VirtualKey.L && ctrl && !alt && !shift)

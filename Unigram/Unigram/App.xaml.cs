@@ -16,10 +16,12 @@ using Unigram.Views.Host;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Media;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
@@ -41,6 +43,7 @@ namespace Unigram
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 
         public static AppServiceConnection Connection { get; private set; }
+        public static BackgroundTaskDeferral Deferral { get; private set; }
 
         private readonly UISettings _uiSettings;
 
@@ -209,67 +212,89 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
-            var deferral = args.TaskInstance.GetDeferral();
-
-            if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
             {
-                var data = Toast.GetData(triggerDetail);
-                if (data == null)
-                {
-                    deferral.Complete();
-                    return;
-                }
+                Connection = appService.AppServiceConnection;
+                Deferral = args.TaskInstance.GetDeferral();
 
-                var session = TLContainer.Current.Lifetime.ActiveItem.Id;
-                if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+                args.TaskInstance.Canceled += (s, e) =>
                 {
-                    session = result;
-                }
-
-                await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
+                    Deferral.Complete();
+                };
             }
-            else if (args.TaskInstance.TriggerDetails is RawNotification notification)
+            else
             {
-                int? GetSession(long id)
+                var deferral = args.TaskInstance.GetDeferral();
+
+                if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
                 {
-                    if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
+                    var data = Toast.GetData(triggerDetail);
+                    if (data == null)
                     {
-                        return value;
+                        deferral.Complete();
+                        return;
                     }
 
-                    return null;
-                }
+                    var session = TLContainer.Current.Lifetime.ActiveItem.Id;
+                    if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+                    {
+                        session = result;
+                    }
 
-                var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
-                if (receiver == null)
+                    await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
+                }
+                else if (args.TaskInstance.TriggerDetails is RawNotification notification)
                 {
-                    deferral.Complete();
-                    return;
+                    int? GetSession(long id)
+                    {
+                        if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
+                        {
+                            return value;
+                        }
+
+                        return null;
+                    }
+
+                    var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
+                    if (receiver == null)
+                    {
+                        deferral.Complete();
+                        return;
+                    }
+
+                    var session = GetSession(receiver.Id);
+                    if (session == null)
+                    {
+                        deferral.Complete();
+                        return;
+                    }
+
+                    var service = TLContainer.Current.Resolve<IProtoService>(session.Value);
+                    if (service == null)
+                    {
+                        deferral.Complete();
+                        return;
+                    }
+
+                    await service.SendAsync(new ProcessPushNotification(notification.Content));
+
+                    foreach (var item in TLContainer.Current.ResolveAll<IProtoService>())
+                    {
+                        await item.SendAsync(new Close());
+                    }
                 }
 
-                var session = GetSession(receiver.Id);
-                if (session == null)
-                {
-                    deferral.Complete();
-                    return;
-                }
-
-                var service = TLContainer.Current.Resolve<IProtoService>(session.Value);
-                if (service == null)
-                {
-                    deferral.Complete();
-                    return;
-                }
-
-                await service.SendAsync(new ProcessPushNotification(notification.Content));
-
-                foreach (var item in TLContainer.Current.ResolveAll<IProtoService>())
-                {
-                    await item.SendAsync(new Close());
-                }
+                deferral.Complete();
             }
+        }
 
-            deferral.Complete();
+        private void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            if (args.Request.Message.TryGetValue("Exit", out object exit))
+            {
+                Application.Current.Exit();
+            }
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
