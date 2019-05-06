@@ -77,6 +77,14 @@ namespace Unigram.Services
             }
         }
 
+        public void Handle(UpdateUser update)
+        {
+            if (update.User.Id == CacheService.Options.MyId)
+            {
+                _lifetimeService.Update();
+            }
+        }
+
         public void Handle(UpdateUnreadMessageCount update)
         {
             if (!Settings.Notifications.CountUnreadMessages)
@@ -121,7 +129,7 @@ namespace Unigram.Services
             {
                 _loggingOut = true;
             }
-            if (update.AuthorizationState is AuthorizationStateClosed && _loggingOut)
+            else if (update.AuthorizationState is AuthorizationStateClosed && _loggingOut)
             {
                 _loggingOut = false;
                 _lifetimeService.Destroy(this);
