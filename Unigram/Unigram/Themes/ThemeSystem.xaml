@@ -954,6 +954,8 @@
             <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{StaticResource SystemChromeMediumColor}" />
             <Color x:Key="SystemChromeMediumHighColor">#FF323232</Color>
 
+            <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="PageHeaderBackgroundBrush"/>
+
             <StaticResource x:Key="NavigationViewItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
             <StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
             <StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
@@ -2170,6 +2172,8 @@
             <StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
             <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
             <Color x:Key="SystemChromeMediumHighColor">#FFE6E6E6</Color>
+
+            <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="PageHeaderBackgroundBrush"/>
 
             <StaticResource x:Key="NavigationViewItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
             <StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />

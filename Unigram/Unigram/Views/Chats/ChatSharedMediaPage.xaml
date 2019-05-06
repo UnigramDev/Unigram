@@ -23,15 +23,6 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Default">
-                    <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Light">
-                    <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-
             <Style TargetType="PivotItem">
                 <Setter Property="Margin" Value="0"/>
             </Style>
