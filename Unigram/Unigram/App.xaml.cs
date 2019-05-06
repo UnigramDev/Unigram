@@ -58,13 +58,9 @@ namespace Unigram
         /// </summary>
         public App()
         {
-#if DEBUG
-            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en";
-#endif
-
             Locator.Configure(/*session*/);
 
-            if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
+            if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
             {
                 RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             }

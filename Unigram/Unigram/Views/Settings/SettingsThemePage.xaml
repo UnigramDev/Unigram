@@ -11,210 +11,216 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="ThemeBrushPartTemplate" x:DataType="local:ThemeColorPart">
-            <Ellipse Width="24"
-                        Height="24"
-                        Stroke="White"
-                        StrokeThickness="1"
-                        Grid.Column="1">
-                <Ellipse.Fill>
-                    <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                </Ellipse.Fill>
-            </Ellipse>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Themes/ThemeTemplates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <DataTemplate x:Key="ThemeBrushPartTemplate" x:DataType="local:ThemeColorPart">
+                <Ellipse Width="24"
+                            Height="24"
+                            Stroke="White"
+                            StrokeThickness="1"
+                            Grid.Column="1">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </DataTemplate>
 
-        <DataTemplate x:Key="ChatOnlineBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
-            <Grid Width="48"
-                    Height="48">
-                <Ellipse Fill="{ThemeResource Placeholder0Brush}"/>
+            <DataTemplate x:Key="ChatOnlineBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
+                <Grid Width="48"
+                        Height="48">
+                    <Ellipse Fill="{ThemeResource Placeholder0Brush}"/>
 
-                <Border Width="13"
-                        Height="13"
-                        CornerRadius="6.5"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        Margin="0,0,1,1">
-                    <Border.Background>
-                        <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ApplicationPageBackgroundThemeBrush']).Value, Mode=OneWay}"/>
-                    </Border.Background>
-                    <Border Width="9"
-                            Height="9"
-                            CornerRadius="4.5">
+                    <Border Width="13"
+                            Height="13"
+                            CornerRadius="6.5"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,1,1">
                         <Border.Background>
-                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                            <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ApplicationPageBackgroundThemeBrush']).Value, Mode=OneWay}"/>
                         </Border.Background>
+                        <Border Width="9"
+                                Height="9"
+                                CornerRadius="4.5">
+                            <Border.Background>
+                                <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                            </Border.Background>
+                        </Border>
                     </Border>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="ChatVerifiedBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
+                <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" StrokeThickness="0">
+                    <Path.Fill>
+                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                    </Path.Fill>
+                </Path>
+            </DataTemplate>
+
+            <DataTemplate x:Key="ChatLastMessageStateBrushTemplate" x:DataType="local:ThemeBrushPart">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon Glyph="&#xE600;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                    <FontIcon Glyph="&#xE602;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18"
+                                Margin="4,0,4,0">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                    <FontIcon Glyph="&#xE601;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                </StackPanel>
+            </DataTemplate>
+
+            <DataTemplate x:Key="ChatUnreadBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
+                <Border Width="20"
+                        Height="20"
+                        CornerRadius="10">
+                    <Border.Background>
+                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                    </Border.Background>
+                    <TextBlock Text="1"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                TextAlignment="Center"
+                                Margin="6,2,6,0">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatUnreadLabelBrush']).Value, Mode=OneWay}"/>
+                        </TextBlock.Foreground>
+                    </TextBlock>
                 </Border>
-            </Grid>
-        </DataTemplate>
+            </DataTemplate>
 
-        <DataTemplate x:Key="ChatVerifiedBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
-            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" StrokeThickness="0">
-                <Path.Fill>
-                    <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                </Path.Fill>
-            </Path>
-        </DataTemplate>
+            <DataTemplate x:Key="ChatUnreadBadgeMutedBrushTemplate" x:DataType="local:ThemeBrushPart">
+                <Border Width="20"
+                        Height="20"
+                        CornerRadius="10">
+                    <Border.Background>
+                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                    </Border.Background>
+                    <TextBlock Text="1"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                TextAlignment="Center"
+                                Margin="6,2,6,0">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatUnreadLabelMutedBrush']).Value, Mode=OneWay}"/>
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </Border>
+            </DataTemplate>
 
-        <DataTemplate x:Key="ChatLastMessageStateBrushTemplate" x:DataType="local:ThemeBrushPart">
-            <StackPanel Orientation="Horizontal">
-                <FontIcon Glyph="&#xE600;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18">
-                    <FontIcon.Foreground>
+            <DataTemplate x:Key="ChatFailedBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
+                <Border Width="20"
+                        Height="20"
+                        CornerRadius="10">
+                    <Border.Background>
                         <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-                <FontIcon Glyph="&#xE602;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18"
-                            Margin="4,0,4,0">
-                    <FontIcon.Foreground>
-                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-                <FontIcon Glyph="&#xE601;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18">
-                    <FontIcon.Foreground>
-                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-            </StackPanel>
-        </DataTemplate>
+                    </Border.Background>
+                    <TextBlock Text="&#xE171;"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatFailedLabelBrush']).Value, Mode=OneWay}"/>
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </Border>
+            </DataTemplate>
 
-        <DataTemplate x:Key="ChatUnreadBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
-            <Border Width="20"
-                    Height="20"
-                    CornerRadius="10">
-                <Border.Background>
-                    <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                </Border.Background>
-                <TextBlock Text="1"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            TextAlignment="Center"
-                            Margin="6,2,6,0">
-                    <TextBlock.Foreground>
-                        <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatUnreadLabelBrush']).Value, Mode=OneWay}"/>
-                    </TextBlock.Foreground>
-                </TextBlock>
-            </Border>
-        </DataTemplate>
+            <DataTemplate x:Key="MessageSubtleGlyphColorTemplate" x:DataType="local:ThemeColorPart">
+                <StackPanel Padding="6,6,12,6" Margin="0,0,-12,0" Orientation="Horizontal">
+                    <StackPanel.Background>
+                        <SolidColorBrush Color="{x:Bind ((local:ThemeColorPart)Group['MessageBackgroundColor']).Value, Mode=OneWay}"/>
+                    </StackPanel.Background>
+                    <FontIcon Glyph="&#xE600;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                    <FontIcon Glyph="&#xE602;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18"
+                                Margin="4,0,4,0">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                    <FontIcon Glyph="&#xE601;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                </StackPanel>
+            </DataTemplate>
 
-        <DataTemplate x:Key="ChatUnreadBadgeMutedBrushTemplate" x:DataType="local:ThemeBrushPart">
-            <Border Width="20"
-                    Height="20"
-                    CornerRadius="10">
-                <Border.Background>
-                    <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                </Border.Background>
-                <TextBlock Text="1"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            TextAlignment="Center"
-                            Margin="6,2,6,0">
-                    <TextBlock.Foreground>
-                        <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatUnreadLabelMutedBrush']).Value, Mode=OneWay}"/>
-                    </TextBlock.Foreground>
-                </TextBlock>
-            </Border>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ChatFailedBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
-            <Border Width="20"
-                    Height="20"
-                    CornerRadius="10">
-                <Border.Background>
-                    <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                </Border.Background>
-                <TextBlock Text="&#xE171;"
-                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            VerticalAlignment="Center"
-                            TextAlignment="Center">
-                    <TextBlock.Foreground>
-                        <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatFailedLabelBrush']).Value, Mode=OneWay}"/>
-                    </TextBlock.Foreground>
-                </TextBlock>
-            </Border>
-        </DataTemplate>
-
-        <DataTemplate x:Key="MessageSubtleGlyphColorTemplate" x:DataType="local:ThemeColorPart">
-            <StackPanel Padding="6,6,12,6" Margin="0,0,-12,0" Orientation="Horizontal">
-                <StackPanel.Background>
-                    <SolidColorBrush Color="{x:Bind ((local:ThemeColorPart)Group['MessageBackgroundColor']).Value, Mode=OneWay}"/>
-                </StackPanel.Background>
-                <FontIcon Glyph="&#xE600;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18">
-                    <FontIcon.Foreground>
-                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-                <FontIcon Glyph="&#xE602;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18"
-                            Margin="4,0,4,0">
-                    <FontIcon.Foreground>
-                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-                <FontIcon Glyph="&#xE601;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18">
-                    <FontIcon.Foreground>
-                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-            </StackPanel>
-        </DataTemplate>
-
-        <DataTemplate x:Key="MessageSubtleGlyphOutColorTemplate" x:DataType="local:ThemeColorPart">
-            <StackPanel Padding="6,6,12,6" Margin="0,0,-12,0" Orientation="Horizontal">
-                <StackPanel.Background>
-                    <SolidColorBrush Color="{x:Bind ((local:ThemeColorPart)Group['MessageBackgroundOutColor']).Value, Mode=OneWay}"/>
-                </StackPanel.Background>
-                <FontIcon Glyph="&#xE600;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18">
-                    <FontIcon.Foreground>
-                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-                <FontIcon Glyph="&#xE602;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18"
-                            Margin="4,0,4,0">
-                    <FontIcon.Foreground>
-                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-                <FontIcon Glyph="&#xE601;"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            FontSize="10"
-                            Height="10"
-                            Width="18">
-                    <FontIcon.Foreground>
-                        <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
-                    </FontIcon.Foreground>
-                </FontIcon>
-            </StackPanel>
-        </DataTemplate>
+            <DataTemplate x:Key="MessageSubtleGlyphOutColorTemplate" x:DataType="local:ThemeColorPart">
+                <StackPanel Padding="6,6,12,6" Margin="0,0,-12,0" Orientation="Horizontal">
+                    <StackPanel.Background>
+                        <SolidColorBrush Color="{x:Bind ((local:ThemeColorPart)Group['MessageBackgroundOutColor']).Value, Mode=OneWay}"/>
+                    </StackPanel.Background>
+                    <FontIcon Glyph="&#xE600;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                    <FontIcon Glyph="&#xE602;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18"
+                                Margin="4,0,4,0">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                    <FontIcon Glyph="&#xE601;"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="10"
+                                Height="10"
+                                Width="18">
+                        <FontIcon.Foreground>
+                            <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
+                        </FontIcon.Foreground>
+                    </FontIcon>
+                </StackPanel>
+            </DataTemplate>
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -229,10 +235,6 @@
             PageSubHeaderBackgroundBrush="{ThemeResource PageSubHeaderBackgroundBrush}" 
             TelegramSeparatorMediumBrush="{ThemeResource TelegramSeparatorMediumBrush}" 
             SystemControlDescriptionTextForegroundBrush="{ThemeResource SystemControlDescriptionTextForegroundBrush}" 
-            SliderContainerBackground="{ThemeResource SliderContainerBackground}" 
-            SliderContainerBackgroundPointerOver="{ThemeResource SliderContainerBackgroundPointerOver}" 
-            SliderContainerBackgroundPressed="{ThemeResource SliderContainerBackgroundPressed}" 
-            SliderContainerBackgroundDisabled="{ThemeResource SliderContainerBackgroundDisabled}" 
             SliderThumbBackground="{ThemeResource SliderThumbBackground}" 
             SliderThumbBackgroundPointerOver="{ThemeResource SliderThumbBackgroundPointerOver}" 
             SliderThumbBackgroundPressed="{ThemeResource SliderThumbBackgroundPressed}" 
@@ -266,22 +268,10 @@
             RadioButtonForegroundPointerOver="{ThemeResource RadioButtonForegroundPointerOver}" 
             RadioButtonForegroundPressed="{ThemeResource RadioButtonForegroundPressed}" 
             RadioButtonForegroundDisabled="{ThemeResource RadioButtonForegroundDisabled}" 
-            RadioButtonBackground="{ThemeResource RadioButtonBackground}" 
-            RadioButtonBackgroundPointerOver="{ThemeResource RadioButtonBackgroundPointerOver}" 
-            RadioButtonBackgroundPressed="{ThemeResource RadioButtonBackgroundPressed}" 
-            RadioButtonBackgroundDisabled="{ThemeResource RadioButtonBackgroundDisabled}" 
-            RadioButtonBorderBrush="{ThemeResource RadioButtonBorderBrush}" 
-            RadioButtonBorderBrushPointerOver="{ThemeResource RadioButtonBorderBrushPointerOver}" 
-            RadioButtonBorderBrushPressed="{ThemeResource RadioButtonBorderBrushPressed}" 
-            RadioButtonBorderBrushDisabled="{ThemeResource RadioButtonBorderBrushDisabled}" 
             RadioButtonOuterEllipseStroke="{ThemeResource RadioButtonOuterEllipseStroke}" 
             RadioButtonOuterEllipseStrokePointerOver="{ThemeResource RadioButtonOuterEllipseStrokePointerOver}" 
             RadioButtonOuterEllipseStrokePressed="{ThemeResource RadioButtonOuterEllipseStrokePressed}" 
             RadioButtonOuterEllipseStrokeDisabled="{ThemeResource RadioButtonOuterEllipseStrokeDisabled}" 
-            RadioButtonOuterEllipseFill="{ThemeResource RadioButtonOuterEllipseFill}" 
-            RadioButtonOuterEllipseFillPointerOver="{ThemeResource RadioButtonOuterEllipseFillPointerOver}" 
-            RadioButtonOuterEllipseFillPressed="{ThemeResource RadioButtonOuterEllipseFillPressed}" 
-            RadioButtonOuterEllipseFillDisabled="{ThemeResource RadioButtonOuterEllipseFillDisabled}" 
             RadioButtonOuterEllipseCheckedStroke="{ThemeResource RadioButtonOuterEllipseCheckedStroke}" 
             RadioButtonOuterEllipseCheckedStrokePointerOver="{ThemeResource RadioButtonOuterEllipseCheckedStrokePointerOver}" 
             RadioButtonOuterEllipseCheckedStrokePressed="{ThemeResource RadioButtonOuterEllipseCheckedStrokePressed}" 
@@ -289,15 +279,10 @@
             RadioButtonOuterEllipseCheckedFill="{ThemeResource RadioButtonOuterEllipseCheckedFill}" 
             RadioButtonOuterEllipseCheckedFillPointerOver="{ThemeResource RadioButtonOuterEllipseCheckedFillPointerOver}" 
             RadioButtonOuterEllipseCheckedFillPressed="{ThemeResource RadioButtonOuterEllipseCheckedFillPressed}" 
-            RadioButtonOuterEllipseCheckedFillDisabled="{ThemeResource RadioButtonOuterEllipseCheckedFillDisabled}" 
             RadioButtonCheckGlyphFill="{ThemeResource RadioButtonCheckGlyphFill}" 
             RadioButtonCheckGlyphFillPointerOver="{ThemeResource RadioButtonCheckGlyphFillPointerOver}" 
             RadioButtonCheckGlyphFillPressed="{ThemeResource RadioButtonCheckGlyphFillPressed}" 
             RadioButtonCheckGlyphFillDisabled="{ThemeResource RadioButtonCheckGlyphFillDisabled}" 
-            RadioButtonCheckGlyphStroke="{ThemeResource RadioButtonCheckGlyphStroke}" 
-            RadioButtonCheckGlyphStrokePointerOver="{ThemeResource RadioButtonCheckGlyphStrokePointerOver}" 
-            RadioButtonCheckGlyphStrokePressed="{ThemeResource RadioButtonCheckGlyphStrokePressed}" 
-            RadioButtonCheckGlyphStrokeDisabled="{ThemeResource RadioButtonCheckGlyphStrokeDisabled}" 
             CheckBoxForegroundUnchecked="{ThemeResource CheckBoxForegroundUnchecked}" 
             CheckBoxForegroundUncheckedPointerOver="{ThemeResource CheckBoxForegroundUncheckedPointerOver}" 
             CheckBoxForegroundUncheckedPressed="{ThemeResource CheckBoxForegroundUncheckedPressed}" 
@@ -310,30 +295,6 @@
             CheckBoxForegroundIndeterminatePointerOver="{ThemeResource CheckBoxForegroundIndeterminatePointerOver}" 
             CheckBoxForegroundIndeterminatePressed="{ThemeResource CheckBoxForegroundIndeterminatePressed}" 
             CheckBoxForegroundIndeterminateDisabled="{ThemeResource CheckBoxForegroundIndeterminateDisabled}" 
-            CheckBoxBackgroundUnchecked="{ThemeResource CheckBoxBackgroundUnchecked}" 
-            CheckBoxBackgroundUncheckedPointerOver="{ThemeResource CheckBoxBackgroundUncheckedPointerOver}" 
-            CheckBoxBackgroundUncheckedPressed="{ThemeResource CheckBoxBackgroundUncheckedPressed}" 
-            CheckBoxBackgroundUncheckedDisabled="{ThemeResource CheckBoxBackgroundUncheckedDisabled}" 
-            CheckBoxBackgroundChecked="{ThemeResource CheckBoxBackgroundChecked}" 
-            CheckBoxBackgroundCheckedPointerOver="{ThemeResource CheckBoxBackgroundCheckedPointerOver}" 
-            CheckBoxBackgroundCheckedPressed="{ThemeResource CheckBoxBackgroundCheckedPressed}" 
-            CheckBoxBackgroundCheckedDisabled="{ThemeResource CheckBoxBackgroundCheckedDisabled}" 
-            CheckBoxBackgroundIndeterminate="{ThemeResource CheckBoxBackgroundIndeterminate}" 
-            CheckBoxBackgroundIndeterminatePointerOver="{ThemeResource CheckBoxBackgroundIndeterminatePointerOver}" 
-            CheckBoxBackgroundIndeterminatePressed="{ThemeResource CheckBoxBackgroundIndeterminatePressed}" 
-            CheckBoxBackgroundIndeterminateDisabled="{ThemeResource CheckBoxBackgroundIndeterminateDisabled}" 
-            CheckBoxBorderBrushUnchecked="{ThemeResource CheckBoxBorderBrushUnchecked}" 
-            CheckBoxBorderBrushUncheckedPointerOver="{ThemeResource CheckBoxBorderBrushUncheckedPointerOver}" 
-            CheckBoxBorderBrushUncheckedPressed="{ThemeResource CheckBoxBorderBrushUncheckedPressed}" 
-            CheckBoxBorderBrushUncheckedDisabled="{ThemeResource CheckBoxBorderBrushUncheckedDisabled}" 
-            CheckBoxBorderBrushChecked="{ThemeResource CheckBoxBorderBrushChecked}" 
-            CheckBoxBorderBrushCheckedPointerOver="{ThemeResource CheckBoxBorderBrushCheckedPointerOver}" 
-            CheckBoxBorderBrushCheckedPressed="{ThemeResource CheckBoxBorderBrushCheckedPressed}" 
-            CheckBoxBorderBrushCheckedDisabled="{ThemeResource CheckBoxBorderBrushCheckedDisabled}" 
-            CheckBoxBorderBrushIndeterminate="{ThemeResource CheckBoxBorderBrushIndeterminate}" 
-            CheckBoxBorderBrushIndeterminatePointerOver="{ThemeResource CheckBoxBorderBrushIndeterminatePointerOver}" 
-            CheckBoxBorderBrushIndeterminatePressed="{ThemeResource CheckBoxBorderBrushIndeterminatePressed}" 
-            CheckBoxBorderBrushIndeterminateDisabled="{ThemeResource CheckBoxBorderBrushIndeterminateDisabled}" 
             CheckBoxCheckBackgroundStrokeUnchecked="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}" 
             CheckBoxCheckBackgroundStrokeUncheckedPointerOver="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPointerOver}" 
             CheckBoxCheckBackgroundStrokeUncheckedPressed="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPressed}" 
@@ -346,18 +307,13 @@
             CheckBoxCheckBackgroundStrokeIndeterminatePointerOver="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" 
             CheckBoxCheckBackgroundStrokeIndeterminatePressed="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" 
             CheckBoxCheckBackgroundStrokeIndeterminateDisabled="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" 
-            CheckBoxCheckBackgroundFillUnchecked="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}" 
-            CheckBoxCheckBackgroundFillUncheckedPointerOver="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPointerOver}" 
             CheckBoxCheckBackgroundFillUncheckedPressed="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPressed}" 
-            CheckBoxCheckBackgroundFillUncheckedDisabled="{ThemeResource CheckBoxCheckBackgroundFillUncheckedDisabled}" 
             CheckBoxCheckBackgroundFillChecked="{ThemeResource CheckBoxCheckBackgroundFillChecked}" 
             CheckBoxCheckBackgroundFillCheckedPointerOver="{ThemeResource CheckBoxCheckBackgroundFillCheckedPointerOver}" 
             CheckBoxCheckBackgroundFillCheckedPressed="{ThemeResource CheckBoxCheckBackgroundFillCheckedPressed}" 
-            CheckBoxCheckBackgroundFillCheckedDisabled="{ThemeResource CheckBoxCheckBackgroundFillCheckedDisabled}" 
             CheckBoxCheckBackgroundFillIndeterminate="{ThemeResource CheckBoxCheckBackgroundFillIndeterminate}" 
             CheckBoxCheckBackgroundFillIndeterminatePointerOver="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" 
             CheckBoxCheckBackgroundFillIndeterminatePressed="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePressed}" 
-            CheckBoxCheckBackgroundFillIndeterminateDisabled="{ThemeResource CheckBoxCheckBackgroundFillIndeterminateDisabled}" 
             CheckBoxCheckGlyphForegroundUnchecked="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}" 
             CheckBoxCheckGlyphForegroundUncheckedPointerOver="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPointerOver}" 
             CheckBoxCheckGlyphForegroundUncheckedPressed="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPressed}" 
@@ -378,10 +334,6 @@
             HyperlinkButtonBackgroundPointerOver="{ThemeResource HyperlinkButtonBackgroundPointerOver}" 
             HyperlinkButtonBackgroundPressed="{ThemeResource HyperlinkButtonBackgroundPressed}" 
             HyperlinkButtonBackgroundDisabled="{ThemeResource HyperlinkButtonBackgroundDisabled}" 
-            HyperlinkButtonBorderBrush="{ThemeResource HyperlinkButtonBorderBrush}" 
-            HyperlinkButtonBorderBrushPointerOver="{ThemeResource HyperlinkButtonBorderBrushPointerOver}" 
-            HyperlinkButtonBorderBrushPressed="{ThemeResource HyperlinkButtonBorderBrushPressed}" 
-            HyperlinkButtonBorderBrushDisabled="{ThemeResource HyperlinkButtonBorderBrushDisabled}" 
             RepeatButtonBackground="{ThemeResource RepeatButtonBackground}" 
             RepeatButtonBackgroundPointerOver="{ThemeResource RepeatButtonBackgroundPointerOver}" 
             RepeatButtonBackgroundPressed="{ThemeResource RepeatButtonBackgroundPressed}" 
@@ -398,14 +350,7 @@
             ToggleSwitchContentForegroundDisabled="{ThemeResource ToggleSwitchContentForegroundDisabled}" 
             ToggleSwitchHeaderForeground="{ThemeResource ToggleSwitchHeaderForeground}" 
             ToggleSwitchHeaderForegroundDisabled="{ThemeResource ToggleSwitchHeaderForegroundDisabled}" 
-            ToggleSwitchContainerBackground="{ThemeResource ToggleSwitchContainerBackground}" 
-            ToggleSwitchContainerBackgroundPointerOver="{ThemeResource ToggleSwitchContainerBackgroundPointerOver}" 
-            ToggleSwitchContainerBackgroundPressed="{ThemeResource ToggleSwitchContainerBackgroundPressed}" 
-            ToggleSwitchContainerBackgroundDisabled="{ThemeResource ToggleSwitchContainerBackgroundDisabled}" 
-            ToggleSwitchFillOff="{ThemeResource ToggleSwitchFillOff}" 
-            ToggleSwitchFillOffPointerOver="{ThemeResource ToggleSwitchFillOffPointerOver}" 
             ToggleSwitchFillOffPressed="{ThemeResource ToggleSwitchFillOffPressed}" 
-            ToggleSwitchFillOffDisabled="{ThemeResource ToggleSwitchFillOffDisabled}" 
             ToggleSwitchStrokeOff="{ThemeResource ToggleSwitchStrokeOff}" 
             ToggleSwitchStrokeOffPointerOver="{ThemeResource ToggleSwitchStrokeOffPointerOver}" 
             ToggleSwitchStrokeOffPressed="{ThemeResource ToggleSwitchStrokeOffPressed}" 
@@ -462,27 +407,13 @@
             ToggleButtonBorderBrushDisabled="{ThemeResource ToggleButtonBorderBrushDisabled}" 
             ToggleButtonBorderBrushChecked="{ThemeResource ToggleButtonBorderBrushChecked}" 
             ToggleButtonBorderBrushCheckedPointerOver="{ThemeResource ToggleButtonBorderBrushCheckedPointerOver}" 
-            ToggleButtonBorderBrushCheckedPressed="{ThemeResource ToggleButtonBorderBrushCheckedPressed}" 
             ToggleButtonBorderBrushCheckedDisabled="{ThemeResource ToggleButtonBorderBrushCheckedDisabled}" 
             ToggleButtonBorderBrushIndeterminate="{ThemeResource ToggleButtonBorderBrushIndeterminate}" 
             ToggleButtonBorderBrushIndeterminatePointerOver="{ThemeResource ToggleButtonBorderBrushIndeterminatePointerOver}" 
             ToggleButtonBorderBrushIndeterminatePressed="{ThemeResource ToggleButtonBorderBrushIndeterminatePressed}" 
             ToggleButtonBorderBrushIndeterminateDisabled="{ThemeResource ToggleButtonBorderBrushIndeterminateDisabled}" 
-            ScrollBarBackground="{ThemeResource ScrollBarBackground}" 
-            ScrollBarBackgroundPointerOver="{ThemeResource ScrollBarBackgroundPointerOver}" 
-            ScrollBarBackgroundDisabled="{ThemeResource ScrollBarBackgroundDisabled}" 
-            ScrollBarForeground="{ThemeResource ScrollBarForeground}" 
-            ScrollBarBorderBrush="{ThemeResource ScrollBarBorderBrush}" 
-            ScrollBarBorderBrushPointerOver="{ThemeResource ScrollBarBorderBrushPointerOver}" 
-            ScrollBarBorderBrushDisabled="{ThemeResource ScrollBarBorderBrushDisabled}" 
-            ScrollBarButtonBackground="{ThemeResource ScrollBarButtonBackground}" 
             ScrollBarButtonBackgroundPointerOver="{ThemeResource ScrollBarButtonBackgroundPointerOver}" 
             ScrollBarButtonBackgroundPressed="{ThemeResource ScrollBarButtonBackgroundPressed}" 
-            ScrollBarButtonBackgroundDisabled="{ThemeResource ScrollBarButtonBackgroundDisabled}" 
-            ScrollBarButtonBorderBrush="{ThemeResource ScrollBarButtonBorderBrush}" 
-            ScrollBarButtonBorderBrushPointerOver="{ThemeResource ScrollBarButtonBorderBrushPointerOver}" 
-            ScrollBarButtonBorderBrushPressed="{ThemeResource ScrollBarButtonBorderBrushPressed}" 
-            ScrollBarButtonBorderBrushDisabled="{ThemeResource ScrollBarButtonBorderBrushDisabled}" 
             ScrollBarButtonArrowForeground="{ThemeResource ScrollBarButtonArrowForeground}" 
             ScrollBarButtonArrowForegroundPointerOver="{ThemeResource ScrollBarButtonArrowForegroundPointerOver}" 
             ScrollBarButtonArrowForegroundPressed="{ThemeResource ScrollBarButtonArrowForegroundPressed}" 
@@ -498,7 +429,6 @@
             ScrollBarPanningThumbBackgroundDisabled="{ThemeResource ScrollBarPanningThumbBackgroundDisabled}" 
             ScrollBarThumbBackgroundColor="{ThemeResource ScrollBarThumbBackgroundColor}" 
             ScrollBarPanningThumbBackgroundColor="{ThemeResource ScrollBarPanningThumbBackgroundColor}" 
-            ListViewHeaderItemBackground="{ThemeResource ListViewHeaderItemBackground}" 
             ListViewHeaderItemDividerStroke="{ThemeResource ListViewHeaderItemDividerStroke}" 
             ComboBoxItemForeground="{ThemeResource ComboBoxItemForeground}" 
             ComboBoxItemForegroundPressed="{ThemeResource ComboBoxItemForegroundPressed}" 
@@ -509,24 +439,12 @@
             ComboBoxItemForegroundSelectedPressed="{ThemeResource ComboBoxItemForegroundSelectedPressed}" 
             ComboBoxItemForegroundSelectedPointerOver="{ThemeResource ComboBoxItemForegroundSelectedPointerOver}" 
             ComboBoxItemForegroundSelectedDisabled="{ThemeResource ComboBoxItemForegroundSelectedDisabled}" 
-            ComboBoxItemBackground="{ThemeResource ComboBoxItemBackground}" 
             ComboBoxItemBackgroundPressed="{ThemeResource ComboBoxItemBackgroundPressed}" 
             ComboBoxItemBackgroundPointerOver="{ThemeResource ComboBoxItemBackgroundPointerOver}" 
-            ComboBoxItemBackgroundDisabled="{ThemeResource ComboBoxItemBackgroundDisabled}" 
             ComboBoxItemBackgroundSelected="{ThemeResource ComboBoxItemBackgroundSelected}" 
             ComboBoxItemBackgroundSelectedUnfocused="{ThemeResource ComboBoxItemBackgroundSelectedUnfocused}" 
             ComboBoxItemBackgroundSelectedPressed="{ThemeResource ComboBoxItemBackgroundSelectedPressed}" 
             ComboBoxItemBackgroundSelectedPointerOver="{ThemeResource ComboBoxItemBackgroundSelectedPointerOver}" 
-            ComboBoxItemBackgroundSelectedDisabled="{ThemeResource ComboBoxItemBackgroundSelectedDisabled}" 
-            ComboBoxItemBorderBrush="{ThemeResource ComboBoxItemBorderBrush}" 
-            ComboBoxItemBorderBrushPressed="{ThemeResource ComboBoxItemBorderBrushPressed}" 
-            ComboBoxItemBorderBrushPointerOver="{ThemeResource ComboBoxItemBorderBrushPointerOver}" 
-            ComboBoxItemBorderBrushDisabled="{ThemeResource ComboBoxItemBorderBrushDisabled}" 
-            ComboBoxItemBorderBrushSelected="{ThemeResource ComboBoxItemBorderBrushSelected}" 
-            ComboBoxItemBorderBrushSelectedUnfocused="{ThemeResource ComboBoxItemBorderBrushSelectedUnfocused}" 
-            ComboBoxItemBorderBrushSelectedPressed="{ThemeResource ComboBoxItemBorderBrushSelectedPressed}" 
-            ComboBoxItemBorderBrushSelectedPointerOver="{ThemeResource ComboBoxItemBorderBrushSelectedPointerOver}" 
-            ComboBoxItemBorderBrushSelectedDisabled="{ThemeResource ComboBoxItemBorderBrushSelectedDisabled}" 
             ComboBoxBackground="{ThemeResource ComboBoxBackground}" 
             ComboBoxBackgroundPointerOver="{ThemeResource ComboBoxBackgroundPointerOver}" 
             ComboBoxBackgroundPressed="{ThemeResource ComboBoxBackgroundPressed}" 
@@ -557,18 +475,12 @@
             ComboBoxDropDownForeground="{ThemeResource ComboBoxDropDownForeground}" 
             ComboBoxDropDownBorderBrush="{ThemeResource ComboBoxDropDownBorderBrush}" 
             AppBarSeparatorForeground="{ThemeResource AppBarSeparatorForeground}" 
-            AppBarEllipsisButtonBackground="{ThemeResource AppBarEllipsisButtonBackground}" 
             AppBarEllipsisButtonBackgroundPointerOver="{ThemeResource AppBarEllipsisButtonBackgroundPointerOver}" 
             AppBarEllipsisButtonBackgroundPressed="{ThemeResource AppBarEllipsisButtonBackgroundPressed}" 
-            AppBarEllipsisButtonBackgroundDisabled="{ThemeResource AppBarEllipsisButtonBackgroundDisabled}" 
             AppBarEllipsisButtonForeground="{ThemeResource AppBarEllipsisButtonForeground}" 
             AppBarEllipsisButtonForegroundPointerOver="{ThemeResource AppBarEllipsisButtonForegroundPointerOver}" 
             AppBarEllipsisButtonForegroundPressed="{ThemeResource AppBarEllipsisButtonForegroundPressed}" 
             AppBarEllipsisButtonForegroundDisabled="{ThemeResource AppBarEllipsisButtonForegroundDisabled}" 
-            AppBarEllipsisButtonBorderBrush="{ThemeResource AppBarEllipsisButtonBorderBrush}" 
-            AppBarEllipsisButtonBorderBrushPointerOver="{ThemeResource AppBarEllipsisButtonBorderBrushPointerOver}" 
-            AppBarEllipsisButtonBorderBrushPressed="{ThemeResource AppBarEllipsisButtonBorderBrushPressed}" 
-            AppBarEllipsisButtonBorderBrushDisabled="{ThemeResource AppBarEllipsisButtonBorderBrushDisabled}" 
             AppBarBackground="{ThemeResource AppBarBackground}" 
             AppBarForeground="{ThemeResource AppBarForeground}" 
             AppBarHighContrastBorder="{ThemeResource AppBarHighContrastBorder}" 
@@ -625,12 +537,10 @@
             CalendarViewBackground="{ThemeResource CalendarViewBackground}" 
             CalendarViewBorderBrush="{ThemeResource CalendarViewBorderBrush}" 
             CalendarViewWeekDayForegroundDisabled="{ThemeResource CalendarViewWeekDayForegroundDisabled}" 
-            CalendarViewNavigationButtonBackground="{ThemeResource CalendarViewNavigationButtonBackground}" 
             CalendarViewNavigationButtonForegroundPointerOver="{ThemeResource CalendarViewNavigationButtonForegroundPointerOver}" 
             CalendarViewNavigationButtonForegroundPressed="{ThemeResource CalendarViewNavigationButtonForegroundPressed}" 
             CalendarViewNavigationButtonForegroundDisabled="{ThemeResource CalendarViewNavigationButtonForegroundDisabled}" 
             CalendarViewNavigationButtonBorderBrushPointerOver="{ThemeResource CalendarViewNavigationButtonBorderBrushPointerOver}" 
-            CalendarViewNavigationButtonBorderBrush="{ThemeResource CalendarViewNavigationButtonBorderBrush}" 
             HubForeground="{ThemeResource HubForeground}" 
             HubSectionHeaderButtonForeground="{ThemeResource HubSectionHeaderButtonForeground}" 
             HubSectionHeaderButtonForegroundPointerOver="{ThemeResource HubSectionHeaderButtonForegroundPointerOver}" 
@@ -647,8 +557,6 @@
             FlipViewNextPreviousButtonBorderBrush="{ThemeResource FlipViewNextPreviousButtonBorderBrush}" 
             FlipViewNextPreviousButtonBorderBrushPointerOver="{ThemeResource FlipViewNextPreviousButtonBorderBrushPointerOver}" 
             FlipViewNextPreviousButtonBorderBrushPressed="{ThemeResource FlipViewNextPreviousButtonBorderBrushPressed}" 
-            FlipViewItemBackground="{ThemeResource FlipViewItemBackground}" 
-            DateTimePickerFlyoutButtonBackground="{ThemeResource DateTimePickerFlyoutButtonBackground}" 
             DateTimePickerFlyoutButtonBackgroundPointerOver="{ThemeResource DateTimePickerFlyoutButtonBackgroundPointerOver}" 
             DateTimePickerFlyoutButtonBackgroundPressed="{ThemeResource DateTimePickerFlyoutButtonBackgroundPressed}" 
             DateTimePickerFlyoutButtonBorderBrush="{ThemeResource DateTimePickerFlyoutButtonBorderBrush}" 
@@ -726,12 +634,7 @@
             TextControlHeaderForeground="{ThemeResource TextControlHeaderForeground}" 
             TextControlHeaderForegroundDisabled="{ThemeResource TextControlHeaderForegroundDisabled}" 
             TextControlSelectionHighlightColor="{ThemeResource TextControlSelectionHighlightColor}" 
-            TextControlButtonBackground="{ThemeResource TextControlButtonBackground}" 
-            TextControlButtonBackgroundPointerOver="{ThemeResource TextControlButtonBackgroundPointerOver}" 
             TextControlButtonBackgroundPressed="{ThemeResource TextControlButtonBackgroundPressed}" 
-            TextControlButtonBorderBrush="{ThemeResource TextControlButtonBorderBrush}" 
-            TextControlButtonBorderBrushPointerOver="{ThemeResource TextControlButtonBorderBrushPointerOver}" 
-            TextControlButtonBorderBrushPressed="{ThemeResource TextControlButtonBorderBrushPressed}" 
             TextControlButtonForeground="{ThemeResource TextControlButtonForeground}" 
             TextControlButtonForegroundPointerOver="{ThemeResource TextControlButtonForegroundPointerOver}" 
             TextControlButtonForegroundPressed="{ThemeResource TextControlButtonForegroundPressed}" 
@@ -740,10 +643,8 @@
             TextControlHighlighterForeground="{ThemeResource TextControlHighlighterForeground}" 
             FlyoutPresenterBackground="{ThemeResource FlyoutPresenterBackground}" 
             FlyoutBorderThemeBrush="{ThemeResource FlyoutBorderThemeBrush}" 
-            ToggleMenuFlyoutItemBackground="{ThemeResource ToggleMenuFlyoutItemBackground}" 
             ToggleMenuFlyoutItemBackgroundPointerOver="{ThemeResource ToggleMenuFlyoutItemBackgroundPointerOver}" 
             ToggleMenuFlyoutItemBackgroundPressed="{ThemeResource ToggleMenuFlyoutItemBackgroundPressed}" 
-            ToggleMenuFlyoutItemBackgroundDisabled="{ThemeResource ToggleMenuFlyoutItemBackgroundDisabled}" 
             ToggleMenuFlyoutItemForeground="{ThemeResource ToggleMenuFlyoutItemForeground}" 
             ToggleMenuFlyoutItemForegroundPointerOver="{ThemeResource ToggleMenuFlyoutItemForegroundPointerOver}" 
             ToggleMenuFlyoutItemForegroundPressed="{ThemeResource ToggleMenuFlyoutItemForegroundPressed}" 
@@ -756,8 +657,6 @@
             ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver="{ThemeResource ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver}" 
             ToggleMenuFlyoutItemCheckGlyphForegroundPressed="{ThemeResource ToggleMenuFlyoutItemCheckGlyphForegroundPressed}" 
             ToggleMenuFlyoutItemCheckGlyphForegroundDisabled="{ThemeResource ToggleMenuFlyoutItemCheckGlyphForegroundDisabled}" 
-            PivotBackground="{ThemeResource PivotBackground}" 
-            PivotHeaderBackground="{ThemeResource PivotHeaderBackground}" 
             PivotNextButtonBackground="{ThemeResource PivotNextButtonBackground}" 
             PivotNextButtonBackgroundPointerOver="{ThemeResource PivotNextButtonBackgroundPointerOver}" 
             PivotNextButtonBackgroundPressed="{ThemeResource PivotNextButtonBackgroundPressed}" 
@@ -776,14 +675,11 @@
             PivotPreviousButtonForeground="{ThemeResource PivotPreviousButtonForeground}" 
             PivotPreviousButtonForegroundPointerOver="{ThemeResource PivotPreviousButtonForegroundPointerOver}" 
             PivotPreviousButtonForegroundPressed="{ThemeResource PivotPreviousButtonForegroundPressed}" 
-            PivotItemBackground="{ThemeResource PivotItemBackground}" 
-            PivotHeaderItemBackgroundUnselected="{ThemeResource PivotHeaderItemBackgroundUnselected}" 
             PivotHeaderItemBackgroundUnselectedPointerOver="{ThemeResource PivotHeaderItemBackgroundUnselectedPointerOver}" 
             PivotHeaderItemBackgroundUnselectedPressed="{ThemeResource PivotHeaderItemBackgroundUnselectedPressed}" 
             PivotHeaderItemBackgroundSelected="{ThemeResource PivotHeaderItemBackgroundSelected}" 
             PivotHeaderItemBackgroundSelectedPointerOver="{ThemeResource PivotHeaderItemBackgroundSelectedPointerOver}" 
             PivotHeaderItemBackgroundSelectedPressed="{ThemeResource PivotHeaderItemBackgroundSelectedPressed}" 
-            PivotHeaderItemBackgroundDisabled="{ThemeResource PivotHeaderItemBackgroundDisabled}" 
             PivotHeaderItemForegroundUnselected="{ThemeResource PivotHeaderItemForegroundUnselected}" 
             PivotHeaderItemForegroundUnselectedPointerOver="{ThemeResource PivotHeaderItemForegroundUnselectedPointerOver}" 
             PivotHeaderItemForegroundUnselectedPressed="{ThemeResource PivotHeaderItemForegroundUnselectedPressed}" 
@@ -793,9 +689,7 @@
             PivotHeaderItemForegroundDisabled="{ThemeResource PivotHeaderItemForegroundDisabled}" 
             PivotHeaderItemFocusPipeFill="{ThemeResource PivotHeaderItemFocusPipeFill}" 
             PivotHeaderItemSelectedPipeFill="{ThemeResource PivotHeaderItemSelectedPipeFill}" 
-            GridViewHeaderItemBackground="{ThemeResource GridViewHeaderItemBackground}" 
             GridViewHeaderItemDividerStroke="{ThemeResource GridViewHeaderItemDividerStroke}" 
-            GridViewItemBackground="{ThemeResource GridViewItemBackground}" 
             GridViewItemBackgroundPointerOver="{ThemeResource GridViewItemBackgroundPointerOver}" 
             GridViewItemBackgroundPressed="{ThemeResource GridViewItemBackgroundPressed}" 
             GridViewItemBackgroundSelected="{ThemeResource GridViewItemBackgroundSelected}" 
@@ -810,7 +704,6 @@
             GridViewItemFocusSecondaryBorderBrush="{ThemeResource GridViewItemFocusSecondaryBorderBrush}" 
             GridViewItemCheckBrush="{ThemeResource GridViewItemCheckBrush}" 
             GridViewItemCheckBoxBrush="{ThemeResource GridViewItemCheckBoxBrush}" 
-            GridViewItemDragBackground="{ThemeResource GridViewItemDragBackground}" 
             GridViewItemDragForeground="{ThemeResource GridViewItemDragForeground}" 
             GridViewItemPlaceholderBackground="{ThemeResource GridViewItemPlaceholderBackground}" 
             MediaTransportControlsPanelBackground="{ThemeResource MediaTransportControlsPanelBackground}" 
@@ -832,19 +725,15 @@
             KeyTipBorderBrush="{ThemeResource KeyTipBorderBrush}" 
             MenuFlyoutPresenterBackground="{ThemeResource MenuFlyoutPresenterBackground}" 
             MenuFlyoutPresenterBorderBrush="{ThemeResource MenuFlyoutPresenterBorderBrush}" 
-            MenuFlyoutItemBackground="{ThemeResource MenuFlyoutItemBackground}" 
             MenuFlyoutItemBackgroundPointerOver="{ThemeResource MenuFlyoutItemBackgroundPointerOver}" 
             MenuFlyoutItemBackgroundPressed="{ThemeResource MenuFlyoutItemBackgroundPressed}" 
-            MenuFlyoutItemBackgroundDisabled="{ThemeResource MenuFlyoutItemBackgroundDisabled}" 
             MenuFlyoutItemForeground="{ThemeResource MenuFlyoutItemForeground}" 
             MenuFlyoutItemForegroundPointerOver="{ThemeResource MenuFlyoutItemForegroundPointerOver}" 
             MenuFlyoutItemForegroundPressed="{ThemeResource MenuFlyoutItemForegroundPressed}" 
             MenuFlyoutItemForegroundDisabled="{ThemeResource MenuFlyoutItemForegroundDisabled}" 
-            MenuFlyoutSubItemBackground="{ThemeResource MenuFlyoutSubItemBackground}" 
             MenuFlyoutSubItemBackgroundPointerOver="{ThemeResource MenuFlyoutSubItemBackgroundPointerOver}" 
             MenuFlyoutSubItemBackgroundPressed="{ThemeResource MenuFlyoutSubItemBackgroundPressed}" 
             MenuFlyoutSubItemBackgroundSubMenuOpened="{ThemeResource MenuFlyoutSubItemBackgroundSubMenuOpened}" 
-            MenuFlyoutSubItemBackgroundDisabled="{ThemeResource MenuFlyoutSubItemBackgroundDisabled}" 
             MenuFlyoutSubItemForeground="{ThemeResource MenuFlyoutSubItemForeground}" 
             MenuFlyoutSubItemForegroundPointerOver="{ThemeResource MenuFlyoutSubItemForegroundPointerOver}" 
             MenuFlyoutSubItemForegroundPressed="{ThemeResource MenuFlyoutSubItemForegroundPressed}" 
@@ -876,26 +765,17 @@
             NavigationViewItemForegroundSelectedPointerOver="{ThemeResource NavigationViewItemForegroundSelectedPointerOver}" 
             NavigationViewItemForegroundSelectedPressed="{ThemeResource NavigationViewItemForegroundSelectedPressed}" 
             NavigationViewItemForegroundSelectedDisabled="{ThemeResource NavigationViewItemForegroundSelectedDisabled}" 
-            NavigationViewItemBorderBrushDisabled="{ThemeResource NavigationViewItemBorderBrushDisabled}" 
-            NavigationViewItemBorderBrushCheckedDisabled="{ThemeResource NavigationViewItemBorderBrushCheckedDisabled}" 
-            NavigationViewItemBorderBrushSelectedDisabled="{ThemeResource NavigationViewItemBorderBrushSelectedDisabled}" 
             NavigationViewSelectionIndicatorForeground="{ThemeResource NavigationViewSelectionIndicatorForeground}" 
             TopNavigationViewItemForeground="{ThemeResource TopNavigationViewItemForeground}" 
             TopNavigationViewItemForegroundPointerOver="{ThemeResource TopNavigationViewItemForegroundPointerOver}" 
             TopNavigationViewItemForegroundPressed="{ThemeResource TopNavigationViewItemForegroundPressed}" 
             TopNavigationViewItemForegroundSelected="{ThemeResource TopNavigationViewItemForegroundSelected}" 
             TopNavigationViewItemForegroundDisabled="{ThemeResource TopNavigationViewItemForegroundDisabled}" 
-            TopNavigationViewItemBackgroundPointerOver="{ThemeResource TopNavigationViewItemBackgroundPointerOver}" 
-            TopNavigationViewItemBackgroundPressed="{ThemeResource TopNavigationViewItemBackgroundPressed}" 
-            TopNavigationViewItemBackgroundSelected="{ThemeResource TopNavigationViewItemBackgroundSelected}" 
-            NavigationViewBackButtonBackground="{ThemeResource NavigationViewBackButtonBackground}" 
             ColorPickerSliderThumbBackground="{ThemeResource ColorPickerSliderThumbBackground}" 
             ColorPickerSliderThumbBackgroundPointerOver="{ThemeResource ColorPickerSliderThumbBackgroundPointerOver}" 
             ColorPickerSliderThumbBackgroundPressed="{ThemeResource ColorPickerSliderThumbBackgroundPressed}" 
             ColorPickerSliderThumbBackgroundDisabled="{ThemeResource ColorPickerSliderThumbBackgroundDisabled}" 
             ColorPickerSliderTrackFillDisabled="{ThemeResource ColorPickerSliderTrackFillDisabled}" 
-            MenuBarBackground="{ThemeResource MenuBarBackground}" 
-            MenuBarItemBackground="{ThemeResource MenuBarItemBackground}" 
             MenuBarItemBackgroundPointerOver="{ThemeResource MenuBarItemBackgroundPointerOver}" 
             MenuBarItemBackgroundPressed="{ThemeResource MenuBarItemBackgroundPressed}" 
             MenuBarItemBackgroundSelected="{ThemeResource MenuBarItemBackgroundSelected}" 
@@ -903,25 +783,16 @@
             MenuBarItemBorderBrushPointerOver="{ThemeResource MenuBarItemBorderBrushPointerOver}" 
             MenuBarItemBorderBrushPressed="{ThemeResource MenuBarItemBorderBrushPressed}" 
             MenuBarItemBorderBrushSelected="{ThemeResource MenuBarItemBorderBrushSelected}" 
-            AppBarButtonBackground="{ThemeResource AppBarButtonBackground}" 
             AppBarButtonBackgroundPointerOver="{ThemeResource AppBarButtonBackgroundPointerOver}" 
             AppBarButtonBackgroundPressed="{ThemeResource AppBarButtonBackgroundPressed}" 
-            AppBarButtonBackgroundDisabled="{ThemeResource AppBarButtonBackgroundDisabled}" 
             AppBarButtonForeground="{ThemeResource AppBarButtonForeground}" 
             AppBarButtonForegroundPointerOver="{ThemeResource AppBarButtonForegroundPointerOver}" 
             AppBarButtonForegroundPressed="{ThemeResource AppBarButtonForegroundPressed}" 
             AppBarButtonForegroundDisabled="{ThemeResource AppBarButtonForegroundDisabled}" 
-            AppBarButtonBorderBrush="{ThemeResource AppBarButtonBorderBrush}" 
-            AppBarButtonBorderBrushPointerOver="{ThemeResource AppBarButtonBorderBrushPointerOver}" 
-            AppBarButtonBorderBrushPressed="{ThemeResource AppBarButtonBorderBrushPressed}" 
-            AppBarButtonBorderBrushDisabled="{ThemeResource AppBarButtonBorderBrushDisabled}" 
-            AppBarToggleButtonBackground="{ThemeResource AppBarToggleButtonBackground}" 
-            AppBarToggleButtonBackgroundDisabled="{ThemeResource AppBarToggleButtonBackgroundDisabled}" 
             AppBarToggleButtonBackgroundChecked="{ThemeResource AppBarToggleButtonBackgroundChecked}" 
             AppBarToggleButtonBackgroundCheckedPointerOver="{ThemeResource AppBarToggleButtonBackgroundCheckedPointerOver}" 
             AppBarToggleButtonBackgroundCheckedPressed="{ThemeResource AppBarToggleButtonBackgroundCheckedPressed}" 
             AppBarToggleButtonBackgroundCheckedDisabled="{ThemeResource AppBarToggleButtonBackgroundCheckedDisabled}" 
-            AppBarToggleButtonBackgroundHighLightOverlay="{ThemeResource AppBarToggleButtonBackgroundHighLightOverlay}" 
             AppBarToggleButtonBackgroundHighLightOverlayPointerOver="{ThemeResource AppBarToggleButtonBackgroundHighLightOverlayPointerOver}" 
             AppBarToggleButtonBackgroundHighLightOverlayPressed="{ThemeResource AppBarToggleButtonBackgroundHighLightOverlayPressed}" 
             AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver="{ThemeResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver}" 
@@ -934,14 +805,6 @@
             AppBarToggleButtonForegroundCheckedPointerOver="{ThemeResource AppBarToggleButtonForegroundCheckedPointerOver}" 
             AppBarToggleButtonForegroundCheckedPressed="{ThemeResource AppBarToggleButtonForegroundCheckedPressed}" 
             AppBarToggleButtonForegroundCheckedDisabled="{ThemeResource AppBarToggleButtonForegroundCheckedDisabled}" 
-            AppBarToggleButtonBorderBrush="{ThemeResource AppBarToggleButtonBorderBrush}" 
-            AppBarToggleButtonBorderBrushPointerOver="{ThemeResource AppBarToggleButtonBorderBrushPointerOver}" 
-            AppBarToggleButtonBorderBrushPressed="{ThemeResource AppBarToggleButtonBorderBrushPressed}" 
-            AppBarToggleButtonBorderBrushDisabled="{ThemeResource AppBarToggleButtonBorderBrushDisabled}" 
-            AppBarToggleButtonBorderBrushChecked="{ThemeResource AppBarToggleButtonBorderBrushChecked}" 
-            AppBarToggleButtonBorderBrushCheckedPointerOver="{ThemeResource AppBarToggleButtonBorderBrushCheckedPointerOver}" 
-            AppBarToggleButtonBorderBrushCheckedPressed="{ThemeResource AppBarToggleButtonBorderBrushCheckedPressed}" 
-            AppBarToggleButtonBorderBrushCheckedDisabled="{ThemeResource AppBarToggleButtonBorderBrushCheckedDisabled}" 
             AppBarToggleButtonCheckGlyphForeground="{ThemeResource AppBarToggleButtonCheckGlyphForeground}" 
             AppBarToggleButtonCheckGlyphForegroundPointerOver="{ThemeResource AppBarToggleButtonCheckGlyphForegroundPointerOver}" 
             AppBarToggleButtonCheckGlyphForegroundPressed="{ThemeResource AppBarToggleButtonCheckGlyphForegroundPressed}" 
@@ -963,7 +826,6 @@
             CommandBarOverflowPresenterBackground="{ThemeResource CommandBarOverflowPresenterBackground}" 
             CommandBarOverflowPresenterBorderBrush="{ThemeResource CommandBarOverflowPresenterBorderBrush}" 
             CommandBarLightDismissOverlayBackground="{ThemeResource CommandBarLightDismissOverlayBackground}" 
-            ListViewItemBackground="{ThemeResource ListViewItemBackground}" 
             ListViewItemBackgroundPointerOver="{ThemeResource ListViewItemBackgroundPointerOver}" 
             ListViewItemBackgroundPressed="{ThemeResource ListViewItemBackgroundPressed}" 
             ListViewItemBackgroundSelected="{ThemeResource ListViewItemBackgroundSelected}" 
@@ -978,13 +840,11 @@
             ListViewItemFocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}" 
             ListViewItemCheckBrush="{ThemeResource ListViewItemCheckBrush}" 
             ListViewItemCheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}" 
-            ListViewItemDragBackground="{ThemeResource ListViewItemDragBackground}" 
             ListViewItemDragForeground="{ThemeResource ListViewItemDragForeground}" 
             ListViewItemPlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}" 
             AutoSuggestBoxSuggestionsListBackground="{ThemeResource AutoSuggestBoxSuggestionsListBackground}" 
             AutoSuggestBoxSuggestionsListBorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}" 
             AutoSuggestBoxLightDismissOverlayBackground="{ThemeResource AutoSuggestBoxLightDismissOverlayBackground}" 
-            TreeViewItemBackgroundDisabled="{ThemeResource TreeViewItemBackgroundDisabled}" 
             TreeViewItemBackgroundSelectedDisabled="{ThemeResource TreeViewItemBackgroundSelectedDisabled}" 
             TreeViewItemForeground="{ThemeResource TreeViewItemForeground}" 
             TreeViewItemForegroundPointerOver="{ThemeResource TreeViewItemForegroundPointerOver}" 
@@ -994,11 +854,6 @@
             TreeViewItemForegroundSelectedPointerOver="{ThemeResource TreeViewItemForegroundSelectedPointerOver}" 
             TreeViewItemForegroundSelectedPressed="{ThemeResource TreeViewItemForegroundSelectedPressed}" 
             TreeViewItemForegroundSelectedDisabled="{ThemeResource TreeViewItemForegroundSelectedDisabled}" 
-            TreeViewItemBorderBrush="{ThemeResource TreeViewItemBorderBrush}" 
-            TreeViewItemBorderBrushDisabled="{ThemeResource TreeViewItemBorderBrushDisabled}" 
-            TreeViewItemBorderBrushSelected="{ThemeResource TreeViewItemBorderBrushSelected}" 
-            TreeViewItemBorderBrushSelectedDisabled="{ThemeResource TreeViewItemBorderBrushSelectedDisabled}" 
-            TreeViewItemCheckBoxBackgroundSelected="{ThemeResource TreeViewItemCheckBoxBackgroundSelected}" 
             TreeViewItemCheckBoxBorderSelected="{ThemeResource TreeViewItemCheckBoxBorderSelected}" 
             TreeViewItemCheckGlyphSelected="{ThemeResource TreeViewItemCheckGlyphSelected}" 
             SwipeItemBackground="{ThemeResource SwipeItemBackground}" 
@@ -1032,7 +887,6 @@
             SplitButtonBorderBrushCheckedPointerOver="{ThemeResource SplitButtonBorderBrushCheckedPointerOver}" 
             SplitButtonBorderBrushCheckedPressed="{ThemeResource SplitButtonBorderBrushCheckedPressed}" 
             SplitButtonBorderBrushCheckedDisabled="{ThemeResource SplitButtonBorderBrushCheckedDisabled}" 
-            CommandBarFlyoutButtonBackground="{ThemeResource CommandBarFlyoutButtonBackground}" 
             MenuFlyoutItemKeyboardAcceleratorTextForeground="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForeground}" 
             MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" 
             MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" 
@@ -1052,13 +906,12 @@
             AppBarButtonBackgroundSubMenuOpened="{ThemeResource AppBarButtonBackgroundSubMenuOpened}" 
             AppBarButtonForegroundSubMenuOpened="{ThemeResource AppBarButtonForegroundSubMenuOpened}" 
             AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened="{ThemeResource AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened}" 
-            AppBarButtonBorderBrushSubMenuOpened="{ThemeResource AppBarButtonBorderBrushSubMenuOpened}" 
             AppBarButtonSubItemChevronForeground="{ThemeResource AppBarButtonSubItemChevronForeground}" 
             AppBarButtonSubItemChevronForegroundPointerOver="{ThemeResource AppBarButtonSubItemChevronForegroundPointerOver}" 
             AppBarButtonSubItemChevronForegroundPressed="{ThemeResource AppBarButtonSubItemChevronForegroundPressed}" 
             AppBarButtonSubItemChevronForegroundSubMenuOpened="{ThemeResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" 
             AppBarButtonSubItemChevronForegroundDisabled="{ThemeResource AppBarButtonSubItemChevronForegroundDisabled}" />
-
+        
         <controls:ContentPageHeader x:Name="Header">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -1111,12 +964,13 @@
                 <local:ThemePartTemplateSelector>
                     <local:ThemePartTemplateSelector.BrushTemplate>
                         <DataTemplate x:DataType="local:ThemeColorPart">
-                            <Grid Padding="0,8,12,9">
+                            <Grid Padding="0,8,12,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -1134,7 +988,7 @@
                                 <TextBlock Text="{x:Bind Key}" 
                                            VerticalAlignment="Center"
                                            Margin="12,0,0,0"/>
-                                <TextBlock Text="{x:Bind HexValue, Mode=OneWay}"
+                                <TextBlock common:TextBlockHelper.Markdown="{x:Bind HexValue, Mode=OneWay}"
                                            Style="{StaticResource InfoCaptionTextBlockStyle}"
                                            VerticalAlignment="Center"
                                            Margin="12,0,0,0"
@@ -1142,6 +996,10 @@
                                     
                                 <TextBlock common:TextBlockHelper.Markdown="{x:Bind Description}"
                                            Visibility="{x:Bind Description, Converter={StaticResource NullToVisibilityConverter}}"
+                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           TextWrapping="Wrap"
+                                           Margin="12,4,12,0"
                                            Grid.Row="2"
                                            Grid.ColumnSpan="2"/>
 
@@ -1151,9 +1009,16 @@
                                         Grid.RowSpan="2">
                                     <ContentControl x:Name="Presenter" Content="{x:Bind}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
                                 </Border>
+
+                                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,9,-12,-1" Grid.Row="3" Grid.ColumnSpan="2"/>
                             </Grid>
                         </DataTemplate>
                     </local:ThemePartTemplateSelector.BrushTemplate>
+                    <local:ThemePartTemplateSelector.BooleanTemplate>
+                        <DataTemplate x:DataType="local:ThemeBooleanPart">
+                            <CheckBox Click="Boolean_Click" Content="{x:Bind Key}" IsChecked="{x:Bind Value, Mode=TwoWay}" Tag="{x:Bind}"/>
+                        </DataTemplate>
+                    </local:ThemePartTemplateSelector.BooleanTemplate>
                 </local:ThemePartTemplateSelector>
             </ListView.ItemTemplateSelector>
             <ListView.ItemContainerStyle>

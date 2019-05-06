@@ -128,7 +128,7 @@ namespace Unigram.Controls.Chats
                             _container.Content = _imageBackground;
                         }
                     }
-                    else if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light))
+                    else if (SettingsService.Current.Appearance.IsLightTheme())
                     {
                         if (_colorBackground == null)
                             _colorBackground = new Rectangle();
@@ -164,7 +164,7 @@ namespace Unigram.Controls.Chats
             }
             catch
             {
-                if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light))
+                if (SettingsService.Current.Appearance.IsLightTheme())
                 {
                     if (_colorBackground == null)
                         _colorBackground = new Rectangle();

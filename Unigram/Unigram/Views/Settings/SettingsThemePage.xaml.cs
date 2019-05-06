@@ -87,74 +87,166 @@ namespace Unigram.Views.Settings
             var groups = new List<ThemeGroup>();
 
             var items = new ThemeGroup("Header", service, theme, baseTheme);
-            items.Add("PageHeaderHighlightBrush", group.AddBrush("PageHeaderHighlightBrush"));
-            items.Add("PageHeaderDisabledBrush", group.AddBrush("PageHeaderDisabledBrush"));
-            items.Add("PageHeaderForegroundBrush", group.AddBrush("PageHeaderForegroundBrush"));
-            items.Add("PageHeaderBackgroundBrush", group.AddBrush("PageHeaderBackgroundBrush"));
-            items.Add("PageSubHeaderBackgroundBrush", group.AddBrush("PageSubHeaderBackgroundBrush"));
+            items.Add(group.AddBrush("PageHeaderHighlightBrush"));
+            items.Add(group.AddBrush("PageHeaderDisabledBrush"));
+            items.Add(group.AddBrush("PageHeaderForegroundBrush"));
+            items.Add(group.AddBrush("PageHeaderBackgroundBrush"));
+            items.Add(group.AddBrush("PageSubHeaderBackgroundBrush"));
             groups.Add(items);
 
             items = new ThemeGroup("Content", service, theme, baseTheme);
-            items.Add("SystemAccentColor", group.AddColor("SystemAccentColor"));
-            items.Add("SystemControlBackgroundAccentBrush", group.AddBrush("SystemControlBackgroundAccentBrush"));
-            items.Add("SystemControlDisabledAccentBrush", group.AddBrush("SystemControlDisabledAccentBrush"));
-            items.Add("SystemControlForegroundAccentBrush", group.AddBrush("SystemControlForegroundAccentBrush"));
-            items.Add("SystemControlHighlightAccentBrush", group.AddBrush("SystemControlHighlightAccentBrush"));
-            items.Add("SystemControlHighlightAltAccentBrush", group.AddBrush("SystemControlHighlightAltAccentBrush"));
+            items.Add(group.AddColor("SystemAccentColor"));
+            items.Add(group.AddBrush("SystemControlBackgroundAccentBrush", resourceKey: "SystemAccentColor"));
+            items.Add(group.AddBrush("SystemControlDisabledAccentBrush", resourceKey: "SystemAccentColor"));
+            items.Add(group.AddBrush("SystemControlForegroundAccentBrush", resourceKey: "SystemAccentColor"));
+            items.Add(group.AddBrush("SystemControlHighlightAccentBrush", resourceKey: "SystemAccentColor"));
+            items.Add(group.AddBrush("SystemControlHighlightAltAccentBrush", resourceKey: "SystemAccentColor"));
             groups.Add(items);
 
             items = new ThemeGroup("Content", service, theme, baseTheme);
-            items.Add("ApplicationPageBackgroundThemeBrush", group.AddBrush("ApplicationPageBackgroundThemeBrush"));
-            items.Add("TelegramSeparatorMediumBrush", group.AddBrush("TelegramSeparatorMediumBrush"));
-            //items.Add("SystemControlPageTextBaseHighBrush", group.AddBrush("SystemControlPageTextBaseHighBrush"));;
-            items.Add("SystemControlForegroundBaseHighBrush", group.AddBrush("SystemControlForegroundBaseHighBrush"));
-            items.Add("SystemControlDisabledChromeDisabledLowBrush", group.AddBrush("SystemControlDisabledChromeDisabledLowBrush"));
+            items.Add(group.AddBrush("ApplicationPageBackgroundThemeBrush"));
+            items.Add(group.AddBrush("TelegramSeparatorMediumBrush"));
+            //items.Add(group.AddBrush("SystemControlPageTextBaseHighBrush"));;
+            items.Add(group.AddBrush("SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("SystemControlDisabledChromeDisabledLowBrush"));
             groups.Add(items);
 
             items = new ThemeGroup("Chats", service, theme, baseTheme);
-            items.Add("ChatOnlineBadgeBrush", group.AddBrush("ChatOnlineBadgeBrush"));
-            items.Add("ChatVerifiedBadgeBrush", group.AddBrush("ChatVerifiedBadgeBrush"));
-            items.Add("ChatLastMessageStateBrush", group.AddBrush("ChatLastMessageStateBrush"));
-            items.Add("ChatFromLabelBrush", group.AddBrush("ChatFromLabelBrush"));
-            items.Add("ChatDraftLabelBrush", group.AddBrush("ChatDraftLabelBrush"));
-            items.Add("ChatUnreadBadgeBrush", group.AddBrush("ChatUnreadBadgeBrush"));
-            items.Add("ChatUnreadLabelBrush", group.AddBrush("ChatUnreadLabelBrush", "ChatUnreadBadgeBrush"));
-            items.Add("ChatUnreadBadgeMutedBrush", group.AddBrush("ChatUnreadBadgeMutedBrush"));
-            items.Add("ChatUnreadLabelMutedBrush", group.AddBrush("ChatUnreadLabelMutedBrush", "ChatUnreadBadgeMutedBrush"));
-            items.Add("ChatFailedBadgeBrush", group.AddBrush("ChatFailedBadgeBrush"));
-            items.Add("ChatFailedLabelBrush", group.AddBrush("ChatFailedLabelBrush", "ChatFailedBadgeBrush"));
+            items.Add(group.AddBrush("ChatPageBackgroundBrush", resourceKey: "ApplicationPageBackgroundThemeBrush"));
+            items.Add(group.AddBrush("ChatOnlineBadgeBrush"));
+            items.Add(group.AddBrush("ChatVerifiedBadgeBrush"));
+            items.Add(group.AddBrush("ChatLastMessageStateBrush"));
+            items.Add(group.AddBrush("ChatFromLabelBrush"));
+            items.Add(group.AddBrush("ChatDraftLabelBrush"));
+            items.Add(group.AddBrush("ChatUnreadBadgeBrush"));
+            items.Add(group.AddBrush("ChatUnreadLabelBrush", "ChatUnreadBadgeBrush"));
+            items.Add(group.AddBrush("ChatUnreadBadgeMutedBrush"));
+            items.Add(group.AddBrush("ChatUnreadLabelMutedBrush", "ChatUnreadBadgeMutedBrush"));
+            items.Add(group.AddBrush("ChatFailedBadgeBrush"));
+            items.Add(group.AddBrush("ChatFailedLabelBrush", "ChatFailedBadgeBrush"));
             groups.Add(items);
 
+            var messageThickness = new ThemeBooleanPart { Key = "MessageBorderThickness" };
+            group.Add("MessageBorderThickness", messageThickness);
+
             items = new ThemeGroup("Incoming messages", service, theme, baseTheme);
-            items.Add("MessageForegroundColor", group.AddColor("MessageForegroundColor"));
-            items.Add("MessageForegroundLinkColor", group.AddColor("MessageForegroundLinkColor"));
-            items.Add("MessageBackgroundColor", group.AddColor("MessageBackgroundColor"));
-            items.Add("MessageSubtleLabelColor", group.AddColor("MessageSubtleLabelColor"));
-            items.Add("MessageSubtleGlyphColor", group.AddColor("MessageSubtleGlyphColor"));
-            items.Add("MessageSubtleForegroundColor", group.AddColor("MessageSubtleForegroundColor"));
-            items.Add("MessageHeaderForegroundColor", group.AddColor("MessageHeaderForegroundColor"));
-            items.Add("MessageHeaderBorderColor", group.AddColor("MessageHeaderBorderColor"));
-            items.Add("MessageMediaForegroundColor", group.AddColor("MessageMediaForegroundColor"));
-            items.Add("MessageMediaBackgroundColor", group.AddColor("MessageMediaBackgroundColor"));
-            items.Add("MessageOverlayBackgroundColor", group.AddColor("MessageOverlayBackgroundColor"));
-            items.Add("MessageCallForegroundColor", group.AddColor("MessageCallForegroundColor"));
-            items.Add("MessageCallMissedForegroundColor", group.AddColor("MessageCallMissedForegroundColor"));
+            items.Add(group.AddColor("MessageForegroundColor"));
+            items.Add(group.AddColor("MessageForegroundLinkColor"));
+            items.Add(group.AddColor("MessageBackgroundColor"));
+            //items.Add(group.AddColor("MessageBorderColor"));
+            //items.Add("MessageBorderThickness", messageThickness);
+            items.Add(group.AddColor("MessageSubtleLabelColor"));
+            items.Add(group.AddColor("MessageSubtleGlyphColor"));
+            items.Add(group.AddColor("MessageSubtleForegroundColor"));
+            items.Add(group.AddColor("MessageHeaderForegroundColor"));
+            items.Add(group.AddColor("MessageHeaderBorderColor"));
+            items.Add(group.AddColor("MessageMediaForegroundColor"));
+            items.Add(group.AddColor("MessageMediaBackgroundColor"));
+            items.Add(group.AddColor("MessageOverlayBackgroundColor"));
+            items.Add(group.AddColor("MessageCallForegroundColor"));
+            items.Add(group.AddColor("MessageCallMissedForegroundColor"));
             groups.Add(items);
 
             items = new ThemeGroup("Outgoing messages", service, theme, baseTheme);
-            items.Add("MessageForegroundOutColor", group.AddColor("MessageForegroundOutColor"));
-            items.Add("MessageForegroundLinkOutColor", group.AddColor("MessageForegroundLinkOutColor"));
-            items.Add("MessageBackgroundOutColor", group.AddColor("MessageBackgroundOutColor"));
-            items.Add("MessageSubtleLabelOutColor", group.AddColor("MessageSubtleLabelOutColor"));
-            items.Add("MessageSubtleGlyphOutColor", group.AddColor("MessageSubtleGlyphOutColor"));
-            items.Add("MessageSubtleForegroundOutColor", group.AddColor("MessageSubtleForegroundOutColor"));
-            items.Add("MessageHeaderForegroundOutColor", group.AddColor("MessageHeaderForegroundOutColor"));
-            items.Add("MessageHeaderBorderOutColor", group.AddColor("MessageHeaderBorderOutColor"));
-            items.Add("MessageMediaForegroundOutColor", group.AddColor("MessageMediaForegroundOutColor"));
-            items.Add("MessageMediaBackgroundOutColor", group.AddColor("MessageMediaBackgroundOutColor"));
-            items.Add("MessageOverlayBackgroundOutColor", group.AddColor("MessageOverlayBackgroundOutColor"));
-            items.Add("MessageCallForegroundOutColor", group.AddColor("MessageCallForegroundOutColor"));
-            items.Add("MessageCallMissedForegroundOutColor", group.AddColor("MessageCallMissedForegroundOutColor"));
+            items.Add(group.AddColor("MessageForegroundOutColor"));
+            items.Add(group.AddColor("MessageForegroundLinkOutColor"));
+            items.Add(group.AddColor("MessageBackgroundOutColor"));
+            //items.Add(group.AddColor("MessageBorderOutColor"));
+            //items.Add("MessageBorderThickness", messageThickness);
+            items.Add(group.AddColor("MessageSubtleLabelOutColor"));
+            items.Add(group.AddColor("MessageSubtleGlyphOutColor"));
+            items.Add(group.AddColor("MessageSubtleForegroundOutColor"));
+            items.Add(group.AddColor("MessageHeaderForegroundOutColor"));
+            items.Add(group.AddColor("MessageHeaderBorderOutColor"));
+            items.Add(group.AddColor("MessageMediaForegroundOutColor"));
+            items.Add(group.AddColor("MessageMediaBackgroundOutColor"));
+            items.Add(group.AddColor("MessageOverlayBackgroundOutColor"));
+            items.Add(group.AddColor("MessageCallForegroundOutColor"));
+            items.Add(group.AddColor("MessageCallMissedForegroundOutColor"));
+            groups.Add(items);
+
+
+
+            items = new ThemeGroup("ToggleSwitch", service, theme, baseTheme);
+            items.Add(group.AddBrush("ToggleSwitchContentForeground"));
+            items.Add(group.AddBrush("ToggleSwitchContentForegroundDisabled"));
+            items.Add(group.AddBrush("ToggleSwitchHeaderForeground"));
+            items.Add(group.AddBrush("ToggleSwitchHeaderForegroundDisabled"));
+            items.Add(group.AddBrush("ToggleSwitchStrokeOff"));
+            items.Add(group.AddBrush("ToggleSwitchStrokeOffPointerOver"));
+            items.Add(group.AddBrush("ToggleSwitchStrokeOffPressed"));
+            items.Add(group.AddBrush("ToggleSwitchStrokeOffDisabled"));
+            items.Add(group.AddBrush("ToggleSwitchFillOn"));
+            items.Add(group.AddBrush("ToggleSwitchFillOnPointerOver"));
+            items.Add(group.AddBrush("ToggleSwitchFillOnPressed"));
+            items.Add(group.AddBrush("ToggleSwitchFillOnDisabled"));
+            items.Add(group.AddBrush("ToggleSwitchKnobFillOff"));
+            items.Add(group.AddBrush("ToggleSwitchKnobFillOffPointerOver"));
+            items.Add(group.AddBrush("ToggleSwitchKnobFillOffPressed"));
+            items.Add(group.AddBrush("ToggleSwitchKnobFillOffDisabled"));
+            items.Add(group.AddBrush("ToggleSwitchKnobFillOn"));
+            items.Add(group.AddBrush("ToggleSwitchKnobFillOnPointerOver"));
+            items.Add(group.AddBrush("ToggleSwitchKnobFillOnPressed"));
+            items.Add(group.AddBrush("ToggleSwitchKnobFillOnDisabled"));
+            groups.Add(items);
+
+            items = new ThemeGroup("RadioButton", service, theme, baseTheme);
+            items.Add(group.AddBrush("RadioButtonForeground", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("RadioButtonForegroundPointerOver", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("RadioButtonForegroundPressed", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("RadioButtonForegroundDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("RadioButtonOuterEllipseStroke", resourceKey: "SystemControlForegroundBaseMediumHighBrush"));
+            items.Add(group.AddBrush("RadioButtonOuterEllipseStrokePointerOver", resourceKey: "SystemControlHighlightBaseHighBrush"));
+            items.Add(group.AddBrush("RadioButtonOuterEllipseStrokePressed", resourceKey: "SystemControlHighlightBaseMediumBrush"));
+            items.Add(group.AddBrush("RadioButtonOuterEllipseStrokeDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("RadioButtonOuterEllipseCheckedStroke", resourceKey: "SystemControlHighlightAccentBrush"));
+            items.Add(group.AddBrush("RadioButtonOuterEllipseCheckedStrokePointerOver", resourceKey: "SystemControlHighlightAccentBrush"));
+            items.Add(group.AddBrush("RadioButtonOuterEllipseCheckedStrokePressed", resourceKey: "SystemControlHighlightBaseMediumBrush"));
+            items.Add(group.AddBrush("RadioButtonOuterEllipseCheckedStrokeDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("RadioButtonCheckGlyphFill", resourceKey: "SystemControlHighlightBaseMediumHighBrush"));
+            items.Add(group.AddBrush("RadioButtonCheckGlyphFillPointerOver", resourceKey: "SystemControlHighlightAltBaseHighBrush"));
+            items.Add(group.AddBrush("RadioButtonCheckGlyphFillPressed", resourceKey: "SystemControlHighlightAltBaseMediumBrush"));
+            items.Add(group.AddBrush("RadioButtonCheckGlyphFillDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            groups.Add(items);
+
+            items = new ThemeGroup("CheckBox", service, theme, baseTheme);
+            items.Add(group.AddBrush("CheckBoxForegroundUnchecked", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundUncheckedPointerOver", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundUncheckedPressed", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundUncheckedDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundChecked", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundCheckedPointerOver", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundCheckedPressed", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundCheckedDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundIndeterminate", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundIndeterminatePointerOver", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundIndeterminatePressed", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxForegroundIndeterminateDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeUnchecked", resourceKey: "SystemControlForegroundBaseMediumHighBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeUncheckedPointerOver", resourceKey: "SystemControlHighlightBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeUncheckedDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeCheckedPointerOver", resourceKey: "SystemControlHighlightBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeCheckedDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeIndeterminate", resourceKey: "SystemControlForegroundAccentBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeIndeterminatePointerOver", resourceKey: "SystemControlHighlightAccentBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeIndeterminatePressed", resourceKey: "SystemControlHighlightBaseMediumBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundStrokeIndeterminateDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundFillUncheckedPressed", resourceKey: "SystemControlBackgroundBaseMediumBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundFillChecked", resourceKey: "SystemControlHighlightAccentBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundFillCheckedPointerOver", resourceKey: "SystemControlBackgroundAccentBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckBackgroundFillCheckedPressed", resourceKey: "SystemControlHighlightBaseMediumBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundUnchecked", resourceKey: "SystemControlHighlightAltChromeWhiteBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundUncheckedPointerOver", resourceKey: "SystemControlHighlightAltChromeWhiteBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundUncheckedPressed", resourceKey: "SystemControlHighlightAltChromeWhiteBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundUncheckedDisabled", resourceKey: "SystemControlHighlightAltChromeWhiteBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundChecked", resourceKey: "SystemControlHighlightAltChromeWhiteBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundCheckedPointerOver", resourceKey: "SystemControlForegroundChromeWhiteBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundCheckedPressed", resourceKey: "SystemControlForegroundChromeWhiteBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundCheckedDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundIndeterminate", resourceKey: "SystemControlForegroundBaseMediumHighBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundIndeterminatePointerOver", resourceKey: "SystemControlForegroundBaseHighBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundIndeterminatePressed", resourceKey: "SystemControlForegroundBaseMediumBrush"));
+            items.Add(group.AddBrush("CheckBoxCheckGlyphForegroundIndeterminateDisabled", resourceKey: "SystemControlDisabledBaseMediumLowBrush"));
             groups.Add(items);
 
             var collection = new CollectionViewSource();
@@ -281,60 +373,79 @@ namespace Unigram.Views.Settings
                     return;
                 }
 
-                var value = SettingsService.Current.Appearance.GetElementTheme();
-                var mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(_theme.Parent);
+                Update();
+            }
+        }
 
-                _theme.Values.Clear();
+        private void Boolean_Click(object sender, RoutedEventArgs e)
+        {
+            var check = sender as CheckBox;
+            if (check != null && check.Tag is ThemeBooleanPart boolean)
+            {
+                Update();
+            }
+        }
 
-                foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+        private async void Update()
+        {
+            var value = SettingsService.Current.Appearance.RequestedTheme;
+            var mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(_theme.Parent);
+
+            _theme.Values.Clear();
+
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            {
+                await window.Dispatcher.DispatchAsync(() =>
                 {
-                    await window.Dispatcher.DispatchAsync(() =>
+                    var dict = new ResourceDictionary();
+                    foreach (var item in _group.Values)
                     {
-                        var dict = new ResourceDictionary();
-                        foreach (var item in _group.Values)
+                        if (item is ThemeBrushPart brush && !brush.IsDefault)
                         {
-                            if (item is ThemeBrushPart brush && !brush.IsDefault)
-                            {
-                                _theme.Values[brush.Key] = brush.Value;
-                                dict[brush.Key] = new SolidColorBrush(brush.Value);
+                            _theme.Values[brush.Key] = brush.Value;
+                            dict[brush.Key] = new SolidColorBrush(brush.Value);
 
-                                if (mapping.TryGetValue(brush.Key, out string[] additional))
+                            if (mapping.TryGetValue(brush.Key, out string[] additional))
+                            {
+                                foreach (var key in additional)
                                 {
-                                    foreach (var key in additional)
-                                    {
-                                        dict[key] = new SolidColorBrush(brush.Value);
-                                    }
+                                    dict[key] = new SolidColorBrush(brush.Value);
                                 }
                             }
-                            else if (item is ThemeColorPart color && !color.IsDefault)
-                            {
-                                _theme.Values[color.Key] = color.Value;
-                                dict[color.Key] = color.Value;
-                            }
                         }
-
-                        Theme.Current.MergedDictionaries[0].MergedDictionaries.Clear();
-                        Theme.Current.MergedDictionaries[0].MergedDictionaries.Add(dict);
-
-                        window.UpdateTitleBar();
-
-                        if (window.Content is FrameworkElement element)
+                        else if (item is ThemeColorPart color && !color.IsDefault)
                         {
-                            if (value == element.RequestedTheme)
-                            {
-                                element.RequestedTheme = value == ElementTheme.Dark
-                                    ? ElementTheme.Light
-                                    : ElementTheme.Dark;
-                            }
-
-                            element.RequestedTheme = value;
+                            _theme.Values[color.Key] = color.Value;
+                            dict[color.Key] = color.Value;
                         }
-                    });
-                }
+                        else if (item is ThemeBooleanPart boolean && boolean.Value)
+                        {
+                            dict["MessageBorderThickness"] = new Thickness(1);
+                            dict["MessageBorderNegativeThickness"] = new Thickness(-1);
+                        }
+                    }
 
-                var file = await StorageFile.GetFileFromPathAsync(_theme.Path);
-                await TLContainer.Current.Resolve<IThemeService>().SerializeAsync(file, _theme);
+                    Theme.Current.MergedDictionaries[0].MergedDictionaries.Clear();
+                    Theme.Current.MergedDictionaries[0].MergedDictionaries.Add(dict);
+
+                    window.UpdateTitleBar();
+
+                    if (window.Content is FrameworkElement element)
+                    {
+                        if (value == element.RequestedTheme)
+                        {
+                            element.RequestedTheme = value == ElementTheme.Dark
+                                ? ElementTheme.Light
+                                : ElementTheme.Dark;
+                        }
+
+                        element.RequestedTheme = value;
+                    }
+                });
             }
+
+            var file = await StorageFile.GetFileFromPathAsync(_theme.Path);
+            await TLContainer.Current.Resolve<IThemeService>().SerializeAsync(file, _theme);
         }
     }
 
@@ -355,18 +466,35 @@ namespace Unigram.Views.Settings
 
         public string Key { get; set; }
 
-        public ThemeBrushPart AddBrush(string key, string dependsUpon = null)
+        public ThemeBrushPart AddBrush(string key, string dependsUpon = null, string resourceKey = null)
         {
             ThemeBrushPart item;
-            Add(key, item = new ThemeBrushPart(key, dependsUpon, _service, this, _model, _super));
+            Add(key, item = new ThemeBrushPart(key, dependsUpon, resourceKey, _service, this, _model, _super));
             return item;
         }
 
-        public ThemeColorPart AddColor(string key, string dependsUpon = null)
+        public ThemeColorPart AddColor(string key, string dependsUpon = null, string resourceKey = null)
         {
             ThemeColorPart item;
-            Add(key, item = new ThemeColorPart(key, dependsUpon, _service, this, _model, _super));
+            Add(key, item = new ThemeColorPart(key, dependsUpon, resourceKey, _service, this, _model, _super));
             return item;
+        }
+
+        public void Add(ThemeColorPart part)
+        {
+            Add(part.Key, part);
+        }
+
+        public bool TryGetColor(string key, out ThemeColorPart value)
+        {
+            if (TryGetValue(key, out var result) && result is ThemeColorPart)
+            {
+                value = result as ThemeColorPart;
+                return true;
+            }
+
+            value = null;
+            return false;
         }
     }
 
@@ -376,16 +504,67 @@ namespace Unigram.Views.Settings
         public string Description { get; set; }
     }
 
+    public abstract class ThemePropertyPart : ThemePartBase
+    {
+        public bool IsResource { get; }
+
+        public abstract object GetValue();
+    }
+
+    public class ThemeNumberPart : ThemePropertyPart
+    {
+        private int _value;
+        public int Value
+        {
+            get { return _value; }
+            set { Set(ref _value, value); }
+        }
+
+        public override object GetValue()
+        {
+            return Value;
+        }
+    }
+
+    public class ThemeThicknessPart : ThemeNumberPart
+    {
+        public override object GetValue()
+        {
+            return new Thickness(Value);
+        }
+    }
+
+    public class ThemeBooleanPart : ThemePropertyPart
+    {
+        private bool _value;
+        public bool Value
+        {
+            get { return _value; }
+            set { Set(ref _value, value); }
+        }
+
+        public override object GetValue()
+        {
+            return Value;
+        }
+    }
+
     public class ThemeBrushPart : ThemeColorPart
     {
-        public ThemeBrushPart(string key, string dependsUpon, IThemeService service, ThemeGroup group, ThemeCustomInfo model, ResourceDictionary super)
-            : base(key, dependsUpon, group)
+        public ThemeBrushPart(string key, string dependsUpon, string resourceKey, IThemeService service, ThemeGroup group, ThemeCustomInfo model, ResourceDictionary super)
+            : base(key, dependsUpon, resourceKey, group)
         {
             _super = service.GetDefaultColor(model.Parent, key);
 
             if (model.Values.TryGet(key, out Color mcolor))
             {
                 _value = mcolor;
+            }
+            else if (resourceKey != null)
+            {
+                //_super = GetDefaultColor(resourceKey, service, group, model);
+                _super = default;
+                _value = default;
             }
             else if (super.TryGet(key, out SolidColorBrush brush))
             {
@@ -399,25 +578,34 @@ namespace Unigram.Views.Settings
         protected readonly ThemeGroup _group;
         protected Color _super;
 
-        protected ThemeColorPart(string key, string dependsUpon, ThemeGroup group)
+        protected ThemeColorPart(string key, string dependsUpon, string resourceKey, ThemeGroup group)
         {
             Key = key;
             DependsUpon = dependsUpon;
+            ResourceKey = resourceKey;
+
+            //if (resourceKey != null)
+            //{
+            //    Description = string.Format("When empty, **{0}** is used.", resourceKey);
+            //}
 
             _group = group;
         }
 
-        public ThemeColorPart(string key, string dependsUpon, IThemeService service, ThemeGroup group, ThemeCustomInfo model, ResourceDictionary super)
+        public ThemeColorPart(string key, string dependsUpon, string resourceKey, IThemeService service, ThemeGroup group, ThemeCustomInfo model, ResourceDictionary super)
+            : this(key, dependsUpon, resourceKey, group)
         {
-            Key = key;
-            DependsUpon = dependsUpon;
-
-            _group = group;
             _super = service.GetDefaultColor(model.Parent, key);
 
             if (model.Values.TryGet(key, out Color mcolor))
             {
                 _value = mcolor;
+            }
+            else if (resourceKey != null)
+            {
+                //_super = GetDefaultColor(resourceKey, service, group, model);
+                _super = default;
+                _value = default;
             }
             else if (super.TryGet(key, out Color color))
             {
@@ -426,15 +614,37 @@ namespace Unigram.Views.Settings
         }
 
         public string DependsUpon { get; private set; }
+        public string ResourceKey { get; private set; }
 
         protected Color _value;
         public Color Value
         {
             get { return _value; }
-            set { Set(ref _value, value); RaisePropertyChanged(() => IsDefault); RaisePropertyChanged(() => HexValue); }
+            set { SetValue(value); }
         }
 
-        public bool IsDefault => _value == _super;
+        private void SetValue(Color value)
+        {
+            //foreach (ThemeColorPart part in _group.Values)
+            //{
+            //    if (string.Equals(part.ResourceKey, Key))
+            //    {
+
+            //    }
+            //}
+
+            Set(ref _value, value);
+            RaisePropertyChanged(() => IsDefault);
+            RaisePropertyChanged(() => HexValue);
+        }
+
+        private void SetSuper(Color super)
+        {
+            _super = super;
+            RaisePropertyChanged(() => IsDefault);
+        }
+
+        public bool IsDefault => _value == _super || _value == default;
 
 
 
@@ -446,6 +656,11 @@ namespace Unigram.Views.Settings
         {
             get
             {
+                if (ResourceKey != null && IsDefault)
+                {
+                    return $"**{ResourceKey}**";
+                }
+
                 if (_value.A < 255)
                 {
                     return string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", _value.A, _value.R, _value.G, _value.B);
@@ -457,7 +672,33 @@ namespace Unigram.Views.Settings
 
         public void Reset()
         {
-            Value = _super;
+            if (ResourceKey != null)
+            {
+                Value = default(Color);
+            }
+            else
+            {
+                Value = _super;
+            }
+        }
+
+
+
+        protected static Color GetDefaultColor(string key, IThemeService service, ThemeGroup group, ThemeCustomInfo model)
+        {
+            while (group.TryGetColor(key, out ThemeColorPart parent))
+            {
+                if (parent.ResourceKey == null)
+                {
+                    return parent.Value;
+                }
+                else
+                {
+                    key = parent.ResourceKey;
+                }
+            }
+
+            return default(Color);
         }
     }
 
@@ -465,6 +706,7 @@ namespace Unigram.Views.Settings
     {
         public DataTemplate BrushTemplate { get; set; }
         public DataTemplate ColorTemplate { get; set; }
+        public DataTemplate BooleanTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -473,9 +715,13 @@ namespace Unigram.Views.Settings
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            //if (item is ThemeBrushPart)
+            if (item is ThemeColorPart)
             {
                 return BrushTemplate;
+            }
+            else if (item is ThemeBooleanPart)
+            {
+                return BooleanTemplate;
             }
             //else if (item is ThemeColorPart)
             //{
@@ -520,6 +766,78 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty TelegramSeparatorMediumBrushProperty =
             DependencyProperty.Register("TelegramSeparatorMediumBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageBackgroundOutColor
+        {
+            get { return (object)GetValue(MessageBackgroundOutColorProperty); }
+            set { SetValue(MessageBackgroundOutColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageBackgroundOutColorProperty =
+            DependencyProperty.Register("MessageBackgroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageSubtleLabelOutColor
+        {
+            get { return (object)GetValue(MessageSubtleLabelOutColorProperty); }
+            set { SetValue(MessageSubtleLabelOutColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageSubtleLabelOutColorProperty =
+            DependencyProperty.Register("MessageSubtleLabelOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageSubtleGlyphOutColor
+        {
+            get { return (object)GetValue(MessageSubtleGlyphOutColorProperty); }
+            set { SetValue(MessageSubtleGlyphOutColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageSubtleGlyphOutColorProperty =
+            DependencyProperty.Register("MessageSubtleGlyphOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageSubtleForegroundColor
+        {
+            get { return (object)GetValue(MessageSubtleForegroundColorProperty); }
+            set { SetValue(MessageSubtleForegroundColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageSubtleForegroundColorProperty =
+            DependencyProperty.Register("MessageSubtleForegroundColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageSubtleForegroundOutColor
+        {
+            get { return (object)GetValue(MessageSubtleForegroundOutColorProperty); }
+            set { SetValue(MessageSubtleForegroundOutColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageSubtleForegroundOutColorProperty =
+            DependencyProperty.Register("MessageSubtleForegroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageHeaderForegroundOutColor
+        {
+            get { return (object)GetValue(MessageHeaderForegroundOutColorProperty); }
+            set { SetValue(MessageHeaderForegroundOutColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageHeaderForegroundOutColorProperty =
+            DependencyProperty.Register("MessageHeaderForegroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageHeaderBorderOutColor
+        {
+            get { return (object)GetValue(MessageHeaderBorderOutColorProperty); }
+            set { SetValue(MessageHeaderBorderOutColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageHeaderBorderOutColorProperty =
+            DependencyProperty.Register("MessageHeaderBorderOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageMediaForegroundOutColor
+        {
+            get { return (object)GetValue(MessageMediaForegroundOutColorProperty); }
+            set { SetValue(MessageMediaForegroundOutColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageMediaForegroundOutColorProperty =
+            DependencyProperty.Register("MessageMediaForegroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
+        public object MessageMediaBackgroundOutColor
+        {
+            get { return (object)GetValue(MessageMediaBackgroundOutColorProperty); }
+            set { SetValue(MessageMediaBackgroundOutColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageMediaBackgroundOutColorProperty =
+            DependencyProperty.Register("MessageMediaBackgroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SystemControlDescriptionTextForegroundBrush
         {
             get { return (object)GetValue(SystemControlDescriptionTextForegroundBrushProperty); }
@@ -528,38 +846,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty SystemControlDescriptionTextForegroundBrushProperty =
             DependencyProperty.Register("SystemControlDescriptionTextForegroundBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object SliderContainerBackground
-        {
-            get { return (object)GetValue(SliderContainerBackgroundProperty); }
-            set { SetValue(SliderContainerBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty SliderContainerBackgroundProperty =
-            DependencyProperty.Register("SliderContainerBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object SliderContainerBackgroundPointerOver
-        {
-            get { return (object)GetValue(SliderContainerBackgroundPointerOverProperty); }
-            set { SetValue(SliderContainerBackgroundPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty SliderContainerBackgroundPointerOverProperty =
-            DependencyProperty.Register("SliderContainerBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object SliderContainerBackgroundPressed
-        {
-            get { return (object)GetValue(SliderContainerBackgroundPressedProperty); }
-            set { SetValue(SliderContainerBackgroundPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty SliderContainerBackgroundPressedProperty =
-            DependencyProperty.Register("SliderContainerBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object SliderContainerBackgroundDisabled
-        {
-            get { return (object)GetValue(SliderContainerBackgroundDisabledProperty); }
-            set { SetValue(SliderContainerBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty SliderContainerBackgroundDisabledProperty =
-            DependencyProperty.Register("SliderContainerBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderThumbBackground
         {
             get { return (object)GetValue(SliderThumbBackgroundProperty); }
@@ -824,70 +1110,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty RadioButtonForegroundDisabledProperty =
             DependencyProperty.Register("RadioButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonBackground
-        {
-            get { return (object)GetValue(RadioButtonBackgroundProperty); }
-            set { SetValue(RadioButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonBackgroundProperty =
-            DependencyProperty.Register("RadioButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonBackgroundPointerOver
-        {
-            get { return (object)GetValue(RadioButtonBackgroundPointerOverProperty); }
-            set { SetValue(RadioButtonBackgroundPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonBackgroundPointerOverProperty =
-            DependencyProperty.Register("RadioButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonBackgroundPressed
-        {
-            get { return (object)GetValue(RadioButtonBackgroundPressedProperty); }
-            set { SetValue(RadioButtonBackgroundPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonBackgroundPressedProperty =
-            DependencyProperty.Register("RadioButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonBackgroundDisabled
-        {
-            get { return (object)GetValue(RadioButtonBackgroundDisabledProperty); }
-            set { SetValue(RadioButtonBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonBackgroundDisabledProperty =
-            DependencyProperty.Register("RadioButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonBorderBrush
-        {
-            get { return (object)GetValue(RadioButtonBorderBrushProperty); }
-            set { SetValue(RadioButtonBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonBorderBrushProperty =
-            DependencyProperty.Register("RadioButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonBorderBrushPointerOver
-        {
-            get { return (object)GetValue(RadioButtonBorderBrushPointerOverProperty); }
-            set { SetValue(RadioButtonBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonBorderBrushPointerOverProperty =
-            DependencyProperty.Register("RadioButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonBorderBrushPressed
-        {
-            get { return (object)GetValue(RadioButtonBorderBrushPressedProperty); }
-            set { SetValue(RadioButtonBorderBrushPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonBorderBrushPressedProperty =
-            DependencyProperty.Register("RadioButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonBorderBrushDisabled
-        {
-            get { return (object)GetValue(RadioButtonBorderBrushDisabledProperty); }
-            set { SetValue(RadioButtonBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonBorderBrushDisabledProperty =
-            DependencyProperty.Register("RadioButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseStroke
         {
             get { return (object)GetValue(RadioButtonOuterEllipseStrokeProperty); }
@@ -920,38 +1142,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty RadioButtonOuterEllipseStrokeDisabledProperty =
             DependencyProperty.Register("RadioButtonOuterEllipseStrokeDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonOuterEllipseFill
-        {
-            get { return (object)GetValue(RadioButtonOuterEllipseFillProperty); }
-            set { SetValue(RadioButtonOuterEllipseFillProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonOuterEllipseFillProperty =
-            DependencyProperty.Register("RadioButtonOuterEllipseFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonOuterEllipseFillPointerOver
-        {
-            get { return (object)GetValue(RadioButtonOuterEllipseFillPointerOverProperty); }
-            set { SetValue(RadioButtonOuterEllipseFillPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonOuterEllipseFillPointerOverProperty =
-            DependencyProperty.Register("RadioButtonOuterEllipseFillPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonOuterEllipseFillPressed
-        {
-            get { return (object)GetValue(RadioButtonOuterEllipseFillPressedProperty); }
-            set { SetValue(RadioButtonOuterEllipseFillPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonOuterEllipseFillPressedProperty =
-            DependencyProperty.Register("RadioButtonOuterEllipseFillPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonOuterEllipseFillDisabled
-        {
-            get { return (object)GetValue(RadioButtonOuterEllipseFillDisabledProperty); }
-            set { SetValue(RadioButtonOuterEllipseFillDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonOuterEllipseFillDisabledProperty =
-            DependencyProperty.Register("RadioButtonOuterEllipseFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseCheckedStroke
         {
             get { return (object)GetValue(RadioButtonOuterEllipseCheckedStrokeProperty); }
@@ -1008,14 +1198,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty RadioButtonOuterEllipseCheckedFillPressedProperty =
             DependencyProperty.Register("RadioButtonOuterEllipseCheckedFillPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonOuterEllipseCheckedFillDisabled
-        {
-            get { return (object)GetValue(RadioButtonOuterEllipseCheckedFillDisabledProperty); }
-            set { SetValue(RadioButtonOuterEllipseCheckedFillDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonOuterEllipseCheckedFillDisabledProperty =
-            DependencyProperty.Register("RadioButtonOuterEllipseCheckedFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonCheckGlyphFill
         {
             get { return (object)GetValue(RadioButtonCheckGlyphFillProperty); }
@@ -1048,38 +1230,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty RadioButtonCheckGlyphFillDisabledProperty =
             DependencyProperty.Register("RadioButtonCheckGlyphFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonCheckGlyphStroke
-        {
-            get { return (object)GetValue(RadioButtonCheckGlyphStrokeProperty); }
-            set { SetValue(RadioButtonCheckGlyphStrokeProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonCheckGlyphStrokeProperty =
-            DependencyProperty.Register("RadioButtonCheckGlyphStroke", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonCheckGlyphStrokePointerOver
-        {
-            get { return (object)GetValue(RadioButtonCheckGlyphStrokePointerOverProperty); }
-            set { SetValue(RadioButtonCheckGlyphStrokePointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonCheckGlyphStrokePointerOverProperty =
-            DependencyProperty.Register("RadioButtonCheckGlyphStrokePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonCheckGlyphStrokePressed
-        {
-            get { return (object)GetValue(RadioButtonCheckGlyphStrokePressedProperty); }
-            set { SetValue(RadioButtonCheckGlyphStrokePressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonCheckGlyphStrokePressedProperty =
-            DependencyProperty.Register("RadioButtonCheckGlyphStrokePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object RadioButtonCheckGlyphStrokeDisabled
-        {
-            get { return (object)GetValue(RadioButtonCheckGlyphStrokeDisabledProperty); }
-            set { SetValue(RadioButtonCheckGlyphStrokeDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadioButtonCheckGlyphStrokeDisabledProperty =
-            DependencyProperty.Register("RadioButtonCheckGlyphStrokeDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundUnchecked
         {
             get { return (object)GetValue(CheckBoxForegroundUncheckedProperty); }
@@ -1176,198 +1326,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty CheckBoxForegroundIndeterminateDisabledProperty =
             DependencyProperty.Register("CheckBoxForegroundIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundUnchecked
-        {
-            get { return (object)GetValue(CheckBoxBackgroundUncheckedProperty); }
-            set { SetValue(CheckBoxBackgroundUncheckedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundUncheckedProperty =
-            DependencyProperty.Register("CheckBoxBackgroundUnchecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundUncheckedPointerOver
-        {
-            get { return (object)GetValue(CheckBoxBackgroundUncheckedPointerOverProperty); }
-            set { SetValue(CheckBoxBackgroundUncheckedPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundUncheckedPointerOverProperty =
-            DependencyProperty.Register("CheckBoxBackgroundUncheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundUncheckedPressed
-        {
-            get { return (object)GetValue(CheckBoxBackgroundUncheckedPressedProperty); }
-            set { SetValue(CheckBoxBackgroundUncheckedPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundUncheckedPressedProperty =
-            DependencyProperty.Register("CheckBoxBackgroundUncheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundUncheckedDisabled
-        {
-            get { return (object)GetValue(CheckBoxBackgroundUncheckedDisabledProperty); }
-            set { SetValue(CheckBoxBackgroundUncheckedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundUncheckedDisabledProperty =
-            DependencyProperty.Register("CheckBoxBackgroundUncheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundChecked
-        {
-            get { return (object)GetValue(CheckBoxBackgroundCheckedProperty); }
-            set { SetValue(CheckBoxBackgroundCheckedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundCheckedProperty =
-            DependencyProperty.Register("CheckBoxBackgroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundCheckedPointerOver
-        {
-            get { return (object)GetValue(CheckBoxBackgroundCheckedPointerOverProperty); }
-            set { SetValue(CheckBoxBackgroundCheckedPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundCheckedPointerOverProperty =
-            DependencyProperty.Register("CheckBoxBackgroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundCheckedPressed
-        {
-            get { return (object)GetValue(CheckBoxBackgroundCheckedPressedProperty); }
-            set { SetValue(CheckBoxBackgroundCheckedPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundCheckedPressedProperty =
-            DependencyProperty.Register("CheckBoxBackgroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundCheckedDisabled
-        {
-            get { return (object)GetValue(CheckBoxBackgroundCheckedDisabledProperty); }
-            set { SetValue(CheckBoxBackgroundCheckedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundCheckedDisabledProperty =
-            DependencyProperty.Register("CheckBoxBackgroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundIndeterminate
-        {
-            get { return (object)GetValue(CheckBoxBackgroundIndeterminateProperty); }
-            set { SetValue(CheckBoxBackgroundIndeterminateProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundIndeterminateProperty =
-            DependencyProperty.Register("CheckBoxBackgroundIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundIndeterminatePointerOver
-        {
-            get { return (object)GetValue(CheckBoxBackgroundIndeterminatePointerOverProperty); }
-            set { SetValue(CheckBoxBackgroundIndeterminatePointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundIndeterminatePointerOverProperty =
-            DependencyProperty.Register("CheckBoxBackgroundIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundIndeterminatePressed
-        {
-            get { return (object)GetValue(CheckBoxBackgroundIndeterminatePressedProperty); }
-            set { SetValue(CheckBoxBackgroundIndeterminatePressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundIndeterminatePressedProperty =
-            DependencyProperty.Register("CheckBoxBackgroundIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBackgroundIndeterminateDisabled
-        {
-            get { return (object)GetValue(CheckBoxBackgroundIndeterminateDisabledProperty); }
-            set { SetValue(CheckBoxBackgroundIndeterminateDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBackgroundIndeterminateDisabledProperty =
-            DependencyProperty.Register("CheckBoxBackgroundIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushUnchecked
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushUncheckedProperty); }
-            set { SetValue(CheckBoxBorderBrushUncheckedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushUncheckedProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushUnchecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushUncheckedPointerOver
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushUncheckedPointerOverProperty); }
-            set { SetValue(CheckBoxBorderBrushUncheckedPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushUncheckedPointerOverProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushUncheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushUncheckedPressed
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushUncheckedPressedProperty); }
-            set { SetValue(CheckBoxBorderBrushUncheckedPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushUncheckedPressedProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushUncheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushUncheckedDisabled
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushUncheckedDisabledProperty); }
-            set { SetValue(CheckBoxBorderBrushUncheckedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushUncheckedDisabledProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushUncheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushChecked
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushCheckedProperty); }
-            set { SetValue(CheckBoxBorderBrushCheckedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushCheckedProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushCheckedPointerOver
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushCheckedPointerOverProperty); }
-            set { SetValue(CheckBoxBorderBrushCheckedPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushCheckedPointerOverProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushCheckedPressed
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushCheckedPressedProperty); }
-            set { SetValue(CheckBoxBorderBrushCheckedPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushCheckedPressedProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushCheckedDisabled
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushCheckedDisabledProperty); }
-            set { SetValue(CheckBoxBorderBrushCheckedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushCheckedDisabledProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushIndeterminate
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushIndeterminateProperty); }
-            set { SetValue(CheckBoxBorderBrushIndeterminateProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushIndeterminateProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushIndeterminatePointerOver
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushIndeterminatePointerOverProperty); }
-            set { SetValue(CheckBoxBorderBrushIndeterminatePointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushIndeterminatePointerOverProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushIndeterminatePressed
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushIndeterminatePressedProperty); }
-            set { SetValue(CheckBoxBorderBrushIndeterminatePressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushIndeterminatePressedProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxBorderBrushIndeterminateDisabled
-        {
-            get { return (object)GetValue(CheckBoxBorderBrushIndeterminateDisabledProperty); }
-            set { SetValue(CheckBoxBorderBrushIndeterminateDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxBorderBrushIndeterminateDisabledProperty =
-            DependencyProperty.Register("CheckBoxBorderBrushIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeUnchecked
         {
             get { return (object)GetValue(CheckBoxCheckBackgroundStrokeUncheckedProperty); }
@@ -1464,22 +1422,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty CheckBoxCheckBackgroundStrokeIndeterminateDisabledProperty =
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxCheckBackgroundFillUnchecked
-        {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillUncheckedProperty); }
-            set { SetValue(CheckBoxCheckBackgroundFillUncheckedProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxCheckBackgroundFillUncheckedProperty =
-            DependencyProperty.Register("CheckBoxCheckBackgroundFillUnchecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxCheckBackgroundFillUncheckedPointerOver
-        {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillUncheckedPointerOverProperty); }
-            set { SetValue(CheckBoxCheckBackgroundFillUncheckedPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxCheckBackgroundFillUncheckedPointerOverProperty =
-            DependencyProperty.Register("CheckBoxCheckBackgroundFillUncheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillUncheckedPressed
         {
             get { return (object)GetValue(CheckBoxCheckBackgroundFillUncheckedPressedProperty); }
@@ -1488,14 +1430,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty CheckBoxCheckBackgroundFillUncheckedPressedProperty =
             DependencyProperty.Register("CheckBoxCheckBackgroundFillUncheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxCheckBackgroundFillUncheckedDisabled
-        {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillUncheckedDisabledProperty); }
-            set { SetValue(CheckBoxCheckBackgroundFillUncheckedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxCheckBackgroundFillUncheckedDisabledProperty =
-            DependencyProperty.Register("CheckBoxCheckBackgroundFillUncheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillChecked
         {
             get { return (object)GetValue(CheckBoxCheckBackgroundFillCheckedProperty); }
@@ -1520,14 +1454,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty CheckBoxCheckBackgroundFillCheckedPressedProperty =
             DependencyProperty.Register("CheckBoxCheckBackgroundFillCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxCheckBackgroundFillCheckedDisabled
-        {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillCheckedDisabledProperty); }
-            set { SetValue(CheckBoxCheckBackgroundFillCheckedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxCheckBackgroundFillCheckedDisabledProperty =
-            DependencyProperty.Register("CheckBoxCheckBackgroundFillCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillIndeterminate
         {
             get { return (object)GetValue(CheckBoxCheckBackgroundFillIndeterminateProperty); }
@@ -1552,14 +1478,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty CheckBoxCheckBackgroundFillIndeterminatePressedProperty =
             DependencyProperty.Register("CheckBoxCheckBackgroundFillIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CheckBoxCheckBackgroundFillIndeterminateDisabled
-        {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillIndeterminateDisabledProperty); }
-            set { SetValue(CheckBoxCheckBackgroundFillIndeterminateDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty CheckBoxCheckBackgroundFillIndeterminateDisabledProperty =
-            DependencyProperty.Register("CheckBoxCheckBackgroundFillIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundUnchecked
         {
             get { return (object)GetValue(CheckBoxCheckGlyphForegroundUncheckedProperty); }
@@ -1720,38 +1638,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty HyperlinkButtonBackgroundDisabledProperty =
             DependencyProperty.Register("HyperlinkButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object HyperlinkButtonBorderBrush
-        {
-            get { return (object)GetValue(HyperlinkButtonBorderBrushProperty); }
-            set { SetValue(HyperlinkButtonBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty HyperlinkButtonBorderBrushProperty =
-            DependencyProperty.Register("HyperlinkButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object HyperlinkButtonBorderBrushPointerOver
-        {
-            get { return (object)GetValue(HyperlinkButtonBorderBrushPointerOverProperty); }
-            set { SetValue(HyperlinkButtonBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty HyperlinkButtonBorderBrushPointerOverProperty =
-            DependencyProperty.Register("HyperlinkButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object HyperlinkButtonBorderBrushPressed
-        {
-            get { return (object)GetValue(HyperlinkButtonBorderBrushPressedProperty); }
-            set { SetValue(HyperlinkButtonBorderBrushPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty HyperlinkButtonBorderBrushPressedProperty =
-            DependencyProperty.Register("HyperlinkButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object HyperlinkButtonBorderBrushDisabled
-        {
-            get { return (object)GetValue(HyperlinkButtonBorderBrushDisabledProperty); }
-            set { SetValue(HyperlinkButtonBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty HyperlinkButtonBorderBrushDisabledProperty =
-            DependencyProperty.Register("HyperlinkButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBackground
         {
             get { return (object)GetValue(RepeatButtonBackgroundProperty); }
@@ -1880,54 +1766,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ToggleSwitchHeaderForegroundDisabledProperty =
             DependencyProperty.Register("ToggleSwitchHeaderForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleSwitchContainerBackground
-        {
-            get { return (object)GetValue(ToggleSwitchContainerBackgroundProperty); }
-            set { SetValue(ToggleSwitchContainerBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleSwitchContainerBackgroundProperty =
-            DependencyProperty.Register("ToggleSwitchContainerBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleSwitchContainerBackgroundPointerOver
-        {
-            get { return (object)GetValue(ToggleSwitchContainerBackgroundPointerOverProperty); }
-            set { SetValue(ToggleSwitchContainerBackgroundPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleSwitchContainerBackgroundPointerOverProperty =
-            DependencyProperty.Register("ToggleSwitchContainerBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleSwitchContainerBackgroundPressed
-        {
-            get { return (object)GetValue(ToggleSwitchContainerBackgroundPressedProperty); }
-            set { SetValue(ToggleSwitchContainerBackgroundPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleSwitchContainerBackgroundPressedProperty =
-            DependencyProperty.Register("ToggleSwitchContainerBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleSwitchContainerBackgroundDisabled
-        {
-            get { return (object)GetValue(ToggleSwitchContainerBackgroundDisabledProperty); }
-            set { SetValue(ToggleSwitchContainerBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleSwitchContainerBackgroundDisabledProperty =
-            DependencyProperty.Register("ToggleSwitchContainerBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleSwitchFillOff
-        {
-            get { return (object)GetValue(ToggleSwitchFillOffProperty); }
-            set { SetValue(ToggleSwitchFillOffProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleSwitchFillOffProperty =
-            DependencyProperty.Register("ToggleSwitchFillOff", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleSwitchFillOffPointerOver
-        {
-            get { return (object)GetValue(ToggleSwitchFillOffPointerOverProperty); }
-            set { SetValue(ToggleSwitchFillOffPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleSwitchFillOffPointerOverProperty =
-            DependencyProperty.Register("ToggleSwitchFillOffPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchFillOffPressed
         {
             get { return (object)GetValue(ToggleSwitchFillOffPressedProperty); }
@@ -1936,14 +1774,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ToggleSwitchFillOffPressedProperty =
             DependencyProperty.Register("ToggleSwitchFillOffPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleSwitchFillOffDisabled
-        {
-            get { return (object)GetValue(ToggleSwitchFillOffDisabledProperty); }
-            set { SetValue(ToggleSwitchFillOffDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleSwitchFillOffDisabledProperty =
-            DependencyProperty.Register("ToggleSwitchFillOffDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOff
         {
             get { return (object)GetValue(ToggleSwitchStrokeOffProperty); }
@@ -2392,14 +2222,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ToggleButtonBorderBrushCheckedPointerOverProperty =
             DependencyProperty.Register("ToggleButtonBorderBrushCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleButtonBorderBrushCheckedPressed
-        {
-            get { return (object)GetValue(ToggleButtonBorderBrushCheckedPressedProperty); }
-            set { SetValue(ToggleButtonBorderBrushCheckedPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleButtonBorderBrushCheckedPressedProperty =
-            DependencyProperty.Register("ToggleButtonBorderBrushCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushCheckedDisabled
         {
             get { return (object)GetValue(ToggleButtonBorderBrushCheckedDisabledProperty); }
@@ -2440,70 +2262,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ToggleButtonBorderBrushIndeterminateDisabledProperty =
             DependencyProperty.Register("ToggleButtonBorderBrushIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarBackground
-        {
-            get { return (object)GetValue(ScrollBarBackgroundProperty); }
-            set { SetValue(ScrollBarBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarBackgroundProperty =
-            DependencyProperty.Register("ScrollBarBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarBackgroundPointerOver
-        {
-            get { return (object)GetValue(ScrollBarBackgroundPointerOverProperty); }
-            set { SetValue(ScrollBarBackgroundPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarBackgroundPointerOverProperty =
-            DependencyProperty.Register("ScrollBarBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarBackgroundDisabled
-        {
-            get { return (object)GetValue(ScrollBarBackgroundDisabledProperty); }
-            set { SetValue(ScrollBarBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarBackgroundDisabledProperty =
-            DependencyProperty.Register("ScrollBarBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarForeground
-        {
-            get { return (object)GetValue(ScrollBarForegroundProperty); }
-            set { SetValue(ScrollBarForegroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarForegroundProperty =
-            DependencyProperty.Register("ScrollBarForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarBorderBrush
-        {
-            get { return (object)GetValue(ScrollBarBorderBrushProperty); }
-            set { SetValue(ScrollBarBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarBorderBrushProperty =
-            DependencyProperty.Register("ScrollBarBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarBorderBrushPointerOver
-        {
-            get { return (object)GetValue(ScrollBarBorderBrushPointerOverProperty); }
-            set { SetValue(ScrollBarBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarBorderBrushPointerOverProperty =
-            DependencyProperty.Register("ScrollBarBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarBorderBrushDisabled
-        {
-            get { return (object)GetValue(ScrollBarBorderBrushDisabledProperty); }
-            set { SetValue(ScrollBarBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarBorderBrushDisabledProperty =
-            DependencyProperty.Register("ScrollBarBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarButtonBackground
-        {
-            get { return (object)GetValue(ScrollBarButtonBackgroundProperty); }
-            set { SetValue(ScrollBarButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarButtonBackgroundProperty =
-            DependencyProperty.Register("ScrollBarButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarButtonBackgroundPointerOver
         {
             get { return (object)GetValue(ScrollBarButtonBackgroundPointerOverProperty); }
@@ -2520,46 +2278,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ScrollBarButtonBackgroundPressedProperty =
             DependencyProperty.Register("ScrollBarButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarButtonBackgroundDisabled
-        {
-            get { return (object)GetValue(ScrollBarButtonBackgroundDisabledProperty); }
-            set { SetValue(ScrollBarButtonBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarButtonBackgroundDisabledProperty =
-            DependencyProperty.Register("ScrollBarButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarButtonBorderBrush
-        {
-            get { return (object)GetValue(ScrollBarButtonBorderBrushProperty); }
-            set { SetValue(ScrollBarButtonBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarButtonBorderBrushProperty =
-            DependencyProperty.Register("ScrollBarButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarButtonBorderBrushPointerOver
-        {
-            get { return (object)GetValue(ScrollBarButtonBorderBrushPointerOverProperty); }
-            set { SetValue(ScrollBarButtonBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarButtonBorderBrushPointerOverProperty =
-            DependencyProperty.Register("ScrollBarButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarButtonBorderBrushPressed
-        {
-            get { return (object)GetValue(ScrollBarButtonBorderBrushPressedProperty); }
-            set { SetValue(ScrollBarButtonBorderBrushPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarButtonBorderBrushPressedProperty =
-            DependencyProperty.Register("ScrollBarButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ScrollBarButtonBorderBrushDisabled
-        {
-            get { return (object)GetValue(ScrollBarButtonBorderBrushDisabledProperty); }
-            set { SetValue(ScrollBarButtonBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollBarButtonBorderBrushDisabledProperty =
-            DependencyProperty.Register("ScrollBarButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarButtonArrowForeground
         {
             get { return (object)GetValue(ScrollBarButtonArrowForegroundProperty); }
@@ -2680,14 +2398,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ScrollBarPanningThumbBackgroundColorProperty =
             DependencyProperty.Register("ScrollBarPanningThumbBackgroundColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ListViewHeaderItemBackground
-        {
-            get { return (object)GetValue(ListViewHeaderItemBackgroundProperty); }
-            set { SetValue(ListViewHeaderItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ListViewHeaderItemBackgroundProperty =
-            DependencyProperty.Register("ListViewHeaderItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewHeaderItemDividerStroke
         {
             get { return (object)GetValue(ListViewHeaderItemDividerStrokeProperty); }
@@ -2768,14 +2478,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ComboBoxItemForegroundSelectedDisabledProperty =
             DependencyProperty.Register("ComboBoxItemForegroundSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBackground
-        {
-            get { return (object)GetValue(ComboBoxItemBackgroundProperty); }
-            set { SetValue(ComboBoxItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBackgroundProperty =
-            DependencyProperty.Register("ComboBoxItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemBackgroundPressed
         {
             get { return (object)GetValue(ComboBoxItemBackgroundPressedProperty); }
@@ -2792,14 +2494,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ComboBoxItemBackgroundPointerOverProperty =
             DependencyProperty.Register("ComboBoxItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBackgroundDisabled
-        {
-            get { return (object)GetValue(ComboBoxItemBackgroundDisabledProperty); }
-            set { SetValue(ComboBoxItemBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBackgroundDisabledProperty =
-            DependencyProperty.Register("ComboBoxItemBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemBackgroundSelected
         {
             get { return (object)GetValue(ComboBoxItemBackgroundSelectedProperty); }
@@ -2832,86 +2526,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ComboBoxItemBackgroundSelectedPointerOverProperty =
             DependencyProperty.Register("ComboBoxItemBackgroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBackgroundSelectedDisabled
-        {
-            get { return (object)GetValue(ComboBoxItemBackgroundSelectedDisabledProperty); }
-            set { SetValue(ComboBoxItemBackgroundSelectedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBackgroundSelectedDisabledProperty =
-            DependencyProperty.Register("ComboBoxItemBackgroundSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrush
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushProperty); }
-            set { SetValue(ComboBoxItemBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrushPressed
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushPressedProperty); }
-            set { SetValue(ComboBoxItemBorderBrushPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushPressedProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrushPointerOver
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushPointerOverProperty); }
-            set { SetValue(ComboBoxItemBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushPointerOverProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrushDisabled
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushDisabledProperty); }
-            set { SetValue(ComboBoxItemBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushDisabledProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrushSelected
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushSelectedProperty); }
-            set { SetValue(ComboBoxItemBorderBrushSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushSelectedProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrushSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrushSelectedUnfocused
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushSelectedUnfocusedProperty); }
-            set { SetValue(ComboBoxItemBorderBrushSelectedUnfocusedProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushSelectedUnfocusedProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrushSelectedUnfocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrushSelectedPressed
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushSelectedPressedProperty); }
-            set { SetValue(ComboBoxItemBorderBrushSelectedPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushSelectedPressedProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrushSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrushSelectedPointerOver
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushSelectedPointerOverProperty); }
-            set { SetValue(ComboBoxItemBorderBrushSelectedPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushSelectedPointerOverProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrushSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ComboBoxItemBorderBrushSelectedDisabled
-        {
-            get { return (object)GetValue(ComboBoxItemBorderBrushSelectedDisabledProperty); }
-            set { SetValue(ComboBoxItemBorderBrushSelectedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ComboBoxItemBorderBrushSelectedDisabledProperty =
-            DependencyProperty.Register("ComboBoxItemBorderBrushSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBackground
         {
             get { return (object)GetValue(ComboBoxBackgroundProperty); }
@@ -3152,14 +2766,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AppBarSeparatorForegroundProperty =
             DependencyProperty.Register("AppBarSeparatorForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarEllipsisButtonBackground
-        {
-            get { return (object)GetValue(AppBarEllipsisButtonBackgroundProperty); }
-            set { SetValue(AppBarEllipsisButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarEllipsisButtonBackgroundProperty =
-            DependencyProperty.Register("AppBarEllipsisButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarEllipsisButtonBackgroundPointerOver
         {
             get { return (object)GetValue(AppBarEllipsisButtonBackgroundPointerOverProperty); }
@@ -3176,14 +2782,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AppBarEllipsisButtonBackgroundPressedProperty =
             DependencyProperty.Register("AppBarEllipsisButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarEllipsisButtonBackgroundDisabled
-        {
-            get { return (object)GetValue(AppBarEllipsisButtonBackgroundDisabledProperty); }
-            set { SetValue(AppBarEllipsisButtonBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarEllipsisButtonBackgroundDisabledProperty =
-            DependencyProperty.Register("AppBarEllipsisButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarEllipsisButtonForeground
         {
             get { return (object)GetValue(AppBarEllipsisButtonForegroundProperty); }
@@ -3216,38 +2814,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AppBarEllipsisButtonForegroundDisabledProperty =
             DependencyProperty.Register("AppBarEllipsisButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarEllipsisButtonBorderBrush
-        {
-            get { return (object)GetValue(AppBarEllipsisButtonBorderBrushProperty); }
-            set { SetValue(AppBarEllipsisButtonBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarEllipsisButtonBorderBrushProperty =
-            DependencyProperty.Register("AppBarEllipsisButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarEllipsisButtonBorderBrushPointerOver
-        {
-            get { return (object)GetValue(AppBarEllipsisButtonBorderBrushPointerOverProperty); }
-            set { SetValue(AppBarEllipsisButtonBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarEllipsisButtonBorderBrushPointerOverProperty =
-            DependencyProperty.Register("AppBarEllipsisButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarEllipsisButtonBorderBrushPressed
-        {
-            get { return (object)GetValue(AppBarEllipsisButtonBorderBrushPressedProperty); }
-            set { SetValue(AppBarEllipsisButtonBorderBrushPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarEllipsisButtonBorderBrushPressedProperty =
-            DependencyProperty.Register("AppBarEllipsisButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarEllipsisButtonBorderBrushDisabled
-        {
-            get { return (object)GetValue(AppBarEllipsisButtonBorderBrushDisabledProperty); }
-            set { SetValue(AppBarEllipsisButtonBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarEllipsisButtonBorderBrushDisabledProperty =
-            DependencyProperty.Register("AppBarEllipsisButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarBackground
         {
             get { return (object)GetValue(AppBarBackgroundProperty); }
@@ -3696,14 +3262,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty CalendarViewWeekDayForegroundDisabledProperty =
             DependencyProperty.Register("CalendarViewWeekDayForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CalendarViewNavigationButtonBackground
-        {
-            get { return (object)GetValue(CalendarViewNavigationButtonBackgroundProperty); }
-            set { SetValue(CalendarViewNavigationButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty CalendarViewNavigationButtonBackgroundProperty =
-            DependencyProperty.Register("CalendarViewNavigationButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewNavigationButtonForegroundPointerOver
         {
             get { return (object)GetValue(CalendarViewNavigationButtonForegroundPointerOverProperty); }
@@ -3736,14 +3294,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty CalendarViewNavigationButtonBorderBrushPointerOverProperty =
             DependencyProperty.Register("CalendarViewNavigationButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CalendarViewNavigationButtonBorderBrush
-        {
-            get { return (object)GetValue(CalendarViewNavigationButtonBorderBrushProperty); }
-            set { SetValue(CalendarViewNavigationButtonBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty CalendarViewNavigationButtonBorderBrushProperty =
-            DependencyProperty.Register("CalendarViewNavigationButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HubForeground
         {
             get { return (object)GetValue(HubForegroundProperty); }
@@ -3872,22 +3422,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty FlipViewNextPreviousButtonBorderBrushPressedProperty =
             DependencyProperty.Register("FlipViewNextPreviousButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object FlipViewItemBackground
-        {
-            get { return (object)GetValue(FlipViewItemBackgroundProperty); }
-            set { SetValue(FlipViewItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty FlipViewItemBackgroundProperty =
-            DependencyProperty.Register("FlipViewItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object DateTimePickerFlyoutButtonBackground
-        {
-            get { return (object)GetValue(DateTimePickerFlyoutButtonBackgroundProperty); }
-            set { SetValue(DateTimePickerFlyoutButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty DateTimePickerFlyoutButtonBackgroundProperty =
-            DependencyProperty.Register("DateTimePickerFlyoutButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DateTimePickerFlyoutButtonBackgroundPointerOver
         {
             get { return (object)GetValue(DateTimePickerFlyoutButtonBackgroundPointerOverProperty); }
@@ -4504,22 +4038,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty TextControlSelectionHighlightColorProperty =
             DependencyProperty.Register("TextControlSelectionHighlightColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TextControlButtonBackground
-        {
-            get { return (object)GetValue(TextControlButtonBackgroundProperty); }
-            set { SetValue(TextControlButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextControlButtonBackgroundProperty =
-            DependencyProperty.Register("TextControlButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TextControlButtonBackgroundPointerOver
-        {
-            get { return (object)GetValue(TextControlButtonBackgroundPointerOverProperty); }
-            set { SetValue(TextControlButtonBackgroundPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextControlButtonBackgroundPointerOverProperty =
-            DependencyProperty.Register("TextControlButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlButtonBackgroundPressed
         {
             get { return (object)GetValue(TextControlButtonBackgroundPressedProperty); }
@@ -4528,30 +4046,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty TextControlButtonBackgroundPressedProperty =
             DependencyProperty.Register("TextControlButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TextControlButtonBorderBrush
-        {
-            get { return (object)GetValue(TextControlButtonBorderBrushProperty); }
-            set { SetValue(TextControlButtonBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextControlButtonBorderBrushProperty =
-            DependencyProperty.Register("TextControlButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TextControlButtonBorderBrushPointerOver
-        {
-            get { return (object)GetValue(TextControlButtonBorderBrushPointerOverProperty); }
-            set { SetValue(TextControlButtonBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextControlButtonBorderBrushPointerOverProperty =
-            DependencyProperty.Register("TextControlButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TextControlButtonBorderBrushPressed
-        {
-            get { return (object)GetValue(TextControlButtonBorderBrushPressedProperty); }
-            set { SetValue(TextControlButtonBorderBrushPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextControlButtonBorderBrushPressedProperty =
-            DependencyProperty.Register("TextControlButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlButtonForeground
         {
             get { return (object)GetValue(TextControlButtonForegroundProperty); }
@@ -4616,14 +4110,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty FlyoutBorderThemeBrushProperty =
             DependencyProperty.Register("FlyoutBorderThemeBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleMenuFlyoutItemBackground
-        {
-            get { return (object)GetValue(ToggleMenuFlyoutItemBackgroundProperty); }
-            set { SetValue(ToggleMenuFlyoutItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleMenuFlyoutItemBackgroundProperty =
-            DependencyProperty.Register("ToggleMenuFlyoutItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemBackgroundPointerOver
         {
             get { return (object)GetValue(ToggleMenuFlyoutItemBackgroundPointerOverProperty); }
@@ -4640,14 +4126,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ToggleMenuFlyoutItemBackgroundPressedProperty =
             DependencyProperty.Register("ToggleMenuFlyoutItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ToggleMenuFlyoutItemBackgroundDisabled
-        {
-            get { return (object)GetValue(ToggleMenuFlyoutItemBackgroundDisabledProperty); }
-            set { SetValue(ToggleMenuFlyoutItemBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty ToggleMenuFlyoutItemBackgroundDisabledProperty =
-            DependencyProperty.Register("ToggleMenuFlyoutItemBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemForeground
         {
             get { return (object)GetValue(ToggleMenuFlyoutItemForegroundProperty); }
@@ -4744,22 +4222,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ToggleMenuFlyoutItemCheckGlyphForegroundDisabledProperty =
             DependencyProperty.Register("ToggleMenuFlyoutItemCheckGlyphForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object PivotBackground
-        {
-            get { return (object)GetValue(PivotBackgroundProperty); }
-            set { SetValue(PivotBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty PivotBackgroundProperty =
-            DependencyProperty.Register("PivotBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object PivotHeaderBackground
-        {
-            get { return (object)GetValue(PivotHeaderBackgroundProperty); }
-            set { SetValue(PivotHeaderBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty PivotHeaderBackgroundProperty =
-            DependencyProperty.Register("PivotHeaderBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonBackground
         {
             get { return (object)GetValue(PivotNextButtonBackgroundProperty); }
@@ -4904,22 +4366,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty PivotPreviousButtonForegroundPressedProperty =
             DependencyProperty.Register("PivotPreviousButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object PivotItemBackground
-        {
-            get { return (object)GetValue(PivotItemBackgroundProperty); }
-            set { SetValue(PivotItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty PivotItemBackgroundProperty =
-            DependencyProperty.Register("PivotItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object PivotHeaderItemBackgroundUnselected
-        {
-            get { return (object)GetValue(PivotHeaderItemBackgroundUnselectedProperty); }
-            set { SetValue(PivotHeaderItemBackgroundUnselectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty PivotHeaderItemBackgroundUnselectedProperty =
-            DependencyProperty.Register("PivotHeaderItemBackgroundUnselected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemBackgroundUnselectedPointerOver
         {
             get { return (object)GetValue(PivotHeaderItemBackgroundUnselectedPointerOverProperty); }
@@ -4960,14 +4406,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty PivotHeaderItemBackgroundSelectedPressedProperty =
             DependencyProperty.Register("PivotHeaderItemBackgroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object PivotHeaderItemBackgroundDisabled
-        {
-            get { return (object)GetValue(PivotHeaderItemBackgroundDisabledProperty); }
-            set { SetValue(PivotHeaderItemBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty PivotHeaderItemBackgroundDisabledProperty =
-            DependencyProperty.Register("PivotHeaderItemBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemForegroundUnselected
         {
             get { return (object)GetValue(PivotHeaderItemForegroundUnselectedProperty); }
@@ -5040,14 +4478,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty PivotHeaderItemSelectedPipeFillProperty =
             DependencyProperty.Register("PivotHeaderItemSelectedPipeFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object GridViewHeaderItemBackground
-        {
-            get { return (object)GetValue(GridViewHeaderItemBackgroundProperty); }
-            set { SetValue(GridViewHeaderItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty GridViewHeaderItemBackgroundProperty =
-            DependencyProperty.Register("GridViewHeaderItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewHeaderItemDividerStroke
         {
             get { return (object)GetValue(GridViewHeaderItemDividerStrokeProperty); }
@@ -5056,14 +4486,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty GridViewHeaderItemDividerStrokeProperty =
             DependencyProperty.Register("GridViewHeaderItemDividerStroke", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object GridViewItemBackground
-        {
-            get { return (object)GetValue(GridViewItemBackgroundProperty); }
-            set { SetValue(GridViewItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty GridViewItemBackgroundProperty =
-            DependencyProperty.Register("GridViewItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemBackgroundPointerOver
         {
             get { return (object)GetValue(GridViewItemBackgroundPointerOverProperty); }
@@ -5176,14 +4598,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty GridViewItemCheckBoxBrushProperty =
             DependencyProperty.Register("GridViewItemCheckBoxBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object GridViewItemDragBackground
-        {
-            get { return (object)GetValue(GridViewItemDragBackgroundProperty); }
-            set { SetValue(GridViewItemDragBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty GridViewItemDragBackgroundProperty =
-            DependencyProperty.Register("GridViewItemDragBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemDragForeground
         {
             get { return (object)GetValue(GridViewItemDragForegroundProperty); }
@@ -5352,14 +4766,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty MenuFlyoutPresenterBorderBrushProperty =
             DependencyProperty.Register("MenuFlyoutPresenterBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object MenuFlyoutItemBackground
-        {
-            get { return (object)GetValue(MenuFlyoutItemBackgroundProperty); }
-            set { SetValue(MenuFlyoutItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty MenuFlyoutItemBackgroundProperty =
-            DependencyProperty.Register("MenuFlyoutItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemBackgroundPointerOver
         {
             get { return (object)GetValue(MenuFlyoutItemBackgroundPointerOverProperty); }
@@ -5376,14 +4782,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty MenuFlyoutItemBackgroundPressedProperty =
             DependencyProperty.Register("MenuFlyoutItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object MenuFlyoutItemBackgroundDisabled
-        {
-            get { return (object)GetValue(MenuFlyoutItemBackgroundDisabledProperty); }
-            set { SetValue(MenuFlyoutItemBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty MenuFlyoutItemBackgroundDisabledProperty =
-            DependencyProperty.Register("MenuFlyoutItemBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemForeground
         {
             get { return (object)GetValue(MenuFlyoutItemForegroundProperty); }
@@ -5416,14 +4814,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty MenuFlyoutItemForegroundDisabledProperty =
             DependencyProperty.Register("MenuFlyoutItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object MenuFlyoutSubItemBackground
-        {
-            get { return (object)GetValue(MenuFlyoutSubItemBackgroundProperty); }
-            set { SetValue(MenuFlyoutSubItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty MenuFlyoutSubItemBackgroundProperty =
-            DependencyProperty.Register("MenuFlyoutSubItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemBackgroundPointerOver
         {
             get { return (object)GetValue(MenuFlyoutSubItemBackgroundPointerOverProperty); }
@@ -5448,14 +4838,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty MenuFlyoutSubItemBackgroundSubMenuOpenedProperty =
             DependencyProperty.Register("MenuFlyoutSubItemBackgroundSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object MenuFlyoutSubItemBackgroundDisabled
-        {
-            get { return (object)GetValue(MenuFlyoutSubItemBackgroundDisabledProperty); }
-            set { SetValue(MenuFlyoutSubItemBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty MenuFlyoutSubItemBackgroundDisabledProperty =
-            DependencyProperty.Register("MenuFlyoutSubItemBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemForeground
         {
             get { return (object)GetValue(MenuFlyoutSubItemForegroundProperty); }
@@ -5704,30 +5086,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty NavigationViewItemForegroundSelectedDisabledProperty =
             DependencyProperty.Register("NavigationViewItemForegroundSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object NavigationViewItemBorderBrushDisabled
-        {
-            get { return (object)GetValue(NavigationViewItemBorderBrushDisabledProperty); }
-            set { SetValue(NavigationViewItemBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty NavigationViewItemBorderBrushDisabledProperty =
-            DependencyProperty.Register("NavigationViewItemBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object NavigationViewItemBorderBrushCheckedDisabled
-        {
-            get { return (object)GetValue(NavigationViewItemBorderBrushCheckedDisabledProperty); }
-            set { SetValue(NavigationViewItemBorderBrushCheckedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty NavigationViewItemBorderBrushCheckedDisabledProperty =
-            DependencyProperty.Register("NavigationViewItemBorderBrushCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object NavigationViewItemBorderBrushSelectedDisabled
-        {
-            get { return (object)GetValue(NavigationViewItemBorderBrushSelectedDisabledProperty); }
-            set { SetValue(NavigationViewItemBorderBrushSelectedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty NavigationViewItemBorderBrushSelectedDisabledProperty =
-            DependencyProperty.Register("NavigationViewItemBorderBrushSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewSelectionIndicatorForeground
         {
             get { return (object)GetValue(NavigationViewSelectionIndicatorForegroundProperty); }
@@ -5776,38 +5134,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty TopNavigationViewItemForegroundDisabledProperty =
             DependencyProperty.Register("TopNavigationViewItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TopNavigationViewItemBackgroundPointerOver
-        {
-            get { return (object)GetValue(TopNavigationViewItemBackgroundPointerOverProperty); }
-            set { SetValue(TopNavigationViewItemBackgroundPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty TopNavigationViewItemBackgroundPointerOverProperty =
-            DependencyProperty.Register("TopNavigationViewItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TopNavigationViewItemBackgroundPressed
-        {
-            get { return (object)GetValue(TopNavigationViewItemBackgroundPressedProperty); }
-            set { SetValue(TopNavigationViewItemBackgroundPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty TopNavigationViewItemBackgroundPressedProperty =
-            DependencyProperty.Register("TopNavigationViewItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TopNavigationViewItemBackgroundSelected
-        {
-            get { return (object)GetValue(TopNavigationViewItemBackgroundSelectedProperty); }
-            set { SetValue(TopNavigationViewItemBackgroundSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty TopNavigationViewItemBackgroundSelectedProperty =
-            DependencyProperty.Register("TopNavigationViewItemBackgroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object NavigationViewBackButtonBackground
-        {
-            get { return (object)GetValue(NavigationViewBackButtonBackgroundProperty); }
-            set { SetValue(NavigationViewBackButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty NavigationViewBackButtonBackgroundProperty =
-            DependencyProperty.Register("NavigationViewBackButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ColorPickerSliderThumbBackground
         {
             get { return (object)GetValue(ColorPickerSliderThumbBackgroundProperty); }
@@ -5848,22 +5174,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ColorPickerSliderTrackFillDisabledProperty =
             DependencyProperty.Register("ColorPickerSliderTrackFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object MenuBarBackground
-        {
-            get { return (object)GetValue(MenuBarBackgroundProperty); }
-            set { SetValue(MenuBarBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty MenuBarBackgroundProperty =
-            DependencyProperty.Register("MenuBarBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object MenuBarItemBackground
-        {
-            get { return (object)GetValue(MenuBarItemBackgroundProperty); }
-            set { SetValue(MenuBarItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty MenuBarItemBackgroundProperty =
-            DependencyProperty.Register("MenuBarItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuBarItemBackgroundPointerOver
         {
             get { return (object)GetValue(MenuBarItemBackgroundPointerOverProperty); }
@@ -5920,14 +5230,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty MenuBarItemBorderBrushSelectedProperty =
             DependencyProperty.Register("MenuBarItemBorderBrushSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarButtonBackground
-        {
-            get { return (object)GetValue(AppBarButtonBackgroundProperty); }
-            set { SetValue(AppBarButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarButtonBackgroundProperty =
-            DependencyProperty.Register("AppBarButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonBackgroundPointerOver
         {
             get { return (object)GetValue(AppBarButtonBackgroundPointerOverProperty); }
@@ -5944,14 +5246,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AppBarButtonBackgroundPressedProperty =
             DependencyProperty.Register("AppBarButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarButtonBackgroundDisabled
-        {
-            get { return (object)GetValue(AppBarButtonBackgroundDisabledProperty); }
-            set { SetValue(AppBarButtonBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarButtonBackgroundDisabledProperty =
-            DependencyProperty.Register("AppBarButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonForeground
         {
             get { return (object)GetValue(AppBarButtonForegroundProperty); }
@@ -5984,54 +5278,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AppBarButtonForegroundDisabledProperty =
             DependencyProperty.Register("AppBarButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarButtonBorderBrush
-        {
-            get { return (object)GetValue(AppBarButtonBorderBrushProperty); }
-            set { SetValue(AppBarButtonBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarButtonBorderBrushProperty =
-            DependencyProperty.Register("AppBarButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarButtonBorderBrushPointerOver
-        {
-            get { return (object)GetValue(AppBarButtonBorderBrushPointerOverProperty); }
-            set { SetValue(AppBarButtonBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarButtonBorderBrushPointerOverProperty =
-            DependencyProperty.Register("AppBarButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarButtonBorderBrushPressed
-        {
-            get { return (object)GetValue(AppBarButtonBorderBrushPressedProperty); }
-            set { SetValue(AppBarButtonBorderBrushPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarButtonBorderBrushPressedProperty =
-            DependencyProperty.Register("AppBarButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarButtonBorderBrushDisabled
-        {
-            get { return (object)GetValue(AppBarButtonBorderBrushDisabledProperty); }
-            set { SetValue(AppBarButtonBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarButtonBorderBrushDisabledProperty =
-            DependencyProperty.Register("AppBarButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBackground
-        {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundProperty); }
-            set { SetValue(AppBarToggleButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBackgroundProperty =
-            DependencyProperty.Register("AppBarToggleButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBackgroundDisabled
-        {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundDisabledProperty); }
-            set { SetValue(AppBarToggleButtonBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBackgroundDisabledProperty =
-            DependencyProperty.Register("AppBarToggleButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundChecked
         {
             get { return (object)GetValue(AppBarToggleButtonBackgroundCheckedProperty); }
@@ -6064,14 +5310,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AppBarToggleButtonBackgroundCheckedDisabledProperty =
             DependencyProperty.Register("AppBarToggleButtonBackgroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBackgroundHighLightOverlay
-        {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundHighLightOverlayProperty); }
-            set { SetValue(AppBarToggleButtonBackgroundHighLightOverlayProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBackgroundHighLightOverlayProperty =
-            DependencyProperty.Register("AppBarToggleButtonBackgroundHighLightOverlay", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundHighLightOverlayPointerOver
         {
             get { return (object)GetValue(AppBarToggleButtonBackgroundHighLightOverlayPointerOverProperty); }
@@ -6168,70 +5406,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AppBarToggleButtonForegroundCheckedDisabledProperty =
             DependencyProperty.Register("AppBarToggleButtonForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBorderBrush
-        {
-            get { return (object)GetValue(AppBarToggleButtonBorderBrushProperty); }
-            set { SetValue(AppBarToggleButtonBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBorderBrushProperty =
-            DependencyProperty.Register("AppBarToggleButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBorderBrushPointerOver
-        {
-            get { return (object)GetValue(AppBarToggleButtonBorderBrushPointerOverProperty); }
-            set { SetValue(AppBarToggleButtonBorderBrushPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBorderBrushPointerOverProperty =
-            DependencyProperty.Register("AppBarToggleButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBorderBrushPressed
-        {
-            get { return (object)GetValue(AppBarToggleButtonBorderBrushPressedProperty); }
-            set { SetValue(AppBarToggleButtonBorderBrushPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBorderBrushPressedProperty =
-            DependencyProperty.Register("AppBarToggleButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBorderBrushDisabled
-        {
-            get { return (object)GetValue(AppBarToggleButtonBorderBrushDisabledProperty); }
-            set { SetValue(AppBarToggleButtonBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBorderBrushDisabledProperty =
-            DependencyProperty.Register("AppBarToggleButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBorderBrushChecked
-        {
-            get { return (object)GetValue(AppBarToggleButtonBorderBrushCheckedProperty); }
-            set { SetValue(AppBarToggleButtonBorderBrushCheckedProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBorderBrushCheckedProperty =
-            DependencyProperty.Register("AppBarToggleButtonBorderBrushChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBorderBrushCheckedPointerOver
-        {
-            get { return (object)GetValue(AppBarToggleButtonBorderBrushCheckedPointerOverProperty); }
-            set { SetValue(AppBarToggleButtonBorderBrushCheckedPointerOverProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBorderBrushCheckedPointerOverProperty =
-            DependencyProperty.Register("AppBarToggleButtonBorderBrushCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBorderBrushCheckedPressed
-        {
-            get { return (object)GetValue(AppBarToggleButtonBorderBrushCheckedPressedProperty); }
-            set { SetValue(AppBarToggleButtonBorderBrushCheckedPressedProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBorderBrushCheckedPressedProperty =
-            DependencyProperty.Register("AppBarToggleButtonBorderBrushCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarToggleButtonBorderBrushCheckedDisabled
-        {
-            get { return (object)GetValue(AppBarToggleButtonBorderBrushCheckedDisabledProperty); }
-            set { SetValue(AppBarToggleButtonBorderBrushCheckedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarToggleButtonBorderBrushCheckedDisabledProperty =
-            DependencyProperty.Register("AppBarToggleButtonBorderBrushCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForeground
         {
             get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundProperty); }
@@ -6400,14 +5574,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty CommandBarLightDismissOverlayBackgroundProperty =
             DependencyProperty.Register("CommandBarLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ListViewItemBackground
-        {
-            get { return (object)GetValue(ListViewItemBackgroundProperty); }
-            set { SetValue(ListViewItemBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ListViewItemBackgroundProperty =
-            DependencyProperty.Register("ListViewItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemBackgroundPointerOver
         {
             get { return (object)GetValue(ListViewItemBackgroundPointerOverProperty); }
@@ -6520,14 +5686,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty ListViewItemCheckBoxBrushProperty =
             DependencyProperty.Register("ListViewItemCheckBoxBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object ListViewItemDragBackground
-        {
-            get { return (object)GetValue(ListViewItemDragBackgroundProperty); }
-            set { SetValue(ListViewItemDragBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ListViewItemDragBackgroundProperty =
-            DependencyProperty.Register("ListViewItemDragBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemDragForeground
         {
             get { return (object)GetValue(ListViewItemDragForegroundProperty); }
@@ -6568,14 +5726,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AutoSuggestBoxLightDismissOverlayBackgroundProperty =
             DependencyProperty.Register("AutoSuggestBoxLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TreeViewItemBackgroundDisabled
-        {
-            get { return (object)GetValue(TreeViewItemBackgroundDisabledProperty); }
-            set { SetValue(TreeViewItemBackgroundDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty TreeViewItemBackgroundDisabledProperty =
-            DependencyProperty.Register("TreeViewItemBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemBackgroundSelectedDisabled
         {
             get { return (object)GetValue(TreeViewItemBackgroundSelectedDisabledProperty); }
@@ -6648,46 +5798,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty TreeViewItemForegroundSelectedDisabledProperty =
             DependencyProperty.Register("TreeViewItemForegroundSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TreeViewItemBorderBrush
-        {
-            get { return (object)GetValue(TreeViewItemBorderBrushProperty); }
-            set { SetValue(TreeViewItemBorderBrushProperty, value); }
-        }
-
-        public static readonly DependencyProperty TreeViewItemBorderBrushProperty =
-            DependencyProperty.Register("TreeViewItemBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TreeViewItemBorderBrushDisabled
-        {
-            get { return (object)GetValue(TreeViewItemBorderBrushDisabledProperty); }
-            set { SetValue(TreeViewItemBorderBrushDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty TreeViewItemBorderBrushDisabledProperty =
-            DependencyProperty.Register("TreeViewItemBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TreeViewItemBorderBrushSelected
-        {
-            get { return (object)GetValue(TreeViewItemBorderBrushSelectedProperty); }
-            set { SetValue(TreeViewItemBorderBrushSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty TreeViewItemBorderBrushSelectedProperty =
-            DependencyProperty.Register("TreeViewItemBorderBrushSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TreeViewItemBorderBrushSelectedDisabled
-        {
-            get { return (object)GetValue(TreeViewItemBorderBrushSelectedDisabledProperty); }
-            set { SetValue(TreeViewItemBorderBrushSelectedDisabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty TreeViewItemBorderBrushSelectedDisabledProperty =
-            DependencyProperty.Register("TreeViewItemBorderBrushSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object TreeViewItemCheckBoxBackgroundSelected
-        {
-            get { return (object)GetValue(TreeViewItemCheckBoxBackgroundSelectedProperty); }
-            set { SetValue(TreeViewItemCheckBoxBackgroundSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty TreeViewItemCheckBoxBackgroundSelectedProperty =
-            DependencyProperty.Register("TreeViewItemCheckBoxBackgroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemCheckBoxBorderSelected
         {
             get { return (object)GetValue(TreeViewItemCheckBoxBorderSelectedProperty); }
@@ -6952,14 +6062,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty SplitButtonBorderBrushCheckedDisabledProperty =
             DependencyProperty.Register("SplitButtonBorderBrushCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object CommandBarFlyoutButtonBackground
-        {
-            get { return (object)GetValue(CommandBarFlyoutButtonBackgroundProperty); }
-            set { SetValue(CommandBarFlyoutButtonBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty CommandBarFlyoutButtonBackgroundProperty =
-            DependencyProperty.Register("CommandBarFlyoutButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemKeyboardAcceleratorTextForeground
         {
             get { return (object)GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundProperty); }
@@ -7112,14 +6214,6 @@ namespace Unigram.Views.Settings
 
         public static readonly DependencyProperty AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpenedProperty =
             DependencyProperty.Register("AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
-        public object AppBarButtonBorderBrushSubMenuOpened
-        {
-            get { return (object)GetValue(AppBarButtonBorderBrushSubMenuOpenedProperty); }
-            set { SetValue(AppBarButtonBorderBrushSubMenuOpenedProperty, value); }
-        }
-
-        public static readonly DependencyProperty AppBarButtonBorderBrushSubMenuOpenedProperty =
-            DependencyProperty.Register("AppBarButtonBorderBrushSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonSubItemChevronForeground
         {
             get { return (object)GetValue(AppBarButtonSubItemChevronForegroundProperty); }

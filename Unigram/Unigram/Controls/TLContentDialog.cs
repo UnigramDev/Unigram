@@ -23,7 +23,7 @@ namespace Unigram.Controls
                 var app = App.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 var frame = element.RequestedTheme;
 
-                if (app != frame && !SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
+                if (app != frame && SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
                 {
                     RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
                 }

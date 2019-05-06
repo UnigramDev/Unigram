@@ -248,6 +248,7 @@
 
             <ResourceDictionary.MergedDictionaries>
                 <themes:Fluent/>
+                <ResourceDictionary Source="ms-appx:///Themes/ThemeGreen.xaml"/>
                 <common:Theme/>
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <themes:Messages/>

@@ -146,7 +146,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light);
+                return Settings.Appearance.RequestedTheme.HasFlag(ElementTheme.Light);
             }
         }
 
@@ -232,7 +232,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else
                 {
-                    return SettingsService.Current.Appearance.RequestedTheme == x.Parent;
+                    return SettingsService.Current.Appearance.RequestedTheme == (x.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
                 }
             });
 

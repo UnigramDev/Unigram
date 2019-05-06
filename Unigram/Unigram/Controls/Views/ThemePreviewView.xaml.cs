@@ -35,8 +35,8 @@ namespace Unigram.Controls.Views
 
             _path = path;
 
-            var flags = TelegramTheme.Default | TelegramTheme.Brand;
-            var theme = SettingsService.Current.Appearance.GetElementTheme();
+            var flags = TelegramTheme.Light;
+            var theme = SettingsService.Current.Appearance.RequestedTheme;
             var mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(flags);
 
             var lines = System.IO.File.ReadAllLines(path);
@@ -93,10 +93,7 @@ namespace Unigram.Controls.Views
                 }
             }
 
-            LayoutRoot.Resources.ThemeDictionaries.Clear();
-            LayoutRoot.Resources.MergedDictionaries.Clear();
-            LayoutRoot.Resources.MergedDictionaries.Add(dict);
-
+            LayoutRoot.Resources.ThemeDictionaries[flags.HasFlag(TelegramTheme.Light) ? "Light" : "Dark"] = dict;
             LayoutRoot.RequestedTheme = flags.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark;
 
             Chat1.Mockup(new ChatTypePrivate(), 0, "Eva Summer", string.Empty, "Reminds me of a Chinese proverb...", false, 0, false, true, DateTime.Now);

@@ -39,7 +39,7 @@ namespace Unigram.Views.Host
 
         public RootPage(NavigationService service)
         {
-            if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
+            if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
             {
                 RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             }
