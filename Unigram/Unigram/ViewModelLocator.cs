@@ -243,6 +243,7 @@ namespace Unigram
                 builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
                 builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsWallpapersViewModel>();//.SingleInstance();
+                builder.RegisterType<SettingsEmojiViewModel>();
                 builder.RegisterType<SettingsVoIPViewModel>();
                 builder.RegisterType<WallpaperViewModel>();
                 builder.RegisterType<AttachedStickersViewModel>();
