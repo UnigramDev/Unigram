@@ -128,14 +128,61 @@
                 </ListView.ItemsPanel>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="Margin" Value="0"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                        <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}" />
+                        <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}" />
+                        <Setter Property="TabNavigation" Value="Local" />
+                        <Setter Property="IsHoldingEnabled" Value="True" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
                         <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
                         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                        <Setter Property="MinWidth" Value="0"/>
-                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="MinWidth" Value="0" />
+                        <Setter Property="MinHeight" Value="0" />
+                        <Setter Property="AllowDrop" Value="False" />
+                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                        <Setter Property="FocusVisualMargin" Value="0" />
+                        <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
+                        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                        <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
+                        <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                           Control.IsTemplateFocusTarget="True"
+                                                           FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                                           FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                                           FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                                           FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                                           FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                                           SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                                           CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                                                           CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                                           DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                                           DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                                           FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                                           FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                                           PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                                           PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                                           PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                                           SelectedBackground="{ThemeResource ListViewItemBackground}"
+                                                           SelectedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                           SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                                           PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                                           SelectedPressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                                           DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                           DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                           ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                           ContentMargin="{TemplateBinding Padding}"
+                                                           CheckMode="{ThemeResource ListViewItemCheckMode}" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
