@@ -236,7 +236,8 @@ namespace Unigram.Controls.Cells
                 var link = links[i];
                 if (MessageHelper.TryCreateUri(link, out Uri uri))
                 {
-                    var paragraph = new TextBlock { TextTrimming = TextTrimming.CharacterEllipsis };
+                    var textBlock = new RichTextBlock { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, IsTextSelectionEnabled = false };
+                    var paragraph = new Paragraph();
                     var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
 
                     if (link == webPageLink && webPageCached)
@@ -254,13 +255,23 @@ namespace Unigram.Controls.Cells
                     hyperlink.Inlines.Add(new Run { Text = link });
                     paragraph.Inlines.Add(hyperlink);
                     paragraph.Inlines.Add(new Run { Text = " " });
+                    textBlock.Blocks.Add(paragraph);
+                    textBlock.ContextRequested += Paragraph_ContextRequested;
+
+                    MessageHelper.SetEntity(hyperlink, link);
+
+                    ToolTipService.SetToolTip(hyperlink, link);
+                    Grid.SetRow(textBlock, i);
 
                     LinksPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-                    LinksPanel.Children.Add(paragraph);
-
-                    Grid.SetRow(paragraph, i);
+                    LinksPanel.Children.Add(textBlock);
                 }
             }
+        }
+
+        private void Paragraph_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            MessageHelper.Hyperlink_ContextRequested(sender, args);
         }
 
         private void InstantView_Click(Hyperlink sender, string link)
