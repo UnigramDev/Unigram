@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Gallery;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -164,10 +165,10 @@ namespace Unigram.Controls.Messages.Content
                 else
                 {
                     //Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play;
-                    Button.SetGlyph(message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
+                    Button.SetGlyph(message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? Icons.Confirm : Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
                     Button.Progress = 1;
 
-                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || message.SendingState is MessageSendingStatePending)
+                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))
                     {
                         Button.Opacity = 1;
                     }
@@ -271,6 +272,7 @@ namespace Unigram.Controls.Messages.Content
                 if (_message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0)
                 {
                     _message.Delegate.OpenUrl(text.WebPage.Url, false);
+                    //await EmbedUrlView.GetForCurrentView().ShowAsync(_message, text.WebPage, () => this);
                 }
                 else
                 {

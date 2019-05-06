@@ -175,7 +175,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
-                    Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play;
+                    Button.Glyph = message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? Icons.Confirm : Icons.Play;
                     Button.Progress = 0;
                     Overlay.Progress = 1;
                     Overlay.ProgressVisibility = Visibility.Collapsed;
