@@ -102,7 +102,7 @@ namespace Unigram.Common
             {
                 if (list.Entries.Count >= list.MaximumItemsAllowed - 10)
                 {
-                    var first = list.Entries.FirstOrDefault();
+                    var first = list.Entries.LastOrDefault();
                     if (first.Token != null)
                     {
                         list.Remove(first.Token);
@@ -110,7 +110,7 @@ namespace Unigram.Common
                 }
             }
             catch { }
-            
+
             try
             {
                 return list.Add(item);
