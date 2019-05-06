@@ -257,7 +257,7 @@ namespace Unigram.ViewModels.Chats
             }
             else
             {
-                ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), true));
+                ProtoService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.Revoke));
             }
 
             if (dialog.BanUser && sameUser)
