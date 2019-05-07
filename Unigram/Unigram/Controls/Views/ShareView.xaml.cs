@@ -617,5 +617,34 @@ namespace Unigram.Controls.Views
             DialogsSearchListView.Width = e.NewSize.Width;
             DialogsSearchListView.Height = e.NewSize.Height;
         }
+
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+        }
+
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+        }
+
+        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        {
+            var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            {
+                return;
+            }
+
+            var focused = FocusManager.GetFocusedElement();
+            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            {
+                Search_Click(null, null);
+                SearchField.Text = character;
+                SearchField.SelectionStart = character.Length;
+
+                args.Handled = true;
+            }
+        }
     }
 }

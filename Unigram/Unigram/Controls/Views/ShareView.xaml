@@ -15,7 +15,9 @@
     PrimaryButtonText="OK"
     PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
     IsPrimaryButtonEnabled="False"
-    SecondaryButtonText="Cancel">
+    SecondaryButtonText="Cancel"
+    Opened="OnOpened"
+    Closing="OnClosing">
 
     <ContentControl.Resources>
         <CollectionViewSource x:Name="ChatsResults" Source="{x:Bind ViewModel.Search, Mode=OneWay}" IsSourceGrouped="True"/>
