@@ -41,6 +41,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -805,6 +806,40 @@ namespace Unigram.Views
                 if (ViewModel.ComposerHeader != null && ViewModel.ComposerHeader.ReplyToMessage != null)
                 {
                     ViewModel.ClearReplyCommand.Execute(null);
+                    args.Handled = true;
+                }
+            }
+            else if ((args.VirtualKey == Windows.System.VirtualKey.PageUp || args.VirtualKey == Windows.System.VirtualKey.Up) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
+            {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
+                var peer = new ListViewAutomationPeer(Messages);
+
+                var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
+                if (provider.VerticallyScrollable)
+                {
+                    provider.Scroll(ScrollAmount.NoAmount, args.VirtualKey == Windows.System.VirtualKey.Up ? ScrollAmount.SmallDecrement : ScrollAmount.LargeDecrement);
+                    args.Handled = true;
+                }
+            }
+            else if ((args.VirtualKey == Windows.System.VirtualKey.PageDown || args.VirtualKey == Windows.System.VirtualKey.Down) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == TextField.Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
+            {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
+                var peer = new ListViewAutomationPeer(Messages);
+
+                var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
+                if (provider.VerticallyScrollable)
+                {
+                    provider.Scroll(ScrollAmount.NoAmount, args.VirtualKey == Windows.System.VirtualKey.Down ? ScrollAmount.SmallIncrement : ScrollAmount.LargeIncrement);
                     args.Handled = true;
                 }
             }
