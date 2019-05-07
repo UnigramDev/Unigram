@@ -647,6 +647,7 @@ namespace Unigram.Views
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
             Window.Current.SizeChanged += Window_SizeChanged;
 
+            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
             OnSizeChanged(Window.Current.Bounds.Width);
@@ -672,6 +673,7 @@ namespace Unigram.Views
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
             Window.Current.SizeChanged -= Window_SizeChanged;
 
+            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
@@ -721,6 +723,31 @@ namespace Unigram.Views
         {
             AttachRecent.MaxWidth = AttachRestriction.MaxWidth = width < 500 ? width - 16 - 2 : 360;
             AttachRecent.MinWidth = AttachRestriction.MinWidth = width < 500 ? width - 16 - 2 : 360;
+        }
+
+
+        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        {
+            var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            {
+                return;
+            }
+
+            var focused = FocusManager.GetFocusedElement();
+            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
+                TextField.Focus(FocusState.Keyboard);
+                TextField.InsertText(character, false, false);
+
+                args.Handled = true;
+            }
         }
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
