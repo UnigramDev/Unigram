@@ -17,6 +17,14 @@ namespace Unigram.Services.Settings
         Dark = 1 << 2,
     }
 
+    [Flags]
+    public enum TelegramAppTheme
+    {
+        Default = 1 << 0,
+        Light = 1 << 1,
+        Dark = 1 << 2,
+    }
+
     public class AppearanceSettings : SettingsServiceBase
     {
         private Timer _nightModeTimer;
@@ -173,14 +181,35 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_requestedTheme == null)
-                    _requestedTheme = (ElementTheme)GetValueOrDefault(_container, "Theme", (int)ElementTheme.Default);
+                {
+                    var theme = (TelegramAppTheme)GetValueOrDefault(_container, "Theme", (int)TelegramAppTheme.Default);
+                    if (theme.HasFlag(TelegramAppTheme.Default))
+                    {
+                        _requestedTheme = ElementTheme.Default;
+                    }
+                    else if (theme.HasFlag(TelegramAppTheme.Dark))
+                    {
+                        _requestedTheme = ElementTheme.Dark;
+                    }
+                    else
+                    {
+                        _requestedTheme = ElementTheme.Light;
+                    }
+                }
 
                 return _requestedTheme ?? ElementTheme.Default;
             }
             set
             {
                 _requestedTheme = value;
-                AddOrUpdateValue(_container, "Theme", (int)value);
+
+                var theme = value == ElementTheme.Default
+                    ? TelegramAppTheme.Default
+                    : value == ElementTheme.Dark
+                    ? TelegramAppTheme.Dark
+                    : TelegramAppTheme.Light;
+
+                AddOrUpdateValue(_container, "Theme", (int)theme);
             }
         }
 
