@@ -188,6 +188,8 @@ namespace Unigram.Views
             _textShadowVisual = DropShadowEx.Attach(Separator, 20, 0.25f);
             _textShadowVisual.IsVisible = false;
 
+            TextField.Language = Native.NativeUtils.GetCurrentCulture();
+
             return;
 
             if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Input.FocusManager", "GettingFocus"))
