@@ -902,7 +902,7 @@ namespace Unigram.Controls.Messages
 
             if (AdjustEmojis(span, text))
             {
-                adjust = true;
+                adjust = message.ReplyToMessageId == 0;
             }
             else if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
