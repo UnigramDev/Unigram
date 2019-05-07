@@ -523,6 +523,7 @@ namespace Unigram.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Subscribe(this);
+            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
 
             OnStateChanged(null, null);
@@ -547,11 +548,42 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Unsubscribe(this);
+            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
 
             Bindings.StopTracking();
 
             _unloaded = true;
+        }
+
+        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        {
+            var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            {
+                return;
+            }
+
+            if (MasterDetail.NavigationService.Frame.Content is BlankPage == false)
+            {
+                return;
+            }
+
+            var focused = FocusManager.GetFocusedElement();
+            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
+                Search_Click(null, null);
+                SearchField.Text = character;
+                SearchField.SelectionStart = character.Length;
+
+                args.Handled = true;
+            }
         }
 
         private async void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
