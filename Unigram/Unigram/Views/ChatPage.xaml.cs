@@ -52,7 +52,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatPage : Page, INavigablePage, IDialogDelegate, IDisposable
+    public sealed partial class ChatPage : Page, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -725,6 +725,10 @@ namespace Unigram.Views
             AttachRecent.MinWidth = AttachRestriction.MinWidth = width < 500 ? width - 16 - 2 : 360;
         }
 
+        public void Search()
+        {
+            ViewModel.SearchCommand.Execute();
+        }
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
@@ -761,12 +765,7 @@ namespace Unigram.Views
             var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (args.VirtualKey == Windows.System.VirtualKey.Search || (args.VirtualKey == Windows.System.VirtualKey.F && ctrl && !alt && !shift))
-            {
-                ViewModel.SearchCommand.Execute();
-                args.Handled = true;
-            }
-            else if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
+            if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
             {
                 ViewModel.MessagesDeleteCommand.Execute();
                 args.Handled = true;

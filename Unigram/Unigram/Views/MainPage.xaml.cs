@@ -621,16 +621,17 @@ namespace Unigram.Views
             {
                 ChatsList.ScrollIntoView(ViewModel.Chats.Items.FirstOrDefault());
             }
-            else if (((args.VirtualKey == Windows.System.VirtualKey.E /*|| args.VirtualKey == Windows.System.VirtualKey.K*/) && ctrl && !alt && !shift) || args.VirtualKey == Windows.System.VirtualKey.Search)
+            else if (((args.VirtualKey == Windows.System.VirtualKey.E || args.VirtualKey == Windows.System.VirtualKey.F) && ctrl && !alt && !shift) || args.VirtualKey == Windows.System.VirtualKey.Search)
             {
-                MasterDetail.AllowCompact = false;
+                if (MasterDetail.NavigationService.Frame.Content is ISearchablePage child)
+                {
+                    child.Search();
+                }
+                else
+                {
+                    Search_Click(null, null);
+                }
 
-                Header.Visibility = Visibility.Visible;
-                MainHeader.Visibility = Visibility.Collapsed;
-                SearchField.Visibility = Visibility.Visible;
-                Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
-
-                SearchField.Focus(FocusState.Keyboard);
                 args.Handled = true;
             }
             else if ((args.VirtualKey == Windows.System.VirtualKey.Q || args.VirtualKey == Windows.System.VirtualKey.W) && ctrl && !alt && !shift)
