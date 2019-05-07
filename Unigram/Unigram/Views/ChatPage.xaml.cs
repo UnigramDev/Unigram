@@ -704,6 +704,13 @@ namespace Unigram.Views
             if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
             {
                 ViewVisibleMessages(false);
+
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
                 TextField.Focus(FocusState.Programmatic);
             }
         }
@@ -712,6 +719,12 @@ namespace Unigram.Views
         {
             if (e.Visible)
             {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
                 TextField.Focus(FocusState.Programmatic);
             }
         }
