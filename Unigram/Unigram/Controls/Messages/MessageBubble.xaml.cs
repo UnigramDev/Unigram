@@ -344,7 +344,7 @@ namespace Unigram.Controls.Messages
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(new Run { Text = title });
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
-                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
+                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
                 hyperlink.Click += (s, args) => FwdFrom_Click(message);
 
                 paragraph.Inlines.Add(hyperlink);
@@ -359,7 +359,7 @@ namespace Unigram.Controls.Messages
                 hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @"), FontWeight = FontWeights.Normal });
                 hyperlink.Inlines.Add(new Run { Text = viaBot.Username });
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
-                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
+                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
                 hyperlink.Click += (s, args) => ViaBot_Click(message);
 
                 if (paragraph.Inlines.Count > 0 && !forward)
@@ -861,7 +861,7 @@ namespace Unigram.Controls.Messages
 
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                     hyperlink.Inlines.Add(new Run { Text = data });
-                    hyperlink.Foreground = GetLinksBrush();
+                    hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
 
@@ -887,7 +887,7 @@ namespace Unigram.Controls.Messages
 
                     hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    hyperlink.Foreground = GetLinksBrush();
+                    hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
                     //hyperlink.Foreground = foreground;
                     span.Inlines.Add(hyperlink);
                 }
@@ -902,7 +902,8 @@ namespace Unigram.Controls.Messages
 
             if (AdjustEmojis(span, text))
             {
-                adjust = message.ReplyToMessageId == 0;
+                Message.FlowDirection = FlowDirection.LeftToRight;
+                adjust = message.ReplyToMessageId == 0 && message.Content is MessageText;
             }
             else if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
@@ -953,14 +954,14 @@ namespace Unigram.Controls.Messages
             return false;
         }
 
-        private Brush GetLinksBrush()
+        private Brush GetBrush(string key)
         {
-            if (Resources.TryGetValue("MessageForegroundLinkBrush", out object value))
+            if (Resources.TryGetValue(key, out object value))
             {
                 return value as SolidColorBrush;
             }
 
-            return App.Current.Resources["MessageForegroundLinkBrush"] as SolidColorBrush;
+            return App.Current.Resources[key] as SolidColorBrush;
         }
 
         private void Entity_Click(MessageViewModel message, TextEntityType type, string data)
