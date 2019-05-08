@@ -916,11 +916,11 @@
                                 </VisualState>
                             </VisualStateGroup>
                             <!-- FullWindow states -->
-                            <VisualStateGroup x:Name="FullWindowStates">
-                                <VisualState x:Name="NonFullWindowState" />
-                                <VisualState x:Name="FullWindowState">
+                            <VisualStateGroup x:Name="FullWindowStates2">
+                                <VisualState x:Name="NonFullWindowState2" />
+                                <VisualState x:Name="FullWindowState2">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FullWindowSymbol" Storyboard.TargetProperty="Symbol">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FullWindowSymbol2" Storyboard.TargetProperty="Symbol">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="BackToWindow" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1188,12 +1188,12 @@
                                                     <FontIcon Glyph="&#xEC15;"/>
                                                 </AppBarButton.Icon>
                                             </AppBarButton>-->
-                                            <AppBarButton x:Name="FullWindowButton"
+                                            <AppBarButton x:Name="FullButton"
                                                             Style="{StaticResource AppBarButtonStyle}"
                                                             MediaTransportControlsHelper.DropoutOrder="17"
                                                           Grid.Column="6">
                                                 <AppBarButton.Icon>
-                                                    <SymbolIcon x:Name="FullWindowSymbol" Symbol="FullScreen" />
+                                                    <SymbolIcon x:Name="FullWindowSymbol2" Symbol="FullScreen" />
                                                 </AppBarButton.Icon>
                                             </AppBarButton>
                                         </Grid>
