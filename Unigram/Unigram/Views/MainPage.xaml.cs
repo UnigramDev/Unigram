@@ -131,6 +131,18 @@ namespace Unigram.Views
             }
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+
+            //FocusManager.GettingFocus += (s, args) =>
+            // {
+            //     if (args.NewFocusedElement != null)
+            //     {
+            //         StatusLabel.Text = args.NewFocusedElement.GetType().FullName;
+            //     }
+            //     else
+            //     {
+            //         StatusLabel.Text = "None";
+            //     }
+            // };
         }
 
         ~MainPage()
@@ -623,7 +635,7 @@ namespace Unigram.Views
             }
             else if (((args.VirtualKey == Windows.System.VirtualKey.E || args.VirtualKey == Windows.System.VirtualKey.F) && ctrl && !alt && !shift) || args.VirtualKey == Windows.System.VirtualKey.Search)
             {
-                if (MasterDetail.NavigationService.Frame.Content is ISearchablePage child)
+                if (MasterDetail.NavigationService.Frame.Content is ISearchablePage child && args.VirtualKey != Windows.System.VirtualKey.E)
                 {
                     child.Search();
                 }
