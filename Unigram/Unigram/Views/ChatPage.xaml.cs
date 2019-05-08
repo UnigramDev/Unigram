@@ -66,6 +66,8 @@ namespace Unigram.Views
 
         private bool _myPeople;
 
+        private bool _selectionFromItemClick;
+
         private DispatcherTimer _stickersTimer;
         private Visual _stickersPanel;
         private bool _stickersOpen;
@@ -809,7 +811,7 @@ namespace Unigram.Views
                     args.Handled = true;
                 }
             }
-            else if ((args.VirtualKey == Windows.System.VirtualKey.PageUp || args.VirtualKey == Windows.System.VirtualKey.Up) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
+            else if ((args.VirtualKey == Windows.System.VirtualKey.PageUp) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
             {
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -817,16 +819,37 @@ namespace Unigram.Views
                     return;
                 }
 
-                var peer = new ListViewAutomationPeer(Messages);
-
-                var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
-                if (provider.VerticallyScrollable)
+                var focused = FocusManager.GetFocusedElement();
+                if (focused is Selector || focused is SelectorItem)
                 {
-                    provider.Scroll(ScrollAmount.NoAmount, args.VirtualKey == Windows.System.VirtualKey.Up ? ScrollAmount.SmallDecrement : ScrollAmount.LargeDecrement);
-                    args.Handled = true;
+                    return;
                 }
+
+                var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
+                if (panel == null)
+                {
+                    return;
+                }
+
+                SelectorItem target;
+                if (args.VirtualKey == Windows.System.VirtualKey.PageUp)
+                {
+                    target = Messages.ContainerFromIndex(panel.FirstVisibleIndex) as SelectorItem;
+                }
+                else
+                {
+                    target = Messages.ContainerFromIndex(panel.LastVisibleIndex) as SelectorItem;
+                }
+
+                if (target == null)
+                {
+                    return;
+                }
+
+                target.Focus(FocusState.Keyboard);
+                args.Handled = true;
             }
-            else if ((args.VirtualKey == Windows.System.VirtualKey.PageDown || args.VirtualKey == Windows.System.VirtualKey.Down) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == TextField.Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
+            else if ((args.VirtualKey == Windows.System.VirtualKey.PageDown || args.VirtualKey == Windows.System.VirtualKey.Down) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == TextField.Text?.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
             {
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -834,14 +857,35 @@ namespace Unigram.Views
                     return;
                 }
 
-                var peer = new ListViewAutomationPeer(Messages);
-
-                var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
-                if (provider.VerticallyScrollable)
+                var focused = FocusManager.GetFocusedElement();
+                if (focused is Selector || focused is SelectorItem)
                 {
-                    provider.Scroll(ScrollAmount.NoAmount, args.VirtualKey == Windows.System.VirtualKey.Down ? ScrollAmount.SmallIncrement : ScrollAmount.LargeIncrement);
-                    args.Handled = true;
+                    return;
                 }
+
+                var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
+                if (panel == null)
+                {
+                    return;
+                }
+
+                SelectorItem target;
+                if (args.VirtualKey == Windows.System.VirtualKey.PageUp)
+                {
+                    target = Messages.ContainerFromIndex(panel.FirstVisibleIndex) as SelectorItem;
+                }
+                else
+                {
+                    target = Messages.ContainerFromIndex(panel.LastVisibleIndex) as SelectorItem;
+                }
+
+                if (target == null)
+                {
+                    return;
+                }
+
+                target.Focus(FocusState.Keyboard);
+                args.Handled = true;
             }
         }
 
@@ -1567,6 +1611,11 @@ namespace Unigram.Views
             }
         }
 
+        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            _selectionFromItemClick = true;
+        }
+
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
@@ -1578,6 +1627,13 @@ namespace Unigram.Views
                 //    ViewModel.SelectionMode = ListViewSelectionMode.None;
                 //}
             }
+
+            if (_selectionFromItemClick && Messages.SelectedItems.Count < 1)
+            {
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
+            }
+
+            _selectionFromItemClick = false;
         }
 
         #region Context menu
@@ -2509,6 +2565,11 @@ namespace Unigram.Views
             {
                 return count > 0 ? count > 1 ? Strings.Resources.SendAsFiles : Strings.Resources.SendAsFile : Strings.Resources.ChatDocument;
             }
+        }
+
+        private bool ConvertClickEnabled(ListViewSelectionMode mode)
+        {
+            return mode == ListViewSelectionMode.Multiple;
         }
 
         #endregion

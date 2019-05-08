@@ -596,6 +596,8 @@
                                 ItemContainerTransitions="{x:Null}"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ShowsScrollingPlaceholders="False"
+                                IsItemClickEnabled="{x:Bind ConvertClickEnabled(ViewModel.SelectionMode), Mode=OneWay}"
+                                ItemClick="List_ItemClick"
                                 SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                                 SelectionChanged="List_SelectionChanged"
                                 ChoosingItemContainer="OnChoosingItemContainer"

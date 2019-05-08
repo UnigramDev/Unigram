@@ -227,6 +227,11 @@ namespace Unigram.Controls
             {
                 return;
             }
+            
+            if (SelectedItems.Count < 1)
+            {
+                SelectionMode = ListViewSelectionMode.None;
+            }
 
             e.Handled = handled;
         }
