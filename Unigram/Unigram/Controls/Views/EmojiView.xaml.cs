@@ -27,6 +27,8 @@ namespace Unigram.Controls.Views
         public event EventHandler Switch;
         public event ItemClickEventHandler ItemClick;
 
+        private bool _expanded;
+
         public EmojisView()
         {
             this.InitializeComponent();
@@ -37,10 +39,6 @@ namespace Unigram.Controls.Views
             {
                 shadow.Size = args.NewSize.ToVector2();
             };
-
-            EmojisViewSource.Source = Emoji.Items.ToArray();
-            Toolbar.ItemsSource = Emoji.Items.ToArray();
-            Toolbar.SelectedIndex = 0;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -58,21 +56,32 @@ namespace Unigram.Controls.Views
         {
             VisualStateManager.GoToState(this, widget ? "FilledState" : "NarrowState", false);
 
-            if (Toolbar.ItemsSource is EmojiGroup[] groups)
-            {
-                var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSetId, "microsoft");
+            var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSetId, "microsoft");
+            var tone = SettingsService.Current.Stickers.SkinTone;
 
-                if (groups.Length == Emoji.Items.Count && microsoft)
+            if (Toolbar.ItemsSource is List<EmojiGroup> groups)
+            {
+                if (groups.Count == Emoji.Items.Count && microsoft)
                 {
-                    EmojisViewSource.Source = Emoji.Items.Take(Emoji.Items.Count - 1).ToArray();
-                    Toolbar.ItemsSource = Emoji.Items.Take(Emoji.Items.Count - 1).ToArray();
+                    var items = Emoji.Get(tone, false);
+                    EmojisViewSource.Source = items;
+                    Toolbar.ItemsSource = items;
                 }
-                else if (groups.Length == Emoji.Items.Count - 1 && !microsoft)
+                else if (groups.Count == Emoji.Items.Count - 1 && !microsoft)
                 {
-                    EmojisViewSource.Source = Emoji.Items.ToArray();
-                    Toolbar.ItemsSource = Emoji.Items.ToArray();
+                    var items = Emoji.Get(tone, true);
+                    EmojisViewSource.Source = items;
+                    Toolbar.ItemsSource = items;
                 }
             }
+            else
+            {
+                var items = Emoji.Get(EmojiSkinTone.Default, !microsoft);
+                EmojisViewSource.Source = items;
+                Toolbar.ItemsSource = items;
+            }
+
+            UpdateSkinTone(tone, false, false);
         }
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -114,6 +123,107 @@ namespace Unigram.Controls.Views
         private void Switch_Click(object sender, RoutedEventArgs e)
         {
             Switch?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void SkinTone_Click(object sender, RoutedEventArgs e)
+        {
+            if (Grid.GetColumn(SkinFitz6) == 0)
+            {
+                UpdateSkinTone(SettingsService.Current.Stickers.SkinTone, true, true);
+                return;
+            }
+
+            var radio = sender as RadioButton;
+            if (radio.Content is int value && EmojisViewSource.Source is List<EmojiGroup> groups)
+            {
+                foreach (var group in groups)
+                {
+                    foreach (var item in group.Items.OfType<EmojiSkinData>())
+                    {
+                        item.SetValue((EmojiSkinTone)value);
+                    }
+                }
+
+                SettingsService.Current.Stickers.SkinTone = (EmojiSkinTone)value;
+                UpdateSkinTone((EmojiSkinTone)value, false, true);
+
+                return;
+                var items = Emoji.Get((EmojiSkinTone)value, true);
+
+                EmojisViewSource.Source = items;
+                Toolbar.ItemsSource = items;
+            }
+        }
+
+        private void UpdateSkinTone(EmojiSkinTone selected, bool expand, bool animated)
+        {
+            //VisualStateManager.GoToState(SkinDefault, "Normal", false);
+            //VisualStateManager.GoToState(SkinFitz12, "Normal", false);
+            //VisualStateManager.GoToState(SkinFitz3, "Normal", false);
+            //VisualStateManager.GoToState(SkinFitz4, "Normal", false);
+            //VisualStateManager.GoToState(SkinFitz5, "Normal", false);
+            //VisualStateManager.GoToState(SkinFitz6, "Normal", false);
+
+            Canvas.SetZIndex(SkinDefault, selected == EmojiSkinTone.Default ? 1 : 0);
+            Canvas.SetZIndex(SkinFitz12, selected == EmojiSkinTone.Fitz12 ? 1 : 0);
+            Canvas.SetZIndex(SkinFitz3, selected == EmojiSkinTone.Fitz3 ? 1 : 0);
+            Canvas.SetZIndex(SkinFitz4, selected == EmojiSkinTone.Fitz4 ? 1 : 0);
+            Canvas.SetZIndex(SkinFitz5, selected == EmojiSkinTone.Fitz5 ? 1 : 0);
+            Canvas.SetZIndex(SkinFitz6, selected == EmojiSkinTone.Fitz6 ? 1 : 0);
+
+            Grid.SetColumn(SkinDefault, expand ? 0 : 0);
+            Grid.SetColumn(SkinFitz12, expand ? 1 : 0);
+            Grid.SetColumn(SkinFitz3, expand ? 2 : 0);
+            Grid.SetColumn(SkinFitz4, expand ? 3 : 0);
+            Grid.SetColumn(SkinFitz5, expand ? 4 : 0);
+            Grid.SetColumn(SkinFitz6, expand ? 5 : 0);
+            Grid.SetColumn(Toolbar, expand ? 6 : 1);
+
+            SkinDefault.IsEnabled = expand || selected == EmojiSkinTone.Default;
+            SkinFitz12.IsEnabled = expand || selected == EmojiSkinTone.Fitz12;
+            SkinFitz3.IsEnabled = expand || selected == EmojiSkinTone.Fitz3;
+            SkinFitz4.IsEnabled = expand || selected == EmojiSkinTone.Fitz4;
+            SkinFitz5.IsEnabled = expand || selected == EmojiSkinTone.Fitz5;
+            SkinFitz6.IsEnabled = expand || selected == EmojiSkinTone.Fitz6;
+
+            SkinDefault.IsChecked = selected == EmojiSkinTone.Default;
+            SkinFitz12.IsChecked = selected == EmojiSkinTone.Fitz12;
+            SkinFitz3.IsChecked = selected == EmojiSkinTone.Fitz3;
+            SkinFitz4.IsChecked = selected == EmojiSkinTone.Fitz4;
+            SkinFitz5.IsChecked = selected == EmojiSkinTone.Fitz5;
+            SkinFitz6.IsChecked = selected == EmojiSkinTone.Fitz6;
+
+            if (_expanded == expand || !animated)
+            {
+                _expanded = expand;
+                return;
+            }
+
+            var elements = new UIElement[] { /*SkinDefault,*/ SkinFitz12, SkinFitz3, SkinFitz4, SkinFitz5, SkinFitz6, Toolbar };
+
+            for (int i = 0; i < elements.Length; i++)
+            {
+                var visual = ElementCompositionPreview.GetElementVisual(VisualTreeHelper.GetChild(elements[i], 0) as UIElement);
+                var anim = visual.Compositor.CreateScalarKeyFrameAnimation();
+                anim.InsertKeyFrame(0, expand ? i * -40 : i * 40);
+                anim.InsertKeyFrame(1, 0);
+
+                visual.StartAnimation("Offset.X", anim);
+            }
+
+            _expanded = expand;
+        }
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.Style = List.ItemContainerStyle;
+            }
+
+            args.ItemContainer.ContentTemplate = Resources[args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate"] as DataTemplate;
+            args.IsContainerPrepared = true;
         }
     }
 }

@@ -15,6 +15,71 @@
 
     <UserControl.Resources>
         <CollectionViewSource x:Name="EmojisViewSource" IsSourceGrouped="True" ItemsPath="Items"/>
+
+        <DataTemplate x:Key="EmojiTemplate" x:DataType="common:EmojiData">
+            <TextBlock x:Phase="0" Text="{x:Bind Value, Mode=OneWay}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="EmojiSkinTemplate" x:DataType="common:EmojiSkinData">
+            <TextBlock x:Phase="0" Text="{x:Bind Value, Mode=OneWay}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+        </DataTemplate>
+
+        <Style x:Key="SkinToneRadioButtonStyle" TargetType="ButtonBase">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Height" Value="{StaticResource AppBarThemeCompactHeight}" />
+            <Setter Property="Width" Value="{StaticResource AppBarThemeCompactHeight}" />
+            <Setter Property="MinHeight" Value="{StaticResource AppBarThemeCompactHeight}" />
+            <Setter Property="MinWidth" Value="{StaticResource AppBarThemeCompactHeight}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ButtonBase">
+                        <Grid x:Name="RootGrid" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border Background="White"
+                                    CornerRadius="10"
+                                    Width="20"
+                                    Height="20">
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="8"
+                                        Width="16"
+                                        Height="16"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -36,6 +101,7 @@
         <GridView x:Name="List"
                   ItemsSource="{x:Bind EmojisViewSource.View, Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
+                  ChoosingItemContainer="OnChoosingItemContainer"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
@@ -44,8 +110,8 @@
                 <common:FluidGridViewTrigger RowsOrColumns="7"/>
             </common:FluidGridView.Triggers>
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="x:String">
-                    <TextBlock x:Phase="0" Text="{x:Bind}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+                <DataTemplate x:DataType="common:EmojiData">
+                    <TextBlock x:Phase="0" Text="{x:Bind Value, Mode=OneWay}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
                 </DataTemplate>
             </GridView.ItemTemplate>
             <GridView.ItemContainerStyle>
@@ -110,98 +176,157 @@
         </GridView>
         <Grid x:Name="ToolbarContainer" Grid.Row="0">
             <Border x:Name="Separator"/>
-            <ListView x:Name="Toolbar"
-                            Height="{ThemeResource AppBarThemeCompactHeight}"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            IsItemClickEnabled="True"
-                            ItemClick="Toolbar_ItemClick"
-                            SelectionChanged="Toolbar_SelectionChanged"
-                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                            ScrollViewer.HorizontalScrollMode="Auto"
-                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                            ScrollViewer.VerticalScrollMode="Disabled"
-                            Grid.Row="0">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                        <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}" />
-                        <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}" />
-                        <Setter Property="TabNavigation" Value="Local" />
-                        <Setter Property="IsHoldingEnabled" Value="True" />
-                        <Setter Property="Padding" Value="0" />
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                        <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                        <Setter Property="MinWidth" Value="0" />
-                        <Setter Property="MinHeight" Value="0" />
-                        <Setter Property="AllowDrop" Value="False" />
-                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                        <Setter Property="FocusVisualMargin" Value="0" />
-                        <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
-                        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
-                        <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
-                        <Setter Property="FocusVisualSecondaryThickness" Value="1" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListViewItem">
-                                    <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                           Control.IsTemplateFocusTarget="True"
-                                                           FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                                           FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                                                           FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                                                           FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                                                           FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                                                           SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
-                                                           CheckBrush="{ThemeResource ListViewItemCheckBrush}"
-                                                           CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                                           DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                                           DragForeground="{ThemeResource ListViewItemDragForeground}"
-                                                           FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                                           FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                                           PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                                           PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                                           PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                                           SelectedBackground="{ThemeResource ListViewItemBackground}"
-                                                           SelectedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                                           SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                                           PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                                                           SelectedPressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                                                           DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                           DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                           ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                           ContentMargin="{TemplateBinding Padding}"
-                                                           CheckMode="{ThemeResource ListViewItemCheckMode}" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="common:EmojiGroup">
-                        <Border AutomationProperties.Name="{x:Bind Title}"
-                                ToolTipService.ToolTip="{x:Bind Title}"
-                                Background="Transparent">
-                            <TextBlock Text="{x:Bind Glyph}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       IsColorFontEnabled="False"
-                                       TextLineBounds="TrimToBaseline,TrimToCapHeight"/>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection/>
-                </ListView.ItemContainerTransitions>
-            </ListView>
+            <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                          VerticalScrollBarVisibility="Disabled"
+                          VerticalScrollMode="Disabled"
+                          HorizontalScrollBarVisibility="Auto"
+                          HorizontalScrollMode="Auto">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton x:Name="SkinDefault"
+                                 Click="SkinTone_Click"
+                                 GroupName="SkinTone"
+                                 Background="#ffc83d"
+                                 Style="{StaticResource SkinToneRadioButtonStyle}">
+                        <common:EmojiSkinTone>Default</common:EmojiSkinTone>
+                    </RadioButton>
+                    <RadioButton x:Name="SkinFitz12"
+                                 Click="SkinTone_Click"
+                                 GroupName="SkinTone"
+                                 Background="#f7d7c4"
+                                 Style="{StaticResource SkinToneRadioButtonStyle}">
+                        <common:EmojiSkinTone>Fitz12</common:EmojiSkinTone>
+                    </RadioButton>
+                    <RadioButton x:Name="SkinFitz3"
+                                 Click="SkinTone_Click"
+                                 GroupName="SkinTone"
+                                 Background="#d8b094"
+                                 Style="{StaticResource SkinToneRadioButtonStyle}">
+                        <common:EmojiSkinTone>Fitz3</common:EmojiSkinTone>
+                    </RadioButton>
+                    <RadioButton x:Name="SkinFitz4"
+                                 Click="SkinTone_Click"
+                                 GroupName="SkinTone"
+                                 Background="#bb9167"
+                                 Style="{StaticResource SkinToneRadioButtonStyle}">
+                        <common:EmojiSkinTone>Fitz4</common:EmojiSkinTone>
+                    </RadioButton>
+                    <RadioButton x:Name="SkinFitz5"
+                                 Click="SkinTone_Click"
+                                 GroupName="SkinTone"
+                                 Background="#8e562e"
+                                 Style="{StaticResource SkinToneRadioButtonStyle}">
+                        <common:EmojiSkinTone>Fitz5</common:EmojiSkinTone>
+                    </RadioButton>
+                    <RadioButton x:Name="SkinFitz6"
+                                 Click="SkinTone_Click"
+                                 GroupName="SkinTone"
+                                 Background="#613d30"
+                                 Style="{StaticResource SkinToneRadioButtonStyle}">
+                        <common:EmojiSkinTone>Fitz6</common:EmojiSkinTone>
+                    </RadioButton>
+                    <ListView x:Name="Toolbar"
+                              Style="{StaticResource StaticListViewStyle}"
+                              Height="{ThemeResource AppBarThemeCompactHeight}"
+                              IsItemClickEnabled="True"
+                              ItemClick="Toolbar_ItemClick"
+                              SelectionChanged="Toolbar_SelectionChanged"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollMode="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollMode="Disabled"
+                              Grid.Row="1">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                                <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}" />
+                                <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}" />
+                                <Setter Property="TabNavigation" Value="Local" />
+                                <Setter Property="IsHoldingEnabled" Value="True" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+                                <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+                                <Setter Property="MinWidth" Value="0" />
+                                <Setter Property="MinHeight" Value="0" />
+                                <Setter Property="AllowDrop" Value="False" />
+                                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                <Setter Property="FocusVisualMargin" Value="0" />
+                                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
+                                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
+                                <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                   Control.IsTemplateFocusTarget="True"
+                                                                   FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                                                   FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                                                   FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                                                   FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                                                   FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                                                   SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                                                   CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                                                                   CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                                                   DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                                                   DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                                                   FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                                                   FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                                                   PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                                                   PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                                                   PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                                                   SelectedBackground="{ThemeResource ListViewItemBackground}"
+                                                                   SelectedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                                   SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                                                   PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                                                   SelectedPressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                                                   DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                                   DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                                   ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                                   HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                   ContentMargin="{TemplateBinding Padding}"
+                                                                   CheckMode="{ThemeResource ListViewItemCheckMode}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="common:EmojiGroup">
+                                <Border AutomationProperties.Name="{x:Bind Title}"
+                                        ToolTipService.ToolTip="{x:Bind Title}"
+                                        Background="Transparent">
+                                    <TextBlock Text="{x:Bind Glyph}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               IsColorFontEnabled="False"
+                                               TextLineBounds="TrimToBaseline,TrimToCapHeight"/>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection/>
+                        </ListView.ItemContainerTransitions>
+                    </ListView>
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </UserControl>
