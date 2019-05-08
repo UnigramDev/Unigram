@@ -49,6 +49,7 @@
 
         <TextBlock x:Name="Text"
                    Style="{StaticResource BodyTextBlockStyle}"
+                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
                    VerticalAlignment="Top"
                    Margin="0,8,0,8"
                    Grid.Column="1"/>
