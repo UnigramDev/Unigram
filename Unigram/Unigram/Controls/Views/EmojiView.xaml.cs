@@ -76,7 +76,7 @@ namespace Unigram.Controls.Views
             }
             else
             {
-                var items = Emoji.Get(EmojiSkinTone.Default, !microsoft);
+                var items = Emoji.Get(tone, !microsoft);
                 EmojisViewSource.Source = items;
                 Toolbar.ItemsSource = items;
             }
