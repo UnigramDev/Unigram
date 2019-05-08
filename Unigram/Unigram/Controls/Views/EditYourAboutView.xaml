@@ -18,7 +18,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBox x:Name="FieldAbout" PlaceholderText="{CustomResource UserBio}" MaxLength="70" TextWrapping="Wrap" Margin="12,12,12,8"/>
+        <TextBox x:Name="FieldAbout" PlaceholderText="{CustomResource UserBio}" MaxLength="70" TextWrapping="Wrap" FontFamily="{ThemeResource EmojiThemeFontFamily}" Margin="12,12,12,8"/>
         <TextBlock Text="{CustomResource UserBioInfo}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
     </Grid>
 </ContentDialog>

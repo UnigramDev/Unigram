@@ -14,7 +14,7 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <TextBox x:Name="TextFirstName" TextChanged="OnTextChanged" PlaceholderText="{CustomResource FirstName}" Margin="12,12,12,12"/>
-        <TextBox x:Name="TextLastName" TextChanged="OnTextChanged" PlaceholderText="{CustomResource LastName}" Margin="12,0,12,12"/>
+        <TextBox x:Name="TextFirstName" TextChanged="OnTextChanged" PlaceholderText="{CustomResource FirstName}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Margin="12,12,12,12"/>
+        <TextBox x:Name="TextLastName" TextChanged="OnTextChanged" PlaceholderText="{CustomResource LastName}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Margin="12,0,12,12"/>
     </StackPanel>
 </ContentDialog>

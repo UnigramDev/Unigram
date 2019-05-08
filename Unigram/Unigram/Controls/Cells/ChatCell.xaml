@@ -189,6 +189,7 @@
         <TextBlock x:Name="TypingLabel"
                    Visibility="Collapsed"
                    Style="{StaticResource BodyTextBlockStyle}"
+                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
                    Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                    TextTrimming="CharacterEllipsis"
                    TextWrapping="NoWrap"
@@ -271,7 +272,7 @@
                    Grid.ColumnSpan="5"
                    Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
                    StrokeThickness="2"
-                   Margin="0,-8,-12,-8"
+                   Margin="0,-8,-12,0"
                    Visibility="Collapsed"/>
     </Grid>
 </UserControl>

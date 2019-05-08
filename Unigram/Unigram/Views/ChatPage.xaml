@@ -224,8 +224,8 @@
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8">
-                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource ServiceButtonStyle}">
-                    <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" Style="{StaticResource ServiceButtonStyle}">
+                    <TextBlock Foreground="White" TextAlignment="Center" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
@@ -235,8 +235,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <messages:MessageService Click="ServiceMessage_Click" Margin="0,4,0,6" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource ServiceButtonStyle}">
-                <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+            <messages:MessageService Click="ServiceMessage_Click" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
+                <TextBlock Foreground="White" TextAlignment="Center" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
             </messages:MessageService>
         </DataTemplate>
 
@@ -426,6 +426,7 @@
                                                        TextWrapping="NoWrap"
                                                        TextTrimming="CharacterEllipsis"
                                                        Foreground="{ThemeResource PageHeaderHighlightBrush}"
+                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"
                                                        VerticalAlignment="Top"/>
                                         </StackPanel>

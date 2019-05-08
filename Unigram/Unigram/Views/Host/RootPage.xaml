@@ -125,15 +125,18 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="NameLabel"
-                                    TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Bottom"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
                         <TextBlock x:Name="PhoneLabel"
-                                    VerticalAlignment="Top"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Grid.Row="1"
-                                    MaxLines="1"/>
+                                   VerticalAlignment="Top"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Grid.Row="1"
+                                   MaxLines="1"/>
                         <CheckBox x:Name="Expanded" MinWidth="0" IsEnabled="False" Style="{StaticResource NavigationViewExpanderStyle}" Grid.Column="1" Grid.RowSpan="2"/>
                     </Grid>
                 </Button>

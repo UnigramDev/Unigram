@@ -133,6 +133,7 @@
                 <TextBlock x:Name="Caption"
                            Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            TextTrimming="CharacterEllipsis"
                            MaxLines="5"
@@ -143,7 +144,7 @@
 
                 <Border x:Name="Details" Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2">
                     <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource BaseTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </Border>
