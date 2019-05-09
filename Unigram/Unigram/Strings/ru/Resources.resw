@@ -88,6 +88,12 @@
   <data name="AccActionPlay" xml:space="preserve">
     <value>Воспроизвести</value>
   </data>
+  <data name="AccActionRecordVideo" xml:space="preserve">
+    <value>Записать видео</value>
+  </data>
+  <data name="AccActionTakePicture" xml:space="preserve">
+    <value>Сделать снимок</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Соотношение сторон</value>
   </data>
@@ -184,6 +190,15 @@
   <data name="AccDescrMoreOptions" xml:space="preserve">
     <value>Дополнительные параметры</value>
   </data>
+  <data name="AccDescrMsgNotPlayed" xml:space="preserve">
+    <value>Не воспроизведено</value>
+  </data>
+  <data name="AccDescrMsgRead" xml:space="preserve">
+    <value>Прочитано</value>
+  </data>
+  <data name="AccDescrMsgUnread" xml:space="preserve">
+    <value>Не прочитано</value>
+  </data>
   <data name="AccDescrMusicInfo" xml:space="preserve">
     <value>{1}  {0}</value>
   </data>
@@ -243,6 +258,15 @@
   </data>
   <data name="AccDescrRotate" xml:space="preserve">
     <value>Повернуть</value>
+  </data>
+  <data name="AccDescrSearchByUser" xml:space="preserve">
+    <value>Фильтр по участнику</value>
+  </data>
+  <data name="AccDescrSearchNext" xml:space="preserve">
+    <value>Следующий результат поиска</value>
+  </data>
+  <data name="AccDescrSearchPrev" xml:space="preserve">
+    <value>Предыдущий результат поиска</value>
   </data>
   <data name="AccDescrSecretChat" xml:space="preserve">
     <value>Секретный чат</value>
@@ -571,6 +595,9 @@
   <data name="AddStickers" xml:space="preserve">
     <value>Добавить стикеры</value>
   </data>
+  <data name="AddStickersCount" xml:space="preserve">
+    <value>ДОБАВИТЬ {0}</value>
+  </data>
   <data name="AddStickersInstalled" xml:space="preserve">
     <value>Добавлены новые стикеры</value>
   </data>
@@ -748,6 +775,42 @@
   <data name="April" xml:space="preserve">
     <value>Апрель</value>
   </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Архивировать</value>
+  </data>
+  <data name="ArchiveHidden" xml:space="preserve">
+    <value>Архив скрыт.</value>
+  </data>
+  <data name="ArchiveHiddenInfo" xml:space="preserve">
+    <value>Потяните вниз, чтобы увидеть архив.</value>
+  </data>
+  <data name="ArchiveHintHeader1" xml:space="preserve">
+    <value>Это Ваш архив</value>
+  </data>
+  <data name="ArchiveHintHeader2" xml:space="preserve">
+    <value>Чаты без уведомлений</value>
+  </data>
+  <data name="ArchiveHintHeader3" xml:space="preserve">
+    <value>Закрепленные чаты</value>
+  </data>
+  <data name="ArchiveHintText1" xml:space="preserve">
+    <value>Чаты со включенными уведомлениями покидают архив, когда приходят новые сообщения.</value>
+  </data>
+  <data name="ArchiveHintText2" xml:space="preserve">
+    <value>Чаты с выключенными уведомлениями остаются в архиве, когда приходят новые сообщения.</value>
+  </data>
+  <data name="ArchiveHintText3" xml:space="preserve">
+    <value>Вы можете закрепить неограниченное количество чатов наверху архива.</value>
+  </data>
+  <data name="ArchivePinned" xml:space="preserve">
+    <value>Архив закреплен.</value>
+  </data>
+  <data name="ArchivePinnedInfo" xml:space="preserve">
+    <value>Смахните влево, чтобы скрыть архив.</value>
+  </data>
+  <data name="ArchivedChats" xml:space="preserve">
+    <value>Архив</value>
+  </data>
   <data name="ArchivedMasks" xml:space="preserve">
     <value>Архивные маски</value>
   </data>
@@ -796,8 +859,14 @@
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>Вы точно хотите очистить историю?</value>
   </data>
+  <data name="AreYouSureClearHistoryCacheFewChats" xml:space="preserve">
+    <value>Удалить из кэша все сообщения и материалы выбранных чатов?</value>
+  </data>
   <data name="AreYouSureClearHistoryChannel" xml:space="preserve">
     <value>Удалить из кэша текст и медиафайлы этого канала?</value>
+  </data>
+  <data name="AreYouSureClearHistoryFewChats" xml:space="preserve">
+    <value>Вы точно хотите удалить историю переписки в выбранных чатах?</value>
   </data>
   <data name="AreYouSureClearHistoryGroup" xml:space="preserve">
     <value>Удалить из кэша все сообщения и материалы этой группы?</value>
@@ -822,6 +891,9 @@
   </data>
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Вы точно хотите удалить этот контакт?</value>
+  </data>
+  <data name="AreYouSureDeleteFewChats" xml:space="preserve">
+    <value>Вы точно хотите удалить выбранные чаты?</value>
   </data>
   <data name="AreYouSureDeleteFewMessages" xml:space="preserve">
     <value>Вы точно хотите удалить эти сообщения?</value>
@@ -1021,6 +1093,9 @@
   <data name="AutoDownloadFiles" xml:space="preserve">
     <value>Файлы</value>
   </data>
+  <data name="AutoDownloadFilesOn" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
   <data name="AutoDownloadFilesTitle" xml:space="preserve">
     <value>Автозагрузка файлов и музыки</value>
   </data>
@@ -1078,6 +1153,9 @@
   <data name="AutoDownloadPhotos" xml:space="preserve">
     <value>Фото</value>
   </data>
+  <data name="AutoDownloadPhotosOn" xml:space="preserve">
+    <value>Фото</value>
+  </data>
   <data name="AutoDownloadPhotosTitle" xml:space="preserve">
     <value>Автозагрузка фото</value>
   </data>
@@ -1103,6 +1181,9 @@
     <value>До {0} для всех чатов</value>
   </data>
   <data name="AutoDownloadVideos" xml:space="preserve">
+    <value>Видео</value>
+  </data>
+  <data name="AutoDownloadVideosOn" xml:space="preserve">
     <value>Видео</value>
   </data>
   <data name="AutoDownloadVideosTitle" xml:space="preserve">
@@ -1557,6 +1638,9 @@
   <data name="ChannelBlockedUsers" xml:space="preserve">
     <value>Чёрный список</value>
   </data>
+  <data name="ChannelBots" xml:space="preserve">
+    <value>Боты</value>
+  </data>
   <data name="ChannelBroadcast" xml:space="preserve">
     <value>Публикация</value>
   </data>
@@ -1571,6 +1655,9 @@
   </data>
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>К сожалению, Вы не можете отправлять сообщения в этот канал.</value>
+  </data>
+  <data name="ChannelContacts" xml:space="preserve">
+    <value>Контакты в этом канале</value>
   </data>
   <data name="ChannelCreator" xml:space="preserve">
     <value>Создатель</value>
@@ -1635,11 +1722,17 @@
   <data name="ChannelMembersInfo" xml:space="preserve">
     <value>Этот список видят только администраторы канала.</value>
   </data>
+  <data name="ChannelMessageAlbum" xml:space="preserve">
+    <value>В канале «{0}» новый альбом</value>
+  </data>
   <data name="ChannelMessageAudio" xml:space="preserve">
     <value>В канале «{0}» новое голосовое сообщение</value>
   </data>
   <data name="ChannelMessageContact" xml:space="preserve">
     <value>В канал {0} отправили контакт</value>
+  </data>
+  <data name="ChannelMessageContact2" xml:space="preserve">
+    <value>В канале «{0}» новый контакт {1}</value>
   </data>
   <data name="ChannelMessageDocument" xml:space="preserve">
     <value>В канале «{0}» новый файл</value>
@@ -1668,6 +1761,9 @@
   <data name="ChannelMessagePoll" xml:space="preserve">
     <value>В канале «{0}» новый опрос</value>
   </data>
+  <data name="ChannelMessagePoll2" xml:space="preserve">
+    <value>В канале «{0}» новый опрос {1}</value>
+  </data>
   <data name="ChannelMessageRound" xml:space="preserve">
     <value>В канале «{0}» новое видеосообщение</value>
   </data>
@@ -1691,6 +1787,12 @@
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
     <value>Участники получают уведомления о публикациях</value>
+  </data>
+  <data name="ChannelOtherMembers" xml:space="preserve">
+    <value>Другие участники</value>
+  </data>
+  <data name="ChannelOtherSubscribers" xml:space="preserve">
+    <value>Другие подписчики</value>
   </data>
   <data name="ChannelPermissions" xml:space="preserve">
     <value>Разрешения</value>
@@ -1807,6 +1909,12 @@
   <data name="ChatAdmin" xml:space="preserve">
     <value>админ</value>
   </data>
+  <data name="ChatArchived" xml:space="preserve">
+    <value>Чат перенесён в архив.</value>
+  </data>
+  <data name="ChatArchivedInfo" xml:space="preserve">
+    <value>Смахните влево, чтобы скрыть архив.</value>
+  </data>
   <data name="ChatBackground" xml:space="preserve">
     <value>Фон для чатов</value>
   </data>
@@ -1826,7 +1934,7 @@
     <value>Люди</value>
   </data>
   <data name="ChatHintsDelete" xml:space="preserve">
-    <value>Удалить {0} из подсказок?</value>
+    <value>Убрать {0} из подсказок?</value>
   </data>
   <data name="ChatHistory" xml:space="preserve">
     <value>История чата для новых участников</value>
@@ -1845,6 +1953,15 @@
   </data>
   <data name="ChatHistoryVisibleInfo" xml:space="preserve">
     <value>Новые участники будут видеть полную историю сообщений.</value>
+  </data>
+  <data name="ChatList" xml:space="preserve">
+    <value>Список чатов</value>
+  </data>
+  <data name="ChatListDefault" xml:space="preserve">
+    <value>Двустрочный</value>
+  </data>
+  <data name="ChatListExpanded" xml:space="preserve">
+    <value>Трехстрочный</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Геопозиция</value>
@@ -1894,6 +2011,9 @@
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} чатов</value>
   </data>
+  <data name="ChatsArchived" xml:space="preserve">
+    <value>Чаты перенесены в архив.</value>
+  </data>
   <data name="ChatsExceptionZero" xml:space="preserve">
     <value/>
   </data>
@@ -1911,6 +2031,66 @@
   </data>
   <data name="ChatsExceptionOther" xml:space="preserve">
     <value>{0} чатов</value>
+  </data>
+  <data name="ChatsMute" xml:space="preserve">
+    <value>Убрать звук</value>
+  </data>
+  <data name="ChatsSelectedZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedOne" xml:space="preserve">
+    <value>{0} чат</value>
+  </data>
+  <data name="ChatsSelectedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedFew" xml:space="preserve">
+    <value>{0} чата</value>
+  </data>
+  <data name="ChatsSelectedMany" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
+  <data name="ChatsSelectedOther" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
+  <data name="ChatsSelectedClearZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearOne" xml:space="preserve">
+    <value>{0} чат</value>
+  </data>
+  <data name="ChatsSelectedClearTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearFew" xml:space="preserve">
+    <value>{0} чата</value>
+  </data>
+  <data name="ChatsSelectedClearMany" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
+  <data name="ChatsSelectedClearOther" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
+  <data name="ChatsSelectedClearCacheZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearCacheOne" xml:space="preserve">
+    <value>{0} чата</value>
+  </data>
+  <data name="ChatsSelectedClearCacheTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearCacheFew" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
+  <data name="ChatsSelectedClearCacheMany" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
+  <data name="ChatsSelectedClearCacheOther" xml:space="preserve">
+    <value>{0} чатов</value>
+  </data>
+  <data name="ChatsUnmute" xml:space="preserve">
+    <value>Включить звук</value>
   </data>
   <data name="Checking" xml:space="preserve">
     <value>Проверка...</value>
@@ -1969,8 +2149,14 @@
   <data name="ClearCache" xml:space="preserve">
     <value>Очистить кэш</value>
   </data>
+  <data name="ClearCacheFewChatsTitle" xml:space="preserve">
+    <value>Очистить кэш для {0}</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Освободите память устройства; файлы останутся в облаке.</value>
+  </data>
+  <data name="ClearFewChatsTitle" xml:space="preserve">
+    <value>Очистить {0}</value>
   </data>
   <data name="ClearHistory" xml:space="preserve">
     <value>Очистить историю</value>
@@ -2390,6 +2576,9 @@
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Удалить контакт</value>
+  </data>
+  <data name="DeleteFewChatsTitle" xml:space="preserve">
+    <value>Удалить {0}</value>
   </data>
   <data name="DeleteForAll" xml:space="preserve">
     <value>Удалить у всех участников</value>
@@ -3021,7 +3210,7 @@
     <value>Читать сообщения</value>
   </data>
   <data name="EventLogRestrictedSendEmbed" xml:space="preserve">
-    <value>Предпросмотр ссылок</value>
+    <value>Предпросмотр для ссылок</value>
   </data>
   <data name="EventLogRestrictedSendMedia" xml:space="preserve">
     <value>Отправлять медиа</value>
@@ -3481,6 +3670,9 @@
   <data name="Green" xml:space="preserve">
     <value>Зелёный</value>
   </data>
+  <data name="GroupContacts" xml:space="preserve">
+    <value>Контакты в этой группе</value>
+  </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Группа удалена.</value>
   </data>
@@ -3585,6 +3777,9 @@
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>Удалённый аккаунт</value>
+  </data>
+  <data name="HideOnTop" xml:space="preserve">
+    <value>Скрыть</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Свет</value>
@@ -3944,6 +4139,10 @@
   <data name="LinkCopied" xml:space="preserve">
     <value>Ссылка скопирована в буфер обмена.</value>
   </data>
+  <data name="LinkCopiedPrivate" xml:space="preserve">
+    <value>Ссылка скопирована.
+Она будет работать только для участников чата.</value>
+  </data>
   <data name="LinkInUse" xml:space="preserve">
     <value>Имя уже занято.</value>
   </data>
@@ -3968,8 +4167,11 @@
   <data name="LinkInvalidStartNumberMega" xml:space="preserve">
     <value>Имена групп не могут начинаться с цифры.</value>
   </data>
+  <data name="LinkNotFound" xml:space="preserve">
+    <value>К сожалению, Вы не состоите в чате, где было опубликовано это сообщение.</value>
+  </data>
   <data name="LinkPreview" xml:space="preserve">
-    <value>Предпросмотр ссылок</value>
+    <value>Предпросмотр ссылки</value>
   </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>Общие ссылки</value>
@@ -4110,6 +4312,24 @@
   </data>
   <data name="Masks" xml:space="preserve">
     <value>Маски</value>
+  </data>
+  <data name="MasksCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MasksCountOne" xml:space="preserve">
+    <value>{0} маска</value>
+  </data>
+  <data name="MasksCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MasksCountFew" xml:space="preserve">
+    <value>{0} маски</value>
+  </data>
+  <data name="MasksCountMany" xml:space="preserve">
+    <value>{0} масок</value>
+  </data>
+  <data name="MasksCountOther" xml:space="preserve">
+    <value>{0} масок</value>
   </data>
   <data name="MasksInfo" xml:space="preserve">
     <value>Вы можете добавлять маски на отправляемые фото. Для этого перед отправкой откройте визуальный редактор.</value>
@@ -4435,7 +4655,7 @@
     <value>Вы пока не пользовались звонками.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
-    <value>Чатов пока нет...</value>
+    <value>Добро пожаловать</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
     <value>Чтобы написать сообщение, нажмите на значок карандаша в правом нижнем углу.</value>
@@ -4568,8 +4788,14 @@
   <data name="NotificationActionPinnedContact" xml:space="preserve">
     <value>{0} закрепил(а) контакт в группе {1}</value>
   </data>
+  <data name="NotificationActionPinnedContact2" xml:space="preserve">
+    <value>{0} закрепил(а) контакт {2} в группе «{1}»</value>
+  </data>
   <data name="NotificationActionPinnedContactChannel" xml:space="preserve">
     <value>{0} закрепил(а) контакт</value>
+  </data>
+  <data name="NotificationActionPinnedContactChannel2" xml:space="preserve">
+    <value>{0} закрепил(а) контакт {1}</value>
   </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
     <value>{0} закрепил(а) файл в группе {1}</value>
@@ -4582,6 +4808,12 @@
   </data>
   <data name="NotificationActionPinnedGameChannel" xml:space="preserve">
     <value>{0} закрепил(а) игру</value>
+  </data>
+  <data name="NotificationActionPinnedGameScore" xml:space="preserve">
+    <value>{0} закрепил(а) счёт игры в группе «{1}»</value>
+  </data>
+  <data name="NotificationActionPinnedGameScoreChannel" xml:space="preserve">
+    <value>{0} закрепил(а) очки в игре</value>
   </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
     <value>{0} закрепил(а) карту в группе {1}</value>
@@ -4628,8 +4860,14 @@
   <data name="NotificationActionPinnedPoll" xml:space="preserve">
     <value>{0} закрепил(а) опрос в группе «{1}»</value>
   </data>
+  <data name="NotificationActionPinnedPoll2" xml:space="preserve">
+    <value>{0} закрепил(а) опрос {2} в группе «{1}»</value>
+  </data>
   <data name="NotificationActionPinnedPollChannel" xml:space="preserve">
     <value>{0} закрепил(а) опрос</value>
+  </data>
+  <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
+    <value>{0} закрепил(а) опрос {1}</value>
   </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0} закрепил(а) видеосообщение в группе {1}</value>
@@ -4688,6 +4926,9 @@
   <data name="NotificationGroupAddSelfMega" xml:space="preserve">
     <value>{0} теперь в «{1}»</value>
   </data>
+  <data name="NotificationGroupAlbum" xml:space="preserve">
+    <value>{0} отправил(а) альбом в группу «{1}»</value>
+  </data>
   <data name="NotificationGroupFew" xml:space="preserve">
     <value>{0} отправил(а) {2} в «{1}»</value>
   </data>
@@ -4709,11 +4950,17 @@
   <data name="NotificationInvitedToGroupByLink" xml:space="preserve">
     <value>{0} вступил(а) в группу {1} по ссылке-приглашению</value>
   </data>
+  <data name="NotificationMessageAlbum" xml:space="preserve">
+    <value>{0} прислал(а) альбом</value>
+  </data>
   <data name="NotificationMessageAudio" xml:space="preserve">
     <value>{0} прислал(а) голосовое сообщение</value>
   </data>
   <data name="NotificationMessageContact" xml:space="preserve">
     <value>{0} прислал(а) контакт</value>
+  </data>
+  <data name="NotificationMessageContact2" xml:space="preserve">
+    <value>{0} прислал(а) контакт {1}</value>
   </data>
   <data name="NotificationMessageDocument" xml:space="preserve">
     <value>{0} прислал(а) файл</value>
@@ -4727,6 +4974,9 @@
   <data name="NotificationMessageGame" xml:space="preserve">
     <value>{0} пригласил(а) вас сыграть в {1}</value>
   </data>
+  <data name="NotificationMessageGameScored" xml:space="preserve">
+    <value>{0} набрал(а) {2} очков в игре «{1}»</value>
+  </data>
   <data name="NotificationMessageGif" xml:space="preserve">
     <value>{0} прислал(а) GIF</value>
   </data>
@@ -4736,11 +4986,17 @@
   <data name="NotificationMessageGroupContact" xml:space="preserve">
     <value>{0} отправил(а) контакт в «{1}»</value>
   </data>
+  <data name="NotificationMessageGroupContact2" xml:space="preserve">
+    <value>{0} отправил(а) контакт {2} в группу «{1}»</value>
+  </data>
   <data name="NotificationMessageGroupDocument" xml:space="preserve">
     <value>{0} отправил(а) файл в «{1}»</value>
   </data>
   <data name="NotificationMessageGroupGame" xml:space="preserve">
     <value>{0} пригласил(а) «{1}» сыграть в {2}</value>
+  </data>
+  <data name="NotificationMessageGroupGameScored" xml:space="preserve">
+    <value>{0} набрал(а) {3} очков в «{2}» в группе «{1}»</value>
   </data>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} отправил(а) GIF в «{1}»</value>
@@ -4765,6 +5021,9 @@
   </data>
   <data name="NotificationMessageGroupPoll" xml:space="preserve">
     <value>{0} отправил(а) опрос в группу «{1}»</value>
+  </data>
+  <data name="NotificationMessageGroupPoll2" xml:space="preserve">
+    <value>{0} отправил(а) опрос {2} в группу «{1}»</value>
   </data>
   <data name="NotificationMessageGroupRound" xml:space="preserve">
     <value>{0} отправил(а) видеосообщение в «{1}»</value>
@@ -4801,6 +5060,9 @@
   </data>
   <data name="NotificationMessagePoll" xml:space="preserve">
     <value>{0} прислал(а) опрос</value>
+  </data>
+  <data name="NotificationMessagePoll2" xml:space="preserve">
+    <value>{0} прислал(а) опрос {1}</value>
   </data>
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>{0} прислал(а) видеосообщение</value>
@@ -5016,7 +5278,7 @@
     <value>Открыть</value>
   </data>
   <data name="OpenBackground" xml:space="preserve">
-    <value>ПРОСМОТРЕТЬ ФОН</value>
+    <value>ПРОСМОТР ФОНА</value>
   </data>
   <data name="OpenChannel" xml:space="preserve">
     <value>ПЕРЕЙТИ В КАНАЛ</value>
@@ -6361,6 +6623,9 @@
   <data name="RemoveFromListText" xml:space="preserve">
     <value>Нажмите и удерживайте имя пользователя для удаления.</value>
   </data>
+  <data name="RemoveStickersCount" xml:space="preserve">
+    <value>УДАЛИТЬ {0}</value>
+  </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>Стикер удалён из избранных</value>
   </data>
@@ -6601,6 +6866,9 @@
   </data>
   <data name="SavedMessagesInfo" xml:space="preserve">
     <value>Сохранить на память</value>
+  </data>
+  <data name="ScamMessage" xml:space="preserve">
+    <value>МОШЕННИЧЕСТВО</value>
   </data>
   <data name="ScreenCapture" xml:space="preserve">
     <value>Разрешить снимки экрана</value>
@@ -7474,7 +7742,7 @@
     <value>Сообщение</value>
   </data>
   <data name="TypePrivate" xml:space="preserve">
-    <value>Приватный</value>
+    <value>Частный</value>
   </data>
   <data name="TypePrivateGroup" xml:space="preserve">
     <value>Частная</value>
@@ -7490,6 +7758,9 @@
   </data>
   <data name="URL" xml:space="preserve">
     <value>URL</value>
+  </data>
+  <data name="Unarchive" xml:space="preserve">
+    <value>Вернуть</value>
   </data>
   <data name="Unavailable" xml:space="preserve">
     <value>Недоступен</value>
@@ -7511,6 +7782,9 @@
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Сбросить особые настройки уведомлений для отдельных контактов, чатов и каналов.</value>
+  </data>
+  <data name="UnhideFromTop" xml:space="preserve">
+    <value>Закрепить</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Неизвестная ошибка</value>
@@ -7705,7 +7979,7 @@
     <value>Срок</value>
   </data>
   <data name="UserRestrictionsEmbedLinks" xml:space="preserve">
-    <value>Предпросмотр ссылок</value>
+    <value>Предпросмотр для ссылок</value>
   </data>
   <data name="UserRestrictionsInviteUsers" xml:space="preserve">
     <value>Добавление участников</value>
@@ -7853,6 +8127,24 @@
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Видеосообщения</value>
+  </data>
+  <data name="VideosZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosOne" xml:space="preserve">
+    <value>{0} видео</value>
+  </data>
+  <data name="VideosTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosFew" xml:space="preserve">
+    <value>{0} видео</value>
+  </data>
+  <data name="VideosMany" xml:space="preserve">
+    <value>{0} видео</value>
+  </data>
+  <data name="VideosOther" xml:space="preserve">
+    <value>{0} видео</value>
   </data>
   <data name="ViewContact" xml:space="preserve">
     <value>ПРОСМОТР КОНТАКТА</value>

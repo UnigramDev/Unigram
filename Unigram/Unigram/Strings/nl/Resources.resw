@@ -88,6 +88,12 @@
   <data name="AccActionPlay" xml:space="preserve">
     <value>Afspelen</value>
   </data>
+  <data name="AccActionRecordVideo" xml:space="preserve">
+    <value>Video opnemen</value>
+  </data>
+  <data name="AccActionTakePicture" xml:space="preserve">
+    <value>Neem een foto</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Beelverhouding</value>
   </data>
@@ -184,6 +190,15 @@
   <data name="AccDescrMoreOptions" xml:space="preserve">
     <value>Meer opties</value>
   </data>
+  <data name="AccDescrMsgNotPlayed" xml:space="preserve">
+    <value>Niet afgespeeld</value>
+  </data>
+  <data name="AccDescrMsgRead" xml:space="preserve">
+    <value>Gezien</value>
+  </data>
+  <data name="AccDescrMsgUnread" xml:space="preserve">
+    <value>Niet gezien</value>
+  </data>
   <data name="AccDescrMusicInfo" xml:space="preserve">
     <value>{1} door {0}</value>
   </data>
@@ -243,6 +258,15 @@
   </data>
   <data name="AccDescrRotate" xml:space="preserve">
     <value>Draaien</value>
+  </data>
+  <data name="AccDescrSearchByUser" xml:space="preserve">
+    <value>Filter op gebruiker</value>
+  </data>
+  <data name="AccDescrSearchNext" xml:space="preserve">
+    <value>Volgende zoekresultaat</value>
+  </data>
+  <data name="AccDescrSearchPrev" xml:space="preserve">
+    <value>Vorig zoekresultaat</value>
   </data>
   <data name="AccDescrSecretChat" xml:space="preserve">
     <value>Geheime chat</value>
@@ -571,6 +595,9 @@
   <data name="AddStickers" xml:space="preserve">
     <value>Stickers toevoegen</value>
   </data>
+  <data name="AddStickersCount" xml:space="preserve">
+    <value>VOEG {0} TOE</value>
+  </data>
   <data name="AddStickersInstalled" xml:space="preserve">
     <value>Nieuwe stickers toegevoegd</value>
   </data>
@@ -748,6 +775,42 @@
   <data name="April" xml:space="preserve">
     <value>april</value>
   </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Archiveren</value>
+  </data>
+  <data name="ArchiveHidden" xml:space="preserve">
+    <value>Archief verborgen</value>
+  </data>
+  <data name="ArchiveHiddenInfo" xml:space="preserve">
+    <value>Veeg naar beneden voor het archief</value>
+  </data>
+  <data name="ArchiveHintHeader1" xml:space="preserve">
+    <value>Dit is je archief</value>
+  </data>
+  <data name="ArchiveHintHeader2" xml:space="preserve">
+    <value>Stille chats</value>
+  </data>
+  <data name="ArchiveHintHeader3" xml:space="preserve">
+    <value>Vastgezette chats</value>
+  </data>
+  <data name="ArchiveHintText1" xml:space="preserve">
+    <value>Chats met ingeschakelde melding worden gedearchiveerd bij nieuwe meldingen.</value>
+  </data>
+  <data name="ArchiveHintText2" xml:space="preserve">
+    <value>Stille chats blijven gearchiveerd bij nieuwe berichten.</value>
+  </data>
+  <data name="ArchiveHintText3" xml:space="preserve">
+    <value>Je kunt een ongelimteerd aantal gearchiveerde chats vastzetten.</value>
+  </data>
+  <data name="ArchivePinned" xml:space="preserve">
+    <value>Archief vastgezet.</value>
+  </data>
+  <data name="ArchivePinnedInfo" xml:space="preserve">
+    <value>Veeg naar links om het archief te verbergen.</value>
+  </data>
+  <data name="ArchivedChats" xml:space="preserve">
+    <value>Gearchiveerde chats</value>
+  </data>
   <data name="ArchivedMasks" xml:space="preserve">
     <value>Gearchiveerde maskers</value>
   </data>
@@ -796,11 +859,20 @@
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>Geschiedenis echt wissen? </value>
   </data>
+  <data name="AreYouSureClearHistoryCacheFewChats" xml:space="preserve">
+    <value>Alle gecachete tekst en media van de geselecteerde chats verwijderen?</value>
+  </data>
   <data name="AreYouSureClearHistoryChannel" xml:space="preserve">
     <value>Kanaalcache opschonen?</value>
   </data>
+  <data name="AreYouSureClearHistoryFewChats" xml:space="preserve">
+    <value>Geschiedenis van geselecteerde chats echt wissen?</value>
+  </data>
   <data name="AreYouSureClearHistoryGroup" xml:space="preserve">
     <value>Gecachet tekst en media van deze groep wissen?</value>
+  </data>
+  <data name="AreYouSureClearHistorySavedMessages" xml:space="preserve">
+    <value>**Bewaarde berichten** echt wissen?</value>
   </data>
   <data name="AreYouSureClearHistoryWithChat" xml:space="preserve">
     <value>Chatgeschiedenis in **{0}** echt wissen?</value>
@@ -820,8 +892,14 @@
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Contact echt verwijderen?</value>
   </data>
+  <data name="AreYouSureDeleteFewChats" xml:space="preserve">
+    <value>Geselecteerde chats echt verwijderen?</value>
+  </data>
   <data name="AreYouSureDeleteFewMessages" xml:space="preserve">
     <value>Berichten echt verwijderen?</value>
+  </data>
+  <data name="AreYouSureDeleteFewMessagesMega" xml:space="preserve">
+    <value>Berichten echt voor iedereen wissen?</value>
   </data>
   <data name="AreYouSureDeleteGIF" xml:space="preserve">
     <value>Echt deze GIF verwijderen?</value>
@@ -835,8 +913,14 @@
   <data name="AreYouSureDeleteSingleMessage" xml:space="preserve">
     <value>Bericht echt verwijderen?</value>
   </data>
+  <data name="AreYouSureDeleteSingleMessageMega" xml:space="preserve">
+    <value>Bericht echt voor iedereen wissen?</value>
+  </data>
   <data name="AreYouSureDeleteThisChat" xml:space="preserve">
     <value>Chat echt verwijderen?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
+    <value> **Bewaarde berichten** echt verwijderen?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>Chat **{0}** echt wissen?</value>
@@ -1009,6 +1093,9 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
   <data name="AutoDownloadFiles" xml:space="preserve">
     <value>Bestanden</value>
   </data>
+  <data name="AutoDownloadFilesOn" xml:space="preserve">
+    <value>Bestanden</value>
+  </data>
   <data name="AutoDownloadFilesTitle" xml:space="preserve">
     <value>Autom bestanden en muziek downloaden</value>
   </data>
@@ -1066,6 +1153,9 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
   <data name="AutoDownloadPhotos" xml:space="preserve">
     <value>Foto's</value>
   </data>
+  <data name="AutoDownloadPhotosOn" xml:space="preserve">
+    <value>Foto's</value>
+  </data>
   <data name="AutoDownloadPhotosTitle" xml:space="preserve">
     <value>Autom. Foto's downloaden</value>
   </data>
@@ -1091,6 +1181,9 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
     <value>Tot {0} in alle chats</value>
   </data>
   <data name="AutoDownloadVideos" xml:space="preserve">
+    <value>Video's</value>
+  </data>
+  <data name="AutoDownloadVideosOn" xml:space="preserve">
     <value>Video's</value>
   </data>
   <data name="AutoDownloadVideosTitle" xml:space="preserve">
@@ -1544,6 +1637,9 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   <data name="ChannelBlockedUsers" xml:space="preserve">
     <value>Verwijderde gebruikers</value>
   </data>
+  <data name="ChannelBots" xml:space="preserve">
+    <value>Bots</value>
+  </data>
   <data name="ChannelBroadcast" xml:space="preserve">
     <value>Massabericht</value>
   </data>
@@ -1558,6 +1654,9 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   </data>
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>Je hebt alleen leesrechten in dit kanaal.</value>
+  </data>
+  <data name="ChannelContacts" xml:space="preserve">
+    <value>Contacten in dit kanaal</value>
   </data>
   <data name="ChannelCreator" xml:space="preserve">
     <value>Maker</value>
@@ -1622,11 +1721,17 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   <data name="ChannelMembersInfo" xml:space="preserve">
     <value>Alleen kanaal-beheerders zien deze lijst.</value>
   </data>
+  <data name="ChannelMessageAlbum" xml:space="preserve">
+    <value>{0} plaatste een album</value>
+  </data>
   <data name="ChannelMessageAudio" xml:space="preserve">
     <value>{0} plaatste een spraakbericht</value>
   </data>
   <data name="ChannelMessageContact" xml:space="preserve">
     <value>{0} plaatste een contact</value>
+  </data>
+  <data name="ChannelMessageContact2" xml:space="preserve">
+    <value>{0} plaatste een contact {1}</value>
   </data>
   <data name="ChannelMessageDocument" xml:space="preserve">
     <value>{0} plaatste een bestand</value>
@@ -1655,6 +1760,9 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   <data name="ChannelMessagePoll" xml:space="preserve">
     <value>{0} heeft een poll geplaatst</value>
   </data>
+  <data name="ChannelMessagePoll2" xml:space="preserve">
+    <value>{0} plaatste een poll {1}</value>
+  </data>
   <data name="ChannelMessageRound" xml:space="preserve">
     <value>{0} plaatste een videobericht</value>
   </data>
@@ -1675,6 +1783,12 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
     <value>Berichtgeving voor leden</value>
+  </data>
+  <data name="ChannelOtherMembers" xml:space="preserve">
+    <value>Andere leden</value>
+  </data>
+  <data name="ChannelOtherSubscribers" xml:space="preserve">
+    <value>Andere abonnees</value>
   </data>
   <data name="ChannelPermissions" xml:space="preserve">
     <value>Rechten</value>
@@ -1792,6 +1906,12 @@ De minimale lengte is 5 karakters.</value>
   <data name="ChatAdmin" xml:space="preserve">
     <value>beheerder</value>
   </data>
+  <data name="ChatArchived" xml:space="preserve">
+    <value>Chat gearchiveerd</value>
+  </data>
+  <data name="ChatArchivedInfo" xml:space="preserve">
+    <value>Veeg naar links om het archief te verbergen</value>
+  </data>
   <data name="ChatBackground" xml:space="preserve">
     <value>Achtergrond kiezen</value>
   </data>
@@ -1830,6 +1950,15 @@ De minimale lengte is 5 karakters.</value>
   </data>
   <data name="ChatHistoryVisibleInfo" xml:space="preserve">
     <value>Nieuwe leden krijgen chatgeschiedenis ouder dan de eigen deelname te zien.</value>
+  </data>
+  <data name="ChatList" xml:space="preserve">
+    <value>Weergave chatoverzicht</value>
+  </data>
+  <data name="ChatListDefault" xml:space="preserve">
+    <value>Twee regels</value>
+  </data>
+  <data name="ChatListExpanded" xml:space="preserve">
+    <value>Drie regels</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Locatie</value>
@@ -1879,6 +2008,9 @@ De minimale lengte is 5 karakters.</value>
   <data name="ChatsOther" xml:space="preserve">
     <value>{0} chats</value>
   </data>
+  <data name="ChatsArchived" xml:space="preserve">
+    <value>Chats gearchiveerd</value>
+  </data>
   <data name="ChatsExceptionZero" xml:space="preserve">
     <value/>
   </data>
@@ -1896,6 +2028,66 @@ De minimale lengte is 5 karakters.</value>
   </data>
   <data name="ChatsExceptionOther" xml:space="preserve">
     <value>{0} chats</value>
+  </data>
+  <data name="ChatsMute" xml:space="preserve">
+    <value>Stil</value>
+  </data>
+  <data name="ChatsSelectedZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedOne" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
+  <data name="ChatsSelectedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedOther" xml:space="preserve">
+    <value>{0} chats</value>
+  </data>
+  <data name="ChatsSelectedClearZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearOne" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
+  <data name="ChatsSelectedClearTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearOther" xml:space="preserve">
+    <value>{0} chats</value>
+  </data>
+  <data name="ChatsSelectedClearCacheZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearCacheOne" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
+  <data name="ChatsSelectedClearCacheTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearCacheFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearCacheMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ChatsSelectedClearCacheOther" xml:space="preserve">
+    <value>{0} chats</value>
+  </data>
+  <data name="ChatsUnmute" xml:space="preserve">
+    <value>Geluid aan</value>
   </data>
   <data name="Checking" xml:space="preserve">
     <value>Controleren...</value>
@@ -1954,8 +2146,14 @@ De minimale lengte is 5 karakters.</value>
   <data name="ClearCache" xml:space="preserve">
     <value>Cache Wissen</value>
   </data>
+  <data name="ClearCacheFewChatsTitle" xml:space="preserve">
+    <value>Lege cache voor {0}</value>
+  </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Schoon de opslag op je apparaat op; je media blijft bewaard in de Cloud.</value>
+  </data>
+  <data name="ClearFewChatsTitle" xml:space="preserve">
+    <value>Wis {0}</value>
   </data>
   <data name="ClearHistory" xml:space="preserve">
     <value>Geschiedenis wissen</value>
@@ -2376,6 +2574,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="DeleteContact" xml:space="preserve">
     <value>Verwijder</value>
   </data>
+  <data name="DeleteFewChatsTitle" xml:space="preserve">
+    <value>Verwijder {0}</value>
+  </data>
   <data name="DeleteForAll" xml:space="preserve">
     <value>Verwijder voor iedereen</value>
   </data>
@@ -2408,6 +2609,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   </data>
   <data name="DeleteMessagesTextGroup" xml:space="preserve">
     <value>Je kunt ook het {0} dat je hebt gestuurd verwijderen bij de andere groepsleden via de "Bericht intrekken"-functie.</value>
+  </data>
+  <data name="DeleteMessagesTextGroupPart" xml:space="preserve">
+    <value>Je kunt deze {0} ook verwijderen bij alle groepsleden via de optie “verwijder voor iedereen”.</value>
   </data>
   <data name="DeleteMessagesTitle" xml:space="preserve">
     <value>Verwijder {0}</value>
@@ -3466,6 +3670,9 @@ over Telegram?</value>
   <data name="Green" xml:space="preserve">
     <value>Groen</value>
   </data>
+  <data name="GroupContacts" xml:space="preserve">
+    <value>Contacten in deze groep</value>
+  </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Groep verwijderd.</value>
   </data>
@@ -3570,6 +3777,9 @@ over Telegram?</value>
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>Verwijderd account</value>
+  </data>
+  <data name="HideOnTop" xml:space="preserve">
+    <value>Verbergen</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Accent</value>
@@ -3929,6 +4139,10 @@ Je kunt je taal altijd aanpassen via Instellingen.</value>
   <data name="LinkCopied" xml:space="preserve">
     <value>Link gekopieerd naar klembord.</value>
   </data>
+  <data name="LinkCopiedPrivate" xml:space="preserve">
+    <value>Link gekopiëerd naar klembord.
+Deze link werkt alleen voor leden van deze chat.</value>
+  </data>
   <data name="LinkInUse" xml:space="preserve">
     <value>Deze naam is bezet.</value>
   </data>
@@ -3952,6 +4166,9 @@ Je kunt je taal altijd aanpassen via Instellingen.</value>
   </data>
   <data name="LinkInvalidStartNumberMega" xml:space="preserve">
     <value>Begincijfers zijn niet toegestaan.</value>
+  </data>
+  <data name="LinkNotFound" xml:space="preserve">
+    <value>Je kunt dit bericht niet openen omdat je geen lid bent van de chat waar dit bericht is geplaatst.</value>
   </data>
   <data name="LinkPreview" xml:space="preserve">
     <value>Link-voorbeeld</value>
@@ -4095,6 +4312,24 @@ Dit kan enkele minuten duren.</value>
   </data>
   <data name="Masks" xml:space="preserve">
     <value>Maskers</value>
+  </data>
+  <data name="MasksCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MasksCountOne" xml:space="preserve">
+    <value>{0} masker</value>
+  </data>
+  <data name="MasksCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MasksCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MasksCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MasksCountOther" xml:space="preserve">
+    <value>{0} maskers</value>
   </data>
   <data name="MasksInfo" xml:space="preserve">
     <value>Je kunt maskers toevoegen aan foto's , gebruik de fotobewerkingsoptie en verstuur ze.</value>
@@ -4554,8 +4789,14 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   <data name="NotificationActionPinnedContact" xml:space="preserve">
     <value>{0} heeft contact vastgezet in de groep {1}</value>
   </data>
+  <data name="NotificationActionPinnedContact2" xml:space="preserve">
+    <value>{0} heeft een contact {2}  vastgezet in de groep {1}</value>
+  </data>
   <data name="NotificationActionPinnedContactChannel" xml:space="preserve">
     <value>{0} heeft contact vastgezet</value>
+  </data>
+  <data name="NotificationActionPinnedContactChannel2" xml:space="preserve">
+    <value>{0} heeft een contact vastgezet {1}</value>
   </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
     <value>{0} heeft bestand vastgezet in de groep {1}</value>
@@ -4568,6 +4809,12 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   </data>
   <data name="NotificationActionPinnedGameChannel" xml:space="preserve">
     <value>{0} heeft een spel vastgezet</value>
+  </data>
+  <data name="NotificationActionPinnedGameScore" xml:space="preserve">
+    <value>{0} heeft een score vastgezet in de groep {1}</value>
+  </data>
+  <data name="NotificationActionPinnedGameScoreChannel" xml:space="preserve">
+    <value>{0} heeft een score vastgezet</value>
   </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
     <value>{0} heeft locatie vastgezet in de groep {1}</value>
@@ -4614,8 +4861,14 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   <data name="NotificationActionPinnedPoll" xml:space="preserve">
     <value>{0} heeft poll vastgezet in de groep {1}</value>
   </data>
+  <data name="NotificationActionPinnedPoll2" xml:space="preserve">
+    <value>{0} heeft een poll {2} vastgezet in de groep {1}</value>
+  </data>
   <data name="NotificationActionPinnedPollChannel" xml:space="preserve">
     <value>{0} heeft een poll vastgezet</value>
+  </data>
+  <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
+    <value>{0} heeft een poll vastgezet {1}</value>
   </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0} heeft videobericht vastgezet in de groep {1}</value>
@@ -4674,6 +4927,9 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   <data name="NotificationGroupAddSelfMega" xml:space="preserve">
     <value>{0} is nu lid van de groep {1}</value>
   </data>
+  <data name="NotificationGroupAlbum" xml:space="preserve">
+    <value>{0} heeft een album naar de groep {1} gestuurd</value>
+  </data>
   <data name="NotificationGroupFew" xml:space="preserve">
     <value>{0} heeft {2} naar de groep {1} gestuurd</value>
   </data>
@@ -4695,11 +4951,17 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   <data name="NotificationInvitedToGroupByLink" xml:space="preserve">
     <value>{0} is nu lid van de groep {1} via uitnodigingslink</value>
   </data>
+  <data name="NotificationMessageAlbum" xml:space="preserve">
+    <value>{0} stuurde je een album</value>
+  </data>
   <data name="NotificationMessageAudio" xml:space="preserve">
     <value>{0} heeft je een spraakbericht gestuurd</value>
   </data>
   <data name="NotificationMessageContact" xml:space="preserve">
     <value>{0} heeft een contact met je gedeeld</value>
+  </data>
+  <data name="NotificationMessageContact2" xml:space="preserve">
+    <value>{0} deelde een contact {1} met je</value>
   </data>
   <data name="NotificationMessageDocument" xml:space="preserve">
     <value>{0} heeft je een bestand gestuurd</value>
@@ -4713,6 +4975,9 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   <data name="NotificationMessageGame" xml:space="preserve">
     <value>{0} wil {1} met je spelen</value>
   </data>
+  <data name="NotificationMessageGameScored" xml:space="preserve">
+    <value>{0} behaalde {2} punten met het spel {1}</value>
+  </data>
   <data name="NotificationMessageGif" xml:space="preserve">
     <value>{0} heeft je een GIF gestuurd</value>
   </data>
@@ -4722,11 +4987,17 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   <data name="NotificationMessageGroupContact" xml:space="preserve">
     <value>{0} heeft een contact gedeeld met de groep {1}</value>
   </data>
+  <data name="NotificationMessageGroupContact2" xml:space="preserve">
+    <value>{0} deelde een contact {2} in de groep {1}</value>
+  </data>
   <data name="NotificationMessageGroupDocument" xml:space="preserve">
     <value>{0} heeft een bestand gestuurd naar de groep {1}</value>
   </data>
   <data name="NotificationMessageGroupGame" xml:space="preserve">
     <value>{0} wil {2} met de groep {1} spelen</value>
+  </data>
+  <data name="NotificationMessageGroupGameScored" xml:space="preserve">
+    <value>{0} behaalde {3} punten met het spel {2} in de groep {1}</value>
   </data>
   <data name="NotificationMessageGroupGif" xml:space="preserve">
     <value>{0} heeft een GIF gestuurd naar de groep {1}</value>
@@ -4751,6 +5022,9 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   </data>
   <data name="NotificationMessageGroupPoll" xml:space="preserve">
     <value>{0} heeft een poll gestuurd naar de groep {1}</value>
+  </data>
+  <data name="NotificationMessageGroupPoll2" xml:space="preserve">
+    <value>{0} stuurde een poll {2} naar de groep {1}</value>
   </data>
   <data name="NotificationMessageGroupRound" xml:space="preserve">
     <value>{0} heeft een videobericht gestuurd naar de groep {1}</value>
@@ -4787,6 +5061,9 @@ Je kunt de instellingen van een chat wijzigen door het profiel te openen en naar
   </data>
   <data name="NotificationMessagePoll" xml:space="preserve">
     <value>{0} heeft je een poll gestuurd</value>
+  </data>
+  <data name="NotificationMessagePoll2" xml:space="preserve">
+    <value>{0} stuurde je een poll {1}</value>
   </data>
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>{0} heeft je een videobericht gestuurd</value>
@@ -6164,7 +6441,7 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
     <value>Berichten van je die worden doorgestuurd linken niet terug naar je account.</value>
   </data>
   <data name="PrivacyForwardsInfo2" xml:space="preserve">
-    <value>Deze instellingen overschrijven de waarden hierboven</value>
+    <value>Deze instelling overschrijft de bovenstaande.</value>
   </data>
   <data name="PrivacyForwardsMessageLine" xml:space="preserve">
     <value>Godfried, verveel je je?</value>
@@ -6209,7 +6486,7 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
     <value>Je kunt nauwkeurig beperken wie je profielfoto kan zien.</value>
   </data>
   <data name="PrivacyProfilePhotoInfo2" xml:space="preserve">
-    <value>Deze instellingen overschrijven de waarden hierboven</value>
+    <value>Deze instelling overschrijft de bovenstaande.</value>
   </data>
   <data name="PrivacyProfilePhotoTitle" xml:space="preserve">
     <value>Wie kan mijn profielfoto zien</value>
@@ -6351,6 +6628,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   </data>
   <data name="RemoveFromListText" xml:space="preserve">
     <value>Gebruiker vasthouden om te verwijderen.</value>
+  </data>
+  <data name="RemoveStickersCount" xml:space="preserve">
+    <value>VERWIJDER {0}</value>
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>Sticker verwijderd uit favorieten</value>
@@ -6592,6 +6872,9 @@ Het kanaal "**{1}**" zal privé worden.</value>
   </data>
   <data name="SavedMessagesInfo" xml:space="preserve">
     <value>Hierheen doorsturen om op te slaan</value>
+  </data>
+  <data name="ScamMessage" xml:space="preserve">
+    <value>OPLICHTING</value>
   </data>
   <data name="ScreenCapture" xml:space="preserve">
     <value>App-inhoud weergeven in taakbeheer</value>
@@ -7358,7 +7641,7 @@ met onze *Gebruiksvoorwaarden*.</value>
     <value>Tekstgrootte berichten</value>
   </data>
   <data name="TextSizeHeader" xml:space="preserve">
-    <value>Berichttekstgrootte</value>
+    <value>Tekstgrootte berichten</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Thema</value>
@@ -7480,6 +7763,9 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   <data name="URL" xml:space="preserve">
     <value>URL</value>
   </data>
+  <data name="Unarchive" xml:space="preserve">
+    <value>Dearchiveren</value>
+  </data>
   <data name="Unavailable" xml:space="preserve">
     <value>Onbeschikbaar</value>
   </data>
@@ -7500,6 +7786,9 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
     <value>Alle aangepaste meldingsinstellingen wissen voor contacten, groepen en kanalen.</value>
+  </data>
+  <data name="UnhideFromTop" xml:space="preserve">
+    <value>Vastzetten</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>Onbekende fout</value>
@@ -7824,6 +8113,24 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Videoberichten</value>
+  </data>
+  <data name="VideosZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosOne" xml:space="preserve">
+    <value>{0} video</value>
+  </data>
+  <data name="VideosTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosOther" xml:space="preserve">
+    <value>{0} video's</value>
   </data>
   <data name="ViewContact" xml:space="preserve">
     <value>CONTACT BEKIJKEN</value>
