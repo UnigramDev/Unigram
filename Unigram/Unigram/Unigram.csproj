@@ -618,7 +618,6 @@
     <Compile Include="ViewModels\Settings\SettingsAppearanceViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAndStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAutoViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsEmojiViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNetworkViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNightModeViewModel.cs" />
@@ -831,9 +830,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsDataAutoPage.xaml.cs">
       <DependentUpon>SettingsDataAutoPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsEmojiPage.xaml.cs">
-      <DependentUpon>SettingsEmojiPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsLanguagePage.xaml.cs">
       <DependentUpon>SettingsLanguagePage.xaml</DependentUpon>
@@ -2251,10 +2247,6 @@
     <Page Include="Views\Settings\SettingsDataAutoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\SettingsEmojiPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsLanguagePage.xaml">
       <SubType>Designer</SubType>

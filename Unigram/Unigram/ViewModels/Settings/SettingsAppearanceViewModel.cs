@@ -204,7 +204,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand EmojiSetCommand { get; }
         private async void EmojiSetExecute()
         {
-            await new SettingsEmojiSetView().ShowQueuedAsync();
+            await new SettingsEmojiSetView(ProtoService, Aggregator).ShowQueuedAsync();
 
             var emojiSet = Settings.Appearance.EmojiSet;
             var emojiSetId = Settings.Appearance.EmojiSetId;
@@ -212,7 +212,17 @@ namespace Unigram.ViewModels.Settings
             if (emojiSet.Length > 0 && emojiSetId.Length > 0)
             {
                 EmojiSet = emojiSet;
-                EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSetId}.png";
+
+                switch (emojiSetId)
+                {
+                    case "microsoft":
+                    case "apple":
+                        EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSetId}.png";
+                        break;
+                    default:
+                        EmojiSetId = $"ms-appdata:///local/emoji/{emojiSetId}.png";
+                        break;
+                }
             }
             else
             {

@@ -42,14 +42,17 @@ namespace Unigram.Common
                 var emojiSetId = SettingsService.Current.Appearance.EmojiSetId;
                 if (emojiSetId.Length > 0)
                 {
-                    if (string.Equals(emojiSetId, "microsoft"))
+                    switch (emojiSetId)
                     {
-                        this.Add("EmojiThemeFontFamily", new FontFamily("XamlAutoFontFamily"));
-                    }
-                    else
-                    {
-                        //this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSetId}.ttf#Segoe UI Emoji"));
-                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/{emojiSetId}.ttf#Segoe UI Emoji"));
+                        case "microsoft":
+                            Theme.Current["EmojiThemeFontFamily"] = new FontFamily($"XamlAutoFontFamily");
+                            break;
+                        case "apple":
+                            this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/{emojiSetId}.ttf#Segoe UI Emoji"));
+                            break;
+                        default:
+                            this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSetId}.ttf#Segoe UI Emoji"));
+                            break;
                     }
                 }
                 else

@@ -18,6 +18,7 @@ namespace Unigram.Common
         public File Document { get; set; }
 
         public bool IsDefault { get; set; }
+        public bool IsOfficial { get; set; }
 
         public bool UpdateFile(File file)
         {
