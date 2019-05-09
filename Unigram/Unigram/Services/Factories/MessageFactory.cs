@@ -275,41 +275,74 @@ namespace Unigram.Services.Factories
         public async Task ForwardMessagesAsync(long chatId, long fromChatId, IList<Message> messageIds, bool copy, bool captions)
         {
             var albumId = 0L;
-            var chunk = new List<Message>();
+            var chunk = new List<long>();
 
-            foreach (var message in messageIds)
+            var copyAlbumId = 0L;
+            var copyChunk = new List<InputMessageContent>();
+
+            async Task SendCopy()
             {
-                if (chunk.Count == _protoService.Options.ForwardedMessageCountMax || (chunk.Count > 0 && message.MediaAlbumId != albumId))
+                if (copyChunk.Count > 1 && copyAlbumId != 0)
                 {
-                    await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk.Select(x => x.Id).ToList(), false, false, albumId != 0));
-
-                    albumId = 0L;
-                    chunk.Clear();
+                    await _protoService.SendAsync(new SendMessageAlbum(chatId, 0, false, false, copyChunk));
+                }
+                else if (copyChunk.Count > 0)
+                {
+                    foreach (var input in copyChunk)
+                    {
+                        await _protoService.SendAsync(new SendMessage(chatId, 0, false, false, null, input));
+                    }
                 }
 
+                copyAlbumId = 0L;
+                copyChunk.Clear();
+            }
+
+            async Task SendForward()
+            {
+                if (chunk.Count > 0)
+                {
+                    await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk, false, false, albumId != 0));
+                }
+
+                albumId = 0L;
+                chunk.Clear();
+            }
+
+            foreach (var message in messageIds.OrderBy(x => x.Id))
+            {
                 if (copy && CanBeCopied(message))
                 {
+                    if (message.MediaAlbumId != copyAlbumId)
+                    {
+                        await SendCopy();
+                    }
                     if (chunk.Count > 0)
                     {
-                        await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk.Select(x => x.Id).ToList(), false, false, albumId != 0));
-
-                        albumId = 0L;
-                        chunk.Clear();
+                        await SendForward();
                     }
 
-                    await _protoService.SendAsync(new SendMessage(chatId, 0, false, false, null, ToInput(message, captions)));
+                    copyAlbumId = message.MediaAlbumId;
+                    copyChunk.Add(ToInput(message, captions));
                 }
                 else
                 {
+                    if (message.MediaAlbumId != albumId || chunk.Count == _protoService.Options.ForwardedMessageCountMax)
+                    {
+                        await SendForward();
+                    }
+                    if (copyChunk.Count > 0)
+                    {
+                        await SendCopy();
+                    }
+
                     albumId = message.MediaAlbumId;
-                    chunk.Add(message);
+                    chunk.Add(message.Id);
                 }
             }
 
-            if (chunk.Count > 0)
-            {
-                await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk.Select(x => x.Id).ToList(), false, false, albumId != 0));
-            }
+            await SendCopy();
+            await SendForward();
         }
     }
 
