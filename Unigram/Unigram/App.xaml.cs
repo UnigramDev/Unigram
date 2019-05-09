@@ -72,9 +72,16 @@ namespace Unigram
 
             _uiSettings = new UISettings();
 
-            _mediaExtensionManager = new MediaExtensionManager();
-            _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
-            _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".oga", "audio/ogg");
+            try
+            {
+                _mediaExtensionManager = new MediaExtensionManager();
+                _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
+                _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".oga", "audio/ogg");
+            }
+            catch
+            {
+                // User won't be able to play and record voice messages, but it still better than not being able to use the app at all.
+            }
 
             InactivityHelper.Detected += Inactivity_Detected;
 
@@ -440,10 +447,10 @@ namespace Unigram
             });
 #endif
 
-            //if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
-            //{
-            //    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-            //}
+            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            {
+                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            }
 
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {
@@ -465,7 +472,7 @@ namespace Unigram
             }
         }
 
-        public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
+        public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
             Logs.Logger.Info(Logs.Target.Lifecycle, "OnResuming");
 
