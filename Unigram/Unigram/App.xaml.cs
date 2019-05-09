@@ -449,7 +449,14 @@ namespace Unigram
 
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
-                await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+                try
+                {
+                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+                }
+                catch
+                {
+                    // The app has been compiled without desktop bridge
+                }
             }
 
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")

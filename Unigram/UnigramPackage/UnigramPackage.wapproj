@@ -95,8 +95,9 @@
     <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
+    <AppxManifest Include="..\Assets\Bridge\$(ConfigurationName)\Package.appxmanifest">
       <SubType>Designer</SubType>
+      <Link>Package.appxmanifest</Link>
     </AppxManifest>
     <None Include="UnigramPackage_TemporaryKey.pfx" />
   </ItemGroup>
