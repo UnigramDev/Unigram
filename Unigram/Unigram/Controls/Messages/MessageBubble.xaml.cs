@@ -133,6 +133,29 @@ namespace Unigram.Controls.Messages
 
             builder.Append(". ");
 
+            var maxId = 0L;
+            if (chat != null)
+            {
+                maxId = chat.LastReadOutboxMessageId;
+            }
+
+            if (message.SendingState is MessageSendingStateFailed)
+            {
+            }
+            else if (message.SendingState is MessageSendingStatePending)
+            {
+            }
+            else if (message.Id <= maxId)
+            {
+                builder.Append(Strings.Resources.AccDescrMsgUnread);
+            }
+            else
+            {
+                builder.Append(Strings.Resources.AccDescrMsgRead);
+            }
+
+            builder.Append(".");
+
             return builder.ToString();
         }
 
