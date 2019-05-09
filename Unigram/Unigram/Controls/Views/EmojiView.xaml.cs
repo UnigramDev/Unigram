@@ -157,19 +157,12 @@ namespace Unigram.Controls.Views
 
         private void UpdateSkinTone(EmojiSkinTone selected, bool expand, bool animated)
         {
-            //VisualStateManager.GoToState(SkinDefault, "Normal", false);
-            //VisualStateManager.GoToState(SkinFitz12, "Normal", false);
-            //VisualStateManager.GoToState(SkinFitz3, "Normal", false);
-            //VisualStateManager.GoToState(SkinFitz4, "Normal", false);
-            //VisualStateManager.GoToState(SkinFitz5, "Normal", false);
-            //VisualStateManager.GoToState(SkinFitz6, "Normal", false);
-
-            Canvas.SetZIndex(SkinDefault, selected == EmojiSkinTone.Default ? 1 : 0);
-            Canvas.SetZIndex(SkinFitz12, selected == EmojiSkinTone.Fitz12 ? 1 : 0);
-            Canvas.SetZIndex(SkinFitz3, selected == EmojiSkinTone.Fitz3 ? 1 : 0);
-            Canvas.SetZIndex(SkinFitz4, selected == EmojiSkinTone.Fitz4 ? 1 : 0);
-            Canvas.SetZIndex(SkinFitz5, selected == EmojiSkinTone.Fitz5 ? 1 : 0);
-            Canvas.SetZIndex(SkinFitz6, selected == EmojiSkinTone.Fitz6 ? 1 : 0);
+            Canvas.SetZIndex(SkinDefault, (int)selected < 0 ? 0 : (int)selected > 0 ? 0 : 1);
+            Canvas.SetZIndex(SkinFitz12, (int)selected < 1 ? -1 : (int)selected > 1 ? 1 : 2);
+            Canvas.SetZIndex(SkinFitz3, (int)selected < 2 ? -2 : (int)selected > 2 ? 2 : 3);
+            Canvas.SetZIndex(SkinFitz4, (int)selected < 3 ? -3 : (int)selected > 3 ? 3 : 4);
+            Canvas.SetZIndex(SkinFitz5, (int)selected < 4 ? -4 : (int)selected > 4 ? 4 : 5);
+            Canvas.SetZIndex(SkinFitz6, (int)selected < 5 ? -5 : (int)selected > 5 ? 5 : 6);
 
             Grid.SetColumn(SkinDefault, expand ? 0 : 0);
             Grid.SetColumn(SkinFitz12, expand ? 1 : 0);
@@ -199,13 +192,20 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            var elements = new UIElement[] { /*SkinDefault,*/ SkinFitz12, SkinFitz3, SkinFitz4, SkinFitz5, SkinFitz6, Toolbar };
+            var elements = new UIElement[] { SkinDefault, SkinFitz12, SkinFitz3, SkinFitz4, SkinFitz5, SkinFitz6, Toolbar };
 
             for (int i = 0; i < elements.Length; i++)
             {
                 var visual = ElementCompositionPreview.GetElementVisual(VisualTreeHelper.GetChild(elements[i], 0) as UIElement);
+
+                var from = i;
+                if (elements[i] == Toolbar)
+                {
+                    from--;
+                }
+
                 var anim = visual.Compositor.CreateScalarKeyFrameAnimation();
-                anim.InsertKeyFrame(0, expand ? i * -40 : i * 40);
+                anim.InsertKeyFrame(0, expand ? from * -40 : from * 40);
                 anim.InsertKeyFrame(1, 0);
 
                 visual.StartAnimation("Offset.X", anim);
