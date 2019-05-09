@@ -61,6 +61,8 @@ namespace Unigram.Controls.Gallery
 
         private Visual _layer;
 
+        private bool _wasFullScreen;
+
         private GalleryView()
         {
             InitializeComponent();
@@ -311,6 +313,8 @@ namespace Unigram.Controls.Gallery
                 RoutedEventHandler handler = null;
                 handler = new RoutedEventHandler(async (s, args) =>
                 {
+                    _wasFullScreen = ApplicationView.GetForCurrentView().IsFullScreenMode;
+
                     Transport.Focus(FocusState.Programmatic);
 
                     Loaded -= handler;
@@ -345,6 +349,11 @@ namespace Unigram.Controls.Gallery
 
         public void OnBackRequesting(HandledRoutedEventArgs e)
         {
+            if (!_wasFullScreen)
+            {
+                ApplicationView.GetForCurrentView().ExitFullScreenMode();
+            }
+
             Unload();
             Dispose();
 
@@ -353,6 +362,11 @@ namespace Unigram.Controls.Gallery
 
         protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
         {
+            if (!_wasFullScreen)
+            {
+                ApplicationView.GetForCurrentView().ExitFullScreenMode();
+            }
+
             //var container = GetContainer(0);
             //var root = container.Presenter;
             if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
