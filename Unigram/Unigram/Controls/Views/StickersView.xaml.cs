@@ -259,9 +259,9 @@ namespace Unigram.Controls.Views
 
         private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is string emoji)
+            if (e.ClickedItem is EmojiData emoji)
             {
-                EmojiClick?.Invoke(emoji);
+                EmojiClick?.Invoke(emoji.Value);
             }
         }
 

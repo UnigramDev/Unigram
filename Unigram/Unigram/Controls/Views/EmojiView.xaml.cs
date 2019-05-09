@@ -27,6 +27,7 @@ namespace Unigram.Controls.Views
         public event EventHandler Switch;
         public event ItemClickEventHandler ItemClick;
 
+        private EmojiSkinTone _selected;
         private bool _expanded;
 
         public EmojisView()
@@ -127,7 +128,7 @@ namespace Unigram.Controls.Views
 
         private void SkinTone_Click(object sender, RoutedEventArgs e)
         {
-            if (Grid.GetColumn(SkinFitz6) == 0)
+            if (!_expanded)
             {
                 UpdateSkinTone(SettingsService.Current.Stickers.SkinTone, true, true);
                 return;
@@ -157,19 +158,19 @@ namespace Unigram.Controls.Views
 
         private void UpdateSkinTone(EmojiSkinTone selected, bool expand, bool animated)
         {
-            Canvas.SetZIndex(SkinDefault, (int)selected < 0 ? 0 : (int)selected > 0 ? 0 : 1);
-            Canvas.SetZIndex(SkinFitz12, (int)selected < 1 ? -1 : (int)selected > 1 ? 1 : 2);
-            Canvas.SetZIndex(SkinFitz3, (int)selected < 2 ? -2 : (int)selected > 2 ? 2 : 3);
-            Canvas.SetZIndex(SkinFitz4, (int)selected < 3 ? -3 : (int)selected > 3 ? 3 : 4);
-            Canvas.SetZIndex(SkinFitz5, (int)selected < 4 ? -4 : (int)selected > 4 ? 4 : 5);
-            Canvas.SetZIndex(SkinFitz6, (int)selected < 5 ? -5 : (int)selected > 5 ? 5 : 6);
+            Canvas.SetZIndex(SkinDefault, (int)selected  == 0 ? 6 : 5);
+            Canvas.SetZIndex(SkinFitz12, (int)selected == 1 ? 6 : 4);
+            Canvas.SetZIndex(SkinFitz3, (int)selected == 2 ? 6 : 3);
+            Canvas.SetZIndex(SkinFitz4, (int)selected == 3 ? 6 : 2);
+            Canvas.SetZIndex(SkinFitz5, (int)selected == 4 ? 6 : 1);
+            Canvas.SetZIndex(SkinFitz6, (int)selected == 5 ? 6 : 0);
 
-            Grid.SetColumn(SkinDefault, expand ? 0 : 0);
-            Grid.SetColumn(SkinFitz12, expand ? 1 : 0);
-            Grid.SetColumn(SkinFitz3, expand ? 2 : 0);
-            Grid.SetColumn(SkinFitz4, expand ? 3 : 0);
-            Grid.SetColumn(SkinFitz5, expand ? 4 : 0);
-            Grid.SetColumn(SkinFitz6, expand ? 5 : 0);
+            Grid.SetColumn(SkinDefault, expand ? (int)selected < 0 ? 0 : (int)selected > 0 ? 1 : 0 : 0);
+            Grid.SetColumn(SkinFitz12, expand ? (int)selected < 1 ? 1 : (int)selected > 1 ? 2 : 0 : 0);
+            Grid.SetColumn(SkinFitz3, expand ? (int)selected < 2 ? 2 : (int)selected > 2 ? 3 : 0 : 0);
+            Grid.SetColumn(SkinFitz4, expand ? (int)selected < 3 ? 3 : (int)selected > 3 ? 4 : 0 : 0);
+            Grid.SetColumn(SkinFitz5, expand ? (int)selected < 4 ? 4 : (int)selected > 4 ? 5 : 0 : 0);
+            Grid.SetColumn(SkinFitz6, expand ? (int)selected < 5 ? 5 : (int)selected > 5 ? 5 : 0 : 0);
             Grid.SetColumn(Toolbar, expand ? 6 : 1);
 
             SkinDefault.IsEnabled = expand || selected == EmojiSkinTone.Default;
@@ -188,6 +189,7 @@ namespace Unigram.Controls.Views
 
             if (_expanded == expand || !animated)
             {
+                _selected = selected;
                 _expanded = expand;
                 return;
             }
@@ -203,6 +205,10 @@ namespace Unigram.Controls.Views
                 {
                     from--;
                 }
+                else
+                {
+                    from = (int)_selected < i ? i : (int)_selected > i ? i + 1 : 0;
+                }
 
                 var anim = visual.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, expand ? from * -40 : from * 40);
@@ -211,6 +217,7 @@ namespace Unigram.Controls.Views
                 visual.StartAnimation("Offset.X", anim);
             }
 
+            _selected = selected;
             _expanded = expand;
         }
 
