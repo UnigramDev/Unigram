@@ -28,6 +28,17 @@ namespace Unigram.Controls
                     RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
                 }
             }
+
+            Opened += TLContentDialog_Opened;
+        }
+
+        private void TLContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            var button = GetTemplateChild("PrimaryButton") as Button;
+            if (button != null)
+            {
+                button.Focus(FocusState.Keyboard);
+            }
         }
 
         protected override void OnApplyTemplate()
