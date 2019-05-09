@@ -28,6 +28,7 @@ using System.Numerics;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.Controls.Views
 {
@@ -97,6 +98,15 @@ namespace Unigram.Controls.Views
                 case Services.Settings.StickersTab.Stickers:
                     Pivot.SelectedIndex = 2;
                     break;
+            }
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
+            {
+                var themeShadow = new ThemeShadow();
+                BackgroundElement.Shadow = themeShadow;
+                BackgroundElement.Translation += new Vector3(0, 0, 32);
+
+                themeShadow.Receivers.Add(ShadowElement);
             }
         }
 

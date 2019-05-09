@@ -146,6 +146,8 @@
             <RowDefinition x:Name="ShowRow"/>
         </Grid.RowDefinitions>
 
+        <Border x:Name="ShadowElement" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+
         <Border Background="Transparent" Grid.Column="1" Grid.Row="1">
             <Grid x:Name="BackgroundElement"
                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"

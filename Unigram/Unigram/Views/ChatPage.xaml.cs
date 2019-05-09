@@ -191,7 +191,7 @@ namespace Unigram.Views
             _textShadowVisual = DropShadowEx.Attach(Separator, 20, 0.25f);
             _textShadowVisual.IsVisible = false;
 
-            TextField.Language = Native.NativeUtils.GetCurrentCulture();
+            //TextField.Language = Native.NativeUtils.GetCurrentCulture();
 
             return;
 
@@ -2200,6 +2200,11 @@ namespace Unigram.Views
 
             await Task.Delay(100);
             TextField.Focus(FocusState.Programmatic);
+        }
+
+        private void InlinePanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _textShadowVisual.IsVisible = e.NewSize.Height > 0;
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)

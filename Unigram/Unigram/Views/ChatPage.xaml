@@ -829,7 +829,9 @@
                 </StackPanel>
             </StackPanel>
 
-            <Grid Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
+            <Grid SizeChanged="InlinePanel_SizeChanged"
+                  VerticalAlignment="Bottom"
+                  Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
                 <views:InlineBotResultsView
                     x:Name="InlinePanel"
                     Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
@@ -908,7 +910,8 @@
         </Grid>
 
         <!-- Input pane -->
-        <Border x:Name="Separator" Visibility="{x:Bind ConvertShadowVisibility(ViewModel.InlineBotResultsVisibility, ViewModel.StickerPack, ViewModel.Autocomplete), Mode=OneWay}" Grid.Row="3"/>
+        <!--<Border x:Name="Separator" Visibility="{x:Bind ConvertShadowVisibility(ViewModel.InlineBotResultsVisibility, ViewModel.StickerPack, ViewModel.Autocomplete), Mode=OneWay}" Grid.Row="3"/>-->
+        <Border x:Name="Separator" Grid.Row="3"/>
 
         <ContentControl x:Name="TextArea"
                         IsTabStop="False"
