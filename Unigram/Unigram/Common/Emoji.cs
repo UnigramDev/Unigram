@@ -15,6 +15,7 @@ namespace Unigram.Common
     {
         public string Id { get; set; }
         public string Title { get; set; }
+        public int Version { get; set; }
 
         public File Thumbnail { get; set; }
         public File Document { get; set; }
@@ -36,6 +37,16 @@ namespace Unigram.Common
             }
 
             return false;
+        }
+
+        public InstalledEmojiSet ToInstalled()
+        {
+            return new InstalledEmojiSet
+            {
+                Id = Id,
+                Title = Title,
+                Version = Version
+            };
         }
     }
 

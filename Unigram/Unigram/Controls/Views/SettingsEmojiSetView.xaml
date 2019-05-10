@@ -54,6 +54,9 @@
                     </RadioButton>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection/>
+            </ListView.ItemContainerTransitions>
         </ListView>
     </Grid>
 </controls:TLContentDialog>

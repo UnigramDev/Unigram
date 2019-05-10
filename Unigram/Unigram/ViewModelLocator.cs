@@ -114,6 +114,10 @@ namespace Unigram
                     .As<INetworkService>()
                     .SingleInstance()
                     .AutoActivate();
+                builder.RegisterType<EmojiSetService>()
+                    .As<IEmojiSetService>()
+                    .SingleInstance()
+                    .AutoActivate();
                 //builder.RegisterType<OptionsService>()
                 //    .As<IOptionsService>()
                 //    .SingleInstance()
@@ -243,7 +247,6 @@ namespace Unigram
                 builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
                 builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsWallpapersViewModel>();//.SingleInstance();
-                builder.RegisterType<SettingsEmojiViewModel>();
                 builder.RegisterType<SettingsVoIPViewModel>();
                 builder.RegisterType<WallpaperViewModel>();
                 builder.RegisterType<AttachedStickersViewModel>();

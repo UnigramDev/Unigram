@@ -25,6 +25,13 @@ namespace Unigram.Services.Settings
         Dark = 1 << 2,
     }
 
+    public class InstalledEmojiSet
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public int Version { get; set; }
+    }
+
     public class AppearanceSettings : SettingsServiceBase
     {
         private Timer _nightModeTimer;
@@ -124,38 +131,38 @@ namespace Unigram.Services.Settings
             }
         }
 
-        private string _emojiSet;
-        public string EmojiSet
+        private InstalledEmojiSet _emojiSet;
+        public InstalledEmojiSet EmojiSet
         {
             get
             {
                 if (_emojiSet == null)
-                    _emojiSet = GetValueOrDefault(_container, "EmojiSet", "Apple");
+                    _emojiSet = new InstalledEmojiSet
+                    {
+                        Id = GetValueOrDefault(_container, "EmojiSetId", "apple"),
+                        Title = GetValueOrDefault(_container, "EmojiSet", "Apple"),
+                        Version = GetValueOrDefault(_container, "EmojiSetVersion", 1),
+                    };
 
-                return _emojiSet ?? "Apple";
+                return _emojiSet;
             }
             set
             {
-                _emojiSet = value ?? "Apple";
-                AddOrUpdateValue(_container, "EmojiSet", value);
+                _emojiSet = value ?? GetDefaultEmojiSet();
+                AddOrUpdateValue(_container, "EmojiSetId", value?.Id ?? "apple");
+                AddOrUpdateValue(_container, "EmojiSet", value?.Title ?? "Apple");
+                AddOrUpdateValue(_container, "EmojiSetVersion", value?.Version ?? 1);
             }
         }
 
-        private string _emojiSetId;
-        public string EmojiSetId
+        private InstalledEmojiSet GetDefaultEmojiSet()
         {
-            get
+            return new InstalledEmojiSet
             {
-                if (_emojiSetId == null)
-                    _emojiSetId = GetValueOrDefault(_container, "EmojiSetId", "apple");
-
-                return _emojiSetId ?? "apple";
-            }
-            set
-            {
-                _emojiSetId = value ?? "apple";
-                AddOrUpdateValue(_container, "EmojiSetId", value);
-            }
+                Id = "apple",
+                Title = "Apple",
+                Version = 1
+            };
         }
 
         private string _requestedThemePath;

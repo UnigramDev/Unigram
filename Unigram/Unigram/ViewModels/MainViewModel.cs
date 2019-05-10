@@ -30,10 +30,11 @@ namespace Unigram.ViewModels
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
         private readonly IVoIPService _voipService;
+        private readonly IEmojiSetService _emojiSetService;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -44,6 +45,7 @@ namespace Unigram.ViewModels
             _lifetimeService = lifecycle;
             _sessionService = session;
             _voipService = voipService;
+            _emojiSetService = emojiSetService;
 
             Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService);
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
@@ -142,6 +144,7 @@ namespace Unigram.ViewModels
             {
                 Task.Run(() => _pushService.RegisterAsync());
                 Task.Run(() => _contactsService.JumpListAsync());
+                Task.Run(() => _emojiSetService.UpdateAsync());
             }
 
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));

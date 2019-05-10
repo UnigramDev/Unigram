@@ -475,6 +475,7 @@
     <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
+    <Compile Include="Services\EmojiSetService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\Settings\AppearanceSettings.cs" />
     <Compile Include="Services\ContactsService.cs" />

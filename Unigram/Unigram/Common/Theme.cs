@@ -39,25 +39,18 @@ namespace Unigram.Common
 
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d));
 
-                var emojiSetId = SettingsService.Current.Appearance.EmojiSetId;
-                if (emojiSetId.Length > 0)
+                var emojiSet = SettingsService.Current.Appearance.EmojiSet;
+                switch (emojiSet.Id)
                 {
-                    switch (emojiSetId)
-                    {
-                        case "microsoft":
-                            Theme.Current["EmojiThemeFontFamily"] = new FontFamily($"XamlAutoFontFamily");
-                            break;
-                        case "apple":
-                            this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/{emojiSetId}.ttf#Segoe UI Emoji"));
-                            break;
-                        default:
-                            this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSetId}.ttf#Segoe UI Emoji"));
-                            break;
-                    }
-                }
-                else
-                {
-                    this.Add("EmojiThemeFontFamily", new FontFamily("XamlAutoFontFamily"));
+                    case "microsoft":
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"XamlAutoFontFamily"));
+                        break;
+                    case "apple":
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/{emojiSet.Id}.ttf#Segoe UI Emoji"));
+                        break;
+                    default:
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSet.Id}.{emojiSet.Version}.ttf#Segoe UI Emoji"));
+                        break;
                 }
             }
             catch { }

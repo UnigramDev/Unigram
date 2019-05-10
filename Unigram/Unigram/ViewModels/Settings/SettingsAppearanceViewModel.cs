@@ -26,14 +26,16 @@ namespace Unigram.ViewModels.Settings
     public class SettingsAppearanceViewModel : TLViewModelBase
     {
         private readonly IThemeService _themeService;
+        private readonly IEmojiSetService _emojiSetService;
 
         private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
         private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
 
-        public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService)
+        public SettingsAppearanceViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, IEmojiSetService emojiSetService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _themeService = themeService;
+            _emojiSetService = emojiSetService;
 
             Items = new MvxObservableCollection<ThemeInfoBase>();
 
@@ -55,17 +57,17 @@ namespace Unigram.ViewModels.Settings
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var emojiSet = Settings.Appearance.EmojiSet;
-            var emojiSetId = Settings.Appearance.EmojiSetId;
+            EmojiSet = emojiSet.Title;
 
-            if (emojiSet.Length > 0 && emojiSetId.Length > 0)
+            switch (emojiSet.Id)
             {
-                EmojiSet = emojiSet;
-                EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSetId}.png";
-            }
-            else
-            {
-                EmojiSet = "Microsoft";
-                EmojiSetId = $"ms-appx:///Assets/Emoji/microsoft.png";
+                case "microsoft":
+                case "apple":
+                    EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSet.Id}.png";
+                    break;
+                default:
+                    EmojiSetId = $"ms-appdata:///local/emoji/{emojiSet.Id}.png";
+                    break;
             }
 
             Items.ReplaceWith(await _themeService.GetThemesAsync());
@@ -204,30 +206,20 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand EmojiSetCommand { get; }
         private async void EmojiSetExecute()
         {
-            await new SettingsEmojiSetView(ProtoService, Aggregator).ShowQueuedAsync();
+            await new SettingsEmojiSetView(ProtoService, _emojiSetService, Aggregator).ShowQueuedAsync();
 
             var emojiSet = Settings.Appearance.EmojiSet;
-            var emojiSetId = Settings.Appearance.EmojiSetId;
+            EmojiSet = emojiSet.Title;
 
-            if (emojiSet.Length > 0 && emojiSetId.Length > 0)
+            switch (emojiSet.Id)
             {
-                EmojiSet = emojiSet;
-
-                switch (emojiSetId)
-                {
-                    case "microsoft":
-                    case "apple":
-                        EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSetId}.png";
-                        break;
-                    default:
-                        EmojiSetId = $"ms-appdata:///local/emoji/{emojiSetId}.png";
-                        break;
-                }
-            }
-            else
-            {
-                EmojiSet = "Microsoft";
-                EmojiSetId = $"ms-appx:///Assets/Emoji/microsoft.png";
+                case "microsoft":
+                case "apple":
+                    EmojiSetId = $"ms-appx:///Assets/Emoji/{emojiSet.Id}.png";
+                    break;
+                default:
+                    EmojiSetId = $"ms-appdata:///local/emoji/{emojiSet.Id}.png";
+                    break;
             }
         }
 
