@@ -14,7 +14,7 @@
     Loaded="OnLoaded">
 
     <UserControl.Resources>
-        <CollectionViewSource x:Name="EmojisViewSource" IsSourceGrouped="True" ItemsPath="Items"/>
+        <CollectionViewSource x:Name="EmojiCollection" IsSourceGrouped="True" ItemsPath="Items"/>
 
         <DataTemplate x:Key="EmojiTemplate" x:DataType="common:EmojiData">
             <TextBlock x:Phase="0" Text="{x:Bind Value, Mode=OneWay}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
@@ -88,25 +88,30 @@
                 <VisualState x:Name="NarrowState"/>
                 <VisualState x:Name="FilledState">
                     <VisualState.Setters>
-                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="2"/>
+                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="3"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Border Grid.Row="1">
+            <TextBox x:Name="FieldEmoji" PlaceholderText="{CustomResource SearchEmojiHint}" TextChanged="FieldEmoji_TextChanged" Margin="12,8"/>
+        </Border>
+
         <GridView x:Name="List"
-                  ItemsSource="{x:Bind EmojisViewSource.View, Mode=OneWay}"
+                  ItemsSource="{x:Bind EmojiCollection.View, Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
-                  Grid.Row="1">
+                  Grid.Row="2">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="7"/>
             </common:FluidGridView.Triggers>

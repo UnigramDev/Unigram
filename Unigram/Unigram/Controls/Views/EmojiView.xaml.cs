@@ -24,7 +24,6 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class EmojisView : UserControl
     {
-        public event EventHandler Switch;
         public event ItemClickEventHandler ItemClick;
 
         private EmojiSkinTone _selected;
@@ -65,23 +64,23 @@ namespace Unigram.Controls.Views
 
             if (Toolbar.ItemsSource is List<EmojiGroup> groups)
             {
-                if (groups.Count == Emoji.Items.Count && microsoft)
+                if (groups.Count == Emoji.GroupsCount && microsoft)
                 {
                     var items = Emoji.Get(tone, false);
-                    EmojisViewSource.Source = items;
+                    EmojiCollection.Source = items;
                     Toolbar.ItemsSource = items;
                 }
-                else if (groups.Count == Emoji.Items.Count - 1 && !microsoft)
+                else if (groups.Count == Emoji.GroupsCount - 1 && !microsoft)
                 {
                     var items = Emoji.Get(tone, true);
-                    EmojisViewSource.Source = items;
+                    EmojiCollection.Source = items;
                     Toolbar.ItemsSource = items;
                 }
             }
             else
             {
                 var items = Emoji.Get(tone, !microsoft);
-                EmojisViewSource.Source = items;
+                EmojiCollection.Source = items;
                 Toolbar.ItemsSource = items;
             }
 
@@ -124,9 +123,16 @@ namespace Unigram.Controls.Views
             ItemClick?.Invoke(this, e);
         }
 
-        private void Switch_Click(object sender, RoutedEventArgs e)
+        private void FieldEmoji_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Switch?.Invoke(this, EventArgs.Empty);
+            if (string.IsNullOrWhiteSpace(FieldEmoji.Text))
+            {
+                EmojiCollection.Source = Toolbar.ItemsSource;
+            }
+            else
+            {
+                EmojiCollection.Source = Emoji.Search(FieldEmoji.Text, _selected);
+            }
         }
 
         private void SkinTone_Click(object sender, RoutedEventArgs e)
@@ -138,7 +144,7 @@ namespace Unigram.Controls.Views
             }
 
             var radio = sender as RadioButton;
-            if (radio.Content is int value && EmojisViewSource.Source is List<EmojiGroup> groups)
+            if (radio.Content is int value && EmojiCollection.Source is List<EmojiGroup> groups)
             {
                 foreach (var group in groups)
                 {
@@ -148,14 +154,19 @@ namespace Unigram.Controls.Views
                     }
                 }
 
+                if (EmojiCollection.Source != Toolbar.ItemsSource && Toolbar.ItemsSource is List<EmojiGroup> toolbar)
+                {
+                    foreach (var group in toolbar)
+                    {
+                        foreach (var item in group.Items.OfType<EmojiSkinData>())
+                        {
+                            item.SetValue((EmojiSkinTone)value);
+                        }
+                    }
+                }
+
                 SettingsService.Current.Stickers.SkinTone = (EmojiSkinTone)value;
                 UpdateSkinTone((EmojiSkinTone)value, false, true);
-
-                return;
-                var items = Emoji.Get((EmojiSkinTone)value, true);
-
-                EmojisViewSource.Source = items;
-                Toolbar.ItemsSource = items;
             }
         }
 
@@ -290,6 +301,5 @@ namespace Unigram.Controls.Views
         }
 
         #endregion
-
     }
 }

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Native;
+using Unigram.Services.Settings;
 
 namespace Unigram.Common
 {
@@ -133,33 +135,6 @@ namespace Unigram.Common
         #endregion
     }
 
-    public partial class EmojiGroupInternal
-    {
-        public string Title { get; set; }
-        public string Glyph { get; set; }
-
-        public string[] Items { get; set; }
-
-        public EmojiGroup ToGroup(EmojiSkinTone tone)
-        {
-            return new EmojiGroup
-            {
-                Title = Title,
-                Glyph = Glyph,
-                Items = Items.Select(x =>
-                {
-                    if (_skinEmojis.Contains(x))
-                    {
-                        return new EmojiSkinData(x, tone);
-                    }
-
-                    return new EmojiData(x);
-
-                }).ToArray()
-            };
-        }
-    }
-
     public class EmojiGroup
     {
         public string Title { get; set; }
@@ -170,6 +145,33 @@ namespace Unigram.Common
 
     public static partial class Emoji
     {
+        partial class EmojiGroupInternal
+        {
+            public string Title { get; set; }
+            public string Glyph { get; set; }
+
+            public string[] Items { get; set; }
+
+            public EmojiGroup ToGroup(EmojiSkinTone tone)
+            {
+                return new EmojiGroup
+                {
+                    Title = Title,
+                    Glyph = Glyph,
+                    Items = Items.Select(x =>
+                    {
+                        if (_skinEmojis.Contains(x))
+                        {
+                            return new EmojiSkinData(x, tone);
+                        }
+
+                        return new EmojiData(x);
+
+                    }).ToArray()
+                };
+            }
+        }
+
         public static List<EmojiGroup> Get(EmojiSkinTone skin, bool flags)
         {
             var results = new List<EmojiGroup>();
@@ -183,6 +185,37 @@ namespace Unigram.Common
             }
 
             return results;
+        }
+
+        public static List<EmojiGroup> Search(string query, EmojiSkinTone skin)
+        {
+            var result = new List<EmojiData>();
+
+            var suggestions = EmojiSuggestion.GetSuggestions(query);
+            if (suggestions != null)
+            {
+                foreach (var item in suggestions)
+                {
+                    var emoji = item.Emoji.TrimEnd('\uFE0F');
+                    if (EmojiGroupInternal._skinEmojis.Contains(emoji))
+                    {
+                        result.Add(new EmojiSkinData(emoji, skin));
+                    }
+                    else
+                    {
+                        result.Add(new EmojiData(item.Emoji));
+                    }
+                }
+            }
+
+            return new List<EmojiGroup>
+            {
+                new EmojiGroup
+                {
+                    Title = result.Count > 0 ? Strings.Resources.SearchEmojiHint : Strings.Resources.NoEmojiFound,
+                    Items = result.ToArray()
+                }
+            };
         }
 
         public static bool ContainsSingleEmoji(string text)
