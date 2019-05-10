@@ -102,6 +102,7 @@
                   ItemsSource="{x:Bind EmojisViewSource.View, Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
                   ChoosingItemContainer="OnChoosingItemContainer"
+                  ContainerContentChanging="OnContainerContentChanging"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
@@ -179,7 +180,7 @@
             <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                           VerticalScrollBarVisibility="Disabled"
                           VerticalScrollMode="Disabled"
-                          HorizontalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Hidden"
                           HorizontalScrollMode="Auto">
                 <Grid>
                     <Grid.ColumnDefinitions>

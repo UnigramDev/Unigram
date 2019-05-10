@@ -40,6 +40,9 @@ namespace Unigram.Controls.Views
             {
                 shadow.Size = args.NewSize.ToVector2();
             };
+
+            _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
+            _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -57,7 +60,7 @@ namespace Unigram.Controls.Views
         {
             VisualStateManager.GoToState(this, widget ? "FilledState" : "NarrowState", false);
 
-            var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSetId, "microsoft");
+            var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSet.Id, "microsoft");
             var tone = SettingsService.Current.Stickers.SkinTone;
 
             if (Toolbar.ItemsSource is List<EmojiGroup> groups)
@@ -221,16 +224,72 @@ namespace Unigram.Controls.Views
             _expanded = expand;
         }
 
+        #region Recycle
+
+        private Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
+
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            if (args.ItemContainer == null)
+            var typeName = args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate";
+            var relevantHashSet = _typeToItemHashSetMapping[typeName];
+
+            // args.ItemContainer is used to indicate whether the ListView is proposing an
+            // ItemContainer (ListViewItem) to use. If args.Itemcontainer != null, then there was a
+            // recycled ItemContainer available to be reused.
+            if (args.ItemContainer != null)
             {
-                args.ItemContainer = new GridViewItem();
-                args.ItemContainer.Style = List.ItemContainerStyle;
+                if (args.ItemContainer.Tag.Equals(typeName))
+                {
+                    // Suggestion matches what we want, so remove it from the recycle queue
+                    relevantHashSet.Remove(args.ItemContainer);
+                }
+                else
+                {
+                    // The ItemContainer's datatemplate does not match the needed
+                    // datatemplate.
+                    // Don't remove it from the recycle queue, since XAML will resuggest it later
+                    args.ItemContainer = null;
+                }
             }
 
-            args.ItemContainer.ContentTemplate = Resources[args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate"] as DataTemplate;
+            // If there was no suggested container or XAML's suggestion was a miss, pick one up from the recycle queue
+            // or create a new one
+            if (args.ItemContainer == null)
+            {
+                // See if we can fetch from the correct list.
+                if (relevantHashSet.Count > 0)
+                {
+                    // Unfortunately have to resort to LINQ here. There's no efficient way of getting an arbitrary
+                    // item from a hashset without knowing the item. Queue isn't usable for this scenario
+                    // because you can't remove a specific element (which is needed in the block above).
+                    args.ItemContainer = relevantHashSet.First();
+                    relevantHashSet.Remove(args.ItemContainer);
+                }
+                else
+                {
+                    // There aren't any (recycled) ItemContainers available. So a new one
+                    // needs to be created.
+                    var item = new GridViewItem { ContentTemplate = Resources[typeName] as DataTemplate, Tag = typeName };
+                    item.Style = List.ItemContainerStyle;
+                    args.ItemContainer = item;
+                }
+            }
+
+            // Indicate to XAML that we picked a container for it
             args.IsContainerPrepared = true;
         }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue == true)
+            {
+                // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
+                var tag = args.ItemContainer.Tag as string;
+                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+            }
+        }
+
+        #endregion
+
     }
 }
