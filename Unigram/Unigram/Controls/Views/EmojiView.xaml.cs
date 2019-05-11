@@ -35,7 +35,7 @@ namespace Unigram.Controls.Views
 
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
 
-            Toolbar.SizeChanged += (s, args) =>
+            Separator.SizeChanged += (s, args) =>
             {
                 shadow.Size = args.NewSize.ToVector2();
             };

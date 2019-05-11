@@ -207,8 +207,8 @@ namespace Unigram.Common
             {
                 foreach (var item in suggestions)
                 {
-                    var emoji = item.Emoji.TrimEnd('\uFE0F');
-                    if (EmojiGroupInternal._skinEmojis.Contains(emoji))
+                    var emoji = item.Emoji.ToString();
+                    if (EmojiGroupInternal._skinEmojis.Contains(emoji) || EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
                     {
                         result.Add(new EmojiSkinData(emoji, skin));
                     }
