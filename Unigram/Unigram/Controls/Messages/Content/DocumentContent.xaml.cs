@@ -166,13 +166,21 @@ namespace Unigram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageDocument)
+            if (content is MessageDocument document)
             {
+#if DEBUG
+                return !(document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json"));
+#else
                 return true;
+#endif
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
+#if DEBUG
+                return text.WebPage.Document != null && !(text.WebPage.Document.FileName.StartsWith("tg_secret_sticker") && text.WebPage.Document.FileName.EndsWith("json"));
+#else
                 return text.WebPage.Document != null;
+#endif
             }
 
             return false;

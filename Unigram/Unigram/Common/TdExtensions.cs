@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Selectors;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Settings;
 
 namespace Unigram.Common
@@ -294,6 +295,30 @@ namespace Unigram.Common
             }
 
             return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
+        }
+
+        public static bool IsAnimatedSticker(this Message message)
+        {
+#if DEBUG
+            if (message.Content is MessageDocument document)
+            {
+                return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");
+            }
+#endif
+
+            return false;
+        }
+
+        public static bool IsAnimatedSticker(this MessageViewModel message)
+        {
+#if DEBUG
+            if (message.Content is MessageDocument document)
+            {
+                return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");
+            }
+#endif
+
+            return false;
         }
 
         public static IEnumerable<FormattedText> Split(this FormattedText text, int maxLength)
@@ -1187,6 +1212,7 @@ namespace Unigram.Common
                     case 'c': newFullLevel = 7; break; // crop 640x640
                     case 'd': newFullLevel = 6; break; // crop 1280x1280
                     case 'i': newFullLevel = i.Photo.Local.IsDownloadingCompleted || i.Photo.Local.CanBeDownloaded ? 0 : 10; break;
+                    case 'u': newFullLevel = 10; break;
                 }
 
                 if (newFullLevel < 0)

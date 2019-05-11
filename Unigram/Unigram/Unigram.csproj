@@ -218,6 +218,9 @@
     <Compile Include="Controls\Messages\Content\AlbumContent.xaml.cs">
       <DependentUpon>AlbumContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Content\AnimatedStickerContent.xaml.cs">
+      <DependentUpon>AnimatedStickerContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\AudioContent.xaml.cs">
       <DependentUpon>AudioContent.xaml</DependentUpon>
     </Compile>
@@ -1717,6 +1720,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Messages\Content\AnimatedStickerContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Messages\Content\AudioContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2517,7 +2524,11 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Microsoft.Toolkit.Uwp.UI.Lottie">
+      <HintPath>..\Libraries\Lottie\Microsoft.Toolkit.Uwp.UI.Lottie.winmd</HintPath>
+    </Reference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
