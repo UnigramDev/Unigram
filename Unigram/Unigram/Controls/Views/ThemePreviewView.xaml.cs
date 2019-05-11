@@ -32,14 +32,19 @@ namespace Unigram.Controls.Views
         public ThemePreviewView(string path)
         {
             InitializeComponent();
+            Initialize(path);
+        }
 
+        private async void Initialize(string path)
+        {
             _path = path;
 
             var flags = TelegramTheme.Light;
             var theme = SettingsService.Current.Appearance.RequestedTheme;
             var mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(flags);
 
-            var lines = System.IO.File.ReadAllLines(path);
+            var file = await StorageFile.GetFileFromPathAsync(path);
+            var lines = await FileIO.ReadLinesAsync(file);
             var dict = new ResourceDictionary();
 
             foreach (var line in lines)
