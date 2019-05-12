@@ -342,9 +342,9 @@ namespace Unigram.Views
                 if (animation.Local.IsDownloadingCompleted)
                 {
                     var root = container.ContentTemplateRoot as FrameworkElement;
-                    if (root is Grid grid)
+                    if (root is MessageBubble == false)
                     {
-                        root = grid.FindName("Bubble") as FrameworkElement;
+                        root = root.FindName("Bubble") as FrameworkElement;
                     }
 
                     var target = message.Content as object;

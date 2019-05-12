@@ -283,9 +283,9 @@ namespace Unigram.ViewModels
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is Grid grid)
+                        if (content is MessageBubble == false)
                         {
-                            content = grid.FindName("Bubble") as FrameworkElement;
+                            content = content.FindName("Bubble") as FrameworkElement;
                         }
 
                         if (content is MessageBubble bubble)
@@ -641,9 +641,9 @@ namespace Unigram.ViewModels
                                 }
 
                                 var content = container.ContentTemplateRoot as FrameworkElement;
-                                if (content is Grid grid)
+                                if (content is MessageBubble == false)
                                 {
-                                    content = grid.FindName("Bubble") as FrameworkElement;
+                                    content = content.FindName("Bubble") as FrameworkElement;
                                 }
 
                                 if (content is MessageBubble bubble)
@@ -672,9 +672,9 @@ namespace Unigram.ViewModels
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is Grid grid)
+                        if (content is MessageBubble == false)
                         {
-                            content = grid.FindName("Bubble") as FrameworkElement;
+                            content = content.FindName("Bubble") as FrameworkElement;
                         }
 
                         if (content is MessageBubble bubble)
@@ -720,9 +720,9 @@ namespace Unigram.ViewModels
                                 }
 
                                 var content = container.ContentTemplateRoot as FrameworkElement;
-                                if (content is Grid grid)
+                                if (content is MessageBubble == false)
                                 {
-                                    content = grid.FindName("Bubble") as FrameworkElement;
+                                    content = content.FindName("Bubble") as FrameworkElement;
                                 }
 
                                 if (content is MessageBubble bubble)
@@ -759,9 +759,9 @@ namespace Unigram.ViewModels
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is Grid grid)
+                        if (content is MessageBubble == false)
                         {
-                            content = grid.FindName("Bubble") as FrameworkElement;
+                            content = content.FindName("Bubble") as FrameworkElement;
                         }
 
                         if (content is MessageBubble bubble)
@@ -788,9 +788,9 @@ namespace Unigram.ViewModels
             }
 
             var content = container.ContentTemplateRoot as FrameworkElement;
-            if (content is Grid grid)
+            if (content is MessageBubble == false)
             {
-                content = grid.FindName("Bubble") as FrameworkElement;
+                content = content.FindName("Bubble") as FrameworkElement;
             }
 
             if (content is MessageBubble bubble)

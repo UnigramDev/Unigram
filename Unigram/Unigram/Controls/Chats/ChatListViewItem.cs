@@ -383,9 +383,9 @@ namespace Unigram.Controls.Chats
 
         protected override string GetNameCore()
         {
-            if (_owner.ContentTemplateRoot is Grid root)
+            if (_owner.ContentTemplateRoot is FrameworkElement content && content is MessageBubble == false)
             {
-                var bubble = root.FindName("Bubble") as MessageBubble;
+                var bubble = content.FindName("Bubble") as MessageBubble;
                 if (bubble != null)
                 {
                     return bubble.GetAutomationName() ?? base.GetNameCore();

@@ -500,15 +500,15 @@ namespace Unigram.Views
                     continue;
                 }
 
-                if (content is Grid grid)
+                if (content is MessageBubble == false)
                 {
-                    var photo = grid.FindName("Photo") as ProfilePicture;
+                    var photo = content.FindName("Photo") as ProfilePicture;
                     if (photo != null)
                     {
                         photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
                     }
 
-                    content = grid.FindName("Bubble") as FrameworkElement;
+                    content = content.FindName("Bubble") as FrameworkElement;
                 }
                 else if (content is StackPanel panel && !(content is MessageBubble))
                 {
@@ -1743,9 +1743,9 @@ namespace Unigram.Views
                 element = content;
                 message = content.Tag as MessageViewModel;
 
-                if (content is Grid grid)
+                if (content is MessageBubble == false)
                 {
-                    element = grid.FindName("Bubble") as FrameworkElement;
+                    element = content.FindName("Bubble") as FrameworkElement;
                 }
                 else if (content is StackPanel panel && !(content is MessageBubble))
                 {
@@ -3535,9 +3535,9 @@ namespace Unigram.Views
                     }
 
                     var content = container.ContentTemplateRoot as FrameworkElement;
-                    if (content is Grid grid)
+                    if (content is MessageBubble == false)
                     {
-                        content = grid.FindName("Bubble") as FrameworkElement;
+                        content = content.FindName("Bubble") as FrameworkElement;
                     }
 
                     if (content is MessageBubble bubble)
@@ -3563,9 +3563,9 @@ namespace Unigram.Views
                     }
 
                     var content = container.ContentTemplateRoot as FrameworkElement;
-                    if (content is Grid grid)
+                    if (content is MessageBubble == false)
                     {
-                        var photo = grid.FindName("Photo") as ProfilePicture;
+                        var photo = content.FindName("Photo") as ProfilePicture;
                         if (photo != null)
                         {
                             if (message.IsSaved())
