@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Messages.Content;
+using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -24,6 +26,9 @@ namespace Unigram.Controls
 
         private TextBlock _label;
         private Visual _visual;
+
+        private long _fileId;
+        private MessageContentState _state;
 
         public FileButton()
         {
@@ -84,9 +89,58 @@ namespace Unigram.Controls
 
         #endregion
 
-        public void SetGlyph(string glyph, bool animate)
+
+        //public void SetGlyph(string glyph, bool animate)
+        //{
+        //    OnGlyphChanged(glyph, Glyph, animate);
+        //}
+
+        public void SetGlyph(int fileId, MessageContentState state)
         {
-            OnGlyphChanged(glyph, Glyph, animate);
+            if (fileId != _fileId)
+            {
+                _state = MessageContentState.None;
+            }
+
+            switch (state)
+            {
+                case MessageContentState.Download:
+                    OnGlyphChanged(Icons.Download, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Downloading:
+                    OnGlyphChanged(Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Uploading:
+                    OnGlyphChanged(Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Confirm:
+                    OnGlyphChanged(Icons.Confirm, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Document:
+                    OnGlyphChanged(Icons.Document, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Animation:
+                    OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Photo:
+                    OnGlyphChanged(Icons.Photo, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Play:
+                    OnGlyphChanged(Icons.Play, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Pause:
+                    OnGlyphChanged(Icons.Pause, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Ttl:
+                    OnGlyphChanged(Icons.Ttl, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Theme:
+                    OnGlyphChanged(Icons.Theme, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+            }
+
+            _fileId = fileId;
+            _state = state;
         }
 
         private void OnGlyphChanged(string newValue, string oldValue, bool animate)
