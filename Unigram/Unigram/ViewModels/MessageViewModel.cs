@@ -80,7 +80,7 @@ namespace Unigram.ViewModels
             }
 
             var user = ProtoService.GetUser(_message.SenderUserId);
-            if (user.Type is UserTypeBot)
+            if (user?.Type is UserTypeBot)
             {
                 return user;
             }

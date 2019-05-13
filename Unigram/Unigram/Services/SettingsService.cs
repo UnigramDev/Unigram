@@ -166,8 +166,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (7UL << 32) | (2309UL << 16);
-        public const string CurrentChangelog = "• Custom Themes (beta)\r\nYou can now install and share custom themes, as well as create them using the new Theme Editor in Settings > Appearance.\r\n• A new way to display the chat list (You can enable it in settings).\r\n• Forward messages as copy.\r\n• Added a lot of tiny animations.\r\n• Bug fixes and improvements.";
+        public const ulong CurrentVersion = (3UL << 48) | (8UL << 32) | (2411UL << 16);
+        public const string CurrentChangelog = "• More emoji sets: you can now download them from Chat Settings.\r\n• Search emoji by keywords from the emoji panel.\r\n• Added emoji skin tone selector.\r\n• You can now start typing anywhere to compose a message, or, if you don't have any open chat, to trigger a search.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;

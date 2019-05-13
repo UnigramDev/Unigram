@@ -75,6 +75,7 @@
                         <TextBox
                             x:Name="Title"
                             Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
                             MaxLength="{StaticResource ChannelTitleMaxLength}"/>
                     </Border>
                 </Grid>
@@ -83,6 +84,7 @@
                     <TextBox
                         x:Name="About"
                         Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                         MaxLength="{StaticResource ChannelAboutMaxLength}"
                         PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
                         TextWrapping="Wrap"

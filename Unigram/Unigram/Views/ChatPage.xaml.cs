@@ -285,6 +285,12 @@ namespace Unigram.Views
                 {
                     _stickersTimer.Stop();
 
+                    var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                    if (popups.Count > 0)
+                    {
+                        return;
+                    }
+
                     Collapse_Click(StickersPanel, null);
                     TextField.Focus(FocusState.Programmatic);
                 };
@@ -322,6 +328,12 @@ namespace Unigram.Views
                     ButtonStickers.Glyph = "\uF4AA";
                     break;
             }
+        }
+
+        public void HideStickers()
+        {
+            Collapse_Click(StickersPanel, null);
+            TextField.Focus(FocusState.Programmatic);
         }
 
         private void ContactPanel_LaunchFullAppRequested(Windows.ApplicationModel.Contacts.ContactPanel sender, Windows.ApplicationModel.Contacts.ContactPanelLaunchFullAppRequestedEventArgs args)
@@ -2182,7 +2194,7 @@ namespace Unigram.Views
 
         public async void Stickers_ItemClick(Sticker sticker)
         {
-            ViewModel.SendStickerCommand.Execute(sticker);
+            ViewModel.StickerSendCommand.Execute(sticker);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
@@ -2193,7 +2205,7 @@ namespace Unigram.Views
 
         public async void Animations_ItemClick(Animation animation)
         {
-            ViewModel.SendAnimationCommand.Execute(animation);
+            ViewModel.AnimationSendCommand.Execute(animation);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
