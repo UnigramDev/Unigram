@@ -287,7 +287,7 @@ namespace Unigram.Services
                 return;
             }
 
-            ProcessNotification(update.NotificationGroupId, 0, update.Notification);
+            //ProcessNotification(update.NotificationGroupId, 0, update.Notification);
         }
 
         private void ProcessNotification(int group, long chatId, Telegram.Td.Api.Notification notification)
