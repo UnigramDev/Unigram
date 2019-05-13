@@ -26,7 +26,6 @@ namespace Unigram.Controls.Cells
     {
         private IProtoService _protoService;
         private IMessageDelegate _delegate;
-        private MessageContentState _oldState;
         private Message _message;
 
         public SharedFileCell()
@@ -39,7 +38,6 @@ namespace Unigram.Controls.Cells
             _protoService = protoService;
             _delegate = delegato;
 
-            _oldState = message.Id != _message?.Id ? MessageContentState.None : _oldState;
             _message = message;
 
             var data = message.GetFileAndName(false);
@@ -87,42 +85,34 @@ namespace Unigram.Controls.Cells
             if (file.Local.IsDownloadingActive)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
+                Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
-
-                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
+                Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
-
-                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 //Button.Glyph = Icons.Download;
-                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
+                Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
                 Subtitle.Text = FileSizeConverter.Convert(size) + " — " + UpdateTimeLabel(message);
-
-                _oldState = MessageContentState.Download;
             }
             else
             {
                 //Button.Glyph = Icons.Document;
-                Button.SetGlyph(Icons.Document, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
+                Button.SetGlyph(file.Id, MessageContentState.Document);
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size) + " — " + UpdateTimeLabel(message);
-
-                _oldState = MessageContentState.Open;
             }
         }
 
