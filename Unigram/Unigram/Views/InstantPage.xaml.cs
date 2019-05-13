@@ -277,6 +277,8 @@ namespace Unigram.Views
         {
             _instantView = instantView;
 
+            ScrollingHost.FlowDirection = instantView.IsRtl ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+
             var processed = 0;
             PageBlock previousBlock = null;
             FrameworkElement previousElement = null;
@@ -348,6 +350,7 @@ namespace Unigram.Views
                 case PageBlockSubtitle subtitle:
                 case PageBlockFooter footer:
                 case PageBlockParagraph paragraph:
+                case PageBlockKicker kicker:
                     return ProcessText(block, false);
                 case PageBlockBlockQuote blockquote:
                     return ProcessBlockquote(blockquote);
@@ -385,6 +388,7 @@ namespace Unigram.Views
                     return ProcessRelatedArticles(relatedArticles);
                 case PageBlockMap map:
                     return ProcessMap(map);
+                    //return ProcessKicker(kicker);
                 default:
                     return ProcessUnsupported(block);
             }
@@ -393,6 +397,11 @@ namespace Unigram.Views
         }
 
         #region 2.0
+
+        private FrameworkElement ProcessKicker(PageBlockKicker kicker)
+        {
+            throw new NotImplementedException();
+        }
 
         private FrameworkElement ProcessMap(PageBlockMap map)
         {
@@ -732,6 +741,9 @@ namespace Unigram.Views
                     break;
                 case PageBlockRelatedArticles relatedArticles:
                     text = relatedArticles.Header;
+                    break;
+                case PageBlockKicker kicker:
+                    text = kicker.Kicker;
                     break;
             }
 
@@ -1762,6 +1774,21 @@ namespace Unigram.Views
         }
 
         public void VotePoll(MessageViewModel message, PollOption option)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SelectMessage(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeselectMessage(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsMessageSelected(long messageId)
         {
             throw new NotImplementedException();
         }
