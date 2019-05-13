@@ -281,6 +281,13 @@ namespace Unigram.Services
             });
         }
 
+        private void InitializeReady()
+        {
+            Send(new GetChats(long.MaxValue, 0, 20));
+
+            UpdateVersion();
+        }
+
         private async void UpdateVersion()
         {
             if (_settings.Version < SettingsService.CurrentVersion)
@@ -875,7 +882,7 @@ namespace Unigram.Services
                         CleanUp();
                         break;
                     case AuthorizationStateReady ready:
-                        UpdateVersion();
+                        InitializeReady();
                         break;
                 }
 
