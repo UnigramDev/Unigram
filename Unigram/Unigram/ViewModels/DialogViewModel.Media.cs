@@ -39,9 +39,13 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel
     {
-        public RelayCommand<Sticker> SendStickerCommand { get; }
-        public async void SendStickerExecute(Sticker sticker)
+        #region Stickers
+
+        public RelayCommand<Sticker> StickerSendCommand { get; }
+        public async void StickerSendExecute(Sticker sticker)
         {
+            Delegate?.HideStickers();
+
             var chat = _chat;
             if (chat == null)
             {
@@ -60,9 +64,35 @@ namespace Unigram.ViewModels
             await SendMessageAsync(reply, input);
         }
 
-        public RelayCommand<Animation> SendAnimationCommand { get; }
-        public async void SendAnimationExecute(Animation animation)
+        public RelayCommand<Sticker> StickerViewCommand { get; }
+        private void StickerViewExecute(Sticker sticker)
         {
+            Delegate?.HideStickers();
+
+            OpenSticker(sticker);
+        }
+
+        public RelayCommand<Sticker> StickerFaveCommand { get; }
+        private void StickerFaveExecute(Sticker sticker)
+        {
+            ProtoService.Send(new AddFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
+        }
+
+        public RelayCommand<Sticker> StickerUnfaveCommand { get; }
+        private void StickerUnfaveExecute(Sticker sticker)
+        {
+            ProtoService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.StickerValue.Id)));
+        }
+
+        #endregion
+
+        #region Animations
+
+        public RelayCommand<Animation> AnimationSendCommand { get; }
+        public async void AnimationSendExecute(Animation animation)
+        {
+            Delegate?.HideStickers();
+
             var chat = _chat;
             if (chat == null)
             {
@@ -80,6 +110,14 @@ namespace Unigram.ViewModels
 
             await SendMessageAsync(reply, input);
         }
+
+        public RelayCommand<Animation> AnimationDeleteCommand { get; }
+        private void AnimationDeleteExecute(Animation animation)
+        {
+            ProtoService.Send(new RemoveSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
+        }
+
+        #endregion
 
         public async Task<bool> VerifyRightsAsync(Chat chat, Func<ChatMemberStatusRestricted, bool> permission, string forever, string temporary)
         {

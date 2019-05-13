@@ -199,13 +199,19 @@ namespace Unigram.ViewModels
             MessageUnvotePollCommand = new RelayCommand<MessageViewModel>(MessageUnvotePollExecute);
             MessageStopPollCommand = new RelayCommand<MessageViewModel>(MessageStopPollExecute);
 
-            SendStickerCommand = new RelayCommand<Sticker>(SendStickerExecute);
-            SendAnimationCommand = new RelayCommand<Animation>(SendAnimationExecute);
             SendDocumentCommand = new RelayCommand(SendDocumentExecute);
             SendMediaCommand = new RelayCommand(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
             SendPollCommand = new RelayCommand(SendPollExecute);
+
+            StickerSendCommand = new RelayCommand<Sticker>(StickerSendExecute);
+            StickerViewCommand = new RelayCommand<Sticker>(StickerViewExecute);
+            StickerFaveCommand = new RelayCommand<Sticker>(StickerFaveExecute);
+            StickerUnfaveCommand = new RelayCommand<Sticker>(StickerUnfaveExecute);
+
+            AnimationSendCommand = new RelayCommand<Animation>(AnimationSendExecute);
+            AnimationDeleteCommand = new RelayCommand<Animation>(AnimationDeleteExecute);
 
             EditDocumentCommand = new RelayCommand(EditDocumentExecute);
             EditMediaCommand = new RelayCommand(EditMediaExecute);

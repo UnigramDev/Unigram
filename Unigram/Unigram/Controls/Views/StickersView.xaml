@@ -287,7 +287,7 @@
                                       Grid.Row="1">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <controls:MosaicRow HorizontalAlignment="Stretch"/>
+                                        <controls:MosaicRow HorizontalAlignment="Stretch" ItemContextRequested="Animation_ContextRequested"/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.ItemContainerStyle>
@@ -320,6 +320,7 @@
                                 ItemsSource="{x:Bind StickersSource.View, Mode=OneWay}"
                                 common:FluidGridView.OrientationOnly="False"
                                 ChoosingGroupHeaderContainer="Stickers_ChoosingGroupHeaderContainer"
+                                ChoosingItemContainer="Stickers_ChoosingItemContainer"
                                 ContainerContentChanging="Stickers_ContainerContentChanging"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"

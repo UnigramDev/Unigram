@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -22,6 +24,8 @@ namespace Unigram.Controls
             //SizeChanged += OnSizeChanged;
             //DataContextChanged += OnDataContextChanged;
         }
+
+        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -124,6 +128,11 @@ namespace Unigram.Controls
 
                 var button = new Button { Content = content, Tag = position, HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Stretch, Style = App.Current.Resources["GridViewButtonStyle"] as Style };
                 button.Click += (s, args) => click?.Invoke(position.Item);
+
+                if (position.Item is Animation)
+                {
+                    button.ContextRequested += ItemContextRequested;
+                }
 
                 Children.Add(button);
             }
