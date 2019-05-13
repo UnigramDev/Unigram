@@ -84,7 +84,7 @@ namespace Unigram.Services
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
             _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
-            //_mediaPlayer.CommandManager.IsEnabled = false;
+            _mediaPlayer.CommandManager.IsEnabled = false;
 
             //_transport = _mediaPlayer.SystemMediaTransportControls;
 
@@ -104,6 +104,10 @@ namespace Unigram.Services
             else if (sender.PlaybackState == MediaPlaybackState.Paused && sender.Position == sender.NaturalDuration && _playlist.CurrentItem == _playlist.Items.LastOrDefault())
             {
                 Clear();
+            }
+            else
+            {
+                Debugger.Break();
             }
 
             PlaybackStateChanged?.Invoke(sender, args);
@@ -143,9 +147,16 @@ namespace Unigram.Services
 
         private void OnCurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
-            if (args.NewItem != null && _mapping.TryGetValue((string)args.NewItem.Source.CustomProperties["token"], out Message value))
+            if (args.NewItem != null && args.NewItem.Source.CustomProperties.TryGet("token", out string token))
             {
-                CurrentItem = value;
+                if (_currentItem?.Id == _lastItem.Id && _currentItem?.ChatId == _lastItem.ChatId)
+                {
+                    Clear();
+                }
+                else if (_mapping.TryGetValue(token, out Message value))
+                {
+                    CurrentItem = value;
+                }
             }
             else
             {
@@ -220,6 +231,8 @@ namespace Unigram.Services
 
         public MediaPlaybackSession Session => _mediaPlayer.PlaybackSession;
         public MediaPlaybackList List => _playlist;
+
+        private Message _lastItem;
 
         private Message _currentItem;
         public Message CurrentItem
@@ -356,7 +369,10 @@ namespace Unigram.Services
         {
             var item = GetPlaybackItem(message);
 
+            _lastItem = message;
+
             _playlist = new MediaPlaybackList();
+            _playlist.AutoRepeatEnabled = true;
             _playlist.MaxPrefetchTime = TimeSpan.FromMinutes(10);
             _playlist.CurrentItemChanged += OnCurrentItemChanged;
             _playlist.Items.Add(item);
@@ -371,7 +387,7 @@ namespace Unigram.Services
 
         private MediaPlaybackItem GetPlaybackItem(Message message)
         {
-            var token = message.Id.ToString();
+            var token = $"{message.ChatId}_{message.Id}";
             var file = GetFile(message);
 
             var binder = new MediaBinder();
@@ -454,7 +470,7 @@ namespace Unigram.Services
                 {
                     if (message.UpdateFile(update.File))
                     {
-                        var token = message.Id.ToString();
+                        var token = $"{message.ChatId}_{message.Id}";
                         if (_binders.TryGetValue(token, out MediaBindingEventArgs args) && _inverse.TryGetValue(token, out Deferral deferral))
                         {
                             args.SetUri(new Uri("file:///" + update.File.Local.Path));
@@ -470,6 +486,7 @@ namespace Unigram.Services
             if (_mediaPlayer != null)
             {
                 _mediaPlayer.Source = null;
+                _mediaPlayer.CommandManager.IsEnabled = false;
             }
 
             if (_playlist != null)

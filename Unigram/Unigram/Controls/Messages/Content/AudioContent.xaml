@@ -9,7 +9,8 @@
     mc:Ignorable="d"
     MinWidth="220"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Unloaded="OnUnloaded">
 
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>

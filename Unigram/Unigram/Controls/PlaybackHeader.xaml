@@ -31,10 +31,10 @@
             </TextBlock>
         </Button>
 
-        <controls:GlyphButton
+        <controls:AnimatedGlyphButton
             x:Name="PlaybackButton"
             Click="Toggle_Click"
-            Glyph="&#xE103;"
+            Glyph="&#xE102;"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
             FontSize="16"
             Height="32"/>

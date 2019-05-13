@@ -101,31 +101,37 @@ namespace Unigram.Controls
                 }
 
                 TitleLabel.Text = user.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : user.GetFullName();
-                SubtitleLabel.Text = string.Format("{0} at {1}", date.Date == DateTime.Now.Date ? "Today" : BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+                SubtitleLabel.Text = string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
             }
+            else if (message.Content is MessageAudio || webPage?.Audio != null)
+            {
+                var audio = message.Content is MessageAudio messageAudio ? messageAudio.Audio : webPage?.Audio;
+                if (audio == null)
+                {
+                    return;
+                }
 
-            //        if (audio.HasPerformer && audio.HasTitle)
-            //        {
-            //            TitleLabel.Text = audio.Title;
-            //            SubtitleLabel.Text = "- " + audio.Performer;
-            //        }
-            //        else if (audio.HasPerformer && !audio.HasTitle)
-            //        {
-            //            TitleLabel.Text = Strings.Resources.AudioUnknownTitle;
-            //            SubtitleLabel.Text = "- " + audio.Performer;
-            //        }
-            //        else if (audio.HasTitle && !audio.HasPerformer)
-            //        {
-            //            TitleLabel.Text = audio.Title;
-            //            SubtitleLabel.Text = Strings.Resources.AudioUnknownArtist;
-            //        }
-            //        else
-            //        {
-            //            TitleLabel.Text = Strings.Resources.AudioUnknownTitle;
-            //            SubtitleLabel.Text = Strings.Resources.AudioUnknownArtist;
-            //        }
-            //    }
-            //}
+                if (audio.Performer.Length > 0 && audio.Title.Length > 0)
+                {
+                    TitleLabel.Text = audio.Title;
+                    SubtitleLabel.Text = "- " + audio.Performer;
+                }
+                else if (audio.Performer.Length > 0)
+                {
+                    TitleLabel.Text = Strings.Resources.AudioUnknownTitle;
+                    SubtitleLabel.Text = "- " + audio.Performer;
+                }
+                else if (audio.Title.Length > 0)
+                {
+                    TitleLabel.Text = audio.Title;
+                    SubtitleLabel.Text = Strings.Resources.AudioUnknownArtist;
+                }
+                else
+                {
+                    TitleLabel.Text = Strings.Resources.AudioUnknownTitle;
+                    SubtitleLabel.Text = Strings.Resources.AudioUnknownArtist;
+                }
+            }
         }
 
         private void UpdateRate()
