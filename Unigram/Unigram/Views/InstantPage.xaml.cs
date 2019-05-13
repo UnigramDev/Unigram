@@ -388,7 +388,6 @@ namespace Unigram.Views
                     return ProcessRelatedArticles(relatedArticles);
                 case PageBlockMap map:
                     return ProcessMap(map);
-                    //return ProcessKicker(kicker);
                 default:
                     return ProcessUnsupported(block);
             }
@@ -397,11 +396,6 @@ namespace Unigram.Views
         }
 
         #region 2.0
-
-        private FrameworkElement ProcessKicker(PageBlockKicker kicker)
-        {
-            throw new NotImplementedException();
-        }
 
         private FrameworkElement ProcessMap(PageBlockMap map)
         {
