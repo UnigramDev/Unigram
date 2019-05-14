@@ -534,7 +534,7 @@
                                     </selectors:SearchTemplateSelector.ChatTemplate>
                                     <selectors:SearchTemplateSelector.MessageTemplate>
                                         <DataTemplate>
-                                            <cells:ChatCell Margin="-12,0"/>
+                                            <cells:ChatCell Margin="-12,0" Stroke="{ThemeResource ChatLastMessageStateBrush}"/>
                                         </DataTemplate>
                                     </selectors:SearchTemplateSelector.MessageTemplate>
                                 </selectors:SearchTemplateSelector>
@@ -626,7 +626,7 @@
                                 </ListView.ItemContainerStyleSelector>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <cells:ChatCell/>
+                                        <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.Header>
@@ -704,7 +704,7 @@
                                     </ListView.ItemContainerStyleSelector>
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <cells:ChatCell/>
+                                            <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"/>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                     <ListView.ItemContainerTransitions>
