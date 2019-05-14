@@ -17,14 +17,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings.Privacy
 {
-    public sealed partial class SettingsPrivacyAllowCallsPage : Page
+    public sealed partial class SettingsPrivacyShowPhotoPage : Page
     {
-        public SettingsPrivacyAllowCallsViewModel ViewModel => DataContext as SettingsPrivacyAllowCallsViewModel;
+        public SettingsPrivacyShowPhotoViewModel ViewModel => DataContext as SettingsPrivacyShowPhotoViewModel;
 
-        public SettingsPrivacyAllowCallsPage()
+        public SettingsPrivacyShowPhotoPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyAllowCallsViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsPrivacyShowPhotoViewModel>();
         }
 
         #region Binding

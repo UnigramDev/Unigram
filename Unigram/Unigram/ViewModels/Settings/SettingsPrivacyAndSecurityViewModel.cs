@@ -21,17 +21,21 @@ namespace Unigram.ViewModels.Settings
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;
 
+        private readonly SettingsPrivacyShowForwardedViewModel _showForwardedRules;
+        private readonly SettingsPrivacyShowPhotoViewModel _showPhotoRules;
         private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
         private readonly SettingsPrivacyAllowP2PCallsViewModel _allowP2PCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowP2PCallsViewModel p2pCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowP2PCallsViewModel p2pCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
             _passcodeService = passcodeService;
 
+            _showForwardedRules = showForwarded;
+            _showPhotoRules = showPhoto;
             _showStatusRules = statusTimestamp;
             _allowCallsRules = phoneCall;
             _allowP2PCallsRules = p2pCall;
@@ -87,6 +91,8 @@ namespace Unigram.ViewModels.Settings
 
         #region Properties
 
+        public SettingsPrivacyShowForwardedViewModel ShowForwardedRules => _showForwardedRules;
+        public SettingsPrivacyShowPhotoViewModel ShowPhotoRules => _showPhotoRules;
         public SettingsPrivacyShowStatusViewModel ShowStatusRules => _showStatusRules;
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
         public SettingsPrivacyAllowP2PCallsViewModel AllowP2PCallsRules => _allowP2PCallsRules;

@@ -11,6 +11,8 @@ using Unigram.Views.Settings.Privacy;
 using Unigram.Controls;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Controls.Views;
+using Unigram.ViewModels.Settings.Privacy;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -190,23 +192,16 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AlwaysCommand { get; }
         public async void AlwaysExecute()
         {
-            UserPrivacySettingRuleAllowUsers result = null;
-            switch (_inputKey)
+            var viewModel = new SettingsPrivacyAlwaysViewModel(ProtoService, CacheService, Settings, Aggregator, _inputKey);
+            var dialog = new UsersPickerView(viewModel, _rules);
+
+            var confirm = await dialog.ShowAsync();
+            if (confirm != ContentDialogResult.Primary)
             {
-                case UserPrivacySettingAllowCalls allowCalls:
-                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleAllowUsers>(typeof(SettingsPrivacyAlwaysAllowCallsPage), _rules);
-                    break;
-                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
-                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleAllowUsers>(typeof(SettingsPrivacyAlwaysAllowP2PCallsPage), _rules);
-                    break;
-                case UserPrivacySettingAllowChatInvites allowChatInvites:
-                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleAllowUsers>(typeof(SettingsPrivacyAlwaysAllowChatInvitesPage), _rules);
-                    break;
-                case UserPrivacySettingShowStatus showStatus:
-                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleAllowUsers>(typeof(SettingsPrivacyAlwaysShowStatusPage), _rules);
-                    break;
+                return;
             }
 
+            var result = viewModel.Rule;
             if (result != null)
             {
                 Allowed = result;
@@ -216,23 +211,16 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand NeverCommand { get; }
         public async void NeverExecute()
         {
-            UserPrivacySettingRuleRestrictUsers result = null;
-            switch (_inputKey)
+            var viewModel = new SettingsPrivacyNeverViewModel(ProtoService, CacheService, Settings, Aggregator, _inputKey);
+            var dialog = new UsersPickerView(viewModel, _rules);
+
+            var confirm = await dialog.ShowAsync();
+            if (confirm != ContentDialogResult.Primary)
             {
-                case UserPrivacySettingAllowCalls allowCalls:
-                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleRestrictUsers>(typeof(SettingsPrivacyNeverAllowCallsPage), _rules);
-                    break;
-                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
-                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleRestrictUsers>(typeof(SettingsPrivacyNeverAllowP2PCallsPage), _rules);
-                    break;
-                case UserPrivacySettingAllowChatInvites allowChatInvites:
-                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleRestrictUsers>(typeof(SettingsPrivacyNeverAllowChatInvitesPage), _rules);
-                    break;
-                case UserPrivacySettingShowStatus showStatus:
-                    result = await NavigationService.NavigateWithResult<UserPrivacySettingRuleRestrictUsers>(typeof(SettingsPrivacyNeverShowStatusPage), _rules);
-                    break;
+                return;
             }
 
+            var result = viewModel.Rule;
             if (result != null)
             {
                 Disallowed = result;

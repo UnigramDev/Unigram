@@ -25,8 +25,6 @@ namespace Unigram.Views.Settings.Privacy
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsPrivacyAllowP2PCallsViewModel>();
-
-            NavigationCacheMode = NavigationCacheMode.Required;
         }
 
         #region Binding

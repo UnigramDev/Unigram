@@ -8,13 +8,11 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyAlwaysShowStatusViewModel : SettingsPrivacyAlwaysViewModelBase
+    public class SettingsPrivacyShowForwardedViewModel : SettingsPrivacyViewModelBase
     {
-        public SettingsPrivacyAlwaysShowStatusViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SettingsPrivacyShowForwardedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator, new UserPrivacySettingShowStatus())
         {
         }
-
-        public override string Title => Strings.Resources.AlwaysShareWithTitle;
     }
 }

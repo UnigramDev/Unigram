@@ -202,7 +202,14 @@ namespace Unigram.Controls.Views
             return (maximum == int.MaxValue && infinite) || maximum == 1 ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        private Visibility ConvertConfirm(int maximum, bool visible)
+        {
+            return maximum > 1 && visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         #endregion
+
+        public bool IsConfirmVisible { get; set; } = true;
 
         public object Header { get; set; }
 

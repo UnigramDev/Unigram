@@ -1,9 +1,11 @@
 <Page
-    x:Class="Unigram.Views.Settings.Privacy.SettingsPrivacyShowStatusPage"
+    x:Class="Unigram.Views.Settings.Privacy.SettingsPrivacyShowForwardedPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
+    xmlns:chats="using:Unigram.Controls.Chats"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -33,16 +35,27 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="{CustomResource PrivacyLastSeen}" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;"/>
+        <controls:ButtonPageHeader Text="{CustomResource PrivacyForwards}" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;"/>
 
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
+                <Grid>
+                    <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"/>
+                    <Grid Padding="0,10">
+                        <messages:MessageBubble x:Name="MessagePreview" HorizontalAlignment="Left"/>
+                        <ToolTip x:Name="ToolTip"
+                                 Content="{x:Bind ConvertToolTip(ViewModel.SelectedItem), Mode=OneWay}"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Bottom"
+                                 Margin="22,0,0,-6"/>
+                    </Grid>
+                </Grid>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}"
                             Padding="0,8,12,8">
-                    <TextBlock Text="{CustomResource LastSeenTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource PrivacyForwardsTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:PrivacyRadioButton
                         Content="{CustomResource LastSeenEverybody}"
                         Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
@@ -59,20 +72,20 @@
                         Type="DisallowAll"
                         Margin="12,0,0,0"/>
                 </StackPanel>
-                <TextBlock Text="{CustomResource CustomHelp}" Margin="12,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                <TextBlock Text="{CustomResource PrivacyForwardsInfo}" Margin="12,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource AddExceptions}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
-                        Content="{CustomResource AlwaysShareWith}"
+                        Content="{CustomResource AlwaysAllow}"
                         Command="{x:Bind ViewModel.AlwaysCommand}"
                         Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
                         Badge="{x:Bind ViewModel.Allowed.UserIds.Count, Mode=OneWay, Converter={StaticResource PrivacyRuleToUsersConverter}}"/>
                     <controls:BadgeButton
-                        Content="{CustomResource NeverShareWith}"
+                        Content="{CustomResource NeverAllow}"
                         Command="{x:Bind ViewModel.NeverCommand}"
                         Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
                         Badge="{x:Bind ViewModel.Disallowed.UserIds.Count, Mode=OneWay, Converter={StaticResource PrivacyRuleToUsersConverter}}"/>
-                    <TextBlock Text="{CustomResource CustomShareSettingsHelp}" Margin="12,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                    <TextBlock Text="{CustomResource PrivacyForwardsInfo2}" Margin="12,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
