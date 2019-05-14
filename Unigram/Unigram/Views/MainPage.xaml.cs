@@ -487,9 +487,9 @@ namespace Unigram.Views
 
         #endregion
 
-        public void DeleteChat(IList<Chat> chats, bool clear, Action<IList<Chat>> action, Action<IList<Chat>> undo)
+        public void ShowChatsUndo(IList<Chat> chats, UndoType type, Action<IList<Chat>> action, Action<IList<Chat>> undo)
         {
-            Undo.Show(chats, clear, action, undo);
+            Undo.Show(chats, type, action, undo);
         }
 
         public void OnBackRequesting(HandledRoutedEventArgs args)

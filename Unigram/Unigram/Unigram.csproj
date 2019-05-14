@@ -107,6 +107,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assets\Animations\ChatArchivedAnimation.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\KeyedList.cs" />
     <Compile Include="Collections\MvxObservableCollection.cs" />
@@ -2488,6 +2489,7 @@
       <HintPath>..\Libraries\Lottie\Microsoft.Toolkit.Uwp.UI.Lottie.winmd</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

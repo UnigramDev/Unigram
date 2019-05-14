@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Controls;
 
 namespace Unigram.ViewModels.Delegates
 {
     public interface IChatsDelegate : IViewModelDelegate
     {
-        void DeleteChat(IList<Chat> chats, bool clear, Action<IList<Chat>> action, Action<IList<Chat>> undo);
+        void ShowChatsUndo(IList<Chat> chats, UndoType type, Action<IList<Chat>> action, Action<IList<Chat>> undo);
 
         void SetSelectionMode(bool enabled);
 

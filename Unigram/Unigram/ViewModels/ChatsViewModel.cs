@@ -230,7 +230,7 @@ namespace Unigram.ViewModels
                 _deletedChats[chat.Id] = true;
                 Handle(chat.Id, 0);
 
-                Delegate?.DeleteChat(new[] { chat }, false, async items =>
+                Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Delete, async items =>
                 {
                     var delete = items.FirstOrDefault();
                     if (delete == null)
@@ -293,7 +293,7 @@ namespace Unigram.ViewModels
                     Handle(chat.Id, 0);
                 }
 
-                Delegate?.DeleteChat(chats, false, async items =>
+                Delegate?.ShowChatsUndo(chats, UndoType.Delete, async items =>
                 {
                     foreach (var delete in items)
                     {
@@ -334,7 +334,7 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                Delegate?.DeleteChat(new[] { chat }, true, items =>
+                Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Clear , items =>
                 {
                     foreach (var delete in items)
                     {
@@ -366,7 +366,7 @@ namespace Unigram.ViewModels
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                Delegate?.DeleteChat(chats, true, items =>
+                Delegate?.ShowChatsUndo(chats, UndoType.Clear, items =>
                 {
                     var clear = items.FirstOrDefault();
                     if (clear == null)

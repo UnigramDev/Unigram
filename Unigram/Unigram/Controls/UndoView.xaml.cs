@@ -18,6 +18,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
+    public enum UndoType
+    {
+        Delete,
+        Clear,
+        Archive
+    }
+
     public sealed partial class UndoView : UserControl
     {
         private readonly DispatcherTimer _timeout;
@@ -51,7 +58,7 @@ namespace Unigram.Controls
             }
         }
 
-        public void Show(IList<Chat> chats, bool clear, Action<IList<Chat>> action, Action<IList<Chat>> undo)
+        public void Show(IList<Chat> chats, UndoType type, Action<IList<Chat>> action, Action<IList<Chat>> undo)
         {
             _timeout.Stop();
             _storyboard?.Stop();
@@ -59,26 +66,41 @@ namespace Unigram.Controls
             _remaining = 5;
             _queue.Enqueue(new UndoOp(chats, action, undo));
 
-            _timeout.Start();
+            if (type == UndoType.Archive)
+            {
+                Text.Text = chats.Count > 1 ? Strings.Resources.ChatsArchived : Strings.Resources.ChatArchived;
 
-            if (clear)
-            {
-                Text.Text = Strings.Resources.HistoryClearedUndo;
+                Remaining.Visibility = Visibility.Collapsed;
+                Slice.Visibility = Visibility.Collapsed;
+                Player.Source = new Assets.Animations.ChatArchivedAnimation();
+
+                _ = Player.PlayAsync(0, 1, false);
             }
-            else if (chats.Count == 0 && chats[0] is Chat chat)
+            else
             {
-                if (chat.Type is ChatTypeSupergroup super)
+                if (type == UndoType.Clear)
                 {
-                    Text.Text = super.IsChannel ? Strings.Resources.ChannelDeletedUndo : Strings.Resources.GroupDeletedUndo;
+                    Text.Text = Strings.Resources.HistoryClearedUndo;
+                }
+                else if (chats.Count == 1 && chats[0] is Chat chat)
+                {
+                    if (chat.Type is ChatTypeSupergroup super)
+                    {
+                        Text.Text = super.IsChannel ? Strings.Resources.ChannelDeletedUndo : Strings.Resources.GroupDeletedUndo;
+                    }
+                    else
+                    {
+                        Text.Text = chat.Type is ChatTypeBasicGroup ? Strings.Resources.GroupDeletedUndo : Strings.Resources.ChatDeletedUndo;
+                    }
                 }
                 else
                 {
                     Text.Text = Strings.Resources.ChatDeletedUndo;
                 }
-            }
-            else
-            {
-                Text.Text = Strings.Resources.ChatDeletedUndo;
+
+                Remaining.Visibility = Visibility.Visible;
+                Slice.Visibility = Visibility.Visible;
+                Player.Source = null;
             }
 
             IsEnabled = true;
