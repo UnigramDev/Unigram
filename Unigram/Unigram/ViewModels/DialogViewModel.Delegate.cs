@@ -512,40 +512,5 @@ namespace Unigram.ViewModels
 
             return _admins.TryGetValue(chat.Id, out IList<int> value) && value.Contains(userId);
         }
-
-
-
-        #region Selection
-
-        public void SelectMessage(MessageViewModel message)
-        {
-            SelectedItems[message.Id] = message;
-
-            MessagesForwardCommand.RaiseCanExecuteChanged();
-            MessagesDeleteCommand.RaiseCanExecuteChanged();
-            MessagesCopyCommand.RaiseCanExecuteChanged();
-            MessagesReportCommand.RaiseCanExecuteChanged();
-
-            RaisePropertyChanged(() => SelectedCount);
-        }
-
-        public void DeselectMessage(MessageViewModel message)
-        {
-            SelectedItems.Remove(message.Id);
-
-            MessagesForwardCommand.RaiseCanExecuteChanged();
-            MessagesDeleteCommand.RaiseCanExecuteChanged();
-            MessagesCopyCommand.RaiseCanExecuteChanged();
-            MessagesReportCommand.RaiseCanExecuteChanged();
-
-            RaisePropertyChanged(() => SelectedCount);
-        }
-
-        public bool IsMessageSelected(long messageId)
-        {
-            return SelectedItems.ContainsKey(messageId);
-        }
-
-        #endregion
     }
 }

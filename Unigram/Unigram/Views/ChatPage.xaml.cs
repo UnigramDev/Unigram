@@ -66,6 +66,8 @@ namespace Unigram.Views
 
         private bool _myPeople;
 
+        private bool _selectionFromItemClick;
+
         private DispatcherTimer _stickersTimer;
         private Visual _stickersPanel;
         private bool _stickersOpen;
@@ -131,7 +133,7 @@ namespace Unigram.Views
             InitializeAutomation();
             InitializeStickers();
 
-            Messages.RegisterPropertyChangedCallback(ChatListView.IsSelectionEnabledProperty, List_SelectionModeChanged);
+            Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
 
             _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
@@ -551,7 +553,7 @@ namespace Unigram.Views
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (ViewModel.IsSelectionEnabled == false)
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
                 ShowHideManagePanel(false);
             }
@@ -601,7 +603,7 @@ namespace Unigram.Views
                     InfoPanel.Visibility = Visibility.Visible;
                     ManagePanel.Visibility = Visibility.Collapsed;
 
-                    ViewModel.SelectedItems.Clear();
+                    ViewModel.SelectedItems = new List<MessageViewModel>();
                 }
             };
 
@@ -640,13 +642,13 @@ namespace Unigram.Views
 
         private void Manage_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.IsSelectionEnabled)
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
-                ViewModel.IsSelectionEnabled = false;
+                ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
             }
             else
             {
-                ViewModel.IsSelectionEnabled = true;
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
             }
         }
 
@@ -793,12 +795,12 @@ namespace Unigram.Views
             var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
             var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
 
-            if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
+            if (args.VirtualKey == Windows.System.VirtualKey.Delete && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
             {
                 ViewModel.MessagesDeleteCommand.Execute();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
+            else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift && ViewModel.SelectionMode != ListViewSelectionMode.None && ViewModel.SelectedItems != null && ViewModel.SelectedItems.Count > 0)
             {
                 ViewModel.MessagesCopyCommand.Execute();
                 args.Handled = true;
@@ -873,11 +875,6 @@ namespace Unigram.Views
                     return;
                 }
 
-                if (args.VirtualKey == Windows.System.VirtualKey.Down && focused is TextBox)
-                {
-                    return;
-                }
-
                 var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
                 if (panel == null)
                 {
@@ -931,9 +928,9 @@ namespace Unigram.Views
                 args.Handled = true;
             }
 
-            if (ViewModel.IsSelectionEnabled)
+            if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
-                ViewModel.IsSelectionEnabled = false;
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
                 args.Handled = true;
             }
 
@@ -1561,6 +1558,94 @@ namespace Unigram.Views
             }
 
             InputPane.GetForCurrentView().TryShow();
+        }
+
+        private async void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            var control = sender as FrameworkElement;
+
+            var message = control.Tag as MessageViewModel;
+            if (message == null)
+            {
+                return;
+            }
+
+            if (message.IsSaved())
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                {
+                    ViewModel.OpenUser(fromUser.SenderUserId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                {
+                    // TODO: verify if this is sufficient
+                    ViewModel.OpenChat(post.ChatId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
+            else if (message.IsChannelPost)
+            {
+                ViewModel.OpenChat(message.ChatId);
+            }
+            else
+            {
+                ViewModel.OpenUser(message.SenderUserId);
+            }
+        }
+
+        private void Action_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var message = button.Tag as MessageViewModel;
+
+            if (message == null)
+            {
+                return;
+            }
+
+            if (message.IsSaved())
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                {
+                    ViewModel.NavigationService.NavigateToChat(message.ForwardInfo.FromChatId, message.ForwardInfo.FromMessageId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                {
+                    ViewModel.NavigationService.NavigateToChat(post.ChatId, post.MessageId);
+                }
+            }
+            else
+            {
+                ViewModel.MessageShareCommand.Execute(message);
+            }
+        }
+
+        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            _selectionFromItemClick = true;
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
+
+                //if (ViewModel.SelectedItems.IsEmpty())
+                //{
+                //    ViewModel.SelectionMode = ListViewSelectionMode.None;
+                //}
+            }
+
+            if (_selectionFromItemClick && Messages.SelectedItems.Count < 1)
+            {
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
+            }
+
+            _selectionFromItemClick = false;
         }
 
         #region Context menu

@@ -144,7 +144,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            IsSelectionEnabled = false;
+            SelectionMode = ListViewSelectionMode.None;
 
             if (dialog.DeleteAll && sameUser)
             {
@@ -189,7 +189,7 @@ namespace Unigram.ViewModels
             //}
 
             DisposeSearch();
-            IsSelectionEnabled = false;
+            SelectionMode = ListViewSelectionMode.None;
 
             await ShareView.GetForCurrentView().ShowAsync(message.Get());
 
@@ -220,7 +220,7 @@ namespace Unigram.ViewModels
         public RelayCommand MessagesDeleteCommand { get; }
         private void MessagesDeleteExecute()
         {
-            var messages = new List<MessageViewModel>(SelectedItems.Values);
+            var messages = new List<MessageViewModel>(SelectedItems);
 
             var first = messages.FirstOrDefault();
             if (first == null)
@@ -239,7 +239,7 @@ namespace Unigram.ViewModels
 
         private bool MessagesDeleteCanExecute()
         {
-            return SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
+            return SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
         }
 
         #endregion
@@ -249,11 +249,11 @@ namespace Unigram.ViewModels
         public RelayCommand MessagesForwardCommand { get; }
         private async void MessagesForwardExecute()
         {
-            var messages = SelectedItems.Values.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
+            var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
             if (messages.Count > 0)
             {
                 DisposeSearch();
-                IsSelectionEnabled = false;
+                SelectionMode = ListViewSelectionMode.None;
 
                 await ShareView.GetForCurrentView().ShowAsync(messages);
 
@@ -263,7 +263,7 @@ namespace Unigram.ViewModels
 
         private bool MessagesForwardCanExecute()
         {
-            return SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeForwarded);
+            return SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeForwarded);
         }
 
         #endregion
@@ -273,11 +273,11 @@ namespace Unigram.ViewModels
         public RelayCommand MessagesCopyCommand { get; }
         private void MessagesCopyExecute()
         {
-            var messages = SelectedItems.Values.OrderBy(x => x.Id).ToList();
+            var messages = SelectedItems.OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
                 var builder = new StringBuilder();
-                IsSelectionEnabled = false;
+                SelectionMode = ListViewSelectionMode.None;
 
                 foreach (var message in messages)
                 {
@@ -455,7 +455,7 @@ namespace Unigram.ViewModels
             }
 
             var myId = CacheService.Options.MyId;
-            var messages = SelectedItems.Values.Where(x => x.SenderUserId != myId).OrderBy(x => x.Id).Select(x => x.Id).ToList();
+            var messages = SelectedItems.Where(x => x.SenderUserId != myId).OrderBy(x => x.Id).Select(x => x.Id).ToList();
             if (messages.Count < 1)
             {
                 return;
@@ -531,7 +531,7 @@ namespace Unigram.ViewModels
             }
 
             var myId = CacheService.Options.MyId;
-            return chat.CanBeReported && SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.SenderUserId != myId);
+            return chat.CanBeReported && SelectedItems.Count > 0 && SelectedItems.All(x => x.SenderUserId != myId);
         }
 
         #endregion
@@ -548,9 +548,8 @@ namespace Unigram.ViewModels
                 message = group;
             }
 
-            IsSelectionEnabled = true;
-            ListField?.SelectItem2(message);
-            //ListField?.SelectedItems.Add(message);
+            SelectionMode = ListViewSelectionMode.Multiple;
+            ListField?.SelectedItems.Add(message);
 
             ExpandSelection(new[] { message });
         }

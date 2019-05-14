@@ -188,9 +188,6 @@
     <Compile Include="Controls\Chats\ChatBottomButton.cs" />
     <Compile Include="Controls\Chats\ChatListView.cs" />
     <Compile Include="Controls\Chats\ChatListViewItem.cs" />
-    <Compile Include="Controls\Chats\ChatListViewItemPresenter.xaml.cs">
-      <DependentUpon>ChatListViewItemPresenter.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Chats\ChatRecordButton.cs" />
     <Compile Include="Controls\Chats\ChatSearchMask.xaml.cs">
       <DependentUpon>ChatSearchMask.xaml</DependentUpon>
@@ -1700,10 +1697,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\WebSessionCell.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Chats\ChatListViewItemPresenter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

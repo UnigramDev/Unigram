@@ -847,21 +847,6 @@ namespace Unigram.ViewModels.Supergroups
             throw new NotImplementedException();
         }
 
-        public void SelectMessage(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeselectMessage(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsMessageSelected(long messageId)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
     }
 }

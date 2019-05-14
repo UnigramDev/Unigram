@@ -598,12 +598,81 @@ namespace Unigram.Views
                 selector.PrepareForItemOverride(message);
             }
 
-            if (content is ChatListViewItemPresenter presenter)
+            if (content is Grid grid)
             {
-                presenter.UpdateMessage(Messages, message);
-                presenter.SetSelectionEnabled(ViewModel.IsSelectionEnabled, false);
+                var photo = grid.FindName("Photo") as ProfilePicture;
+                if (photo != null)
+                {
+                    photo.Visibility = message.IsLast ? Visibility.Visible : Visibility.Collapsed;
+                    photo.Tag = message;
 
-                content = presenter.FindName("Bubble") as FrameworkElement;
+                    if (message.IsSaved())
+                    {
+                        if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                        {
+                            var user = message.ProtoService.GetUser(fromUser.SenderUserId);
+                            if (user != null)
+                            {
+                                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
+                            }
+                        }
+                        else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                        {
+                            var chat = message.ProtoService.GetChat(post.ChatId);
+                            if (chat != null)
+                            {
+                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
+                            }
+                        }
+                        else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                        {
+                            photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
+                        }
+                    }
+                    else
+                    {
+                        var user = message.GetSenderUser();
+                        if (user != null)
+                        {
+                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
+                        }
+                    }
+                }
+
+                var action = grid.FindName("Action") as Border;
+                if (action != null)
+                {
+                    var button = action.Child as GlyphButton;
+                    button.Tag = message;
+
+                    if (message.IsSaved())
+                    {
+                        if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
+                        {
+                            action.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            button.Glyph = "\uE72A";
+                            action.Visibility = Visibility.Visible;
+
+                            Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
+                        }
+                    }
+                    else if (message.IsShareable())
+                    {
+                        button.Glyph = "\uE72D";
+                        action.Visibility = Visibility.Visible;
+
+                        Automation.SetToolTip(button, Strings.Resources.ShareFile);
+                    }
+                    else
+                    {
+                        action.Visibility = Visibility.Collapsed;
+                    }
+                }
+
+                content = grid.FindName("Bubble") as FrameworkElement;
             }
             else if (content is StackPanel panel && !(content is MessageBubble))
             {

@@ -11,20 +11,16 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.ViewModels;
-using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatListView : SelectListView, ILazoListView
+    public class ChatListView : PaddedListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -37,103 +33,10 @@ namespace Unigram.Controls.Chats
         {
             DefaultStyleKey = typeof(ListView);
 
-            _recognizer = new GestureRecognizer();
-            _recognizer.GestureSettings = GestureSettings.DoubleTap;
-            _recognizer.Tapped += Recognizer_Tapped;
-
             Loaded += OnLoaded;
         }
 
-        #region Selection
-
-        public bool IsSelectionEnabled
-        {
-            get { return (bool)GetValue(IsSelectionEnabledProperty); }
-            set { SetValue(IsSelectionEnabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsSelectionEnabledProperty =
-            DependencyProperty.Register("IsSelectionEnabled", typeof(bool), typeof(ChatListView), new PropertyMetadata(false, OnSelectionEnabledChanged));
-
-        private static void OnSelectionEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ChatListView)d).OnSelectionEnabledChanged((bool)e.NewValue, (bool)e.OldValue);
-        }
-
-        private void OnSelectionEnabledChanged(bool newValue, bool oldValue)
-        {
-            var panel = ItemsPanelRoot as ItemsStackPanel;
-            if (panel == null)
-            {
-                return;
-            }
-
-            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
-            {
-                var container = ContainerFromIndex(i) as ListViewItem;
-                if (container == null)
-                {
-                    continue;
-                }
-
-                var content = container.ContentTemplateRoot as ChatListViewItemPresenter;
-                if (content != null)
-                {
-                    content.SetSelectionEnabled(newValue, true);
-                }
-            }
-
-            if (newValue != oldValue)
-            {
-                ViewModel.SelectedItems.Clear();
-            }
-        }
-
-        public void SelectRange2(ItemIndexRange range)
-        {
-            for (int i = range.FirstIndex; i <= range.LastIndex; i++)
-            {
-                var container = ContainerFromIndex(i) as SelectorItem;
-                if (container != null && container.ContentTemplateRoot is ChatListViewItemPresenter presenter)
-                {
-                    presenter.SetSelected(true);
-                }
-            }
-        }
-
-        public void DeselectRange2(ItemIndexRange range)
-        {
-            for (int i = range.FirstIndex; i <= range.LastIndex; i++)
-            {
-                var container = ContainerFromIndex(i) as SelectorItem;
-                if (container != null && container.ContentTemplateRoot is ChatListViewItemPresenter presenter)
-                {
-                    presenter.SetSelected(false);
-                }
-            }
-        }
-
-        public void SelectItem2(object item)
-        {
-            var container = ContainerFromItem(item) as SelectorItem;
-            if (container != null && container.ContentTemplateRoot is ChatListViewItemPresenter presenter)
-            {
-                presenter.SetSelected(true);
-            }
-        }
-
-        public void DeselectItem2(object item)
-        {
-            var container = ContainerFromItem(item) as SelectorItem;
-            if (container != null && container.ContentTemplateRoot is ChatListViewItemPresenter presenter)
-            {
-                presenter.SetSelected(false);
-            }
-        }
-
-        #endregion
-
-        protected void OnDoubleTapped(SelectorItem selector)
+        protected override void OnDoubleTapped(SelectorItem selector)
         {
             if (selector.ContentTemplateRoot is FrameworkElement root && root.Tag is MessageViewModel message)
             {
@@ -284,6 +187,22 @@ namespace Unigram.Controls.Chats
             return new ChatListViewItem(this);
         }
 
+        protected override bool CantSelect(object item)
+        {
+            return item is MessageViewModel message && message.IsService();
+        }
+
+        protected override long IdFromContainer(DependencyObject container)
+        {
+            var item = ItemFromContainer(container) as MessageViewModel;
+            if (item != null)
+            {
+                return item.Id;
+            }
+
+            return -1;
+        }
+
         public async Task ScrollToItem(object item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
             var scrollViewer = ScrollingHost;
@@ -363,236 +282,5 @@ namespace Unigram.Controls.Chats
                 bubble.Highlight();
             }
         }
-
-
-
-
-        #region Lazo
-
-        private long[] _ranges;
-        private object _firstItem;
-        private bool _operation;
-
-        private bool _pressed;
-        private Point _position;
-
-        private GestureRecognizer _recognizer;
-
-        public void OnPointerPressed(SelectorItem item, PointerRoutedEventArgs e)
-        {
-            if (IsSelectionEnabled == false)
-            {
-                var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
-                if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
-                {
-                    try
-                    {
-                        _recognizer.ProcessDownEvent(point);
-                    }
-                    catch
-                    {
-                        _recognizer.CompleteGesture();
-                    }
-                }
-            }
-
-            _pressed = true;
-        }
-
-        public void OnPointerEntered(SelectorItem item, PointerRoutedEventArgs e)
-        {
-            if (_firstItem == null || !_pressed || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
-            {
-                return;
-            }
-
-            var point = e.GetCurrentPoint(item);
-            if (!point.Properties.IsLeftButtonPressed)
-            {
-                return;
-            }
-
-            e.Handled = true;
-
-            if (IsSelectionEnabled == false)
-            {
-                IsSelectionEnabled = true;
-            }
-
-            var begin = Items.IndexOf(_firstItem);
-            if (begin < 0)
-            {
-                return;
-            }
-
-            var index = IndexFromContainer(item);
-            var first = Math.Min(begin, index);
-            var last = Math.Max(begin, index);
-
-            if (ViewModel.SelectedItems.Count > 0)
-            {
-                ViewModel.SelectedItems.Clear();
-
-                foreach (var original in _ranges)
-                {
-                    var message = ViewModel.Items.FirstOrDefault(x => x.Id == original);
-                    if (message != null)
-                    {
-                        SelectItem2(message);
-                    }
-                }
-            }
-
-            if (_operation)
-            {
-                SelectRange2(new ItemIndexRange(first, (uint)Math.Max(1, last - first + 1)));
-            }
-            else
-            {
-                DeselectRange2(new ItemIndexRange(first, (uint)Math.Max(1, last - first + 1)));
-            }
-        }
-
-        public void OnPointerMoved(SelectorItem item, PointerRoutedEventArgs e)
-        {
-            var child = ItemFromContainer(item) as MessageViewModel;
-            if (child == null)
-            {
-                return;
-            }
-
-            if ((_firstItem != null && _firstItem != child) || !_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
-            {
-                return;
-            }
-
-            var point = e.GetCurrentPoint(item);
-            if (!point.Properties.IsLeftButtonPressed)
-            {
-                return;
-            }
-
-            e.Handled = true;
-
-            if (_firstItem == null)
-            {
-                _firstItem = ItemFromContainer(item);
-                _ranges = ViewModel.SelectedItems.Keys.ToArray();
-                _operation = !ViewModel.SelectedItems.ContainsKey(child.Id);
-
-                _position = point.Position;
-            }
-            else if (_firstItem == child)
-            {
-                //var contains = SelectedItems.Contains(child);
-                var contains = ViewModel.SelectedItems.ContainsKey(child.Id);
-
-                var delta = Math.Abs(point.Position.Y - _position.Y);
-                if (delta > 10)
-                {
-                    IsSelectionEnabled = true;
-
-                    if (_operation && !contains)
-                    {
-                        SelectItem2(child);
-                    }
-                    else if (!_operation && contains)
-                    {
-                        DeselectItem2(child);
-                    }
-                }
-                else
-                {
-                    if (_operation && contains)
-                    {
-                        DeselectItem2(child);
-                    }
-                    else if (!_operation && !contains)
-                    {
-                        SelectItem2(child);
-                    }
-                }
-            }
-        }
-
-        public void OnPointerReleased(SelectorItem item, PointerRoutedEventArgs e)
-        {
-            var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
-            if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
-            {
-                try
-                {
-                    _recognizer.ProcessUpEvent(point);
-                }
-                catch
-                {
-                    _recognizer.CompleteGesture();
-                }
-            }
-
-            var first = _firstItem != null ? ContainerFromItem(_firstItem) as SelectorItem : null;
-            var child = first != null ? ItemFromContainer(first) as MessageViewModel : null;
-            var handled = child != null && ViewModel.SelectedItems.ContainsKey(child.Id) == _operation;
-
-            _firstItem = null;
-            _ranges = null;
-
-            _pressed = false;
-            _position = new Point();
-
-            if (IsSelectionEnabled == false)
-            {
-                return;
-            }
-
-            if (ViewModel.SelectedItems.Count < 1 && handled)
-            {
-                IsSelectionEnabled = false;
-            }
-
-            e.Handled = handled;
-        }
-
-        public void OnPointerCanceled(SelectorItem item, PointerRoutedEventArgs e)
-        {
-            _recognizer.CompleteGesture();
-        }
-
-
-
-        private void Recognizer_Tapped(GestureRecognizer sender, TappedEventArgs args)
-        {
-            if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
-            {
-                sender.CompleteGesture();
-
-                var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
-                var selector = children?.FirstOrDefault(x => x is SelectorItem) as SelectorItem;
-                if (selector != null)
-                {
-                    OnDoubleTapped(selector);
-                }
-            }
-        }
-
-
-
-        protected bool CantSelect(object item)
-        {
-            return item is MessageViewModel message && message.IsService();
-        }
-
-        protected long IdFromContainer(DependencyObject container)
-        {
-            var item = ItemFromContainer(container) as MessageViewModel;
-            if (item != null)
-            {
-                return item.Id;
-            }
-
-            return -1;
-        }
-
-        #endregion
     }
 }
