@@ -4,70 +4,72 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
     public class LazoListViewItem : ListViewItem
     {
-        private LazoListView _parent;
+        private ILazoListView _parent;
 
-        public LazoListViewItem(LazoListView parent)
+        public LazoListViewItem(ILazoListView parent)
         {
             _parent = parent;
         }
 
-        protected override void OnPointerPressed(PointerRoutedEventArgs e)
-        {
-            if (e.OriginalSource is ListViewItemPresenter && !CantSelect())
-            {
-                _parent.OnPointerPressed(this, e);
-            }
+        //protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        //{
+        //    if (e.OriginalSource is ListViewItemPresenter && !CantSelect())
+        //    {
+        //        _parent.OnPointerPressed(this, e);
+        //    }
 
-            base.OnPointerPressed(e);
-        }
+        //    base.OnPointerPressed(e);
+        //}
 
-        protected override void OnPointerEntered(PointerRoutedEventArgs e)
-        {
-            if (e.OriginalSource is ListViewItemPresenter)
-            {
-                _parent.OnPointerEntered(this, e);
-            }
+        //protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        //{
+        //    if (e.OriginalSource is ListViewItemPresenter)
+        //    {
+        //        _parent.OnPointerEntered(this, e);
+        //    }
 
-            base.OnPointerEntered(e);
-        }
+        //    base.OnPointerEntered(e);
+        //}
 
-        protected override void OnPointerMoved(PointerRoutedEventArgs e)
-        {
-            if (e.OriginalSource is ListViewItemPresenter)
-            {
-                _parent.OnPointerMoved(this, e);
-            }
+        //protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        //{
+        //    if (e.OriginalSource is ListViewItemPresenter)
+        //    {
+        //        _parent.OnPointerMoved(this, e);
+        //    }
 
-            base.OnPointerMoved(e);
-        }
+        //    base.OnPointerMoved(e);
+        //}
 
-        protected override void OnPointerReleased(PointerRoutedEventArgs e)
-        {
-            if (e.OriginalSource is ListViewItemPresenter)
-            {
-                _parent.OnPointerReleased(this, e);
-            }
+        //protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        //{
+        //    if (e.OriginalSource is ListViewItemPresenter)
+        //    {
+        //        _parent.OnPointerReleased(this, e);
+        //    }
 
-            base.OnPointerReleased(e);
-        }
+        //    base.OnPointerReleased(e);
+        //}
 
-        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
-        {
-            if (e.OriginalSource is ListViewItemPresenter)
-            {
-                _parent.OnPointerCanceled(this, e);
-            }
+        //protected override void OnPointerCanceled(PointerRoutedEventArgs e)
+        //{
+        //    if (e.OriginalSource is ListViewItemPresenter)
+        //    {
+        //        _parent.OnPointerCanceled(this, e);
+        //    }
 
-            base.OnPointerCanceled(e);
-        }
+        //    base.OnPointerCanceled(e);
+        //}
 
         public virtual bool CantSelect()
         {

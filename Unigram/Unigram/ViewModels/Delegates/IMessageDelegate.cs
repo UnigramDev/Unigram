@@ -37,5 +37,9 @@ namespace Unigram.ViewModels.Delegates
         void SendBotCommand(string command);
 
         bool IsAdmin(int userId);
+
+        void SelectMessage(MessageViewModel message);
+        void DeselectMessage(MessageViewModel message);
+        bool IsMessageSelected(long messageId);
     }
 }

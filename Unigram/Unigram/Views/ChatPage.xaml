@@ -256,7 +256,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble x:Name="Bubble" HorizontalAlignment="Right">
+            <!--<messages:MessageBubble x:Name="Bubble" HorizontalAlignment="Right">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -264,11 +264,20 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </FrameworkElement.Resources>
-            </messages:MessageBubble>
+            </messages:MessageBubble>-->
+            <chats:ChatListViewItemPresenter>
+                <FrameworkElement.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <ResourceDictionary Source="ms-appx:///Themes/OutgoingOverride.xaml"/>
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </FrameworkElement.Resources>
+            </chats:ChatListViewItemPresenter>
         </DataTemplate>
 
         <DataTemplate x:Key="FriendMessageTemplate">
-            <Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+            <!--<Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -283,11 +292,12 @@
                         Grid.Column="2">
                     <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" Radius="15"/>
                 </Border>
-            </Grid>
+            </Grid>-->
+            <chats:ChatListViewItemPresenter/>
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate">
-            <Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+            <!--<Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="38"/>
                     <ColumnDefinition/>
@@ -311,7 +321,8 @@
                         Grid.Column="2">
                     <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" Radius="15"/>
                 </Border>
-            </Grid>
+            </Grid>-->
+            <chats:ChatListViewItemPresenter/>
         </DataTemplate>
     </Page.Resources>
 
@@ -505,7 +516,7 @@
                         Grid.Column="3"/>
 
                     <ContentControl
-                        Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
+                        Content="{x:Bind ViewModel.SelectedCount, Mode=OneWay}"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         FontWeight="SemiBold"
@@ -596,10 +607,8 @@
                                 ItemContainerTransitions="{x:Null}"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ShowsScrollingPlaceholders="False"
-                                IsItemClickEnabled="{x:Bind ConvertClickEnabled(ViewModel.SelectionMode), Mode=OneWay}"
-                                ItemClick="List_ItemClick"
-                                SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
-                                SelectionChanged="List_SelectionChanged"
+                                SelectionMode="None"
+                                IsSelectionEnabled="{x:Bind ViewModel.IsSelectionEnabled, Mode=TwoWay}"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 Padding="0,0,0,2"
@@ -622,7 +631,7 @@
                                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                                 <Setter Property="TabNavigation" Value="Local"/>
                                 <Setter Property="IsHoldingEnabled" Value="True"/>
-                                <Setter Property="Padding" Value="12,0,12,0"/>
+                                <Setter Property="Padding" Value="0,0,0,0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                 <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                                 <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
@@ -633,7 +642,7 @@
                                             <ListViewItemPresenter
                                                 x:Name="Presenter"
                                                 ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                SelectionCheckMarkVisualEnabled="True"
+                                                SelectionCheckMarkVisualEnabled="False"
                                                 CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                                 CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                                 DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
@@ -654,7 +663,7 @@
                                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                 ContentMargin="{TemplateBinding Padding}"
-                                                CheckMode="Inline"/>
+                                                CheckMode="Overlay"/>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
@@ -668,7 +677,7 @@
                                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                                 <Setter Property="TabNavigation" Value="Local"/>
                                 <Setter Property="IsHoldingEnabled" Value="True"/>
-                                <Setter Property="Padding" Value="12,0,12,0"/>
+                                <Setter Property="Padding" Value="0,0,0,0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                 <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                                 <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>

@@ -16,7 +16,16 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    public class LazoListView : SelectListView
+    public interface ILazoListView
+    {
+        void OnPointerPressed(SelectorItem item, PointerRoutedEventArgs e);
+        void OnPointerEntered(SelectorItem item, PointerRoutedEventArgs e);
+        void OnPointerMoved(SelectorItem item, PointerRoutedEventArgs e);
+        void OnPointerReleased(SelectorItem item, PointerRoutedEventArgs e);
+        void OnPointerCanceled(SelectorItem item, PointerRoutedEventArgs e);
+    }
+
+    public class LazoListView : SelectListView, ILazoListView
     {
         private IList<ItemIndexRange> _ranges;
         private object _firstItem;
@@ -59,7 +68,7 @@ namespace Unigram.Controls
             return new LazoListViewItem(this);
         }
 
-        internal void OnPointerPressed(LazoListViewItem item, PointerRoutedEventArgs e)
+        public void OnPointerPressed(SelectorItem item, PointerRoutedEventArgs e)
         {
             if (SelectionMode == ListViewSelectionMode.None)
             {
@@ -80,7 +89,7 @@ namespace Unigram.Controls
             _pressed = true;
         }
 
-        internal void OnPointerEntered(LazoListViewItem item, PointerRoutedEventArgs e)
+        public void OnPointerEntered(SelectorItem item, PointerRoutedEventArgs e)
         {
             if (_firstItem == null || !_pressed || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
@@ -138,7 +147,7 @@ namespace Unigram.Controls
             }
         }
 
-        internal void OnPointerMoved(LazoListViewItem item, PointerRoutedEventArgs e)
+        public void OnPointerMoved(SelectorItem item, PointerRoutedEventArgs e)
         {
             var child = ItemFromContainer(item);
             if (child == null)
@@ -199,7 +208,7 @@ namespace Unigram.Controls
             }
         }
 
-        internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
+        public void OnPointerReleased(SelectorItem item, PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
             if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
@@ -236,7 +245,7 @@ namespace Unigram.Controls
             e.Handled = handled;
         }
 
-        internal void OnPointerCanceled(LazoListViewItem item, PointerRoutedEventArgs e)
+        public void OnPointerCanceled(SelectorItem item, PointerRoutedEventArgs e)
         {
             _recognizer.CompleteGesture();
         }

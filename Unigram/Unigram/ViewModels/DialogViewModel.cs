@@ -41,24 +41,37 @@ using Unigram.Controls.Chats;
 
 namespace Unigram.ViewModels
 {
+    public struct SelectedMessage
+    {
+        public long Id;
+        public bool CanBeForwarded;
+        public bool CanBeDeleted;
+
+        public int Count;
+    }
+
     public partial class DialogViewModel : TLViewModelBase, IDelegable<IDialogDelegate>
     {
-        private List<MessageViewModel> _selectedItems = new List<MessageViewModel>();
-        public List<MessageViewModel> SelectedItems
-        {
-            get
-            {
-                return _selectedItems;
-            }
-            set
-            {
-                Set(ref _selectedItems, value);
-                MessagesForwardCommand.RaiseCanExecuteChanged();
-                MessagesDeleteCommand.RaiseCanExecuteChanged();
-                MessagesCopyCommand.RaiseCanExecuteChanged();
-                MessagesReportCommand.RaiseCanExecuteChanged();
-            }
-        }
+        //private List<MessageViewModel> _selectedItems = new List<MessageViewModel>();
+        //public List<MessageViewModel> SelectedItems
+        //{
+        //    get
+        //    {
+        //        return _selectedItems;
+        //    }
+        //    set
+        //    {
+        //        Set(ref _selectedItems, value);
+        //        MessagesForwardCommand.RaiseCanExecuteChanged();
+        //        MessagesDeleteCommand.RaiseCanExecuteChanged();
+        //        MessagesCopyCommand.RaiseCanExecuteChanged();
+        //        MessagesReportCommand.RaiseCanExecuteChanged();
+        //    }
+        //}
+
+        public readonly Dictionary<long, MessageViewModel> SelectedItems = new Dictionary<long, MessageViewModel>();
+
+        public int SelectedCount => SelectedItems.Count;
 
         public void ExpandSelection(IEnumerable<MessageViewModel> vector)
         {
@@ -80,7 +93,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            SelectedItems = messages;
+            //SelectedItems = messages;
         }
 
         public MediaLibraryCollection MediaLibrary
@@ -423,18 +436,18 @@ namespace Unigram.ViewModels
             }
         }
 
-        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
-        public ListViewSelectionMode SelectionMode
+        private bool _isSelectionEnabled;
+        public bool IsSelectionEnabled
         {
             get
             {
-                return _selectionMode;
+                return _isSelectionEnabled;
             }
             set
             {
-                Set(ref _selectionMode, value);
+                Set(ref _isSelectionEnabled, value);
 
-                if (value != ListViewSelectionMode.None)
+                if (value)
                 {
                     DisposeSearch();
                 }

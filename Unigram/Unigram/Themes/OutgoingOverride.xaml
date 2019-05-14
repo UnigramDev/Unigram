@@ -16,4 +16,6 @@
     <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="{ThemeResource MessageCallForegroundOutColor}" />
     <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="{ThemeResource MessageCallMissedForegroundOutColor}" />
 
+    <StaticResource x:Key="MessageHorizontalAlignment" ResourceKey="MessageHorizontalAlignmentOut" />
+
 </ResourceDictionary>
