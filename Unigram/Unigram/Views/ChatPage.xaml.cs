@@ -3556,6 +3556,22 @@ namespace Unigram.Views
                     {
                         bubble.UpdateFile(message, file);
                     }
+
+                    if (message.Content is MessageAnimation animation && animation.Animation.AnimationValue.Id == file.Id && file.Local.IsDownloadingCompleted)
+                    {
+                        ViewVisibleMessages(false);
+                    }
+                    else if (message.Content is MessageVideoNote videoNote && videoNote.VideoNote.Video.Id == file.Id && file.Local.IsDownloadingCompleted)
+                    {
+                        ViewVisibleMessages(false);
+                    }
+                    else if (message.Content is MessageText text && text.WebPage != null && file.Local.IsDownloadingCompleted)
+                    {
+                        if (text.WebPage.Animation?.AnimationValue.Id == file.Id || text.WebPage.VideoNote?.Video.Id == file.Id)
+                        {
+                            ViewVisibleMessages(false);
+                        }
+                    }
                 }
 
                 if (file.Local.IsDownloadingCompleted && file.Remote.IsUploadingCompleted)
