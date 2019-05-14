@@ -3144,11 +3144,11 @@ namespace Unigram.Views
             var messages = ElementCompositionPreview.GetElementVisual(Messages);
             var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
 
-            textArea.Clip?.StopAnimation("TopInset");
-            messages.Clip?.StopAnimation("TopInset");
-            composer.Clip?.StopAnimation("BottomInset");
-            messages.StopAnimation("Offset");
-            composer.StopAnimation("Offset");
+            //textArea.Clip?.StopAnimation("TopInset");
+            //messages.Clip?.StopAnimation("TopInset");
+            //composer.Clip?.StopAnimation("BottomInset");
+            //messages.StopAnimation("Offset");
+            //composer.StopAnimation("Offset");
 
             if ((show && ComposerHeader.Visibility == Visibility.Visible) || (!show && (ComposerHeader.Visibility == Visibility.Collapsed || _composerHeaderCollapsed)))
             {
