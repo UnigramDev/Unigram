@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +11,7 @@ using Unigram.Native;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels.Delegates;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml.Navigation;
@@ -106,9 +109,33 @@ namespace Unigram.ViewModels
 
                     if (_isBlurEnabled)
                     {
+                        using (var source = await item.OpenReadAsync())
                         using (var stream = await result.OpenAsync(FileAccessMode.ReadWrite))
                         {
-                            PlaceholderImageHelper.GetForCurrentView().DrawThumbnailPlaceholder(item.Path, 10, stream);
+                            var device = new CanvasDevice();
+                            var bitmap = await CanvasBitmap.LoadAsync(device, source);
+
+                            double ratioX = (double)450 / bitmap.SizeInPixels.Width;
+                            double ratioY = (double)450 / bitmap.SizeInPixels.Height;
+                            double ratio = Math.Max(ratioX, ratioY);
+
+                            var width = (int)(bitmap.SizeInPixels.Width * ratio);
+                            var height = (int)(bitmap.SizeInPixels.Height * ratio);
+
+                            var renderer = new CanvasRenderTarget(device, width, height, bitmap.Dpi);
+
+                            using (var ds = renderer.CreateDrawingSession())
+                            {
+                                var blur = new GaussianBlurEffect
+                                {
+                                    BlurAmount = 12.0f,
+                                    Source = bitmap
+                                };
+
+                                ds.DrawImage(blur, new Rect(0, 0, width, height), new Rect(0, 0, bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height));
+                            }
+
+                            await renderer.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg);
                         }
                     }
                     else

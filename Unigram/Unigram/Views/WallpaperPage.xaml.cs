@@ -113,7 +113,7 @@ namespace Unigram.Views
 
             if (sender is CheckBox check && check.IsChecked == true)
             {
-                animation.InsertKeyFrame(1, 10);
+                animation.InsertKeyFrame(1, 12);
             }
             else
             {

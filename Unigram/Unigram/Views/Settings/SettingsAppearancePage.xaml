@@ -69,7 +69,7 @@
 
                 <Grid x:Name="Preview">
                     <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"/>
-                    <StackPanel Padding="12,12,12,10">
+                    <StackPanel Padding="0,10">
                         <messages:MessageBubble x:Name="Message1" HorizontalAlignment="Left"/>
                         <messages:MessageBubble x:Name="Message2" HorizontalAlignment="Right">
                             <FrameworkElement.Resources>
