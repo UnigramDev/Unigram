@@ -16,6 +16,7 @@
     <StackPanel>
         <TextBox
             x:Name="TextField"
+            FontFamily="{ThemeResource EmojiThemeFontFamily}"
             PlaceholderText="{CustomResource Text}"
             Margin="12,12,12,12"
             KeyDown="TextField_KeyDown"/>

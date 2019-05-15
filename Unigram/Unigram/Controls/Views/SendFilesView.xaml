@@ -533,6 +533,7 @@
                     DataContext="{x:Bind ViewModel}"
                     Paste="OnPaste"
                     InputScope="Chat"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                     PlaceholderText="{CustomResource AddCaption}"
                     Margin="12,8,12,0"
                     Grid.Row="1"/>
