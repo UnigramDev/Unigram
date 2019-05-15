@@ -299,7 +299,7 @@ namespace Unigram.Common
 
         public static bool IsAnimatedSticker(this Message message)
         {
-#if DEBUG
+#if DEBUG_LOTTIE
             if (message.Content is MessageDocument document)
             {
                 return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");
@@ -311,7 +311,7 @@ namespace Unigram.Common
 
         public static bool IsAnimatedSticker(this MessageViewModel message)
         {
-#if DEBUG
+#if DEBUG_LOTTIE
             if (message.Content is MessageDocument document)
             {
                 return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");

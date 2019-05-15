@@ -160,7 +160,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (content is MessageDocument document)
             {
-#if DEBUG
+#if DEBUG_LOTTIE
                 return !(document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json"));
 #else
                 return true;
@@ -168,7 +168,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-#if DEBUG
+#if DEBUG_LOTTIE
                 return text.WebPage.Document != null && !(text.WebPage.Document.FileName.StartsWith("tg_secret_sticker") && text.WebPage.Document.FileName.EndsWith("json"));
 #else
                 return text.WebPage.Document != null;
