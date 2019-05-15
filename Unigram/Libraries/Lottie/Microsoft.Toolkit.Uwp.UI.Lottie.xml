@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0"?>
 <doc>
     <assembly>
         <name>Microsoft.Toolkit.Uwp.UI.Lottie</name>
@@ -6,16 +6,16 @@
     <members>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.Instantiator">
             <summary>
-            Creates instances of a <see cref="T:Windows.UI.Composition.Visual" /> tree from a description
+            Creates instances of a <see cref="T:Windows.UI.Composition.Visual"/> tree from a description
             of the tree.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.Instantiator.CreateVisual(Windows.UI.Composition.Compositor,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual)">
             <summary>
-            Creates a new instance of <see cref="T:Windows.UI.Composition.Visual" />
-            described by the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual" />.
+            Creates a new instance of <see cref="T:Windows.UI.Composition.Visual"/>
+            described by the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/>.
             </summary>
-            <returns>The <see cref="T:Windows.UI.Composition.Visual" />.</returns>
+            <returns>The <see cref="T:Windows.UI.Composition.Visual"/>.</returns>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.Issue">
             <summary>
@@ -55,13 +55,13 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualDiagnostics.Options">
             <summary>
-            Gets the options that were set on the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" /> when it
+            Gets the options that were set on the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/> when it
             produced this diagnostics object.
             </summary>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualOptions">
             <summary>
-            Options for controlling how the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" /> processes a Lottie file.
+            Options for controlling how the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/> processes a Lottie file.
             </summary>
         </member>
         <member name="F:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualOptions.None">
@@ -88,13 +88,13 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource">
             <summary>
-            A <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisualSource" /> for a Lottie composition. This allows
-            a Lottie to be specified as the source for a <see cref="T:Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer" />.
+            A <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisualSource"/> for a Lottie composition. This allows
+            a Lottie to be specified as the source for a <see cref="T:Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.OptionsProperty">
             <summary>
-            Gets the options for the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" />.
+            Gets the options for the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.UriSourceProperty">
@@ -104,12 +104,12 @@
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" /> class to be used in markup.
+            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/> class to be used in markup.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.#ctor(Windows.Storage.StorageFile)">
             <summary>
-            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" /> class from a <see cref="T:Windows.Storage.StorageFile" />.
+            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/> class from a <see cref="T:Windows.Storage.StorageFile"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.Options">
@@ -119,47 +119,47 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.UriSource">
             <summary>
-            Gets or sets the Uniform Resource Identifier (URI) of the JSON source file for this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" />.
+            Gets or sets the Uniform Resource Identifier (URI) of the JSON source file for this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/>.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.CreateFromString(System.String)">
             <summary>
-            Called by XAML to convert a string to an <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisualSource" />.
+            Called by XAML to convert a string to an <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisualSource"/>.
             </summary>
-            <returns>The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" /> for the given url.</returns>
+            <returns>The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/> for the given url.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.SetSourceAsync(Windows.Storage.StorageFile)">
             <summary>
-            Sets the source for the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" />.
+            Sets the source for the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/>.
             </summary>
             <param name="file">A file that refers to a JSON Lottie file.</param>
-            <returns>An <see cref="T:Windows.Foundation.IAsyncAction" /> that completes when the load completes or fails.</returns>
+            <returns>An <see cref="T:Windows.Foundation.IAsyncAction"/> that completes when the load completes or fails.</returns>
         </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.SetSourceAsync(Windows.Foundation.Uri)">
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.SetSourceAsync(System.Uri)">
             <summary>
-            Sets the source for the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" />.
+            Sets the source for the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/>.
             </summary>
             <param name="sourceUri">A URI that refers to a JSON Lottie file.</param>
-            <returns>An <see cref="T:Windows.Foundation.IAsyncAction" /> that completes when the load completes or fails.</returns>
+            <returns>An <see cref="T:Windows.Foundation.IAsyncAction"/> that completes when the load completes or fails.</returns>
         </member>
         <member name="E:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.AnimatedVisualInvalidated">
             <summary>
-            Implements <see cref="T:Microsoft.UI.Xaml.Controls.IDynamicAnimatedVisualSource" />.
+            Implements <see cref="T:Microsoft.UI.Xaml.Controls.IDynamicAnimatedVisualSource"/>.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.TryCreateAnimatedVisual(Windows.UI.Composition.Compositor,System.Object@)">
             <summary>
-            Implements <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisualSource" />.
+            Implements <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisualSource"/>.
             </summary>
-            <param name="compositor">The <see cref="T:Windows.UI.Composition.Compositor" /> that can be used as a factory for the resulting <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisual" />.</param>
+            <param name="compositor">The <see cref="T:Windows.UI.Composition.Compositor"/> that can be used as a factory for the resulting <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisual"/>.</param>
             <param name="diagnostics">An optional object that may provide extra information about the result.</param>
-            <returns>An <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisual" />.</returns>
+            <returns>An <see cref="T:Microsoft.UI.Xaml.Controls.IAnimatedVisual"/>.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.ToString">
             <summary>
-            Returns a string representation of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" /> for debugging purposes.
+            Returns a string representation of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/> for debugging purposes.
             </summary>
-            <returns>A string representation of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource" /> for debugging purposes.</returns>
+            <returns>A string representation of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/> for debugging purposes.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.IsRuntimeCompatible(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ApiCompatibility)">
             <summary>
@@ -174,19 +174,19 @@
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1.#ctor(`0,System.Nullable{System.Int32})">
             <summary>
-            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1" /> class with
+            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1"/> class with
             a non-animated value.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1.#ctor(System.Collections.Generic.IEnumerable{Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame{`0}},System.Nullable{System.Int32})">
             <summary>
-            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1" /> class with
+            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1"/> class with
             the given key frames.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1.#ctor(`0,Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame{`0}[]@,System.Nullable{System.Int32})">
             <summary>
-            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1" /> class with
+            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1"/> class with
             the given key frames.
             </summary>
         </member>
@@ -207,7 +207,7 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1.IsAnimated">
             <summary>
-            Gets a value indicating whether the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1" /> has any key frames.
+            Gets a value indicating whether the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1"/> has any key frames.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1.AlwaysEquals(`0)">
@@ -217,10 +217,10 @@
             <returns><c>true</c> if this value is always equal to the given value.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ExtensionMethods">
             <summary>
@@ -233,7 +233,7 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.AnimatableVector3.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.AnimatableXYZ">
             <summary>
@@ -241,33 +241,33 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.AnimatableXYZ.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.AnimatableXYZ.InitialValue">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.AnimatableXYZ.IsAnimated">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.AssetCollection.GetAssetById(System.String)">
             <summary>
-            Returns the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset" /> with the given id, or null if not found.
+            Returns the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset"/> with the given id, or null if not found.
             </summary>
-            <returns>The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset" /> with the given id, or null if not found.</returns>
+            <returns>The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset"/> with the given id, or null if not found.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.AssetCollection.GetEnumerator">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment">
             <summary>
-            A segment defined as a cubic bezier curve from <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment.ControlPoint0" /> to <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment.ControlPoint3" />.
+            A segment defined as a cubic bezier curve from <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment.ControlPoint0"/> to <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment.ControlPoint3"/>.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.BezierSegment.IsALine">
             <summary>
@@ -281,40 +281,40 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Color.Equals(System.Object)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Color.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Color)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Color.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Color.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.CubicBezierEasing.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.CubicBezierEasing.Equals(System.Object)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.CubicBezierEasing.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.CubicBezierEasing)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.CubicBezierEasing.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.CubicBezierEasing.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Easing.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Easing)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Ellipse.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Ellipse.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop.GetFirstColor(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop[])">
             <summary>
@@ -324,7 +324,7 @@
             <returns>The first gradient stop in the sequence.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.HoldEasing">
             <summary>
@@ -333,19 +333,19 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.HoldEasing.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.HoldEasing.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.HoldEasing.Equals(System.Object)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.HoldEasing.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.HoldEasing)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.HoldEasing.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.IAnimatableValue`1.InitialValue">
             <summary>
@@ -363,18 +363,18 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ImageAsset.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ImageLayer.RefId">
             <summary>
-            Gets the id of an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset" /> referenced by this layer.
+            Gets the id of an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset"/> referenced by this layer.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ImageLayer.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ImageLayer.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1">
             <summary>
@@ -390,7 +390,7 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1.Frame">
             <summary>
-            Gets the frame at which the animation should have the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1.Value" />.
+            Gets the frame at which the animation should have the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1.Value"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1.SpatialControlPoint1">
@@ -409,47 +409,47 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame{`0})">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer">
             <summary>
             Base class for layer objects.
             </summary>
             <remarks>
-            Each <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" />, apart from the root <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer" /> belongs to a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer" /> and has
+            Each <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/>, apart from the root <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer"/> belongs to a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer"/> and has
             an index that determines its rendering order, and is also used to identify it as the owner of a set of transforms that
-            can be inherited by other <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" />s.</remarks>
+            can be inherited by other <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/>s.</remarks>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.StartTime">
             <summary>
-            Gets the frame at which this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> starts playing. May be negative.
+            Gets the frame at which this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> starts playing. May be negative.
             </summary>
-            <remarks><see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" />s all start together.</remarks>
+            <remarks><see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/>s all start together.</remarks>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.InPoint">
             <summary>
-            Gets the frame at which this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> becomes visible. <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.OutPoint" />.
+            Gets the frame at which this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> becomes visible. <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.OutPoint"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.OutPoint">
             <summary>
-            Gets the frame at which this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> becomes invisible. <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.OutPoint" />.
+            Gets the frame at which this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> becomes invisible. <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.OutPoint"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.Index">
             <summary>
-            Gets the index used to uniquely identify a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> within the owning <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection" />.
+            Gets the index used to uniquely identify a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> within the owning <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer.Parent">
             <summary>
-            Gets the index that identifies the index of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> from which transforms are inherited,
+            Gets the index that identifies the index of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> from which transforms are inherited,
             or null if no transforms are inherited.
             </summary>
         </member>
@@ -460,61 +460,61 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection">
             <summary>
-            A collection of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" />s in drawing order.
+            A collection of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/>s in drawing order.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection.GetLayersBottomToTop">
             <summary>
-            Returns the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" />s in the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection" /> in
+            Returns the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/>s in the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection"/> in
             painting order.
             </summary>
-            <returns>The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" />s in painting order.</returns>
+            <returns>The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/>s in painting order.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection.GetLayerById(System.Nullable{System.Int32})">
             <summary>
-            Returns the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> with the given id, or null if no matching <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> is found.
+            Returns the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> with the given id, or null if no matching <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> is found.
             </summary>
-            <returns>The corresponding <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> or null if <paramref name="id" /> does not match
-            a single <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" /> in the collection.</returns>
+            <returns>The corresponding <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> or null if <paramref name="id"/> does not match
+            a single <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/> in the collection.</returns>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollectionAsset">
             <summary>
-            A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection" /> stored in the assets section of a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" />.
+            A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection"/> stored in the assets section of a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollectionAsset.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearEasing.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearEasing.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearEasing.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearEasing.Equals(System.Object)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearEasing.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearEasing)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearGradientFill.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearGradientFill.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearGradientStroke.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearGradientStroke.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition.#ctor(System.String,System.Double,System.Double,System.Double,System.Double,System.Double,System.Boolean,System.Version,Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.AssetCollection,System.Collections.Generic.IEnumerable{Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Char},System.Collections.Generic.IEnumerable{Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Font},Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LayerCollection,System.Collections.Generic.IEnumerable{Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Marker})">
             <summary>
-            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> class.
+            Initializes a new instance of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> class.
             </summary>
             <param name="name">The name of the composition.</param>
             <param name="width">Width of animation canvas as specified in AfterEffects.</param>
@@ -541,7 +541,7 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition.Version">
             <summary>
@@ -550,12 +550,12 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieCompositionValidator">
             <summary>
-            Validates a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> against various rules.
+            Validates a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> against various rules.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieCompositionValidator.Validate(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition)">
             <summary>
-            Validates the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> against all of the validation rules.
+            Validates the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> against all of the validation rules.
             Returns a list of validation issues, or an empty list if no issues were found.
             </summary>
             <returns>A list of the issues discovered during validation.</returns>
@@ -597,7 +597,7 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Marker.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Mask">
             <summary>
@@ -605,16 +605,16 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.MergePaths.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.MergePaths.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.NullLayer.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.NullLayer.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Optimization.Optimizer">
             <summary>
@@ -624,13 +624,13 @@
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Optimization.Optimizer.RemoveRedundantKeyFrames``1(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame{``0}[]@)">
             <summary>
-            Returns an equivalent list of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1" />s but with any redundant
-            <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1" />s removed.
+            Returns an equivalent list of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1"/>s but with any redundant
+            <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1"/>s removed.
             </summary>
-            <typeparam name="T">The type of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1" />.</typeparam>
-            <param name="keyFrames">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1" />s to filter.</param>
-            <returns>An equivalent list of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1" />s but with any redundant
-            <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1" />s removed.
+            <typeparam name="T">The type of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1"/>.</typeparam>
+            <param name="keyFrames">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1"/>s to filter.</param>
+            <returns>An equivalent list of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1"/>s but with any redundant
+            <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame`1"/>s removed.
             </returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Optimization.Optimizer.GetKeyFrameWithHoldEasing``1(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.KeyFrame{``0})">
@@ -641,58 +641,58 @@
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Optimization.Optimizer.TrimKeyFrames``1(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable{``0},System.Double,System.Double)">
             <summary>
-            Returns only the key frames that are visible between <paramref name="startTime" />
-            and <paramref name="endTime" />, with other key frames removed.
+            Returns only the key frames that are visible between <paramref name="startTime"/>
+            and <paramref name="endTime"/>, with other key frames removed.
             </summary>
             <typeparam name="T">The type of key frame.</typeparam>
-            <param name="animatable">An <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1" />.</param>
+            <param name="animatable">An <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1"/>.</param>
             <param name="startTime">The frame time at which rendering starts.</param>
             <param name="endTime">The frame time at which rendering ends.</param>
             <returns>
-            The key frames that are visible for rendering between <paramref name="startTime" />
-            and <paramref name="endTime" />, with other key frames removed.
+            The key frames that are visible for rendering between <paramref name="startTime"/>
+            and <paramref name="endTime"/>, with other key frames removed.
             </returns>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Path.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Path.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Polystar.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Polystar.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer.RefId">
             <summary>
-            Gets the id of an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset" /> that contains the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer" />s under this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer" />.
+            Gets the id of an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset"/> that contains the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Layer"/>s under this <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RadialGradientFill.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RadialGradientFill.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RadialGradientStroke.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RadialGradientStroke.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Rectangle.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Rectangle.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Repeater">
             <summary>
@@ -715,26 +715,26 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Repeater.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Repeater.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RepeaterTransform.StartOpacityPercent">
             <summary>
-            Gets the opacity of the original shaped. Only used by <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Repeater" />.
+            Gets the opacity of the original shaped. Only used by <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Repeater"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RepeaterTransform.EndOpacityPercent">
             <summary>
-            Gets the opacity of the last copy of the original shape. Only used by <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Repeater" />.
+            Gets the opacity of the last copy of the original shape. Only used by <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Repeater"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RoundedCorner.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RoundedCorner.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Sequence`1">
             <summary>
@@ -748,16 +748,16 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Sequence`1.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Sequence{`0})">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Sequence`1.Equals(System.Object)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Sequence`1.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Sequence`1.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Serialization.LottieCompositionReader.Options">
             <summary>
@@ -788,9 +788,9 @@
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Serialization.LottieCompositionReader.ReadLottieCompositionFromJsonStream(System.IO.Stream,Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Serialization.LottieCompositionReader.Options,System.ValueTuple{System.String,System.String}[]@)">
             <summary>
-            Parses a Lottie file to create a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" />.
+            Parses a Lottie file to create a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/>.
             </summary>
-            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> read from the json stream.</returns>
+            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> read from the json stream.</returns>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Serialization.LottieCompositionReaderException">
             <summary>
@@ -804,58 +804,58 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeContentType">
             <summary>
-            Types of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerContent" /> objects.
+            Types of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerContent"/> objects.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeGroup.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeGroup.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayer.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayer.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerContent.ContentType">
             <summary>
-            Gets the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeContentType" /> of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerContent" /> object.
+            Gets the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeContentType"/> of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerContent"/> object.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.SolidColorFill.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.SolidColorFill.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.SolidColorStroke.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.SolidColorStroke.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.SolidLayer.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.SolidLayer.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.TextLayer.RefId">
             <summary>
-            Gets the id of an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset" /> referenced by this layer.
+            Gets the id of an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Asset"/> referenced by this layer.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.TextLayer.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.TextLayer.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Tools.Stats">
             <summary>
-            Calculates stats for a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" />.
+            Calculates stats for a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Transform.Anchor">
@@ -865,20 +865,20 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Transform.Position">
             <summary>
-            Gets the position, specified as the offset from the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Transform.Anchor" />.
+            Gets the position, specified as the offset from the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Transform.Anchor"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Transform.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Transform.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.TrimPath.ContentType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.TrimPath.ObjectType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ValidationIssues">
             <summary>
@@ -886,33 +886,33 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector2.Equals(System.Object)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector2.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector2)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector2.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector2.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector3.Equals(System.Object)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector3.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector3)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector3.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Vector3.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieToWinComp.ContainerShapeOrVisual">
             <summary>
-            Helper for abstracting <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionContainerShape" /> and
-            <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ContainerVisual" /> so that they can be treated the same
+            Helper for abstracting <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionContainerShape"/> and
+            <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ContainerVisual"/> so that they can be treated the same
             in some circumstances.
             </summary>
             <remarks>
@@ -934,38 +934,38 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieToWinComp.LottieToWinCompTranslator">
             <summary>
-            Translates a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> to an equivalent <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual" />.
+            Translates a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> to an equivalent <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/>.
             </summary>
-            <remarks>See https://helpx.adobe.com/pdf/after_effects_reference.pdf"/&gt; for the
+            <remarks>See https://helpx.adobe.com/pdf/after_effects_reference.pdf"/> for the
             After Effects semantics.</remarks>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieToWinComp.LottieToWinCompTranslator.ProgressPropertyName">
             <summary>
-            Gets the name of the property on the resulting <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual" /> that controls the progress
+            Gets the name of the property on the resulting <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> that controls the progress
             of the animation. Setting this property (directly or with an animation)
             between 0 and 1 controls the position of the animation.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieToWinComp.LottieToWinCompTranslator.TryTranslateLottieComposition(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition,System.Boolean,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual@,System.ValueTuple{System.String,System.String}[]@)">
             <summary>
-            Attempts to translates the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" />.
+            Attempts to translates the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/>.
             </summary>
-            <param name="lottieComposition">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> to translate.</param>
+            <param name="lottieComposition">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> to translate.</param>
             <param name="strictTranslation">If true, throw an exception if translation issues are found.</param>
-            <param name="visual">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual" /> that contains the translated Lottie.</param>
+            <param name="visual">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> that contains the translated Lottie.</param>
             <param name="translationIssues">A list of issues that were encountered during the translation.</param>
-            <returns><c>true</c> if the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> was translated.</returns>
+            <returns><c>true</c> if the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> was translated.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieToWinComp.LottieToWinCompTranslator.TryTranslateLottieComposition(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition,System.Boolean,System.Boolean,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual@,System.ValueTuple{System.String,System.String}[]@)">
             <summary>
-            Attempts to translates the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" />.
+            Attempts to translates the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/>.
             </summary>
-            <param name="lottieComposition">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> to translate.</param>
+            <param name="lottieComposition">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> to translate.</param>
             <param name="strictTranslation">If true, throw an exception if translation issues are found.</param>
             <param name="addCodegenDescriptions">Add descriptions to objects for comments on generated code.</param>
-            <param name="visual">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual" /> that contains the translated Lottie.</param>
+            <param name="visual">The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> that contains the translated Lottie.</param>
             <param name="translationIssues">A list of issues that were encountered during the translation.</param>
-            <returns><c>true</c> if the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition" /> was translated.</returns>
+            <returns><c>true</c> if the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LottieComposition"/> was translated.</returns>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieToWinComp.TranslationContext">
             <summary>
@@ -981,7 +981,7 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieToWinComp.TrimmedAnimatable`1">
             <summary>
-            An <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1" /> that has had its key frames trimmed
+            An <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1"/> that has had its key frames trimmed
             to include only those that affect a particular time period.
             </summary>
             <typeparam name="T">The type of the key frames.</typeparam>
@@ -998,14 +998,14 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieToWinComp.TrimmedAnimatable`1.IsAnimated">
             <summary>
-            Gets a value indicating whether the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1" /> has any key frames.
+            Gets a value indicating whether the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1"/> has any key frames.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.AnimationController.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CppStringifier">
             <summary>
@@ -1023,70 +1023,70 @@
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.CreateFactoryCode(System.String,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual,System.Single,System.Single,System.TimeSpan,System.Boolean)">
             <summary>
-            Returns the C# code for a factory that will instantiate the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual" /> as a
+            Returns the C# code for a factory that will instantiate the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> as a
             Windows.UI.Composition Visual.
             </summary>
             <returns>The C# code.</returns>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteFileStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteInstantiatorStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteFileEnd(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryCombinationFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryEllipseFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryGroupFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryPathFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryRoundedRectangleFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryTransformedGeometryFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.CreateFactoryCode(System.String,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual,System.Single,System.Single,System.TimeSpan,System.String,System.String@,System.String@,System.Boolean)">
             <summary>
-            Returns the Cx code for a factory that will instantiate the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual" /> as a
+            Returns the Cx code for a factory that will instantiate the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> as a
             Windows.UI.Composition Visual.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteFileStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteInstantiatorStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteFileEnd(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryCombinationFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryEllipseFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryGroupFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryPathFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryRoundedRectangleFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryTransformedGeometryFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry,System.String,System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.TrySynthesizeClassName(System.String)">
             <summary>
@@ -1120,7 +1120,7 @@
             <summary>
             Writes CanvasGeometery.Combination factory code.
             </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder" /> used to create the code.</param>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
             <param name="obj">Describes the object that should be instantiated by the factory code.</param>
             <param name="typeName">The type of the result.</param>
             <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
@@ -1129,7 +1129,7 @@
             <summary>
             Writes CanvasGeometery.Ellipse factory code.
             </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder" /> used to create the code.</param>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
             <param name="obj">Describes the object that should be instantiated by the factory code.</param>
             <param name="typeName">The type of the result.</param>
             <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
@@ -1138,7 +1138,7 @@
             <summary>
             Writes CanvasGeometery.Ellipse factory code.
             </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder" /> used to create the code.</param>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
             <param name="obj">Describes the object that should be instantiated by the factory code.</param>
             <param name="typeName">The type of the result.</param>
             <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
@@ -1147,7 +1147,7 @@
             <summary>
             Writes CanvasGeometery.Path factory code.
             </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder" /> used to create the code.</param>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
             <param name="obj">Describes the object that should be instantiated by the factory code.</param>
             <param name="typeName">The type of the result.</param>
             <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
@@ -1156,7 +1156,7 @@
             <summary>
             Writes CanvasGeometery.RoundedRectangle factory code.
             </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder" /> used to create the code.</param>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
             <param name="obj">Describes the object that should be instantiated by the factory code.</param>
             <param name="typeName">The type of the result.</param>
             <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
@@ -1165,7 +1165,7 @@
             <summary>
             Writes CanvasGeometery.TransformedGeometry factory code.
             </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder" /> used to create the code.</param>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
             <param name="obj">Describes the object that should be instantiated by the factory code.</param>
             <param name="typeName">The type of the result.</param>
             <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
@@ -1234,86 +1234,86 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Deref">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.IListAdd">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int64TypeName">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.MemberSelect">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.New">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Null">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Readonly(System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.ScopeResolve">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Var">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Bool(System.Boolean)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.CanvasFigureLoop(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasFigureLoop)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.CanvasGeometryCombine(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometryCombine)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Color(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.FactoryCall(System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.FilledRegionDetermination(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasFilledRegionDetermination)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Float(System.Single)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int32(System.Int32)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int64(System.Int64)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Matrix3x2(System.Numerics.Matrix3x2)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Matrix4x4(System.Numerics.Matrix4x4)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.ReferenceTypeName(System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.String(System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.TimeSpan(System.TimeSpan)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.TimeSpan(System.String)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Vector2(System.Numerics.Vector2)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Vector3(System.Numerics.Vector3)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.NodeNamer`1">
             <summary>
-            Generates names for the nodes in an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ObjectGraph`1" />.
+            Generates names for the nodes in an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ObjectGraph`1"/>.
             </summary>
             <typeparam name="TNode">The type of the data associated with each node.</typeparam>
         </member>
@@ -1337,7 +1337,7 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.TreeReducer">
             <summary>
-            Optimizes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual" /> tree by combining and removing containers.
+            Optimizes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> tree by combining and removing containers.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CanonicalizedNode`1.Canonical">
@@ -1351,45 +1351,45 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ColorKeyFrameAnimation.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionAnimation.Freeze">
             <summary>
-            Marks the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionAnimation" /> to indicate that its state
+            Marks the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionAnimation"/> to indicate that its state
             should never change again. Note that this is a weak guarantee as there
             are not checks on all mutators to ensure that changes aren't made after
             freezing. However correct code must never mutate a frozen object.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionColorBrush.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionContainerShape.Shapes">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionContainerShape.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionEffectFactory.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionEllipseGeometry.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionGeometricClip.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.LongDescription">
             <summary>
             Gets or sets a description of the object. This may be used to add comments to generated code.
-            Cf. the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.Comment" /> property which is a property on real composition
+            Cf. the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.Comment"/> property which is a property on real composition
             objects that is used for debugging.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.ShortDescription">
             <summary>
             Gets or sets a description of the object. This may be used to add comments to generated code.
-            Cf. the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.Comment" /> property which is a property on real composition
+            Cf. the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.Comment"/> property which is a property on real composition
             objects that is used for debugging.
             </summary>
         </member>
@@ -1406,7 +1406,7 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.Dispose">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.Animator">
             <summary>
@@ -1424,7 +1424,7 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.Animator.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionPath">
             <summary>
@@ -1432,25 +1432,25 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionPath.LongDescription">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionPath.ShortDescription">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionPathGeometry.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionPropertySet.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionRectangleGeometry.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionRoundedRectangleGeometry.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionSpriteShape.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionSurfaceBase">
             <summary>
@@ -1461,25 +1461,25 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionSurfaceBrush.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionViewBox.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionVisualSurface.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ContainerVisual.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CubicBezierEasingFunction.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ExpressionAnimation.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ExpressionAnimation.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Boolean">
             <summary>
@@ -1487,13 +1487,13 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Boolean.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Boolean.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Boolean.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Cubed">
             <summary>
@@ -1501,13 +1501,13 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Cubed.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Cubed.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Cubed.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.CubicBezierFunction2">
             <summary>
@@ -1516,7 +1516,7 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.CubicBezierFunction2.Zero">
             <summary>
-            Gets a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.CubicBezierFunction2" /> that describes a line from 0 to 0.
+            Gets a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.CubicBezierFunction2"/> that describes a line from 0 to 0.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.CubicBezierFunction2.IsEquivalentToLinear">
@@ -1530,22 +1530,22 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.CubicBezierFunction2.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.CubicBezierFunction2.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.CubicBezierFunction2.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Divide.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Divide.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Divide.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression.IsAtomic">
             <summary>
@@ -1554,7 +1554,7 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression.Simplified">
             <summary>
@@ -1575,7 +1575,7 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.ExpressionType">
             <summary>
-            Describes the type of an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression" /> or variable.
+            Describes the type of an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression"/> or variable.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.ExpressionType.Constraints">
@@ -1587,7 +1587,7 @@
             <summary>
             Gets a value indicating whether the expression has a generic type.
             The expression has a generic type if there is more than one valid type in the
-            <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.ExpressionType.Constraints" /> set.
+            <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.ExpressionType.Constraints"/> set.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.ExpressionType.IsValid">
@@ -1596,66 +1596,66 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.ExpressionType.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.LessThan.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.LessThan.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.LessThan.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Matrix3x2.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Matrix3x2.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Matrix3x2.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Max.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Max.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Max.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Min.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Min.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Min.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Multiply.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Multiply.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Multiply.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Name">
             <summary>
-            A name in an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression" />.
+            A name in an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression"/>.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Name.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Name.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Name.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Number">
             <summary>
@@ -1663,13 +1663,13 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Number.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Number.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Number.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Squared">
             <summary>
@@ -1677,54 +1677,54 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Squared.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Squared.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Squared.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Subtract.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Subtract.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Subtract.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Sum.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Sum.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Sum.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Ternary.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Ternary.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Ternary.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.TypeAssert">
             <summary>
-            Constraints its child <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression" /> to a given set of types.
+            Constraints its child <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Expression"/> to a given set of types.
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.TypeAssert.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.TypeAssert.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.TypeAssert.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.TypeConstraint">
             <summary>
@@ -1732,35 +1732,35 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.UntypedExpression.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.UntypedExpression.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.UntypedExpression.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Vector2.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Vector2.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Vector2.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Vector3.Simplify">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Vector3.CreateExpressionString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Expressions.Vector3.InferredType">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.IContainShapes.Shapes">
             <summary>
-            The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionShape" />s that are contained by this object.
+            The <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionShape"/>s that are contained by this object.
             </summary>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.IDescribable">
@@ -1782,19 +1782,19 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.InsetClip.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.KeyFrameAnimation`1.KeyFrameCount">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.KeyFrameAnimation`1.ValueKeyFrame.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.KeyFrameAnimation`1.ExpressionKeyFrame.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.LinearEasingFunction.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgce.GraphicsEffectBase">
             <summary>
@@ -1803,117 +1803,117 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.LongDescription">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.ShortDescription">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.GeometryType">
             <summary>
-            The type of a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry" />.
+            The type of a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Dispose">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.BeginFigure.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.BeginFigure.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.BeginFigure)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.EndFigure.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.EndFigure.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.EndFigure)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.AddCubicBezier.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.AddCubicBezier.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.AddCubicBezier)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.AddLine.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.AddLine.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasPathBuilder.Command.AddLine)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.PathKeyFrameAnimation.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ScalarKeyFrameAnimation.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.CompositionObjectDgmlSerializer">
             <summary>
-            Serializes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject" /> graph into DGML format.
+            Serializes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> graph into DGML format.
             </summary>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.CompositionObjectXmlSerializer">
             <summary>
-            Serializes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject" /> graph into an XML format.
+            Serializes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> graph into an XML format.
             </summary>
             <remarks>The format is only designed for human consumption, and should
             not be relied upon for deserialization.</remarks>
@@ -1931,9 +1931,9 @@
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.FromCompositionObject(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject,System.Boolean)">
             <summary>
-            Returns the graph of nodes reachable from the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject" /> root.
+            Returns the graph of nodes reachable from the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> root.
             </summary>
-            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph" /> from the given Composition tree.</returns>
+            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph"/> from the given Composition tree.</returns>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node">
             <summary>
@@ -1952,50 +1952,50 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node`1.Vertex.Node">
             <summary>
-            The node at the other end of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node`1.Vertex" />.
+            The node at the other end of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node`1.Vertex"/>.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.Item(System.Int32)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.Count">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.Add(`0)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.Clear">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.GetEnumerator">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.IndexOf(`0)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.Insert(System.Int32,`0)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.Remove(`0)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.RemoveAt(System.Int32)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ObjectGraph`1">
             <summary>
-            The graph of creatable objects reachable from a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject" />.
+            The graph of creatable objects reachable from a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/>.
             </summary>
             <typeparam name="T">The type of the data associated with each node.</typeparam>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ObjectGraph`1.FromCompositionObject(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject,System.Boolean)">
             <summary>
-            Returns the graph of nodes reachable from the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject" /> root.
+            Returns the graph of nodes reachable from the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> root.
             </summary>
-            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph" /> for the given Composition tree.</returns>
+            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph"/> for the given Composition tree.</returns>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Stats">
             <summary>
@@ -2004,25 +2004,25 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ShapeVisual.Shapes">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ShapeVisual.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.SpriteVisual.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.StepEasingFunction.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Vector2KeyFrameAnimation.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Vector3KeyFrameAnimation.Type">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color.ToString">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color.Name">
             <summary>
@@ -2033,13 +2033,13 @@
             </summary>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color.Equals(System.Object)">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color.GetHashCode">
-            <inheritdoc />
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color.TryGetFriendlyName(System.String@)">
             <summary>
@@ -2050,6 +2050,26 @@
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color.Hex">
             <summary>
             Gets the hex representation of this color.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.Lottie_XamlTypeInfo.XamlMetaDataProvider">
+            <summary>
+            Main class for providing metadata for the app or library
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.Lottie_XamlTypeInfo.XamlMetaDataProvider.GetXamlType(System.Type)">
+            <summary>
+            GetXamlType(Type)
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.Lottie_XamlTypeInfo.XamlMetaDataProvider.GetXamlType(System.String)">
+            <summary>
+            GetXamlType(String)
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.Lottie_XamlTypeInfo.XamlMetaDataProvider.GetXmlnsDefinitions">
+            <summary>
+            GetXmlnsDefinitions()
             </summary>
         </member>
     </members>
