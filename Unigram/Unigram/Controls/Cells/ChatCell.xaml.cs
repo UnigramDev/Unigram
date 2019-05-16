@@ -1,10 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Template10.Common;
@@ -14,29 +11,23 @@ using Unigram.Common.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Services;
-using Unigram.ViewModels;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI;
+using Unigram.ViewModels.Delegates;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Cells
 {
-    public sealed partial class ChatCell : UserControl
+    public sealed partial class ChatCell : CheckBox
     {
         private Chat _chat;
         private IProtoService _protoService;
+        private IChatListDelegate _delegate;
+        private ChatsListView _parent;
 
         private Visual _onlineBadge;
 
@@ -47,10 +38,8 @@ namespace Unigram.Controls.Cells
         public ChatCell()
         {
             InitializeComponent();
-
-            // Due to an UWP bug we can't have composition geometries here due to Pointer*ThemeAnimations:
-            // https://github.com/microsoft/WindowsCompositionSamples/issues/329
-            // InitializeAnimation();
+            InitializeSelection();
+            InitializeTick();
 
             _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
             _onlineBadge.CenterPoint = new Vector3(6.5f);
@@ -58,20 +47,32 @@ namespace Unigram.Controls.Cells
             _onlineBadge.Scale = new Vector3(0);
         }
 
-        public void UpdateService(IProtoService protoService)
+        protected override AutomationPeer OnCreateAutomationPeer()
         {
-            _protoService = protoService;
+            return new ChatCellAutomationPeer(this, _parent);
         }
 
-        public void UpdateChat(IProtoService protoService, Chat chat)
+        public void UpdateService(IProtoService protoService, IChatListDelegate delegato, ChatsListView parent)
         {
             _protoService = protoService;
+            _delegate = delegato;
+            _parent = parent;
+        }
+
+        public void UpdateChat(IProtoService protoService, IChatListDelegate delegato, ChatsListView parent, Chat chat)
+        {
+            _protoService = protoService;
+            _delegate = delegato;
+            _parent = parent;
+
             Update(chat);
         }
 
-        public void UpdateMessage(IProtoService protoService, Message message)
+        public void UpdateMessage(IProtoService protoService, IChatListDelegate delegato, ChatsListView parent, Message message)
         {
             _protoService = protoService;
+            _delegate = delegato;
+            _parent = parent;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -245,7 +246,7 @@ namespace Unigram.Controls.Cells
         public void UpdateNotificationSettings(Chat chat)
         {
             var muted = _protoService.GetNotificationSettingsMuteFor(chat) > 0;
-            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
+            VisualStateManager.GoToState(LayoutRoot, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -361,9 +362,9 @@ namespace Unigram.Controls.Cells
 
         public void UpdateViewState(Chat chat, bool selected, bool compact, bool threeLines)
         {
-            VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
-            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
-            VisualStateManager.GoToState(this, threeLines ? "ThreeLines" : "Default", false);
+            VisualStateManager.GoToState(LayoutRoot, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
+            VisualStateManager.GoToState(LayoutRoot, compact ? "Compact" : "Expanded", false);
+            VisualStateManager.GoToState(LayoutRoot, threeLines ? "ThreeLines" : "Default", false);
 
             if (threeLines != _expanded && _protoService != null)
             {
@@ -874,7 +875,7 @@ namespace Unigram.Controls.Cells
             TypeIcon.Visibility = type is ChatTypeSupergroup ? Visibility.Visible : Visibility.Collapsed;
 
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
-            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
+            VisualStateManager.GoToState(LayoutRoot, muted ? "Muted" : "Unmuted", false);
 
             VerifiedIcon.Visibility = Visibility.Collapsed;
 
@@ -894,9 +895,183 @@ namespace Unigram.Controls.Cells
         }
 
 
+        #region Selection Animation
+
+        private Visual _selectionOutline;
+        private Visual _selectionPhoto;
+
+        private CompositionPathGeometry _polygon;
+        private ShapeVisual _visual;
+
+        private void InitializeSelection()
+        {
+            CompositionPath GetCheckMark()
+            {
+                CanvasGeometry result;
+                using (var builder = new CanvasPathBuilder(null))
+                {
+                    //builder.BeginFigure(new Vector2(3.821f, 7.819f));
+                    //builder.AddLine(new Vector2(6.503f, 10.501f));
+                    //builder.AddLine(new Vector2(12.153f, 4.832f));
+                    builder.BeginFigure(new Vector2(5.821f, 9.819f));
+                    builder.AddLine(new Vector2(7.503f, 12.501f));
+                    builder.AddLine(new Vector2(14.153f, 6.832f));
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    result = CanvasGeometry.CreatePath(builder);
+                }
+                return new CompositionPath(result);
+            }
+
+            var compositor = Window.Current.Compositor;
+            //12.711,5.352 11.648,4.289 6.5,9.438 4.352,7.289 3.289,8.352 6.5,11.563
+
+            if (ApiInfo.CanUseDirectComposition)
+            {
+                var polygon = compositor.CreatePathGeometry();
+                polygon.Path = GetCheckMark();
+
+                var shape1 = compositor.CreateSpriteShape();
+                shape1.Geometry = polygon;
+                shape1.StrokeThickness = 1.5f;
+                shape1.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+
+                var ellipse = compositor.CreateEllipseGeometry();
+                ellipse.Radius = new Vector2(8);
+                ellipse.Center = new Vector2(10);
+
+                var shape2 = compositor.CreateSpriteShape();
+                shape2.Geometry = ellipse;
+                shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.Black);
+
+                var outer = compositor.CreateEllipseGeometry();
+                outer.Radius = new Vector2(10);
+                outer.Center = new Vector2(10);
+
+                var shape3 = compositor.CreateSpriteShape();
+                shape3.Geometry = outer;
+                shape3.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+
+                var visual = compositor.CreateShapeVisual();
+                visual.Shapes.Add(shape3);
+                visual.Shapes.Add(shape2);
+                visual.Shapes.Add(shape1);
+                visual.Size = new Vector2(20, 20);
+                visual.Offset = new Vector3(48 - 19, 48 - 19, 0);
+                visual.CenterPoint = new Vector3(8);
+                visual.Scale = new Vector3(0);
+
+                ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
+
+                _polygon = polygon;
+                _visual = visual;
+            }
+
+            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
+            _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
+            _selectionPhoto.CenterPoint = new Vector3(24);
+            _selectionOutline.CenterPoint = new Vector3(24);
+            _selectionOutline.Opacity = 0;
+        }
+
+        protected override void OnToggle()
+        {
+            if (_selectionMode == ListViewSelectionMode.Multiple)
+            {
+                OnSelectionChanged(IsChecked != true, true);
+                base.OnToggle();
+
+                if (IsChecked == true)
+                {
+                    _delegate?.AddSelectedItem(_chat);
+                }
+                else
+                {
+                    _delegate?.RemoveSelectedItem(_chat);
+                }
+            }
+        }
+
+        private void OnSelectionChanged(bool selected, bool animate)
+        {
+            if (animate && selected != (IsChecked == true))
+            {
+                var compositor = Window.Current.Compositor;
+
+                var anim3 = compositor.CreateScalarKeyFrameAnimation();
+                anim3.InsertKeyFrame(selected ? 0 : 1, 0);
+                anim3.InsertKeyFrame(selected ? 1 : 0, 1);
+
+                if (_visual != null)
+                {
+                    var anim1 = compositor.CreateScalarKeyFrameAnimation();
+                    anim1.InsertKeyFrame(selected ? 0 : 1, 0);
+                    anim1.InsertKeyFrame(selected ? 1 : 0, 1);
+                    anim1.DelayTime = TimeSpan.FromMilliseconds(anim1.Duration.TotalMilliseconds / 2);
+                    anim1.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+                    var anim2 = compositor.CreateVector3KeyFrameAnimation();
+                    anim2.InsertKeyFrame(selected ? 0 : 1, new Vector3(0));
+                    anim2.InsertKeyFrame(selected ? 1 : 0, new Vector3(1));
+
+                    _polygon.StartAnimation("TrimEnd", anim1);
+                    _visual.StartAnimation("Scale", anim2);
+                    _visual.StartAnimation("Opacity", anim3);
+                }
 
 
-        #region Animation
+                var anim4 = compositor.CreateVector3KeyFrameAnimation();
+                anim4.InsertKeyFrame(selected ? 0 : 1, new Vector3(1));
+                anim4.InsertKeyFrame(selected ? 1 : 0, new Vector3(40f / 48f));
+
+                var anim5 = compositor.CreateVector3KeyFrameAnimation();
+                anim5.InsertKeyFrame(selected ? 1 : 0, new Vector3(1));
+                anim5.InsertKeyFrame(selected ? 0 : 1, new Vector3(40f / 48f));
+
+                _selectionPhoto.StartAnimation("Scale", anim4);
+                _selectionOutline.StartAnimation("Scale", anim5);
+                _selectionOutline.StartAnimation("Opacity", anim3);
+            }
+            else
+            {
+                if (_visual != null)
+                {
+                    _polygon.TrimEnd = selected ? 1 : 0;
+                    _visual.Scale = new Vector3(selected ? 1 : 0);
+                    _visual.Opacity = selected ? 1 : 0;
+                }
+
+                _selectionPhoto.Scale = new Vector3(selected ? 40f / 48f : 1);
+                _selectionOutline.Scale = new Vector3(selected ? 1: 40f / 48f);
+                _selectionOutline.Opacity = selected ? 1 : 0;
+            }
+        }
+
+        private ListViewSelectionMode _selectionMode;
+
+        public void SetSelectionMode(ListViewSelectionMode mode, bool animate)
+        {
+            if (mode == ListViewSelectionMode.Multiple && _delegate.IsItemSelected(_chat))
+            {
+                OnSelectionChanged(true, animate);
+                IsChecked = true;
+            }
+            else if (mode == ListViewSelectionMode.Single && _delegate.SelectedItem == _chat.Id)
+            {
+                OnSelectionChanged(false, _selectionMode == ListViewSelectionMode.Multiple && IsChecked == true);
+                IsChecked = null;
+            }
+            else
+            {
+                OnSelectionChanged(false, animate);
+                IsChecked = false;
+            }
+
+            _selectionMode = mode;
+        }
+
+        #endregion
+
+        #region Tick Animation
 
         private CompositionGeometry _line11;
         private CompositionGeometry _line12;
@@ -938,10 +1113,9 @@ namespace Unigram.Controls.Cells
             }
         }
 
-
         #endregion
 
-        private void InitializeAnimation()
+        private void InitializeTick()
         {
             if (!ApiInfo.CanUseDirectComposition)
             {
@@ -1099,33 +1273,42 @@ namespace Unigram.Controls.Cells
         }
 
         #endregion
+
+        private void OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_selectionMode != ListViewSelectionMode.Multiple)
+            {
+                _delegate.SetSelectedItem(_chat);
+            }
+            else if (_delegate.SelectedCount < 1)
+            {
+                _delegate.SetSelectionMode(false);
+            }
+        }
+
+        public Chat Chat => _chat;
     }
 
-    public class ChatCellAutomationPeer : FrameworkElementAutomationPeer
+    public class ChatCellAutomationPeer : CheckBoxAutomationPeer
     {
         private ChatCell _owner;
-        private string _name;
+        private ChatsListView _parent;
 
-        public ChatCellAutomationPeer(ChatCell owner)
+        public ChatCellAutomationPeer(ChatCell owner, ChatsListView parent)
             : base(owner)
         {
             _owner = owner;
-        }
-
-        public void SetName(string name)
-        {
-            SetName(name, _name);
-        }
-
-        private void SetName(string newValue, string oldValue)
-        {
-            _name = newValue;
-            RaisePropertyChangedEvent(AutomationElementIdentifiers.NameProperty, oldValue ?? string.Empty, newValue);
+            _parent = parent;
         }
 
         protected override string GetNameCore()
         {
-            return "ciao";
+            return _owner.GetAutomationName();
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.ListItem;
         }
     }
 }

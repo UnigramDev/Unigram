@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IChatListDelegate, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
         private readonly INotificationsService _notificationsService;
 
@@ -61,6 +61,8 @@ namespace Unigram.ViewModels
             SelectedItems = new MvxObservableCollection<Chat>();
         }
 
+        #region Selection
+
         private long? _selectedItem;
         public long? SelectedItem
         {
@@ -81,6 +83,61 @@ namespace Unigram.ViewModels
             get { return _selectionMode; }
             set { Set(ref _selectionMode, value); }
         }
+
+        public int SelectedCount => _selectedItems.Count;
+
+        public void SetSelectionMode(bool enabled)
+        {
+            Delegate?.SetSelectionMode(enabled);
+        }
+
+        public void SetSelectedItem(Chat chat)
+        {
+            if (SelectionMode != ListViewSelectionMode.Multiple)
+            {
+                Delegate?.Navigate(chat);
+                //ChatsList.SelectedItem = chat;
+            }
+        }
+
+        public void SetSelectedItems(IList<Chat> chats)
+        {
+            //if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
+            //{
+            //    foreach (var item in chats)
+            //    {
+            //        if (!ChatsList.SelectedItems.Contains(item))
+            //        {
+            //            ChatsList.SelectedItems.Add(item);
+            //        }
+            //    }
+
+            //    foreach (Chat item in ChatsList.SelectedItems)
+            //    {
+            //        if (!chats.Contains(item))
+            //        {
+            //            ChatsList.SelectedItems.Remove(item);
+            //        }
+            //    }
+            //}
+        }
+
+        public void AddSelectedItem(Chat chat)
+        {
+            SelectedItems.Add(chat);
+        }
+
+        public void RemoveSelectedItem(Chat chat)
+        {
+            SelectedItems.Remove(chat);
+        }
+
+        public bool IsItemSelected(Chat chat)
+        {
+            return SelectedItems.Contains(chat);
+        }
+
+        #endregion
 
         public ItemsCollection Items { get; private set; }
 
@@ -396,10 +453,10 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> ChatSelectCommand { get; }
         private void ChatSelectExecute(Chat chat)
         {
-            SelectionMode = ListViewSelectionMode.Multiple;
             SelectedItems.ReplaceWith(new[] { chat });
+            SelectionMode = ListViewSelectionMode.Multiple;
 
-            Delegate?.SetSelectedItems(_selectedItems);
+            //Delegate?.SetSelectedItems(_selectedItems);
         }
 
         #endregion
@@ -607,6 +664,8 @@ namespace Unigram.ViewModels
 #if MOCKUP
                 _hasMoreItems = false;
 #endif
+
+                _ = LoadMoreItemsAsync(0);
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)

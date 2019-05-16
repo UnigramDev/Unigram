@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Delegates
 {
@@ -16,5 +17,27 @@ namespace Unigram.ViewModels.Delegates
 
         void SetSelectedItem(Chat chat);
         void SetSelectedItems(IList<Chat> chats);
+
+        bool IsItemSelected(Chat chat);
+
+
+        void Navigate(object item);
+    }
+
+    public interface IChatListDelegate
+    {
+        void SetSelectedItem(Chat chat);
+        void SetSelectedItems(IList<Chat> chats);
+
+        void AddSelectedItem(Chat chat);
+        void RemoveSelectedItem(Chat chat);
+
+        bool IsItemSelected(Chat chat);
+
+        long? SelectedItem { get; set; }
+
+        int SelectedCount { get; }
+
+        void SetSelectionMode(bool enabled);
     }
 }

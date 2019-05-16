@@ -592,43 +592,14 @@
                             </ListView.GroupStyle>
                         </ListView>
                         <Grid x:Name="DialogsPanel">
-                            <controls:ChatsListView x:Name="ChatsList"
-                                                    AutomationProperties.LandmarkType="Main"
-                                                    ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
-                                                    IsItemClickEnabled="True"
-                                                    SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
-                                                    ItemClick="ListView_ItemClick"
-                                                    SelectionChanged="ListView_SelectionChanged"
-                                                    ChoosingItemContainer="ChatsList_ChoosingItemContainer"
-                                                    CanDragItems="True"
-                                                    CanReorderItems="False"
-                                                    DragItemsStarting="Chats_DragItemsStarting"
-                                                    DragItemsCompleted="Chats_DragItemsCompleted"
-                                                    AllowDrop="True">
-                                <ListView.ItemContainerStyleSelector>
-                                    <selectors:DialogStyleSelector CacheService="{x:Bind ViewModel.CacheService}">
-                                        <selectors:DialogStyleSelector.DialogStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                <Setter Property="Padding" Value="0"/>
-                                                <Setter Property="MinHeight" Value="0"/>
-                                            </Style>
-                                        </selectors:DialogStyleSelector.DialogStyle>
-                                        <selectors:DialogStyleSelector.PinnedStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
-                                                <Setter Property="Padding" Value="0"/>
-                                                <Setter Property="MinHeight" Value="0"/>
-                                            </Style>
-                                        </selectors:DialogStyleSelector.PinnedStyle>
-                                    </selectors:DialogStyleSelector>
-                                </ListView.ItemContainerStyleSelector>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"/>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
+                                                    <!--IsItemClickEnabled="True"
+                                                    SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
+                            <local:ChatsPage x:Name="ChatsList"
+                                             AutomationProperties.LandmarkType="Main"
+                                             DataContext="{x:Bind ViewModel.Chats}"
+                                             ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
+                                             SelectionMode2="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
+                                             AllowSelection="True">
                                 <ListView.Header>
                                     <StackPanel>
                                         <HyperlinkButton x:Name="ResetFilters" Click="ResetFilters_Click" Visibility="Collapsed" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -662,55 +633,16 @@
                                         </HyperlinkButton>
                                     </StackPanel>
                                 </ListView.Header>
-                                <ListView.ItemContainerTransitions>
-                                    <TransitionCollection/>
-                                </ListView.ItemContainerTransitions>
-                            </controls:ChatsListView>
+                            </local:ChatsPage>
 
                             <Grid x:Name="FolderPanel" x:Load="False">
                                 <Border x:Name="FolderShadow" Background="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                                <controls:ChatsListView x:Name="FolderList"
-                                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                        AutomationProperties.LandmarkType="Main"
-                                                        ItemsSource="{x:Bind ViewModel.Folder.Items, Mode=OneWay}"
-                                                        IsItemClickEnabled="True"
-                                                        SelectionMode="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"
-                                                        ItemClick="ListView_ItemClick"
-                                                        SelectionChanged="ListView_SelectionChanged"
-                                                        ChoosingItemContainer="ChatsList_ChoosingItemContainer"
-                                                        CanDragItems="True"
-                                                        CanReorderItems="False"
-                                                        DragItemsStarting="Chats_DragItemsStarting"
-                                                        DragItemsCompleted="Chats_DragItemsCompleted"
-                                                        AllowDrop="True">
-                                    <ListView.ItemContainerStyleSelector>
-                                        <selectors:DialogStyleSelector CacheService="{x:Bind ViewModel.CacheService}">
-                                            <selectors:DialogStyleSelector.DialogStyle>
-                                                <Style TargetType="ListViewItem">
-                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                    <Setter Property="Padding" Value="0"/>
-                                                    <Setter Property="MinHeight" Value="0"/>
-                                                </Style>
-                                            </selectors:DialogStyleSelector.DialogStyle>
-                                            <selectors:DialogStyleSelector.PinnedStyle>
-                                                <Style TargetType="ListViewItem">
-                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                    <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
-                                                    <Setter Property="Padding" Value="0"/>
-                                                    <Setter Property="MinHeight" Value="0"/>
-                                                </Style>
-                                            </selectors:DialogStyleSelector.PinnedStyle>
-                                        </selectors:DialogStyleSelector>
-                                    </ListView.ItemContainerStyleSelector>
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"/>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                    <ListView.ItemContainerTransitions>
-                                        <TransitionCollection/>
-                                    </ListView.ItemContainerTransitions>
-                                </controls:ChatsListView>
+                                <local:ChatsPage x:Name="FolderList"
+                                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                 AutomationProperties.LandmarkType="Main"
+                                                 DataContext="{x:Bind ViewModel.Folder, Mode=OneWay}"
+                                                 ItemsSource="{x:Bind ViewModel.Folder.Items, Mode=OneWay}"
+                                                 SelectionMode2="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"/>
                             </Grid>
 
                             <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom"/>

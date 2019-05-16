@@ -9,13 +9,15 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
     public class ChatsListView : GroupedListView
     {
-        public TLViewModelBase ViewModel => DataContext as TLViewModelBase;
+        public ChatsViewModel ViewModel => DataContext as ChatsViewModel;
 
         public MasterDetailState _viewState;
 
@@ -24,6 +26,124 @@ namespace Unigram.Controls
             ContainerContentChanging += OnContainerContentChanging;
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
         }
+
+        #region Selection
+
+        public ListViewSelectionMode SelectionMode2
+        {
+            get { return (ListViewSelectionMode)GetValue(SelectionMode2Property); }
+            set { SetValue(SelectionMode2Property, value); }
+        }
+
+        public static readonly DependencyProperty SelectionMode2Property =
+            DependencyProperty.Register("SelectionMode2", typeof(ListViewSelectionMode), typeof(ChatsListView), new PropertyMetadata(ListViewSelectionMode.None, OnSelectionModeChanged));
+
+        private static void OnSelectionModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ChatsListView)d).OnSelectionModeChanged((ListViewSelectionMode)e.NewValue, (ListViewSelectionMode)e.OldValue);
+        }
+
+        private void OnSelectionModeChanged(ListViewSelectionMode newValue, ListViewSelectionMode oldValue)
+        {
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null)
+            {
+                return;
+            }
+
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
+            {
+                var container = ContainerFromIndex(i) as ListViewItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var content = container.ContentTemplateRoot as ChatCell;
+                if (content != null)
+                {
+                    var item = ItemFromContainer(container);
+                    content.UpdateViewState(item as Chat, SelectedItem2 == item && SelectionMode2 == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
+                    content.SetSelectionMode(newValue, true);
+                }
+            }
+
+            //if (newValue != oldValue)
+            //{
+            //    ViewModel.SelectedItems.Clear();
+            //}
+        }
+
+        public object SelectedItem2
+        {
+            get { return (object)GetValue(SelectedItem2Property); }
+            set { SetValue(SelectedItem2Property, value); }
+        }
+
+        public static readonly DependencyProperty SelectedItem2Property =
+            DependencyProperty.Register("SelectedItem2", typeof(object), typeof(ChatsListView), new PropertyMetadata(ListViewSelectionMode.None, OnSelectedItemChanged));
+
+        private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ChatsListView)d).OnSelectedItemChanged((object)e.NewValue, (object)e.OldValue);
+        }
+
+        private void OnSelectedItemChanged(object newValue, object oldValue)
+        {
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null)
+            {
+                return;
+            }
+
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
+            {
+                var container = ContainerFromIndex(i) as ListViewItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var content = container.ContentTemplateRoot as ChatCell;
+                if (content != null)
+                {
+                    var item = ItemFromContainer(container);
+                    content.UpdateViewState(item as Chat, SelectedItem2 == item && SelectionMode2 == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
+                    content.SetSelectionMode(SelectionMode2, false);
+                }
+            }
+
+            //if (newValue != oldValue)
+            //{
+            //    ViewModel.SelectedItems.Clear();
+            //}
+        }
+
+        public void SetSelectedItems(IList<Chat> chats)
+        {
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null)
+            {
+                return;
+            }
+
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
+            {
+                var container = ContainerFromIndex(i) as ListViewItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var content = container.ContentTemplateRoot as ChatCell;
+                if (content != null)
+                {
+                    content.SetSelectionMode(SelectionMode2, false);
+                }
+            }
+        }
+
+        #endregion
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -37,9 +157,10 @@ namespace Unigram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateService(ViewModel.ProtoService);
-                content.UpdateViewState(args.Item as Chat, args.ItemContainer.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
-                content.UpdateChat(ViewModel.ProtoService, args.Item as Chat);
+                content.UpdateService(ViewModel.ProtoService, ViewModel, this);
+                content.UpdateViewState(args.Item as Chat, SelectedItem2 == args.Item && SelectionMode2 == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
+                content.UpdateChat(ViewModel.ProtoService, ViewModel, this, args.Item as Chat);
+                content.SetSelectionMode(SelectionMode2, false);
                 args.Handled = true;
             }
         }
@@ -74,7 +195,8 @@ namespace Unigram.Controls
                 var content = container.ContentTemplateRoot as ChatCell;
                 if (content != null)
                 {
-                    content.UpdateViewState(ItemFromContainer(container) as Chat, container.IsSelected && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
+                    var item = ItemFromContainer(container);
+                    content.UpdateViewState(item as Chat, SelectedItem2 == item && SelectionMode2 == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
                 }
             }
         }
@@ -102,7 +224,7 @@ namespace Unigram.Controls
         public ChatsListViewItem(ChatsListView list)
         {
             _list = list;
-            RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
+            //RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
         }
 
         private void OnSelectedChanged(DependencyObject sender, DependencyProperty dp)
