@@ -1202,6 +1202,50 @@ namespace Unigram.Controls.Messages
             UpdateMockup();
         }
 
+        public void Mockup(string message, string forwarded, bool link, bool outgoing, DateTime date, bool first = true, bool last = true)
+        {
+            UpdateMockup(outgoing, first, last);
+
+            Header.Visibility = Visibility.Collapsed;
+
+            Footer.Mockup(outgoing, date);
+
+            Media.Margin = new Thickness(0);
+            Placeholder.Visibility = Visibility.Visible;
+            FooterToNormal();
+            Grid.SetRow(Footer, 2);
+            Grid.SetRow(Message, 2);
+
+            Span.Inlines.Clear();
+            Span.Inlines.Add(new Run { Text = message });
+
+            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(message))
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
+            else if (ApiInfo.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(message))
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
+
+            HeaderLabel.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
+            HeaderLabel.Inlines.Add(new LineBreak());
+            HeaderLabel.Inlines.Add(new Run { Text = Strings.Resources.From + " ", FontWeight = FontWeights.Normal });
+
+            var hyperlink = new Hyperlink();
+            hyperlink.Inlines.Add(new Run { Text = forwarded });
+            hyperlink.UnderlineStyle = UnderlineStyle.None;
+            hyperlink.Foreground = GetBrush("MessageHeaderForegroundBrush");
+            //hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+            HeaderLabel.Inlines.Add(hyperlink);
+
+            Header.Visibility = Visibility.Visible;
+            HeaderLabel.Visibility = Visibility.Visible;
+
+            UpdateMockup();
+        }
+
         public void Mockup(string message, string sender, string reply, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
             UpdateMockup(outgoing, first, last);
