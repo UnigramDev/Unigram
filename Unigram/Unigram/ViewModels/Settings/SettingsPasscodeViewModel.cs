@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Services.Updates;
@@ -132,7 +133,7 @@ namespace Unigram.ViewModels.Settings
         {
             var timeout = AutolockTimeout + 0;
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = 0,           Content = Locale.FormatAutoLock(0),           IsChecked = timeout == 0 });

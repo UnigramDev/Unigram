@@ -38,7 +38,7 @@ using System.Threading.Tasks;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class ShareView : ContentDialog
+    public sealed partial class ShareView : TLContentDialog
     {
         public ShareViewModel ViewModel => DataContext as ShareViewModel;
 

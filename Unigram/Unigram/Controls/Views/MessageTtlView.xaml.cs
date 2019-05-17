@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class MessageTtlView : ContentDialog
+    public sealed partial class MessageTtlView : TLContentDialog
     {
         public MessageTtlView(bool photo)
         {

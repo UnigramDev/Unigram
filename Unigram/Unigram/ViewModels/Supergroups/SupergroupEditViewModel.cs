@@ -288,7 +288,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = true,  Content = Strings.Resources.WhoCanAddMembersAllMembers, IsChecked = group.AnyoneCanInvite });
@@ -340,7 +340,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = true, Content = Strings.Resources.ChatHistoryVisible, IsChecked = full.IsAllHistoryAvailable });

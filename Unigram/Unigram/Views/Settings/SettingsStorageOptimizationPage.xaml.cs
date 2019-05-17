@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStorageOptimizationPage : ContentDialog
+    public sealed partial class SettingsStorageOptimizationPage : TLContentDialog
     {
         public SettingsStorageOptimizationPage(IProtoService protoService, StorageStatisticsByChat statistics)
         {
@@ -118,7 +118,7 @@ namespace Unigram.Views.Settings
                     title.Text = string.Format("{0} {1}", fileType.Count, "voice messages");
                     break;
                 case FileTypeWallpaper wallpaper:
-                    title.Text = string.Format("{0} {1}", fileType.Count, "wallapers");
+                    title.Text = string.Format("{0} {1}", fileType.Count, "wallpapers");
                     break;
                 default:
                     break;

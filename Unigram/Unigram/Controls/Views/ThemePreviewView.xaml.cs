@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class ThemePreviewView : ContentDialog
+    public sealed partial class ThemePreviewView : TLContentDialog
     {
         private string _path;
 

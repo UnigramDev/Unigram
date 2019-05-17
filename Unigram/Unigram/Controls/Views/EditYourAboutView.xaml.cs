@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class EditYourAboutView : ContentDialog
+    public sealed partial class EditYourAboutView : TLContentDialog
     {
         public EditYourAboutView(string bio)
         {

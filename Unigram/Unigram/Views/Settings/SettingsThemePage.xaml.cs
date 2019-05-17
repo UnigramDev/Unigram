@@ -350,8 +350,7 @@ namespace Unigram.Views.Settings
                 picker.PreviousColor = part.Value;
                 picker.Margin = new Thickness(12, 12, 12, 0);
 
-                var dialog = new ContentDialog();
-                dialog.Style = App.Current.Resources["ModernContentDialogStyle"] as Style;
+                var dialog = new TLContentDialog();
                 dialog.PrimaryButtonText = Strings.Resources.Save;
                 dialog.SecondaryButtonText = part.IsDefault ? string.Empty : Strings.Resources.Default;
                 dialog.CloseButtonText = Strings.Resources.Cancel;

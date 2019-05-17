@@ -275,7 +275,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearPaymentsCommand { get; }
         private async void ClearPaymentsExecute()
         {
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             var stack = new StackPanel();
             var checkShipping = new CheckBox { Content = Strings.Resources.PrivacyClearShipping, IsChecked = true };
             var checkPayment = new CheckBox { Content = Strings.Resources.PrivacyClearPayment, IsChecked = true };
@@ -320,7 +320,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AccountTTLCommand { get; }
         private async void AccountTTLExecute()
         {
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = 30, Content = Locale.Declension("Months", 1) });

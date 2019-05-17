@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
-    public sealed partial class InputDialog : ContentDialog
+    public sealed partial class InputDialog : TLContentDialog
     {
         public string Header { get; set; }
 

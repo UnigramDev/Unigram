@@ -725,7 +725,7 @@ namespace Unigram.ViewModels.Passport
             combo.ItemsSource = types;
             //combo.DisplayMemberPath = "Name";
 
-            var dialog = new ContentDialog();
+            var dialog = new TLContentDialog();
             dialog.Content = combo;
 
             await dialog.ShowQueuedAsync();

@@ -474,7 +474,7 @@ namespace Unigram.ViewModels
             stack.Children.Add(opt5);
             stack.Margin = new Thickness(12, 16, 12, 0);
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             dialog.Content = stack;
             dialog.Title = Strings.Resources.ReportChat;
             dialog.IsPrimaryButtonEnabled = true;
@@ -844,7 +844,7 @@ namespace Unigram.ViewModels
             stack.Children.Add(opt5);
             stack.Margin = new Thickness(12, 16, 12, 0);
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             dialog.Content = stack;
             dialog.Title = Strings.Resources.ReportChat;
             dialog.IsPrimaryButtonEnabled = true;

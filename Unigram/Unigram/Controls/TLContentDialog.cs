@@ -18,6 +18,8 @@ namespace Unigram.Controls
     {
         public TLContentDialog()
         {
+            DefaultStyleKey = typeof(TLContentDialog);
+
             if (Window.Current.Content is FrameworkElement element)
             {
                 var app = App.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;

@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SettingsPasscodeConfirmView : ContentDialog
+    public sealed partial class SettingsPasscodeConfirmView : TLContentDialog
     {
         private readonly IPasscodeService _passcodeService;
 

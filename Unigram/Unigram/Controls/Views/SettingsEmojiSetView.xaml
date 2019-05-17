@@ -12,7 +12,6 @@
     SecondaryButtonText="Button2"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    Style="{StaticResource ModernContentDialogStyle}"
     Closed="OnClosed">
 
     <Grid>

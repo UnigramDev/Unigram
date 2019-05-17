@@ -11,8 +11,7 @@
     PrimaryButtonText="Button1"
     SecondaryButtonText="Button2"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    Style="{StaticResource ModernContentDialogStyle}">
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <local:UsersSelectionView x:Name="View" IsConfirmVisible="False"/>
 </controls:TLContentDialog>

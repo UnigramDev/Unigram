@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SupergroupEditRestrictedUntilView : ContentDialog
+    public sealed partial class SupergroupEditRestrictedUntilView : TLContentDialog
     {
         public SupergroupEditRestrictedUntilView(int until)
         {

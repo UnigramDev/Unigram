@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class EditUserNameView : ContentDialog
+    public sealed partial class EditUserNameView : TLContentDialog
     {
         public EditUserNameView()
         {
