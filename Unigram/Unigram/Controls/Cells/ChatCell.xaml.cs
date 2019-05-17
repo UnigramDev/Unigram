@@ -18,12 +18,13 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
-    public sealed partial class ChatCell : CheckBox
+    public sealed partial class ChatCell : ToggleButton
     {
         private Chat _chat;
         private IProtoService _protoService;
@@ -1350,7 +1351,7 @@ namespace Unigram.Controls.Cells
         public Chat Chat => _chat;
     }
 
-    public class ChatCellAutomationPeer : CheckBoxAutomationPeer
+    public class ChatCellAutomationPeer : ToggleButtonAutomationPeer
     {
         private ChatCell _owner;
         private ChatsListView _parent;

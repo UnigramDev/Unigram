@@ -14,6 +14,7 @@ using Template10.Common;
 using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Controls.Views;
@@ -832,7 +833,12 @@ namespace Unigram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector || focused is SelectorItem)
+                if (focused is Selector || focused is SelectorItem || focused is Microsoft.UI.Xaml.Controls.ItemsRepeater || focused is ChatCell)
+                {
+                    return;
+                }
+
+                if (args.VirtualKey == Windows.System.VirtualKey.Up && (focused is TextBox || focused is RichEditBox))
                 {
                     return;
                 }
@@ -870,7 +876,12 @@ namespace Unigram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector || focused is SelectorItem)
+                if (focused is Selector || focused is SelectorItem || focused is Microsoft.UI.Xaml.Controls.ItemsRepeater || focused is ChatCell)
+                {
+                    return;
+                }
+
+                if (args.VirtualKey == Windows.System.VirtualKey.Down && (focused is TextBox || focused is RichEditBox))
                 {
                     return;
                 }
