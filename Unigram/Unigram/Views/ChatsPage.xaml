@@ -13,15 +13,20 @@
     d:DesignWidth="400"
     x:Name="ChatsList"
     AutomationProperties.LandmarkType="Main"
-    IsItemClickEnabled="True"
+    IsItemClickEnabled="False"
+    SelectionMode="None"
     CanDragItems="True"
     CanReorderItems="False"
-    AllowDrop="True">
+    AllowDrop="True"
+    DragItemsStarting="Chats_DragItemsStarting"
+    DragItemsCompleted="Chats_DragItemsCompleted"
+    ChoosingItemContainer="ChatsList_ChoosingItemContainer">
 
     <ListView.ItemContainerStyleSelector>
         <selectors:DialogStyleSelector>
             <selectors:DialogStyleSelector.DialogStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="IsTabStop" Value="False"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="Padding" Value="0"/>
                     <Setter Property="MinHeight" Value="0"/>
@@ -29,6 +34,7 @@
             </selectors:DialogStyleSelector.DialogStyle>
             <selectors:DialogStyleSelector.PinnedStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="IsTabStop" Value="False"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
                     <Setter Property="Padding" Value="0"/>
@@ -39,7 +45,9 @@
     </ListView.ItemContainerStyleSelector>
     <ListView.ItemTemplate>
         <DataTemplate>
-            <cells:ChatCell/>
+            <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                            SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            Accent="{ThemeResource SystemAccentColor}"/>
         </DataTemplate>
     </ListView.ItemTemplate>
     <!--<ListView.Header>

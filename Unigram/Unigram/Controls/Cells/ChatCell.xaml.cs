@@ -12,6 +12,7 @@ using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -895,12 +896,70 @@ namespace Unigram.Controls.Cells
         }
 
 
+        #region Accent
+
+        public Color Accent
+        {
+            get { return (Color)GetValue(AccentProperty); }
+            set { SetValue(AccentProperty, value); }
+        }
+
+        public static readonly DependencyProperty AccentProperty =
+            DependencyProperty.Register("Accent", typeof(Color), typeof(ChatCell), new PropertyMetadata(default(Color), OnAccentChanged));
+
+        private static void OnAccentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as ChatCell;
+            var solid = (Color)e.NewValue;
+
+            if (solid == null || sender._ellipse == null)
+            {
+                return;
+            }
+
+            var brush = Window.Current.Compositor.CreateColorBrush(solid);
+
+            sender._ellipse.FillBrush = brush;
+        }
+
+        #endregion
+
+        #region Accent
+
+        public SolidColorBrush SelectionStroke
+        {
+            get { return (SolidColorBrush)GetValue(SelectionStrokeProperty); }
+            set { SetValue(SelectionStrokeProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectionStrokeProperty =
+            DependencyProperty.Register("SelectionStroke", typeof(SolidColorBrush), typeof(ChatCell), new PropertyMetadata(default(Color), OnSelectionStrokeChanged));
+
+        private static void OnSelectionStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as ChatCell;
+            var solid = e.NewValue as SolidColorBrush;
+
+            if (solid == null || sender._stroke == null)
+            {
+                return;
+            }
+
+            var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+
+            sender._stroke.FillBrush = brush;
+        }
+
+        #endregion
+
         #region Selection Animation
 
         private Visual _selectionOutline;
         private Visual _selectionPhoto;
 
         private CompositionPathGeometry _polygon;
+        private CompositionSpriteShape _ellipse;
+        private CompositionSpriteShape _stroke;
         private ShapeVisual _visual;
 
         private void InitializeSelection()
@@ -963,6 +1022,8 @@ namespace Unigram.Controls.Cells
                 ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
 
                 _polygon = polygon;
+                _ellipse = shape2;
+                _stroke = shape3;
                 _visual = visual;
             }
 

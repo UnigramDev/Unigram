@@ -206,7 +206,7 @@
                   VerticalAlignment="Top"
                   Grid.RowSpan="2"
                   Grid.ColumnSpan="2">
-                <Ellipse x:Name="SelectionOutline" StrokeThickness="2" Stroke="Black"/>
+                <Ellipse x:Name="SelectionOutline" StrokeThickness="2" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                 <controls:ProfilePicture x:Name="Photo"
                                          Width="48"
                                          Height="48"
