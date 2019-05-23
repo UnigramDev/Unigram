@@ -16,14 +16,14 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsAdvancedViewModel>();
 
-            //if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
-            //{
-            //    TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            //}
-            //else
-            //{
-            //    TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            //}
+            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            {
+                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
+            {
+                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
         }
 
         private void OnSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)

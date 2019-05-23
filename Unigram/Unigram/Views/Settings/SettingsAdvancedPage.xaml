@@ -48,11 +48,11 @@
                         Header="Try connecting through IPv6"
                         Style="{StaticResource CheckButtonStyle}"/>
 
-                    <!--<ToggleSwitch
+                    <ToggleSwitch
                         x:Name="TraySwitch"
                         IsOn="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"
                         Header="Show tray icon"
-                        Style="{StaticResource CheckButtonStyle}"/>-->
+                        Style="{StaticResource CheckButtonStyle}"/>
 
                     <controls:StartupSwitch Margin="0,24"/>
                 </StackPanel>
