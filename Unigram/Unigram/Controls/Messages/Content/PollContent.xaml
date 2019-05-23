@@ -14,7 +14,8 @@
     <TextBlock x:Name="Question"
                TextWrapping="Wrap"
                Style="{StaticResource BaseTextBlockStyle}"
-               FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+               IsTextSelectionEnabled="True"/>
     <TextBlock x:Name="Type"
                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                Style="{StaticResource CaptionTextBlockStyle}"
