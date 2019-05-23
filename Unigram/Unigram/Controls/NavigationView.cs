@@ -110,5 +110,18 @@ namespace Unigram.Controls
             DependencyProperty.Register("PaneToggleButtonVisibility", typeof(Visibility), typeof(NavigationView), new PropertyMetadata(Visibility.Visible));
 
         #endregion
+
+        #region TopPadding
+
+        public Thickness TopPadding
+        {
+            get { return (Thickness)GetValue(TopPaddingProperty); }
+            set { SetValue(TopPaddingProperty, value); }
+        }
+
+        public static readonly DependencyProperty TopPaddingProperty =
+            DependencyProperty.Register("TopPadding", typeof(Thickness), typeof(NavigationView), new PropertyMetadata(null));
+
+        #endregion
     }
 }

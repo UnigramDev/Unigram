@@ -543,7 +543,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>
+            <!--<controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>-->
 
             <Grid x:Name="PinnedMessagePanel"
                     Background="{ThemeResource PageSubHeaderBackgroundBrush}"

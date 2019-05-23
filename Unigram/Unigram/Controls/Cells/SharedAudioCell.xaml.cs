@@ -4,7 +4,9 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -18,20 +20,16 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Messages.Content
+namespace Unigram.Controls.Cells
 {
-    public sealed partial class AudioContent : Grid, IContentWithFile
+    public sealed partial class SharedAudioCell : Grid
     {
-        private MessageViewModel _message;
-        public MessageViewModel Message => _message;
+        private IPlaybackService _playbackService;
+        private IProtoService _protoService;
+        private Message _message;
+        public Message Message => _message;
 
-        public AudioContent(MessageViewModel message)
-        {
-            InitializeComponent();
-            UpdateMessage(message);
-        }
-
-        public AudioContent()
+        public SharedAudioCell()
         {
             InitializeComponent();
         }
@@ -44,19 +42,21 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
-            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.PositionChanged -= OnPositionChanged;
+            _playbackService.PropertyChanged -= OnCurrentItemChanged;
+            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            _playbackService.PositionChanged -= OnPositionChanged;
         }
 
-        public void UpdateMessage(MessageViewModel message)
+        public void UpdateMessage(IPlaybackService playbackService, IProtoService protoService, Message message)
         {
+            _playbackService = playbackService;
+            _protoService = protoService;
             _message = message;
 
-            message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
-            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
-            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.PlaybackStateChanged += OnPlaybackStateChanged;
+            _playbackService.PropertyChanged -= OnCurrentItemChanged;
+            _playbackService.PropertyChanged += OnCurrentItemChanged;
+            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
 
             var audio = GetContent(message.Content);
             if (audio == null)
@@ -148,9 +148,9 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (message.Equals(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
+            if (message.Equals(_playbackService.CurrentItem) /*&& !_pressed*/)
             {
-                Subtitle.Text = FormatTime(message.PlaybackService.Position) + " / " + FormatTime(message.PlaybackService.Duration);
+                Subtitle.Text = FormatTime(_playbackService.Position) + " / " + FormatTime(_playbackService.Duration);
             }
         }
 
@@ -168,16 +168,7 @@ namespace Unigram.Controls.Messages.Content
 
         #endregion
 
-        public void UpdateMessageContentOpened(MessageViewModel message)
-        {
-            if (message.Ttl > 0)
-            {
-                //Timer.Maximum = message.Ttl;
-                //Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
-            }
-        }
-
-        public void UpdateFile(MessageViewModel message, File file)
+        public void UpdateFile(Message message, File file)
         {
             var audio = GetContent(message.Content);
             if (audio == null)
@@ -220,16 +211,16 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = audio.GetDuration() + ", " + FileSizeConverter.Convert(size);
 
-                if (message.Delegate.CanBeDownloaded(message))
-                {
-                    _message.ProtoService.DownloadFile(file.Id, 32);
-                }
+                //if (message.Delegate.CanBeDownloaded(message))
+                //{
+                //    _message.ProtoService.DownloadFile(file.Id, 32);
+                //}
             }
             else
             {
-                if (Equals(message, message.PlaybackService.CurrentItem))
+                if (Equals(message, _playbackService.CurrentItem))
                 {
-                    if (message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
+                    if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                     {
                         //Button.Glyph = Icons.Pause;
                         Button.SetGlyph(file.Id, MessageContentState.Pause);
@@ -241,7 +232,7 @@ namespace Unigram.Controls.Messages.Content
                     }
 
                     UpdatePosition();
-                    message.PlaybackService.PositionChanged += OnPositionChanged;
+                    _playbackService.PositionChanged += OnPositionChanged;
                 }
                 else
                 {
@@ -256,7 +247,7 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, PhotoSize photoSize, File file)
+        private void UpdateThumbnail(Message message, PhotoSize photoSize, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -272,7 +263,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                _protoService.DownloadFile(file.Id, 1);
 
                 Texture.Background = null;
                 Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
@@ -318,33 +309,33 @@ namespace Unigram.Controls.Messages.Content
             var file = audio.AudioValue;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
+                _protoService.Send(new CancelDownloadFile(file.Id, false));
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                _protoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                //_message.ProtoService.DownloadFile(file.Id, 32);
-                _message.PlaybackService.Enqueue(_message.Get());
+                //_protoService.DownloadFile(file.Id, 32);
+                _playbackService.Enqueue(_message);
             }
             else
             {
-                if (_message.Equals(_message.PlaybackService.CurrentItem))
+                if (_message.Equals(_playbackService.CurrentItem))
                 {
-                    if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
+                    if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                     {
-                        _message.PlaybackService.Pause();
+                        _playbackService.Pause();
                     }
                     else
                     {
-                        _message.PlaybackService.Play();
+                        _playbackService.Play();
                     }
                 }
                 else
                 {
-                    _message.Delegate.PlayMessage(_message);
+                    _playbackService.Enqueue(_message);
                 }
             }
         }

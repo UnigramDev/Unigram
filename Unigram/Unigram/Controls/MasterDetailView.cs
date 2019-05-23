@@ -239,6 +239,12 @@ namespace Unigram.Controls
         //    }
         //}
 
+        public bool IsBlank
+        {
+            get { return AdaptivePanel.IsBlank; }
+            set { AdaptivePanel.IsBlank = value; }
+        }
+
         protected override void OnApplyTemplate()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;

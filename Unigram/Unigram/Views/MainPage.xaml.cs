@@ -171,6 +171,8 @@ namespace Unigram.Views
             //PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
             MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
 
+            Separator.Margin = new Thickness(0, -sender.Height, 0, 0);
+
             sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
             sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
         }
@@ -183,6 +185,8 @@ namespace Unigram.Views
 
             //PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
             MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
+
+            Separator.Margin = new Thickness(0, -sender.Height, 0, 0);
         }
 
         private void InitializeLocalization()
@@ -535,6 +539,8 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            Playback.Update(ViewModel.ProtoService, ViewModel.PlaybackService, ViewModel.NavigationService, ViewModel.Aggregator);
+
             ViewModel.Aggregator.Subscribe(this);
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
@@ -998,6 +1004,7 @@ namespace Unigram.Views
 
         private void SetTitleBarVisibility(Visibility visibility)
         {
+            MasterDetail.IsBlank = visibility == Visibility.Collapsed;
             VisualStateManager.GoToState(this, visibility == Visibility.Collapsed ? "Normal" : "TitleBar", false);
         }
 

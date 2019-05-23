@@ -288,7 +288,8 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                //_message.ProtoService.DownloadFile(file.Id, 32);
+                _message.PlaybackService.Enqueue(_message.Get());
             }
             else
             {

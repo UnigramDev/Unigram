@@ -35,23 +35,20 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
                         <controls:MasterDetailPanel x:Name="AdaptivePanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <Grid Background="{TemplateBinding Background}">
-                                <!--<Border x:Name="DropShadow" Loaded="DropShadow_Loaded"/>-->
-                                <chats:ChatBackgroundPresenter
-                                    Background="{ThemeResource ChatPageBackgroundBrush}"
-                                    Opacity="{TemplateBinding BackgroundOpacity}"
-                                    Loading="ChatBackgroundPresenter_Loading"/>
-                                
-                                <Grid x:Name="DetailPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}">
-                                    <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
-                                </Grid>
-                                <!--<Grid.RowDefinitions>
-                                     <RowDefinition Height="Auto"/>
-                                     <RowDefinition/>
-                                     </Grid.RowDefinitions>
-                                     <ContentControl Content="{TemplateBinding PageHeader}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-                                     </Grid>-->
+                            <chats:ChatBackgroundPresenter
+                                Background="{ThemeResource ChatPageBackgroundBrush}"
+                                Opacity="{TemplateBinding BackgroundOpacity}"
+                                Loading="ChatBackgroundPresenter_Loading"/>
+
+                            <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
+
+                            <ContentControl Content="{TemplateBinding Header}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding PageHeader}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+
+                            <Grid x:Name="DetailPresenter">
+                                <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
                             </Grid>
+
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
                                               ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -82,6 +79,26 @@
     </Page.Resources>
 
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate">
+        <controls:MasterDetailView.Header>
+            <Grid x:Name="TitleBarrr" Background="{ThemeResource PageHeaderBackgroundBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
+                <TextBlock x:Name="StatusLabel"
+                           VerticalAlignment="Center"
+                           TextLineBounds="TrimToCapHeight"
+                           Margin="6,0,0,0"
+                           AutomationProperties.LiveSetting="Assertive"
+                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Grid.Column="1"/>
+            </Grid>
+        </controls:MasterDetailView.Header>
+        <controls:MasterDetailView.PageHeader>
+            <controls:PlaybackHeader x:Name="Playback"/>
+        </controls:MasterDetailView.PageHeader>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Normal"/>
@@ -99,21 +116,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Grid x:Name="TitleBarrr" Background="{ThemeResource PageHeaderBackgroundBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-                <TextBlock x:Name="StatusLabel"
-                           VerticalAlignment="Center"
-                           TextLineBounds="TrimToCapHeight"
-                           Margin="6,0,0,0"
-                           AutomationProperties.LiveSetting="Assertive"
-                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           Grid.Column="1"/>
-            </Grid>
             <controls:ContentPageHeader x:Name="PageHeader" Grid.Row="1">
                 <Grid x:Name="Header">
                     <Grid x:Name="MainHeader">

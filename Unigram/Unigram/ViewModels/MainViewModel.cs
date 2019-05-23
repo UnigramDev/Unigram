@@ -31,10 +31,11 @@ namespace Unigram.ViewModels
         private readonly ISessionService _sessionService;
         private readonly IVoIPService _voipService;
         private readonly IEmojiSetService _emojiSetService;
+        private readonly IPlaybackService _playbackService;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, IPlaybackService playbackService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -46,6 +47,7 @@ namespace Unigram.ViewModels
             _sessionService = session;
             _voipService = voipService;
             _emojiSetService = emojiSetService;
+            _playbackService = playbackService;
 
             Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService);
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
@@ -71,6 +73,8 @@ namespace Unigram.ViewModels
 
         public ILiveLocationService LiveLocation => _liveLocationService;
         public IPasscodeService Passcode => _passcodeService;
+
+        public IPlaybackService PlaybackService => _playbackService;
 
         public RelayCommand LiveLocationCommand { get; }
         private async void LiveLocationExecute()

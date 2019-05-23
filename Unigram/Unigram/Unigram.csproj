@@ -164,6 +164,9 @@
     <Compile Include="Controls\Cells\SessionCell.xaml.cs">
       <DependentUpon>SessionCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\SharedAudioCell.xaml.cs">
+      <DependentUpon>SharedAudioCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\SharedFileCell.xaml.cs">
       <DependentUpon>SharedFileCell.xaml</DependentUpon>
     </Compile>
@@ -388,9 +391,6 @@
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\PlaybackView.xaml.cs">
-      <DependentUpon>PlaybackView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Views\SettingsEmojiSetView.xaml.cs">
       <DependentUpon>SettingsEmojiSetView.xaml</DependentUpon>
     </Compile>
@@ -598,7 +598,6 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
-    <Compile Include="ViewModels\PlaybackViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\SecretChats\SecretChatCreateViewModel.cs" />
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneIntroViewModel.cs" />
@@ -1653,6 +1652,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\SharedAudioCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\SharedFileCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1894,10 +1897,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageReference.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\PlaybackView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -28,7 +28,8 @@
                                                Height="{ThemeResource AppBarThemeCompactHeight}"
                                                AutomationProperties.LandmarkType="Navigation"
                                                AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
-                                               ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"/>
+                                               ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
+                                               Margin="{TemplateBinding TopPadding}"/>
                         </Grid>
                         <SplitView x:Name="RootSplitView" PaneBackground="Transparent" OpenPaneLength="240" IsTabStop="False" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <SplitView.Pane>

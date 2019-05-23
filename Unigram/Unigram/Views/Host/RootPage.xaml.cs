@@ -125,6 +125,12 @@ namespace Unigram.Views.Host
             sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
         }
 
+        public Thickness TopPadding
+        {
+            get { return Navigation.TopPadding; }
+            set { Navigation.TopPadding = value; }
+        }
+
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
             Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
@@ -411,7 +417,7 @@ namespace Unigram.Views.Host
                         break;
                     case RootDestination.Calls:
                         content.Text = Strings.Resources.Calls;
-                        content.Glyph = "\uE789";
+                        content.Glyph = "\uE717";
                         break;
                     case RootDestination.Settings:
                         content.Text = Strings.Resources.Settings;
