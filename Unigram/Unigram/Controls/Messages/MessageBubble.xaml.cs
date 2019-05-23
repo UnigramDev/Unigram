@@ -147,11 +147,11 @@ namespace Unigram.Controls.Messages
             }
             else if (message.Id <= maxId)
             {
-                builder.Append(Strings.Resources.AccDescrMsgUnread);
+                builder.Append(Strings.Resources.AccDescrMsgRead);
             }
             else
             {
-                builder.Append(Strings.Resources.AccDescrMsgRead);
+                builder.Append(Strings.Resources.AccDescrMsgUnread);
             }
 
             builder.Append(".");

@@ -77,12 +77,19 @@ namespace Unigram.Controls.Messages.Content
                 //Texture.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
                 //Player.Source = LottieVisualSource.CreateFromString("file:///" + file.Local.Path); // new LottieVisualSource { UriSource = new Uri("file:///" + file.Local.Path) };
 
-                var storage = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                var source = new LottieVisualSource();
+                try
+                {
+                    var storage = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var source = new LottieVisualSource();
 
-                Player.Source = source;
+                    Player.Source = source;
 
-                await source.SetSourceAsync(storage);
+                    await source.SetSourceAsync(storage);
+                }
+                catch
+                {
+                    // For some reason LottieVisualSource throws an exception on unsupported OS versions
+                }
 
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

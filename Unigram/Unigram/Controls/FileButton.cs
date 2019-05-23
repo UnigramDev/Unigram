@@ -185,8 +185,6 @@ namespace Unigram.Controls
                 return;
             }
 
-            _container.Children.RemoveAll();
-
             var visualShow = _visual == _visual1 ? _visual2 : _visual1;
             var visualHide = _visual == _visual1 ? _visual1 : _visual2;
 

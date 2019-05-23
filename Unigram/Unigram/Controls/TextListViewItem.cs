@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Controls.Cells;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
@@ -29,6 +30,11 @@ namespace Unigram.Controls
 
         protected override string GetNameCore()
         {
+            if (_owner.ContentTemplateRoot is ChatCell cell)
+            {
+                return cell.GetAutomationName() ?? base.GetNameCore();
+            }
+
             var builder = new StringBuilder();
             var descendants = (_owner.ContentTemplateRoot ?? _owner).DescendantsAndSelf<TextBlock>();
 

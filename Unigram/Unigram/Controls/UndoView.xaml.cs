@@ -66,6 +66,8 @@ namespace Unigram.Controls
             _remaining = 5;
             _queue.Enqueue(new UndoOp(chats, action, undo));
 
+            _timeout.Start();
+
             if (type == UndoType.Archive)
             {
                 Text.Text = chats.Count > 1 ? Strings.Resources.ChatsArchived : Strings.Resources.ChatArchived;
