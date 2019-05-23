@@ -109,31 +109,31 @@
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">
-                    <controls:GlyphButton Content="{CustomResource NotificationsAndSounds}"
+                    <controls:BadgeButton Content="{CustomResource NotificationsAndSounds}"
                                           Glyph="&#xEC42;"
                                           Click="Notifications_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource PrivacySettings}"
+                    <controls:BadgeButton Content="{CustomResource PrivacySettings}"
                                           Glyph="&#xE1F6;"
                                           Click="Privacy_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource DataSettings}"
+                    <controls:BadgeButton Content="{CustomResource DataSettings}"
                                           Glyph="&#xEB05;"
                                           Click="Data_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource StickersName}"
+                    <controls:BadgeButton Content="{CustomResource StickersName}"
                                           Glyph="&#xF4AA;"
                                           Click="Stickers_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource ChatSettings}"
+                    <controls:BadgeButton Content="{CustomResource ChatSettings}"
                                           Glyph="&#xE8BD;"
                                           Click="Appearance_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource Language}"
+                    <controls:BadgeButton Content="{CustomResource Language}"
                                           Glyph="&#xE774;"
                                           Click="Language_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource PrivacyAdvanced}"
+                    <controls:BadgeButton Content="{CustomResource PrivacyAdvanced}"
                                           Glyph="&#xE9E9;"
                                           Click="Advanced_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
@@ -141,18 +141,18 @@
 
                 <StackPanel Visibility="{x:Bind ViewModel.HasPassportData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Margin="0,24,0,0">
-                    <controls:GlyphButton Content="{CustomResource TelegramPassport}"
+                    <controls:BadgeButton Content="{CustomResource TelegramPassport}"
                                           Glyph="&#xE8C7;"
                                           Click="Passport_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
                 </StackPanel>
                 
                 <StackPanel Margin="0,24,0,0">
-                    <controls:GlyphButton Content="{CustomResource AskAQuestion}"
+                    <controls:BadgeButton Content="{CustomResource AskAQuestion}"
                                           Glyph="&#xED15;"
                                           Command="{x:Bind ViewModel.AskCommand}"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource TelegramFAQ}"
+                    <controls:BadgeButton Content="{CustomResource TelegramFAQ}"
                                           Glyph="&#xE783;"
                                           Click="Questions_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>

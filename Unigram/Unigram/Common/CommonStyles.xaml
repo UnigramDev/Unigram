@@ -1865,7 +1865,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="TextGlyphButtonStyle" TargetType="controls:GlyphButton">
+    <Style x:Key="TextGlyphButtonStyle" TargetType="controls:BadgeButton">
         <Setter Property="Background" Value="Transparent"/>
         <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>-->
         <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
@@ -1882,7 +1882,7 @@
         <Setter Property="Height" Value="Auto"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="controls:GlyphButton">
+                <ControlTemplate TargetType="controls:BadgeButton">
                     <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -1924,6 +1924,16 @@
                                 FontFamily="{TemplateBinding FontFamily}"/>
 
                             <ContentPresenter x:Name="ContentPresenter" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="0,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                            <ContentControl x:Name="BadgePresenter" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Height="44" Padding="12,11,12,12" HorizontalContentAlignment="Right" IsTabStop="False" Grid.Column="1">
+                                <ContentControl.ContentTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition/>
+                                    </TransitionCollection>
+                                </ContentControl.ContentTransitions>
+                                <ContentControl.Clip>
+                                    <RectangleGeometry Rect="0,0,3600,44"/>
+                                </ContentControl.Clip>
+                            </ContentControl>
                         </Grid>
                         <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
                     </StackPanel>

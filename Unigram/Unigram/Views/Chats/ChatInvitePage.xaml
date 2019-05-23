@@ -19,7 +19,7 @@
 
     <views:UsersSelectionView>
         <views:UsersSelectionView.Header>
-            <controls:GlyphButton x:Name="Invite"
+            <controls:BadgeButton x:Name="Invite"
                                   Click="Invite_Click"
                                   Visibility="{x:Bind (Visibility)ViewModel.IsCreator, Mode=OneWay}"
                                   Content="{x:Bind ConvertInviteText(ViewModel.IsGroup), Mode=OneWay}"

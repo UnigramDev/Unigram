@@ -38,7 +38,7 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE81C;"/>
 
-                    <controls:GlyphButton x:Name="AddNew"
+                    <controls:BadgeButton x:Name="AddNew"
                                           Visibility="Collapsed"
                                           Content="{CustomResource ChannelAddAdmin}"
                                           Command="{x:Bind ViewModel.AddCommand}"

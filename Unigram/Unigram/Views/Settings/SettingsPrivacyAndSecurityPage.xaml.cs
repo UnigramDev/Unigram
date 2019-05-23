@@ -50,6 +50,16 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsPrivacyShowStatusPage));
         }
 
+        private void ProfilePhoto_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPrivacyShowPhotoPage));
+        }
+
+        private void Forwards_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPrivacyShowForwardedPage));
+        }
+
         private void PhoneCall_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPrivacyAllowCallsPage));
