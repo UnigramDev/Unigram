@@ -193,6 +193,7 @@ namespace Unigram.ViewModels
             MessageSaveMediaCommand = new RelayCommand<MessageViewModel>(MessageSaveMediaExecute);
             MessageSaveDownloadCommand = new RelayCommand<MessageViewModel>(MessageSaveDownloadExecute);
             MessageSaveAnimationCommand = new RelayCommand<MessageViewModel>(MessageSaveAnimationExecute);
+            MessageOpenWithCommand = new RelayCommand<MessageViewModel>(MessageOpenWithExecute);
             MessageOpenFolderCommand = new RelayCommand<MessageViewModel>(MessageOpenFolderExecute);
             MessageAddContactCommand = new RelayCommand<MessageViewModel>(MessageAddContactExecute);
             MessageServiceCommand = new RelayCommand<MessageViewModel>(MessageServiceExecute);
@@ -1099,6 +1100,8 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, offset, limit, false));
                 if (response is Messages messages)
                 {
+                    _groupedMessages.Clear();
+
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
@@ -2940,7 +2943,7 @@ namespace Unigram.ViewModels
             stack.Children.Add(opt5);
             stack.Margin = new Thickness(12, 16, 12, 0);
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             dialog.Content = stack;
             dialog.Title = Strings.Resources.ReportChat;
             dialog.IsPrimaryButtonEnabled = true;

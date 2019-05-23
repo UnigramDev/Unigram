@@ -1289,6 +1289,29 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Open with
+
+        public RelayCommand<MessageViewModel> MessageOpenWithCommand { get; }
+        private async void MessageOpenWithExecute(MessageViewModel message)
+        {
+            var result = message.Get().GetFileAndName(true);
+
+            var file = result.File;
+            if (file == null || !file.Local.IsDownloadingCompleted)
+            {
+                return;
+            }
+
+            var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+
+            var options = new LauncherOptions();
+            options.DisplayApplicationPicker = true;
+
+            await Launcher.LaunchFileAsync(item, options);
+        }
+
+        #endregion
+
         #region Show in folder
 
         public RelayCommand<MessageViewModel> MessageOpenFolderCommand { get; }
