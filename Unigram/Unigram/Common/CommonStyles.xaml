@@ -173,7 +173,6 @@
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter x:Name="ContentPresenter"
                                               AutomationProperties.AccessibilityView="Raw"
-                                              Background="{ThemeResource ListViewItemRevealBackground}"
                                               BorderBrush="{TemplateBinding BorderBrush}"
                                               BorderThickness="{TemplateBinding BorderThickness}"
                                               ContentTemplate="{TemplateBinding ContentTemplate}"
