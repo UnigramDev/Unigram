@@ -431,6 +431,7 @@
                                   IsItemClickEnabled="True"
                                   SelectionMode="Single"
                                   ItemClick="ListView_ItemClick"
+                                  ChoosingItemContainer="DialogsSearchListView_ChoosingItemContainer"
                                   ContainerContentChanging="DialogsSearchListView_ContainerContentChanging"
                                   SelectionChanged="ListView_SelectionChanged">
                             <ListView.Header>
@@ -536,7 +537,7 @@
                                     </selectors:SearchTemplateSelector.ChatTemplate>
                                     <selectors:SearchTemplateSelector.MessageTemplate>
                                         <DataTemplate>
-                                            <cells:ChatCell Margin="-12,0" Stroke="{ThemeResource ChatLastMessageStateBrush}"/>
+                                            <cells:ChatCell Margin="-12,0" Stroke="{ThemeResource ChatLastMessageStateBrush}" IsEnabled="False"/>
                                         </DataTemplate>
                                     </selectors:SearchTemplateSelector.MessageTemplate>
                                 </selectors:SearchTemplateSelector>
