@@ -81,5 +81,11 @@
   <ItemGroup>
     <None Include="Resources\Default.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Muted.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Unmuted.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

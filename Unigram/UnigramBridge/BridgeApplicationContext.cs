@@ -29,25 +29,40 @@ namespace UnigramBridge
             notifyIcon.Click += new EventHandler(OpenApp);
             notifyIcon.Icon = Properties.Resources.Default;
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[] { openMenuItem, exitMenuItem });
+#if DEBUG
+            notifyIcon.Text = "Telegram";
+#else
             notifyIcon.Text = "Unigram";
+#endif
 
-            var local = ApplicationData.Current.LocalSettings;
-            if (local.Values.TryGetValue("IsTrayVisible", out object value) && value is bool visible)
+            try
             {
-                notifyIcon.Visible = visible;
+                var local = ApplicationData.Current.LocalSettings;
+                if (local.Values.TryGetValue("IsTrayVisible", out object value) && value is bool visible)
+                {
+                    notifyIcon.Visible = visible;
+                }
+                else
+                {
+                    notifyIcon.Visible = true;
+                }
+
+                Connect();
             }
-            else
+            catch
             {
                 notifyIcon.Visible = true;
             }
-
-            Connect();
         }
 
         private async void OpenApp(object sender, EventArgs e)
         {
-            IEnumerable<AppListEntry> appListEntries = await Package.Current.GetAppListEntriesAsync();
-            await appListEntries.First().LaunchAsync();
+            try
+            {
+                var appListEntries = await Package.Current.GetAppListEntriesAsync();
+                await appListEntries.First().LaunchAsync();
+            }
+            catch { }
 
             Connect();
         }
@@ -67,7 +82,11 @@ namespace UnigramBridge
 
             if (connection != null)
             {
-                await connection.SendMessageAsync(new ValueSet { { "Exit", string.Empty } });
+                try
+                {
+                    await connection.SendMessageAsync(new ValueSet { { "Exit", string.Empty } });
+                }
+                catch { }
             }
 
             notifyIcon.Dispose();
@@ -80,7 +99,11 @@ namespace UnigramBridge
             {
                 connection = new AppServiceConnection();
                 connection.PackageFamilyName = Package.Current.Id.FamilyName;
+#if DEBUG
+                connection.AppServiceName = "org.telegram.bridge";
+#else
                 connection.AppServiceName = "org.unigram.bridge";
+#endif
                 connection.RequestReceived += Connection_RequestReceived;
                 connection.ServiceClosed += Connection_ServiceClosed;
 
@@ -104,7 +127,11 @@ namespace UnigramBridge
 
             connection = new AppServiceConnection();
             connection.PackageFamilyName = Package.Current.Id.FamilyName;
+#if DEBUG
+            connection.AppServiceName = "org.telegram.bridge";
+#else
             connection.AppServiceName = "org.unigram.bridge";
+#endif
             connection.RequestReceived += Connection_RequestReceived;
             connection.ServiceClosed += Connection_ServiceClosed;
 
@@ -115,8 +142,53 @@ namespace UnigramBridge
             }
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct FLASHWINFO
+        {
+            public UInt32 cbSize;
+            public IntPtr hwnd;
+            public FlashWindow dwFlags;
+            public UInt32 uCount;
+            public UInt32 dwTimeout;
+        }
+
+        public enum FlashWindow : uint
+        {
+            /// <summary>
+            /// Stop flashing. The system restores the window to its original state.
+            /// </summary>    
+            FLASHW_STOP = 0,
+
+            /// <summary>
+            /// Flash the window caption
+            /// </summary>
+            FLASHW_CAPTION = 1,
+
+            /// <summary>
+            /// Flash the taskbar button.
+            /// </summary>
+            FLASHW_TRAY = 2,
+
+            /// <summary>
+            /// Flash both the window caption and taskbar button.
+            /// This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags.
+            /// </summary>
+            FLASHW_ALL = 3,
+
+            /// <summary>
+            /// Flash continuously, until the FLASHW_STOP flag is set.
+            /// </summary>
+            FLASHW_TIMER = 4,
+
+            /// <summary>
+            /// Flash continuously until the window comes to the foreground.
+            /// </summary>
+            FLASHW_TIMERNOFG = 12
+        }
+
         [DllImport("user32.dll")]
-        static extern bool FlashWindow(IntPtr hwnd, bool bInvert);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -131,7 +203,27 @@ namespace UnigramBridge
                 var handle = FindWindow("ApplicationFrameWindow", "Unigram");
 #endif
 
-                FlashWindow(handle, true);
+                FLASHWINFO info = new FLASHWINFO();
+                info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
+                info.hwnd = handle;
+                info.dwFlags = FlashWindow.FLASHW_ALL;
+                info.dwTimeout = 0;
+                info.uCount = 1;
+                FlashWindowEx(ref info);
+            }
+            else if (args.Request.Message.TryGetValue("UnreadCount", out object unread) && args.Request.Message.TryGetValue("UnreadUnmutedCount", out object unreadUnmuted))
+            {
+                if (unread is int unreadCount && unreadUnmuted is int unreadUnmutedCount)
+                {
+                    if (unreadCount > 0 || unreadUnmutedCount > 0)
+                    {
+                        notifyIcon.Icon = unreadUnmutedCount > 0 ? Properties.Resources.Unmuted : Properties.Resources.Muted;
+                    }
+                    else
+                    {
+                        notifyIcon.Icon = Properties.Resources.Default;
+                    }
+                }
             }
             else if (args.Request.Message.TryGetValue("IsTrayVisible", out object value) && value is bool visible)
             {
