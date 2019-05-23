@@ -34,7 +34,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
-                        <controls:MasterDetailPanel x:Name="AdaptivePanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <controls:MasterDetailPanel x:Name="AdaptivePanel" IsBlank="{TemplateBinding IsBlank}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                             <chats:ChatBackgroundPresenter
                                 Background="{ThemeResource ChatPageBackgroundBrush}"
                                 Opacity="{TemplateBinding BackgroundOpacity}"

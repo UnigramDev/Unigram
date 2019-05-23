@@ -60,21 +60,27 @@ namespace Unigram.Controls
             }
         }
 
-        private bool _isBlank = true;
+        private bool _isBlank;
         public bool IsBlank
         {
-            get
+            get { return (bool)GetValue(IsBlankProperty); }
+            set { SetValue(IsBlankProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsBlankProperty =
+            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailPanel), new PropertyMetadata(true, OnBlankChanged));
+
+        private static void OnBlankChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var newValue = (bool)e.NewValue;
+            var oldValue = (bool)e.OldValue;
+
+            ((MasterDetailPanel)d)._isBlank = newValue;
+
+            if (newValue != oldValue)
             {
-                return _isBlank;
-            }
-            set
-            {
-                if (_isBlank != value)
-                {
-                    _isBlank = value;
-                    InvalidateMeasure();
-                    InvalidateArrange();
-                }
+                ((MasterDetailPanel)d).InvalidateMeasure();
+                ((MasterDetailPanel)d).InvalidateArrange();
             }
         }
 

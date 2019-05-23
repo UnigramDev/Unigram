@@ -223,28 +223,6 @@ namespace Unigram.Controls
             }
         }
 
-        //protected override void OnKeyDown(KeyRoutedEventArgs e)
-        //{
-        //    if (e.Key == VirtualKey.Escape)
-        //    {
-        //        if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Narrow)
-        //        {
-        //            DetailFrame.GoBack();
-        //            e.Handled = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        base.OnKeyDown(e);
-        //    }
-        //}
-
-        public bool IsBlank
-        {
-            get { return AdaptivePanel.IsBlank; }
-            set { AdaptivePanel.IsBlank = value; }
-        }
-
         protected override void OnApplyTemplate()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
@@ -560,6 +538,19 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty BackgroundOpacityProperty =
             DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(MasterDetailView), new PropertyMetadata(1d));
+
+        #endregion
+
+        #region IsBlank
+
+        public bool IsBlank
+        {
+            get { return (bool)GetValue(IsBlankProperty); }
+            set { SetValue(IsBlankProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsBlankProperty =
+            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
 
         #endregion
     }
