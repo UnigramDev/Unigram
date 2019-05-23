@@ -21,7 +21,7 @@
 
         <StackPanel Margin="12,8,12,12" Grid.Row="1">
             <TextBlock x:Name="Title" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock x:Name="Subtitle" TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+            <TextBlock x:Name="Subtitle" TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource BodyTextBlockStyle}"/>
         </StackPanel>
 
         <CheckBox x:Name="CheckBox" Margin="12,12,12,0" Visibility="Collapsed" Grid.Row="2"/>
