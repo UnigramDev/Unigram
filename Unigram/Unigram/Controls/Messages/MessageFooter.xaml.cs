@@ -351,6 +351,11 @@ namespace Unigram.Controls.Messages
 
         private void UpdateTicks(bool? read, bool animate = false)
         {
+            if (_container == null)
+            {
+                return;
+            }
+
             if (read == null)
             {
                 _container.IsVisible = false;
@@ -359,7 +364,7 @@ namespace Unigram.Controls.Messages
             {
                 AnimateTicks();
             }
-            else if (_container != null)
+            else
             {
                 _line11.TrimEnd = read == true ? 1 : 0;
                 _line12.TrimEnd = read == true ? 1 : 0;

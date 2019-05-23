@@ -24,24 +24,32 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Cells
 {
+    public enum MessageTicksState
+    {
+        None,
+        Pending,
+        Failed,
+        Sent,
+        Read
+    }
+
     public sealed partial class ChatCell : ToggleButton
     {
         private Chat _chat;
         private IProtoService _protoService;
         private IChatListDelegate _delegate;
-        private ChatsListView _parent;
 
         private Visual _onlineBadge;
 
         private bool _expanded = false;
 
-        private bool _ticksState;
+        private MessageTicksState _ticksState;
 
         public ChatCell()
         {
             InitializeComponent();
             InitializeSelection();
-            InitializeTick();
+            InitializeTicks();
 
             _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
             _onlineBadge.CenterPoint = new Vector3(6.5f);
@@ -51,30 +59,27 @@ namespace Unigram.Controls.Cells
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
-            return new ChatCellAutomationPeer(this, _parent);
+            return new ChatCellAutomationPeer(this);
         }
 
-        public void UpdateService(IProtoService protoService, IChatListDelegate delegato, ChatsListView parent)
+        public void UpdateService(IProtoService protoService, IChatListDelegate delegato)
         {
             _protoService = protoService;
             _delegate = delegato;
-            _parent = parent;
         }
 
-        public void UpdateChat(IProtoService protoService, IChatListDelegate delegato, ChatsListView parent, Chat chat)
+        public void UpdateChat(IProtoService protoService, IChatListDelegate delegato, Chat chat)
         {
             _protoService = protoService;
             _delegate = delegato;
-            _parent = parent;
 
             Update(chat);
         }
 
-        public void UpdateMessage(IProtoService protoService, IChatListDelegate delegato, ChatsListView parent, Message message)
+        public void UpdateMessage(IProtoService protoService, IChatListDelegate delegato, Message message)
         {
             _protoService = protoService;
             _delegate = delegato;
-            _parent = parent;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -602,7 +607,7 @@ namespace Unigram.Controls.Cells
                 }
                 else
                 {
-                    return $"{result}{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
+                    return $"{result}\uD83C\uDFB5 {performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
                 }
             }
             else if (message.Content is MessageDocument document)
@@ -684,7 +689,7 @@ namespace Unigram.Controls.Cells
             {
                 UpdateTicks(null);
 
-                _ticksState = false;
+                _ticksState = MessageTicksState.None;
                 return string.Empty;
             }
 
@@ -704,7 +709,7 @@ namespace Unigram.Controls.Cells
 
                     UpdateTicks(null);
 
-                    _ticksState = false;
+                    _ticksState = MessageTicksState.None;
                     return string.Empty;
                 }
 
@@ -712,7 +717,7 @@ namespace Unigram.Controls.Cells
                 {
                     UpdateTicks(null);
 
-                    _ticksState = false;
+                    _ticksState = MessageTicksState.Failed;
 
                     // TODO: 
                     return "\uE599"; // Failed
@@ -721,26 +726,26 @@ namespace Unigram.Controls.Cells
                 {
                     UpdateTicks(null);
 
-                    _ticksState = false;
+                    _ticksState = MessageTicksState.Pending;
                     return "\uE600"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
-                    UpdateTicks(true, _ticksState);
+                    UpdateTicks(true, _ticksState == MessageTicksState.Sent);
 
-                    _ticksState = false;
+                    _ticksState = MessageTicksState.Read;
                     return _container != null ? "\uE603" : "\uE601"; // Read
                 }
 
-                UpdateTicks(false);
+                UpdateTicks(false, _ticksState == MessageTicksState.Pending);
 
-                _ticksState = true;
+                _ticksState = MessageTicksState.Sent;
                 return _container != null ? "\uE603" : "\uE602"; // Unread
             }
 
             UpdateTicks(null);
 
-            _ticksState = false;
+            _ticksState = MessageTicksState.None;
             return string.Empty;
         }
 
@@ -891,6 +896,11 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = message;
             TimeLabel.Text = BindConvert.Current.ShortTime.Format(date);
             StateIcon.Glyph = sent ? "\uE601" : string.Empty;
+
+            if (_container != null)
+            {
+                _container.IsVisible = false;
+            }
 
             _onlineBadge.Opacity = online ? 1 : 0;
             _onlineBadge.Scale = new Vector3(online ? 1 : 0);
@@ -1112,12 +1122,12 @@ namespace Unigram.Controls.Cells
 
         public void SetSelectionMode(ListViewSelectionMode mode, bool animate)
         {
-            if (mode == ListViewSelectionMode.Multiple && _delegate.IsItemSelected(_chat))
+            if (mode == ListViewSelectionMode.Multiple && _delegate?.IsItemSelected(_chat) == true)
             {
                 OnSelectionChanged(true, animate);
                 IsChecked = true;
             }
-            else if (mode == ListViewSelectionMode.Single && _delegate.SelectedItem == _chat.Id)
+            else if (mode == ListViewSelectionMode.Single && _delegate?.SelectedItem == _chat.Id)
             {
                 OnSelectionChanged(false, _selectionMode == ListViewSelectionMode.Multiple && IsChecked == true);
                 IsChecked = null;
@@ -1141,6 +1151,7 @@ namespace Unigram.Controls.Cells
 
         private CompositionGeometry _line21;
         private CompositionGeometry _line22;
+        private ShapeVisual _visual2;
 
         private CompositionSpriteShape[] _shapes;
 
@@ -1177,7 +1188,7 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        private void InitializeTick()
+        private void InitializeTicks()
         {
             if (!ApiInfo.CanUseDirectComposition)
             {
@@ -1259,6 +1270,7 @@ namespace Unigram.Controls.Cells
             _line22 = line22;
             _shapes = new[] { shape11, shape12, shape21, shape22 };
             _visual1 = visual1;
+            _visual2 = visual2;
             _container = container;
         }
 
@@ -1273,9 +1285,9 @@ namespace Unigram.Controls.Cells
             {
                 _container.IsVisible = false;
             }
-            else if (read == true && animate)
+            else if (animate)
             {
-                AnimateTicks();
+                AnimateTicks(read == true);
             }
             else
             {
@@ -1288,7 +1300,7 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private void AnimateTicks()
+        private void AnimateTicks(bool read)
         {
             _container.IsVisible = true;
 
@@ -1316,22 +1328,36 @@ namespace Unigram.Controls.Cells
             anim12.DelayTime = anim11.Duration;
             anim12.Duration = TimeSpan.FromMilliseconds(400);
 
-            _line11.StartAnimation("TrimEnd", anim11);
-            _line12.StartAnimation("TrimEnd", anim12);
-
-            var anim21 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            anim21.InsertKeyFrame(0, 0);
-            anim21.InsertKeyFrame(1, 1, linear);
-            anim11.Duration = TimeSpan.FromMilliseconds(duration);
-
             var anim22 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             anim22.InsertKeyFrame(0, new Vector3(1));
             anim22.InsertKeyFrame(0.2f, new Vector3(1.1f));
             anim22.InsertKeyFrame(1, new Vector3(1));
             anim22.Duration = anim11.Duration + anim12.Duration;
 
-            _line21.StartAnimation("TrimStart", anim21);
-            _visual1.StartAnimation("Scale", anim22);
+            if (read)
+            {
+                _line11.StartAnimation("TrimEnd", anim11);
+                _line12.StartAnimation("TrimEnd", anim12);
+                _visual1.StartAnimation("Scale", anim22);
+
+                var anim21 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                anim21.InsertKeyFrame(0, 0);
+                anim21.InsertKeyFrame(1, 1, linear);
+                anim11.Duration = TimeSpan.FromMilliseconds(duration);
+
+                _line21.StartAnimation("TrimStart", anim21);
+            }
+            else
+            {
+                _line11.TrimEnd = 0;
+                _line12.TrimEnd = 0;
+
+                _line21.TrimStart = 0;
+
+                _line21.StartAnimation("TrimEnd", anim11);
+                _line22.StartAnimation("TrimEnd", anim12);
+                _visual2.StartAnimation("Scale", anim22);
+            }
         }
 
         #endregion
@@ -1340,27 +1366,23 @@ namespace Unigram.Controls.Cells
         {
             if (_selectionMode != ListViewSelectionMode.Multiple)
             {
-                _delegate.SetSelectedItem(_chat);
+                _delegate?.SetSelectedItem(_chat);
             }
             else if (_delegate.SelectedCount < 1)
             {
-                _delegate.SetSelectionMode(false);
+                _delegate?.SetSelectionMode(false);
             }
         }
-
-        public Chat Chat => _chat;
     }
 
     public class ChatCellAutomationPeer : ToggleButtonAutomationPeer
     {
         private ChatCell _owner;
-        private ChatsListView _parent;
 
-        public ChatCellAutomationPeer(ChatCell owner, ChatsListView parent)
+        public ChatCellAutomationPeer(ChatCell owner)
             : base(owner)
         {
             _owner = owner;
-            _parent = parent;
         }
 
         protected override string GetNameCore()

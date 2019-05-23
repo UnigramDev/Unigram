@@ -1610,7 +1610,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                content.UpdateMessage(ViewModel.ProtoService, ViewModel.Chats, ChatsList, message);
+                content.UpdateMessage(ViewModel.ProtoService, ViewModel.Chats, message);
             }
 
             args.Handled = true;
