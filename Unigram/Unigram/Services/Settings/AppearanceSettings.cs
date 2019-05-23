@@ -189,22 +189,22 @@ namespace Unigram.Services.Settings
             {
                 if (_requestedTheme == null)
                 {
-                    var theme = (TelegramAppTheme)GetValueOrDefault(_container, "Theme", (int)TelegramAppTheme.Default);
-                    if (theme.HasFlag(TelegramAppTheme.Default))
-                    {
-                        _requestedTheme = ElementTheme.Default;
-                    }
-                    else if (theme.HasFlag(TelegramAppTheme.Dark))
+                    var theme = (TelegramAppTheme)GetValueOrDefault(_container, "Theme", (int)GetSystemTheme());
+                    if (theme.HasFlag(TelegramAppTheme.Dark))
                     {
                         _requestedTheme = ElementTheme.Dark;
                     }
-                    else
+                    else if (theme.HasFlag(TelegramAppTheme.Light))
                     {
                         _requestedTheme = ElementTheme.Light;
                     }
+                    else
+                    {
+                        _requestedTheme = ElementTheme.Default;
+                    }
                 }
 
-                return _requestedTheme ?? ElementTheme.Default;
+                return _requestedTheme ?? (GetSystemTheme() == TelegramAppTheme.Dark ? ElementTheme.Dark : ElementTheme.Light);
             }
             set
             {
@@ -405,7 +405,7 @@ namespace Unigram.Services.Settings
         {
             var conditions = CheckNightModeConditions();
             var theme = conditions == null
-                ? RequestedTheme
+                ? GetActualTheme()
                 : conditions == true
                 ? ElementTheme.Dark
                 : ElementTheme.Light;
@@ -431,6 +431,14 @@ namespace Unigram.Services.Settings
             return ElementTheme.Light;
         }
 
+        public TelegramAppTheme GetSystemTheme()
+        {
+            var app = App.Current as App;
+            var current = app.UISettings.GetColorValue(UIColorType.Background);
+
+            return current == Colors.Black ? TelegramAppTheme.Dark : TelegramAppTheme.Light;
+        }
+
         public bool IsLightTheme()
         {
             var app = App.Current as App;
@@ -447,6 +455,11 @@ namespace Unigram.Services.Settings
             //}
 
             return true;
+        }
+
+        public bool IsDarkTheme()
+        {
+            return !IsLightTheme();
         }
 
         public ApplicationTheme GetCalculatedApplicationTheme()

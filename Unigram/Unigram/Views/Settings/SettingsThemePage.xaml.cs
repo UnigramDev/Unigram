@@ -94,7 +94,7 @@ namespace Unigram.Views.Settings
             items.Add(group.AddBrush("PageSubHeaderBackgroundBrush"));
             groups.Add(items);
 
-            items = new ThemeGroup("Content", service, theme, baseTheme);
+            items = new ThemeGroup("Accent", service, theme, baseTheme);
             items.Add(group.AddColor("SystemAccentColor"));
             items.Add(group.AddBrush("SystemControlBackgroundAccentBrush", resourceKey: "SystemAccentColor"));
             items.Add(group.AddBrush("SystemControlDisabledAccentBrush", resourceKey: "SystemAccentColor"));

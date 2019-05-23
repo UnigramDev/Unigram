@@ -63,14 +63,14 @@ namespace Unigram
         {
             Locator.Configure(/*session*/);
 
+            _uiSettings = new UISettings();
+
             if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
             {
                 RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             }
 
             InitializeComponent();
-
-            _uiSettings = new UISettings();
 
             try
             {

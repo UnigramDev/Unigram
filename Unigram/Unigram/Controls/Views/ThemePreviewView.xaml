@@ -69,25 +69,25 @@
         </controls:ContentPageHeader>
         <ListView x:Name="ChatList" Grid.Row="2">
             <ListViewItem Background="{ThemeResource PageSubHeaderBackgroundBrush}" HorizontalContentAlignment="Stretch" Padding="0">
-                <cells:ChatCell x:Name="Chat1"/>
+                <cells:ChatCell x:Name="Chat1" IsEnabled="False"/>
             </ListViewItem>
             <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
-                <cells:ChatCell x:Name="Chat2"/>
+                <cells:ChatCell x:Name="Chat2" IsEnabled="False"/>
             </ListViewItem>
             <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
-                <cells:ChatCell x:Name="Chat3"/>
+                <cells:ChatCell x:Name="Chat3" IsEnabled="False"/>
             </ListViewItem>
             <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
-                <cells:ChatCell x:Name="Chat4"/>
+                <cells:ChatCell x:Name="Chat4" IsEnabled="False"/>
             </ListViewItem>
             <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
-                <cells:ChatCell x:Name="Chat5"/>
+                <cells:ChatCell x:Name="Chat5" IsEnabled="False"/>
             </ListViewItem>
             <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
-                <cells:ChatCell x:Name="Chat6"/>
+                <cells:ChatCell x:Name="Chat6" IsEnabled="False"/>
             </ListViewItem>
             <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
-                <cells:ChatCell x:Name="Chat7"/>
+                <cells:ChatCell x:Name="Chat7" IsEnabled="False"/>
             </ListViewItem>
         </ListView>
         

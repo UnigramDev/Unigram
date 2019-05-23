@@ -61,7 +61,7 @@ namespace Unigram.Common
             var path = SettingsService.Current.Appearance.RequestedThemePath;
             if (string.IsNullOrEmpty(path) || !File.Exists(path))
             {
-                Update();
+                Update(SettingsService.Current.Appearance.RequestedTheme);
                 return;
             }
 
@@ -109,18 +109,22 @@ namespace Unigram.Common
                 }
             }
 
-            Update(flags);
+            Update(flags == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark);
 
             MergedDictionaries[0].MergedDictionaries.Clear();
             MergedDictionaries[0].MergedDictionaries.Add(dict);
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                try
+                {
+                    TLWindowContext.GetForCurrentView().UpdateTitleBar();
+                }
+                catch { }
+            }
         }
 
-        public void Update()
-        {
-            Update(SettingsService.Current.Appearance.RequestedTheme == ElementTheme.Light ? TelegramTheme.Light : TelegramTheme.Dark);
-        }
-
-        public void Update(TelegramTheme flags)
+        public void Update(ElementTheme flags)
         {
             try
             {
@@ -129,7 +133,14 @@ namespace Unigram.Common
                 ThemeDictionaries.Clear();
                 MergedDictionaries.Clear();
 
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+                if (flags == ElementTheme.Default)
+                {
+                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeSystem.xaml") });
+                }
+                else
+                {
+                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+                }
             }
             catch { }
         }
@@ -138,7 +149,7 @@ namespace Unigram.Common
         {
             if (custom == null)
             {
-                Update();
+                Update(SettingsService.Current.Appearance.RequestedTheme);
                 return;
             }
 
@@ -167,6 +178,11 @@ namespace Unigram.Common
 
                 MergedDictionaries[0].MergedDictionaries.Clear();
                 MergedDictionaries[0].MergedDictionaries.Add(dict);
+
+                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+                {
+                    TLWindowContext.GetForCurrentView().UpdateTitleBar();
+                }
             }
             catch { }
         }

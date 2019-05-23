@@ -92,6 +92,8 @@ namespace Unigram.Services
                 result.Add(await DeserializeAsync(file, false));
             }
 
+            result.Add(new ThemeSystemInfo { Name = "Use system theme" });
+
             return result;
         }
 
@@ -200,7 +202,14 @@ namespace Unigram.Services
 
         public async Task SetThemeAsync(ThemeInfoBase info)
         {
-            _settingsService.Appearance.RequestedTheme = info.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark;
+            if (info is ThemeSystemInfo)
+            {
+                _settingsService.Appearance.RequestedTheme = ElementTheme.Default;
+            }
+            else
+            {
+                _settingsService.Appearance.RequestedTheme = info.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark;
+            }
 
             if (info is ThemeCustomInfo custom)
             {
@@ -211,7 +220,7 @@ namespace Unigram.Services
                 _settingsService.Appearance.RequestedThemePath = null;
             }
 
-            var flags = _settingsService.Appearance.RequestedTheme;
+            var flags = _settingsService.Appearance.GetCalculatedElementTheme();
 
             foreach (TLWindowContext window in WindowContext.ActiveWrappers)
             {
@@ -2707,6 +2716,11 @@ namespace Unigram.Services
     }
 
     public class ThemeBundledInfo : ThemeInfoBase
+    {
+        public override bool IsOfficial => true;
+    }
+
+    public class ThemeSystemInfo : ThemeInfoBase
     {
         public override bool IsOfficial => true;
     }

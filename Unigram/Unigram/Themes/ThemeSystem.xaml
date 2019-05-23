@@ -8,6 +8,7 @@
             <!-- Common -->
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FF000000"/>
             <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
+            <StaticResource x:Key="ContentDialogBackground" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}"/>
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
@@ -585,7 +586,7 @@
             <StaticResource x:Key="AppBarHighContrastBorder" ResourceKey="SystemControlForegroundTransparentBrush" />
             <!-- Resources for Windows.UI.Xaml.Controls.ContentDialog -->
             <StaticResource x:Key="ContentDialogForeground" ResourceKey="SystemControlPageTextBaseHighBrush" />
-            <StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemControlPageBackgroundAltHighBrush" />
+            <!--<StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemControlPageBackgroundAltHighBrush" />-->
             <StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
             <!-- Resources for AccentButtonStyle -->
             <StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlForegroundAccentBrush" />
@@ -1229,6 +1230,7 @@
             <!-- Common -->
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FFFFFFFF"/>
             <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
+            <StaticResource x:Key="ContentDialogBackground" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
 
             <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{StaticResource SystemBaseHighColor}"/>
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
@@ -1807,7 +1809,7 @@
             <StaticResource x:Key="AppBarHighContrastBorder" ResourceKey="SystemControlForegroundTransparentBrush" />
             <!-- Resources for Windows.UI.Xaml.Controls.ContentDialog -->
             <StaticResource x:Key="ContentDialogForeground" ResourceKey="SystemControlPageTextBaseHighBrush" />
-            <StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemControlPageBackgroundAltHighBrush" />
+            <!--<StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemControlPageBackgroundAltHighBrush" />-->
             <StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
             <!-- Resources for AccentButtonStyle -->
             <StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlForegroundAccentBrush" />
