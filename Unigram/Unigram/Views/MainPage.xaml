@@ -42,8 +42,8 @@
 
                             <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
 
-                            <ContentControl Content="{TemplateBinding Header}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
-                            <ContentControl Content="{TemplateBinding PageHeader}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding Header}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding PageHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
 
                             <Grid x:Name="DetailPresenter">
                                 <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
