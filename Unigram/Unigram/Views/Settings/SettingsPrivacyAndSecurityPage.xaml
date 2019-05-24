@@ -60,6 +60,10 @@
                 
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource PrivacyTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <!--<controls:BadgeButton
+                        Content="{CustomResource This is going to be a secret for a while}"
+                        Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
+                        Click="StatusTimestamp_Click"/>-->
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyLastSeen}"
                         Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
@@ -76,10 +80,6 @@
                         Content="{CustomResource Calls}"
                         Badge="{x:Bind ViewModel.AllowCallsRules.Badge, Mode=OneWay}"
                         Click="PhoneCall_Click"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource PrivacyP2P}"
-                        Badge="{x:Bind ViewModel.AllowP2PCallsRules.Badge, Mode=OneWay}"
-                        Click="P2PCall_Click"/>
                     <controls:BadgeButton
                         Content="{CustomResource GroupsAndChannels}"
                         Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"

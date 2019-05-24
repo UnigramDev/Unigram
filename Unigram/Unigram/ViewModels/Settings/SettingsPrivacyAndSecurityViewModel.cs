@@ -25,10 +25,9 @@ namespace Unigram.ViewModels.Settings
         private readonly SettingsPrivacyShowPhotoViewModel _showPhotoRules;
         private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
-        private readonly SettingsPrivacyAllowP2PCallsViewModel _allowP2PCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowP2PCallsViewModel p2pCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
@@ -38,7 +37,6 @@ namespace Unigram.ViewModels.Settings
             _showPhotoRules = showPhoto;
             _showStatusRules = statusTimestamp;
             _allowCallsRules = phoneCall;
-            _allowP2PCallsRules = p2pCall;
             _allowChatInvitesRules = chatInvite;
 
             PasscodeCommand = new RelayCommand(PasscodeExecute);
@@ -50,7 +48,6 @@ namespace Unigram.ViewModels.Settings
 
             Children.Add(_showStatusRules);
             Children.Add(_allowCallsRules);
-            Children.Add(_allowP2PCallsRules);
             Children.Add(_allowChatInvitesRules);
 
             aggregator.Subscribe(this);
@@ -77,25 +74,12 @@ namespace Unigram.ViewModels.Settings
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override IDispatcherWrapper Dispatcher
-        {
-            get => base.Dispatcher;
-            set
-            {
-                base.Dispatcher = value;
-                _showStatusRules.Dispatcher = value;
-                _allowCallsRules.Dispatcher = value;
-                _allowChatInvitesRules.Dispatcher = value;
-            }
-        }
-
         #region Properties
 
         public SettingsPrivacyShowForwardedViewModel ShowForwardedRules => _showForwardedRules;
         public SettingsPrivacyShowPhotoViewModel ShowPhotoRules => _showPhotoRules;
         public SettingsPrivacyShowStatusViewModel ShowStatusRules => _showStatusRules;
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
-        public SettingsPrivacyAllowP2PCallsViewModel AllowP2PCallsRules => _allowP2PCallsRules;
         public SettingsPrivacyAllowChatInvitesViewModel AllowChatInvitesRules => _allowChatInvitesRules;
 
         private int _accountTTL;

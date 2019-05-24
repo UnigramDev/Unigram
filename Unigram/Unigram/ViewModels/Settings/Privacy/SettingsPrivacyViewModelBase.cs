@@ -16,7 +16,7 @@ using Unigram.ViewModels.Settings.Privacy;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsPrivacyViewModelBase : TLViewModelBase, IHandle<UpdateUserPrivacySettingRules>
+    public class SettingsPrivacyViewModelBase : TLMultipleViewModelBase, IHandle<UpdateUserPrivacySettingRules>
     {
         private readonly UserPrivacySetting _inputKey;
 
@@ -41,7 +41,7 @@ namespace Unigram.ViewModels.Settings
                 UpdatePrivacyAsync();
             }
 
-            return Task.CompletedTask;
+            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         //public void Handle(TLUpdatePrivacy update)
