@@ -190,7 +190,7 @@ namespace Unigram.Controls
                 background.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
                 header.Arrange(new Rect(result, title.DesiredSize.Height, finalSize.Width - result, finalSize.Height));
 
-                master.Arrange(new Rect(0, title.DesiredSize.Height, result, finalSize.Height));
+                master.Arrange(new Rect(0, title.DesiredSize.Height, result, finalSize.Height - title.DesiredSize.Height));
                 detail.Arrange(new Rect(result, title.DesiredSize.Height + header.DesiredSize.Height, finalSize.Width - result, finalSize.Height - title.DesiredSize.Height - header.DesiredSize.Height));
 
                 grip.Arrange(new Rect(result, 0, 12, finalSize.Height));
@@ -215,7 +215,7 @@ namespace Unigram.Controls
 
         private void Grip_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(Children[2] as UserControl, "Pressed", false);
+            VisualStateManager.GoToState(Children[5] as UserControl, "Pressed", false);
         }
 
         private void Grip_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
