@@ -72,6 +72,7 @@ namespace Unigram.ViewModels
             CopyPhoneCommand = new RelayCommand(CopyPhoneExecute);
             CopyDescriptionCommand = new RelayCommand(CopyDescriptionExecute);
             CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
+            CopyUsernameLinkCommand = new RelayCommand(CopyUsernameLinkExecute);
             AddCommand = new RelayCommand(AddExecute);
             EditCommand = new RelayCommand(EditExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
@@ -693,6 +694,41 @@ namespace Unigram.ViewModels
 
                 var dataPackage = new DataPackage();
                 dataPackage.SetText($"@{user.Username}");
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+        }
+
+        public RelayCommand CopyUsernameLinkCommand { get; }
+        private void CopyUsernameLinkExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup super)
+            {
+                var supergroup = CacheService.GetSupergroup(super.SupergroupId);
+                if (supergroup == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(MeUrlPrefixConverter.Convert(CacheService, supergroup.Username));
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+            else
+            {
+                var user = CacheService.GetUser(chat);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(MeUrlPrefixConverter.Convert(CacheService, user.Username));
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }

@@ -626,6 +626,11 @@
                                                 <FontIcon Glyph="&#xE8C8;"/>
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
+                                        <MenuFlyoutItem Text="{CustomResource CopyLink}" Command="{x:Bind ViewModel.CopyUsernameLinkCommand}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE71B;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Button.ContextFlyout>
                             </controls:BadgeButton>
