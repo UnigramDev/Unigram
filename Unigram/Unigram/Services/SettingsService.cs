@@ -23,6 +23,7 @@ namespace Unigram.Services
         AppearanceSettings Appearance { get; }
         WallpaperSettings Wallpaper { get; }
         PasscodeLockSettings PasscodeLock { get; }
+        PlaybackSettings Playback { get; }
 
         int UserId { get; set; }
 
@@ -166,8 +167,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (8UL << 32) | (2411UL << 16);
-        public const string CurrentChangelog = "• More emoji sets: you can now download them from Chat Settings.\r\n• Search emoji by keywords from the emoji panel.\r\n• Added emoji skin tone selector.\r\n• You can now start typing anywhere to compose a message, or, if you don't have any open chat, to trigger a search.";
+        public const ulong CurrentVersion = (3UL << 48) | (9UL << 32) | (2460UL << 16);
+        public const string CurrentChangelog = "• (Almost) full featured in-app music player.\r\n• New shiny system tray icon (You can disable it from Settings > Advanced).";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -252,6 +253,15 @@ namespace Unigram.Services
             get
             {
                 return _passcodeLock = _passcodeLock ?? new PasscodeLockSettings();
+            }
+        }
+
+        private static PlaybackSettings _playback;
+        public PlaybackSettings Playback
+        {
+            get
+            {
+                return _playback = _playback ?? new PlaybackSettings(_local);
             }
         }
 

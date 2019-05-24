@@ -66,6 +66,7 @@ namespace Unigram.Services
     {
         private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
+        private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
         private MediaPlayer _mediaPlayer;
@@ -87,6 +88,7 @@ namespace Unigram.Services
         {
             _protoService = protoService;
             _cacheService = cacheService;
+            _settingsService = settingsService;
             _aggregator = aggregator;
 
             _mediaPlayer = new MediaPlayer();
@@ -98,6 +100,13 @@ namespace Unigram.Services
 
             _transport = _mediaPlayer.SystemMediaTransportControls;
             _transport.ButtonPressed += Transport_ButtonPressed;
+
+            _transport.AutoRepeatMode = _settingsService.Playback.RepeatMode;
+            _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
+                ? null
+                : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List
+                ? true
+                : (bool?)false;
 
             _mapping = new Dictionary<string, PlaybackItem>();
             _inverse = new Dictionary<string, Deferral>();
@@ -160,17 +169,20 @@ namespace Unigram.Services
                 {
                     _mediaPlayer.Play();
                 }
-                else if (_isRepeatEnabled == true)
-                {
-                    _mediaPlayer.Source = _items[0].Source;
-                    _mediaPlayer.Play();
-                }
                 else
                 {
                     var index = _items.IndexOf(item);
                     if (index == -1 || index == _items.Count - 1)
                     {
-                        Clear();
+                        if (_isRepeatEnabled == true)
+                        {
+                            _mediaPlayer.Source = _items[0].Source;
+                            _mediaPlayer.Play();
+                        }
+                        else
+                        {
+                            Clear();
+                        }
                     }
                     else
                     {
@@ -375,11 +387,12 @@ namespace Unigram.Services
             set
             {
                 _isRepeatEnabled = value;
-                _transport.AutoRepeatMode = value == true
-                    ? MediaPlaybackAutoRepeatMode.List
-                    : value == null
-                    ? MediaPlaybackAutoRepeatMode.Track
-                    : MediaPlaybackAutoRepeatMode.None;
+                _transport.AutoRepeatMode =
+                    _settingsService.Playback.RepeatMode = value == true
+                        ? MediaPlaybackAutoRepeatMode.List
+                        : value == null
+                        ? MediaPlaybackAutoRepeatMode.Track
+                        : MediaPlaybackAutoRepeatMode.None;
             }
         }
 

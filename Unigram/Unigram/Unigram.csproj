@@ -503,6 +503,7 @@
     <Compile Include="Services\ProtoService.cs" />
     <Compile Include="Services\SessionService.cs" />
     <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\Settings\PlaybackSettings.cs" />
     <Compile Include="Services\Settings\StickersSettings.cs" />
     <Compile Include="Services\Settings\VoIPSettings.cs" />
     <Compile Include="Services\Settings\WallpaperSettings.cs" />
