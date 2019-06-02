@@ -735,7 +735,7 @@ namespace Unigram.ViewModels
             switch (_filter)
             {
                 case ChatTypeFilterMode.Unmuted:
-                    return chat.NotificationSettings.MuteFor > 0 ? false : true;
+                    return _cacheService.GetNotificationSettingsMuteFor(chat) > 0 ? false : true;
                 case ChatTypeFilterMode.Unread:
                     return chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread;
                 case ChatTypeFilterMode.Users:
