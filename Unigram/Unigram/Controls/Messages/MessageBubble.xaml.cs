@@ -283,16 +283,44 @@ namespace Unigram.Controls.Messages
 
             if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
             {
-                var sender = message.GetSenderUser();
+                if (message.SenderUserId != 0)
+                {
+                    var sender = message.GetSenderUser();
 
-                var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(new Run { Text = sender?.GetFullName() });
-                hyperlink.UnderlineStyle = UnderlineStyle.None;
-                hyperlink.Foreground = PlaceholderHelper.GetBrush(message.SenderUserId);
-                hyperlink.Click += (s, args) => From_Click(message);
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = sender?.GetFullName() });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = PlaceholderHelper.GetBrush(message.SenderUserId);
+                    hyperlink.Click += (s, args) => From_Click(message);
 
-                paragraph.Inlines.Add(hyperlink);
-                shown = true;
+                    paragraph.Inlines.Add(hyperlink);
+                    shown = true;
+                }
+                else if (message.ForwardInfo != null)
+                {
+                    var title = string.Empty;
+                    if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                    {
+                        title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    }
+                    else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                    {
+                        title = message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
+                    }
+                    else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                    {
+                        title = fromHiddenUser.SenderName;
+                    }
+
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = title ?? string.Empty });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    //hyperlink.Foreground = Convert.Bubble(message.FwdFrom?.FromId ?? message.FwdFrom?.ChannelId ?? 0);
+                    hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                    shown = true;
+                }
             }
             else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup)
             {
