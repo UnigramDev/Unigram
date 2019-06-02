@@ -460,6 +460,7 @@ namespace Unigram.Controls.Chats
             public event EventHandler RecordingStopped;
             public event EventHandler RecordingTooShort;
 
+            [ThreadStatic]
             private static Recorder _current;
             public static Recorder Current => _current = _current ?? new Recorder();
 
