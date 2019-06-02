@@ -762,7 +762,13 @@ namespace Unigram.Views
 
         public void Scroll(bool up, bool navigate)
         {
-            var index = ChatsList.SelectedIndex;
+            var already = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == ViewModel.Chats.SelectedItem);
+            if (already == null)
+            {
+                return;
+            }
+
+            var index = ViewModel.Chats.Items.IndexOf(already);
             if (up)
             {
                 index--;
