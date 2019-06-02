@@ -11,7 +11,7 @@
     <br>
     <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Download</a>
     &middot;
-    <a href="https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ">Insiders Group</a>
+    <a href="https://t.me/unigraminsiders">Insiders Group</a>
   </p>
 </p>
 
