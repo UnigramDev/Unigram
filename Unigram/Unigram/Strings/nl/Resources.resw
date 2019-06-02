@@ -580,8 +580,26 @@
   <data name="AddMember" xml:space="preserve">
     <value>Lid toevoegen</value>
   </data>
+  <data name="AddMembersAlertCountText" xml:space="preserve">
+    <value>{0} echt toevoegen aan **{1}**?</value>
+  </data>
+  <data name="AddMembersAlertNamesText" xml:space="preserve">
+    <value>{0} echt toevoegen aan **{1}**?</value>
+  </data>
+  <data name="AddMembersAlertTitle" xml:space="preserve">
+    <value>Voeg {0} toe</value>
+  </data>
+  <data name="AddMembersForwardMessages" xml:space="preserve">
+    <value>Nieuwe leden krijgen de laatste 100 berichten te zien.</value>
+  </data>
   <data name="AddMutual" xml:space="preserve">
     <value>Contacten aan je kanaal toevoegen</value>
+  </data>
+  <data name="AddOneMemberAlertTitle" xml:space="preserve">
+    <value>Lid toevoegen</value>
+  </data>
+  <data name="AddOneMemberForwardMessages" xml:space="preserve">
+    <value>Laat de laatste 100 berichten aan **{0}** zien.</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>Proxy toevoegen</value>
@@ -853,6 +871,9 @@
   <data name="AreYouSureBlockContact" xml:space="preserve">
     <value>Weet je zeker dat je deze persoon wilt blokkeren?</value>
   </data>
+  <data name="AreYouSureBlockContact2" xml:space="preserve">
+    <value>**{0}** echt blokkeren?</value>
+  </data>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
     <value>Echt alle Cloud-conceptberichten wissen?</value>
   </data>
@@ -946,6 +967,9 @@ Let op! Als je uitlogt worden al je geheime chats verwijderd.</value>
   </data>
   <data name="AreYouSureSecretChat" xml:space="preserve">
     <value>Weet je zeker dat je een geheime chat wilt starten?</value>
+  </data>
+  <data name="AreYouSureSecretChatTitle" xml:space="preserve">
+    <value>Geheime chat</value>
   </data>
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>Alle apparaten behalve het huidige apparaat uitloggen?</value>
@@ -1201,6 +1225,9 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
   <data name="AutoLockInfo" xml:space="preserve">
     <value>Vraag om toegangscode indien afwezig</value>
   </data>
+  <data name="AutoNightAdaptive" xml:space="preserve">
+    <value>Adaptief</value>
+  </data>
   <data name="AutoNightAutomatic" xml:space="preserve">
     <value>Automatisch</value>
   </data>
@@ -1357,8 +1384,32 @@ Zonsopkomst: {1}</value>
   <data name="BlockContact" xml:space="preserve">
     <value>Blokkeer</value>
   </data>
+  <data name="BlockUser" xml:space="preserve">
+    <value>Blokkeer gebruiker</value>
+  </data>
   <data name="BlockedUsers" xml:space="preserve">
     <value>Geblokkeerd</value>
+  </data>
+  <data name="BlockedUsersCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BlockedUsersCountOne" xml:space="preserve">
+    <value>{0} geblokkeerde gebruiker</value>
+  </data>
+  <data name="BlockedUsersCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BlockedUsersCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BlockedUsersCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BlockedUsersCountOther" xml:space="preserve">
+    <value>{0} geblokkeerde gebruikers</value>
+  </data>
+  <data name="BlockedUsersInfo" xml:space="preserve">
+    <value>Geblokkeerde gebruikers kunnen geen contact met je opnemen en zien je laatst-gezien-tijd niet.</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Blauw</value>
@@ -1419,6 +1470,9 @@ Zonsopkomst: {1}</value>
   </data>
   <data name="Brown" xml:space="preserve">
     <value>Bruin</value>
+  </data>
+  <data name="BuiltInThemes" xml:space="preserve">
+    <value>Ingebouwde thema's</value>
   </data>
   <data name="BytesReceived" xml:space="preserve">
     <value>Ontvangen bytes</value>
@@ -1679,6 +1733,9 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   <data name="ChannelDeletedUndo" xml:space="preserve">
     <value>Kanaal verwijderd</value>
   </data>
+  <data name="ChannelDiscuss" xml:space="preserve">
+    <value>Discussiëren</value>
+  </data>
   <data name="ChannelEdit" xml:space="preserve">
     <value>Wijzig</value>
   </data>
@@ -1933,6 +1990,12 @@ De minimale lengte is 5 karakters.</value>
   <data name="ChatHintsDelete" xml:space="preserve">
     <value>{0} uit suggesties verwijderen?</value>
   </data>
+  <data name="ChatHintsDeleteAlert" xml:space="preserve">
+    <value>**{0}** echt uit suggesties verwijderen?</value>
+  </data>
+  <data name="ChatHintsDeleteAlertTitle" xml:space="preserve">
+    <value>Suggestie verwijderen</value>
+  </data>
   <data name="ChatHistory" xml:space="preserve">
     <value>Geschiedenis voor nieuwe leden</value>
   </data>
@@ -2179,6 +2242,12 @@ De minimale lengte is 5 karakters.</value>
   <data name="ClearSearch" xml:space="preserve">
     <value>Zoekgeschiedenis wissen?</value>
   </data>
+  <data name="ClearSearchAlert" xml:space="preserve">
+    <value>Zoekgeschiedenis echt wissen?</value>
+  </data>
+  <data name="ClearSearchAlertTitle" xml:space="preserve">
+    <value>Zoekgeschiedenis wissen</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Sluit</value>
   </data>
@@ -2217,6 +2286,9 @@ De minimale lengte is 5 karakters.</value>
   </data>
   <data name="ColorTheme" xml:space="preserve">
     <value>Kleurenthema</value>
+  </data>
+  <data name="ColorThemes" xml:space="preserve">
+    <value>Kleurenthema's</value>
   </data>
   <data name="ColorViolet" xml:space="preserve">
     <value>Paars</value>
@@ -2433,6 +2505,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="CustomShareSettingsHelp" xml:space="preserve">
     <value>Deze instelling overschrijft de bovenstaande.</value>
   </data>
+  <data name="CustomThemes" xml:space="preserve">
+    <value>Aangepaste thema's</value>
+  </data>
   <data name="DataSettings" xml:space="preserve">
     <value>Data en opslag</value>
   </data>
@@ -2505,6 +2580,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="DebugMenuImportContacts" xml:space="preserve">
     <value>Contacten importeren</value>
   </data>
+  <data name="DebugMenuReadAllDialogs" xml:space="preserve">
+    <value>Alles als gelezen</value>
+  </data>
   <data name="DebugMenuReloadContacts" xml:space="preserve">
     <value>Contacten verversen</value>
   </data>
@@ -2547,8 +2625,14 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>Account verwijderen</value>
   </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>Alles verwijderen</value>
+  </data>
   <data name="DeleteAllFrom" xml:space="preserve">
     <value>Alles verwijderen van {0}</value>
+  </data>
+  <data name="DeleteAllMessagesAlert" xml:space="preserve">
+    <value>Let op! Hiermee verwijder je **alle berichten** in deze chat voor **beide** deelnemers.</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Groep verwijderen en verlaten</value>
@@ -2684,6 +2768,67 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>Spraakbericht weggooien</value>
+  </data>
+  <data name="DiscussChannel" xml:space="preserve">
+    <value>kanaal</value>
+  </data>
+  <data name="Discussion" xml:space="preserve">
+    <value>Discussie</value>
+  </data>
+  <data name="DiscussionChannelGroupSetHelp" xml:space="preserve">
+    <value>Een link naar **{0}**  zal worden weergegeven aan alle abonnees in het onderpaneel.</value>
+  </data>
+  <data name="DiscussionChannelHelp" xml:space="preserve">
+    <value>Kies een groepschat voor discussie die zal worden weergegeven in je kanaal.</value>
+  </data>
+  <data name="DiscussionChannelHelp2" xml:space="preserve">
+    <value>Alles wat je plaatst in het kanaal zal worden doorgestuurd naar deze groep.</value>
+  </data>
+  <data name="DiscussionCreateGroup" xml:space="preserve">
+    <value>Maak een nieuwe groep</value>
+  </data>
+  <data name="DiscussionGroupHelp" xml:space="preserve">
+    <value>**{0}** koppelt de groep als discussiegroep</value>
+  </data>
+  <data name="DiscussionGroupHelp2" xml:space="preserve">
+    <value>Alle nieuwe berichten die je plaatst in dit kanaal worden doorgestuurd naar de groep.</value>
+  </data>
+  <data name="DiscussionInfo" xml:space="preserve">
+    <value>Voeg een groepschat toe voor opmerkingen.</value>
+  </data>
+  <data name="DiscussionLinkGroup" xml:space="preserve">
+    <value>Groep koppelen</value>
+  </data>
+  <data name="DiscussionLinkGroupAlertHistory" xml:space="preserve">
+    <value>"Chatgeschiedenis voor nieuwe leden" zal op zichtbaar worden ingesteld.</value>
+  </data>
+  <data name="DiscussionLinkGroupPrivateAlert" xml:space="preserve">
+    <value>**{0}** echt de discussiegroep voor **{1}** maken?
+
+Alle leden van deze groep kunnen berichten in het kanaal zien.</value>
+  </data>
+  <data name="DiscussionLinkGroupPublicAlert" xml:space="preserve">
+    <value>**{0}** echt de discussiegroep voor **{1}** maken?</value>
+  </data>
+  <data name="DiscussionLinkGroupPublicPrivateAlert" xml:space="preserve">
+    <value>**{0}** echt de discussiegroep voor **{1}** maken?
+
+Alle abonnees van het kanaal kunnen de berichten in deze groep zien.</value>
+  </data>
+  <data name="DiscussionUnlink" xml:space="preserve">
+    <value>Ontkoppel</value>
+  </data>
+  <data name="DiscussionUnlinkChannel" xml:space="preserve">
+    <value>Kanaal ontkoppelen</value>
+  </data>
+  <data name="DiscussionUnlinkChannelAlert" xml:space="preserve">
+    <value>**{0}** echt ontkoppelen van dit kanaal?</value>
+  </data>
+  <data name="DiscussionUnlinkGroup" xml:space="preserve">
+    <value>Groep ontkoppelen</value>
+  </data>
+  <data name="DiscussionUnlinkGroupAlert" xml:space="preserve">
+    <value>**{0}** echt ontkoppelen van deze groep?</value>
   </data>
   <data name="DocumentsTitle" xml:space="preserve">
     <value>Gedeelde bestanden</value>
@@ -2975,6 +3120,12 @@ Lees meer op telegram.org</value>
   <data name="EventLogChangedGroupLink" xml:space="preserve">
     <value>link door un1 gewijzigd:</value>
   </data>
+  <data name="EventLogChangedLinkedChannel" xml:space="preserve">
+    <value>un1 heeft deze groep aan un2 gekoppeld</value>
+  </data>
+  <data name="EventLogChangedLinkedGroup" xml:space="preserve">
+    <value>un1 heeft un2 de discussiegroep van dit kanaal gemaakt.</value>
+  </data>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>groepsstickers door un1 gewijzigd</value>
   </data>
@@ -3180,6 +3331,12 @@ voor je zoekopdracht.</value>
   </data>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
     <value>groepslink door un1 verwijderd</value>
+  </data>
+  <data name="EventLogRemovedLinkedChannel" xml:space="preserve">
+    <value>un1 heeft deze groep van un2 ontkoppeld</value>
+  </data>
+  <data name="EventLogRemovedLinkedGroup" xml:space="preserve">
+    <value>un1 heeft de discussiegroep verwijderd un2</value>
   </data>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>groepsstickers door un1 verwijderd</value>
@@ -4173,6 +4330,9 @@ Deze link werkt alleen voor leden van deze chat.</value>
   <data name="LinkPreview" xml:space="preserve">
     <value>Link-voorbeeld</value>
   </data>
+  <data name="LinkedChannel" xml:space="preserve">
+    <value>Gekoppeld kanaal</value>
+  </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>Gedeelde links</value>
   </data>
@@ -4656,7 +4816,7 @@ De minimale lengte is 5 karakters.</value>
     <value>Je hebt nog geen oproepen gedaan.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
-    <value>Nog geen chats</value>
+    <value>Welkom bij Telegram</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
     <value>Begin een gesprek door op de opstelknop rechtsonder te drukken.</value>
@@ -5303,6 +5463,18 @@ Het Telegram-team</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>URL {0} openen?</value>
+  </data>
+  <data name="OpenUrlAlert2" xml:space="preserve">
+    <value>Wil je {0} openen?</value>
+  </data>
+  <data name="OpenUrlOption1" xml:space="preserve">
+    <value>Log in op {0} als {1}</value>
+  </data>
+  <data name="OpenUrlOption2" xml:space="preserve">
+    <value>Sta {0} toe om me berichten te sturen</value>
+  </data>
+  <data name="OpenUrlTitle" xml:space="preserve">
+    <value>Link openen</value>
   </data>
   <data name="OptionZero" xml:space="preserve">
     <value/>
@@ -6317,6 +6489,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="PinMessageAlertChat" xml:space="preserve">
     <value>Wil je dit bericht vastzetten bovenaan de chat?</value>
   </data>
+  <data name="PinMessageAlertTitle" xml:space="preserve">
+    <value>Bericht vastzetten</value>
+  </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Alle leden informeren</value>
   </data>
@@ -6401,6 +6576,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="PriorityInfo" xml:space="preserve">
     <value>Meldingen met hoge prioriteit werken ook als je telefoon op "Niet storen" staat.</value>
   </data>
+  <data name="PrivacyAddAnException" xml:space="preserve">
+    <value>Voeg gebruikers of groepen toe.</value>
+  </data>
   <data name="PrivacyAdvanced" xml:space="preserve">
     <value>Geavanceerd</value>
   </data>
@@ -6424,6 +6602,9 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   </data>
   <data name="PrivacyDeleteCloudDrafts" xml:space="preserve">
     <value>Verwijder alle Cloud-conceptberichten</value>
+  </data>
+  <data name="PrivacyExceptions" xml:space="preserve">
+    <value>Uitzonderingen</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>Sorry, te veel verzoeken. Momenteel is het niet mogelijk om de privacyinstellingen te wijzigen, even geduld alsjeblieft.</value>
@@ -6458,6 +6639,12 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   <data name="PrivacyP2P" xml:space="preserve">
     <value>Peer-to-Peer in oproepen</value>
   </data>
+  <data name="PrivacyP2P2" xml:space="preserve">
+    <value>Gebruik Peer-to-Peer met</value>
+  </data>
+  <data name="PrivacyP2PHeader" xml:space="preserve">
+    <value>Peer-to-Peer</value>
+  </data>
   <data name="PrivacyPayments" xml:space="preserve">
     <value>Betalingen</value>
   </data>
@@ -6469,6 +6656,18 @@ Betalingen gaan direct naar de ontwikkelaar van {0}. Telegram kan geen garanties
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>Je kunt je verzendinformatie wissen en alle betalingsproviders opdracht geven om je bewaarde creditcards te verwijderen. Je creditcardgegevens worden nooit opgeslagen door Telegram.</value>
+  </data>
+  <data name="PrivacyPhone" xml:space="preserve">
+    <value>Telefoonnummer</value>
+  </data>
+  <data name="PrivacyPhoneInfo" xml:space="preserve">
+    <value>Gebruikers die je nummer al hebben opgeslagen in contacten zien je nummer op ook Telegram.</value>
+  </data>
+  <data name="PrivacyPhoneInfo2" xml:space="preserve">
+    <value>Je kunt een gebruiker of groep toevoegen als uitzondering op de instelling hierboven.</value>
+  </data>
+  <data name="PrivacyPhoneTitle" xml:space="preserve">
+    <value>Wie kan mijn telefoonnummer zien?</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Privacybeleid</value>
@@ -6745,11 +6944,17 @@ Je kunt dit proces ieder moment annuleren.</value>
   <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
     <value>Instellingen voor automatisch downloaden echt resetten?</value>
   </data>
+  <data name="ResetAutomaticMediaDownloadAlertTitle" xml:space="preserve">
+    <value>Instellingen resetten</value>
+  </data>
   <data name="ResetChatBackgrounds" xml:space="preserve">
     <value>Chatachtergronden resetten</value>
   </data>
   <data name="ResetChatBackgroundsAlert" xml:space="preserve">
     <value>Echt alle chatachtergronden resetten?</value>
+  </data>
+  <data name="ResetChatBackgroundsAlertTitle" xml:space="preserve">
+    <value>Chat achtergrond resetten</value>
   </data>
   <data name="ResetChatBackgroundsInfo" xml:space="preserve">
     <value>Verwijder alle geüploade chatachtergronden en herstel de voorgeïnstalleerde achtergronden.</value>
@@ -6775,13 +6980,16 @@ Al je chats, berichten en data gaan verloren als je je account reset.</value>
     <value>Alle meldingsinstellingen herstellen naar de standaardwaarden?</value>
   </data>
   <data name="ResetNotificationsText" xml:space="preserve">
-    <value>Meldingen gereset</value>
+    <value>Alle meldingen gereset</value>
   </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>Gegevens opnieuw instellen</value>
   </data>
   <data name="ResetStatisticsAlert" xml:space="preserve">
     <value>Gebruiksgegevens opnieuw instellen?</value>
+  </data>
+  <data name="ResetStatisticsAlertTitle" xml:space="preserve">
+    <value>Statistieken resetten</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
     <value>We hebben een herstelcode naar je opgegeven e-mailadres gestuurd:
@@ -6902,6 +7110,12 @@ Het kan zijn dat je de app moet herstarten voordat dit actief is.</value>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Emoji zoeken</value>
   </data>
+  <data name="SearchForPeople" xml:space="preserve">
+    <value>Zoek mensen</value>
+  </data>
+  <data name="SearchForPeopleAndGroups" xml:space="preserve">
+    <value>Zoek naar gebruikers en groepen</value>
+  </data>
   <data name="SearchFriends" xml:space="preserve">
     <value>Contacten zoeken</value>
   </data>
@@ -7006,6 +7220,9 @@ Het kan zijn dat je de app moet herstarten voordat dit actief is.</value>
   </data>
   <data name="SelectContact" xml:space="preserve">
     <value>Contact kiezen</value>
+  </data>
+  <data name="SelectContacts" xml:space="preserve">
+    <value>Kies contacten</value>
   </data>
   <data name="SelectFile" xml:space="preserve">
     <value>Kies een bestand</value>
@@ -7315,6 +7532,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="ShowAllMedia" xml:space="preserve">
     <value>Alle media weergeven</value>
   </data>
+  <data name="ShowAllThemes" xml:space="preserve">
+    <value>Alle thema's weergeven</value>
+  </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>In chat weergeven</value>
   </data>
@@ -7380,6 +7600,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Standaard</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>Geheime chat starten</value>
@@ -7646,6 +7869,9 @@ met onze *Gebruiksvoorwaarden*.</value>
   <data name="Theme" xml:space="preserve">
     <value>Thema</value>
   </data>
+  <data name="ThemeArcticBlue" xml:space="preserve">
+    <value>Arctisch Blauw</value>
+  </data>
   <data name="ThemeBlue" xml:space="preserve">
     <value>Blauw</value>
   </data>
@@ -7654,6 +7880,9 @@ met onze *Gebruiksvoorwaarden*.</value>
   </data>
   <data name="ThemeDarkBlue" xml:space="preserve">
     <value>Donkerblauw</value>
+  </data>
+  <data name="ThemeGraphite" xml:space="preserve">
+    <value>Grafiet</value>
   </data>
   <data name="ThemeInfo" xml:space="preserve">
     <value>Kies aangepast kleurenthema</value>
@@ -7811,6 +8040,9 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>Wil je dit bericht losmaken?</value>
   </data>
+  <data name="UnpinMessageAlertTitle" xml:space="preserve">
+    <value>Bericht losmaken</value>
+  </data>
   <data name="UnreadMessages" xml:space="preserve">
     <value>Ongelezen berichten</value>
   </data>
@@ -7949,6 +8181,9 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   <data name="UserBioInfo" xml:space="preserve">
     <value>Je kunt hier wat over jezelf vertellen. Iedereen die je profiel opent kan deze tekst zien.</value>
   </data>
+  <data name="UserBlocked" xml:space="preserve">
+    <value>Gebruiker geblokkeerd</value>
+  </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>Verwijderd door {0}</value>
   </data>
@@ -8039,6 +8274,9 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Voor altijd</value>
   </data>
+  <data name="UserUnblocked" xml:space="preserve">
+    <value>Gebruiker gedeblokkeerd</value>
+  </data>
   <data name="Username" xml:space="preserve">
     <value>Gebruikersnaam</value>
   </data>
@@ -8095,6 +8333,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   </data>
   <data name="UsersOther" xml:space="preserve">
     <value>{0} gebruikers</value>
+  </data>
+  <data name="ViaBot" xml:space="preserve">
+    <value>via</value>
   </data>
   <data name="Vibrate" xml:space="preserve">
     <value>Trillen</value>

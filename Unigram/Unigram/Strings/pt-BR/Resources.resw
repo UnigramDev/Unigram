@@ -580,8 +580,26 @@
   <data name="AddMember" xml:space="preserve">
     <value>Adicionar Membro</value>
   </data>
+  <data name="AddMembersAlertCountText" xml:space="preserve">
+    <value>Deseja mesmo adicionar {0} ao **{1}**?</value>
+  </data>
+  <data name="AddMembersAlertNamesText" xml:space="preserve">
+    <value>Deseja mesmo adicionar {0} ao **{1}**?</value>
+  </data>
+  <data name="AddMembersAlertTitle" xml:space="preserve">
+    <value>Adicionar {0}</value>
+  </data>
+  <data name="AddMembersForwardMessages" xml:space="preserve">
+    <value>Mostrar últimas 100 mensagens para os novos membros</value>
+  </data>
   <data name="AddMutual" xml:space="preserve">
     <value>Adicionar contatos no canal</value>
+  </data>
+  <data name="AddOneMemberAlertTitle" xml:space="preserve">
+    <value>Adicionar membro</value>
+  </data>
+  <data name="AddOneMemberForwardMessages" xml:space="preserve">
+    <value>Mostrar últimas 100 mensagens para **{0}**</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>Adicionar Proxy</value>
@@ -716,7 +734,7 @@
     <value/>
   </data>
   <data name="AndMoreTypingGroupOne" xml:space="preserve">
-    <value>{0} e {1} mais estão escrevendo</value>
+    <value>{0} e mais {1} estão escrevendo</value>
   </data>
   <data name="AndMoreTypingGroupTwo" xml:space="preserve">
     <value/>
@@ -728,7 +746,7 @@
     <value/>
   </data>
   <data name="AndMoreTypingGroupOther" xml:space="preserve">
-    <value>{0} and {1} more are typing</value>
+    <value>{0} e mais {1} estão escrevendo</value>
   </data>
   <data name="AndOtherZero" xml:space="preserve">
     <value/>
@@ -853,6 +871,9 @@
   <data name="AreYouSureBlockContact" xml:space="preserve">
     <value>Você tem certeza de que deseja bloquear este contato?</value>
   </data>
+  <data name="AreYouSureBlockContact2" xml:space="preserve">
+    <value>Deseja mesmo bloquear **{0}**?</value>
+  </data>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
     <value>Deseja mesmo apagar todos os seus rascunhos da nuvem?</value>
   </data>
@@ -947,6 +968,9 @@ Lembre-se, sair apaga todos os seus Chats Secretos.</value>
   <data name="AreYouSureSecretChat" xml:space="preserve">
     <value>Você tem certeza de que deseja iniciar um chat secreto?</value>
   </data>
+  <data name="AreYouSureSecretChatTitle" xml:space="preserve">
+    <value>Chat secreto</value>
+  </data>
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>Você tem certeza de que deseja terminar todas as outras sessões?</value>
   </data>
@@ -963,7 +987,7 @@ Lembre-se, sair apaga todos os seus Chats Secretos.</value>
     <value>Você tem certeza de que deseja desbloquear este contato?</value>
   </data>
   <data name="AreYouSureWebSessions" xml:space="preserve">
-    <value>Tem certeza de que deseja desconectar de todos os sites onde você logou usando o Telegram?</value>
+    <value>Tem certeza de que deseja desconectar de todos os sites em que você logou usando o Telegram?</value>
   </data>
   <data name="ArticleByAuthor" xml:space="preserve">
     <value>por {0}</value>
@@ -1201,6 +1225,9 @@ Dê uma olhada na página de <![CDATA[<a href="https://telegram.org/faq/br#quest
   <data name="AutoLockInfo" xml:space="preserve">
     <value>Solicita a senha se você ficar ausente por um tempo.</value>
   </data>
+  <data name="AutoNightAdaptive" xml:space="preserve">
+    <value>Adaptativo</value>
+  </data>
   <data name="AutoNightAutomatic" xml:space="preserve">
     <value>Automático</value>
   </data>
@@ -1208,7 +1235,7 @@ Dê uma olhada na página de <![CDATA[<a href="https://telegram.org/faq/br#quest
     <value>Porcentagem do brilho</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Alternar para o seu tema noturno preferido quando a luz ambiente estiver abaixo de {0}%.</value>
+    <value>Alterna para o seu tema noturno preferido quando a luz ambiente estiver abaixo de {0}%.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Desativado</value>
@@ -1357,8 +1384,32 @@ Nascer do Sol: {1}</value>
   <data name="BlockContact" xml:space="preserve">
     <value>Bloquear</value>
   </data>
+  <data name="BlockUser" xml:space="preserve">
+    <value>Bloquear usuário</value>
+  </data>
   <data name="BlockedUsers" xml:space="preserve">
     <value>Usuários Bloqueados</value>
+  </data>
+  <data name="BlockedUsersCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BlockedUsersCountOne" xml:space="preserve">
+    <value>{0} usuário bloqueado</value>
+  </data>
+  <data name="BlockedUsersCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BlockedUsersCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BlockedUsersCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BlockedUsersCountOther" xml:space="preserve">
+    <value>{0} usuários bloqueados</value>
+  </data>
+  <data name="BlockedUsersInfo" xml:space="preserve">
+    <value>Usuários bloqueados não conseguem entrar em contato com você e não veem o seu Visto por Último.</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>Azul</value>
@@ -1419,6 +1470,9 @@ Nascer do Sol: {1}</value>
   </data>
   <data name="Brown" xml:space="preserve">
     <value>Marrom</value>
+  </data>
+  <data name="BuiltInThemes" xml:space="preserve">
+    <value>Temas padrão</value>
   </data>
   <data name="BytesReceived" xml:space="preserve">
     <value>Bytes recebidos</value>
@@ -1679,6 +1733,9 @@ Nota: se você esquecer a sua senha, terá de apagar e reinstalar o app. Todos o
   <data name="ChannelDeletedUndo" xml:space="preserve">
     <value>Canal apagado.</value>
   </data>
+  <data name="ChannelDiscuss" xml:space="preserve">
+    <value>CONVERSAR</value>
+  </data>
   <data name="ChannelEdit" xml:space="preserve">
     <value>Editar</value>
   </data>
@@ -1746,7 +1803,7 @@ Nota: se você esquecer a sua senha, terá de apagar e reinstalar o app. Todos o
     <value>%1$@ postou uma localização em tempo real</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
-    <value>{0} postou uma foto</value>
+    <value>{0} postou uma localização</value>
   </data>
   <data name="ChannelMessageMusic" xml:space="preserve">
     <value>{0} postou uma música</value>
@@ -1803,7 +1860,7 @@ Nota: se você esquecer a sua senha, terá de apagar e reinstalar o app. Todos o
     <value>Canal Privado</value>
   </data>
   <data name="ChannelPrivateInfo" xml:space="preserve">
-    <value>Só é possível entrar em canais privados através de um link de convite.</value>
+    <value>Só é possível entrar em canais privados por meio de um link de convite.</value>
   </data>
   <data name="ChannelPrivateLinkHelp" xml:space="preserve">
     <value>Pessoas podem entrar em seu canal com esse link. Você pode desativar o link quando quiser.</value>
@@ -1932,6 +1989,12 @@ O tamanho mínimo é de 5 caracteres.</value>
   </data>
   <data name="ChatHintsDelete" xml:space="preserve">
     <value>Remover {0} das sugestões?</value>
+  </data>
+  <data name="ChatHintsDeleteAlert" xml:space="preserve">
+    <value>Tem certeza de que você deseja remover  **{0}** das sugestões?</value>
+  </data>
+  <data name="ChatHintsDeleteAlertTitle" xml:space="preserve">
+    <value>Remover sugestão</value>
   </data>
   <data name="ChatHistory" xml:space="preserve">
     <value>Histórico do chat para novos membros</value>
@@ -2121,7 +2184,7 @@ O tamanho mínimo é de 5 caracteres.</value>
     <value>Nenhum pacote de sticker encontrado</value>
   </data>
   <data name="ChooseStickerSetNotFoundInfo" xml:space="preserve">
-    <value>Tente novamente para escolher através da lista</value>
+    <value>Tente novamente ou escolha da lista abaixo</value>
   </data>
   <data name="ChooseStickerSetPlaceholder" xml:space="preserve">
     <value>pacote de sticker</value>
@@ -2172,13 +2235,19 @@ O tamanho mínimo é de 5 caracteres.</value>
     <value>Sai de todos os dispositivos, exceto este.</value>
   </data>
   <data name="ClearOtherWebSessionsHelp" xml:space="preserve">
-    <value>Você pode entrar em sites que suportam o login com o Telegram.</value>
+    <value>Você pode entrar em sites que são compatíveis com o login com o Telegram.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Limpar emojis recentes?</value>
   </data>
   <data name="ClearSearch" xml:space="preserve">
     <value>Limpar histórico de busca?</value>
+  </data>
+  <data name="ClearSearchAlert" xml:space="preserve">
+    <value>Tem certeza de que você deseja limpar seu histórico de busca?</value>
+  </data>
+  <data name="ClearSearchAlertTitle" xml:space="preserve">
+    <value>Limpar histórico de busca</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Fechar</value>
@@ -2218,6 +2287,9 @@ O tamanho mínimo é de 5 caracteres.</value>
   </data>
   <data name="ColorTheme" xml:space="preserve">
     <value>Tema de cores</value>
+  </data>
+  <data name="ColorThemes" xml:space="preserve">
+    <value>Tema de Cores</value>
   </data>
   <data name="ColorViolet" xml:space="preserve">
     <value>Violeta</value>
@@ -2288,7 +2360,7 @@ Assim que {1} atualizar o Telegram, fotos com timers de 1 minuto ou menos passar
     <value>Contatos</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>O **Telegram** precisa acessar seus contatos para que você possa se comunicar com seus amigos através de todos os seus dispositivos. Seus contatos serão continuamente sincronizados na nuvem fortemente criptografada do Telegram.</value>
+    <value>O **Telegram** precisa acessar seus contatos para que você possa se comunicar com seus amigos em todos os seus dispositivos. Seus contatos serão continuamente sincronizados na nuvem fortemente criptografada do Telegram.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>CONTINUAR</value>
@@ -2420,7 +2492,7 @@ Você sempre pode voltar para o tema padrão do Telegram aqui.</value>
     <value>Esses usuários poderão ou não te ligar dependendo de suas configurações.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>Importante: você não poderá ver quando foi o Último Acesso das pessoas com quem você não compartilha o seu Último Acesso. Em vez disso, você verá o último acesso aproximado (recentemente; há uma semana; há um mês).</value>
+    <value>Você não poderá ver o Último Acesso e status online das pessoas com quem você não compartilha o seu. Em vez disso, você verá o último acesso aproximado (recentemente; há uma semana; há um mês).</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
     <value>Notificações Personalizadas</value>
@@ -2432,7 +2504,10 @@ Você sempre pode voltar para o tema padrão do Telegram aqui.</value>
     <value>Esses usuários poderão ou não te adicionar em grupos e canais, dependendo de suas configurações.</value>
   </data>
   <data name="CustomShareSettingsHelp" xml:space="preserve">
-    <value>Essas configurações irão sobrepor os valores acima.</value>
+    <value>Você pode adicionar usuários ou grupos inteiros como exceções que substituirão as configurações acima.</value>
+  </data>
+  <data name="CustomThemes" xml:space="preserve">
+    <value>Temas personalizados</value>
   </data>
   <data name="DataSettings" xml:space="preserve">
     <value>Dados e Armazenamento</value>
@@ -2506,6 +2581,9 @@ Você sempre pode voltar para o tema padrão do Telegram aqui.</value>
   <data name="DebugMenuImportContacts" xml:space="preserve">
     <value>Importar Contatos</value>
   </data>
+  <data name="DebugMenuReadAllDialogs" xml:space="preserve">
+    <value>Ler Todos os Chats</value>
+  </data>
   <data name="DebugMenuReloadContacts" xml:space="preserve">
     <value>Recarregar Contatos</value>
   </data>
@@ -2548,8 +2626,14 @@ Você sempre pode voltar para o tema padrão do Telegram aqui.</value>
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>Autodestruição da conta</value>
   </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>Apagar Tudo</value>
+  </data>
   <data name="DeleteAllFrom" xml:space="preserve">
     <value>Apagar tudo de {0}</value>
+  </data>
+  <data name="DeleteAllMessagesAlert" xml:space="preserve">
+    <value>Aviso! Esta ação **apagará todas as mensagens** neste chat para **ambos** os participantes.</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Apagar e sair do grupo</value>
@@ -2685,6 +2769,67 @@ Você sempre pode voltar para o tema padrão do Telegram aqui.</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>Descartar Mensagem de Voz</value>
+  </data>
+  <data name="DiscussChannel" xml:space="preserve">
+    <value>canal</value>
+  </data>
+  <data name="Discussion" xml:space="preserve">
+    <value>Conversa</value>
+  </data>
+  <data name="DiscussionChannelGroupSetHelp" xml:space="preserve">
+    <value>Um link para **{0}** é exibido no painel inferior para todos os inscritos.</value>
+  </data>
+  <data name="DiscussionChannelHelp" xml:space="preserve">
+    <value>Escolha um grupo para conversas que será exibido em seu canal.</value>
+  </data>
+  <data name="DiscussionChannelHelp2" xml:space="preserve">
+    <value>Tudo que você postar no canal será encaminhado para este grupo.</value>
+  </data>
+  <data name="DiscussionCreateGroup" xml:space="preserve">
+    <value>Criar Novo Grupo</value>
+  </data>
+  <data name="DiscussionGroupHelp" xml:space="preserve">
+    <value>O canal **{0}** está vinculado a este grupo de conversas.</value>
+  </data>
+  <data name="DiscussionGroupHelp2" xml:space="preserve">
+    <value>Todas as novas mensagens postadas neste canal serão encaminhadas ao grupo.</value>
+  </data>
+  <data name="DiscussionInfo" xml:space="preserve">
+    <value>Adicione um grupo para comentários</value>
+  </data>
+  <data name="DiscussionLinkGroup" xml:space="preserve">
+    <value>VINCULAR GRUPO</value>
+  </data>
+  <data name="DiscussionLinkGroupAlertHistory" xml:space="preserve">
+    <value>"Histórico do chat para novos membros" mudará para Visível.</value>
+  </data>
+  <data name="DiscussionLinkGroupPrivateAlert" xml:space="preserve">
+    <value>Você deseja definir **{0}** como o grupo de conversas para **{1}**?
+
+Qualquer pessoa deste grupo poderá ver mensagens no canal.</value>
+  </data>
+  <data name="DiscussionLinkGroupPublicAlert" xml:space="preserve">
+    <value>Você deseja definir {0} como o grupo de conversas para {1}?</value>
+  </data>
+  <data name="DiscussionLinkGroupPublicPrivateAlert" xml:space="preserve">
+    <value>Você deseja definir **{0}** como o grupo de conversas para **{1}**?
+
+Qualquer pessoa do canal poderá ver mensagens neste grupo.</value>
+  </data>
+  <data name="DiscussionUnlink" xml:space="preserve">
+    <value>Desvincular</value>
+  </data>
+  <data name="DiscussionUnlinkChannel" xml:space="preserve">
+    <value>Desvincular Canal</value>
+  </data>
+  <data name="DiscussionUnlinkChannelAlert" xml:space="preserve">
+    <value>Deseja mesmo desvincular **{0}** deste canal?</value>
+  </data>
+  <data name="DiscussionUnlinkGroup" xml:space="preserve">
+    <value>Desvincular Grupo</value>
+  </data>
+  <data name="DiscussionUnlinkGroupAlert" xml:space="preserve">
+    <value>Deseja mesmo desvincular **{0}** deste grupo?</value>
   </data>
   <data name="DocumentsTitle" xml:space="preserve">
     <value>Arquivos Compartilhados</value>
@@ -2973,6 +3118,12 @@ Se você vê o mesmo no dispositivo de **{1}**, a criptografia de ponta a ponta 
   <data name="EventLogChangedGroupLink" xml:space="preserve">
     <value>un1 alterou o link do grupo:</value>
   </data>
+  <data name="EventLogChangedLinkedChannel" xml:space="preserve">
+    <value>un1 vinculou este grupo ao un2</value>
+  </data>
+  <data name="EventLogChangedLinkedGroup" xml:space="preserve">
+    <value>un1 definiu un2 como o grupo de conversas deste canal.</value>
+  </data>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>un1 alterou o pacote de sticker do grupo</value>
   </data>
@@ -3178,6 +3329,12 @@ Nenhuma ação recente corresponde à sua busca.</value>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
     <value>un1 removeu o link do grupo</value>
   </data>
+  <data name="EventLogRemovedLinkedChannel" xml:space="preserve">
+    <value>un1 desvinculou este grupo de un2</value>
+  </data>
+  <data name="EventLogRemovedLinkedGroup" xml:space="preserve">
+    <value>un1 removeu o grupo de conversas un2</value>
+  </data>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>un1 removeu o pacote de sticker do grupo</value>
   </data>
@@ -3304,7 +3461,7 @@ Duração: {1}</value>
     <value>Stickers Populares</value>
   </data>
   <data name="FeaturedStickersInfo" xml:space="preserve">
-    <value>Esses são os stickers do momento no Telegram. Você pode adicionar stickers customizados através do bot @stickers.</value>
+    <value>Esses são os stickers do momento no Telegram. Você pode adicionar stickers personalizados usando o bot @stickers.</value>
   </data>
   <data name="February" xml:space="preserve">
     <value>fevereiro</value>
@@ -3361,16 +3518,16 @@ Duração: {1}</value>
     <value>Tamanho da Fonte</value>
   </data>
   <data name="FontSizePreviewLine1" xml:space="preserve">
-    <value>Ahh, vocês crianças de hoje em dia com essas músicas eletrônicas! Ouçam os clássicos, como Hasselhoff!</value>
+    <value>Você sabe que horas são?</value>
   </data>
   <data name="FontSizePreviewLine2" xml:space="preserve">
-    <value>Não consigo nem te levar a sério agora.</value>
+    <value>É manhã em Tóquio 😎</value>
   </data>
   <data name="FontSizePreviewName" xml:space="preserve">
     <value>Lúcio</value>
   </data>
   <data name="FontSizePreviewReply" xml:space="preserve">
-    <value>Reinhardt, temos que achar umas músicas novas pra você. 🎶.</value>
+    <value>Bom dia! 👋</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Esqueceu a senha?</value>
@@ -3728,7 +3885,7 @@ sobre o Telegram?</value>
     <value>Desculpe, você não pode adicionar esse usuário a grupos.</value>
   </data>
   <data name="GroupUserCantAdmin" xml:space="preserve">
-    <value>Desculpe, muitos administradores neste canal.</value>
+    <value>Desculpe, há muitos administradores neste grupo.</value>
   </data>
   <data name="GroupUserCantBot" xml:space="preserve">
     <value>Desculpe, há bots demais neste grupo.</value>
@@ -3755,7 +3912,7 @@ sobre o Telegram?</value>
     <value>{0} grupos</value>
   </data>
   <data name="GroupsAndChannels" xml:space="preserve">
-    <value>Grupos</value>
+    <value>Grupos e Canais</value>
   </data>
   <data name="GroupsAndChannelsHelp" xml:space="preserve">
     <value>Altera quem pode te adicionar em grupos ou canais.</value>
@@ -4170,6 +4327,9 @@ Este link só funcionará para os membros deste chat.</value>
   <data name="LinkPreview" xml:space="preserve">
     <value>Prévia do link</value>
   </data>
+  <data name="LinkedChannel" xml:space="preserve">
+    <value>Canal Vinculado</value>
+  </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>Links Compartilhados</value>
   </data>
@@ -4377,7 +4537,7 @@ Essa operação pode demorar alguns minutos para ser concluída.</value>
     <value>Grupo Privado</value>
   </data>
   <data name="MegaPrivateInfo" xml:space="preserve">
-    <value>Grupos privados só podem ser aderidos através de um link de convite.</value>
+    <value>Só é possível entrar em grupos privados por meio de um link de convite.</value>
   </data>
   <data name="MegaPrivateLinkHelp" xml:space="preserve">
     <value>Pessoas podem entrar em seu grupo com esse link. Você pode desativar o link quando quiser.</value>
@@ -4653,7 +4813,7 @@ O tamanho mínimo é de 5 caracteres.</value>
     <value>Você ainda não realizou chamadas.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
-    <value>Ainda não há chats...</value>
+    <value>Boas-vindas ao Telegram</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
     <value>Comece a conversar pressionando o botão de lápis no canto inferior direito.</value>
@@ -4709,7 +4869,7 @@ Você pode personalizar notificações para um chat abrindo o perfil do mesmo e 
     <value>Nenhum login ativo.</value>
   </data>
   <data name="NoOtherWebSessionsInfo" xml:space="preserve">
-    <value>Você pode entrar em sites que suportam o login com o Telegram.</value>
+    <value>Você pode entrar em sites que são compatíveis com o login com o Telegram.</value>
   </data>
   <data name="NoPhotos" xml:space="preserve">
     <value>Ainda não há fotos</value>
@@ -5301,6 +5461,18 @@ Equipe Telegram</value>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Abrir URL em {0}?</value>
   </data>
+  <data name="OpenUrlAlert2" xml:space="preserve">
+    <value>Você deseja abrir {0}?</value>
+  </data>
+  <data name="OpenUrlOption1" xml:space="preserve">
+    <value>Entrar em {0} como {1}</value>
+  </data>
+  <data name="OpenUrlOption2" xml:space="preserve">
+    <value>Permitir que **{0}** me envie mensagens</value>
+  </data>
+  <data name="OpenUrlTitle" xml:space="preserve">
+    <value>Abrir Link</value>
+  </data>
   <data name="OptionZero" xml:space="preserve">
     <value/>
   </data>
@@ -5401,7 +5573,7 @@ seguras contra ataques de hackers.</value>
   </data>
   <data name="Page6Message" xml:space="preserve">
     <value>O **Telegram** permite que você acesse suas mensagens
-através de vários dispositivos.</value>
+em vários dispositivos.</value>
   </data>
   <data name="Page6Title" xml:space="preserve">
     <value>Baseado em nuvem</value>
@@ -6214,7 +6386,7 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
     <value>Para que você se conecte aos seus amigos em todos os dispositivos, seus contatos serão sincronizados continuamente com os servidores fortemente criptografados do Telegram.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
-    <value>Telegram precisa de acesso para sobrescrever outros apps para reproduzir vídeos no modo PiP.</value>
+    <value>O Telegram precisa de acesso para aparecer sobre outros apps a fim de reproduzir vídeos no modo PiP.</value>
   </data>
   <data name="PermissionNoAudio" xml:space="preserve">
     <value>Telegram precisa acessar seu microfone para que você possa enviar mensagens de voz.</value>
@@ -6311,6 +6483,9 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
   <data name="PinMessageAlertChat" xml:space="preserve">
     <value>Você deseja fixar essa mensagem no topo do chat?</value>
   </data>
+  <data name="PinMessageAlertTitle" xml:space="preserve">
+    <value>Fixar mensagem</value>
+  </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Notificar todos os membros</value>
   </data>
@@ -6395,6 +6570,9 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
   <data name="PriorityInfo" xml:space="preserve">
     <value>Nas prioridades mais altas as notificações irão funcionar mesmo que o seu celular esteja no modo Não Perturbe.</value>
   </data>
+  <data name="PrivacyAddAnException" xml:space="preserve">
+    <value>Adicionar Usuários ou Grupos</value>
+  </data>
   <data name="PrivacyAdvanced" xml:space="preserve">
     <value>Avançado</value>
   </data>
@@ -6402,7 +6580,7 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
     <value>Bots e sites</value>
   </data>
   <data name="PrivacyBotsInfo" xml:space="preserve">
-    <value>Sites onde você logou usando o Telegram.</value>
+    <value>Sites em que você logou usando o Telegram.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
     <value>Desativar a conexão de ponta a ponta irá transmitir as chamadas através dos servidores do Telegram para evitar que seu endereço de IP seja revelado, mas poderá diminuir a qualidade do áudio.</value>
@@ -6418,6 +6596,9 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
   </data>
   <data name="PrivacyDeleteCloudDrafts" xml:space="preserve">
     <value>Apagar Todos os Rascunhos da Nuvem</value>
+  </data>
+  <data name="PrivacyExceptions" xml:space="preserve">
+    <value>Exceções</value>
   </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>Desculpe, muitas solicitações. Impossível alterar os ajustes de privacidade agora, por favor aguarde.</value>
@@ -6435,7 +6616,7 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
     <value>Quando encaminhadas para outros chats, as mensagens enviadas não terão um link para sua conta.</value>
   </data>
   <data name="PrivacyForwardsInfo2" xml:space="preserve">
-    <value>Essas configurações substituirão os valores acima.</value>
+    <value>Você pode adicionar usuários ou grupos inteiros como exceções que substituirão as configurações acima.</value>
   </data>
   <data name="PrivacyForwardsMessageLine" xml:space="preserve">
     <value>Reinhardt, precisamos encontrar músicas novas.</value>
@@ -6447,10 +6628,16 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
     <value>Quem pode adicionar um link para minha conta ao encaminhar minhas mensagens?</value>
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
-    <value>Último Acesso</value>
+    <value>Último Acesso e Online</value>
   </data>
   <data name="PrivacyP2P" xml:space="preserve">
     <value>Ponta a Ponta em Chamadas</value>
+  </data>
+  <data name="PrivacyP2P2" xml:space="preserve">
+    <value>Usar Ponta a Ponta com</value>
+  </data>
+  <data name="PrivacyP2PHeader" xml:space="preserve">
+    <value>Ponta a Ponta</value>
   </data>
   <data name="PrivacyPayments" xml:space="preserve">
     <value>Pagamentos</value>
@@ -6463,6 +6650,18 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>Você pode remover suas informações de envio e instruir aos provedores de pagamentos para remover seus cartões de crédito salvos. Note que o Telegram nunca armazena seus dados de cartão de crédito.</value>
+  </data>
+  <data name="PrivacyPhone" xml:space="preserve">
+    <value>Número de Telefone</value>
+  </data>
+  <data name="PrivacyPhoneInfo" xml:space="preserve">
+    <value>Usuários que já tiverem o seu número salvo nos contatos também irão ver no Telegram.</value>
+  </data>
+  <data name="PrivacyPhoneInfo2" xml:space="preserve">
+    <value>Você pode adicionar usuários ou grupos inteiros como exceções que substituirão as configurações acima.</value>
+  </data>
+  <data name="PrivacyPhoneTitle" xml:space="preserve">
+    <value>Quem pode ver meu número?</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Política de Privacidade</value>
@@ -6480,7 +6679,7 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
     <value>Você pode restringir quem pode ver sua foto de perfil com precisão granular.</value>
   </data>
   <data name="PrivacyProfilePhotoInfo2" xml:space="preserve">
-    <value>Essas configurações substituirão os valores acima.</value>
+    <value>Você pode adicionar usuários ou grupos inteiros como exceções que substituirão as configurações acima.</value>
   </data>
   <data name="PrivacyProfilePhotoTitle" xml:space="preserve">
     <value>Quem pode ver minha foto de perfil?</value>
@@ -6739,11 +6938,17 @@ Você pode cancelar esse processo a qualquer momento.</value>
   <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
     <value>Tem certeza de que deseja apagar as configurações de download automático?</value>
   </data>
+  <data name="ResetAutomaticMediaDownloadAlertTitle" xml:space="preserve">
+    <value>Restaurar configurações</value>
+  </data>
   <data name="ResetChatBackgrounds" xml:space="preserve">
     <value>Redefinir Papéis de Parede</value>
   </data>
   <data name="ResetChatBackgroundsAlert" xml:space="preserve">
     <value>Deseja mesmo redefinir todos os papéis de parede?</value>
+  </data>
+  <data name="ResetChatBackgroundsAlertTitle" xml:space="preserve">
+    <value>Redefinir papéis de parede</value>
   </data>
   <data name="ResetChatBackgroundsInfo" xml:space="preserve">
     <value>Remove todos os papéis de parede enviados e restaura os pré-instalados.</value>
@@ -6769,13 +6974,16 @@ Se você apagar a sua conta, todas as suas mensagens e chats serão apagados.</v
     <value>Tem certeza de que deseja restaurar todas as configurações de notificação para o padrão?</value>
   </data>
   <data name="ResetNotificationsText" xml:space="preserve">
-    <value>Restaurar todas as configurações de notificação</value>
+    <value>Todas as configurações de notificação foram redefinidas</value>
   </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>Reiniciar Estatísticas</value>
   </data>
   <data name="ResetStatisticsAlert" xml:space="preserve">
     <value>Você deseja reiniciar suas estatísticas de uso?</value>
+  </data>
+  <data name="ResetStatisticsAlertTitle" xml:space="preserve">
+    <value>Reiniciar estatísticas</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
     <value>O código de recuperação foi enviado para o email fornecido:
@@ -6868,7 +7076,7 @@ O canal "**{1}**" se tornará privado.</value>
     <value>Encaminhe aqui para salvar.</value>
   </data>
   <data name="ScamMessage" xml:space="preserve">
-    <value>GOLPE</value>
+    <value>FRAUDE</value>
   </data>
   <data name="ScreenCapture" xml:space="preserve">
     <value>Mostrar Conteúdo no Multitarefas</value>
@@ -6895,6 +7103,12 @@ Pode ser necessário reiniciar o aplicativo para que isso entre em vigor.</value
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Pesquisar emoji</value>
+  </data>
+  <data name="SearchForPeople" xml:space="preserve">
+    <value>Buscar por pessoas...</value>
+  </data>
+  <data name="SearchForPeopleAndGroups" xml:space="preserve">
+    <value>Buscar por usuários e grupos...</value>
   </data>
   <data name="SearchFriends" xml:space="preserve">
     <value>Buscar amigos</value>
@@ -7000,6 +7214,9 @@ Pode ser necessário reiniciar o aplicativo para que isso entre em vigor.</value
   </data>
   <data name="SelectContact" xml:space="preserve">
     <value>Selecione um Contato</value>
+  </data>
+  <data name="SelectContacts" xml:space="preserve">
+    <value>Selecionar Contatos</value>
   </data>
   <data name="SelectFile" xml:space="preserve">
     <value>Selecionar Arquivo</value>
@@ -7309,6 +7526,9 @@ Não atenda, o Telegram processará tudo automaticamente.</value>
   <data name="ShowAllMedia" xml:space="preserve">
     <value>Mostrar todas as mídias</value>
   </data>
+  <data name="ShowAllThemes" xml:space="preserve">
+    <value>Mostrar Todos os Temas</value>
+  </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Mostrar na conversa</value>
   </data>
@@ -7374,6 +7594,9 @@ Não atenda, o Telegram processará tudo automaticamente.</value>
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Padrão</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Iniciar</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>Iniciar Chat Secreto</value>
@@ -7639,6 +7862,9 @@ você concorda com os *Termos de Serviço*.</value>
   <data name="Theme" xml:space="preserve">
     <value>Tema</value>
   </data>
+  <data name="ThemeArcticBlue" xml:space="preserve">
+    <value>Azul Ártico</value>
+  </data>
   <data name="ThemeBlue" xml:space="preserve">
     <value>Azul</value>
   </data>
@@ -7647,6 +7873,9 @@ você concorda com os *Termos de Serviço*.</value>
   </data>
   <data name="ThemeDarkBlue" xml:space="preserve">
     <value>Azul Escuro</value>
+  </data>
+  <data name="ThemeGraphite" xml:space="preserve">
+    <value>Grafite</value>
   </data>
   <data name="ThemeInfo" xml:space="preserve">
     <value>Escolha esquemas de cores personalizados.</value>
@@ -7804,6 +8033,9 @@ Se de forma geral você não concorda com os requisitos modestos do Telegram, n�
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>Você deseja desafixar essa mensagem?</value>
   </data>
+  <data name="UnpinMessageAlertTitle" xml:space="preserve">
+    <value>Desafixar mensagem</value>
+  </data>
   <data name="UnreadMessages" xml:space="preserve">
     <value>Mensagens não lidas</value>
   </data>
@@ -7942,6 +8174,9 @@ Se de forma geral você não concorda com os requisitos modestos do Telegram, n�
   <data name="UserBioInfo" xml:space="preserve">
     <value>Você pode adicionar algumas linhas sobre você. Qualquer um que abrir seu perfil verá esse texto.</value>
   </data>
+  <data name="UserBlocked" xml:space="preserve">
+    <value>Usuário bloqueado</value>
+  </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>Removido por {0}</value>
   </data>
@@ -8032,6 +8267,9 @@ Se de forma geral você não concorda com os requisitos modestos do Telegram, n�
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Para sempre</value>
   </data>
+  <data name="UserUnblocked" xml:space="preserve">
+    <value>Usuário desbloqueado</value>
+  </data>
   <data name="Username" xml:space="preserve">
     <value>Nome de Usuário</value>
   </data>
@@ -8089,6 +8327,9 @@ O tamanho mínimo é de **5** caracteres.</value>
   </data>
   <data name="UsersOther" xml:space="preserve">
     <value>{0} usuários</value>
+  </data>
+  <data name="ViaBot" xml:space="preserve">
+    <value>via</value>
   </data>
   <data name="Vibrate" xml:space="preserve">
     <value>Vibração</value>
@@ -8286,7 +8527,7 @@ O tamanho mínimo é de **5** caracteres.</value>
     <value>Calor</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
-    <value>Logado com o Telegram</value>
+    <value>Entrou com o Telegram</value>
   </data>
   <data name="WeeksZero" xml:space="preserve">
     <value/>

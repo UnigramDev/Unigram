@@ -335,13 +335,13 @@
     <value>⁨un1⁩ أضاف ⁨un2⁩</value>
   </data>
   <data name="ActionAddUserSelf" xml:space="preserve">
-    <value>⁨un1⁩ عاد إلى المجموعة</value>
+    <value>عاد ⁨un1⁩ للمجموعة</value>
   </data>
   <data name="ActionAddUserSelfMega" xml:space="preserve">
     <value>⁨un1⁩ انضم للمجموعة</value>
   </data>
   <data name="ActionAddUserSelfYou" xml:space="preserve">
-    <value>لقد عُدتَ إلى المجموعة</value>
+    <value>لقد عُدتَ للمجموعة</value>
   </data>
   <data name="ActionAddUserYou" xml:space="preserve">
     <value>⁨un1⁩ قام بإضافتك</value>
@@ -580,8 +580,26 @@
   <data name="AddMember" xml:space="preserve">
     <value>إضافة عضو</value>
   </data>
+  <data name="AddMembersAlertCountText" xml:space="preserve">
+    <value>هل ترغب حقًا بإضافة ⁨{0}⁩ إلى **⁨{1}⁩**؟</value>
+  </data>
+  <data name="AddMembersAlertNamesText" xml:space="preserve">
+    <value>هل ترغب حقًا بإضافة ⁨{0}⁩ إلى **⁨{1}⁩**؟</value>
+  </data>
+  <data name="AddMembersAlertTitle" xml:space="preserve">
+    <value>إضافة ⁨{0}⁩</value>
+  </data>
+  <data name="AddMembersForwardMessages" xml:space="preserve">
+    <value>عرض آخر 100 رسالة للأعضاء الجدد</value>
+  </data>
   <data name="AddMutual" xml:space="preserve">
     <value>إضافة جهات اتصالك لقناتك</value>
+  </data>
+  <data name="AddOneMemberAlertTitle" xml:space="preserve">
+    <value>إضافة عضو</value>
+  </data>
+  <data name="AddOneMemberForwardMessages" xml:space="preserve">
+    <value>عرض آخر 100 رسالة لـ **⁨{0}⁩**</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>إضافة بروكسي</value>
@@ -855,6 +873,9 @@
   <data name="AreYouSureBlockContact" xml:space="preserve">
     <value>هل ترغب حقًا في حظر جهة الاتصال هذه؟</value>
   </data>
+  <data name="AreYouSureBlockContact2" xml:space="preserve">
+    <value>هل ترغب حقًا بحظر **⁨{0}⁩**؟</value>
+  </data>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
     <value>هل ترغب حقًا في حذف جميع المسودات السحابية؟</value>
   </data>
@@ -948,6 +969,9 @@
   </data>
   <data name="AreYouSureSecretChat" xml:space="preserve">
     <value>هل ترغب حقًا في إنشاء محادثة سرية؟</value>
+  </data>
+  <data name="AreYouSureSecretChatTitle" xml:space="preserve">
+    <value>محادثة سرية</value>
   </data>
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>هل ترغب حقًا في إنهاء جميع الجلسات الأخرى؟</value>
@@ -1203,6 +1227,9 @@
   <data name="AutoLockInfo" xml:space="preserve">
     <value>طلب رمز القفل إن غِبتُ لفترةٍ ما.</value>
   </data>
+  <data name="AutoNightAdaptive" xml:space="preserve">
+    <value>تلقائي</value>
+  </data>
   <data name="AutoNightAutomatic" xml:space="preserve">
     <value>تلقائي</value>
   </data>
@@ -1359,8 +1386,32 @@
   <data name="BlockContact" xml:space="preserve">
     <value>حظر</value>
   </data>
+  <data name="BlockUser" xml:space="preserve">
+    <value>حظر مستخدم جديد</value>
+  </data>
   <data name="BlockedUsers" xml:space="preserve">
     <value>المستخدمون المحظورون</value>
+  </data>
+  <data name="BlockedUsersCountZero" xml:space="preserve">
+    <value>⁨{0}⁩ مستخدم محظور</value>
+  </data>
+  <data name="BlockedUsersCountOne" xml:space="preserve">
+    <value>مستخدم واحد محظور</value>
+  </data>
+  <data name="BlockedUsersCountTwo" xml:space="preserve">
+    <value>مستخدمان محظوران</value>
+  </data>
+  <data name="BlockedUsersCountFew" xml:space="preserve">
+    <value>⁨{0}⁩ مستخدمين محظورين</value>
+  </data>
+  <data name="BlockedUsersCountMany" xml:space="preserve">
+    <value>⁨{0}⁩ مستخدمًا محظورًا</value>
+  </data>
+  <data name="BlockedUsersCountOther" xml:space="preserve">
+    <value>⁨{0}⁩ مستخدم محظور</value>
+  </data>
+  <data name="BlockedUsersInfo" xml:space="preserve">
+    <value>لن يتمكن المستخدمون المحظورون من مراسلتك أو مشاهدة آخر ظهور لك.</value>
   </data>
   <data name="Blue" xml:space="preserve">
     <value>الأزرق</value>
@@ -1424,6 +1475,9 @@
   <data name="Brown" xml:space="preserve">
     <value>البني</value>
   </data>
+  <data name="BuiltInThemes" xml:space="preserve">
+    <value>الأنماط الافتراضية</value>
+  </data>
   <data name="BytesReceived" xml:space="preserve">
     <value>البايتات الواردة</value>
   </data>
@@ -1473,7 +1527,7 @@
     <value>⁨{0}⁩ (⁨{1}⁩)</value>
   </data>
   <data name="CallNotAvailable" xml:space="preserve">
-    <value>المعذرة، **⁨{0}⁩** لا يستقبل مكالمات.</value>
+    <value>المعذرة، لا يستقبل **⁨{0}⁩** المكالمات.</value>
   </data>
   <data name="CallReportHint" xml:space="preserve">
     <value>ماذا حدث؟</value>
@@ -1541,7 +1595,7 @@
     <value>إلغاء الإرسال</value>
   </data>
   <data name="CantAddBotAsAdmin" xml:space="preserve">
-    <value>المعذرة، يمكن إضافة البوتات إلى القنوات كمشرفين فقط.</value>
+    <value>المعذرة، يمكن إضافة البوتات للقنوات كمشرفين فقط.</value>
   </data>
   <data name="CantPlayVideo" xml:space="preserve">
     <value>لم يتمكن التطبيق من تشغيل هذا المقطع المرئي، هل ترغب في تشغيله بمشغل خارجي؟</value>
@@ -1600,13 +1654,13 @@
     <value>إضافة أعضاء</value>
   </data>
   <data name="ChannelAddTo" xml:space="preserve">
-    <value>هل ترغب بإضافة ⁨{0}⁩ إلى القناة؟</value>
+    <value>هل ترغب بإضافة ⁨{0}⁩ للقناة؟</value>
   </data>
   <data name="ChannelAddToChannel" xml:space="preserve">
-    <value>إضافة إلى القناة</value>
+    <value>إضافة للقناة</value>
   </data>
   <data name="ChannelAddToGroup" xml:space="preserve">
-    <value>إضافة إلى المجموعة</value>
+    <value>إضافة للمجموعة</value>
   </data>
   <data name="ChannelAddedBy" xml:space="preserve">
     <value>⁨un1⁩ أضافك لهذه القناة</value>
@@ -1683,6 +1737,9 @@
   <data name="ChannelDeletedUndo" xml:space="preserve">
     <value>تم حذف القناة.</value>
   </data>
+  <data name="ChannelDiscuss" xml:space="preserve">
+    <value>مناقشة</value>
+  </data>
   <data name="ChannelEdit" xml:space="preserve">
     <value>تعديل</value>
   </data>
@@ -1702,7 +1759,7 @@
     <value>هل ترغب في الانضمام لقناة '⁨{0}⁩'؟</value>
   </data>
   <data name="ChannelJoined" xml:space="preserve">
-    <value>انضممتَ إلى القناة</value>
+    <value>انضممتَ للقناة</value>
   </data>
   <data name="ChannelLeaveAlert" xml:space="preserve">
     <value>هل ترغب حقًا في مغادرة القناة؟</value>
@@ -1937,6 +1994,12 @@
   </data>
   <data name="ChatHintsDelete" xml:space="preserve">
     <value>حذف ⁨{0}⁩ من الاقتراحات؟</value>
+  </data>
+  <data name="ChatHintsDeleteAlert" xml:space="preserve">
+    <value>هل ترغب حقًا في إزالة **⁨{0}⁩** من الاقتراحات؟</value>
+  </data>
+  <data name="ChatHintsDeleteAlertTitle" xml:space="preserve">
+    <value>إزالة الاقتراح</value>
   </data>
   <data name="ChatHistory" xml:space="preserve">
     <value>سجل المحادثة للأعضاء الجدد</value>
@@ -2184,6 +2247,12 @@
   <data name="ClearSearch" xml:space="preserve">
     <value>مسح سجل البحث؟</value>
   </data>
+  <data name="ClearSearchAlert" xml:space="preserve">
+    <value>هل ترغب حقًا في مسح سجل البحث؟</value>
+  </data>
+  <data name="ClearSearchAlertTitle" xml:space="preserve">
+    <value>مسح سجل البحث</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>إغلاق</value>
   </data>
@@ -2222,6 +2291,9 @@
   </data>
   <data name="ColorTheme" xml:space="preserve">
     <value>لون النمط</value>
+  </data>
+  <data name="ColorThemes" xml:space="preserve">
+    <value>الأنماط</value>
   </data>
   <data name="ColorViolet" xml:space="preserve">
     <value>بنفسجي</value>
@@ -2424,8 +2496,7 @@
     <value>هؤلاء المستخدمون سيتم السماح لهم بالاتصال بك أو منعُهم من ذلك بغض النظر عن الإعدادات أعلاه.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>هام: لن تتمكن من رؤية آخر ظهور للأشخاص الذين اخترت ألا يروا آخر ظهور لك.
-سيتم بدلًا من ذلك عرض آخر ظهور تقريبي (شُوهدَ مؤخرًا، خلال أسبوع، خلال شهر).</value>
+    <value>لن تتمكن من رؤية آخر ظهور للأشخاص الذين اخترت ألا يروا آخر ظهور لك. سيتم بدلًا من ذلك عرض آخر ظهور تقريبي (شُوهدَ مؤخرًا، خلال أسبوع، خلال شهر).</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
     <value>الإشعارات المخصصة</value>
@@ -2437,7 +2508,10 @@
     <value>هؤلاء المستخدمون سيتم السماح لهم بإضافتك للمجموعات والقنوات أو منعُهم من ذلك بغض النظر عن الإعدادات أعلاه.</value>
   </data>
   <data name="CustomShareSettingsHelp" xml:space="preserve">
-    <value>ستتجاوز هذه الإعدادات القيم في الأعلى.</value>
+    <value>يمكنك إضافة مستخدمين أو مجموعات بأكملها كاستثناءات ليتجاوزوا القيم في الأعلى.</value>
+  </data>
+  <data name="CustomThemes" xml:space="preserve">
+    <value>الأنماط المخصصة</value>
   </data>
   <data name="DataSettings" xml:space="preserve">
     <value>البيانات والتخزين</value>
@@ -2511,6 +2585,9 @@
   <data name="DebugMenuImportContacts" xml:space="preserve">
     <value>استيراد جهات الاتصال</value>
   </data>
+  <data name="DebugMenuReadAllDialogs" xml:space="preserve">
+    <value>قراءة كافة المحادثات </value>
+  </data>
   <data name="DebugMenuReloadContacts" xml:space="preserve">
     <value>إعادة تنزيل جهات الاتصال</value>
   </data>
@@ -2553,8 +2630,14 @@
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>التدمير الذاتي للحساب</value>
   </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>حذف الكل</value>
+  </data>
   <data name="DeleteAllFrom" xml:space="preserve">
     <value>حذف جميع مشاركات ⁨{0}⁩</value>
+  </data>
+  <data name="DeleteAllMessagesAlert" xml:space="preserve">
+    <value>تحذير! سيؤدي هذا لحذف **جميع رسائل** هذه المحادثة من **كلا** الطرفين.</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>مغادرة المجموعة وحذفها</value>
@@ -2681,6 +2764,67 @@
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>تجاهل الرسالة الصوتية</value>
+  </data>
+  <data name="DiscussChannel" xml:space="preserve">
+    <value>قناة</value>
+  </data>
+  <data name="Discussion" xml:space="preserve">
+    <value>المناقشات</value>
+  </data>
+  <data name="DiscussionChannelGroupSetHelp" xml:space="preserve">
+    <value>يظهر رابط **⁨{0}⁩** لجميع المشتركين في الجزء السفلي من القناة.</value>
+  </data>
+  <data name="DiscussionChannelHelp" xml:space="preserve">
+    <value>قم باختيار مجموعة نقاشات ليتم عرضها في قناتك.</value>
+  </data>
+  <data name="DiscussionChannelHelp2" xml:space="preserve">
+    <value>سيتم تحويل جميع منشورات القناة الجديدة إلى هذه المجموعة.</value>
+  </data>
+  <data name="DiscussionCreateGroup" xml:space="preserve">
+    <value>إنشاء مجموعة جديدة</value>
+  </data>
+  <data name="DiscussionGroupHelp" xml:space="preserve">
+    <value>تم ربط هذه المجموعة بـ **⁨{0}⁩** على أنها منصة نقاشاتها.</value>
+  </data>
+  <data name="DiscussionGroupHelp2" xml:space="preserve">
+    <value>سيتم تحويل جميع المنشورات الجديدة في هذه القناة للمجموعة.</value>
+  </data>
+  <data name="DiscussionInfo" xml:space="preserve">
+    <value>أضف مجموعة للتعليقات</value>
+  </data>
+  <data name="DiscussionLinkGroup" xml:space="preserve">
+    <value>ربط المجموعة</value>
+  </data>
+  <data name="DiscussionLinkGroupAlertHistory" xml:space="preserve">
+    <value>سيتم تغيير "سجل المحادثة للأعضاء الجدد" ليصبح ظاهرًا.</value>
+  </data>
+  <data name="DiscussionLinkGroupPrivateAlert" xml:space="preserve">
+    <value>هل ترغب بجعل **⁨{0}⁩** منصة نقاشات **⁨{1}⁩**؟
+
+سيتمكن جميع أعضاء المجموعة من رؤية منشورات القناة.</value>
+  </data>
+  <data name="DiscussionLinkGroupPublicAlert" xml:space="preserve">
+    <value>هل ترغب بجعل **⁨{0}⁩** منصة نقاشات **⁨{1}⁩**؟</value>
+  </data>
+  <data name="DiscussionLinkGroupPublicPrivateAlert" xml:space="preserve">
+    <value>هل ترغب بجعل **⁨{0}⁩** منصة نقاشات **⁨{1}⁩**؟
+
+سيتمكن جميع مشتركي القناة من رؤية الرسائل في هذه المجموعة.</value>
+  </data>
+  <data name="DiscussionUnlink" xml:space="preserve">
+    <value>إلغاء الربط</value>
+  </data>
+  <data name="DiscussionUnlinkChannel" xml:space="preserve">
+    <value>إلغاء ربط القناة</value>
+  </data>
+  <data name="DiscussionUnlinkChannelAlert" xml:space="preserve">
+    <value>هل ترغب حقًا بإلغاء ربط **⁨{0}⁩** من هذه القناة؟</value>
+  </data>
+  <data name="DiscussionUnlinkGroup" xml:space="preserve">
+    <value>إلغاء ربط المجموعة</value>
+  </data>
+  <data name="DiscussionUnlinkGroupAlert" xml:space="preserve">
+    <value>هل ترغب حقًا في إلغاء ربط **⁨{0}⁩** من هذه المجموعة؟</value>
   </data>
   <data name="DocumentsTitle" xml:space="preserve">
     <value>الملفات المتبادلة</value>
@@ -2970,6 +3114,12 @@
   <data name="EventLogChangedGroupLink" xml:space="preserve">
     <value>غيّرَ ⁨un1⁩ رابط المجموعة:</value>
   </data>
+  <data name="EventLogChangedLinkedChannel" xml:space="preserve">
+    <value>ربط ⁨un1⁩ هذه المجموعة بـ ⁨un2⁩</value>
+  </data>
+  <data name="EventLogChangedLinkedGroup" xml:space="preserve">
+    <value>جعل ⁨un1⁩ ⁨un2⁩ مجموعة نقاشات هذه القناة</value>
+  </data>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>⁨un1⁩ غير حزمة ملصقات المجموعة</value>
   </data>
@@ -3175,6 +3325,12 @@
   </data>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
     <value>⁨un1⁩ أزال رابط المجموعة</value>
+  </data>
+  <data name="EventLogRemovedLinkedChannel" xml:space="preserve">
+    <value>ألغى ⁨un1⁩ ربط هذه المجموعة بـ ⁨un2⁩</value>
+  </data>
+  <data name="EventLogRemovedLinkedGroup" xml:space="preserve">
+    <value>أزال ⁨un1⁩ مجموعة النقاشات ⁨un2⁩</value>
   </data>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>
@@ -3925,13 +4081,13 @@
     <value>مرحبا، أنا و⁨{0}⁩ من جهات اتصالي نستخدم تيليجرام للمحادثة - يمكنك تنزيله من هنا: ⁨{1}⁩</value>
   </data>
   <data name="InviteToChannelError" xml:space="preserve">
-    <value>المعذرة، لا يمكنك إضافة هذا المستخدم للقنوات بسبب إعدادات الخصوصية المتعلقة به.</value>
+    <value>المعذرة، لا يمكنك إضافة هذا المستخدم للقنوات نظرًا لإعدادات خصوصيته.</value>
   </data>
   <data name="InviteToGroupByLink" xml:space="preserve">
     <value>استخدام رابط للدعوة إلى المجموعة</value>
   </data>
   <data name="InviteToGroupError" xml:space="preserve">
-    <value>المعذرة، لا يمكنك إضافة هذا المستخدم للمجموعات بسبب إعدادات الخصوصية المتعلقة به.</value>
+    <value>المعذرة، لا يمكنك إضافة هذا المستخدم للمجموعات نظرًا لإعدادات خصوصيته.</value>
   </data>
   <data name="InviteToTelegram" xml:space="preserve">
     <value>دعوة إلى تيليجرام</value>
@@ -4169,6 +4325,9 @@
   <data name="LinkPreview" xml:space="preserve">
     <value>معاينة الرابط</value>
   </data>
+  <data name="LinkedChannel" xml:space="preserve">
+    <value>القناة المربوطة</value>
+  </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>الروابط المتبادلة</value>
   </data>
@@ -4301,10 +4460,10 @@
     <value>مارس</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
-    <value>تعليم كمقروء</value>
+    <value>تعليم كمقروءة</value>
   </data>
   <data name="MarkAsUnread" xml:space="preserve">
-    <value>تعليم كغير مقروء</value>
+    <value>تعليم كغير مقروءة</value>
   </data>
   <data name="Masks" xml:space="preserve">
     <value>الأقنعة</value>
@@ -4653,7 +4812,7 @@
     <value>لم تقم بإجراء أي مكالمة بعد.</value>
   </data>
   <data name="NoChats" xml:space="preserve">
-    <value>لا توجد محادثات بعد...</value>
+    <value>أهلًا في تيليجرام</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
     <value>ابدأ المراسلة عبر الضغط على زر القلم في الزاوية السفلية للشاشة.</value>
@@ -5300,6 +5459,18 @@
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>هل ترغب في فتح الرابط ⁨{0}⁩؟</value>
+  </data>
+  <data name="OpenUrlAlert2" xml:space="preserve">
+    <value>هل ترغب في فتح ⁨{0}⁩؟</value>
+  </data>
+  <data name="OpenUrlOption1" xml:space="preserve">
+    <value>تسجيل الدخول إلى ⁨{0}⁩ من حساب **⁨{1}⁩**</value>
+  </data>
+  <data name="OpenUrlOption2" xml:space="preserve">
+    <value>السماح لـ **⁨{0}⁩** بمراسلتي</value>
+  </data>
+  <data name="OpenUrlTitle" xml:space="preserve">
+    <value>فتح الرابط</value>
   </data>
   <data name="OptionZero" xml:space="preserve">
     <value>⁨{0}⁩ خيار إضافي</value>
@@ -6313,6 +6484,9 @@
   <data name="PinMessageAlertChat" xml:space="preserve">
     <value>هل ترغب في تثبيت هذه الرسالة أعلى هذه المحادثة؟</value>
   </data>
+  <data name="PinMessageAlertTitle" xml:space="preserve">
+    <value>تثبيت الرسالة</value>
+  </data>
   <data name="PinNotify" xml:space="preserve">
     <value>إشعار جميع الأعضاء</value>
   </data>
@@ -6397,6 +6571,9 @@
   <data name="PriorityInfo" xml:space="preserve">
     <value>ستعمل الإشعارات الأكثر أهمية حتى في حال تفعيل وضعية عدم الإزعاج.</value>
   </data>
+  <data name="PrivacyAddAnException" xml:space="preserve">
+    <value>إضافة مستخدمين أو مجموعات</value>
+  </data>
   <data name="PrivacyAdvanced" xml:space="preserve">
     <value>إعدادات متقدمة</value>
   </data>
@@ -6421,6 +6598,9 @@
   <data name="PrivacyDeleteCloudDrafts" xml:space="preserve">
     <value>حذف جميع المسودات السحابية</value>
   </data>
+  <data name="PrivacyExceptions" xml:space="preserve">
+    <value>الاستثناءات</value>
+  </data>
   <data name="PrivacyFloodControlError" xml:space="preserve">
     <value>عذرًا، لقد قمت بطلبات كثيرة جدًا. لا يمكنك تغيير إعدادات الخصوصية الآن، يرجى الانتظار.</value>
   </data>
@@ -6437,7 +6617,7 @@
     <value>لن تملك الرسائل التي تقوم بتحويلها بنفسك إلى محادثاتٍ أخرى رابطًا إلى حسابك.</value>
   </data>
   <data name="PrivacyForwardsInfo2" xml:space="preserve">
-    <value>ستتجاوز هذه الإعدادات القيم في الأعلى.</value>
+    <value>يمكنك إضافة مستخدمين أو مجموعات بأكملها كاستثناءات ليتجاوزوا القيم في الأعلى.</value>
   </data>
   <data name="PrivacyForwardsMessageLine" xml:space="preserve">
     <value>نعم، جاهز للإنطلاق في أي وقت! هل سنخبرهم بقدومنا أم نجعلها مفاجأة؟</value>
@@ -6449,10 +6629,16 @@
     <value>من يضيف رابطًا إلى حسابي عند تحويل رسائلي؟</value>
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
-    <value>آخر ظهور</value>
+    <value>آخر ظهور ومتصل</value>
   </data>
   <data name="PrivacyP2P" xml:space="preserve">
     <value>النِّدُّ للنِّدِّ في المكالمات</value>
+  </data>
+  <data name="PrivacyP2P2" xml:space="preserve">
+    <value>استخدام النِّدِّ للنِّد مع</value>
+  </data>
+  <data name="PrivacyP2PHeader" xml:space="preserve">
+    <value>النِّد للنِّد</value>
   </data>
   <data name="PrivacyPayments" xml:space="preserve">
     <value>عمليات الدفع</value>
@@ -6465,6 +6651,18 @@
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>يمكنك حذف معلومات الشحن والطلب الخاصة بك والطلب من موردي خدمات الدفع حذف بطاقتك الائتمانية المحفوظة. اعلم أن تيليجرام لا يحفظ بيانات بطاقتك الائتمانية أبدًا.</value>
+  </data>
+  <data name="PrivacyPhone" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="PrivacyPhoneInfo" xml:space="preserve">
+    <value>المستخدمون الذين يملكون رقمك محفوظًا في دليل عناوينهم سيتمكنون من رؤيته في تيليجرام.</value>
+  </data>
+  <data name="PrivacyPhoneInfo2" xml:space="preserve">
+    <value>يمكنك إضافة مستخدمين أو مجموعات بأكملها كاستثناءات ليتجاوزوا القيم في الأعلى.</value>
+  </data>
+  <data name="PrivacyPhoneTitle" xml:space="preserve">
+    <value>من يمْكنه رؤية رقم هاتفي؟</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>سياسة الخصوصية</value>
@@ -6482,7 +6680,7 @@
     <value>بإمكانك تخصيص من يمْكنه رؤية صورتك الشخصية بدقة انتقائية.</value>
   </data>
   <data name="PrivacyProfilePhotoInfo2" xml:space="preserve">
-    <value>ستتجاوز هذه الإعدادات القيم في الأعلى.</value>
+    <value>يمكنك إضافة مستخدمين أو مجموعات بأكملها كاستثناءات ليتجاوزوا القيم في الأعلى.</value>
   </data>
   <data name="PrivacyProfilePhotoTitle" xml:space="preserve">
     <value>من يمْكنه رؤية صورتي الشخصية؟</value>
@@ -6741,11 +6939,17 @@
   <data name="ResetAutomaticMediaDownloadAlert" xml:space="preserve">
     <value>هل ترغب حقًا في إعادة تعيين إعدادات التنزيل التلقائي؟ </value>
   </data>
+  <data name="ResetAutomaticMediaDownloadAlertTitle" xml:space="preserve">
+    <value>إعادة تعيين الإعدادات</value>
+  </data>
   <data name="ResetChatBackgrounds" xml:space="preserve">
     <value>إعادة تعيين الخلفيات</value>
   </data>
   <data name="ResetChatBackgroundsAlert" xml:space="preserve">
     <value>هل ترغب حقًا في إعادة تعيين كافة خلفيات المحادثة؟</value>
+  </data>
+  <data name="ResetChatBackgroundsAlertTitle" xml:space="preserve">
+    <value>إعادة تعيين الخلفيات</value>
   </data>
   <data name="ResetChatBackgroundsInfo" xml:space="preserve">
     <value>لإزالة جميع الخلفيات المرفوعة واستعادةِ الخلفيات الافتراضية لكل الأنماط.</value>
@@ -6778,6 +6982,9 @@
   </data>
   <data name="ResetStatisticsAlert" xml:space="preserve">
     <value>هل ترغب في إعادة تعيين إحصائيات استهلاكك؟</value>
+  </data>
+  <data name="ResetStatisticsAlertTitle" xml:space="preserve">
+    <value>إعادة تعيين الإحصائيات</value>
   </data>
   <data name="RestoreEmailSent" xml:space="preserve">
     <value>لقد قمنا بإرسال رمز الاسترداد إلى بريدك الإلكتروني الذي اخترته مسبقًا:
@@ -6898,6 +7105,12 @@
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>بحث الرموز التعبيرية</value>
   </data>
+  <data name="SearchForPeople" xml:space="preserve">
+    <value>البحث عن أشخاص...</value>
+  </data>
+  <data name="SearchForPeopleAndGroups" xml:space="preserve">
+    <value>البحث عن مستخدمين ومجموعات...</value>
+  </data>
   <data name="SearchFriends" xml:space="preserve">
     <value>بحث جهات الاتصال</value>
   </data>
@@ -7002,6 +7215,9 @@
   </data>
   <data name="SelectContact" xml:space="preserve">
     <value>اختر جهة اتصال</value>
+  </data>
+  <data name="SelectContacts" xml:space="preserve">
+    <value>تحديد جهات اتصال</value>
   </data>
   <data name="SelectFile" xml:space="preserve">
     <value>اختر ملف</value>
@@ -7311,6 +7527,9 @@
   <data name="ShowAllMedia" xml:space="preserve">
     <value>عرض كافة الوسائط</value>
   </data>
+  <data name="ShowAllThemes" xml:space="preserve">
+    <value>عرض جميع الأنماط</value>
+  </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>إظهار في المحادثة</value>
   </data>
@@ -7376,6 +7595,9 @@
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>افتراضي</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>إنشاء</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>إنشاء محادثة سرية</value>
@@ -7641,6 +7863,9 @@
   <data name="Theme" xml:space="preserve">
     <value>النمط</value>
   </data>
+  <data name="ThemeArcticBlue" xml:space="preserve">
+    <value>ثلجي</value>
+  </data>
   <data name="ThemeBlue" xml:space="preserve">
     <value>أزرق</value>
   </data>
@@ -7649,6 +7874,9 @@
   </data>
   <data name="ThemeDarkBlue" xml:space="preserve">
     <value>أزرق غامق</value>
+  </data>
+  <data name="ThemeGraphite" xml:space="preserve">
+    <value>غرافيت</value>
   </data>
   <data name="ThemeInfo" xml:space="preserve">
     <value>اختيار لون مخصص للتطبيق</value>
@@ -7806,6 +8034,9 @@
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>هل ترغب في إلغاء تثبيت هذه الرسالة؟</value>
   </data>
+  <data name="UnpinMessageAlertTitle" xml:space="preserve">
+    <value>إلغاء تثبيت الرسالة</value>
+  </data>
   <data name="UnreadMessages" xml:space="preserve">
     <value>الرسائل غير المقروءة</value>
   </data>
@@ -7945,6 +8176,9 @@
   <data name="UserBioInfo" xml:space="preserve">
     <value>بإمكانك إضافة بعض المعلومات عن نفسك. يمكن لمن يستعرض حسابك رؤية هذه المعلومات.</value>
   </data>
+  <data name="UserBlocked" xml:space="preserve">
+    <value>تم حظر المستخدم</value>
+  </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>تمت إزالته من قبل ⁨{0}⁩</value>
   </data>
@@ -8035,6 +8269,9 @@
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>للأبد</value>
   </data>
+  <data name="UserUnblocked" xml:space="preserve">
+    <value>تم إلغاء حظر المستخدم</value>
+  </data>
   <data name="Username" xml:space="preserve">
     <value>اسم المستخدم</value>
   </data>
@@ -8092,6 +8329,9 @@
   <data name="UsersOther" xml:space="preserve">
     <value>⁨{0}⁩ مستخدم</value>
   </data>
+  <data name="ViaBot" xml:space="preserve">
+    <value>عبر</value>
+  </data>
   <data name="Vibrate" xml:space="preserve">
     <value>الاهتزاز</value>
   </data>
@@ -8109,6 +8349,24 @@
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>الرسائل المرئية</value>
+  </data>
+  <data name="VideosZero" xml:space="preserve">
+    <value>⁨{0}⁩ مقطع مرئي</value>
+  </data>
+  <data name="VideosOne" xml:space="preserve">
+    <value>مقطع مرئي</value>
+  </data>
+  <data name="VideosTwo" xml:space="preserve">
+    <value>مقطعين مرئيين</value>
+  </data>
+  <data name="VideosFew" xml:space="preserve">
+    <value>⁨{0}⁩ مقاطع مرئية</value>
+  </data>
+  <data name="VideosMany" xml:space="preserve">
+    <value>⁨{0}⁩ مقطعًا مرئيًا</value>
+  </data>
+  <data name="VideosOther" xml:space="preserve">
+    <value>⁨{0}⁩ مقطع مرئي</value>
   </data>
   <data name="ViewContact" xml:space="preserve">
     <value>عرض جهة الاتصال</value>
