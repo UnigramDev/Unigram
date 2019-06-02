@@ -185,7 +185,7 @@ namespace Unigram.Services
             }
         }
 
-        public void Handle(UpdateUnreadMessageCount update)
+        public async void Handle(UpdateUnreadMessageCount update)
         {
             if (!_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
@@ -200,9 +200,14 @@ namespace Unigram.Services
             {
                 NotificationTask.UpdatePrimaryBadge(update.UnreadUnmutedCount);
             }
+
+            if (App.Connection is AppServiceConnection connection)
+            {
+                await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+            }
         }
 
-        public void Handle(UpdateUnreadChatCount update)
+        public async void Handle(UpdateUnreadChatCount update)
         {
             if (_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
@@ -216,6 +221,11 @@ namespace Unigram.Services
             else
             {
                 NotificationTask.UpdatePrimaryBadge(update.UnreadUnmutedCount);
+            }
+
+            if (App.Connection is AppServiceConnection connection)
+            {
+                await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
             }
         }
 
@@ -342,7 +352,7 @@ namespace Unigram.Services
                 }
             });
 
-            if (App.Connection is AppServiceConnection connection)
+            if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
             {
                 await connection.SendMessageAsync(new ValueSet { { "FlashWindow", string.Empty } });
             }

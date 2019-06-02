@@ -44,6 +44,23 @@ namespace Unigram.Services.Settings
             }
         }
 
+        private bool? _inAppFlash;
+        public bool InAppFlash
+        {
+            get
+            {
+                if (_inAppFlash == null)
+                    _inAppFlash = GetValueOrDefault("InAppFlash", true);
+
+                return _inAppFlash ?? true;
+            }
+            set
+            {
+                _inAppFlash = value;
+                AddOrUpdateValue("InAppFlash", value);
+            }
+        }
+
         private bool? _inAppSounds;
         public bool InAppSounds
         {

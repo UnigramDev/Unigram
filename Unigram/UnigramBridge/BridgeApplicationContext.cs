@@ -21,7 +21,6 @@ namespace UnigramBridge
         public BridgeApplicationContext()
         {
             MenuItem openMenuItem = new MenuItem("Open Unigram", new EventHandler(OpenApp));
-            MenuItem sendMenuItem = new MenuItem("Send message to UWP", new EventHandler(SendToUWP));
             MenuItem exitMenuItem = new MenuItem("Quit Unigram", new EventHandler(Exit));
             openMenuItem.DefaultItem = true;
 
@@ -67,23 +66,13 @@ namespace UnigramBridge
             Connect();
         }
 
-        private async void SendToUWP(object sender, EventArgs e)
-        {
-            ValueSet message = new ValueSet();
-            message.Add("content", "Message from Systray Extension");
-            await SendToUWP(message);
-        }
-
         private async void Exit(object sender, EventArgs e)
         {
-            //ValueSet message = new ValueSet();
-            //message.Add("exit", "");
-            //await SendToUWP(message);
-
             if (connection != null)
             {
                 try
                 {
+                    connection.ServiceClosed -= Connection_ServiceClosed;
                     await connection.SendMessageAsync(new ValueSet { { "Exit", string.Empty } });
                 }
                 catch { }
@@ -91,31 +80,6 @@ namespace UnigramBridge
 
             notifyIcon.Dispose();
             Application.Exit();
-        }
-
-        private async Task SendToUWP(ValueSet message)
-        {
-            if (connection == null)
-            {
-                connection = new AppServiceConnection();
-                connection.PackageFamilyName = Package.Current.Id.FamilyName;
-#if DEBUG
-                connection.AppServiceName = "org.telegram.bridge";
-#else
-                connection.AppServiceName = "org.unigram.bridge";
-#endif
-                connection.RequestReceived += Connection_RequestReceived;
-                connection.ServiceClosed += Connection_ServiceClosed;
-
-                var connectionStatus = await connection.OpenAsync();
-                if (connectionStatus != AppServiceConnectionStatus.Success)
-                {
-                    //MessageBox.Show("Status: " + connectionStatus.ToString());
-                    return;
-                }
-            }
-
-            await connection.SendMessageAsync(message);
         }
 
         private async void Connect()
@@ -234,6 +198,8 @@ namespace UnigramBridge
             }
             else if (args.Request.Message.TryGetValue("Exit", out object exit))
             {
+                connection.ServiceClosed -= Connection_ServiceClosed;
+
                 notifyIcon.Dispose();
                 Application.Exit();
             }
