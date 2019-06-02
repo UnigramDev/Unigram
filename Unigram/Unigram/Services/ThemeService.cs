@@ -22,7 +22,7 @@ namespace Unigram.Services
         Dictionary<string, string[]> GetMapping(TelegramTheme flags);
         Color GetDefaultColor(TelegramTheme flags, string key);
 
-        Task<IList<ThemeInfoBase>> GetThemesAsync();
+        Task<IList<ThemeInfoBase>> GetThemesAsync(bool custom);
 
         Task SerializeAsync(StorageFile file, ThemeCustomInfo theme);
         Task<ThemeCustomInfo> DeserializeAsync(StorageFile file);
@@ -68,31 +68,35 @@ namespace Unigram.Services
             return default(Color);
         }
 
-        public async Task<IList<ThemeInfoBase>> GetThemesAsync()
+        public async Task<IList<ThemeInfoBase>> GetThemesAsync(bool custom)
         {
-            var result = new List<ThemeInfoBase>
-            {
-                new ThemeBundledInfo { Name = "Light", Parent = TelegramTheme.Light },
-                new ThemeBundledInfo { Name = "Dark", Parent = TelegramTheme.Dark }
-            };
+            var result = new List<ThemeInfoBase>();
 
-            var package = await Package.Current.InstalledLocation.GetFolderAsync("Assets\\Themes");
-            var official = await package.GetFilesAsync();
-
-            foreach (var file in official)
+            if (custom)
             {
-                result.Add(await DeserializeAsync(file, true));
+                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("themes", CreationCollisionOption.OpenIfExists);
+                var files = await folder.GetFilesAsync();
+
+                foreach (var file in files)
+                {
+                    result.Add(await DeserializeAsync(file, false));
+                }
             }
-
-            var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("themes", CreationCollisionOption.OpenIfExists);
-            var files = await folder.GetFilesAsync();
-
-            foreach (var file in files)
+            else
             {
-                result.Add(await DeserializeAsync(file, false));
-            }
+                result.Add(new ThemeBundledInfo { Name = "Light", Parent = TelegramTheme.Light });
+                result.Add(new ThemeBundledInfo { Name = "Dark", Parent = TelegramTheme.Dark });
 
-            result.Add(new ThemeSystemInfo { Name = "Use system theme" });
+                var package = await Package.Current.InstalledLocation.GetFolderAsync("Assets\\Themes");
+                var official = await package.GetFilesAsync();
+
+                foreach (var file in official)
+                {
+                    result.Add(await DeserializeAsync(file, true));
+                }
+
+                result.Add(new ThemeSystemInfo { Name = "Use system theme" });
+            }
 
             return result;
         }
@@ -181,7 +185,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var installed = await GetThemesAsync();
+            var installed = await GetThemesAsync(true);
 
             var equals = installed.FirstOrDefault(x => x is ThemeCustomInfo custom && ThemeCustomInfo.Equals(custom, info));
             if (equals != null)
@@ -2713,6 +2717,70 @@ namespace Unigram.Services
 
             return equal;
         }
+
+
+
+        public override Color ChatBackgroundColor
+        {
+            get
+            {
+                //if (Values.TryGet("PageHeaderBackgroundBrush", out Color color))
+                //{
+                //    return color;
+                //}
+
+                if (Values.TryGet("ApplicationPageBackgroundThemeBrush", out Color color))
+                {
+                    return color;
+                }
+
+                return base.ChatBackgroundColor;
+            }
+        }
+
+        public override Color ChatBorderColor
+        {
+            get
+            {
+                //if (Values.TryGet("PageHeaderBackgroundBrush", out Color color))
+                //{
+                //    return color;
+                //}
+
+                if (Values.TryGet("PageHeaderBackgroundBrush", out Color color))
+                {
+                    return color;
+                }
+
+                return base.ChatBorderColor;
+            }
+        }
+
+        public override Color MessageBackgroundColor
+        {
+            get
+            {
+                if (Values.TryGet("MessageBackgroundColor", out Color color))
+                {
+                    return color;
+                }
+
+                return base.MessageBackgroundColor;
+            }
+        }
+
+        public override Color MessageBackgroundOutColor
+        {
+            get
+            {
+                if (Values.TryGet("MessageBackgroundOutColor", out Color color))
+                {
+                    return color;
+                }
+
+                return base.MessageBackgroundOutColor;
+            }
+        }
     }
 
     public class ThemeBundledInfo : ThemeInfoBase
@@ -2723,6 +2791,47 @@ namespace Unigram.Services
     public class ThemeSystemInfo : ThemeInfoBase
     {
         public override bool IsOfficial => true;
+
+        public override Color ChatBackgroundColor => ((App)App.Current).UISettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Background);
+
+        public override Color ChatBorderColor
+        {
+            get
+            {
+                if (SettingsService.Current.Appearance.GetSystemTheme() == TelegramAppTheme.Light)
+                {
+                    return Color.FromArgb(0xFF, 0xe6, 0xe6, 0xe6);
+                }
+
+                return Color.FromArgb(0xFF, 0x2b, 0x2b, 0x2b);
+            }
+        }
+
+        public override Color MessageBackgroundColor
+        {
+            get
+            {
+                if (SettingsService.Current.Appearance.GetSystemTheme() == TelegramAppTheme.Light)
+                {
+                    return Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
+                }
+
+                return Color.FromArgb(0xFF, 0x1F, 0x2C, 0x36);
+            }
+        }
+
+        public override Color MessageBackgroundOutColor
+        {
+            get
+            {
+                if (SettingsService.Current.Appearance.GetSystemTheme() == TelegramAppTheme.Light)
+                {
+                    return ((App)App.Current).UISettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.AccentLight3);
+                }
+
+                return ((App)App.Current).UISettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.AccentDark2);
+            }
+        }
     }
 
     public abstract class ThemeInfoBase
@@ -2731,5 +2840,59 @@ namespace Unigram.Services
         public TelegramTheme Parent { get; set; }
 
         public abstract bool IsOfficial { get; }
+
+
+
+        public virtual Color ChatBackgroundColor
+        {
+            get
+            {
+                if (Parent.HasFlag(TelegramTheme.Light))
+                {
+                    return Color.FromArgb(0xFF, 0xdf, 0xe4, 0xe8);
+                }
+
+                return Color.FromArgb(0xFF, 0x10, 0x14, 0x16);
+            }
+        }
+
+        public virtual Color ChatBorderColor
+        {
+            get
+            {
+                if (Parent.HasFlag(TelegramTheme.Light))
+                {
+                    return Color.FromArgb(0xFF, 0xe6, 0xe6, 0xe6);
+                }
+
+                return Color.FromArgb(0xFF, 0x2b, 0x2b, 0x2b);
+            }
+        }
+
+        public virtual Color MessageBackgroundColor
+        {
+            get
+            {
+                if (Parent.HasFlag(TelegramTheme.Light))
+                {
+                    return Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
+                }
+
+                return Color.FromArgb(0xFF, 0x18, 0x25, 0x33);
+            }
+        }
+
+        public virtual Color MessageBackgroundOutColor
+        {
+            get
+            {
+                if (Parent.HasFlag(TelegramTheme.Light))
+                {
+                    return Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF);
+                }
+
+                return Color.FromArgb(0xFF, 0x2B, 0x52, 0x78);
+            }
+        }
     }
 }

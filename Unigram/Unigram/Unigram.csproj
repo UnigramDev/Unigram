@@ -627,6 +627,7 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsVoIPViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWallpapersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
@@ -842,6 +843,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsThemePage.xaml.cs">
       <DependentUpon>SettingsThemePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsThemesPage.xaml.cs">
+      <DependentUpon>SettingsThemesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsVoIPPage.xaml.cs">
       <DependentUpon>SettingsVoIPPage.xaml</DependentUpon>
@@ -2254,6 +2258,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsThemePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsThemesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

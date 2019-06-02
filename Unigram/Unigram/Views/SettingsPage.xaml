@@ -10,7 +10,7 @@
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <controls:ScrollViewerBackground
             Background="{ThemeResource PageSubHeaderBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"

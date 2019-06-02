@@ -27,71 +27,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsAppearancePage : Page
+    public sealed partial class SettingsThemesPage : Page
     {
-        public SettingsAppearanceViewModel ViewModel => DataContext as SettingsAppearanceViewModel;
+        public SettingsThemesViewModel ViewModel => DataContext as SettingsThemesViewModel;
 
-        public SettingsAppearancePage()
+        public SettingsThemesPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsAppearanceViewModel>();
-
-            ViewModel.PropertyChanged += OnPropertyChanged;
-
-            var preview = ElementCompositionPreview.GetElementVisual(Preview);
-            preview.Clip = preview.Compositor.CreateInsetClip();
-
-            Message1.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
-            Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
-
-            //UpdatePreview(true);
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
+            DataContext = TLContainer.Current.Resolve<SettingsThemesViewModel>();
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
                 MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
-        }
-
-        private void Wallpaper_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsWallpapersPage));
-        }
-
-        private void NightMode_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsNightModePage));
-        }
-
-        private void Themes_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsThemesPage));
-        }
-
-        #region Binding
-
-        private string ConvertNightMode(NightMode mode)
-        {
-            return mode == NightMode.Scheduled
-                ? Strings.Resources.AutoNightScheduled
-                : mode == NightMode.Automatic
-                ? Strings.Resources.AutoNightAutomatic
-                : Strings.Resources.AutoNightDisabled;
-        }
-
-        private Visibility ConvertNightModeVisibility(NightMode mode)
-        {
-            return mode == NightMode.Disabled ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        #endregion
-
-        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName.Equals("FontSize"))
-            {
-                Message1.UpdateMockup();
-                Message2.UpdateMockup();
             }
         }
 
@@ -145,17 +92,14 @@ namespace Unigram.Views.Settings
 
             if (theme is ThemeCustomInfo custom)
             {
-                radio.RequestedTheme = custom.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
                 radio.IsChecked = string.Equals(SettingsService.Current.Appearance.RequestedThemePath, custom.Path, StringComparison.OrdinalIgnoreCase);
             }
             else if (theme is ThemeSystemInfo)
             {
-                radio.RequestedTheme = SettingsService.Current.Appearance.GetSystemTheme() == TelegramAppTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
                 radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemePath) && SettingsService.Current.Appearance.RequestedTheme == ElementTheme.Default;
             }
             else
             {
-                radio.RequestedTheme = theme.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
                 radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemePath) && SettingsService.Current.Appearance.RequestedTheme == (theme.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
             }
         }

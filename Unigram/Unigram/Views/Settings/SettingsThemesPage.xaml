@@ -1,0 +1,112 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsThemesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:chats="using:Unigram.Controls.Chats"
+    xmlns:services="using:Unigram.Services"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <contract7Present:Grid.BackgroundTransition>
+            <BrushTransition/>
+        </contract7Present:Grid.BackgroundTransition>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ContentPageHeader>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{CustomResource ColorThemes}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+
+                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="1">
+                    <Button.Flyout>
+                        <MenuFlyout x:Name="MenuFlyout">
+                            <MenuFlyoutItem Text="{CustomResource CreateNewThemeMenu}"
+                                    Command="{x:Bind ViewModel.NewThemeCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE2B1;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <FontIcon x:Name="EllipsisIcon"
+                                VerticalAlignment="Center"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Glyph="&#xE10C;"
+                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </controls:ContentPageHeader>
+
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel Margin="0,0,0,48">
+                <StackPanel Padding="12,12,0,12" Margin="0,0,0,0">
+                    <TextBlock Text="{CustomResource BuiltInThemes}" Margin="0,0,0,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                              SelectionMode="None"
+                              ContainerContentChanging="OnContainerContentChanging"
+                              Style="{StaticResource StaticListViewStyle}"
+                              ItemContainerTransitions="{x:Null}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="services:ThemeInfoBase">
+                                <StackPanel>
+                                    <RadioButton Click="Switch_Click" Content="{x:Bind Name}" Tag="{x:Bind}" GroupName="Theme" ContextRequested="Theme_ContextRequested"/>
+                                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,6"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ListView>
+                </StackPanel>
+                
+                <StackPanel Padding="12,0,0,12" Margin="0,18,0,0" Visibility="{x:Bind ViewModel.AreCustomThemesAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="{CustomResource CustomThemes}" Margin="0,0,0,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ListView ItemsSource="{x:Bind ViewModel.Custom}"
+                              SelectionMode="None"
+                              ContainerContentChanging="OnContainerContentChanging"
+                              Style="{StaticResource StaticListViewStyle}"
+                              ItemContainerTransitions="{x:Null}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="services:ThemeInfoBase">
+                                <StackPanel>
+                                    <RadioButton Click="Switch_Click" Content="{x:Bind Name}" Tag="{x:Bind}" GroupName="Theme" ContextRequested="Theme_ContextRequested"/>
+                                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="0,6,0,6"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ListView>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

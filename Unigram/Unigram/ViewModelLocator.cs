@@ -239,6 +239,7 @@ namespace Unigram
                 builder.RegisterType<SettingsMasksArchivedViewModel>();
                 builder.RegisterType<SettingsLanguageViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
+                builder.RegisterType<SettingsThemesViewModel>().SingleInstance();
                 builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsWallpapersViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsVoIPViewModel>();
