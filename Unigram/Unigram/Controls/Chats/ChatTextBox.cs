@@ -237,7 +237,7 @@ namespace Unigram.Controls.Chats
                     entities.Add(entity);
                 }
 
-                SetText(text, entities);
+                InsertText(text, entities);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-td-field-tags"))
             {
