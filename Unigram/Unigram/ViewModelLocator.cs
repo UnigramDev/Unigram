@@ -227,6 +227,7 @@ namespace Unigram
                 builder.RegisterType<SettingsPrivacyAllowP2PCallsViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyAllowChatInvitesViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowForwardedViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsPrivacyShowPhoneViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowPhotoViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowStatusViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPasswordViewModel>(); //.SingleInstance();

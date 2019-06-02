@@ -61,20 +61,20 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource PrivacyTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <!--<controls:BadgeButton
-                        Content="{CustomResource This is going to be a secret for a while}"
-                        Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
-                        Click="StatusTimestamp_Click"/>-->
+                        Content="{CustomResource PrivacyPhone}"
+                        Badge="{x:Bind ViewModel.ShowPhoneRules.Badge, Mode=OneWay}"
+                        Click="ShowPhone_Click"/>-->
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyLastSeen}"
                         Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
                         Click="StatusTimestamp_Click"/>
                     <!--<controls:BadgeButton
                         Content="{CustomResource PrivacyProfilePhoto}"
-                        Badge="{x:Bind ViewModel.AllowCallsRules.Badge, Mode=OneWay}"
+                        Badge="{x:Bind ViewModel.ShowPhotoRules.Badge, Mode=OneWay}"
                         Click="ProfilePhoto_Click"/>
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyForwards}"
-                        Badge="{x:Bind ViewModel.AllowCallsRules.Badge, Mode=OneWay}"
+                        Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"
                         Click="Forwards_Click"/>-->
                     <controls:BadgeButton
                         Content="{CustomResource Calls}"

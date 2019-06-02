@@ -610,6 +610,7 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowForwardedViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhotoViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowStatusViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyViewModelBase.cs" />
@@ -796,6 +797,9 @@
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowForwardedPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowForwardedPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowPhonePage.xaml.cs">
+      <DependentUpon>SettingsPrivacyShowPhonePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowPhotoPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowPhotoPage.xaml</DependentUpon>
@@ -2190,6 +2194,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyShowForwardedPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyShowPhonePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -22,18 +22,20 @@ namespace Unigram.ViewModels.Settings
         private readonly IPasscodeService _passcodeService;
 
         private readonly SettingsPrivacyShowForwardedViewModel _showForwardedRules;
+        private readonly SettingsPrivacyShowPhoneViewModel _showPhoneRules;
         private readonly SettingsPrivacyShowPhotoViewModel _showPhotoRules;
         private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
 
-        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
+        public SettingsPrivacyAndSecurityViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _contactsService = contactsService;
             _passcodeService = passcodeService;
 
             _showForwardedRules = showForwarded;
+            _showPhoneRules = showPhone;
             _showPhotoRules = showPhoto;
             _showStatusRules = statusTimestamp;
             _allowCallsRules = phoneCall;
@@ -46,6 +48,9 @@ namespace Unigram.ViewModels.Settings
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
 
+            //Children.Add(_showForwardedRules);
+            //Children.Add(_showPhoneRules);
+            //Children.Add(_showPhoneRules);
             Children.Add(_showStatusRules);
             Children.Add(_allowCallsRules);
             Children.Add(_allowChatInvitesRules);
@@ -77,6 +82,7 @@ namespace Unigram.ViewModels.Settings
         #region Properties
 
         public SettingsPrivacyShowForwardedViewModel ShowForwardedRules => _showForwardedRules;
+        public SettingsPrivacyShowPhoneViewModel ShowPhoneRules => _showPhoneRules;
         public SettingsPrivacyShowPhotoViewModel ShowPhotoRules => _showPhotoRules;
         public SettingsPrivacyShowStatusViewModel ShowStatusRules => _showStatusRules;
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;

@@ -45,6 +45,11 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsBlockedUsersPage));
         }
 
+        private void ShowPhone_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPrivacyShowPhonePage));
+        }
+
         private void StatusTimestamp_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPrivacyShowStatusPage));
