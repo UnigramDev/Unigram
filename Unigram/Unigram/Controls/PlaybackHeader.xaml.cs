@@ -124,7 +124,6 @@ namespace Unigram.Controls
                 return;
             }
 
-            Slider.ViewportSize = _playbackService.Duration.TotalSeconds / 100;
             Slider.Maximum = _playbackService.Duration.TotalSeconds;
             Slider.Value = _playbackService.Position.TotalSeconds;
         }
@@ -307,7 +306,18 @@ namespace Unigram.Controls
                 return;
             }
 
-            Command?.Execute(message);
+            if (message.Content is MessageAudio)
+            {
+                var flyout = FlyoutBase.GetAttachedFlyout(ViewButton);
+                if (flyout != null)
+                {
+                    flyout.ShowAt(ViewButton);
+                }
+            }
+            else
+            {
+                Command?.Execute(message);
+            }
         }
 
         public ICommand Command { get; set; }
