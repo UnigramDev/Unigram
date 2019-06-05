@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Services;
@@ -42,5 +43,60 @@ namespace Unigram.Common
                 await service.VibrateAsync();
             }
         }
+
+        #region IsVisible
+
+        public static bool GetIsVisible(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsVisibleProperty);
+        }
+
+        public static void SetIsVisible(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsVisibleProperty, value);
+        }
+
+        public static readonly DependencyProperty IsVisibleProperty =
+            DependencyProperty.RegisterAttached("IsVisible", typeof(bool), typeof(UIElement), new PropertyMetadata(true, OnVisibleChanged));
+
+        private static void OnVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as UIElement;
+            var newValue = (bool)e.NewValue;
+            var oldValue = (bool)e.OldValue;
+
+            if (newValue == oldValue)
+            {
+                return;
+            }
+
+            var visual = ElementCompositionPreview.GetElementVisual(sender);
+
+            sender.Visibility = Visibility.Visible;
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                visual.Opacity = newValue ? 1 : 0;
+                visual.Scale = new Vector3(newValue ? 1 : 0);
+
+                sender.Visibility = newValue ? Visibility.Visible : Visibility.Collapsed;
+            };
+
+            var anim1 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            anim1.InsertKeyFrame(0, newValue ? 0 : 1);
+            anim1.InsertKeyFrame(1, newValue ? 1 : 0);
+
+            var anim2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            anim2.InsertKeyFrame(0, new Vector3(newValue ? 0 : 1));
+            anim2.InsertKeyFrame(1, new Vector3(newValue ? 1 : 0));
+
+            visual.StartAnimation("Opacity", anim1);
+            visual.StartAnimation("Scale", anim2);
+
+            batch.End();
+        }
+
+        #endregion
     }
 }

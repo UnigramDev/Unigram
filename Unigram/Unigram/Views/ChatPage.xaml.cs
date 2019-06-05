@@ -2763,6 +2763,11 @@ namespace Unigram.Views
             ListAutocomplete.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
         }
 
+        private void Arrow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height - (float)e.NewSize.Width / 2f, 0);
+        }
+
         private void MaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;

@@ -59,20 +59,24 @@ namespace Unigram.Views
                 return;
             }
 
-            Arrow.Visibility = Visibility.Collapsed;
+            //Arrow.Visibility = Visibility.Collapsed;
+            VisualUtilities.SetIsVisible(Arrow, false);
 
             ViewVisibleMessages(false);
+            //UpdateHeaderDate(false);
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120 && ViewModel.IsFirstSliceLoaded != false)
             {
-                Arrow.Visibility = Visibility.Collapsed;
+                //Arrow.Visibility = Visibility.Collapsed;
+                VisualUtilities.SetIsVisible(Arrow, false);
             }
             else
             {
-                Arrow.Visibility = Visibility.Visible;
+                //Arrow.Visibility = Visibility.Visible;
+                VisualUtilities.SetIsVisible(Arrow, true);
             }
 
             ViewVisibleMessages(e.IsIntermediate);

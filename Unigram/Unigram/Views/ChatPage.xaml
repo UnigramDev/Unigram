@@ -793,7 +793,7 @@
                     </Grid>
                 </StackPanel>
 
-                <StackPanel x:Name="Arrow" Visibility="Collapsed">
+                <StackPanel x:Name="Arrow" SizeChanged="Arrow_SizeChanged" Visibility="Collapsed">
                     <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                             Visibility="{x:Bind ViewModel.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
                             MinWidth="20"
