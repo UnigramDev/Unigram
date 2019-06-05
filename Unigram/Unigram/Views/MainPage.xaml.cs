@@ -133,6 +133,15 @@ namespace Unigram.Views
 
             ChatsList.RegisterPropertyChangedCallback(ChatsListView.SelectionMode2Property, List_SelectionModeChanged);
 
+
+
+            var shadow = DropShadowEx.Attach(ArrowShadow, 2, 0.25f, null);
+            shadow.Size = new Vector2(36, 36);
+            shadow.Offset = new Vector3(0, 1, 0);
+
+            var arrow = ElementCompositionPreview.GetElementVisual(Arrow);
+            arrow.CenterPoint = new Vector3(18);
+
             //FocusManager.GettingFocus += (s, args) =>
             // {
             //     if (args.NewFocusedElement != null)
@@ -562,6 +571,13 @@ namespace Unigram.Views
                 Bindings.StopTracking();
                 Bindings.Update();
             }
+
+            var scrollViewer = ChatsList.GetScrollViewer();
+            if (scrollViewer != null)
+            {
+                scrollViewer.ViewChanged -= ScrollViewer_ViewChanged;
+                scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -572,7 +588,22 @@ namespace Unigram.Views
 
             Bindings.StopTracking();
 
+
+            var scrollViewer = ChatsList.GetScrollViewer();
+            if (scrollViewer != null)
+            {
+                scrollViewer.ViewChanged -= ScrollViewer_ViewChanged;
+            }
+
             _unloaded = true;
+        }
+
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (sender is ScrollViewer scrollViewer)
+            {
+                VisualUtilities.SetIsVisible(Arrow, scrollViewer.VerticalOffset > 400);
+            }
         }
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
@@ -1920,6 +1951,15 @@ namespace Unigram.Views
             else if (destination == RootDestination.News)
             {
                 MessageHelper.NavigateToUsername(ViewModel.ProtoService, MasterDetail.NavigationService, "unigram", null, null, null);
+            }
+        }
+
+        private void Arrow_Click(object sender, RoutedEventArgs e)
+        {
+            var scrollViewer = ChatsList.GetScrollViewer();
+            if (scrollViewer != null)
+            {
+                scrollViewer.ChangeView(null, 0, null);
             }
         }
 

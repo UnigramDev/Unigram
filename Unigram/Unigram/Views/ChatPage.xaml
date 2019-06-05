@@ -774,7 +774,7 @@
                                    Margin="4,2,4,0"/>
                     </Border>
                     <Grid Margin="12,6">
-                        <Ellipse x:Name="ArrowMentionsShadow" Fill="White" Width="36" Height="36"/>
+                        <Ellipse x:Name="ArrowMentionsShadow" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="36" Height="36"/>
                         <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                                 CornerRadius="18"
                                 Height="36"
@@ -811,7 +811,7 @@
                                    Margin="4,2,4,0"/>
                     </Border>
                     <Grid Margin="12,6">
-                        <Ellipse x:Name="ArrowShadow" Fill="White" Width="36" Height="36"/>
+                        <Ellipse x:Name="ArrowShadow" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="36" Height="36"/>
                         <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                                 CornerRadius="18"
                                 Height="36"

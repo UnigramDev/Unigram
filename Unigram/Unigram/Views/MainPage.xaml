@@ -484,7 +484,7 @@
                                                         </Border>
                                                     </Grid>
 
-                                                    <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                    <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -534,6 +534,7 @@
                                                 <TextBlock VerticalAlignment="Top"
                                                            Style="{StaticResource CaptionTextBlockStyle}"
                                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                            TextTrimming="CharacterEllipsis"
                                                            TextWrapping="NoWrap"
                                                            Grid.Column="1"
@@ -644,6 +645,29 @@
                                     </StackPanel>
                                 </ListView.Header>
                             </local:ChatsPage>
+
+                            <Grid x:Name="Arrow"
+                                  Margin="12,12"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Bottom"
+                                  common:VisualUtilities.IsVisible="False"
+                                  Visibility="Collapsed">
+                                <Ellipse x:Name="ArrowShadow" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="36" Height="36"/>
+                                <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                                        CornerRadius="18"
+                                        Height="36"
+                                        Width="36">
+                                    <controls:GlyphButton
+                                        Click="Arrow_Click"
+                                        FontSize="16"
+                                        Width="36"
+                                        Height="36"
+                                        Glyph="&#xE74A;"
+                                        Radius="24"
+                                        AutomationProperties.Name="{CustomResource AccDescrPageDown}"
+                                        ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"/>
+                                </Border>
+                            </Grid>
 
                             <Grid x:Name="FolderPanel" x:Load="False">
                                 <Border x:Name="FolderShadow" Background="{ThemeResource MessageOverlayBackgroundBrush}"/>
