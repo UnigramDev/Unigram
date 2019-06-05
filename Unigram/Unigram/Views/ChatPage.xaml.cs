@@ -82,6 +82,7 @@ namespace Unigram.Views
         private Visual _rootVisual;
         private Visual _textShadowVisual;
 
+        private DispatcherTimer _dateHeaderTimer;
         private Visual _dateHeaderPanel;
         private Visual _dateHeader;
 
@@ -152,7 +153,16 @@ namespace Unigram.Views
 
             if (DateHeaderPanel != null)
             {
-                _dateHeaderPanel = ElementCompositionPreview.GetElementVisual(DateHeaderPanel);
+                _dateHeaderTimer = new DispatcherTimer();
+                _dateHeaderTimer.Interval = TimeSpan.FromMilliseconds(2000);
+                _dateHeaderTimer.Tick += (s, args) =>
+                {
+                    _dateHeaderTimer.Stop();
+
+                    VisualUtilities.SetIsVisible(DateHeaderPanel, false);
+                };
+
+                _dateHeaderPanel = ElementCompositionPreview.GetElementVisual(DateHeaderRelative);
                 _dateHeader = ElementCompositionPreview.GetElementVisual(DateHeader);
 
                 _dateHeaderPanel.Clip = _compositor.CreateInsetClip();
@@ -2766,6 +2776,11 @@ namespace Unigram.Views
         private void Arrow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height - (float)e.NewSize.Width / 2f, 0);
+        }
+
+        private void DateHeaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height / 2f, 0);
         }
 
         private void MaskTitleAndStatusBar()

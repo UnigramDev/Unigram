@@ -63,7 +63,7 @@ namespace Unigram.Views
             VisualUtilities.SetIsVisible(Arrow, false);
 
             ViewVisibleMessages(false);
-            //UpdateHeaderDate(false);
+            UpdateHeaderDate(false);
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -80,7 +80,7 @@ namespace Unigram.Views
             }
 
             ViewVisibleMessages(e.IsIntermediate);
-            //UpdateHeaderDate(e.IsIntermediate);
+            UpdateHeaderDate(e.IsIntermediate);
         }
 
         private void ViewVisibleMessages(bool intermediate)
@@ -196,8 +196,6 @@ namespace Unigram.Views
                 {
                     var transform = container.TransformToVisual(DateHeaderRelative);
                     var point = transform.TransformPoint(new Point());
-                    var height = (float)DateHeader.ActualHeight;
-                    var offset = (float)point.Y + height;
 
                     if (point.Y + container.ActualHeight >= 0)
                     {
@@ -238,6 +236,10 @@ namespace Unigram.Views
                     container.Opacity = 1;
                 }
             }
+
+            _dateHeaderTimer.Stop();
+            _dateHeaderTimer.Start();
+            VisualUtilities.SetIsVisible(DateHeaderPanel, true);
         }
 
         class MediaPlayerItem

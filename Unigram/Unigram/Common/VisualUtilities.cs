@@ -65,11 +65,12 @@ namespace Unigram.Common
             var newValue = (bool)e.NewValue;
             var oldValue = (bool)e.OldValue;
 
-            if (newValue == oldValue)
+            if (newValue == oldValue || (sender.Visibility == Visibility.Collapsed && !newValue))
             {
                 return;
             }
 
+            var scale = GetIsScaleEnabled(d);
             var visual = ElementCompositionPreview.GetElementVisual(sender);
 
             sender.Visibility = Visibility.Visible;
@@ -78,7 +79,7 @@ namespace Unigram.Common
             batch.Completed += (s, args) =>
             {
                 visual.Opacity = newValue ? 1 : 0;
-                visual.Scale = new Vector3(newValue ? 1 : 0);
+                visual.Scale = new Vector3(scale ? newValue ? 1 : 0 : 1);
 
                 sender.Visibility = newValue ? Visibility.Visible : Visibility.Collapsed;
             };
@@ -86,16 +87,35 @@ namespace Unigram.Common
             var anim1 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim1.InsertKeyFrame(0, newValue ? 0 : 1);
             anim1.InsertKeyFrame(1, newValue ? 1 : 0);
-
-            var anim2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            anim2.InsertKeyFrame(0, new Vector3(newValue ? 0 : 1));
-            anim2.InsertKeyFrame(1, new Vector3(newValue ? 1 : 0));
-
             visual.StartAnimation("Opacity", anim1);
-            visual.StartAnimation("Scale", anim2);
+
+            if (scale)
+            {
+                var anim2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                anim2.InsertKeyFrame(0, new Vector3(newValue ? 0 : 1));
+                anim2.InsertKeyFrame(1, new Vector3(newValue ? 1 : 0));
+                visual.StartAnimation("Scale", anim2);
+            }
 
             batch.End();
         }
+
+        #endregion
+
+        #region IsScaleEnabled
+
+        public static bool GetIsScaleEnabled(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsScaleEnabledProperty);
+        }
+
+        public static void SetIsScaleEnabled(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsScaleEnabledProperty, value);
+        }
+
+        public static readonly DependencyProperty IsScaleEnabledProperty =
+            DependencyProperty.RegisterAttached("IsScaleEnabled", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
 
         #endregion
     }
