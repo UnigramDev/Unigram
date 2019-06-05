@@ -95,7 +95,7 @@ namespace Unigram.Services
                     result.Add(await DeserializeAsync(file, true));
                 }
 
-                result.Add(new ThemeSystemInfo { Name = "Use system theme" });
+                result.Add(new ThemeSystemInfo { Name = "System Theme" });
             }
 
             return result;
