@@ -47,7 +47,7 @@ namespace Unigram.Controls.Views
             var user = cacheService.GetUser(chat);
 
             var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
-            if (sameUser && !first.IsOutgoing && chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+            if (sameUser && first.SenderUserId != 0 && !first.IsOutgoing && chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
                 var sender = cacheService.GetUser(first.SenderUserId);
 
