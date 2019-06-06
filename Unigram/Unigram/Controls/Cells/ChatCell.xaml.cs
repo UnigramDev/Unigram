@@ -1325,6 +1325,7 @@ namespace Unigram.Controls.Cells
             var anim12 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim12.InsertKeyFrame(0, 0);
             anim12.InsertKeyFrame(1, 1);
+            anim12.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             anim12.DelayTime = anim11.Duration;
             anim12.Duration = TimeSpan.FromMilliseconds(400);
 
