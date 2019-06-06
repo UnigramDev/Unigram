@@ -273,7 +273,8 @@ namespace Unigram.Services
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
                 _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
-                _client.Send(new SetOption("online", new OptionValueBoolean(online)));
+                //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
+                _client.Send(new SetOption("online", new OptionValueBoolean(false)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
