@@ -246,6 +246,14 @@ namespace Unigram.Views.Chats
             {
                 linkCell.UpdateMessage(message, ViewModel.ProtoService, ViewModel.NavigationService);
             }
+            else if (args.ItemContainer.ContentTemplateRoot is SharedAudioCell audioCell)
+            {
+                audioCell.UpdateMessage(ViewModel.PlaybackService, ViewModel.ProtoService, message);
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is SharedVoiceCell voiceCell)
+            {
+                voiceCell.UpdateMessage(ViewModel.PlaybackService, ViewModel.ProtoService, message);
+            }
             else if (message.Content is MessageHeaderDate && args.ItemContainer.ContentTemplateRoot is Border content && content.Child is TextBlock header)
             {
                 header.Text = DateTimeToFormatConverter.ConvertMonthGrouping(Utils.UnixTimestampToDateTime(message.Date));

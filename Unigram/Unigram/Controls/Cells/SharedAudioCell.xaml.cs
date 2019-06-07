@@ -116,30 +116,6 @@ namespace Unigram.Controls.Cells
             this.BeginOnUIThread(UpdatePosition);
         }
 
-        private void UpdateDuration()
-        {
-            var message = _message;
-            if (message == null)
-            {
-                return;
-            }
-
-            var audio = GetContent(message.Content);
-            if (audio == null)
-            {
-                return;
-            }
-
-            if (message.Content is MessageAudio audioMessage)
-            {
-                Subtitle.Text = audio.GetDuration();
-            }
-            else
-            {
-                Subtitle.Text = audio.GetDuration();
-            }
-        }
-
         private void UpdatePosition()
         {
             var message = _message;
@@ -148,7 +124,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (message.Equals(_playbackService.CurrentItem) /*&& !_pressed*/)
+            if (message.AreEqual(_playbackService.CurrentItem) /*&& !_pressed*/)
             {
                 Subtitle.Text = FormatTime(_playbackService.Position) + " / " + FormatTime(_playbackService.Duration);
             }
@@ -218,7 +194,7 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                if (Equals(message, _playbackService.CurrentItem))
+                if (message.AreEqual(_playbackService.CurrentItem))
                 {
                     if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                     {
@@ -270,20 +246,6 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        public bool IsValid(MessageContent content, bool primary)
-        {
-            if (content is MessageAudio)
-            {
-                return true;
-            }
-            else if (content is MessageText text && text.WebPage != null && !primary)
-            {
-                return text.WebPage.Audio != null;
-            }
-
-            return false;
-        }
-
         private Audio GetContent(MessageContent content)
         {
             if (content is MessageAudio audio)
@@ -322,7 +284,7 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                if (_message.Equals(_playbackService.CurrentItem))
+                if (_message.AreEqual(_playbackService.CurrentItem))
                 {
                     if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                     {

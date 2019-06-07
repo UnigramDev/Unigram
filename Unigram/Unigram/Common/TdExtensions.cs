@@ -297,6 +297,16 @@ namespace Unigram.Common
             return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
         }
 
+        public static bool AreEqual(this Message x, Message y)
+        {
+            if (y == null)
+            {
+                return false;
+            }
+
+            return x.Id == y.Id && x.ChatId == y.ChatId;
+        }
+
         public static bool IsAnimatedSticker(this Message message)
         {
 #if DEBUG_LOTTIE
