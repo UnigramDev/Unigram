@@ -423,6 +423,8 @@ namespace Unigram.ViewModels
                 {
                     if (_inviteToken != null)
                     {
+                        response = await ProtoService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
+
                         var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
                         if (service != null)
                         {
