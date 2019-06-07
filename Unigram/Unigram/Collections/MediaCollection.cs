@@ -33,6 +33,8 @@ namespace Unigram.Collections
         {
             try
             {
+                IsLoading = true;
+
                 var response = await _protoService.SendAsync(new SearchChatMessages(_chatId, _query, 0, _lastMaxId, 0, 50, _filter));
                 if (response is Messages messages)
                 {
@@ -49,10 +51,14 @@ namespace Unigram.Collections
                     var result = messages.MessagesValue.ToArray();
                     ProcessFiles(result);
 
+                    IsLoading = false;
+
                     return messages.MessagesValue;
                 }
             }
             catch { }
+
+            IsLoading = false;
 
             return new Message[0];
         }
