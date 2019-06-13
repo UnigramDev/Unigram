@@ -35,6 +35,7 @@ namespace Unigram.Services
         bool UseThreeLinesLayout { get; set; }
         bool IsAdaptiveWideEnabled { get; set; }
         bool IsTrayVisible { get; set; }
+        bool IsLaunchMinimized { get; set; }
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
@@ -167,8 +168,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (9UL << 32) | (2460UL << 16);
-        public const string CurrentChangelog = "• (Almost) full featured in-app music player.\r\n• New shiny system tray icon (You can disable it from Settings > Advanced).";
+        public const ulong CurrentVersion = (3UL << 48) | (9UL << 32) | (2494UL << 16);
+        public const string CurrentChangelog = "• Improved navigation for busy chats: Scroll up to see the message date.\r\n• \"Flash window when receiving a notification\" can be disabled from Settings > Notifications and Sounds.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -396,6 +397,23 @@ namespace Unigram.Services
             set
             {
                 _isTrayVisible = value;
+                AddOrUpdateValue(_local, "IsTrayVisible", value);
+            }
+        }
+
+        private static bool? _isLaunchMinimized;
+        public bool IsLaunchMinimized
+        {
+            get
+            {
+                if (_isLaunchMinimized == null)
+                    _isLaunchMinimized = GetValueOrDefault(_local, "IsLaunchMinimized", false);
+
+                return _isLaunchMinimized ?? false;
+            }
+            set
+            {
+                _isLaunchMinimized = value;
                 AddOrUpdateValue(_local, "IsTrayVisible", value);
             }
         }

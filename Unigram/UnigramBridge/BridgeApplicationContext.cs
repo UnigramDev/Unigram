@@ -46,7 +46,14 @@ namespace UnigramBridge
                     notifyIcon.Visible = true;
                 }
 
-                Connect();
+                if (local.Values.TryGetValue("IsLaunchMinimized", out object minimizedV) && minimizedV is bool minimized && !minimized)
+                {
+                    OpenApp(null, null);
+                }
+                else
+                {
+                    Connect();
+                }
             }
             catch
             {
