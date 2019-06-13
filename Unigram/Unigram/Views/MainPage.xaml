@@ -123,7 +123,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <controls:ContentPageHeader x:Name="PageHeader" Grid.Row="1">
+            <controls:ContentPageHeader x:Name="PageHeader" BackVisibility="Collapsed" Grid.Row="1">
                 <Grid x:Name="Header">
                     <Grid x:Name="MainHeader">
                         <Grid.ColumnDefinitions>

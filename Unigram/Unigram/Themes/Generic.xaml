@@ -1656,10 +1656,12 @@
                         </contract7Present:Border.BackgroundTransition>
                         <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}"/>
+                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
                             <local:GlyphButton Glyph="{TemplateBinding Glyph}"
                                                Command="{TemplateBinding Command}"
                                                CommandParameter="{TemplateBinding CommandParameter}"
@@ -1667,8 +1669,8 @@
                                                Style="{StaticResource HeaderGlyphButtonStyle}"
                                                AutomationProperties.Name="{TemplateBinding CommandToolTip}"
                                                ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
-                                               Grid.Column="1"/>
-                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                                               Grid.Column="2"/>
+                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -1695,9 +1697,13 @@
                             <BrushTransition/>
                         </contract7Present:Border.BackgroundTransition>
                         <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
-                            <Border BorderThickness="0,0,0,1" BorderBrush="{TemplateBinding BorderBrush}" IsHitTestVisible="False"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}"/>
+                            <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
+                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -1724,8 +1730,13 @@
                             <BrushTransition/>
                         </contract7Present:Border.BackgroundTransition>
                         <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}"/>
+                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
+                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
