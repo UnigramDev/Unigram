@@ -379,6 +379,8 @@ namespace Unigram.Controls.Messages
                 paragraph.Inlines.Add(new Run { Text = Strings.Resources.From + " ", FontWeight = FontWeights.Normal });
 
                 var title = string.Empty;
+                var bold = true;
+
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
@@ -390,10 +392,11 @@ namespace Unigram.Controls.Messages
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
                     title = fromHiddenUser.SenderName;
+                    bold = false;
                 }
 
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(new Run { Text = title });
+                hyperlink.Inlines.Add(new Run { Text = title, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal });
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
                 hyperlink.Click += (s, args) => FwdFrom_Click(message);
