@@ -3077,16 +3077,26 @@ namespace Unigram.Views
 
         public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
         {
-            var updated = ReplyMarkup.Update(message, message?.ReplyMarkup, false);
-            if (updated)
+            if (message?.ReplyMarkup is ReplyMarkupForceReply forceReply && forceReply.IsPersonal)
             {
-                ButtonMarkup.Visibility = Visibility.Visible;
-                ShowMarkup();
+                ViewModel.ReplyToMessage(message);
+
+                ButtonMarkup.Visibility = Visibility.Collapsed;
+                CollapseMarkup(false);
             }
             else
             {
-                ButtonMarkup.Visibility = Visibility.Collapsed;
-                CollapseMarkup(false);
+                var updated = ReplyMarkup.Update(message, message?.ReplyMarkup, false);
+                if (updated)
+                {
+                    ButtonMarkup.Visibility = Visibility.Visible;
+                    ShowMarkup();
+                }
+                else
+                {
+                    ButtonMarkup.Visibility = Visibility.Collapsed;
+                    CollapseMarkup(false);
+                }
             }
         }
 
