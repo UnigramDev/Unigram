@@ -116,7 +116,7 @@ namespace Unigram.Controls.Chats
             _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
             _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
             _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
-            _interactionSource.IsPositionYRailsEnabled = true;
+            _interactionSource.IsPositionXRailsEnabled = true;
 
             //Create tracker and associate interaction source
             _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, this);

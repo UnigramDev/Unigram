@@ -23,9 +23,13 @@ namespace Unigram.ViewModels.Chats
     {
         public IFileDelegate Delegate { get; set; }
 
-        public ChatSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IPlaybackService _playbackService;
+
+        public ChatSharedMediaViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _playbackService = playbackService;
+
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
             MessageViewCommand = new RelayCommand<Message>(MessageViewExecute);
@@ -36,6 +40,8 @@ namespace Unigram.ViewModels.Chats
 
             Aggregator.Subscribe(this);
         }
+
+        public IPlaybackService PlaybackService => _playbackService;
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {

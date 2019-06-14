@@ -116,7 +116,7 @@
                               ItemContainerTransitions="{x:Null}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="services:ThemeInfoBase">
-                                <StackPanel Margin="12,0,0,0">
+                                <StackPanel Margin="12,0,0,12">
                                     <RadioButton Click="Switch_Click" Tag="{x:Bind}" GroupName="Theme" ContextRequested="Theme_ContextRequested" Style="{StaticResource ThemeRadioButtonStyle}">
                                         <RadioButton.Background>
                                             <SolidColorBrush Color="{x:Bind ChatBackgroundColor}"/>
@@ -156,9 +156,12 @@
                                 <Setter Property="Padding" Value="0"/>
                             </Style>
                         </ItemsControl.ItemContainerStyle>
+                        <ListView.Footer>
+                            <Border Width="12"/>
+                        </ListView.Footer>
                     </ListView>
 
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,12,0,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
 
                     <controls:BadgeButton
                         Content="{CustomResource ShowAllThemes}"
@@ -174,7 +177,7 @@
                                   VerticalScrollBarVisibility="Disabled"
                                   VerticalScrollMode="Disabled">
                         <StackPanel Margin="12,0" Orientation="Horizontal">
-                            <StackPanel Margin="0,0,12,0">
+                            <StackPanel Margin="0,0,12,12">
                                 <RadioButton IsChecked="{x:Bind ViewModel.UseDefaultLayout, Mode=TwoWay}" GroupName="Layout" Style="{StaticResource ChatListRadioButtonStyle}">
                                     <StackPanel>
                                         <Grid>
@@ -208,7 +211,7 @@
                                 <TextBlock Text="{CustomResource ChatListDefault}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </StackPanel>
 
-                            <StackPanel Margin="0,0,0,0">
+                            <StackPanel Margin="0,0,0,12">
                                 <RadioButton IsChecked="{x:Bind ViewModel.UseThreeLinesLayout, Mode=TwoWay}" GroupName="Layout" Style="{StaticResource ChatListRadioButtonStyle}">
                                     <StackPanel>
                                         <Grid>
@@ -248,7 +251,7 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,12,0,12"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,12"/>
                 </StackPanel>
 
                 <StackPanel>

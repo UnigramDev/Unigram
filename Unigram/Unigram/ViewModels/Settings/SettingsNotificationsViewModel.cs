@@ -85,6 +85,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool InAppFlash
+        {
+            get
+            {
+                return Settings.Notifications.InAppFlash;
+            }
+            set
+            {
+                Settings.Notifications.InAppFlash = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool InAppSounds
         {
             get

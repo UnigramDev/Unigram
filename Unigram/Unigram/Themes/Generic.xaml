@@ -1660,7 +1660,7 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}"/>
+                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
                             <local:GlyphButton Glyph="{TemplateBinding Glyph}"
                                                Command="{TemplateBinding Command}"
@@ -1701,7 +1701,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}"/>
+                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
@@ -1734,7 +1734,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}"/>
+                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
                             <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>

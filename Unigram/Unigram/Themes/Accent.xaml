@@ -43,7 +43,7 @@
     <Thickness x:Key="MessageContentPadding">10,4,10,6</Thickness>
     <Thickness x:Key="MessageContentMargin">0,0,0,0</Thickness>
 
-    <CornerRadius x:Key="MessageServiceCornerRadius">12</CornerRadius>
+    <CornerRadius x:Key="MessageServiceCornerRadius">11</CornerRadius>
     <CornerRadius x:Key="MessageOverlayCornerRadius">12</CornerRadius>
 
     <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
