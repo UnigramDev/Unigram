@@ -202,7 +202,7 @@ namespace Unigram.Common
                 return true;
             }
 
-            return Uri.TryCreate("http://" + url, UriKind.Absolute, out uri);
+            return Uri.TryCreate("https://" + url, UriKind.Absolute, out uri);
         }
 
         public static bool IsTelegramUrl(Uri uri)
