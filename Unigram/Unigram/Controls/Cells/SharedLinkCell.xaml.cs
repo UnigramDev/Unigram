@@ -119,7 +119,7 @@ namespace Unigram.Controls.Cells
                                 var url = link;
                                 if (url.StartsWith("http") == false)
                                 {
-                                    url = "http://" + url;
+                                    url = "https://" + url;
                                 }
 
                                 Uri uri = new Uri(url);
@@ -160,7 +160,7 @@ namespace Unigram.Controls.Cells
                         {
                             if (link.ToLower().IndexOf("http") != 0 && link.ToLower().IndexOf("mailto") != 0)
                             {
-                                links.Add("http://" + link);
+                                links.Add("https://" + link);
                             }
                             else
                             {
@@ -304,7 +304,7 @@ namespace Unigram.Controls.Cells
             //        var url = webpage.Url;
             //        if (url.StartsWith("http") == false)
             //        {
-            //            url = "http://" + url;
+            //            url = "https://" + url;
             //        }
 
             //        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
