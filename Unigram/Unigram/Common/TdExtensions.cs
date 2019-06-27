@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Selectors;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Settings;
 
 namespace Unigram.Common
@@ -288,7 +289,46 @@ namespace Unigram.Common
 
         public static InputThumbnail ToInputThumbnail(this PhotoSize photo)
         {
+            if (photo == null)
+            {
+                return null;
+            }
+
             return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
+        }
+
+        public static bool AreEqual(this Message x, Message y)
+        {
+            if (y == null)
+            {
+                return false;
+            }
+
+            return x.Id == y.Id && x.ChatId == y.ChatId;
+        }
+
+        public static bool IsAnimatedSticker(this Message message)
+        {
+#if DEBUG_LOTTIE
+            if (message.Content is MessageDocument document)
+            {
+                return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");
+            }
+#endif
+
+            return false;
+        }
+
+        public static bool IsAnimatedSticker(this MessageViewModel message)
+        {
+#if DEBUG_LOTTIE
+            if (message.Content is MessageDocument document)
+            {
+                return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");
+            }
+#endif
+
+            return false;
         }
 
         public static IEnumerable<FormattedText> Split(this FormattedText text, int maxLength)
@@ -955,15 +995,15 @@ namespace Unigram.Common
 
         public static bool IsSaved(this Message message, int savedMessagesId)
         {
-            if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
             {
-                return fromUser.ForwardedFromChatId != 0;
+                return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo is MessageForwardedPost post)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
             {
-                return post.ForwardedFromChatId != 0;
+                return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
             {
                 return message.ChatId == savedMessagesId;
             }
@@ -1154,13 +1194,13 @@ namespace Unigram.Common
 
         public static PhotoSize GetBig(this Photo photo)
         {
-            var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "i"));
-            if (local != null)
-            {
-                return local;
-            }
+            //var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "i"));
+            //if (local != null && (local.Photo.Local.IsDownloadingCompleted || local.Photo.Local.CanBeDownloaded))
+            //{
+            //    return local;
+            //}
 
-            return photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+            //return photo.Sizes.Where(x => !string.Equals(x.Type, "i")).OrderByDescending(x => x.Width).FirstOrDefault();
 
             PhotoSize full = null;
             int fullLevel = -1;
@@ -1172,15 +1212,17 @@ namespace Unigram.Common
 
                 switch (size)
                 {
-                    case 's': newFullLevel = 4; break; // box 100x100
-                    case 'm': newFullLevel = 3; break; // box 320x320
-                    case 'x': newFullLevel = 1; break; // box 800x800
-                    case 'y': newFullLevel = 0; break; // box 1280x1280
-                    case 'w': newFullLevel = 2; break; // box 2560x2560
-                    case 'a': newFullLevel = 8; break; // crop 160x160
-                    case 'b': newFullLevel = 7; break; // crop 320x320
-                    case 'c': newFullLevel = 6; break; // crop 640x640
-                    case 'd': newFullLevel = 5; break; // crop 1280x1280
+                    case 's': newFullLevel = 5; break; // box 100x100
+                    case 'm': newFullLevel = 4; break; // box 320x320
+                    case 'x': newFullLevel = 2; break; // box 800x800
+                    case 'y': newFullLevel = 1; break; // box 1280x1280
+                    case 'w': newFullLevel = 3; break; // box 2560x2560
+                    case 'a': newFullLevel = 9; break; // crop 160x160
+                    case 'b': newFullLevel = 8; break; // crop 320x320
+                    case 'c': newFullLevel = 7; break; // crop 640x640
+                    case 'd': newFullLevel = 6; break; // crop 1280x1280
+                    case 'i': newFullLevel = i.Photo.Local.IsDownloadingCompleted || i.Photo.Local.CanBeDownloaded ? 0 : 10; break;
+                    case 'u': newFullLevel = 10; break;
                 }
 
                 if (newFullLevel < 0)
@@ -1199,13 +1241,13 @@ namespace Unigram.Common
 
         public static PhotoSize GetSmall(this UserProfilePhoto photo)
         {
-            var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "t"));
-            if (local != null)
-            {
-                return local;
-            }
+            //var local = photo.Sizes.FirstOrDefault(x => string.Equals(x.Type, "t"));
+            //if (local != null && (local.Photo.Local.IsDownloadingCompleted || local.Photo.Local.CanBeDownloaded))
+            //{
+            //    return local;
+            //}
 
-            return photo.Sizes.OrderBy(x => x.Width).FirstOrDefault();
+            //return photo.Sizes.Where(x => !string.Equals(x.Type, "t")).OrderBy(x => x.Width).FirstOrDefault();
 
             PhotoSize thumb = null;
             int thumbLevel = -1;
@@ -1217,15 +1259,16 @@ namespace Unigram.Common
 
                 switch (size)
                 {
-                    case 's': newThumbLevel = 0; break; // box 100x100
-                    case 'm': newThumbLevel = 2; break; // box 320x320
-                    case 'x': newThumbLevel = 5; break; // box 800x800
-                    case 'y': newThumbLevel = 6; break; // box 1280x1280
-                    case 'w': newThumbLevel = 8; break; // box 2560x2560
-                    case 'a': newThumbLevel = 1; break; // crop 160x160
-                    case 'b': newThumbLevel = 3; break; // crop 320x320
-                    case 'c': newThumbLevel = 4; break; // crop 640x640
-                    case 'd': newThumbLevel = 7; break; // crop 1280x1280
+                    case 's': newThumbLevel = 1; break; // box 100x100
+                    case 'm': newThumbLevel = 3; break; // box 320x320
+                    case 'x': newThumbLevel = 6; break; // box 800x800
+                    case 'y': newThumbLevel = 7; break; // box 1280x1280
+                    case 'w': newThumbLevel = 9; break; // box 2560x2560
+                    case 'a': newThumbLevel = 2; break; // crop 160x160
+                    case 'b': newThumbLevel = 4; break; // crop 320x320
+                    case 'c': newThumbLevel = 5; break; // crop 640x640
+                    case 'd': newThumbLevel = 8; break; // crop 1280x1280
+                    case 't': newThumbLevel = i.Photo.Local.IsDownloadingCompleted || i.Photo.Local.CanBeDownloaded ? 0 : 10; break;
                 }
 
                 if (newThumbLevel < 0)

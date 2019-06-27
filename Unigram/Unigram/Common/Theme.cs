@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,8 @@ namespace Unigram.Common
 {
     public class Theme : ResourceDictionary
     {
-        public static Theme Current { get; private set; }
+        [ThreadStatic]
+        public static Theme Current;
 
         private readonly ApplicationDataContainer isolatedStore;
 
@@ -28,7 +30,6 @@ namespace Unigram.Common
             {
                 isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
                 Current = this;
-                Update();
 
                 this.Add("MessageServiceForegroundBrush", GetBrushOrDefault("MessageServiceForegroundBrush", Colors.White));
                 this.Add("MessageServiceBackgroundBrush", GetBrushOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
@@ -37,63 +38,150 @@ namespace Unigram.Common
                 this.Add("MessageServiceBackgroundColor", GetColorOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
 
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d));
+
+                var emojiSet = SettingsService.Current.Appearance.EmojiSet;
+                switch (emojiSet.Id)
+                {
+                    case "microsoft":
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"XamlAutoFontFamily"));
+                        break;
+                    case "apple":
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/{emojiSet.Id}.ttf#Segoe UI Emoji"));
+                        break;
+                    default:
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSet.Id}.{emojiSet.Version}.ttf#Segoe UI Emoji"));
+                        break;
+                }
             }
             catch { }
         }
 
-        //public void UpdateCustom()
-        //{
-        //    try
-        //    {
-        //        var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
-        //        if (accent == null)
-        //        {
-        //            return;
-        //        }
-
-        //        var fileName = FileUtils.GetFileName("colors.palette");
-        //        if (File.Exists(fileName))
-        //        {
-        //            var text = File.ReadAllText(fileName);
-
-        //            try
-        //            {
-        //                var dictionary = XamlReader.Load(text) as ResourceDictionary;
-        //                if (dictionary == null)
-        //                {
-        //                    return;
-        //                }
-
-        //                accent.MergedDictionaries.Clear();
-        //                accent.MergedDictionaries.Add(dictionary);
-        //            }
-        //            catch
-        //            {
-        //                File.Delete(fileName);
-        //                Update();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            accent.MergedDictionaries.Clear();
-        //        }
-        //    }
-        //    catch { }
-        //}
-
-        public void Update()
+        public void Initialize()
         {
-            try
+            var path = SettingsService.Current.Appearance.RequestedThemePath;
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
             {
-                if (GetValueOrDefault("Theme", TelegramTheme.Default | TelegramTheme.Brand).HasFlag(TelegramTheme.Brand))
+                Update(SettingsService.Current.Appearance.RequestedTheme);
+                return;
+            }
+
+            var lines = File.ReadAllLines(path);
+            var dict = new ResourceDictionary();
+
+            var flags = SettingsService.Current.Appearance.RequestedTheme == ElementTheme.Light ? TelegramTheme.Light : TelegramTheme.Dark;
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("name: "))
                 {
-                    MergedDictionaries.Clear();
-                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+                    continue;
+                }
+                else if (line.StartsWith("parent: "))
+                {
+                    flags = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
+                }
+                else if (line.Equals("!") || line.Equals("#"))
+                {
+                    continue;
                 }
                 else
                 {
-                    MergedDictionaries.Clear();
+                    var split = line.Split(':');
+                    var key = split[0].Trim();
+                    var value = split[1].Trim();
+
+                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
+                    {
+                        byte a = (byte)((hexValue & 0xff000000) >> 24);
+                        byte r = (byte)((hexValue & 0x00ff0000) >> 16);
+                        byte g = (byte)((hexValue & 0x0000ff00) >> 8);
+                        byte b = (byte)(hexValue & 0x000000ff);
+
+                        if (key.EndsWith("Brush"))
+                        {
+                            dict[key] = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+                        }
+                        else if (key.EndsWith("Color"))
+                        {
+                            dict[key] = Color.FromArgb(a, r, g, b);
+                        }
+                    }
+                }
+            }
+
+            Update(flags == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark);
+
+            MergedDictionaries[0].MergedDictionaries.Clear();
+            MergedDictionaries[0].MergedDictionaries.Add(dict);
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                try
+                {
+                    TLWindowContext.GetForCurrentView().UpdateTitleBar();
+                }
+                catch { }
+            }
+        }
+
+        public void Update(ElementTheme flags)
+        {
+            try
+            {
+                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
+                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
+                ThemeDictionaries.Clear();
+                MergedDictionaries.Clear();
+
+                if (flags == ElementTheme.Default)
+                {
                     MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeSystem.xaml") });
+                }
+                else
+                {
+                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+                }
+            }
+            catch { }
+        }
+
+        public void Update(ThemeCustomInfo custom)
+        {
+            if (custom == null)
+            {
+                Update(SettingsService.Current.Appearance.RequestedTheme);
+                return;
+            }
+
+            try
+            {
+                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
+                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
+                ThemeDictionaries.Clear();
+                MergedDictionaries.Clear();
+
+                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+
+                var dict = new ResourceDictionary();
+
+                foreach (var item in custom.Values)
+                {
+                    if (item.Key.EndsWith("Brush"))
+                    {
+                        dict[item.Key] = new SolidColorBrush((Color)item.Value);
+                    }
+                    else if (item.Key.EndsWith("Color"))
+                    {
+                        dict[item.Key] = (Color)item.Value;
+                    }
+                }
+
+                MergedDictionaries[0].MergedDictionaries.Clear();
+                MergedDictionaries[0].MergedDictionaries.Add(dict);
+
+                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+                {
+                    TLWindowContext.GetForCurrentView().UpdateTitleBar();
                 }
             }
             catch { }

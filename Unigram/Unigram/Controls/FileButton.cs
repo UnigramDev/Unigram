@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -6,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Messages.Content;
+using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -24,6 +27,11 @@ namespace Unigram.Controls
 
         private TextBlock _label;
         private Visual _visual;
+
+        private ContainerVisual _container;
+
+        private long _fileId;
+        private MessageContentState _state;
 
         public FileButton()
         {
@@ -49,6 +57,12 @@ namespace Unigram.Controls
             _visual1.Opacity = 1;
             _visual1.Scale = new Vector3(1);
             _visual1.CenterPoint = new Vector3(10);
+
+
+            _container = Window.Current.Compositor.CreateContainerVisual();
+            _container.Size = new Vector2(48, 48);
+
+            ElementCompositionPreview.SetElementChildVisual(GetTemplateChild("RootGrid") as Grid, _container);
 
             base.OnApplyTemplate();
         }
@@ -84,9 +98,72 @@ namespace Unigram.Controls
 
         #endregion
 
-        public void SetGlyph(string glyph, bool animate)
+
+        //public void SetGlyph(string glyph, bool animate)
+        //{
+        //    OnGlyphChanged(glyph, Glyph, animate);
+        //}
+
+        public void SetGlyph(int fileId, MessageContentState state)
         {
-            OnGlyphChanged(glyph, Glyph, animate);
+            if (fileId != _fileId)
+            {
+                _state = MessageContentState.None;
+            }
+
+            switch (state)
+            {
+                case MessageContentState.Download:
+                    OnGlyphChanged(Icons.Download, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Downloading:
+                    OnGlyphChanged(Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Uploading:
+                    OnGlyphChanged(Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Confirm:
+                    OnGlyphChanged(Icons.Confirm, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Document:
+                    OnGlyphChanged(Icons.Document, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Animation:
+                    OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Photo:
+                    OnGlyphChanged(Icons.Photo, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Play:
+                    //if (_state == MessageContentState.Pause && ApiInfo.CanUseDirectComposition)
+                    //{
+                    //    OnPauseToPlay();
+                    //}
+                    //else
+                    {
+                        OnGlyphChanged(Icons.Play, Glyph, _state != state && _state != MessageContentState.None);
+                    }
+                    break;
+                case MessageContentState.Pause:
+                    //if (_state == MessageContentState.Play && ApiInfo.CanUseDirectComposition)
+                    //{
+                    //    OnPlayToPause();
+                    //}
+                    //else
+                    {
+                        OnGlyphChanged(Icons.Pause, Glyph, _state != state && _state != MessageContentState.None);
+                    }
+                    break;
+                case MessageContentState.Ttl:
+                    OnGlyphChanged(Icons.Ttl, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+                case MessageContentState.Theme:
+                    OnGlyphChanged(Icons.Theme, Glyph, _state != state && _state != MessageContentState.None);
+                    break;
+            }
+
+            _fileId = fileId;
+            _state = state;
         }
 
         private void OnGlyphChanged(string newValue, string oldValue, bool animate)
@@ -156,6 +233,165 @@ namespace Unigram.Controls
 
             _visual = visualShow;
             _label = labelShow;
+        }
+
+
+
+        private void OnPauseToPlay()
+        {
+            var compositor = Window.Current.Compositor;
+            var line1 = compositor.CreatePathGeometry();
+            line1.Path = GetLine(new Vector2(1, 18), new Vector2(1, 2));
+
+            var shape1 = compositor.CreateSpriteShape(line1);
+            shape1.StrokeThickness = 1;
+            shape1.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            shape1.StrokeStartCap = CompositionStrokeCap.Round;
+            shape1.StrokeEndCap = CompositionStrokeCap.Round;
+
+            var line2 = compositor.CreatePathGeometry();
+            line2.Path = GetLine(new Vector2(1, 2), new Vector2(12.5f, 10.5f));
+
+            var shape2 = compositor.CreateSpriteShape(line2);
+            shape2.StrokeThickness = 1;
+            shape2.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            shape2.StrokeStartCap = CompositionStrokeCap.Round;
+            shape2.StrokeEndCap = CompositionStrokeCap.Round;
+
+            var line3 = compositor.CreatePathGeometry();
+            line3.Path = GetLine(new Vector2(12.5f, 10.5f), new Vector2(1, 18f));
+
+            var shape3 = compositor.CreateSpriteShape(line3);
+            shape3.StrokeThickness = 1;
+            shape3.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            shape3.StrokeStartCap = CompositionStrokeCap.Round;
+            shape3.StrokeEndCap = CompositionStrokeCap.Round;
+
+            var visual = compositor.CreateShapeVisual();
+            visual.Shapes.Add(shape1);
+            visual.Shapes.Add(shape2);
+            visual.Shapes.Add(shape3);
+            visual.Size = new Vector2(20, 20);
+            visual.Offset = new Vector3(((48 - 20) / 2) + 4.5f, (48 - 20) / 2, 0);
+
+            _visual1.Opacity = 0;
+            _visual2.Opacity = 0;
+
+            _container.Children.RemoveAll();
+            _container.Children.InsertAtTop(visual);
+
+
+            var anim11 = compositor.CreatePathKeyFrameAnimation();
+            anim11.InsertKeyFrame(1, GetLine(new Vector2(1, 18), new Vector2(1, 2)));
+            anim11.InsertKeyFrame(0, GetLine(new Vector2(1, 2), new Vector2(10, 2)));
+
+            var anim12 = compositor.CreateScalarKeyFrameAnimation();
+            anim12.InsertKeyFrame(1, 0);
+            anim12.InsertKeyFrame(0, 1);
+            anim12.Duration = anim11.Duration;
+
+
+            var anim21 = compositor.CreatePathKeyFrameAnimation();
+            anim21.InsertKeyFrame(1, GetLine(new Vector2(1, 2), new Vector2(12.5f, 10.5f)));
+            anim21.InsertKeyFrame(0, GetLine(new Vector2(10, 2), new Vector2(10, 18)));
+            anim21.Duration = anim11.Duration;
+
+
+            var anim31 = compositor.CreatePathKeyFrameAnimation();
+            anim31.InsertKeyFrame(1, GetLine(new Vector2(12.5f, 10.5f), new Vector2(1, 18f)));
+            anim31.InsertKeyFrame(0, GetLine(new Vector2(1, 18), new Vector2(1, 2)));
+            anim31.Duration = anim11.Duration;
+
+
+            line1.StartAnimation("TrimStart", anim12);
+            line1.StartAnimation("Path", anim11);
+            line2.StartAnimation("Path", anim21);
+            line3.StartAnimation("Path", anim31);
+        }
+
+        private void OnPlayToPause()
+        {
+            var compositor = Window.Current.Compositor;
+            var line1 = compositor.CreatePathGeometry();
+            line1.Path = GetLine(new Vector2(1, 18), new Vector2(1, 2));
+
+            var shape1 = compositor.CreateSpriteShape(line1);
+            shape1.StrokeThickness = 1;
+            shape1.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            shape1.StrokeStartCap = CompositionStrokeCap.Round;
+            shape1.StrokeEndCap = CompositionStrokeCap.Round;
+
+            var line2 = compositor.CreatePathGeometry();
+            line2.Path = GetLine(new Vector2(1, 2), new Vector2(12.5f, 10.5f));
+
+            var shape2 = compositor.CreateSpriteShape(line2);
+            shape2.StrokeThickness = 1;
+            shape2.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            shape2.StrokeStartCap = CompositionStrokeCap.Round;
+            shape2.StrokeEndCap = CompositionStrokeCap.Round;
+
+            var line3 = compositor.CreatePathGeometry();
+            line3.Path = GetLine(new Vector2(12.5f, 10.5f), new Vector2(1, 18f));
+
+            var shape3 = compositor.CreateSpriteShape(line3);
+            shape3.StrokeThickness = 1;
+            shape3.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            shape3.StrokeStartCap = CompositionStrokeCap.Round;
+            shape3.StrokeEndCap = CompositionStrokeCap.Round;
+
+            var visual = compositor.CreateShapeVisual();
+            visual.Shapes.Add(shape1);
+            visual.Shapes.Add(shape2);
+            visual.Shapes.Add(shape3);
+            visual.Size = new Vector2(20, 20);
+            visual.Offset = new Vector3(((48 - 20) / 2) + 4.5f, (48 - 20) / 2, 0);
+
+            _visual1.Opacity = 0;
+            _visual2.Opacity = 0;
+
+            _container.Children.RemoveAll();
+            _container.Children.InsertAtTop(visual);
+
+
+            var anim11 = compositor.CreatePathKeyFrameAnimation();
+            anim11.InsertKeyFrame(0, GetLine(new Vector2(1, 18), new Vector2(1, 2)));
+            anim11.InsertKeyFrame(1, GetLine(new Vector2(1, 2), new Vector2(10, 2)));
+
+            var anim12 = compositor.CreateScalarKeyFrameAnimation();
+            anim12.InsertKeyFrame(0, 0);
+            anim12.InsertKeyFrame(1, 1);
+            anim12.Duration = anim11.Duration;
+
+
+            var anim21 = compositor.CreatePathKeyFrameAnimation();
+            anim21.InsertKeyFrame(0, GetLine(new Vector2(1, 2), new Vector2(12.5f, 10.5f)));
+            anim21.InsertKeyFrame(1, GetLine(new Vector2(10, 2), new Vector2(10, 18)));
+            anim21.Duration = anim11.Duration;
+
+
+            var anim31 = compositor.CreatePathKeyFrameAnimation();
+            anim31.InsertKeyFrame(0, GetLine(new Vector2(11, 8), new Vector2(1, 15)));
+            anim31.InsertKeyFrame(1, GetLine(new Vector2(1, 18), new Vector2(1, 2)));
+            anim31.Duration = anim11.Duration;
+
+
+            line1.StartAnimation("TrimStart", anim12);
+            line1.StartAnimation("Path", anim11);
+            line2.StartAnimation("Path", anim21);
+            line3.StartAnimation("Path", anim31);
+        }
+
+        CompositionPath GetLine(Vector2 pt1, Vector2 pt2)
+        {
+            CanvasGeometry result;
+            using (var builder = new CanvasPathBuilder(null))
+            {
+                builder.BeginFigure(pt1);
+                builder.AddLine(pt2);
+                builder.EndFigure(CanvasFigureLoop.Open);
+                result = CanvasGeometry.CreatePath(builder);
+            }
+            return new CompositionPath(result);
         }
     }
 }

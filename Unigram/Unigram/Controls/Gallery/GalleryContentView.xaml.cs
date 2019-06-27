@@ -28,8 +28,6 @@ namespace Unigram.Controls.Gallery
         private IGalleryDelegate _delegate;
         private GalleryContent _item;
 
-        private MessageContentState _oldState;
-
         public GalleryContent Item => _item;
         public Grid Presenter => Panel;
 
@@ -88,25 +86,21 @@ namespace Unigram.Controls.Gallery
             if (file.Local.IsDownloadingActive)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
+                Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
                 Button.Opacity = 1;
-
-                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive)
             {
                 Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
+                Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
                 Button.Opacity = 1;
-
-                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 Button.Glyph = Icons.Download;
-                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
+                Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
                 Button.Opacity = 1;
 
@@ -114,26 +108,21 @@ namespace Unigram.Controls.Gallery
                 {
                     item.ProtoService.DownloadFile(file.Id, 1);
                 }
-
-                _oldState = MessageContentState.Download;
             }
             else
             {
                 if (item.IsVideo)
                 {
                     Button.Glyph = Icons.Play;
-                    Button.SetGlyph(Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Play);
+                    Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 1;
                     Button.Opacity = 1;
-
-                    _oldState = MessageContentState.Play;
                 }
                 else if (item.IsPhoto)
                 {
+                    Button.SetGlyph(file.Id, MessageContentState.Photo);
                     Button.Opacity = 0;
                     Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
-
-                    _oldState = MessageContentState.Open;
                 }
             }
         }
@@ -160,6 +149,11 @@ namespace Unigram.Controls.Gallery
             }
 
             var file = item.GetFile();
+            if (file == null)
+            {
+                return;
+            }
+
             if (file.Local.IsDownloadingActive)
             {
                 item.ProtoService.Send(new CancelDownloadFile(file.Id, false));

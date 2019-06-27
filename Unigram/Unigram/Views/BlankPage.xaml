@@ -18,5 +18,5 @@
     <!--<Grid>
          <Border BorderBrush="{ThemeResource TelegramSeparatorBrush}" BorderThickness="1,1,0,0" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="48" Margin="-1,0,0,0"/>
          </Grid>-->
-    <!--<Rectangle VerticalAlignment="Top" Height="{ThemeResource AppBarThemeCompactHeight}" Fill="{ThemeResource TelegramTitleBarBackgroundBrush}"/>-->
+    <!--<Rectangle VerticalAlignment="Top" Height="{ThemeResource AppBarThemeCompactHeight}" Fill="{ThemeResource PageHeaderBackgroundBrush}"/>-->
 </Page>

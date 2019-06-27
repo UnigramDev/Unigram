@@ -16,7 +16,6 @@
         <Grid x:Name="ContentPanel"
               MinHeight="30"
               Padding="{StaticResource MessageContentPadding}"
-              CornerRadius="{StaticResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
@@ -26,6 +25,7 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
+                            <Setter Target="Footer.Stroke" Value="White"/>
                             <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
                             <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
@@ -49,6 +49,7 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
+                            <Setter Target="Footer.Stroke" Value="White"/>
                             <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
                             <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
@@ -72,7 +73,8 @@
                             <Setter Target="Footer.Padding" Value="6,4,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
-                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
+                            <Setter Target="Footer.Stroke" Value="White"/>
+                            <!--<Setter Target="ContentPanel.BorderThickness" Value="0"/>-->
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="HiddenState">
@@ -104,6 +106,7 @@
                            Margin="0,0,0,2"
                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
                            TextTrimming="CharacterEllipsis"
                            TextWrapping="NoWrap"
                            FontWeight="SemiBold"
@@ -124,6 +127,7 @@
                 x:Name="Message"
                 Style="{StaticResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
+                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                 ContextMenuOpening="Message_ContextMenuOpening"
                 TextAlignment="DetectFromContent"
                 Grid.Column="1"
@@ -140,6 +144,7 @@
 
             <local:MessageFooter
                 x:Name="Footer"
+                Stroke="{ThemeResource MessageSubtleLabelBrush}"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
                 SizeChanged="Footer_SizeChanged"

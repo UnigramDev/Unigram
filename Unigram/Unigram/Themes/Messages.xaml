@@ -58,7 +58,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <controls:ProfilePicture IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
-                    <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}" VerticalAlignment="Center" Grid.Column="1">
                         <Run /><Run Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                     </TextBlock>
                 </Grid>
@@ -72,7 +72,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <controls:ProfilePicture IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
-                    <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}" VerticalAlignment="Center" Grid.Column="1">
                         <Run /><Run Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                     </TextBlock>
                 </Grid>
@@ -86,7 +86,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Border Width="32" Height="32" Margin="0,0,12,0">
-                        <TextBlock Text="{x:Bind Emoji}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Emoji}" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center" Grid.Column="1"/>
                 </Grid>

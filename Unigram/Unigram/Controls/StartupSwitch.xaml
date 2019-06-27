@@ -14,6 +14,11 @@
                       x:Uid="StartupSwitch_Toggle"
                       Header="Launch Unigram when system starts"
                       Style="{StaticResource CheckButtonStyle}"/>
+        <ToggleSwitch x:Name="ToggleMinimized"
+                      x:Uid="StartupSwitch_Toggle"
+                      Header="Launch minimized"
+                      Style="{StaticResource CheckButtonStyle}"
+                      Visibility="{x:Bind Toggle.IsOn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <TextBlock x:Name="Label" x:Uid="StartupSwitch_Label"  Text="You can enable this in the Startup tab in Task Manager." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,8,12,0" Style="{StaticResource CaptionTextBlockStyle}"/>
     </StackPanel>
 </UserControl>

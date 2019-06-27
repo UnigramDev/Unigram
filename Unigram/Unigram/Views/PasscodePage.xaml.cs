@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.ApplicationModel;
@@ -23,7 +24,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class PasscodePage : ContentDialog
+    public sealed partial class PasscodePage : TLContentDialog
     {
         private readonly IPasscodeService _passcodeService;
 

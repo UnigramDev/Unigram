@@ -1,7 +1,6 @@
 ﻿using Microsoft.HockeyApp;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -12,65 +11,30 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Unigram.ViewModels;
-using Unigram.ViewModels.BasicGroups;
-using Unigram.ViewModels.Channels;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Dialogs;
-using Unigram.ViewModels.Payments;
-using Unigram.ViewModels.SecretChats;
-using Unigram.ViewModels.Settings;
-using Unigram.ViewModels.Settings.Privacy;
-using Unigram.ViewModels.SignIn;
-using Unigram.ViewModels.Supergroups;
-using Unigram.ViewModels.Users;
 using Unigram.Views;
-using Unigram.Views.BasicGroups;
-using Unigram.Views.Channels;
-using Unigram.Views.Chats;
-using Unigram.Views.Dialogs;
 using Unigram.Views.Host;
-using Unigram.Views.Payments;
-using Unigram.Views.SecretChats;
-using Unigram.Views.Settings;
-using Unigram.Views.Settings.Privacy;
-using Unigram.Views.SignIn;
-using Unigram.Views.Supergroups;
-using Unigram.Views.Users;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
-using Windows.ApplicationModel.Contacts;
-using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
-using Windows.ApplicationModel.VoiceCommands;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Media;
-using Windows.Media.Playback;
-using Windows.Media.SpeechRecognition;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.System.Profile;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
-using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Resources;
 
 namespace Unigram
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
     sealed partial class App : BootStrapper
     {
         public static ShareOperation ShareOperation { get; set; }
@@ -79,28 +43,16 @@ namespace Unigram
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 
         public static AppServiceConnection Connection { get; private set; }
+        public static BackgroundTaskDeferral Deferral { get; private set; }
 
         private readonly UISettings _uiSettings;
 
         public UISettings UISettings => _uiSettings;
 
         private ExtendedExecutionSession _extendedSession;
-
-        //public ViewModelLocator Locator
-        //{
-        //    get
-        //    {
-        //        return Resources["Locator"] as ViewModelLocator;
-        //    }
-        //}
+        private MediaExtensionManager _mediaExtensionManager;
 
         public ViewModelLocator Locator { get; } = new ViewModelLocator();
-
-        public static MediaPlayer Playback { get; } = new MediaPlayer();
-
-        private BackgroundTaskDeferral appServiceDeferral = null;
-
-        private MediaExtensionManager m_mediaExtensionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -109,23 +61,27 @@ namespace Unigram
         /// </summary>
         public App()
         {
-#if DEBUG
-            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en";
-#endif
-
             Locator.Configure(/*session*/);
 
-            if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
+            _uiSettings = new UISettings();
+
+            if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
             {
                 RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             }
 
             InitializeComponent();
 
-            _uiSettings = new UISettings();
-
-            m_mediaExtensionManager = new MediaExtensionManager();
-            m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
+            try
+            {
+                _mediaExtensionManager = new MediaExtensionManager();
+                _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
+                _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".oga", "audio/ogg");
+            }
+            catch
+            {
+                // User won't be able to play and record voice messages, but it still better than not being able to use the app at all.
+            }
 
             InactivityHelper.Detected += Inactivity_Detected;
 
@@ -141,7 +97,6 @@ namespace Unigram
             };
 
 #if !DEBUG
-
             HockeyClient.Current.Configure(Constants.HockeyAppId,
                 new TelemetryConfiguration()
                 {
@@ -159,7 +114,6 @@ namespace Unigram
 
             HockeyClient.Current.TrackEvent($"{major}.{minor}.{build}");
             HockeyClient.Current.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
-
 #endif
         }
 
@@ -169,6 +123,7 @@ namespace Unigram
 
             //args.Window.CoreWindow.FlowDirection = flowDirectionSetting == "RTL" ? CoreWindowFlowDirection.RightToLeft : CoreWindowFlowDirection.LeftToRight;
 
+            Theme.Current.Initialize();
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
         }
@@ -264,62 +219,89 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
-            var deferral = args.TaskInstance.GetDeferral();
-
-            if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
             {
-                var data = Toast.GetData(triggerDetail);
-                if (data == null)
-                {
-                    deferral.Complete();
-                    return;
-                }
+                Connection = appService.AppServiceConnection;
+                Deferral = args.TaskInstance.GetDeferral();
 
-                var session = TLContainer.Current.Lifetime.ActiveItem.Id;
-                if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+                args.TaskInstance.Canceled += (s, e) =>
                 {
-                    session = result;
-                }
-
-                await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
+                    Deferral.Complete();
+                };
             }
-            else if (args.TaskInstance.TriggerDetails is RawNotification notification)
+            else
             {
-                int? GetSession(long id)
+                var deferral = args.TaskInstance.GetDeferral();
+
+                if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
                 {
-                    if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
+                    var data = Toast.GetData(triggerDetail);
+                    if (data == null)
                     {
-                        return value;
+                        deferral.Complete();
+                        return;
                     }
 
-                    return null;
-                }
+                    var session = TLContainer.Current.Lifetime.ActiveItem.Id;
+                    if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+                    {
+                        session = result;
+                    }
 
-                var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
-                if (receiver == null)
+                    await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
+                }
+                else if (args.TaskInstance.TriggerDetails is RawNotification notification)
                 {
-                    deferral.Complete();
-                    return;
+                    int? GetSession(long id)
+                    {
+                        if (ApplicationData.Current.LocalSettings.Values.TryGet($"User{id}", out int value))
+                        {
+                            return value;
+                        }
+
+                        return null;
+                    }
+
+                    var receiver = Client.Execute(new GetPushReceiverId(notification.Content)) as PushReceiverId;
+                    if (receiver == null)
+                    {
+                        deferral.Complete();
+                        return;
+                    }
+
+                    var session = GetSession(receiver.Id);
+                    if (session == null)
+                    {
+                        deferral.Complete();
+                        return;
+                    }
+
+                    var service = TLContainer.Current.Resolve<IProtoService>(session.Value);
+                    if (service == null)
+                    {
+                        deferral.Complete();
+                        return;
+                    }
+
+                    await service.SendAsync(new ProcessPushNotification(notification.Content));
+
+                    foreach (var item in TLContainer.Current.ResolveAll<IProtoService>())
+                    {
+                        await item.SendAsync(new Close());
+                    }
                 }
 
-                var session = GetSession(receiver.Id);
-                if (session == null)
-                {
-                    deferral.Complete();
-                    return;
-                }
-
-                var service = TLContainer.Current.Resolve<IProtoService>(session.Value);
-                if (service == null)
-                {
-                    deferral.Complete();
-                    return;
-                }
-
-                await service.SendAsync(new ProcessPushNotification(notification.Content));
+                deferral.Complete();
             }
+        }
 
-            deferral.Complete();
+        private void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            if (args.Request.Message.TryGetValue("Exit", out object exit))
+            {
+                Application.Current.Exit();
+            }
         }
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
@@ -341,9 +323,6 @@ namespace Unigram
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
                 TLWindowContext.GetForCurrentView().UpdateTitleBar();
-
-                Theme.Current.Update();
-                //NotifyThemeChanged();
             }
 
             return base.OnInitializeAsync(args);
@@ -392,9 +371,6 @@ namespace Unigram
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-
-            //Theme.Current.Update();
-            //NotifyThemeChanged();
 
             var dispatcher = Window.Current.Dispatcher;
             Task.Run(() => OnStartSync(dispatcher));
@@ -471,20 +447,17 @@ namespace Unigram
             });
 #endif
 
-            //if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
-            //{
-            //    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-            //}
-
-            try
+            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
-                // Prepare stuff for Cortana
-                var localVoiceCommands = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///VoiceCommands/VoiceCommands.xml"));
-                await VoiceCommandDefinitionManager.InstallCommandDefinitionsFromStorageFileAsync(localVoiceCommands);
+                try
+                {
+                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+                }
+                catch
+                {
+                    // The app has been compiled without desktop bridge
+                }
             }
-            catch { }
-
-            return;
 
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {
@@ -506,7 +479,7 @@ namespace Unigram
             }
         }
 
-        public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
+        public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
             Logs.Logger.Info(Logs.Target.Lifecycle, "OnResuming");
 
@@ -523,31 +496,5 @@ namespace Unigram
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
-
-
-        //private void Window_Activated(object sender, WindowActivatedEventArgs e)
-        //{
-        //    ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramTitleBarBackgroundBrushDeactivated"]).Color;
-        //}
-
-        //public static void NotifyThemeChanged()
-        //{
-        //    var frame = Window.Current.Content as Frame;
-        //    if (frame == null)
-        //    {
-        //        return;
-        //    }
-
-        //    var current = App.Current as App;
-        //    var theme = current.UISettings.GetColorValue(UIColorType.Background);
-
-        //    frame.RequestedTheme = SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.CurrentTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-        //    //frame.RequestedTheme = ApplicationSettings.Current.CurrentTheme;
-
-        //    //var dark = (bool)App.Current.Resources["IsDarkTheme"];
-
-        //    //frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
-        //    //frame.RequestedTheme = ElementTheme.Default;
-        //}
     }
 }

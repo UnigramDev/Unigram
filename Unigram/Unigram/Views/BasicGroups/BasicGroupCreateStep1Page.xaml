@@ -33,7 +33,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+            <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -43,7 +43,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
-                <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" CornerRadius="32" Width="64" Height="64" RequestedTheme="Dark" Margin="12,6"/>
+                <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" Radius="32" Width="64" Height="64" RequestedTheme="Dark" Margin="12,6"/>
 
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
                     <TextBox x:Name="Title"

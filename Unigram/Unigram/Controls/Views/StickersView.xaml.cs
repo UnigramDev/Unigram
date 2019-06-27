@@ -28,6 +28,9 @@ using System.Numerics;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
+using Windows.Foundation.Metadata;
+using Unigram.Converters;
+using Unigram.Views;
 
 namespace Unigram.Controls.Views
 {
@@ -44,7 +47,7 @@ namespace Unigram.Controls.Views
         private FileContext<ViewModels.Dialogs.StickerViewModel> _stickers = new FileContext<ViewModels.Dialogs.StickerViewModel>();
         private FileContext<Animation> _animations = new FileContext<Animation>();
 
-        private bool _widget;
+        private StickersPanelMode _widget;
 
         public StickersView()
         {
@@ -98,14 +101,27 @@ namespace Unigram.Controls.Views
                     Pivot.SelectedIndex = 2;
                     break;
             }
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
+            {
+                var themeShadow = new ThemeShadow();
+                BackgroundElement.Shadow = themeShadow;
+                BackgroundElement.Translation += new Vector3(0, 0, 32);
+
+                themeShadow.Receivers.Add(ShadowElement);
+            }
         }
 
-        public void SetView(bool widget)
+        public void SetView(StickersPanelMode mode)
         {
-            _widget = widget;
+            _widget = mode;
 
-            Emojis?.SetView(widget);
-            VisualStateManager.GoToState(this, widget ? "FilledState" : "NarrowState", false);
+            Emojis?.SetView(mode);
+            VisualStateManager.GoToState(this, mode == StickersPanelMode.Overlay
+                ? "FilledState"
+                : mode == StickersPanelMode.Sidebar
+                ? "SidebarState"
+                : "NarrowState", false);
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -259,9 +275,9 @@ namespace Unigram.Controls.Views
 
         private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is string emoji)
+            if (e.ClickedItem is EmojiData emoji)
             {
-                EmojiClick?.Invoke(emoji);
+                EmojiClick?.Invoke(emoji.Value);
             }
         }
 
@@ -466,6 +482,19 @@ namespace Unigram.Controls.Views
             //Debug.WriteLine("Choosing group header container");
         }
 
+        private void Stickers_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.Style = Stickers.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = Stickers.ItemTemplate;
+                args.ItemContainer.ContextRequested += Sticker_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private async void Stickers_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var content = args.ItemContainer.ContentTemplateRoot as Image;
@@ -628,6 +657,40 @@ namespace Unigram.Controls.Views
         private void FieldAnimations_TextChanged(object sender, TextChangedEventArgs e)
         {
             //ViewModel.Stickers.FindAnimations(FieldAnimations.Text);
+        }
+
+        private void Sticker_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var element = sender as FrameworkElement;
+            var sticker = element.Tag as ViewModels.Dialogs.StickerViewModel;
+
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(ViewModel.StickerSendCommand, sticker.Get(), Strings.Resources.SendStickerPreview, new FontIcon { Glyph = Icons.Send, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+            flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, sticker.Get(), Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Stickers });
+
+            if (ViewModel.ProtoService.IsStickerFavorite(sticker.StickerValue.Id))
+            {
+                flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, sticker.Get(), Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.Unfavorite });
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker.Get(), Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Favorite });
+            }
+
+            args.ShowAt(flyout, element);
+        }
+
+        private void Animation_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var element = sender as FrameworkElement;
+            var position = element.Tag as MosaicMediaPosition;
+            var animation = position.Item as Animation;
+
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(ViewModel.AnimationSendCommand, animation, Strings.Resources.SendGifPreview, new FontIcon { Glyph = Icons.Send, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+            flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+
+            args.ShowAt(flyout, element);
         }
     }
 }

@@ -193,19 +193,26 @@ namespace Unigram.ViewModels
             MessageSaveMediaCommand = new RelayCommand<MessageViewModel>(MessageSaveMediaExecute);
             MessageSaveDownloadCommand = new RelayCommand<MessageViewModel>(MessageSaveDownloadExecute);
             MessageSaveAnimationCommand = new RelayCommand<MessageViewModel>(MessageSaveAnimationExecute);
+            MessageOpenWithCommand = new RelayCommand<MessageViewModel>(MessageOpenWithExecute);
             MessageOpenFolderCommand = new RelayCommand<MessageViewModel>(MessageOpenFolderExecute);
             MessageAddContactCommand = new RelayCommand<MessageViewModel>(MessageAddContactExecute);
             MessageServiceCommand = new RelayCommand<MessageViewModel>(MessageServiceExecute);
             MessageUnvotePollCommand = new RelayCommand<MessageViewModel>(MessageUnvotePollExecute);
             MessageStopPollCommand = new RelayCommand<MessageViewModel>(MessageStopPollExecute);
 
-            SendStickerCommand = new RelayCommand<Sticker>(SendStickerExecute);
-            SendAnimationCommand = new RelayCommand<Animation>(SendAnimationExecute);
             SendDocumentCommand = new RelayCommand(SendDocumentExecute);
             SendMediaCommand = new RelayCommand(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
             SendPollCommand = new RelayCommand(SendPollExecute);
+
+            StickerSendCommand = new RelayCommand<Sticker>(StickerSendExecute);
+            StickerViewCommand = new RelayCommand<Sticker>(StickerViewExecute);
+            StickerFaveCommand = new RelayCommand<Sticker>(StickerFaveExecute);
+            StickerUnfaveCommand = new RelayCommand<Sticker>(StickerUnfaveExecute);
+
+            AnimationSendCommand = new RelayCommand<Animation>(AnimationSendExecute);
+            AnimationDeleteCommand = new RelayCommand<Animation>(AnimationDeleteExecute);
 
             EditDocumentCommand = new RelayCommand(EditDocumentExecute);
             EditMediaCommand = new RelayCommand(EditMediaExecute);
@@ -537,13 +544,18 @@ namespace Unigram.ViewModels
                 return false;
             }
 
+            if (chat.LastMessage == null)
+            {
+                return true;
+            }
+
             var last = Items.LastOrDefault();
             if (last?.Content is MessageAlbum album)
             {
                 last = album.Layout.Messages.LastOrDefault();
             }
 
-            if (last == null)
+            if (last == null || last.Id == 0)
             {
                 return true;
             }
@@ -639,6 +651,9 @@ namespace Unigram.ViewModels
                 var maxId = Items.FirstOrDefault(x => x != null && x.Id != 0)?.Id;
                 if (maxId == null)
                 {
+                    _isLoadingNextSlice = false;
+                    IsLoading = false;
+
                     return;
                 }
 
@@ -744,6 +759,9 @@ namespace Unigram.ViewModels
                 var maxId = Items.LastOrDefault(x => x != null && x.Id != 0)?.Id;
                 if (maxId == null)
                 {
+                    _isLoadingPreviousSlice = false;
+                    IsLoading = false;
+
                     return;
                 }
 
@@ -1082,6 +1100,8 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, maxId, offset, limit, false));
                 if (response is Messages messages)
                 {
+                    _groupedMessages.Clear();
+
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
@@ -1387,7 +1407,7 @@ namespace Unigram.ViewModels
                 {
                     if (target.IsSaved())
                     {
-                        if (target.ForwardInfo is MessageForwardedFromUser fromUser)
+                        if (target.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                         {
                             var user = target.ProtoService.GetUser(fromUser.SenderUserId);
                             if (user != null && user.ProfilePhoto != null)
@@ -1395,9 +1415,9 @@ namespace Unigram.ViewModels
                                 _photosMap[user.ProfilePhoto.Small.Id].Add(target);
                             }
                         }
-                        else if (target.ForwardInfo is MessageForwardedPost post)
+                        else if (target.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                         {
-                            var fromChat = message.ProtoService.GetChat(post.ForwardedFromChatId);
+                            var fromChat = message.ProtoService.GetChat(post.ChatId);
                             if (fromChat != null && fromChat.Photo != null)
                             {
                                 _photosMap[fromChat.Photo.Small.Id].Add(target);
@@ -2923,7 +2943,7 @@ namespace Unigram.ViewModels
             stack.Children.Add(opt5);
             stack.Margin = new Thickness(12, 16, 12, 0);
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             dialog.Content = stack;
             dialog.Title = Strings.Resources.ReportChat;
             dialog.IsPrimaryButtonEnabled = true;
@@ -3303,13 +3323,13 @@ namespace Unigram.ViewModels
             var saved2 = message2.IsSaved();
             if (saved1 && saved2)
             {
-                if (message1.ForwardInfo is MessageForwardedFromUser fromUser1 && message2.ForwardInfo is MessageForwardedFromUser fromUser2)
+                if (message1.ForwardInfo?.Origin is MessageForwardOriginUser fromUser1 && message2.ForwardInfo?.Origin is MessageForwardOriginUser fromUser2)
                 {
-                    return fromUser1.SenderUserId == fromUser2.SenderUserId && fromUser1.ForwardedFromChatId == fromUser2.ForwardedFromChatId;
+                    return fromUser1.SenderUserId == fromUser2.SenderUserId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
                 }
-                else if (message1.ForwardInfo is MessageForwardedPost post1 && message2.ForwardInfo is MessageForwardedPost post2)
+                else if (message1.ForwardInfo?.Origin is MessageForwardOriginChannel post1 && message2.ForwardInfo?.Origin is MessageForwardOriginChannel post2)
                 {
-                    return post1.ChatId == post2.ChatId && post1.ForwardedFromChatId == post2.ForwardedFromChatId;
+                    return post1.ChatId == post2.ChatId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
                 }
             }
             else if (saved1 || saved2)

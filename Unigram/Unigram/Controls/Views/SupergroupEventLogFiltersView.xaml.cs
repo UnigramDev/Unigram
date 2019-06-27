@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SupergroupEventLogFiltersView : ContentDialog
+    public sealed partial class SupergroupEventLogFiltersView : TLContentDialog
     {
         private IProtoService _protoService;
         private ICacheService _cacheService;

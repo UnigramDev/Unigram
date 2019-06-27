@@ -8,7 +8,8 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="OnLoaded">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -102,6 +103,307 @@
                 </DataTemplate>
             </selectors:MemberTemplateSelector.CreatorTemplate>
         </selectors:MemberTemplateSelector>
+
+        <Style TargetType="ScrollViewer">
+            <Setter Property="HorizontalScrollMode" Value="Auto" />
+            <Setter Property="VerticalScrollMode" Value="Auto" />
+            <Setter Property="IsHorizontalRailEnabled" Value="True" />
+            <Setter Property="IsVerticalRailEnabled" Value="True" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="ZoomMode" Value="Disabled" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollViewer">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="ScrollingIndicatorStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="MouseIndicator" To="NoIndicator">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                    <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                    <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                        <VisualTransition From="MouseIndicatorFull" To="NoIndicator">
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScrollBarSeparator"
+                                                                           Storyboard.TargetProperty="Opacity">
+                                                    <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDuration}" Value="1" />
+                                                    <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}" Value="1" />
+                                                    <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractFinalKeyframe}" Value="0" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                    <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                    <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                        <VisualTransition From="MouseIndicatorFull" To="MouseIndicator">
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScrollBarSeparator"
+                                                                           Storyboard.TargetProperty="Opacity">
+                                                    <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDuration}" Value="1" />
+                                                    <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}" Value="1" />
+                                                    <LinearDoubleKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractFinalKeyframe}" Value="0" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                    <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                    <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                        <VisualTransition From="TouchIndicator" To="NoIndicator">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                    <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                    <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="NoIndicator">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{ThemeResource ScrollViewerSeparatorContractDuration}"
+                                                         Storyboard.TargetName="ScrollBarSeparator"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="TouchIndicator">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{ThemeResource ScrollViewerSeparatorContractDuration}"
+                                                         Storyboard.TargetName="ScrollBarSeparator"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>TouchIndicator</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>TouchIndicator</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseIndicator">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{ThemeResource ScrollViewerSeparatorContractDuration}"
+                                                         Storyboard.TargetName="ScrollBarSeparator"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseIndicatorFull">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{ThemeResource ScrollViewerSeparatorExpandDuration}"
+                                                         Storyboard.TargetName="ScrollBarSeparator"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalScrollBar" Storyboard.TargetProperty="IndicatorMode">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ContentControl Content="{TemplateBinding Tag}"
+                                                HorizontalContentAlignment="Stretch"
+                                                VerticalContentAlignment="Stretch"
+                                                Grid.ColumnSpan="2"
+                                                Canvas.ZIndex="1"/>
+                                <ScrollContentPresenter x:Name="ScrollContentPresenter"
+                                                        Grid.RowSpan="3"
+                                                        Grid.ColumnSpan="2"
+                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                        Margin="0,40,0,0" />
+                                <Grid Grid.RowSpan="3"
+                                      Grid.ColumnSpan="2" />
+                                <ScrollBar x:Name="VerticalScrollBar"
+                                           Grid.Column="1"
+                                           Grid.RowSpan="2"
+                                           IsTabStop="False"
+                                           Maximum="{TemplateBinding ScrollableHeight}"
+                                           Orientation="Vertical"
+                                           Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                           Value="{TemplateBinding VerticalOffset}"
+                                           ViewportSize="{TemplateBinding ViewportHeight}"
+                                           HorizontalAlignment="Right"
+                                           Margin="0,40,0,0"
+                                           Canvas.ZIndex="2"/>
+                                <ScrollBar x:Name="HorizontalScrollBar"
+                                           IsTabStop="False"
+                                           Maximum="{TemplateBinding ScrollableWidth}"
+                                           Orientation="Horizontal"
+                                           Grid.Row="2"
+                                           Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                           Value="{TemplateBinding HorizontalOffset}"
+                                           ViewportSize="{TemplateBinding ViewportWidth}" />
+                                <Border x:Name="ScrollBarSeparator"
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Opacity="0"
+                                        Background="{ThemeResource ScrollViewerScrollBarSeparatorBackground}" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ListView">
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="TabNavigation" Value="Once" />
+            <Setter Property="IsSwipeEnabled" Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+            <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
+            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="True" />
+            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="ItemContainerTransitions">
+                <Setter.Value>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition />
+                        <ContentThemeTransition />
+                        <ReorderThemeTransition />
+                        <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    </TransitionCollection>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListView">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="ScrollViewer"
+                                          TabNavigation="{TemplateBinding TabNavigation}"
+                                          HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                          HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                          IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                                          VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                          IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                                          IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                          IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                          ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                                          IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                          BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          Tag="{TemplateBinding Tag}">
+                                <ItemsPresenter Header="{TemplateBinding Header}"
+                                                HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                                HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                                Footer="{TemplateBinding Footer}"
+                                                FooterTemplate="{TemplateBinding FooterTemplate}"
+                                                FooterTransitions="{TemplateBinding FooterTransitions}"
+                                                Padding="{TemplateBinding Padding}" />
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -109,94 +411,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ContentPageHeader>
-            <Grid>
-                <Grid x:Name="MainHeader">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="{CustomResource Info}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-
-                    <controls:GlyphButton
-                        x:Name="Call"
-                        Glyph="&#xE13A;"
-                        AutomationProperties.Name="{CustomResource Call}"
-                        ToolTipService.ToolTip="{CustomResource Call}"
-                        Visibility="Collapsed"
-                        Command="{x:Bind ViewModel.CallCommand}"
-                        Style="{StaticResource HeaderGlyphButtonStyle}"
-                        Grid.Column="1"/>
-
-                    <controls:GlyphButton
-                        x:Name="GroupInvite"
-                        Glyph="&#xE8FA;"
-                        AutomationProperties.Name="{CustomResource AddMember}"
-                        ToolTipService.ToolTip="{CustomResource AddMember}"
-                        Visibility="Collapsed"
-                        Command="{x:Bind ViewModel.InviteCommand}"
-                        Style="{StaticResource HeaderGlyphButtonStyle}"
-                        Grid.Column="1"/>
-
-                    <controls:GlyphButton
-                        x:Name="Edit"
-                        Glyph="&#xE713;"
-                        Visibility="Collapsed"
-                        Command="{x:Bind ViewModel.EditCommand}"
-                        Style="{StaticResource HeaderGlyphButtonStyle}"
-                        Grid.Column="2"/>
-                    <!--<controls:GlyphButton
-                         x:Name="SendMessage"
-                         Glyph="&#xE8BD;"
-                         Command="{x:Bind ViewModel.SendMessageCommand}"
-                         Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                         Grid.Column="2"/>-->
-                    <Button Click="Menu_ContextRequested"
-                            Padding="{StaticResource EllipsisButtonPadding}"
-                            Style="{StaticResource EllipsisButton}"
-                            AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                            ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                            Grid.Column="3">
-                        <FontIcon x:Name="EllipsisIcon"
-                                  VerticalAlignment="Center"
-                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                  FontSize="16"
-                                  Glyph="&#xE10C;"
-                                  Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                    </Button>
-                </Grid>
-
-                <TextBox x:Name="SearchField"
-                         Style="{StaticResource QueryTextBoxStyle}"
-                         PlaceholderText="{CustomResource Search}"
-                         PreventKeyboardDisplayOnProgrammaticFocus="True"
-                         LostFocus="Search_LostFocus"
-                         TextChanged="Search_TextChanged"
-                         Visibility="Collapsed"
-                         Canvas.ZIndex="1"/>
-            </Grid>
-        </controls:ContentPageHeader>
-
-        <ListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
-                  ItemTemplateSelector="{StaticResource MemberTemplateSelector}"
-                  ItemClick="ListView_ItemClick"
-                  IsItemClickEnabled="True"
-                  ChoosingItemContainer="OnChoosingItemContainer"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  Grid.Row="1">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
-
-        <Grid x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1">
+        <Grid x:Name="ContentPanel" Grid.Row="1">
             <controls:ScrollViewerBackground 
-                Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                 ScrollingHost="{x:Bind ScrollingHost}"
                 VerticalAlignment="Top"
                 Grid.Row="1"/>
@@ -209,56 +426,128 @@
                       ContainerContentChanging="OnContainerContentChanging"
                       SelectionMode="None"
                       Grid.Row="1">
-                <ListView.Header>
-                    <StackPanel>
-                        <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePicture x:Name="Photo"
-                                                     Click="Photo_Click"
-                                                     AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                                     Height="64"
-                                                     Width="64"
-                                                     Margin="12,6"
-                                                     Grid.RowSpan="2"/>
+                <ListView.Tag>
+                    <Grid x:Name="HeaderPanel" Background="{ThemeResource PageSubHeaderBackgroundBrush}" Canvas.ZIndex="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="HeaderOverlay" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
 
-                            <Grid x:Name="LabelTitle" VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                        <controls:ContentPageHeader Grid.ColumnSpan="3">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border x:Name="ScrollingInfo">
+                                    <TextBlock Text="{CustomResource Info}"
+                                                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                                    Style="{StaticResource BaseTextBlockStyle}"
+                                                    VerticalAlignment="Center"
+                                                    Margin="12,0"/>
+                                </Border>
+
+                                <controls:GlyphButton
+                                        x:Name="Call"
+                                        Glyph="&#xE13A;"
+                                        AutomationProperties.Name="{CustomResource Call}"
+                                        ToolTipService.ToolTip="{CustomResource Call}"
+                                        Visibility="Collapsed"
+                                        Command="{x:Bind ViewModel.CallCommand}"
+                                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                                        Grid.Column="1"/>
+
+                                <controls:GlyphButton
+                                        x:Name="GroupInvite"
+                                        Glyph="&#xE8FA;"
+                                        AutomationProperties.Name="{CustomResource AddMember}"
+                                        ToolTipService.ToolTip="{CustomResource AddMember}"
+                                        Visibility="Collapsed"
+                                        Command="{x:Bind ViewModel.InviteCommand}"
+                                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                                        Grid.Column="1"/>
+
+                                <controls:GlyphButton
+                                        x:Name="Edit"
+                                        Glyph="&#xE713;"
+                                        Visibility="Collapsed"
+                                        Command="{x:Bind ViewModel.EditCommand}"
+                                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                                        Grid.Column="2"/>
+
+                                <Button Click="Menu_ContextRequested"
+                                            Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                            Padding="{StaticResource EllipsisButtonPadding}"
+                                            Style="{StaticResource EllipsisButton}"
+                                            AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                                            ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                                            Grid.Column="3">
+                                    <FontIcon x:Name="EllipsisIcon"
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                    FontSize="16"
+                                                    Glyph="&#xE10C;"
+                                                    Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                                </Button>
+                            </Grid>
+                        </controls:ContentPageHeader>
+
+
+                        <Border Height="64"
+                                Width="64"
+                                Margin="12,6"
+                                Grid.Row="1"
+                                Grid.RowSpan="2">
+                            <controls:ProfilePicture x:Name="Photo"
+                                         Click="Photo_Click"
+                                         AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"/>
+                        </Border>
+
+                        <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1">
+                            <Grid x:Name="LabelTitle">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
                                 <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
-                                    <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
-                                    <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                                    <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
                                 </Grid>
                             </Grid>
-                            <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+                        </Border>
+                        <Border VerticalAlignment="Top" Grid.Row="2" Grid.Column="1">
+                            <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource PageHeaderDisabledBrush}"/>
+                        </Border>
 
-                            <Border VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
-                                <Border.Background>
-                                    <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                                </Border.Background>
-                                <controls:GlyphButton Glyph="&#xE8BD;"
-                                                      Command="{x:Bind ViewModel.SendMessageCommand}"
-                                                      Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                                      AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
-                                                      ToolTipService.ToolTip="{CustomResource AccDescrOpenChat}"
-                                                      Width="36"
-                                                      Height="36"
-                                                      CornerRadius="18"
-                                                      Padding="0,0,0,-2"
-                                                      FontSize="16"/>
-                            </Border>
-                        </Grid>
-
+                        <Border x:Name="SendMessage" VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
+                            <Border.Background>
+                                <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
+                            </Border.Background>
+                            <controls:GlyphButton Glyph="&#xE8BD;"
+                                      Command="{x:Bind ViewModel.SendMessageCommand}"
+                                      Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                      AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrOpenChat}"
+                                      Width="36"
+                                      Height="36"
+                                      Radius="18"
+                                      Padding="0,0,0,-2"
+                                      FontSize="16"/>
+                        </Border>
+                    </Grid>
+                </ListView.Tag>
+                <ListView.Header>
+                    <StackPanel>
+                        <Border Height="76"/>
                         <StackPanel>
                             <Grid x:Name="DescriptionPanel" Visibility="Collapsed">
                                 <Grid.ColumnDefinitions>
@@ -294,6 +583,7 @@
                                                ContextMenuOpening="About_ContextMenuOpening"
                                                Padding="0,11,12,12"
                                                Style="{StaticResource BodyRichTextBlockStyle}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                Grid.Column="1">
                                     <Paragraph>
                                         <Span x:Name="DescriptionSpan"/>
@@ -301,7 +591,7 @@
                                 </RichTextBlock>
 
                                 <TextBlock x:Name="DescriptionTitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,-14,12,12" Grid.Column="1" Grid.Row="1"/>
-                                
+
                                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2" Grid.ColumnSpan="2"/>
                             </Grid>
 
@@ -328,14 +618,17 @@
                                 Visibility="Collapsed"
                                 Content="{CustomResource Username}"
                                 Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                FontFamily="{ThemeResource TelegramThemeFontFamily}"
-                                FontSize="15"
-                                Glyph="&#xE91A;">
+                                Glyph="&#xE168;">
                                 <Button.ContextFlyout>
                                     <MenuFlyout>
                                         <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE8C8;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem Text="{CustomResource CopyLink}" Command="{x:Bind ViewModel.CopyUsernameLinkCommand}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE71B;"/>
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                     </MenuFlyout>
@@ -398,7 +691,7 @@
                                     <x:Int32>0</x:Int32>
                                 </controls:BadgeButton.CommandParameter>
                             </controls:BadgeButton>
-                            
+
                             <controls:BadgeButton
                                 Command="{x:Bind ViewModel.MediaCommand}"
                                 Badge="{x:Bind ViewModel.SharedCount[1], Mode=OneWay}"
@@ -410,7 +703,7 @@
                                     <x:Int32>1</x:Int32>
                                 </controls:BadgeButton.CommandParameter>
                             </controls:BadgeButton>
-                            
+
                             <controls:BadgeButton
                                 Command="{x:Bind ViewModel.MediaCommand}"
                                 Badge="{x:Bind ViewModel.SharedCount[2], Mode=OneWay}"
@@ -422,7 +715,7 @@
                                     <x:Int32>2</x:Int32>
                                 </controls:BadgeButton.CommandParameter>
                             </controls:BadgeButton>
-                            
+
                             <controls:BadgeButton
                                 Command="{x:Bind ViewModel.MediaCommand}"
                                 Badge="{x:Bind ViewModel.SharedCount[3], Mode=OneWay}"
@@ -434,7 +727,7 @@
                                     <x:Int32>3</x:Int32>
                                 </controls:BadgeButton.CommandParameter>
                             </controls:BadgeButton>
-                            
+
                             <controls:BadgeButton
                                 Command="{x:Bind ViewModel.MediaCommand}"
                                 Badge="{x:Bind ViewModel.SharedCount[4], Mode=OneWay}"
@@ -446,7 +739,7 @@
                                     <x:Int32>4</x:Int32>
                                 </controls:BadgeButton.CommandParameter>
                             </controls:BadgeButton>
-                            
+
                             <controls:BadgeButton
                                 x:Name="UserCommonChats"
                                 Visibility="Collapsed"
@@ -475,19 +768,19 @@
                                      </controls:BadgeButton.Badge>-->
                             </controls:BadgeButton>
 
-                            <Button x:Name="UserStartSecret"
-                                    Visibility="Collapsed"
-                                    Content="{CustomResource StartEncryptedChat}"
-                                    Command="{x:Bind ViewModel.SecretChatCommand}"
-                                    Style="{StaticResource HyperButtonStyle}"
-                                    Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
+                            <controls:BadgeButton
+                                x:Name="UserStartSecret"
+                                Visibility="Collapsed"
+                                Content="{CustomResource StartEncryptedChat}"
+                                Command="{x:Bind ViewModel.SecretChatCommand}"
+                                Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
 
-                            <Button x:Name="GroupLeave"
-                                    Visibility="Collapsed"
-                                    Content="{CustomResource LeaveChannel}"
-                                    Command="{x:Bind ViewModel.DeleteCommand}"
-                                    Style="{StaticResource HyperButtonStyle}"
-                                    Foreground="Red"/>
+                            <controls:BadgeButton
+                                x:Name="GroupLeave"
+                                Visibility="Collapsed"
+                                Content="{CustomResource LeaveChannel}"
+                                Command="{x:Bind ViewModel.DeleteCommand}"
+                                Foreground="Red"/>
                         </StackPanel>
 
                         <StackPanel x:Name="MembersPanel" Visibility="Collapsed" Margin="0,24,0,0">
@@ -496,7 +789,7 @@
                     </StackPanel>
                 </ListView.Header>
                 <ListView.Footer>
-                    <Border Height="48"/>
+                    <Border x:Name="Footer" Height="48"/>
                 </ListView.Footer>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">

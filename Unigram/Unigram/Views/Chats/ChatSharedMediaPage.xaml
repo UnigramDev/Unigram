@@ -23,15 +23,6 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Default">
-                    <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Light">
-                    <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-
             <Style TargetType="PivotItem">
                 <Setter Property="Margin" Value="0"/>
             </Style>
@@ -82,7 +73,8 @@
                              <Border Height="8"/>
                         </GridView.Header>
                         <GridView.Footer>
-                            <Border Height="8"/>
+                            <!--<Border Height="8"/>-->
+                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Media.IsLoading, Mode=OneWay}"/>
                         </GridView.Footer>
                         <GridView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
@@ -109,7 +101,7 @@
                                 </selectors:MessageContentTemplateSelector.VideoTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -145,7 +137,8 @@
                                 InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
-                            <Border Height="6"/>
+                            <!--<Border Height="8"/>-->
+                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Files.IsLoading, Mode=OneWay}"/>
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
@@ -156,7 +149,7 @@
                                 </selectors:MessageContentTemplateSelector.DocumentTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -187,7 +180,8 @@
                                 InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
-                            <Border Height="6"/>
+                            <!--<Border Height="8"/>-->
+                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Links.IsLoading, Mode=OneWay}"/>
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
@@ -198,7 +192,7 @@
                                 </selectors:MessageContentTemplateSelector.TextTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -229,18 +223,19 @@
                                 InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
-                            <Border Height="6"/>
+                            <!--<Border Height="8"/>-->
+                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Music.IsLoading, Mode=OneWay}"/>
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
                                 <selectors:MessageContentTemplateSelector.DocumentTemplate>
                                     <DataTemplate>
-                                        <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
+                                        <cells:SharedAudioCell ContextRequested="Message_ContextRequested" Margin="0,6"/>
                                     </DataTemplate>
                                 </selectors:MessageContentTemplateSelector.DocumentTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -271,18 +266,19 @@
                                 InputScope="Search"/>
                         </ListView.Header>
                         <ListView.Footer>
-                            <Border Height="6"/>
+                            <!--<Border Height="8"/>-->
+                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Voice.IsLoading, Mode=OneWay}"/>
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
                                 <selectors:MessageContentTemplateSelector.DocumentTemplate>
                                     <DataTemplate>
-                                        <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
+                                        <cells:SharedVoiceCell ContextRequested="Message_ContextRequested" Margin="0,6"/>
                                     </DataTemplate>
                                 </selectors:MessageContentTemplateSelector.DocumentTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
-                                        <Border Margin="-12,0" Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                                        <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                             <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
@@ -324,7 +320,11 @@
                     </ContentControl.Clip>
                 </ContentControl>
 
-                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="4"/>
+                <controls:GlyphButton Click="Manage_Click"
+                                      Glyph="&#xE10A;"
+                                      Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                      Style="{StaticResource HeaderGlyphButtonStyle}"
+                                      Grid.Column="4"/>
             </Grid>
         </controls:ContentPageHeader>
     </Grid>

@@ -10,9 +10,9 @@
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <controls:ScrollViewerBackground
-            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"/>
         <ScrollViewer x:Name="ScrollingHost"
@@ -20,7 +20,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,24">
-                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -43,10 +43,9 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource BaseTextBlockStyle}"/>
                         <Grid Margin="4,0,0,-2" x:Name="Verified" Grid.Column="2">
-                            <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
-                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
                         </Grid>
                     </Grid>
                     <TextBlock x:Name="Subtitle"
@@ -67,7 +66,7 @@
                                               ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
                                               Width="36"
                                               Height="36"
-                                              CornerRadius="18"
+                                              Radius="18"
                                               Padding="0,0,0,0"
                                               FontSize="16">
                             <Button.Flyout>
@@ -99,9 +98,7 @@
                         x:Name="Username"
                         Content="{CustomResource Username}"
                         Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                        FontFamily="{ThemeResource TelegramThemeFontFamily}"
-                        Glyph="&#xE91A;"
-                        FontSize="15"
+                        Glyph="&#xE168;"
                         Click="Username_Click"/>
                     <controls:BadgeButton
                         x:Name="Bio"
@@ -112,31 +109,31 @@
                 </StackPanel>
 
                 <StackPanel Margin="0,24,0,0">
-                    <controls:GlyphButton Content="{CustomResource NotificationsAndSounds}"
+                    <controls:BadgeButton Content="{CustomResource NotificationsAndSounds}"
                                           Glyph="&#xEC42;"
                                           Click="Notifications_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource PrivacySettings}"
+                    <controls:BadgeButton Content="{CustomResource PrivacySettings}"
                                           Glyph="&#xE1F6;"
                                           Click="Privacy_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource DataSettings}"
+                    <controls:BadgeButton Content="{CustomResource DataSettings}"
                                           Glyph="&#xEB05;"
                                           Click="Data_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource StickersName}"
+                    <controls:BadgeButton Content="{CustomResource StickersName}"
                                           Glyph="&#xF4AA;"
                                           Click="Stickers_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource Appearance}"
-                                          Glyph="&#xE2B1;"
+                    <controls:BadgeButton Content="{CustomResource ChatSettings}"
+                                          Glyph="&#xE8BD;"
                                           Click="Appearance_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource Language}"
+                    <controls:BadgeButton Content="{CustomResource Language}"
                                           Glyph="&#xE774;"
                                           Click="Language_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource PrivacyAdvanced}"
+                    <controls:BadgeButton Content="{CustomResource PrivacyAdvanced}"
                                           Glyph="&#xE9E9;"
                                           Click="Advanced_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
@@ -144,18 +141,18 @@
 
                 <StackPanel Visibility="{x:Bind ViewModel.HasPassportData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Margin="0,24,0,0">
-                    <controls:GlyphButton Content="{CustomResource TelegramPassport}"
+                    <controls:BadgeButton Content="{CustomResource TelegramPassport}"
                                           Glyph="&#xE8C7;"
                                           Click="Passport_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
                 </StackPanel>
                 
                 <StackPanel Margin="0,24,0,0">
-                    <controls:GlyphButton Content="{CustomResource AskAQuestion}"
+                    <controls:BadgeButton Content="{CustomResource AskAQuestion}"
                                           Glyph="&#xED15;"
                                           Command="{x:Bind ViewModel.AskCommand}"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:GlyphButton Content="{CustomResource TelegramFAQ}"
+                    <controls:BadgeButton Content="{CustomResource TelegramFAQ}"
                                           Glyph="&#xE783;"
                                           Click="Questions_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>

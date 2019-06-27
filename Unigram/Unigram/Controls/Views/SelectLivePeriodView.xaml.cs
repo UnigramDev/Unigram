@@ -13,11 +13,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SelectLivePeriodView : ContentDialog
+    public sealed partial class SelectLivePeriodView : TLContentDialog
     {
         public SelectLivePeriodView(bool single, string name)
         {

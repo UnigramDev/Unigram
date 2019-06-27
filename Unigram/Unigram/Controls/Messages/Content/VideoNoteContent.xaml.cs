@@ -25,8 +25,6 @@ namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class VideoNoteContent : AspectView, IContentWithFile, IContentWithMask
     {
-        private MessageContentState _oldState;
-
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
@@ -96,49 +94,39 @@ namespace Unigram.Controls.Messages.Content
             if (file.Local.IsDownloadingActive)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
+                Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
-
-                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
+                Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
-
-                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 //Button.Glyph = Icons.Download;
-                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
+                Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
                 if (message.Delegate.CanBeDownloaded(message))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
-
-                _oldState = MessageContentState.Download;
             }
             else
             {
                 if (message.IsSecret())
                 {
                     //Button.Glyph = Icons.Ttl;
-                    Button.SetGlyph(Icons.Ttl, _oldState != MessageContentState.None && _oldState != MessageContentState.Ttl);
+                    Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
-
-                    _oldState = MessageContentState.Ttl;
                 }
                 else
                 {
                     //Button.Glyph = Icons.Play;
-                    Button.SetGlyph(Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Play);
+                    Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 1;
-
-                    _oldState = MessageContentState.Play;
                 }
             }
         }

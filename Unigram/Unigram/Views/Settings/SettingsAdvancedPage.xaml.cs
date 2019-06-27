@@ -2,6 +2,7 @@
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.ViewModels.Settings;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
@@ -14,6 +15,15 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsAdvancedViewModel>();
+
+            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            {
+                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
+            {
+                TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
         }
 
         private void OnSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)

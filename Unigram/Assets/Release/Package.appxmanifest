@@ -28,7 +28,6 @@
         <uap:SplashScreen uap5:Optional="true" Image="Assets\Logos\SplashScreen\SplashScreen.png" BackgroundColor="transparent" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.voipCall" />
         <uap3:Extension Category="windows.appUriHandler">
           <uap3:AppUriHandler>
             <uap3:Host Name="t.me" />
@@ -45,20 +44,6 @@
             <uap5:ExecutionAlias Alias="Unigram.exe" />
           </uap5:AppExecutionAlias>
         </uap5:Extension>
-        <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />
-        <uap:Extension Category="windows.appService" EntryPoint="Unigram.Tasks.VoIPServiceTask">
-          <uap:AppService Name="VoIPServiceTask" ServerName="BackgroundHost" />
-        </uap:Extension>-->
-        <!--<Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>-->
         <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
           <BackgroundTasks>
             <Task Type="pushNotification" />
@@ -95,6 +80,14 @@
             <uap:DataFormat>Bitmap</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="theme">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.unigram-theme</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Unigram Theme</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -111,21 +104,14 @@
         <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
-    <!--<Extension Category="windows.activatableClass.outOfProcessServer">
-      <OutOfProcessServer ServerName="BackgroundHost">
-        <Path>UnigramHost.exe</Path>
-        <Instancing>singleInstance</Instancing>
-        <ActivatableClass ActivatableClassId="UnigramHost.Server" />
-      </OutOfProcessServer>
-    </Extension>-->
   </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />
+	<Capability Name="privateNetworkClientServer" />
     <uap:Capability Name="removableStorage" />
     <uap:Capability Name="picturesLibrary" />
     <uap:Capability Name="voipCall" />
     <uap:Capability Name="contacts" />
-    <!--<rescap:Capability Name="runFullTrust" />-->
     <DeviceCapability Name="location" />
     <DeviceCapability Name="microphone" />
     <DeviceCapability Name="webcam" />

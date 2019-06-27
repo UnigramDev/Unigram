@@ -21,7 +21,11 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{CustomResource AttachLocation}" VerticalAlignment="Center" Margin="12,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{CustomResource AttachLocation}"
+                               VerticalAlignment="Center"
+                               Margin="12,0,0,0"
+                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                               Style="{StaticResource BaseTextBlockStyle}"/>
 
                     <controls:GlyphButton
                         Glyph="&#xE11A;"
@@ -134,9 +138,7 @@
                         </Border>
                     </Grid>
 
-                    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                BorderBrush="{ThemeResource TelegramSeparatorBrush}"
-                                BorderThickness="0,1,0,0">
+                    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                         <!-- Current Location -->
                         <Button x:Name="btnCurrentLocation"
                                 Click="CurrentLocation_Click"
@@ -192,7 +194,7 @@
                         </Button>
 
                         <!-- Nearby header -->
-                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                             <TextBlock Text="{CustomResource NearbyPlaces}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                     </StackPanel>

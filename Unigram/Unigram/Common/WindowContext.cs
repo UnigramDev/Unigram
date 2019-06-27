@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -106,7 +107,11 @@ namespace Unigram.Common
 
         private async void UISettings_ColorValuesChanged(UISettings sender, object args)
         {
-            await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateTitleBar);
+            try
+            {
+                await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateTitleBar);
+            }
+            catch { }
         }
 
         /// <summary>
@@ -167,9 +172,12 @@ namespace Unigram.Common
             // Mobile Status Bar
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
+                var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
+                var foregroundBrush = Application.Current.Resources["PageHeaderForegroundBrush"] as SolidColorBrush;
+
                 var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = background;
-                statusBar.ForegroundColor = foreground;
+                statusBar.BackgroundColor = backgroundBrush.Color;
+                statusBar.ForegroundColor = foregroundBrush.Color;
                 statusBar.BackgroundOpacity = 1;
             }
         }
@@ -363,7 +371,7 @@ namespace Unigram.Common
             {
                 SetContactPanel(contact.ContactPanel);
 
-                var backgroundBrush = Application.Current.Resources["TelegramTitleBarBackgroundBrush"] as SolidColorBrush;
+                var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
                 contact.ContactPanel.HeaderColor = backgroundBrush.Color;
 
                 var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
@@ -413,6 +421,19 @@ namespace Unigram.Common
                     }
                     catch { }
                 }
+            }
+            else if (args is FileActivatedEventArgs file)
+            {
+                if (service?.Frame?.Content is MainPage page)
+                {
+                    //page.Activate(launch);
+                }
+                else
+                {
+                    service.NavigateToMain(string.Empty);
+                }
+
+                await new ThemePreviewView(file.Files[0].Path).ShowQueuedAsync();
             }
             else
             {

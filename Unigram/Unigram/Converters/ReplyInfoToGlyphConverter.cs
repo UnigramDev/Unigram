@@ -33,6 +33,7 @@ namespace Unigram.Converters
         public const string Ttl = "\uE60E";
         public const string Document = "\uE160";
         public const string Animation = "\uE906";
+        public const string Theme = "\uE2B1";
 
         public const string Undo = "\uE7A7";
         public const string Redo = "\uE7A6";
@@ -78,6 +79,8 @@ namespace Unigram.Converters
 
         public const string Archive = "\uE7B8";
 
+        public const string Send = "\uE919";
+
         public const string Delete = "\uE74D";
         public const string Forward = "\uE72D";
         public const string Select = "\uE762";
@@ -100,6 +103,6 @@ namespace Unigram.Converters
         public const string Camera = "\uE722";
         public const string Photo = "\uEB9F";
 
-        public const string Statistics = "\uEB05";
+        public const string Statistics = "\uE9D2";
     }
 }

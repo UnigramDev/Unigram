@@ -41,7 +41,7 @@
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" IsHitTestVisible="False"/>
 
-                        <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                        <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Grid.Column="1"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

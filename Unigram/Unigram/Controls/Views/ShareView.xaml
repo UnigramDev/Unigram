@@ -1,4 +1,4 @@
-﻿<ContentDialog
+﻿<controls:TLContentDialog
     x:Class="Unigram.Controls.Views.ShareView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,12 +10,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Style="{StaticResource ModernContentDialogStyle}"
     TitleTemplate="{x:Null}"
     PrimaryButtonText="OK"
     PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
     IsPrimaryButtonEnabled="False"
-    SecondaryButtonText="Cancel">
+    SecondaryButtonText="Cancel"
+    Opened="OnOpened"
+    Closing="OnClosing">
 
     <ContentControl.Resources>
         <CollectionViewSource x:Name="ChatsResults" Source="{x:Bind ViewModel.Search, Mode=OneWay}" IsSourceGrouped="True"/>
@@ -475,6 +476,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                     <TextBlock Text="{CustomResource ShareSendTo}" Style="{StaticResource BaseTextBlockStyle}"/>
@@ -488,12 +490,25 @@
                 </StackPanel>
 
                 <controls:GlyphButton
+                        Glyph="&#xF0E3;"
+                        Visibility="{x:Bind ViewModel.IsSendAsCopyEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="1">
+                    <controls:GlyphButton.Flyout>
+                        <MenuFlyout x:Name="MenuFlyout">
+                            <ToggleMenuFlyoutItem Text="Send as copy" IsChecked="{x:Bind ViewModel.SendAsCopy, Mode=TwoWay}"/>
+                            <ToggleMenuFlyoutItem Text="Remove captions in copies" IsChecked="{x:Bind ViewModel.RemoveCaptions, Mode=TwoWay}"/>
+                        </MenuFlyout>
+                    </controls:GlyphButton.Flyout>
+                </controls:GlyphButton>
+
+                <controls:GlyphButton
                         Glyph="&#xE11A;"
                         Click="Search_Click"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
-                        Grid.Column="1"/>
+                        Grid.Column="2"/>
 
-                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
             </Grid>
 
             <controls:SearchTextBox
@@ -522,6 +537,7 @@
                 Padding="12,0"
                 SizeChanged="List_SizeChanged"
                 SelectionChanged="List_SelectionChanged"
+                ChoosingItemContainer="OnChoosingItemContainer"
                 ContainerContentChanging="OnContainerContentChanging"
                 common:FluidGridView.OrientationOnly="True">
                 <common:FluidGridView.Triggers>
@@ -531,7 +547,7 @@
                     <DataTemplate>
                         <StackPanel Margin="0,12">
                             <controls:ProfilePicture IsHitTestVisible="False" Width="48" Height="48" Margin="8,0"/>
-                            <TextBlock Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </StackPanel>
                     </DataTemplate>
                 </GridView.ItemTemplate>
@@ -597,7 +613,7 @@
                       Visibility="Collapsed">
                 <ListView.Header>
                     <StackPanel Visibility="{x:Bind ViewModel.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                             <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                         <ListView SelectionMode="None"
@@ -611,7 +627,7 @@
                                     <StackPanel Width="72" Margin="0,12">
                                         <Grid Width="48" Height="48" Margin="12,0">
                                             <controls:ProfilePicture IsHitTestVisible="False"/>
-                                            <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                            <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                     MinWidth="20"
                                                     Height="20"
                                                     CornerRadius="10"
@@ -620,13 +636,13 @@
                                                     Margin="0,-2,-2,0"
                                                     Visibility="Collapsed">
                                                 <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                            TextAlignment="Center"
                                                            Margin="4,2,4,0"/>
                                             </Border>
                                         </Grid>
 
-                                        <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                        <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -638,7 +654,7 @@
                             </ListView.ItemContainerStyle>
                         </ListView>
 
-                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                             <TextBlock Text="{CustomResource Recent}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </Border>
                     </StackPanel>
@@ -665,13 +681,13 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
                                         <Grid Margin="4,0,0,-2" Grid.Column="1">
-                                            <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
-                                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
                                         </Grid>
                                     </Grid>
                                     <TextBlock VerticalAlignment="Top"
                                                Style="{StaticResource CaptionTextBlockStyle}"
                                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="NoWrap"
                                                Grid.Column="1"
@@ -700,7 +716,7 @@
                         </GroupStyle.HeaderTemplate>
                         <GroupStyle.HeaderContainerStyle>
                             <Style TargetType="ListViewHeaderItem">
-                                <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
+                                <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                                 <Setter Property="Margin" Value="0,0,0,0"/>
@@ -744,4 +760,4 @@
             </Border>
         </Grid>
     </Grid>
-</ContentDialog>
+</controls:TLContentDialog>

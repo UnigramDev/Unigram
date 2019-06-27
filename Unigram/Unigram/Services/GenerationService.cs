@@ -15,6 +15,7 @@ using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
+using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 
 namespace Unigram.Services
@@ -30,6 +31,7 @@ namespace Unigram.Services
         Compress,
         Transcode,
         TranscodeThumbnail,
+        DocumentThumbnail,
         // TDLib
         Url
     }
@@ -73,6 +75,10 @@ namespace Unigram.Services
                 else if (conversion == ConversionType.TranscodeThumbnail)
                 {
                     await ThumbnailTranscodeAsync(update, args);
+                }
+                else if (conversion == ConversionType.DocumentThumbnail)
+                {
+                    await ThumbnailDocumentAsync(update, args);
                 }
                 // TDLib
                 else if (conversion == ConversionType.Url)
@@ -345,6 +351,45 @@ namespace Unigram.Services
                         await encoder.FlushAsync();
 
                         _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+            }
+        }
+
+        private async Task ThumbnailDocumentAsync(UpdateFileGenerationStart update, string[] args)
+        {
+            try
+            {
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+
+                var mode = ThumbnailMode.DocumentsView;
+                if (file.ContentType.StartsWith("audio"))
+                {
+                    mode = ThumbnailMode.MusicView;
+                }
+
+                using (var thumbnail = await file.GetThumbnailAsync(mode, 90))
+                {
+                    if (thumbnail != null && thumbnail.Type == ThumbnailType.Image)
+                    {
+                        using (var reader = new DataReader(thumbnail))
+                        {
+                            await reader.LoadAsync((uint)thumbnail.Size);
+                            var buffer = new byte[(int)thumbnail.Size];
+                            reader.ReadBytes(buffer);
+                            await FileIO.WriteBytesAsync(temp, buffer);
+                        }
+
+                        _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
+                    }
+                    else
+                    {
+                        _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "No thumbnail found")));
                     }
                 }
             }

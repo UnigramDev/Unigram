@@ -342,6 +342,11 @@ namespace Unigram.Controls.Messages
                 if (singleUserId == message.SenderUserId)
                 {
                     var chat = message.GetChat();
+                    if (chat == null)
+                    {
+                        return (content, entities);
+                    }
+
                     var supergroup = chat.Type as ChatTypeSupergroup;
                     if (supergroup != null && supergroup.IsChannel)
                     {

@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class JoinChatView : ContentDialog
+    public sealed partial class JoinChatView : TLContentDialog
     {
         private IProtoService _protoService;
 

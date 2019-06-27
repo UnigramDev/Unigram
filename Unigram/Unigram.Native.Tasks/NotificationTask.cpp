@@ -4,7 +4,9 @@
 #include <ios>
 #include <fstream>
 
+#include <experimental\resumable>
 #include <ppltasks.h>
+#include <pplawait.h>
 #include <iostream>  
 #include <iomanip>
 #include <sstream>
@@ -53,9 +55,11 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 	{
 		try
 		{
-			UpdateToastAndTiles(details->Content /*, &log*/);
+			UpdateToastAndTiles(details->Content /*, &log*/).then([=]() {
+				deferral->Complete();
+			});
 		}
-		catch (Exception^ ex)
+		catch (Exception ^ ex)
 		{
 			//time(&rawtime);
 			//localtime_s(&timeinfo, &rawtime);
@@ -66,6 +70,8 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 			//log << L"[";
 			//log << str3;
 			//log << "] Exception while processing notification";
+
+			deferral->Complete();
 		}
 	}
 
@@ -78,117 +84,117 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 	//log << L"[";
 	//log << str2;
 	//log << L"] Quitting background task\n\n";
-
-	deferral->Complete();
 }
 
-void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* log*/)
+task<void> NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* log*/)
 {
-	auto notification = JsonValue::Parse(content)->GetObject();
-	auto data = notification->GetNamedObject("data");
-	if (data == nullptr)
-	{
-		return;
-	}
+	return create_task([=] {
+		auto notification = JsonValue::Parse(content)->GetObject();
+		auto data = notification->GetNamedObject("data");
+		if (data == nullptr)
+		{
+			return;
+		}
 
-	if (data->HasKey("loc_key") == false)
-	{
-		//time_t rawtime = time(NULL);
-		//struct tm timeinfo;
-		//wchar_t buffer[80];
-
-		//time(&rawtime);
-		//localtime_s(&timeinfo, &rawtime);
-
-		//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-		//std::wstring str(buffer);
-
-		//*log << L"[";
-		//*log << str;
-		//*log << L"] Removing a toast notification\n";
-
-		auto custom = data->GetNamedObject("custom");
-		auto group = GetGroup(custom);
-
-		ToastNotificationManager::History->RemoveGroup(group, L"App");
-		return;
-	}
-
-	auto muted = data->GetNamedString("mute", "0") == L"1";
-	if (!muted)
-	{
-		auto loc_key = data->GetNamedString("loc_key");
-		auto loc_args = data->GetNamedArray("loc_args");
-		auto custom = data->GetNamedObject("custom", nullptr);
-
-		//time_t rawtime = time(NULL);
-		//struct tm timeinfo;
-		//wchar_t buffer[80];
-
-		//time(&rawtime);
-		//localtime_s(&timeinfo, &rawtime);
-
-		//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-		//std::wstring str(buffer);
-
-		//*log << L"[";
-		//*log << str;
-		//*log << L"] Received notification with loc_key ";
-		//*log << loc_key->Data();
-		//*log << L"\n";
-
-		auto caption = GetCaption(loc_args, loc_key);
-		auto message = GetMessage(loc_args, loc_key);
-		auto sound = data->GetNamedString("sound", "Default");
-		auto launch = GetLaunch(custom, loc_key);
-		auto group = GetGroup(custom);
 		auto session = GetSession(data);
-		auto picture = GetPicture(custom, group, session);
-		auto date = GetDate(notification);
-
-		if (message == nullptr)
+		if (data->HasKey("loc_key") == false)
 		{
-			message = data->GetNamedString("text", "New Notification");
+			//time_t rawtime = time(NULL);
+			//struct tm timeinfo;
+			//wchar_t buffer[80];
+
+			//time(&rawtime);
+			//localtime_s(&timeinfo, &rawtime);
+
+			//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+			//std::wstring str(buffer);
+
+			//*log << L"[";
+			//*log << str;
+			//*log << L"] Removing a toast notification\n";
+
+			auto custom = data->GetNamedObject("custom");
+			auto group = GetGroup(custom);
+
+			ToastNotificationManager::History->RemoveGroup(group, L"App");
+			return;
 		}
 
-		//if (loc_key->Equals(L"PHONE_CALL_MISSED"))
-		//{
-		//	ToastNotificationManager::History->Remove(L"phoneCall");
-		//}
+		auto muted = data->GetNamedString("mute", "0") == L"1";
+		if (!muted)
+		{
+			auto loc_key = data->GetNamedString("loc_key");
+			auto loc_args = data->GetNamedArray("loc_args");
+			auto custom = data->GetNamedObject("custom", nullptr);
 
-		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
-		{
-			UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, nullptr, date, loc_key);
-			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
-		}
-		else
-		{
-			std::wstring key = loc_key->Data();
-			if ((key.find(L"CONTACT_JOINED") == 0 || key.find(L"PINNED") == 0) && ApplicationData::Current->LocalSettings->Values->HasKey(session))
+			//time_t rawtime = time(NULL);
+			//struct tm timeinfo;
+			//wchar_t buffer[80];
+
+			//time(&rawtime);
+			//localtime_s(&timeinfo, &rawtime);
+
+			//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+			//std::wstring str(buffer);
+
+			//*log << L"[";
+			//*log << str;
+			//*log << L"] Received notification with loc_key ";
+			//*log << loc_key->Data();
+			//*log << L"\n";
+
+			auto caption = GetCaption(loc_args, loc_key);
+			auto message = GetMessage(loc_args, loc_key);
+			auto sound = data->GetNamedString("sound", "Default");
+			auto launch = GetLaunch(custom, loc_key);
+			auto group = GetGroup(custom);
+			auto picture = GetPicture(custom, group, session);
+			auto date = GetDate(notification);
+
+			if (message == nullptr)
 			{
-				auto settings = safe_cast<ApplicationDataCompositeValue^>(ApplicationData::Current->LocalSettings->Values->Lookup(session));
-				auto notifications = safe_cast<ApplicationDataCompositeValue^>(settings->Lookup(L"Notifications"));
-
-				if (key.find(L"CONTACT_JOINED") == 0 && notifications->HasKey(L"IsContactEnabled") && safe_cast<bool>(notifications->Lookup(L"IsContactEnabled")))
-				{
-					return;
-				}
-				else if (key.find(L"PINNED") == 0 && notifications->HasKey(L"IsPinnedEnabled") && safe_cast<bool>(notifications->Lookup(L"IsPinnedEnabled")))
-				{
-					return;
-				}
+				message = data->GetNamedString("text", "New Notification");
 			}
 
-			auto tag = GetTag(custom);
-			UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key);
-			//UpdatePrimaryBadge(data->GetNamedNumber(L"badge", 0));
+			//if (loc_key->Equals(L"PHONE_CALL_MISSED"))
+			//{
+			//	ToastNotificationManager::History->Remove(L"phoneCall");
+			//}
 
-			if (loc_key != L"DC_UPDATE")
+			if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 			{
-				UpdatePrimaryTile(L"0", caption, message, picture);
+				create_task(UpdateToast(caption, message, session, session, sound, launch, L"phoneCall", group, picture, nullptr, date, loc_key)).get();
+				//UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
+			}
+			else
+			{
+				std::wstring key = loc_key->Data();
+				if ((key.find(L"CONTACT_JOINED") == 0 || key.find(L"PINNED") == 0) && ApplicationData::Current->LocalSettings->Values->HasKey(session))
+				{
+					auto settings = safe_cast<ApplicationDataCompositeValue^>(ApplicationData::Current->LocalSettings->Values->Lookup(session));
+					auto notifications = safe_cast<ApplicationDataCompositeValue^>(settings->Lookup(L"Notifications"));
+
+					if (key.find(L"CONTACT_JOINED") == 0 && notifications->HasKey(L"IsContactEnabled") && safe_cast<bool>(notifications->Lookup(L"IsContactEnabled")))
+					{
+						return;
+					}
+					else if (key.find(L"PINNED") == 0 && notifications->HasKey(L"IsPinnedEnabled") && safe_cast<bool>(notifications->Lookup(L"IsPinnedEnabled")))
+					{
+						return;
+					}
+				}
+
+				auto tag = GetTag(custom);
+				create_task(UpdateToast(caption, message, session, session, sound, launch, tag, group, picture, nullptr, date, loc_key)).get();
+				//UpdatePrimaryBadge(data->GetNamedNumber(L"badge", 0));
+
+				if (loc_key != L"DC_UPDATE")
+				{
+					UpdatePrimaryTile(L"0", caption, message, picture);
+				}
 			}
 		}
-	}
+	});
 }
 
 String^ NotificationTask::GetCaption(JsonArray^ loc_args, String^ loc_key)
@@ -412,7 +418,7 @@ void NotificationTask::UpdatePrimaryBadge(int badgeNumber)
 
 		updater->Update(ref new BadgeNotification(document));
 	}
-	catch (Exception^ e) { }
+	catch (Exception ^ e) {}
 }
 
 //void NotificationTask::UpdateSecondaryBadge(String^ group, bool resetBadge)
@@ -591,7 +597,7 @@ void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, Strin
 
 		updater->Update(notification);
 	}
-	catch (Exception^ e) { }
+	catch (Exception ^ e) {}
 }
 
 //void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group)
@@ -658,127 +664,137 @@ void NotificationTask::UpdatePrimaryTile(String^ session, String^ caption, Strin
 //	updater->Update(notification);
 //}
 
-void NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key)
+Windows::Foundation::IAsyncAction^ NotificationTask::UpdateToast(String^ caption, String^ message, String^ attribution, String^ account, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ hero, String^ date, String^ loc_key)
 {
-	bool allow = true;
-	//auto settings = ApplicationData::Current->LocalSettings;
-	//if (settings->Values->HasKey("SessionGuid"))
-	//{
-	//	auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
-
-	//	std::wstringstream path;
-	//	path << temp->Data()
-	//		<< L"\\"
-	//		<< guid->Data()
-	//		<< L"\\passcode_params.dat";
-
-	//	WIN32_FIND_DATA FindFileData;
-	//	HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
-	//	int found = handle != INVALID_HANDLE_VALUE;
-	//	if (found)
-	//	{
-	//		FindClose(handle);
-
-	//		allow = false;
-	//	}
-	//}
-
-	std::wstring key = loc_key->Data();
-	std::wstring actions = L"";
-	if (group != nullptr && key.find(L"CHANNEL") && allow)
+	return create_async([=]()
 	{
-		actions = L"<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
-		actions += launch->Data();
-		//actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
-		actions += L"' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
-		actions += launch->Data();
-		actions += L"' content='ms-resource:Send'/></actions>";
-	}
+		bool allow = true;
+		//auto settings = ApplicationData::Current->LocalSettings;
+		//if (settings->Values->HasKey("SessionGuid"))
+		//{
+		//	auto guid = safe_cast<String^>(settings->Values->Lookup("SessionGuid"));
 
-	std::wstring audio = L"";
-	if (sound->Equals("silent"))
-	{
-		audio = L"<audio silent='true'/>";
-	}
+		//	std::wstringstream path;
+		//	path << temp->Data()
+		//		<< L"\\"
+		//		<< guid->Data()
+		//		<< L"\\passcode_params.dat";
 
-	std::wstring xml = L"<toast launch='";
-	xml += launch->Data();
-	xml += L"' displayTimestamp='";
-	xml += date->Data();
-	//xml += L"' hint-people='remoteid:";
-	//xml += group->Data();
-	xml += L"'>";
-	//xml += L"<header id='";
-	//xml += account->Data();
-	//xml += L"' title='Camping!!' arguments='action = openConversation & amp; id = 6289'/>";
-	xml += L"<visual><binding template='ToastGeneric'>";
+		//	WIN32_FIND_DATA FindFileData;
+		//	HANDLE handle = FindFirstFile(path.str().c_str(), &FindFileData);
+		//	int found = handle != INVALID_HANDLE_VALUE;
+		//	if (found)
+		//	{
+		//		FindClose(handle);
 
-	if (picture != nullptr)
-	{
-		xml += L"<image placement='appLogoOverride' hint-crop='circle' src='";
-		xml += picture->Data();
-		xml += L"'/>";
-	}
+		//		allow = false;
+		//	}
+		//}
 
-	xml += L"<text><![CDATA[";
-	xml += caption->Data();
-	xml += L"]]></text><text><![CDATA[";
-	xml += message->Data();
-	//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
-	xml += L"]]></text>";
-
-	if (hero != nullptr && hero->Length())
-	{
-		xml += L"<image src='";
-		xml += hero->Data();
-		xml += L"'/>";
-	}
-
-	xml += L"<text placement='attribution'><![CDATA[";
-	xml += attribution->Data();
-	xml += L"]]></text></binding></visual>";
-	xml += actions;
-	xml += audio;
-	xml += L"</toast>";
-
-	try
-	{
-		auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
-
-		auto document = ref new XmlDocument();
-		document->LoadXml(ref new String(xml.c_str()));
-
-		auto notification = ref new ToastNotification(document);
-
-		if (tag != nullptr)
+		std::wstring key = loc_key->Data();
+		std::wstring actions = L"";
+		if (group != nullptr && key.find(L"CHANNEL") && allow)
 		{
-			notification->Tag = tag;
-			notification->RemoteId = tag;
+			actions = L"<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
+			actions += launch->Data();
+			//actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+			actions += L"' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
+			actions += launch->Data();
+			actions += L"' content='ms-resource:Send'/></actions>";
 		}
 
-		if (group != nullptr)
+		std::wstring audio = L"";
+		if (sound->Equals("silent"))
 		{
-			notification->Group = group;
+			audio = L"<audio silent='true'/>";
+		}
+
+		std::wstring xml = L"<toast launch='";
+		xml += launch->Data();
+		xml += L"' displayTimestamp='";
+		xml += date->Data();
+		//xml += L"' hint-people='remoteid:";
+		//xml += group->Data();
+		xml += L"'>";
+		//xml += L"<header id='";
+		//xml += account->Data();
+		//xml += L"' title='Camping!!' arguments='action = openConversation & amp; id = 6289'/>";
+		xml += L"<visual><binding template='ToastGeneric'>";
+
+		if (picture != nullptr)
+		{
+			xml += L"<image placement='appLogoOverride' hint-crop='circle' src='";
+			xml += picture->Data();
+			xml += L"'/>";
+		}
+
+		xml += L"<text><![CDATA[";
+		xml += caption->Data();
+		xml += L"]]></text><text><![CDATA[";
+		xml += message->Data();
+		//xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
+		xml += L"]]></text>";
+
+		if (hero != nullptr && hero->Length())
+		{
+			xml += L"<image src='";
+			xml += hero->Data();
+			xml += L"'/>";
+		}
+
+		//xml += L"<text placement='attribution'><![CDATA[";
+		//xml += attribution->Data();
+		//xml += L"]]></text>";
+		xml += L"</binding></visual>";
+		xml += actions;
+		xml += audio;
+		xml += L"</toast>";
+
+		try
+		{
+			//auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+			auto notifier = create_task(ToastNotificationManager::GetDefault()->GetToastNotifierForToastCollectionIdAsync(account)).get();
+
+			if (notifier == nullptr) {
+				notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+			}
+
+			auto document = ref new XmlDocument();
+			document->LoadXml(ref new String(xml.c_str()));
+
+			auto notification = ref new ToastNotification(document);
 
 			if (tag != nullptr)
 			{
-				notification->RemoteId += "_";
+				notification->Tag = tag;
+				notification->RemoteId = tag;
 			}
 
-			notification->RemoteId += group;
+			if (group != nullptr)
+			{
+				notification->Group = group;
+
+				if (tag != nullptr)
+				{
+					notification->RemoteId += "_";
+				}
+
+				notification->RemoteId += group;
+			}
+
+			notifier->Show(notification);
 		}
-
-		notifier->Show(notification);
-	}
-	catch (Exception^ e) { }
-}
-
-void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
-{
-	auto coordinator = VoipCallCoordinator::GetDefault();
-	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask")).then([this, coordinator, caption, message, sound, launch, tag, group, picture, date, loc_key](VoipPhoneCallResourceReservationStatus status)
-	{
-		Sleep(1000000);
-		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
+		catch (Exception ^ e) {}
 	});
 }
+
+//
+//void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key)
+//{
+//	auto coordinator = VoipCallCoordinator::GetDefault();
+//	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask")).then([this, coordinator, caption, message, sound, launch, tag, group, picture, date, loc_key](VoipPhoneCallResourceReservationStatus status)
+//	{
+//		Sleep(1000000);
+//		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
+//	});
+//}

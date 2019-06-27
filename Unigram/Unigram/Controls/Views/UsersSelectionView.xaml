@@ -21,7 +21,7 @@
         <RowDefinition Height="Auto" />
         <RowDefinition />
     </Grid.RowDefinitions>
-    <Grid Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+    <Grid Background="{ThemeResource PageHeaderBackgroundBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
@@ -32,18 +32,16 @@
                 <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/><Run Text="/"/><Run Text="{x:Bind ViewModel.Maximum}"/>
             </TextBlock>
         </StackPanel>
-        <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Visibility="{x:Bind ConvertMaximum(ViewModel.Maximum, x:False)}" Style="{StaticResource HeaderGlyphButtonStyle}" Glyph="&#xE10B;" Grid.Column="1"/>
-        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Visibility="{x:Bind ConvertConfirm(ViewModel.Maximum, IsConfirmVisible)}" Style="{StaticResource HeaderGlyphButtonStyle}" Glyph="&#xE10B;" Grid.Column="1"/>
     </Grid>
 
-    <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}" MinHeight="48" Grid.Row="1">
+    <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}" MinHeight="48" Grid.Row="1">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       MaxHeight="76">
             <controls:TagsTextBox x:Name="SearchField" Text="{Binding SearchQuery, Mode=TwoWay}" TextChanged="SearchField_TextChanged" ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="{CustomResource Search}" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
         </ScrollViewer>
-        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False"/>
     </Grid>
 
     <ListView x:Name="SearchList"
@@ -94,7 +92,7 @@
                 </GroupStyle.HeaderTemplate>
                 <GroupStyle.HeaderContainerStyle>
                     <Style TargetType="ListViewHeaderItem">
-                        <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
+                        <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
                         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                         <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                         <Setter Property="Margin" Value="0,0,0,0"/>

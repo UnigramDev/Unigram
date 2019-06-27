@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Views.Host;
 using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -59,11 +60,38 @@ namespace Unigram.Controls
             }
         }
 
+        private bool _isBlank;
+        public bool IsBlank
+        {
+            get { return (bool)GetValue(IsBlankProperty); }
+            set { SetValue(IsBlankProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsBlankProperty =
+            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailPanel), new PropertyMetadata(true, OnBlankChanged));
+
+        private static void OnBlankChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var newValue = (bool)e.NewValue;
+            var oldValue = (bool)e.OldValue;
+
+            ((MasterDetailPanel)d)._isBlank = newValue;
+
+            if (newValue != oldValue)
+            {
+                ((MasterDetailPanel)d).InvalidateMeasure();
+                ((MasterDetailPanel)d).InvalidateArrange();
+            }
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
-            var detail = Children[0];
-            var master = Children[1];
-            var grip = Children[2] as FrameworkElement;
+            var background = Children[0];
+            var title = Children[1];
+            var header = Children[2];
+            var detail = Children[3];
+            var master = Children[4];
+            var grip = Children[5] as FrameworkElement;
 
             if (grip.ManipulationMode == ManipulationModes.System)
             {
@@ -83,8 +111,12 @@ namespace Unigram.Controls
 
             if (availableSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain)
             {
-                master.Measure(availableSize);
-                detail.Measure(availableSize);
+                title.Measure(availableSize);
+                background.Measure(availableSize);
+                header.Measure(availableSize);
+
+                master.Measure(new Size(availableSize.Width, availableSize.Height - title.DesiredSize.Height - header.DesiredSize.Height));
+                detail.Measure(new Size(availableSize.Width, availableSize.Height - title.DesiredSize.Height - header.DesiredSize.Height));
 
                 grip.Measure(new Size(0, 0));
             }
@@ -100,33 +132,45 @@ namespace Unigram.Controls
                     result = dialogsWidthRatio > 0 ? CountDialogsWidthFromRatio(availableSize.Width, dialogsWidthRatio) : columnMinimalWidthLeft;
                 }
 
-                master.Measure(new Size(result, availableSize.Height));
-                detail.Measure(new Size(availableSize.Width - result, availableSize.Height));
+                header.Measure(new Size(availableSize.Width - result, availableSize.Height));
+                title.Measure(new Size(_isBlank && header.DesiredSize.Height < 1 ? result : availableSize.Width, availableSize.Height));
+                background.Measure(new Size(availableSize.Width - result, availableSize.Height));
+
+                master.Measure(new Size(result, availableSize.Height - title.DesiredSize.Height));
+                detail.Measure(new Size(availableSize.Width - result, availableSize.Height - title.DesiredSize.Height - header.DesiredSize.Height));
 
                 grip.Measure(new Size(12, availableSize.Height));
-
-                return availableSize;
             }
 
-            return base.MeasureOverride(availableSize);
+            return availableSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var detail = Children[0];
-            var master = Children[1];
-            var grip = Children[2];
-
-            var old = _currentState;
+            var background = Children[0];
+            var title = Children[1];
+            var header = Children[2];
+            var detail = Children[3];
+            var master = Children[4];
+            var grip = Children[5];
 
             if (finalSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain)
             {
                 CurrentState = MasterDetailState.Minimal;
 
-                master.Arrange(new Rect(new Point(0, 0), finalSize));
-                detail.Arrange(new Rect(new Point(0, 0), finalSize));
+                title.Arrange(new Rect(new Point(0, 0), finalSize));
+                background.Arrange(new Rect(new Point(0, 0), finalSize));
+                header.Arrange(new Rect(new Point(0, title.DesiredSize.Height), finalSize));
+
+                master.Arrange(new Rect(0, title.DesiredSize.Height + header.DesiredSize.Height, finalSize.Width, finalSize.Height - title.DesiredSize.Height - header.DesiredSize.Height));
+                detail.Arrange(new Rect(0, title.DesiredSize.Height + header.DesiredSize.Height, finalSize.Width, finalSize.Height - title.DesiredSize.Height - header.DesiredSize.Height));
 
                 grip.Arrange(new Rect(0, 0, 0, 0));
+
+                if (Window.Current.Content is RootPage root)
+                {
+                    root.TopPadding = new Thickness(0, header.DesiredSize.Height, 0, 0);
+                }
             }
             else
             {
@@ -142,15 +186,22 @@ namespace Unigram.Controls
                     CurrentState = MasterDetailState.Expanded;
                 }
 
-                master.Arrange(new Rect(0, 0, result, finalSize.Height));
-                detail.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
+                title.Arrange(new Rect(0, 0, _isBlank && header.DesiredSize.Height < 1 ? result : finalSize.Width, finalSize.Height));
+                background.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
+                header.Arrange(new Rect(result, title.DesiredSize.Height, finalSize.Width - result, finalSize.Height));
+
+                master.Arrange(new Rect(0, title.DesiredSize.Height, result, finalSize.Height - title.DesiredSize.Height));
+                detail.Arrange(new Rect(result, title.DesiredSize.Height + header.DesiredSize.Height, finalSize.Width - result, finalSize.Height - title.DesiredSize.Height - header.DesiredSize.Height));
 
                 grip.Arrange(new Rect(result, 0, 12, finalSize.Height));
 
-                return finalSize;
+                if (Window.Current.Content is RootPage root)
+                {
+                    root.TopPadding = new Thickness(0, 0, 0, 0);
+                }
             }
 
-            return base.ArrangeOverride(finalSize);
+            return finalSize;
         }
 
         private double CountDialogsWidthFromRatio(double width, double ratio)
@@ -164,14 +215,13 @@ namespace Unigram.Controls
 
         private void Grip_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(Children[2] as UserControl, "Pressed", false);
+            VisualStateManager.GoToState(Children[5] as UserControl, "Pressed", false);
         }
 
         private void Grip_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            var detail = Children[0];
-            var master = Children[1] as FrameworkElement;
-            var grip = Children[2];
+            var master = Children[4] as FrameworkElement;
+            var grip = Children[5];
 
             var newWidth = master.ActualWidth + e.Cumulative.Translation.X + 12;
             var newRatio = (newWidth < columnMinimalWidthLeft / 2)
@@ -193,7 +243,7 @@ namespace Unigram.Controls
 
         private void Grip_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(Children[2] as UserControl, "Normal", false);
+            VisualStateManager.GoToState(Children[5] as UserControl, "Normal", false);
 
             dialogsWidthRatio = gripWidthRatio;
             SettingsService.Current.DialogsWidthRatio = gripWidthRatio;
@@ -206,9 +256,9 @@ namespace Unigram.Controls
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }
 
-            foreach (var pointer in Children[2].PointerCaptures)
+            foreach (var pointer in Children[5].PointerCaptures)
             {
-                Children[2].ReleasePointerCapture(pointer);
+                Children[5].ReleasePointerCapture(pointer);
             }
         }
 
@@ -232,17 +282,17 @@ namespace Unigram.Controls
 
         private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(Children[2] as UserControl, "Pressed", false);
+            VisualStateManager.GoToState(Children[5] as UserControl, "Pressed", false);
 
-            Children[2].CapturePointer(e.Pointer);
+            Children[5].CapturePointer(e.Pointer);
             e.Handled = true;
         }
 
         private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(Children[2] as UserControl, "Normal", false);
+            VisualStateManager.GoToState(Children[5] as UserControl, "Normal", false);
 
-            var point = e.GetCurrentPoint(Children[2]);
+            var point = e.GetCurrentPoint(Children[5]);
             if (point.Position.X < 0 || point.Position.X > 12)
             {
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;

@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class ProxyView : ContentDialog
+    public sealed partial class ProxyView : TLContentDialog
     {
         public ProxyView()
         {

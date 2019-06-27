@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
@@ -17,6 +18,8 @@ namespace Unigram.Controls.Gallery
     {
         private Button PreviousButtonHorizontal;
         private Button NextButtonHorizontal;
+
+        private Button FullWindowButton;
 
         public GalleryTransportControls()
         {
@@ -32,6 +35,26 @@ namespace Unigram.Controls.Gallery
 
             PreviousButtonHorizontal.Click += Switch_Click;
             NextButtonHorizontal.Click += Switch_Click;
+
+            FullWindowButton = GetTemplateChild("FullButton") as Button;
+            FullWindowButton.Click += FullWindow_Click;
+        }
+
+        private void FullWindow_Click(object sender, RoutedEventArgs e)
+        {
+            var view = ApplicationView.GetForCurrentView();
+            if (view.IsFullScreenMode)
+            {
+                view.ExitFullScreenMode();
+                VisualStateManager.GoToState(this, "NonFullWindowState2", false);
+            }
+            else
+            {
+                if (view.TryEnterFullScreenMode())
+                {
+                    VisualStateManager.GoToState(this, "FullWindowState2", false);
+                }
+            }
         }
 
         public event TypedEventHandler<GalleryTransportControls, int> Switch;

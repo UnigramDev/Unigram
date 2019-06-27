@@ -54,6 +54,21 @@ namespace Unigram.Common
             return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
         }
 
+        public static bool TryGet<T>(this ResourceDictionary dict, string key, out T value)
+        {
+            object tryGetValue;
+            bool success = false;
+            if (success = dict.TryGetValue(key, out tryGetValue))
+            {
+                value = (T)tryGetValue;
+            }
+            else
+            {
+                value = default(T);
+            }
+            return success;
+        }
+
         public static bool TryGet<T>(this IDictionary<string, object> dict, string key, out T value)
         {
             object tryGetValue;
@@ -87,7 +102,7 @@ namespace Unigram.Common
             {
                 if (list.Entries.Count >= list.MaximumItemsAllowed - 10)
                 {
-                    var first = list.Entries.FirstOrDefault();
+                    var first = list.Entries.LastOrDefault();
                     if (first.Token != null)
                     {
                         list.Remove(first.Token);
@@ -95,7 +110,7 @@ namespace Unigram.Common
                 }
             }
             catch { }
-            
+
             try
             {
                 return list.Add(item);

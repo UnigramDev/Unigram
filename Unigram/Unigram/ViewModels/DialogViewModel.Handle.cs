@@ -283,9 +283,9 @@ namespace Unigram.ViewModels
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is Grid grid)
+                        if (content is MessageBubble == false)
                         {
-                            content = grid.FindName("Bubble") as FrameworkElement;
+                            content = content.FindName("Bubble") as FrameworkElement;
                         }
 
                         if (content is MessageBubble bubble)
@@ -344,7 +344,11 @@ namespace Unigram.ViewModels
                 var user = CacheService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
-                    BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(_chat, user, CacheService.GetUserFull(user.Id), false, _accessToken != null));
+                    var fullInfo = CacheService.GetUserFull(user.Id);
+                    if (fullInfo != null)
+                    {
+                        BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(_chat, user, fullInfo, false, _accessToken != null));
+                    }
                 }
             }
         }
@@ -637,9 +641,9 @@ namespace Unigram.ViewModels
                                 }
 
                                 var content = container.ContentTemplateRoot as FrameworkElement;
-                                if (content is Grid grid)
+                                if (content is MessageBubble == false)
                                 {
-                                    content = grid.FindName("Bubble") as FrameworkElement;
+                                    content = content.FindName("Bubble") as FrameworkElement;
                                 }
 
                                 if (content is MessageBubble bubble)
@@ -668,9 +672,9 @@ namespace Unigram.ViewModels
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is Grid grid)
+                        if (content is MessageBubble == false)
                         {
-                            content = grid.FindName("Bubble") as FrameworkElement;
+                            content = content.FindName("Bubble") as FrameworkElement;
                         }
 
                         if (content is MessageBubble bubble)
@@ -716,9 +720,9 @@ namespace Unigram.ViewModels
                                 }
 
                                 var content = container.ContentTemplateRoot as FrameworkElement;
-                                if (content is Grid grid)
+                                if (content is MessageBubble == false)
                                 {
-                                    content = grid.FindName("Bubble") as FrameworkElement;
+                                    content = content.FindName("Bubble") as FrameworkElement;
                                 }
 
                                 if (content is MessageBubble bubble)
@@ -755,9 +759,9 @@ namespace Unigram.ViewModels
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is Grid grid)
+                        if (content is MessageBubble == false)
                         {
-                            content = grid.FindName("Bubble") as FrameworkElement;
+                            content = content.FindName("Bubble") as FrameworkElement;
                         }
 
                         if (content is MessageBubble bubble)
@@ -784,9 +788,9 @@ namespace Unigram.ViewModels
             }
 
             var content = container.ContentTemplateRoot as FrameworkElement;
-            if (content is Grid grid)
+            if (content is MessageBubble == false)
             {
-                content = grid.FindName("Bubble") as FrameworkElement;
+                content = content.FindName("Bubble") as FrameworkElement;
             }
 
             if (content is MessageBubble bubble)

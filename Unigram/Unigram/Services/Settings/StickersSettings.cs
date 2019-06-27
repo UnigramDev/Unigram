@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using Unigram.Common;
+using Windows.Storage;
 
 namespace Unigram.Services.Settings
 {
@@ -55,6 +56,23 @@ namespace Unigram.Services.Settings
             {
                 _selectedTab = (int)value;
                 AddOrUpdateValue("SelectedTab", (int)value);
+            }
+        }
+
+        private int? _skinTone;
+        public EmojiSkinTone SkinTone
+        {
+            get
+            {
+                if (_skinTone == null)
+                    _skinTone = GetValueOrDefault("SkinTone", 0);
+
+                return (EmojiSkinTone)(_skinTone ?? 0);
+            }
+            set
+            {
+                _skinTone = (int)value;
+                AddOrUpdateValue("SkinTone", (int)value);
             }
         }
     }

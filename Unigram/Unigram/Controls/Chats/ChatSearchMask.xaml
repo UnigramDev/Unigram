@@ -207,7 +207,7 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="BottomPanel.Visibility" Value="Collapsed"/>
-                        <Setter Target="TopPanel.Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}"/>
+                        <Setter Target="TopPanel.Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}"/>
                         <Setter Target="TopPanel.Height" Value="{StaticResource TelegramToolBarHeight}"/>
                         <Setter Target="TopPanel.(Grid.Row)" Value="1"/>
                         <Setter Target="SearchPanel.Margin" Value="0,0,0,8"/>
@@ -225,7 +225,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="TopPanel" Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource TelegramTitleBarBackgroundBrush}">
+        <Grid x:Name="TopPanel" Height="{ThemeResource AppBarThemeCompactHeight}" Background="{ThemeResource PageHeaderBackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -247,6 +247,7 @@
                     x:Name="Field"
                     Text="{x:Bind ViewModel.Query, Mode=OneWay}"
                     InputScope="Search"
+                    TextChanged="OnTextChanged"
                     SelectionChanged="OnSelectionChanged"
                     GotFocus="Field_GotFocus"
                     LostFocus="Field_LostFocus"
@@ -279,6 +280,8 @@
                 Glyph="&#xE0A0;"
                 AllowFocusOnInteraction="False"
                 FontSize="{StaticResource GlyphButtonFontSize}"
+                AutomationProperties.Name="{CustomResource AccDescrSearchNext}"
+                ToolTipService.ToolTip="{CustomResource AccDescrSearchNext}"
                 Visibility="Collapsed"/>
             <controls:GlyphButton
                 x:Name="SearchNext"
@@ -286,6 +289,8 @@
                 Glyph="&#xE0A1;"
                 AllowFocusOnInteraction="False"
                 FontSize="{StaticResource GlyphButtonFontSize}"
+                AutomationProperties.Name="{CustomResource AccDescrSearchPrev}"
+                ToolTipService.ToolTip="{CustomResource AccDescrSearchPrev}"
                 Visibility="Collapsed"
                 Grid.Column="1"/>
 
@@ -305,6 +310,8 @@
                         Glyph="&#xE2AF;"
                         AllowFocusOnInteraction="False"
                         Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        AutomationProperties.Name="{CustomResource AccDescrSearchByUser}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrSearchByUser}"
                         FontSize="{StaticResource GlyphButtonFontSize}"/>
                     <controls:GlyphButton
                         Click="FilterByMedia_Click"
@@ -360,14 +367,32 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:GlyphButton Command="{x:Bind ViewModel.Dialog.JumpDateCommand}" Glyph="&#xE163;" AllowFocusOnInteraction="False"/>
-                <controls:GlyphButton Click="FilterByMember_Click" Glyph="&#xE2AF;" AllowFocusOnInteraction="False" Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1"/>
+                <controls:GlyphButton Command="{x:Bind ViewModel.Dialog.JumpDateCommand}"
+                                      Glyph="&#xE163;"
+                                      AllowFocusOnInteraction="False"/>
+                <controls:GlyphButton Click="FilterByMember_Click"
+                                      Glyph="&#xE2AF;"
+                                      AllowFocusOnInteraction="False"
+                                      Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      AutomationProperties.Name="{CustomResource AccDescrSearchByUser}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrSearchByUser}"
+                                      Grid.Column="1"/>
             </Grid>
 
             <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}" Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Margin="12,0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2"/>
 
-            <controls:GlyphButton Command="{x:Bind ViewModel.PreviousCommand}" Glyph="&#xE0A0;" AllowFocusOnInteraction="False" Grid.Column="3"/>
-            <controls:GlyphButton Command="{x:Bind ViewModel.NextCommand}" Glyph="&#xE0A1;" AllowFocusOnInteraction="False" Grid.Column="4"/>
+            <controls:GlyphButton Command="{x:Bind ViewModel.PreviousCommand}"
+                                  Glyph="&#xE0A0;"
+                                  AllowFocusOnInteraction="False"
+                                  AutomationProperties.Name="{CustomResource AccDescrSearchNext}"
+                                  ToolTipService.ToolTip="{CustomResource AccDescrSearchNext}"
+                                  Grid.Column="3"/>
+            <controls:GlyphButton Command="{x:Bind ViewModel.NextCommand}"
+                                  Glyph="&#xE0A1;"
+                                  AllowFocusOnInteraction="False"
+                                  AutomationProperties.Name="{CustomResource AccDescrSearchPrev}"
+                                  ToolTipService.ToolTip="{CustomResource AccDescrSearchPrev}"
+                                  Grid.Column="4"/>
         </Grid>
     </Grid>
 </UserControl>

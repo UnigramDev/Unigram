@@ -540,7 +540,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:GlyphButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -745,22 +745,15 @@
                       ItemsSource="{x:Bind Autocomplete, Mode=OneWay}"
                       Visibility="{x:Bind Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                       ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
+                      BorderThickness="0,1,0,0"
                       AllowFocusOnInteraction="False"
                       IsItemClickEnabled="True"
                       ItemClick="Autocomplete_ItemClick"
                       ContainerContentChanging="OnContainerContentChanging"
+                      VerticalAlignment="Bottom"
                       Grid.RowSpan="2">
-                <ListView.Header>
-                    <Border x:Name="AutocompleteHeader"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Top" Height="1"/>
-                    </Border>
-                </ListView.Header>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
                 <ListView.ItemContainerTransitions>
                     <TransitionCollection/>
                 </ListView.ItemContainerTransitions>
@@ -784,6 +777,7 @@
                     DataContext="{x:Bind ViewModel}"
                     Paste="OnPaste"
                     InputScope="Chat"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                     PlaceholderText="{CustomResource AddCaption}"
                     Margin="12,8,12,8"
                     Grid.Row="1"/>

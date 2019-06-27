@@ -223,22 +223,6 @@ namespace Unigram.Controls
             }
         }
 
-        //protected override void OnKeyDown(KeyRoutedEventArgs e)
-        //{
-        //    if (e.Key == VirtualKey.Escape)
-        //    {
-        //        if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Narrow)
-        //        {
-        //            DetailFrame.GoBack();
-        //            e.Handled = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        base.OnKeyDown(e);
-        //    }
-        //}
-
         protected override void OnApplyTemplate()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
@@ -261,18 +245,21 @@ namespace Unigram.Controls
                 }
 
                 //Grid.SetRow(DetailFrame, 1);
-
-                DetailFrame.Navigated += OnNavigated;
-                DetailPresenter.Children.Add(DetailFrame);
-
-                if (DetailFrame.CurrentSourcePageType == null)
+                try
                 {
-                    DetailFrame.Navigate(BlankPageType);
+                    DetailFrame.Navigated += OnNavigated;
+                    DetailPresenter.Children.Add(DetailFrame);
+
+                    if (DetailFrame.CurrentSourcePageType == null)
+                    {
+                        DetailFrame.Navigate(BlankPageType);
+                    }
+                    else
+                    {
+                        DetailFrame.BackStack.Insert(0, new PageStackEntry(BlankPageType, null, null));
+                    }
                 }
-                else
-                {
-                    DetailFrame.BackStack.Insert(0, new PageStackEntry(BlankPageType, null, null));
-                }
+                catch { }
             }
 
             if (ActualWidth > 0)
@@ -551,6 +538,19 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty BackgroundOpacityProperty =
             DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(MasterDetailView), new PropertyMetadata(1d));
+
+        #endregion
+
+        #region IsBlank
+
+        public bool IsBlank
+        {
+            get { return (bool)GetValue(IsBlankProperty); }
+            set { SetValue(IsBlankProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsBlankProperty =
+            DependencyProperty.Register("IsBlank", typeof(bool), typeof(MasterDetailView), new PropertyMetadata(true));
 
         #endregion
     }

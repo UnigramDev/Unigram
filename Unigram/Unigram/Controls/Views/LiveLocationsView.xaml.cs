@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class LiveLocationsView : ContentDialog
+    public sealed partial class LiveLocationsView : TLContentDialog
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
 

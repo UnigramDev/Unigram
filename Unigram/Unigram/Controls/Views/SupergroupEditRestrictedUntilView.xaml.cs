@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SupergroupEditRestrictedUntilView : ContentDialog
+    public sealed partial class SupergroupEditRestrictedUntilView : TLContentDialog
     {
         public SupergroupEditRestrictedUntilView(int until)
         {
@@ -38,6 +38,9 @@ namespace Unigram.Controls.Views
             Title = Strings.Resources.UserRestrictionsUntil;
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.UserRestrictionsUntilForever;
+            CloseButtonText = Strings.Resources.Cancel;
+
+            DefaultButton = ContentDialogButton.Primary;
         }
 
         public DateTime Value

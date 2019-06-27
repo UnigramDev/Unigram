@@ -19,7 +19,7 @@ using Telegram.Td;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class CreateLinkView : ContentDialog
+    public sealed partial class CreateLinkView : TLContentDialog
     {
         public CreateLinkView()
         {

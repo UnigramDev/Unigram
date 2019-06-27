@@ -10,7 +10,6 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Entities;
-using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Settings;
 using Unigram.Views.SignIn;
@@ -189,7 +188,7 @@ namespace Unigram.ViewModels.SignIn
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_PASSWORD_FLOOD))
                 {
@@ -202,7 +201,7 @@ namespace Unigram.ViewModels.SignIn
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_BANNED))
                 {
                     //needShowInvalidAlert(req.phone_number, true);
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.BannedPhoneNumber, Strings.Resources.OK);
+                    await TLMessageDialog.ShowAsync(Strings.Resources.BannedPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {

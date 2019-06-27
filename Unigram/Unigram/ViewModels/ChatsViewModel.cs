@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IChatListDelegate, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
         private readonly INotificationsService _notificationsService;
 
@@ -31,12 +31,12 @@ namespace Unigram.ViewModels
 
         public IChatsDelegate Delegate { get; set; }
 
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService)
+        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IChatFilter filter = null)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _notificationsService = notificationsService;
 
-            Items = new ItemsCollection(protoService, aggregator, this);
+            Items = new ItemsCollection(protoService, aggregator, this, filter);
 
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
             ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
@@ -61,6 +61,8 @@ namespace Unigram.ViewModels
             SelectedItems = new MvxObservableCollection<Chat>();
         }
 
+        #region Selection
+
         private long? _selectedItem;
         public long? SelectedItem
         {
@@ -81,6 +83,61 @@ namespace Unigram.ViewModels
             get { return _selectionMode; }
             set { Set(ref _selectionMode, value); }
         }
+
+        public int SelectedCount => _selectedItems.Count;
+
+        public void SetSelectionMode(bool enabled)
+        {
+            Delegate?.SetSelectionMode(enabled);
+        }
+
+        public void SetSelectedItem(Chat chat)
+        {
+            if (SelectionMode != ListViewSelectionMode.Multiple)
+            {
+                Delegate?.Navigate(chat);
+                //ChatsList.SelectedItem = chat;
+            }
+        }
+
+        public void SetSelectedItems(IList<Chat> chats)
+        {
+            //if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
+            //{
+            //    foreach (var item in chats)
+            //    {
+            //        if (!ChatsList.SelectedItems.Contains(item))
+            //        {
+            //            ChatsList.SelectedItems.Add(item);
+            //        }
+            //    }
+
+            //    foreach (Chat item in ChatsList.SelectedItems)
+            //    {
+            //        if (!chats.Contains(item))
+            //        {
+            //            ChatsList.SelectedItems.Remove(item);
+            //        }
+            //    }
+            //}
+        }
+
+        public void AddSelectedItem(Chat chat)
+        {
+            SelectedItems.Add(chat);
+        }
+
+        public void RemoveSelectedItem(Chat chat)
+        {
+            SelectedItems.Remove(chat);
+        }
+
+        public bool IsItemSelected(Chat chat)
+        {
+            return SelectedItems.Contains(chat);
+        }
+
+        #endregion
 
         public ItemsCollection Items { get; private set; }
 
@@ -230,33 +287,36 @@ namespace Unigram.ViewModels
                 _deletedChats[chat.Id] = true;
                 Handle(chat.Id, 0);
 
-                Delegate?.DeleteChat(new[] { chat }, false, async items =>
+                Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Delete, async items =>
                 {
-                    foreach (var delete in items)
+                    var delete = items.FirstOrDefault();
+                    if (delete == null)
                     {
-                        if (delete.Type is ChatTypeSecret secret)
+                        return;
+                    }
+
+                    if (delete.Type is ChatTypeSecret secret)
+                    {
+                        await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                    }
+                    else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                    {
+                        await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                    }
+
+                    var user = CacheService.GetUser(delete);
+                    if (user != null && user.Type is UserTypeRegular)
+                    {
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, true, check));
+                    }
+                    else
+                    {
+                        if (delete.Type is ChatTypePrivate privata && check)
                         {
-                            await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-                        }
-                        else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
-                        {
-                            await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                            await ProtoService.SendAsync(new BlockUser(privata.UserId));
                         }
 
-                        var user = CacheService.GetUser(delete);
-                        if (user != null && user.Type is UserTypeRegular)
-                        {
-                            ProtoService.Send(new DeleteChatHistory(delete.Id, true, check));
-                        }
-                        else
-                        {
-                            if (delete.Type is ChatTypePrivate privata && check)
-                            {
-                                await ProtoService.SendAsync(new BlockUser(privata.UserId));
-                            }
-
-                            ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
-                        }
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
                     }
                 }, items =>
                 {
@@ -290,24 +350,21 @@ namespace Unigram.ViewModels
                     Handle(chat.Id, 0);
                 }
 
-                Delegate?.DeleteChat(chats, false, async items =>
+                Delegate?.ShowChatsUndo(chats, UndoType.Delete, async items =>
                 {
-                    var delete = items.FirstOrDefault();
-                    if (delete == null)
+                    foreach (var delete in items)
                     {
-                        return;
-                    }
+                        if (delete.Type is ChatTypeSecret secret)
+                        {
+                            await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                        }
+                        else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
+                        {
+                            await ProtoService.SendAsync(new LeaveChat(delete.Id));
+                        }
 
-                    if (delete.Type is ChatTypeSecret secret)
-                    {
-                        await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
                     }
-                    else if (delete.Type is ChatTypeBasicGroup || delete.Type is ChatTypeSupergroup)
-                    {
-                        await ProtoService.SendAsync(new LeaveChat(delete.Id));
-                    }
-
-                    ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
                 }, items =>
                 {
                     foreach (var undo in items)
@@ -334,11 +391,11 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                Delegate?.DeleteChat(new[] { chat }, true, items =>
+                Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Clear , items =>
                 {
                     foreach (var delete in items)
                     {
-                        ProtoService.Send(new DeleteChatHistory(delete.Id, false, false));
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, false, dialog.IsChecked));
                     }
                 }, items =>
                 {
@@ -366,7 +423,7 @@ namespace Unigram.ViewModels
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                Delegate?.DeleteChat(chats, true, items =>
+                Delegate?.ShowChatsUndo(chats, UndoType.Clear, items =>
                 {
                     var clear = items.FirstOrDefault();
                     if (clear == null)
@@ -396,10 +453,10 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> ChatSelectCommand { get; }
         private void ChatSelectExecute(Chat chat)
         {
-            SelectionMode = ListViewSelectionMode.Multiple;
             SelectedItems.ReplaceWith(new[] { chat });
+            SelectionMode = ListViewSelectionMode.Multiple;
 
-            Delegate?.SetSelectedItems(_selectedItems);
+            //Delegate?.SetSelectedItems(_selectedItems);
         }
 
         #endregion
@@ -607,6 +664,8 @@ namespace Unigram.ViewModels
 #if MOCKUP
                 _hasMoreItems = false;
 #endif
+
+                _ = LoadMoreItemsAsync(0);
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -676,7 +735,7 @@ namespace Unigram.ViewModels
             switch (_filter)
             {
                 case ChatTypeFilterMode.Unmuted:
-                    return chat.NotificationSettings.MuteFor > 0 ? false : true;
+                    return _cacheService.GetNotificationSettingsMuteFor(chat) > 0 ? false : true;
                 case ChatTypeFilterMode.Unread:
                     return chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread;
                 case ChatTypeFilterMode.Users:

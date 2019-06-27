@@ -237,7 +237,7 @@ namespace Unigram.Controls.Chats
                     entities.Add(entity);
                 }
 
-                SetText(text, entities);
+                InsertText(text, entities);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-td-field-tags"))
             {
@@ -296,7 +296,7 @@ namespace Unigram.Controls.Chats
                     Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
                 }
             }
-            else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.PageUp || e.Key == VirtualKey.PageDown)
+            else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -316,28 +316,6 @@ namespace Unigram.Controls.Chats
                 {
                     ViewModel.MessageReplyNextCommand.Execute();
                     e.Handled = true;
-                }
-                else if ((e.Key == VirtualKey.PageUp || e.Key == VirtualKey.Up) && Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
-                {
-                    var peer = new ListViewAutomationPeer(Messages);
-                    var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
-                    if (provider.VerticallyScrollable)
-                    {
-                        provider.Scroll(ScrollAmount.NoAmount, e.Key == VirtualKey.Up ? ScrollAmount.SmallDecrement : ScrollAmount.LargeDecrement);
-
-                        e.Handled = true;
-                    }
-                }
-                else if ((e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Down) && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
-                {
-                    var peer = new ListViewAutomationPeer(Messages);
-                    var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
-                    if (provider.VerticallyScrollable)
-                    {
-                        provider.Scroll(ScrollAmount.NoAmount, e.Key == VirtualKey.Down ? ScrollAmount.SmallIncrement : ScrollAmount.LargeIncrement);
-
-                        e.Handled = true;
-                    }
                 }
                 else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
                 {

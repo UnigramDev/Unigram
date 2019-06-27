@@ -45,19 +45,29 @@ namespace Unigram.Views.Settings
             Frame.Navigate(typeof(SettingsBlockedUsersPage));
         }
 
+        private void ShowPhone_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPrivacyShowPhonePage));
+        }
+
         private void StatusTimestamp_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPrivacyShowStatusPage));
         }
 
+        private void ProfilePhoto_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPrivacyShowPhotoPage));
+        }
+
+        private void Forwards_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPrivacyShowForwardedPage));
+        }
+
         private void PhoneCall_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPrivacyAllowCallsPage));
-        }
-
-        private void P2PCall_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPrivacyAllowP2PCallsPage));
         }
 
         private void ChatInvite_Click(object sender, RoutedEventArgs e)

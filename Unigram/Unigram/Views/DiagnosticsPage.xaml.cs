@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Reflection;
+using Unigram.Controls;
 
 namespace Unigram.Views
 {
@@ -75,7 +76,7 @@ namespace Unigram.Views
         {
             var level = SettingsService.Current.VerbosityLevel;
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = 0, Content = "Assert", IsChecked = level == 0 });

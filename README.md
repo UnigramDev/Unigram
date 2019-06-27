@@ -6,23 +6,18 @@
   <h3 align="center">Unigram</h3>
 
   <p align="center">
-    The Telegram client for the Windows 10 platform, built by the community for the community.
+    The Telegram client optimised for the Windows 10 platform.
     <br>
     <br>
     <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Download</a>
     &middot;
-    <a href="https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ">Insiders Group</a>
+    <a href="https://t.me/unigraminsiders">Insiders Group</a>
   </p>
 </p>
 
 <br>
 
-
-Unigram is a third-party Telegram client specifically designed for the Windows 10 platform.
-
-In fact, thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones and Xbox One) providing a seamless, performant and consistent user experience.
-
-Furthermore, the project is open-source, built by the community for the community, providing the best transparency possible.
+Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience. 
 
 ## Table of contents
 - [Features](#features)

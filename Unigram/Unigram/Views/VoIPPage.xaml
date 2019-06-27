@@ -289,7 +289,7 @@
                     Glyph="&#xE10A;"
                     Foreground="#777777"
                     RequestedTheme="Light"
-                    CornerRadius="24"
+                    Radius="24"
                     AutomationProperties.Name="{CustomResource Close}"
                     ToolTipService.ToolTip="{CustomResource Close}"/>
             </Border>
@@ -297,7 +297,7 @@
                 <controls:GlyphButton
                     Click="Accept_Click"
                     Glyph="&#xE13A;"
-                    CornerRadius="24"
+                    Radius="24"
                     AutomationProperties.Name="{CustomResource VoipAnswerCall}"
                     ToolTipService.ToolTip="{CustomResource VoipAnswerCall}"/>
             </Border>
@@ -308,7 +308,7 @@
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
                     FontSize="24"
                     Padding="0,0,0,2"
-                    CornerRadius="24"
+                    Radius="24"
                     AutomationProperties.Name="{CustomResource VoipEndCall}"
                     ToolTipService.ToolTip="{CustomResource VoipEndCall}"/>
             </Border>

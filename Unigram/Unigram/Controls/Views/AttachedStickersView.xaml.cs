@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class AttachedStickersView : ContentDialog
+    public sealed partial class AttachedStickersView : TLContentDialog
     {
         public AttachedStickersViewModel ViewModel => DataContext as AttachedStickersViewModel;
 

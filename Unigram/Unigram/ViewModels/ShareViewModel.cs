@@ -9,7 +9,9 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
+using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -18,9 +20,13 @@ namespace Unigram.ViewModels
 {
     public class ShareViewModel : TLViewModelBase
     {
-        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ChatsViewModel dialogs)
+        private readonly IMessageFactory _messageFactory;
+
+        public ShareViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IMessageFactory messageFactory)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _messageFactory = messageFactory;
+
             Items = new MvxObservableCollection<Chat>();
             SelectedItems = new MvxObservableCollection<Chat>();
 
@@ -213,6 +219,20 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _sendAsCopy;
+        public bool SendAsCopy
+        {
+            get { return _sendAsCopy; }
+            set { Set(ref _sendAsCopy, value); }
+        }
+
+        private bool _removeCaptions;
+        public bool RemoveCaptions
+        {
+            get { return _removeCaptions; }
+            set { Set(ref _removeCaptions, value); }
+        }
+
         private Uri _shareLink;
         public Uri ShareLink
         {
@@ -251,6 +271,13 @@ namespace Unigram.ViewModels
             {
                 Set(ref _isCommentEnabled, value);
             }
+        }
+
+        private bool _isSendCopyEnabled;
+        public bool IsSendAsCopyEnabled
+        {
+            get { return _isSendCopyEnabled; }
+            set { Set(ref _isSendCopyEnabled, value); }
         }
 
         private SearchChatsType _searchType;
@@ -333,6 +360,21 @@ namespace Unigram.ViewModels
 
             if (_messages != null)
             {
+                if (_sendAsCopy)
+                {
+                    foreach (var message in _messages)
+                    {
+                        if (!_messageFactory.CanBeCopied(message))
+                        {
+                            var confirm = await TLMessageDialog.ShowAsync("Polls, voice and video notes can't be forwarded as copy. Do you want to proceed anyway?", Strings.Resources.AppName, Strings.Resources.Forward, Strings.Resources.Cancel);
+                            if (confirm != ContentDialogResult.Primary)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 foreach (var chat in chats)
                 {
                     if (IsWithMyScore)
@@ -341,7 +383,8 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, true));
+                        //var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, true));
+                        await _messageFactory.ForwardMessagesAsync(chat.Id, _messages[0].ChatId, _messages, _sendAsCopy, !_removeCaptions);
                     }
                 }
 
@@ -358,7 +401,7 @@ namespace Unigram.ViewModels
             }
             else if (_shareLink != null)
             {
-                var formatted = new FormattedText(_shareLink.ToString(), new TextEntity[0]);
+                var formatted = new FormattedText(_shareLink.AbsoluteUri, new TextEntity[0]);
 
                 foreach (var chat in chats)
                 {
@@ -380,6 +423,8 @@ namespace Unigram.ViewModels
                 {
                     if (_inviteToken != null)
                     {
+                        response = await ProtoService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
+
                         var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
                         if (service != null)
                         {

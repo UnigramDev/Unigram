@@ -74,7 +74,18 @@ namespace Unigram.ViewModels
 
         public User GetViaBotUser()
         {
-            return ProtoService.GetUser(_message.ViaBotUserId);
+            if (_message.ViaBotUserId != 0)
+            {
+                return ProtoService.GetUser(_message.ViaBotUserId);
+            }
+
+            var user = ProtoService.GetUser(_message.SenderUserId);
+            if (user?.Type is UserTypeBot)
+            {
+                return user;
+            }
+
+            return null;
         }
 
         public Chat GetChat()

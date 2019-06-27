@@ -273,12 +273,20 @@ namespace Unigram.Services
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
                 _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
-                _client.Send(new SetOption("online", new OptionValueBoolean(online)));
+                //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
+                _client.Send(new SetOption("online", new OptionValueBoolean(false)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Run();
             });
+        }
+
+        private void InitializeReady()
+        {
+            Send(new GetChats(long.MaxValue, 0, 20));
+
+            UpdateVersion();
         }
 
         private async void UpdateVersion()
@@ -327,8 +335,6 @@ namespace Unigram.Services
 
         public void CleanUp()
         {
-            _settings.Clear();
-
             _options.Clear();
 
             _chats.Clear();
@@ -870,12 +876,14 @@ namespace Unigram.Services
             {
                 switch (updateAuthorizationState.AuthorizationState)
                 {
+                    case AuthorizationStateLoggingOut loggingOut:
+                        _settings.Clear();
+                        break;
                     case AuthorizationStateClosed closed:
                         CleanUp();
-                        //Initialize();
                         break;
                     case AuthorizationStateReady ready:
-                        UpdateVersion();
+                        InitializeReady();
                         break;
                 }
 

@@ -23,5 +23,9 @@ namespace Unigram.ViewModels.Delegates
 
 
         void PlayMessage(MessageViewModel message, FrameworkElement target);
+
+
+
+        void HideStickers();
     }
 }

@@ -38,7 +38,7 @@ using System.Threading.Tasks;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class ShareView : ContentDialog
+    public sealed partial class ShareView : TLContentDialog
     {
         public ShareViewModel ViewModel => DataContext as ShareViewModel;
 
@@ -61,6 +61,11 @@ namespace Unigram.Controls.Views
                     await items.LoadMoreItemsAsync(3);
                 }
             });
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
         }
 
         #region Show
@@ -87,6 +92,7 @@ namespace Unigram.Controls.Views
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = false;
+            ViewModel.IsSendAsCopyEnabled = false;
 
             ViewModel.Clear();
             ViewModel.Package = package;
@@ -99,6 +105,7 @@ namespace Unigram.Controls.Views
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = false;
+            ViewModel.IsSendAsCopyEnabled = false;
 
             ViewModel.Clear();
             ViewModel.SwitchInline = switchInline;
@@ -112,6 +119,7 @@ namespace Unigram.Controls.Views
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
+            ViewModel.IsSendAsCopyEnabled = false;
 
             ViewModel.Clear();
             ViewModel.SendMessage = message;
@@ -125,6 +133,7 @@ namespace Unigram.Controls.Views
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
+            ViewModel.IsSendAsCopyEnabled = true;
 
             ViewModel.Clear();
             ViewModel.Messages = new[] { message };
@@ -171,6 +180,7 @@ namespace Unigram.Controls.Views
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
+            ViewModel.IsSendAsCopyEnabled = true;
 
             ViewModel.Clear();
             ViewModel.Messages = messages;
@@ -184,6 +194,7 @@ namespace Unigram.Controls.Views
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
+            ViewModel.IsSendAsCopyEnabled = false;
 
             ViewModel.Clear();
             ViewModel.ShareLink = link;
@@ -197,6 +208,7 @@ namespace Unigram.Controls.Views
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
             ViewModel.SearchType = SearchChatsType.Post;
             ViewModel.IsCommentEnabled = true;
+            ViewModel.IsSendAsCopyEnabled = false;
 
             ViewModel.Clear();
             ViewModel.InputMedia = inputMedia;
@@ -214,6 +226,7 @@ namespace Unigram.Controls.Views
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
             ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
             ViewModel.IsCommentEnabled = false;
+            ViewModel.IsSendAsCopyEnabled = false;
 
             ViewModel.Clear();
             ViewModel.InviteBot = bot;
@@ -240,6 +253,18 @@ namespace Unigram.Controls.Views
         #endregion
 
         #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextGridViewItem();
+                args.ItemContainer.Style = ChatsPanel.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = ChatsPanel.ItemTemplate;
+            }
+
+            args.IsContainerPrepared = true;
+        }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -591,6 +616,35 @@ namespace Unigram.Controls.Views
             Header.Width = e.NewSize.Width;
             DialogsSearchListView.Width = e.NewSize.Width;
             DialogsSearchListView.Height = e.NewSize.Height;
+        }
+
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+        }
+
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+        }
+
+        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        {
+            var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            {
+                return;
+            }
+
+            var focused = FocusManager.GetFocusedElement();
+            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            {
+                Search_Click(null, null);
+                SearchField.Text = character;
+                SearchField.SelectionStart = character.Length;
+
+                args.Handled = true;
+            }
         }
     }
 }

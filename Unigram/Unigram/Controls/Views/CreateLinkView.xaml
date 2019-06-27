@@ -1,12 +1,12 @@
-﻿<ContentDialog
+﻿<controls:TLContentDialog
     x:Class="Unigram.Controls.Views.CreateLinkView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Views"
+    xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Style="{StaticResource ModernContentDialogStyle}"
     Title="CreateLink"
     PrimaryButtonText="OK"
     SecondaryButtonText="Cancel"
@@ -16,6 +16,7 @@
     <StackPanel>
         <TextBox
             x:Name="TextField"
+            FontFamily="{ThemeResource EmojiThemeFontFamily}"
             PlaceholderText="{CustomResource Text}"
             Margin="12,12,12,12"
             KeyDown="TextField_KeyDown"/>
@@ -26,4 +27,4 @@
             Margin="12,0,12,12"
             KeyDown="LinkField_KeyDown"/>
     </StackPanel>
-</ContentDialog>
+</controls:TLContentDialog>

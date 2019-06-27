@@ -56,7 +56,7 @@ namespace Unigram.Controls.Chats
 
             var width = 18f;
             var height = 8f;
-            var color = Fill;
+            var color = Fill?.Color ?? Colors.Black;
 
             var visual = GetVisual(type, Window.Current.Compositor, width, height, color);
             //if (visual != null)
@@ -71,14 +71,14 @@ namespace Unigram.Controls.Chats
 
         #region Fill
 
-        public Color Fill
+        public SolidColorBrush Fill
         {
-            get { return (Color)GetValue(FillProperty); }
+            get { return (SolidColorBrush)GetValue(FillProperty); }
             set { SetValue(FillProperty, value); }
         }
 
         public static readonly DependencyProperty FillProperty =
-            DependencyProperty.Register("Fill", typeof(Color), typeof(ChatActionIndicator), new PropertyMetadata(null));
+            DependencyProperty.Register("Fill", typeof(SolidColorBrush), typeof(ChatActionIndicator), new PropertyMetadata(null));
 
         #endregion
 

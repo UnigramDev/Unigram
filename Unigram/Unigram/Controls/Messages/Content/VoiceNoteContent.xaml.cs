@@ -21,8 +21,6 @@ namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class VoiceNoteContent : Grid, IContentWithFile
     {
-        private MessageContentState _oldState;
-
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
@@ -30,6 +28,11 @@ namespace Unigram.Controls.Messages.Content
         {
             InitializeComponent();
             UpdateMessage(message);
+        }
+
+        public VoiceNoteContent()
+        {
+            InitializeComponent();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -64,6 +67,18 @@ namespace Unigram.Controls.Messages.Content
 
             //UpdateDuration();
             UpdateFile(message, voiceNote.Voice);
+        }
+
+        public void Mockup(MessageVoiceNote voiceNote)
+        {
+            Progress.UpdateWave(voiceNote.VoiceNote);
+            Progress.Minimum = 0;
+            Progress.Maximum = 1;
+            Progress.Value = 0.3;
+
+            Subtitle.Text = FormatTime(TimeSpan.FromSeconds(1)) + " / " + FormatTime(TimeSpan.FromSeconds(3));
+
+            Button.SetGlyph(0, MessageContentState.Pause);
         }
 
         #region Playback
@@ -177,31 +192,25 @@ namespace Unigram.Controls.Messages.Content
             if (file.Local.IsDownloadingActive)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
+                Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
-
-                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
+                Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
-
-                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 //Button.Glyph = Icons.Download;
-                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
+                Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
                 if (message.Delegate.CanBeDownloaded(message))
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
-
-                _oldState = MessageContentState.Download;
             }
             else
             {
@@ -210,26 +219,22 @@ namespace Unigram.Controls.Messages.Content
                     if (message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                     {
                         //Button.Glyph = Icons.Pause;
-                        Button.SetGlyph(Icons.Pause, _oldState != MessageContentState.None && _oldState != MessageContentState.Pause);
+                        Button.SetGlyph(file.Id, MessageContentState.Pause);
                     }
                     else
                     {
                         //Button.Glyph = Icons.Play;
-                        Button.SetGlyph(Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Play);
+                        Button.SetGlyph(file.Id, MessageContentState.Play);
                     }
 
                     UpdatePosition();
                     message.PlaybackService.PositionChanged += OnPositionChanged;
-
-                    _oldState = message.PlaybackService.PlaybackState == MediaPlaybackState.Playing ? MessageContentState.Pause : MessageContentState.Play;
                 }
                 else
                 {
                     //Button.Glyph = Icons.Play;
-                    Button.SetGlyph(Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Play);
+                    Button.SetGlyph(file.Id, MessageContentState.Play);
                     UpdateDuration();
-
-                    _oldState = MessageContentState.Play;
                 }
 
                 Button.Progress = 1;
@@ -266,7 +271,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var voiceNote = GetContent(_message.Content);
+            var voiceNote = GetContent(_message?.Content);
             if (voiceNote == null)
             {
                 return;
@@ -283,7 +288,8 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ProtoService.DownloadFile(file.Id, 32);
+                //_message.ProtoService.DownloadFile(file.Id, 32);
+                _message.PlaybackService.Enqueue(_message.Get());
             }
             else
             {

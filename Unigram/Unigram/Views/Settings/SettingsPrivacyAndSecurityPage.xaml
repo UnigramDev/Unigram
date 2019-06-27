@@ -33,24 +33,53 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Margin="0,0,0,48">
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource PrivacyTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <StackPanel Padding="0,0,0,8" Style="{StaticResource SettingsGroupPanelStyle}">
                     <controls:BadgeButton
                         Content="{CustomResource BlockedUsers}"
                         Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
-                        Click="BlockedUsers_Click"/>
+                        Glyph="&#xF140;"
+                        Click="BlockedUsers_Click"
+                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource SessionsTitle}"
+                        Glyph="&#xE975;"
+                        Click="Sessions_Click"
+                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource Passcode}"
+                        Glyph="&#xE928;"
+                        Command="{x:Bind ViewModel.PasscodeCommand}"
+                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource TwoStepVerification}"
+                        Glyph="&#xE192;"
+                        Click="Password_Click"
+                        Style="{StaticResource TextGlyphButtonStyle}"/>
+
+                </StackPanel>
+                
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="{CustomResource PrivacyTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <!--<controls:BadgeButton
+                        Content="{CustomResource PrivacyPhone}"
+                        Badge="{x:Bind ViewModel.ShowPhoneRules.Badge, Mode=OneWay}"
+                        Click="ShowPhone_Click"/>-->
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyLastSeen}"
                         Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
                         Click="StatusTimestamp_Click"/>
+                    <!--<controls:BadgeButton
+                        Content="{CustomResource PrivacyProfilePhoto}"
+                        Badge="{x:Bind ViewModel.ShowPhotoRules.Badge, Mode=OneWay}"
+                        Click="ProfilePhoto_Click"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource PrivacyForwards}"
+                        Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"
+                        Click="Forwards_Click"/>-->
                     <controls:BadgeButton
                         Content="{CustomResource Calls}"
                         Badge="{x:Bind ViewModel.AllowCallsRules.Badge, Mode=OneWay}"
                         Click="PhoneCall_Click"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource PrivacyP2P}"
-                        Badge="{x:Bind ViewModel.AllowP2PCallsRules.Badge, Mode=OneWay}"
-                        Click="P2PCall_Click"/>
                     <controls:BadgeButton
                         Content="{CustomResource GroupsAndChannels}"
                         Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"
@@ -58,25 +87,6 @@
 
                     <TextBlock
                         Text="{CustomResource GroupsAndChannelsHelp}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
-
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource SecurityTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource Passcode}"
-                        Command="{x:Bind ViewModel.PasscodeCommand}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource TwoStepVerification}"
-                        Click="Password_Click"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource SessionsTitle}" 
-                        Click="Sessions_Click"/>
-
-                    <TextBlock
-                        Text="{CustomResource SessionsInfo}"
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>

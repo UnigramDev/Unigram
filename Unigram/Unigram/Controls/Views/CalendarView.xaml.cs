@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class CalendarView : ContentDialog
+    public sealed partial class CalendarView : TLContentDialog
     {
         public CalendarView()
         {

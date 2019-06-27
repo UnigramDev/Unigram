@@ -34,7 +34,6 @@
             <controls:TablePanel>
                 <StackPanel x:Name="SwitchGroup1"
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            BorderBrush="{ThemeResource TelegramSeparatorBrush}"
                             Margin="0,0,0,0">
                     <controls:BadgeButton Content="Call Settings"
                                           Click="VoIP_Click"/>
@@ -48,7 +47,13 @@
                         IsOn="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
                         Header="Try connecting through IPv6"
                         Style="{StaticResource CheckButtonStyle}"/>
-                    
+
+                    <ToggleSwitch
+                        x:Name="TraySwitch"
+                        IsOn="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"
+                        Header="Show tray icon"
+                        Style="{StaticResource CheckButtonStyle}"/>
+
                     <controls:StartupSwitch Margin="0,24"/>
                 </StackPanel>
             </controls:TablePanel>

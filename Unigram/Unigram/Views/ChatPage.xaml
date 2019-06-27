@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:views="using:Unigram.Controls.Views"
     xmlns:chats="using:Unigram.Controls.Chats"
@@ -225,7 +226,7 @@
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,8">
                 <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" Style="{StaticResource ServiceButtonStyle}">
-                    <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Foreground="White" TextAlignment="Center" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
@@ -236,7 +237,7 @@
 
         <DataTemplate x:Key="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click" Margin="0,4,0,6" Style="{StaticResource ServiceButtonStyle}">
-                <TextBlock Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+                <TextBlock Foreground="White" TextAlignment="Center" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
             </messages:MessageService>
         </DataTemplate>
 
@@ -281,7 +282,7 @@
                         CornerRadius="15"
                         Margin="8,0,0,2"
                         Grid.Column="2">
-                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" CornerRadius="15"/>
+                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" Radius="15"/>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -306,10 +307,10 @@
                 <Border x:Name="Action"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
                         VerticalAlignment="Bottom"
-                        CornerRadius="14"
+                        CornerRadius="15"
                         Margin="8,0,0,2"
                         Grid.Column="2">
-                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" CornerRadius="15"/>
+                    <controls:GlyphButton Click="Action_Click" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="30" Height="30" Radius="15"/>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -328,6 +329,19 @@
                         <Setter Target="StickersPanel.MinHeight" Value="260"/>
                         <Setter Target="StickersPanel.MaxHeight" Value="360"/>
                         <Setter Target="StickersPanel.Margin" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SidebarState">
+                    <VisualState.Setters>
+                        <Setter Target="KeyboardItems.(Grid.Column)" Value="1"/>
+                        <Setter Target="KeyboardItems.(Grid.Row)" Value="0"/>
+                        <Setter Target="KeyboardItems.(Grid.RowSpan)" Value="5"/>
+                        <Setter Target="StickersPanel.Width" Value="320"/>
+                        <Setter Target="StickersPanel.Height" Value="Auto"/>
+                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
+                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
+                        <Setter Target="StickersPanel.Margin" Value="0"/>
+                        <Setter Target="btnExpand.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FilledState">
@@ -369,6 +383,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        
         <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" Grid.RowSpan="5"/>
 
         <Grid Padding="0,0,0,4" VerticalAlignment="Bottom" Grid.RowSpan="4">
@@ -379,7 +398,7 @@
             <Border x:Name="FlyoutArea" MinHeight="{ThemeResource TelegramToolBarHeight}"/>
         </Grid>
 
-        <controls:ContentPageHeader x:Name="Header">
+        <controls:ContentPageHeader x:Name="Header" Canvas.ZIndex="1">
             <Grid>
                 <Grid x:Name="InfoPanel">
                     <Grid.ColumnDefinitions>
@@ -404,26 +423,29 @@
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
                                     <TextBlock x:Name="Title"
+                                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                                Style="{StaticResource BaseTextBlockStyle}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                TextWrapping="NoWrap"
                                                TextTrimming="CharacterEllipsis"
                                                MaxLines="1"/>
                                     <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                                         <TextBlock x:Name="Subtitle"
                                                    Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
-                                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                   Foreground="{ThemeResource PageHeaderDisabledBrush}"
                                                    Style="{StaticResource CaptionTextBlockStyle}"
                                                    TextWrapping="NoWrap"
                                                    TextTrimming="CharacterEllipsis"/>
                                         <StackPanel x:Name="ChatActionPanel" Orientation="Horizontal" Visibility="Collapsed">
                                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                                       Fill="{ThemeResource SystemAccentColor}"
+                                                                       Fill="{ThemeResource PageHeaderHighlightBrush}"
                                                                        VerticalAlignment="Bottom"
                                                                        Margin="0,0,0,-2"/>
                                             <TextBlock x:Name="ChatActionLabel"
                                                        TextWrapping="NoWrap"
                                                        TextTrimming="CharacterEllipsis"
-                                                       Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                       Foreground="{ThemeResource PageHeaderHighlightBrush}"
+                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                        Style="{StaticResource CaptionTextBlockStyle}"
                                                        VerticalAlignment="Top"/>
                                         </StackPanel>
@@ -447,6 +469,7 @@
 
                     <Button x:Name="Options"
                             Click="Menu_ContextRequested"
+                            Foreground="{ThemeResource PageHeaderForegroundBrush}"
                             Padding="{StaticResource EllipsisButtonPadding}"
                             Style="{StaticResource EllipsisButton}"
                             AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
@@ -461,7 +484,7 @@
                     </Button>
                 </Grid>
 
-                <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramTitleBarBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
+                <Grid x:Name="ManagePanel" Background="{ThemeResource PageHeaderBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -514,14 +537,14 @@
                             </TransitionCollection>
                         </ContentControl.ContentTransitions>
                         <ContentControl.Clip>
-                            <RectangleGeometry Rect="0,0,200,48"/>
+                            <RectangleGeometry Rect="0,0,200,40"/>
                         </ContentControl.Clip>
                     </ContentControl>
 
                     <controls:GlyphButton
                         Click="Manage_Click"
                         Glyph="&#xE10A;"
-                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="6"/>
                 </Grid>
@@ -532,17 +555,17 @@
             <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
         </Border>
 
-        <Grid x:Name="Clipper" Canvas.ZIndex="1" Grid.Row="2">
+        <Grid x:Name="Clipper" Canvas.ZIndex="2" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>
+            <!--<controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>-->
 
             <Grid x:Name="PinnedMessagePanel"
-                    Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                     MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                     Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -553,21 +576,17 @@
                 <messages:MessageReference x:Name="PinnedMessage" Click="Reply_Click" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
 
                 <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
-
-                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
             </Grid>
             <Grid x:Name="CallbackQueryAnswerPanel"
                     Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                    Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                     MinHeight="{ThemeResource AppBarThemeCompactHeight}"
                     Grid.Row="1">
                 <messages:MessageReference x:Name="CallbackQueryAnswer" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
-
-                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
             </Grid>
 
             <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
-                    Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                     Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -579,12 +598,15 @@
                 </Button>
 
                 <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
-
-                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
             </Grid>
 
-            <StackPanel x:Name="DateHeaderRelative" x:DeferLoadStrategy="Lazy" Grid.Row="3">
-                <Border x:Name="DateHeaderPanel" HorizontalAlignment="Center">
+            <StackPanel x:Name="DateHeaderRelative" Grid.Row="3">
+                <Border x:Name="DateHeaderPanel"
+                        common:VisualUtilities.IsScaleEnabled="False"
+                        common:VisualUtilities.IsVisible="False"
+                        Visibility="Collapsed"
+                        HorizontalAlignment="Center"
+                        SizeChanged="DateHeaderPanel_SizeChanged">
                     <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,4,0,4" Style="{StaticResource ServiceButtonStyle}">
                         <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </messages:MessageService>
@@ -598,6 +620,8 @@
                                 ItemContainerTransitions="{x:Null}"
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ShowsScrollingPlaceholders="False"
+                                IsItemClickEnabled="{x:Bind ConvertClickEnabled(ViewModel.SelectionMode), Mode=OneWay}"
+                                ItemClick="List_ItemClick"
                                 SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                                 SelectionChanged="List_SelectionChanged"
                                 ChoosingItemContainer="OnChoosingItemContainer"
@@ -759,7 +783,7 @@
 
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
                 <StackPanel x:Name="MentionsPanel" Visibility="Collapsed" RightTapped="Mentions_RightTapped">
-                    <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                             MinWidth="20"
                             Height="20"
                             CornerRadius="10"
@@ -769,13 +793,13 @@
                             Canvas.ZIndex="1">
                         <TextBlock x:Name="Mentions"
                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                    TextAlignment="Center"
                                    Margin="4,2,4,0"/>
                     </Border>
                     <Grid Margin="12,6">
-                        <Ellipse x:Name="ArrowMentionsShadow" Fill="White" Width="36" Height="36"/>
-                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                        <Ellipse x:Name="ArrowMentionsShadow" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="36" Height="36"/>
+                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                                 CornerRadius="18"
                                 Height="36"
                                 Width="36">
@@ -785,7 +809,7 @@
                                                   Width="36"
                                                   Height="36"
                                                   Glyph="@"
-                                                  CornerRadius="24"
+                                                  Radius="24"
                                                   Padding="0,0,0,4"
                                                   AutomationProperties.Name="{CustomResource AccDescrMentionDown}"
                                                   ToolTipService.ToolTip="{CustomResource AccDescrMentionDown}"/>
@@ -793,8 +817,8 @@
                     </Grid>
                 </StackPanel>
 
-                <StackPanel x:Name="Arrow" Visibility="Collapsed">
-                    <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                <StackPanel x:Name="Arrow" SizeChanged="Arrow_SizeChanged" Visibility="Collapsed">
+                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                             Visibility="{x:Bind ViewModel.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
                             MinWidth="20"
                             Height="20"
@@ -806,13 +830,13 @@
                         <TextBlock x:Name="UnreadCount"
                                    Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                    TextAlignment="Center"
                                    Margin="4,2,4,0"/>
                     </Border>
                     <Grid Margin="12,6">
-                        <Ellipse x:Name="ArrowShadow" Fill="White" Width="36" Height="36"/>
-                        <Border Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+                        <Ellipse x:Name="ArrowShadow" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="36" Height="36"/>
+                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                                 CornerRadius="18"
                                 Height="36"
                                 Width="36">
@@ -821,7 +845,7 @@
                                                   Width="36"
                                                   Height="36"
                                                   Glyph="&#xE74B;"
-                                                  CornerRadius="24"
+                                                  Radius="24"
                                                   AutomationProperties.Name="{CustomResource AccDescrPageDown}"
                                                   ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"/>
                         </Border>
@@ -829,7 +853,9 @@
                 </StackPanel>
             </StackPanel>
 
-            <Grid Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
+            <Grid SizeChanged="InlinePanel_SizeChanged"
+                  VerticalAlignment="Bottom"
+                  Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
                 <views:InlineBotResultsView
                     x:Name="InlinePanel"
                     Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
@@ -853,9 +879,7 @@
                     VerticalAlignment="Bottom"
                     Padding="8,0"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    BorderBrush="{ThemeResource TelegramSeparatorBrush}"
-                    Style="{StaticResource ZoomableListViewStyle}"
-                    BorderThickness="0,1,0,0">
+                    Style="{StaticResource ZoomableListViewStyle}">
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel Orientation="Horizontal"/>
@@ -910,7 +934,8 @@
         </Grid>
 
         <!-- Input pane -->
-        <Border x:Name="Separator" Visibility="{x:Bind ConvertShadowVisibility(ViewModel.InlineBotResultsVisibility, ViewModel.StickerPack, ViewModel.Autocomplete), Mode=OneWay}" Grid.Row="3"/>
+        <!--<Border x:Name="Separator" Visibility="{x:Bind ConvertShadowVisibility(ViewModel.InlineBotResultsVisibility, ViewModel.StickerPack, ViewModel.Autocomplete), Mode=OneWay}" Grid.Row="3"/>-->
+        <Border x:Name="Separator" Grid.Row="3"/>
 
         <ContentControl x:Name="TextArea"
                         IsTabStop="False"
@@ -949,6 +974,7 @@
                 <Grid Grid.ColumnSpan="2" Grid.Row="1">
                     <chats:ChatTextBox
                         x:Name="TextField"
+                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                         Background="Transparent"
                         Messages="{x:Bind Messages}"
                         Autocomplete="{x:Bind ListAutocomplete}"
@@ -1215,7 +1241,7 @@
             x:Name="SearchMask"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
             Grid.RowSpan="4"
-            Canvas.ZIndex="2"/>
+            Canvas.ZIndex="3"/>
 
         <!--<controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48" Grid.RowSpan="4"/>-->
     </Grid>

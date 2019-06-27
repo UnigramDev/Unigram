@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -38,12 +39,15 @@ namespace Unigram.Controls
         private async void OnLoaded()
         {
             Toggle.Toggled -= OnToggled;
+            ToggleMinimized.Toggled -= Minimized_Toggled;
 
             var task = await StartupTask.GetAsync("Telegram");
             if (task.State == StartupTaskState.Enabled)
             {
                 Toggle.IsOn = true;
                 Toggle.IsEnabled = true;
+                ToggleMinimized.IsOn = SettingsService.Current.IsLaunchMinimized;
+                ToggleMinimized.Visibility = Visibility.Visible;
                 Label.Visibility = Visibility.Collapsed;
 
                 Visibility = Visibility.Visible;
@@ -52,6 +56,8 @@ namespace Unigram.Controls
             {
                 Toggle.IsOn = false;
                 Toggle.IsEnabled = true;
+                ToggleMinimized.IsOn = false;
+                ToggleMinimized.Visibility = Visibility.Collapsed;
                 Label.Visibility = Visibility.Collapsed;
 
                 Visibility = Visibility.Visible;
@@ -60,6 +66,8 @@ namespace Unigram.Controls
             {
                 Toggle.IsOn = false;
                 Toggle.IsEnabled = false;
+                ToggleMinimized.IsOn = false;
+                ToggleMinimized.Visibility = Visibility.Collapsed;
                 Label.Visibility = Visibility.Visible;
 
                 Visibility = Visibility.Visible;
@@ -70,6 +78,7 @@ namespace Unigram.Controls
             }
 
             Toggle.Toggled += OnToggled;
+            ToggleMinimized.Toggled += Minimized_Toggled;
         }
 
         private async void OnToggled(object sender, RoutedEventArgs e)
@@ -85,6 +94,11 @@ namespace Unigram.Controls
             }
 
             OnLoaded();
+        }
+
+        private async void Minimized_Toggled(object sender, RoutedEventArgs e)
+        {
+            SettingsService.Current.IsLaunchMinimized = ToggleMinimized.IsOn;
         }
     }
 }

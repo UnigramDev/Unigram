@@ -114,6 +114,10 @@ namespace Unigram
                     .As<INetworkService>()
                     .SingleInstance()
                     .AutoActivate();
+                builder.RegisterType<EmojiSetService>()
+                    .As<IEmojiSetService>()
+                    .SingleInstance()
+                    .AutoActivate();
                 //builder.RegisterType<OptionsService>()
                 //    .As<IOptionsService>()
                 //    .SingleInstance()
@@ -131,6 +135,7 @@ namespace Unigram
                 //builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
                 builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
                 builder.RegisterType<HockeyUpdateService>().As<IHockeyUpdateService>().SingleInstance();
+                builder.RegisterType<ThemeService>().As<IThemeService>().SingleInstance();
 
                 builder.RegisterType<MessageFactory>().As<IMessageFactory>().SingleInstance();
 
@@ -166,7 +171,6 @@ namespace Unigram
                 builder.RegisterType<SignInPasswordViewModel>();
                 builder.RegisterType<SignInRecoveryViewModel>();
                 builder.RegisterType<MainViewModel>();//.SingleInstance();
-                builder.RegisterType<PlaybackViewModel>().SingleInstance();
                 builder.RegisterType<ShareViewModel>();//.SingleInstance();
                 builder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
                 builder.RegisterType<ChatsViewModel>();//.SingleInstance();
@@ -220,15 +224,10 @@ namespace Unigram
                 builder.RegisterType<SettingsPrivacyAllowCallsViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyAllowP2PCallsViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyAllowChatInvitesViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsPrivacyShowForwardedViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsPrivacyShowPhoneViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsPrivacyShowPhotoViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowStatusViewModel>(); //.SingleInstance();
-                builder.RegisterType<SettingsPrivacyNeverAllowCallsViewModel>();
-                builder.RegisterType<SettingsPrivacyNeverAllowP2PCallsViewModel>();
-                builder.RegisterType<SettingsPrivacyNeverAllowChatInvitesViewModel>();
-                builder.RegisterType<SettingsPrivacyNeverShowStatusViewModel>();
-                builder.RegisterType<SettingsPrivacyAlwaysAllowCallsViewModel>();
-                builder.RegisterType<SettingsPrivacyAlwaysAllowP2PCallsViewModel>();
-                builder.RegisterType<SettingsPrivacyAlwaysAllowChatInvitesViewModel>();
-                builder.RegisterType<SettingsPrivacyAlwaysShowStatusViewModel>();
                 builder.RegisterType<SettingsPasswordViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPasscodeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsStickersViewModel>().SingleInstance();
@@ -238,6 +237,7 @@ namespace Unigram
                 builder.RegisterType<SettingsMasksArchivedViewModel>();
                 builder.RegisterType<SettingsLanguageViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
+                builder.RegisterType<SettingsThemesViewModel>().SingleInstance();
                 builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsWallpapersViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsVoIPViewModel>();

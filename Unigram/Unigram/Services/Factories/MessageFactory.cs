@@ -27,6 +27,10 @@ namespace Unigram.Services.Factories
         Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
         Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
         Task<InputMessageFactory> CreateDocumentAsync(StorageFile file);
+
+        Task ForwardMessagesAsync(long chatId, long fromChatId, IList<Message> messageIds, bool copy, bool captions);
+        bool CanBeCopied(Message message);
+        InputMessageContent ToInput(Message message, bool caption);
     }
 
     public class MessageFactory : IMessageFactory
@@ -170,7 +174,7 @@ namespace Unigram.Services.Factories
         public async Task<InputMessageFactory> CreateDocumentAsync(StorageFile file)
         {
             var generated = await file.ToGeneratedAsync();
-            var thumbnail = default(InputThumbnail);
+            var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);
 
             if (file.FileType.Equals(".webp", StringComparison.OrdinalIgnoreCase))
             {
@@ -182,15 +186,163 @@ namespace Unigram.Services.Factories
                     var width = webp.PixelWidth;
                     var height = webp.PixelHeight;
 
-                    return new InputMessageFactory { InputFile = generated, Type = new FileTypeSticker(), Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, thumbnail, width, height) };
+                    return new InputMessageFactory { InputFile = generated, Type = new FileTypeSticker(), Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height) };
                 }
                 catch
                 {
                     // Not really a sticker, go on sending as a file
                 }
             }
+            else if (file.FileType.Equals(".mp3", StringComparison.OrdinalIgnoreCase))
+            {
+                var props = await file.Properties.GetMusicPropertiesAsync();
+                return new InputMessageFactory { InputFile = generated, Type = new FileTypeAudio(), Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, (int)props.Duration.TotalSeconds, props.Title, props.Artist, caption) };
+            }
 
             return new InputMessageFactory { InputFile = generated, Type = new FileTypeDocument(), Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption) };
+        }
+
+
+
+        public InputMessageContent ToInput(Message message, bool caption)
+        {
+            var content = message.Content;
+            switch (content)
+            {
+                case MessageAnimation animation:
+                    return new InputMessageAnimation(new InputFileId(animation.Animation.AnimationValue.Id), animation.Animation.Thumbnail.ToInputThumbnail(), animation.Animation.Duration, animation.Animation.Width, animation.Animation.Height, caption ? animation.Caption : null);
+                case MessageAudio audio:
+                    return new InputMessageAudio(new InputFileId(audio.Audio.AudioValue.Id), audio.Audio.AlbumCoverThumbnail.ToInputThumbnail(), audio.Audio.Duration, audio.Audio.Title, audio.Audio.Performer, caption ? audio.Caption : null);
+                case MessageContact contact:
+                    return new InputMessageContact(contact.Contact);
+                case MessageDocument document:
+                    return new InputMessageDocument(new InputFileId(document.Document.DocumentValue.Id), document.Document.Thumbnail.ToInputThumbnail(), caption ? document.Caption : null);
+                case MessageGame game:
+                    return new InputMessageGame(message.ViaBotUserId != 0 ? message.ViaBotUserId : message.SenderUserId, game.Game.ShortName);
+                case MessageLocation location:
+                    return new InputMessageLocation(location.Location, 0);
+                case MessagePhoto photo:
+                    var big = photo.Photo.GetBig();
+                    var small = photo.Photo.GetSmall();
+                    return new InputMessagePhoto(new InputFileId(big.Photo.Id), small.ToInputThumbnail(), new int[0], big.Width, big.Height, caption ? photo.Caption : null, 0);
+                //case MessagePoll poll:
+                //    return new InputMessagePoll()
+                case MessageSticker sticker:
+                    return new InputMessageSticker(new InputFileId(sticker.Sticker.StickerValue.Id), sticker.Sticker.Thumbnail.ToInputThumbnail(), sticker.Sticker.Width, sticker.Sticker.Height);
+                case MessageText text:
+                    return new InputMessageText(text.Text, false, false);
+                case MessageVenue venue:
+                    return new InputMessageVenue(venue.Venue);
+                case MessageVideo video:
+                    return new InputMessageVideo(new InputFileId(video.Video.VideoValue.Id), video.Video.Thumbnail.ToInputThumbnail(), new int[0], video.Video.Duration, video.Video.Width, video.Video.Height, video.Video.SupportsStreaming, caption ? video.Caption : null, 0);
+                case MessageVideoNote videoNote:
+                    return new InputMessageVideoNote(new InputFileId(videoNote.VideoNote.Video.Id), videoNote.VideoNote.Thumbnail.ToInputThumbnail(), videoNote.VideoNote.Duration, videoNote.VideoNote.Length);
+                case MessageVoiceNote voiceNote:
+                    return new InputMessageVoiceNote(new InputFileId(voiceNote.VoiceNote.Voice.Id), voiceNote.VoiceNote.Duration, voiceNote.VoiceNote.Waveform, caption ? voiceNote.Caption : null);
+
+                default:
+                    return null;
+            }
+        }
+
+        public bool CanBeCopied(Message message)
+        {
+            var content = message.Content;
+            switch (content)
+            {
+                case MessageAnimation animation:
+                case MessageAudio audio:
+                case MessageContact contact:
+                case MessageDocument document:
+                case MessageGame game:
+                case MessageLocation location:
+                case MessagePhoto photo:
+                case MessageSticker sticker:
+                case MessageText text:
+                case MessageVenue venue:
+                case MessageVideo video:
+                    return true;
+                //case MessageVideoNote videoNote:
+                //    return new InputMessageVideoNote(new InputFileId(videoNote.VideoNote.Video.Id), videoNote.VideoNote.Thumbnail.ToInputThumbnail(), videoNote.VideoNote.Duration, videoNote.VideoNote.Length);
+                //case MessageVoiceNote voiceNote:
+                //    return new InputMessageVoiceNote(new InputFileId(voiceNote.VoiceNote.Voice.Id), voiceNote.VoiceNote.Duration, voiceNote.VoiceNote.Waveform, voiceNote.Caption);
+
+                default:
+                    return false;
+            }
+        }
+
+        public async Task ForwardMessagesAsync(long chatId, long fromChatId, IList<Message> messageIds, bool copy, bool captions)
+        {
+            var albumId = 0L;
+            var chunk = new List<long>();
+
+            var copyAlbumId = 0L;
+            var copyChunk = new List<InputMessageContent>();
+
+            async Task SendCopy()
+            {
+                if (copyChunk.Count > 1 && copyAlbumId != 0)
+                {
+                    await _protoService.SendAsync(new SendMessageAlbum(chatId, 0, false, false, copyChunk));
+                }
+                else if (copyChunk.Count > 0)
+                {
+                    foreach (var input in copyChunk)
+                    {
+                        await _protoService.SendAsync(new SendMessage(chatId, 0, false, false, null, input));
+                    }
+                }
+
+                copyAlbumId = 0L;
+                copyChunk.Clear();
+            }
+
+            async Task SendForward()
+            {
+                if (chunk.Count > 0)
+                {
+                    await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk, false, false, albumId != 0));
+                }
+
+                albumId = 0L;
+                chunk.Clear();
+            }
+
+            foreach (var message in messageIds.OrderBy(x => x.Id))
+            {
+                if (copy && CanBeCopied(message))
+                {
+                    if (message.MediaAlbumId != copyAlbumId)
+                    {
+                        await SendCopy();
+                    }
+                    if (chunk.Count > 0)
+                    {
+                        await SendForward();
+                    }
+
+                    copyAlbumId = message.MediaAlbumId;
+                    copyChunk.Add(ToInput(message, captions));
+                }
+                else
+                {
+                    if (message.MediaAlbumId != albumId || chunk.Count == _protoService.Options.ForwardedMessageCountMax)
+                    {
+                        await SendForward();
+                    }
+                    if (copyChunk.Count > 0)
+                    {
+                        await SendCopy();
+                    }
+
+                    albumId = message.MediaAlbumId;
+                    chunk.Add(message.Id);
+                }
+            }
+
+            await SendCopy();
+            await SendForward();
         }
     }
 

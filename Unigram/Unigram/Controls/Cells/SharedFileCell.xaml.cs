@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -36,6 +37,7 @@ namespace Unigram.Controls.Cells
         {
             _protoService = protoService;
             _delegate = delegato;
+
             _message = message;
 
             var data = message.GetFileAndName(false);
@@ -82,29 +84,32 @@ namespace Unigram.Controls.Cells
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
             else if (file.Remote.IsUploadingActive)
             {
-
-                Button.Glyph = "\uE10A";
+                //Button.Glyph = Icons.Cancel;
+                Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                Button.Glyph = "\uE118";
+                //Button.Glyph = Icons.Download;
+                Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
                 Subtitle.Text = FileSizeConverter.Convert(size) + " — " + UpdateTimeLabel(message);
             }
             else
             {
-                Button.Glyph = "\uE160";
+                //Button.Glyph = Icons.Document;
+                Button.SetGlyph(file.Id, MessageContentState.Document);
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size) + " — " + UpdateTimeLabel(message);

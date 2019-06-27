@@ -593,5 +593,52 @@ namespace Unigram.Controls
 
             Document.ApplyDisplayUpdates();
         }
+
+        public void InsertText(string text, IList<TextEntity> entities)
+        {
+            Document.BatchDisplayUpdates();
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                var index = Math.Min(Document.Selection.StartPosition, Document.Selection.EndPosition);
+
+                Document.Selection.SetText(TextSetOptions.None, text);
+
+                if (entities != null && entities.Count > 0)
+                {
+                    // We want to enumerate entities from last to first to not
+                    // fuck up ranges due to hidden texts when formatting a link
+                    foreach (var entity in entities.Reverse())
+                    {
+                        var range = Document.GetRange(index + entity.Offset, index + entity.Offset + entity.Length);
+
+                        if (entity.Type is TextEntityTypeBold)
+                        {
+                            range.CharacterFormat.Bold = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeItalic)
+                        {
+                            range.CharacterFormat.Italic = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                        {
+                            range.CharacterFormat.Name = "Consolas";
+                        }
+                        else if (entity.Type is TextEntityTypeTextUrl textUrl)
+                        {
+                            range.Link = $"\"{textUrl.Url}\"";
+                        }
+                        else if (entity.Type is TextEntityTypeMentionName mentionName)
+                        {
+                            range.Link = $"\"tg-user://{mentionName.UserId}\"";
+                        }
+                    }
+                }
+
+                Document.Selection.SetRange(Document.Selection.EndPosition, Document.Selection.EndPosition);
+            }
+
+            Document.ApplyDisplayUpdates();
+        }
     }
 }

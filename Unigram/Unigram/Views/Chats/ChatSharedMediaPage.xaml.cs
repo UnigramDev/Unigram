@@ -246,6 +246,14 @@ namespace Unigram.Views.Chats
             {
                 linkCell.UpdateMessage(message, ViewModel.ProtoService, ViewModel.NavigationService);
             }
+            else if (args.ItemContainer.ContentTemplateRoot is SharedAudioCell audioCell)
+            {
+                audioCell.UpdateMessage(ViewModel.PlaybackService, ViewModel.ProtoService, message);
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is SharedVoiceCell voiceCell)
+            {
+                voiceCell.UpdateMessage(ViewModel.PlaybackService, ViewModel.ProtoService, message);
+            }
             else if (message.Content is MessageHeaderDate && args.ItemContainer.ContentTemplateRoot is Border content && content.Child is TextBlock header)
             {
                 header.Text = DateTimeToFormatConverter.ConvertMonthGrouping(Utils.UnixTimestampToDateTime(message.Date));
@@ -259,10 +267,12 @@ namespace Unigram.Views.Chats
 
         public void UpdateFile(Telegram.Td.Api.File file)
         {
-            foreach (Message message in ScrollingMedia.Items)
+            if (ViewModel.Media.TryGetMessagesForFileId(file.Id, out IList<Message> messages))
             {
-                if (message.UpdateFile(file))
+                foreach (var message in messages)
                 {
+                    message.UpdateFile(file);
+
                     var container = ScrollingMedia.ContainerFromItem(message) as GridViewItem;
                     if (container == null)
                     {
@@ -295,12 +305,19 @@ namespace Unigram.Views.Chats
                         }
                     }
                 }
+
+                if (file.Local.IsDownloadingCompleted && file.Remote.IsUploadingCompleted)
+                {
+                    messages.Clear();
+                }
             }
 
-            foreach (Message message in ScrollingFiles.Items)
+            if (ViewModel.Files.TryGetMessagesForFileId(file.Id, out messages))
             {
-                if (message.UpdateFile(file))
+                foreach (var message in messages)
                 {
+                    message.UpdateFile(file);
+
                     var container = ScrollingFiles.ContainerFromItem(message) as ListViewItem;
                     if (container == null)
                     {
@@ -322,10 +339,12 @@ namespace Unigram.Views.Chats
                 }
             }
 
-            foreach (Message message in ScrollingMusic.Items)
+            if (ViewModel.Music.TryGetMessagesForFileId(file.Id, out messages))
             {
-                if (message.UpdateFile(file))
+                foreach (var message in messages)
                 {
+                    message.UpdateFile(file);
+
                     var container = ScrollingMusic.ContainerFromItem(message) as ListViewItem;
                     if (container == null)
                     {
@@ -347,10 +366,11 @@ namespace Unigram.Views.Chats
                 }
             }
 
-            foreach (Message message in ScrollingVoice.Items)
+            if (ViewModel.Voice.TryGetMessagesForFileId(file.Id, out messages))
             {
-                if (message.UpdateFile(file))
+                foreach (var message in messages)
                 {
+                    message.UpdateFile(file);
                     var container = ScrollingVoice.ContainerFromItem(message) as ListViewItem;
                     if (container == null)
                     {

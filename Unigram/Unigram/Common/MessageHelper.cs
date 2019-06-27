@@ -409,7 +409,7 @@ namespace Unigram.Common
             }
             else
             {
-                var response = await protoService.SendAsync(new GetDeepLinkInfo(scheme.ToString()));
+                var response = await protoService.SendAsync(new GetDeepLinkInfo(scheme.AbsoluteUri));
                 if (response is DeepLinkInfo info)
                 {
                     var confirm = await TLMessageDialog.ShowAsync(info.Text, Strings.Resources.AppName, Strings.Resources.OK, info.NeedUpdateApplication ? Strings.Resources.UpdateApp : null);

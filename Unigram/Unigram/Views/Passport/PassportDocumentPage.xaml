@@ -34,11 +34,10 @@
                         </ListView.ItemTemplate>
                     </ListView>
                     
-                    <Button x:Name="FilesButton"
-                            Command="{x:Bind ViewModel.AddFileCommand}"
-                            Content="{x:Bind ConvertAdd(ViewModel.Files.Count), Mode=OneWay}"
-                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                            Style="{StaticResource HyperButtonStyle}"/>
+                    <controls:BadgeButton
+                        x:Name="FilesButton"
+                        Command="{x:Bind ViewModel.AddFileCommand}"
+                        Content="{x:Bind ConvertAdd(ViewModel.Files.Count), Mode=OneWay}"/>
 
                     <TextBlock Text="{x:Bind ConvertInfo(ViewModel.DocumentType, x:False), Mode=OneWay}"
                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -58,11 +57,10 @@
                         </ListView.ItemTemplate>
                     </ListView>
                     
-                    <Button x:Name="TranslationButton"
-                            Command="{x:Bind ViewModel.AddTranslationCommand}"
-                            Content="{x:Bind ConvertAdd(ViewModel.Translation.Count), Mode=OneWay}"
-                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                            Style="{StaticResource HyperButtonStyle}"/>
+                    <controls:BadgeButton
+                        x:Name="TranslationButton"
+                        Command="{x:Bind ViewModel.AddTranslationCommand}"
+                        Content="{x:Bind ConvertAdd(ViewModel.Translation.Count), Mode=OneWay}"/>
                     
                     <TextBlock Text="{x:Bind ConvertInfo(ViewModel.DocumentType, x:True), Mode=OneWay}"
                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"

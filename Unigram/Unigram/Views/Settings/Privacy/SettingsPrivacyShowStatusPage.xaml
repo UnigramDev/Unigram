@@ -33,7 +33,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="{CustomResource PrivacylastSeen}" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;"/>
+        <controls:ButtonPageHeader Text="{CustomResource PrivacyLastSeen}" Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;"/>
 
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -41,27 +41,28 @@
                       Grid.Row="1">
             <StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}"
-                            BorderBrush="{ThemeResource TelegramSeparatorBrush}"
-                            BorderThickness="0,0,0,1"
                             Padding="0,8,12,8">
                     <TextBlock Text="{CustomResource LastSeenTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:PrivacyRadioButton
                         Content="{CustomResource LastSeenEverybody}"
                         Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                         Type="AllowAll"
-                        Margin="12,0,0,0"/>
+                        Margin="12,6,0,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
                     <controls:PrivacyRadioButton
                         Content="{CustomResource LastSeenContacts}"
                         Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                         Type="AllowContacts"
                         Margin="12,0,0,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
                     <controls:PrivacyRadioButton
                         Content="{CustomResource LastSeenNobody}"
                         Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                         Type="DisallowAll"
                         Margin="12,0,0,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+                    <TextBlock Text="{CustomResource CustomHelp}" Margin="12,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 </StackPanel>
-                <TextBlock Text="{CustomResource CustomHelp}" Margin="12,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource AddExceptions}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton

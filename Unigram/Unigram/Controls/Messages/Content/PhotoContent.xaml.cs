@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Gallery;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -21,8 +22,6 @@ namespace Unigram.Controls.Messages.Content
 {
     public sealed partial class PhotoContent : AspectView, IContentWithFile
     {
-        private MessageContentState _oldState;
-
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
@@ -30,6 +29,11 @@ namespace Unigram.Controls.Messages.Content
         {
             InitializeComponent();
             UpdateMessage(message);
+        }
+
+        public PhotoContent()
+        {
+            InitializeComponent();
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -57,6 +61,18 @@ namespace Unigram.Controls.Messages.Content
             }
 
             UpdateFile(message, big.Photo);
+        }
+
+        public void Mockup(MessagePhoto photo)
+        {
+            var big = photo.Photo.GetBig();
+
+            Constraint = photo;
+            Background = null;
+            Texture.Source = new BitmapImage(new Uri(big.Photo.Local.Path));
+
+            Overlay.Opacity = 0;
+            Button.Opacity = 0;
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -93,29 +109,25 @@ namespace Unigram.Controls.Messages.Content
             if (file.Local.IsDownloadingActive)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
+                Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
-
-                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
+                Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
-
-                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 //Button.Glyph = Icons.Download;
-                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
+                Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
                 Button.Opacity = 1;
@@ -125,31 +137,27 @@ namespace Unigram.Controls.Messages.Content
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
-
-                _oldState = MessageContentState.Download;
             }
             else
             {
                 if (message.IsSecret())
                 {
                     //Button.Glyph = Icons.Ttl;
-                    Button.SetGlyph(Icons.Ttl, _oldState != MessageContentState.None && _oldState != MessageContentState.Ttl);
+                    Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
                     Button.Opacity = 1;
                     Overlay.Opacity = 1;
 
                     Subtitle.Text = Locale.FormatTtl(message.Ttl, true);
-
-                    _oldState = MessageContentState.Ttl;
                 }
                 else
                 {
                     //Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play;
-                    Button.SetGlyph(message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
+                    Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                     Button.Progress = 1;
 
-                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || message.SendingState is MessageSendingStatePending)
+                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))
                     {
                         Button.Opacity = 1;
                     }
@@ -161,8 +169,6 @@ namespace Unigram.Controls.Messages.Content
                     Overlay.Opacity = 0;
 
                     Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
-
-                    _oldState = MessageContentState.Play;
                 }
             }
         }
@@ -218,7 +224,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var photo = GetContent(_message.Content);
+            var photo = GetContent(_message?.Content);
             if (photo == null)
             {
                 return;
@@ -253,6 +259,7 @@ namespace Unigram.Controls.Messages.Content
                 if (_message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0)
                 {
                     _message.Delegate.OpenUrl(text.WebPage.Url, false);
+                    //await EmbedUrlView.GetForCurrentView().ShowAsync(_message, text.WebPage, () => this);
                 }
                 else
                 {

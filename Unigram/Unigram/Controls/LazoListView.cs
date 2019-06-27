@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -35,8 +36,10 @@ namespace Unigram.Controls
 
         private void Recognizer_Tapped(GestureRecognizer sender, TappedEventArgs args)
         {
-            if (args.TapCount == 2 && args.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
             {
+                sender.CompleteGesture();
+
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
                 var selector = children?.FirstOrDefault(x => x is SelectorItem) as SelectorItem;
                 if (selector != null)
@@ -58,10 +61,10 @@ namespace Unigram.Controls
 
         internal void OnPointerPressed(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            if (!_pressed && !_recognizer.IsActive && SelectionMode == ListViewSelectionMode.None)
+            if (SelectionMode == ListViewSelectionMode.None)
             {
                 var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
-                if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
+                if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
                 {
                     try
                     {
@@ -79,7 +82,7 @@ namespace Unigram.Controls
 
         internal void OnPointerEntered(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            if (_firstItem == null || !_pressed || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (_firstItem == null || !_pressed || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 return;
             }
@@ -143,7 +146,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            if ((_firstItem != null && _firstItem != child) || !_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if ((_firstItem != null && _firstItem != child) || !_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 return;
             }
@@ -199,7 +202,7 @@ namespace Unigram.Controls
         internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
-            if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased)
+            if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 try
                 {
@@ -223,6 +226,11 @@ namespace Unigram.Controls
             if (SelectionMode != ListViewSelectionMode.Multiple)
             {
                 return;
+            }
+            
+            if (SelectedItems.Count < 1)
+            {
+                SelectionMode = ListViewSelectionMode.None;
             }
 
             e.Handled = handled;

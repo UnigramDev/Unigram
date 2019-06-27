@@ -6,20 +6,11 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource SystemChromeLowColor}"/>
-            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
-            <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
-            <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
-            
-            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#444444"/>
-            <SolidColorBrush x:Key="TelegramDialogUnreadLabelMutedBrush" Color="#000000"/>
-
-            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeFailedBrush" Color="#FF0000"/>
-            <SolidColorBrush x:Key="TelegramDialogUnreadLabelFailedBrush" Color="#FFFFFF"/>
-
-            <SolidColorBrush x:Key="TelegramDialogOnlineBadge" Color="#89DF9E"/>
+            <SolidColorBrush x:Key="PlaceholderForegroundHighBrush" Color="#3b3e45"/>
+            <SolidColorBrush x:Key="PlaceholderForegroundLowBrush" Color="#545a68"/>
+            <SolidColorBrush x:Key="PlaceholderBackgroundBrush" Color="#262a2d"/>
 
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-dark.png"/>
 
@@ -29,19 +20,13 @@
         <ResourceDictionary x:Key="Light">
             <!--<SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="#000000"/>-->
 
-            <StaticResource x:Key="TelegramTitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
-            <StaticResource x:Key="TelegramSubtitleBarBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
-            <SolidColorBrush x:Key="TelegramDialogGlyphStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="PlaceholderForegroundHighBrush" Color="#e4e4e4"/>
+            <SolidColorBrush x:Key="PlaceholderForegroundLowBrush" Color="#c2c2c2"/>
+            <SolidColorBrush x:Key="PlaceholderBackgroundBrush" Color="#f6f6f6"/>
 
-            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeMutedBrush" Color="#BBBBBB"/>
-            <SolidColorBrush x:Key="TelegramDialogUnreadLabelMutedBrush" Color="#FFFFFF"/>
 
-            <SolidColorBrush x:Key="TelegramDialogUnreadBadgeFailedBrush" Color="#FF0000"/>
-            <SolidColorBrush x:Key="TelegramDialogUnreadLabelFailedBrush" Color="#FFFFFF"/>
-
-            <SolidColorBrush x:Key="TelegramDialogOnlineBadge" Color="#00B12C"/>
 
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-light.png"/>
 
@@ -58,9 +43,7 @@
     <Thickness x:Key="MessageContentPadding">10,4,10,6</Thickness>
     <Thickness x:Key="MessageContentMargin">0,0,0,0</Thickness>
 
-    <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
-    <CornerRadius x:Key="MessageCornerRadiusOut">0</CornerRadius>
-    <CornerRadius x:Key="MessageServiceCornerRadius">12</CornerRadius>
+    <CornerRadius x:Key="MessageServiceCornerRadius">11</CornerRadius>
     <CornerRadius x:Key="MessageOverlayCornerRadius">12</CornerRadius>
 
     <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
@@ -78,12 +61,6 @@
     <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramForegroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramBackgroundMessageBubbleBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogUnreadLabelBrush" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>
 
     <x:Double x:Key="TelegramToolBarSmallHeight">44</x:Double>
     <x:Double x:Key="TelegramToolBarHeight">48</x:Double>
@@ -117,11 +94,11 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
-        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="Radius" Value="24" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -202,7 +179,7 @@
         <Setter Property="Width" Value="Auto" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
-        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="Radius" Value="24" />
         <Setter Property="RequestedTheme" Value="Dark" />
         <Setter Property="Template">
             <Setter.Value>
@@ -259,8 +236,8 @@
                         </VisualStateManager.VisualStateGroups>
                         <!--<controls:BackDrop BlurAmount="5"/>-->
 
-                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}" Width="48" Height="48">
-                            <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding Radius}" Width="48" Height="48">
+                            <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding Radius}">
                                 <TextBlock
                                     x:Name="ContentPresenter1"
                                     HorizontalAlignment="Center"
@@ -297,12 +274,12 @@
         <Setter Property="Width" Value="Auto" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
-        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Radius" Value="12" />
         <Setter Property="RequestedTheme" Value="Dark" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
-                    <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding Radius}">
                         <Grid.Resources>
                             <Style x:Key="SmallProgressBarRingStyle" TargetType="controls:ProgressBarRing">
                                 <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
@@ -368,7 +345,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <!--<controls:BackDrop BlurAmount="5"/>-->
 
-                        <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding Radius}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
@@ -409,11 +386,11 @@
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-        <Setter Property="CornerRadius" Value="{ThemeResource MessageServiceCornerRadius}"/>
+        <Setter Property="Radius" Value="{ThemeResource MessageServiceCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SimpleButton">
-                    <Grid x:Name="RootGrid" Margin="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid x:Name="RootGrid" Margin="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding Radius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -443,7 +420,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

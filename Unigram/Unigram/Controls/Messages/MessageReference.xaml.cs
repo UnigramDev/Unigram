@@ -501,7 +501,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = $"\uD83D\uDCCA {poll.Poll.Question}";
+            ServiceLabel.Text = $"\uD83D\uDCCA {poll.Poll.Question.Replace("\r\n", "\n").Replace('\n', ' ')}";
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -825,15 +825,15 @@ namespace Unigram.Controls.Messages
             }
             else if (message.IsSaved())
             {
-                if (message.ForwardInfo is MessageForwardedFromUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     return message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
                 }
-                else if (message.ForwardInfo is MessageForwardedPost post)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                 {
                     return message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
                 }
-                else if (message.ForwardInfo is MessageForwardedFromHiddenUser fromHiddenUser)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
                     return fromHiddenUser.SenderName;
                 }

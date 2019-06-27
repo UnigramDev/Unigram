@@ -75,6 +75,10 @@
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="{CustomResource InAppNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <CheckBox
+                        IsChecked="{x:Bind ViewModel.InAppFlash, Mode=TwoWay}"
+                        Content="Flash window when receiving a notification"
+                        Margin="12,8,12,8"/>
+                    <CheckBox
                         IsChecked="{x:Bind ViewModel.InAppSounds, Mode=TwoWay}"
                         Content="{CustomResource InAppSounds}"
                         Margin="12,8,12,8"/>

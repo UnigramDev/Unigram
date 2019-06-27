@@ -67,6 +67,25 @@ namespace Unigram.Common
             }
         }
 
+        public static void CreateSwipeItem<T>(this Microsoft.UI.Xaml.Controls.SwipeItems flyout, Func<T, bool> visibility, ICommand command, T parameter, string text, Microsoft.UI.Xaml.Controls.IconSource icon = null) where T : class
+        {
+            var value = visibility(parameter as T);
+            if (value)
+            {
+                var flyoutItem = new Microsoft.UI.Xaml.Controls.SwipeItem();
+                flyoutItem.Command = command;
+                flyoutItem.CommandParameter = parameter;
+                flyoutItem.Text = text;
+
+                if (icon != null)
+                {
+                    flyoutItem.IconSource = icon;
+                }
+
+                flyout.Add(flyoutItem);
+            }
+        }
+
         // Probably used only for members context menu
         public static void CreateFlyoutItem<T1, T2, T3>(this MenuFlyout flyout, Func<T1, T2, T3, bool> visibility, ICommand command, T1 chatType, T2 status, T3 parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T3 : class
         {

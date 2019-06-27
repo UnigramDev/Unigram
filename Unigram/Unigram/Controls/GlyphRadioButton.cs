@@ -41,16 +41,16 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region CornerRadius
+        #region Radius
 
-        public CornerRadius CornerRadius
+        public CornerRadius Radius
         {
-            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
-            set { SetValue(CornerRadiusProperty, value); }
+            get { return (CornerRadius)GetValue(RadiusProperty); }
+            set { SetValue(RadiusProperty, value); }
         }
 
-        public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(GlyphRadioButton), new PropertyMetadata(default(CornerRadius)));
+        public static readonly DependencyProperty RadiusProperty =
+            DependencyProperty.Register("Radius", typeof(CornerRadius), typeof(GlyphRadioButton), new PropertyMetadata(default(CornerRadius)));
 
         #endregion
 

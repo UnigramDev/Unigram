@@ -215,7 +215,7 @@ namespace Unigram.ViewModels.Settings
             var enabled = CacheService.Options.UseStorageOptimizer;
             var ttl = CacheService.Options.StorageMaxTimeFromLastAccess;
 
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = 3, Content = Locale.Declension("Days", 3), IsChecked = enabled && ttl == 3 * 60 * 60 * 24 });

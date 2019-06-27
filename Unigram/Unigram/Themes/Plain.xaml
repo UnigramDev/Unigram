@@ -7,10 +7,14 @@
         <ResourceDictionary x:Key="Default">
             <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemChromeMediumHighColor" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlForegroundAccentBrush" />
+
+            <StaticResource x:Key="UndoViewBackgroundBrush" ResourceKey="PageHeaderBackgroundBrush"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemChromeMediumHighColor" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlForegroundAccentBrush" />
+
+            <StaticResource x:Key="UndoViewBackgroundBrush" ResourceKey="PageHeaderBackgroundBrush"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

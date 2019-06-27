@@ -43,6 +43,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region IndeterminateGlyph
+
+        public string IndeterminateGlyph
+        {
+            get { return (string)GetValue(IndeterminateGlyphProperty); }
+            set { SetValue(IndeterminateGlyphProperty, value); }
+        }
+
+        public static readonly DependencyProperty IndeterminateGlyphProperty =
+            DependencyProperty.Register("IndeterminateGlyph", typeof(string), typeof(GlyphToggleButton), new PropertyMetadata(null));
+
+        #endregion
+
         #region CheckedForeground
 
         public Brush CheckedForeground

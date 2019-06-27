@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using Unigram.Common;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,10 +17,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class DeleteChatView : ContentDialog
+    public sealed partial class DeleteChatView : TLContentDialog
     {
         public DeleteChatView(IProtoService protoService, Chat chat, bool clear)
         {
@@ -32,7 +35,7 @@ namespace Unigram.Controls.Views
             var basicGroup = protoService.GetBasicGroup(chat);
             var supergroup = protoService.GetSupergroup(chat);
 
-            var deleteAll = user != null && chat.Type is ChatTypePrivate privata && privata.UserId != protoService.Options.MyId;
+            var deleteAll = user != null && chat.Type is ChatTypePrivate privata && privata.UserId != protoService.Options.MyId && chat.CanBeDeletedForAllUsers;
             if (deleteAll)
             {
                 CheckBox.Visibility = Visibility.Visible;

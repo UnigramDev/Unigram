@@ -222,6 +222,12 @@ namespace Unigram.ViewModels
         {
             if (file.Local.IsDownloadingCompleted)
             {
+                if (file.Local.Path.EndsWith(".unigram-theme"))
+                {
+                    await new ThemePreviewView(file.Local.Path).ShowQueuedAsync();
+                    return;
+                }
+
                 try
                 {
                     var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
@@ -473,6 +479,8 @@ namespace Unigram.ViewModels
 
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
             }
+
+            TextField?.Focus(FocusState.Programmatic);
         }
 
         public void PlayMessage(MessageViewModel message)

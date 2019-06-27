@@ -22,7 +22,15 @@
             <ColumnDefinition Width="48"/>
         </Grid.ColumnDefinitions>
 
-        <RichTextBlock x:Name="Label" TextAlignment="DetectFromContent" OverflowContentTarget="{x:Bind OverflowArea}" IsTextSelectionEnabled="False" Margin="0,0,8,0" MaxLines="6" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionRichTextBlockStyle}">
+        <RichTextBlock x:Name="Label"
+                       TextAlignment="DetectFromContent"
+                       OverflowContentTarget="{x:Bind OverflowArea}"
+                       IsTextSelectionEnabled="False"
+                       Margin="0,0,8,0"
+                       MaxLines="6"
+                       TextTrimming="CharacterEllipsis"
+                       Style="{StaticResource CaptionRichTextBlockStyle}"
+                       FontFamily="{ThemeResource EmojiThemeFontFamily}">
             <Paragraph>
                 <Run x:Name="TitleLabel" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold"/><Run x:Name="SubtitleLabel" FontWeight="SemiBold"/><Run x:Name="ContentLabel"/>
             </Paragraph>

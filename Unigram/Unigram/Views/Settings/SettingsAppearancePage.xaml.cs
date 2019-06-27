@@ -6,10 +6,13 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Converters;
+using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.ViewManagement;
@@ -43,6 +46,11 @@ namespace Unigram.Views.Settings
 
             //UpdatePreview(true);
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
         }
 
         private void Wallpaper_Click(object sender, RoutedEventArgs e)
@@ -53,6 +61,11 @@ namespace Unigram.Views.Settings
         private void NightMode_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsNightModePage));
+        }
+
+        private void Themes_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsThemesPage));
         }
 
         #region Binding
@@ -73,97 +86,6 @@ namespace Unigram.Views.Settings
 
         #endregion
 
-        private int _advanced;
-        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
-        {
-            //_advanced++;
-
-            //if (_advanced >= 7)
-            //{
-            //    Options.Opacity = 1;
-
-            //    var flyout = new MenuFlyout();
-            //    var import = new MenuFlyoutItem { Text = "Import palette" };
-
-            //    import.Click += Import_Click;
-
-            //    flyout.Items.Add(import);
-
-            //    var exists = File.Exists(FileUtils.GetFileName("colors.palette"));
-            //    if (exists)
-            //    {
-            //        var export = new MenuFlyoutItem { Text = "Export palette" };
-            //        var remove = new MenuFlyoutItem { Text = "Remove palette" };
-
-            //        export.Click += Export_Click;
-            //        remove.Click += Remove_Click;
-
-            //        flyout.Items.Add(export);
-            //        flyout.Items.Add(remove);
-            //    }
-
-            //    flyout.ShowAt((Button)sender);
-            //}
-        }
-
-        private async void Import_Click(object sender, RoutedEventArgs e)
-        {
-            //var picker = new FileOpenPicker();
-            //picker.FileTypeFilter.Add(".palette");
-
-            //var file = await picker.PickSingleFileAsync();
-            //if (file == null)
-            //{
-            //    return;
-            //}
-
-            //var palette = await FileUtils.CreateFileAsync("colors.palette");
-            //await file.CopyAndReplaceAsync(palette);
-
-            //Theme.Current.Update();
-            ////App.NotifyThemeChanged();
-
-            //UpdatePreview(true);
-        }
-
-        private async void Export_Click(object sender, RoutedEventArgs e)
-        {
-            //var picker = new FileSavePicker();
-            //picker.FileTypeChoices.Add("Palette", new[] { ".palette" });
-            //picker.SuggestedFileName = "colors.palette";
-
-            //var file = await picker.PickSaveFileAsync();
-            //if (file == null)
-            //{
-            //    return;
-            //}
-
-            //var palette = await FileUtils.TryGetItemAsync("colors.palette");
-            //if (palette == null)
-            //{
-            //    return;
-            //}
-
-            //await ((StorageFile)palette).CopyAndReplaceAsync(file);
-        }
-
-        private async void Remove_Click(object sender, RoutedEventArgs e)
-        {
-            //var palette = await FileUtils.TryGetItemAsync("colors.palette");
-            //if (palette == null)
-            //{
-            //    return;
-            //}
-
-            //await palette.DeleteAsync();
-
-            //Theme.Current.Update();
-            ////App.NotifyThemeChanged();
-
-            //UpdatePreview(true);
-        }
-
-
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals("FontSize"))
@@ -171,61 +93,71 @@ namespace Unigram.Views.Settings
                 Message1.UpdateMockup();
                 Message2.UpdateMockup();
             }
-            else if (e.PropertyName.Equals("RequestedTheme"))
+        }
+
+        private async void Switch_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is RadioButton radio && radio.Tag is ThemeInfoBase info)
             {
-                //UpdatePreview(false);
-            }
-            else if (e.PropertyName.Equals("IsSystemTheme"))
-            {
-                //UpdatePreview(true);
+                await ViewModel.SetThemeAsync(info);
             }
         }
 
-        private void UpdatePreview(bool extended)
+        #region Context menu
+
+        private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var current = App.Current as App;
-            var theme = current.UISettings.GetColorValue(UIColorType.Background);
-            var value = ViewModel.GetElementTheme();
+            var element = sender as FrameworkElement;
+            var theme = element.Tag as ThemeInfoBase;
 
-            if (extended)
+            if (theme is ThemeSystemInfo)
             {
-                Theme.Current.Update();
-
-                //foreach (TLWindowContext window in WindowContext.ActiveWrappers)
-                //{
-                //    window.UpdateTitleBar();
-
-                //    if (window.Content is FrameworkElement element)
-                //    {
-                //        element.RequestedTheme = ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (ViewModel.Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && theme.R == 0 && theme.G == 0 && theme.B == 0) ? ElementTheme.Light : ElementTheme.Dark;
-                //    }
-                //}
+                return;
             }
 
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Theme });
+
+            if (!theme.IsOfficial)
             {
-                window.Dispatcher.Dispatch(() =>
-                {
-                    window.UpdateTitleBar();
-
-                    if (window.Content is FrameworkElement element)
-                    {
-                        if (value == element.RequestedTheme)
-                        {
-                            element.RequestedTheme = value == ElementTheme.Dark
-                                ? ElementTheme.Light
-                                : ElementTheme.Dark;
-                        }
-
-                        element.RequestedTheme = value;
-                    }
-                });
+                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.Resources.ShareFile, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
             }
+
+            args.ShowAt(flyout, element);
         }
 
-        private void Switch_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            UpdatePreview(true);
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var theme = args.Item as ThemeInfoBase;
+            var root = args.ItemContainer.ContentTemplateRoot as StackPanel;
+
+            var radio = root.Children[0] as RadioButton;
+
+            if (theme is ThemeCustomInfo custom)
+            {
+                radio.RequestedTheme = custom.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
+                radio.IsChecked = string.Equals(SettingsService.Current.Appearance.RequestedThemePath, custom.Path, StringComparison.OrdinalIgnoreCase);
+            }
+            else if (theme is ThemeSystemInfo)
+            {
+                radio.RequestedTheme = SettingsService.Current.Appearance.GetSystemTheme() == TelegramAppTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
+                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemePath) && SettingsService.Current.Appearance.RequestedTheme == ElementTheme.Default;
+            }
+            else
+            {
+                radio.RequestedTheme = theme.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
+                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemePath) && SettingsService.Current.Appearance.RequestedTheme == (theme.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
+            }
         }
     }
 }

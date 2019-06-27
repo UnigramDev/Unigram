@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:services="using:Unigram.Services"
+    xmlns:settings="using:Unigram.Views.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -87,7 +88,7 @@
 
                 <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.Column="1"/>
 
-                <Border Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                         Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
                         MinWidth="20"
                         Height="20"
@@ -97,7 +98,7 @@
                         Grid.Column="2">
                     <TextBlock Text="{x:Bind UnreadCount, Mode=OneWay}"
                                Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                TextAlignment="Center"
                                Margin="4,2,4,0"/>
                 </Border>
@@ -106,47 +107,66 @@
 
     </Page.Resources>
 
-    <controls:NavigationView x:Name="Navigation">
-        <controls:NavigationView.PaneHeader>
-            <Button x:Name="Accounts" Click="Expand_Click" RequestedTheme="Dark" Style="{StaticResource EmptyButtonStyle}">
-                <Grid Padding="12,8">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="NameLabel"
-                                TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
-                    <TextBlock x:Name="PhoneLabel"
-                                VerticalAlignment="Top"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="NoWrap"
-                                Grid.Row="1"
-                                MaxLines="1"/>
-                    <CheckBox x:Name="Expanded" MinWidth="0" IsEnabled="False" Style="{StaticResource NavigationViewExpanderStyle}" Grid.Column="1" Grid.RowSpan="2"/>
-                </Grid>
-            </Button>
-        </controls:NavigationView.PaneHeader>
-        <controls:NavigationView.PaneFooter>
-            <ListView x:Name="NavigationViewList"
-                        ItemClick="OnItemClick"
-                        IsItemClickEnabled="True"
-                        SelectionMode="None"
-                      ChoosingItemContainer="OnChoosingItemContainer"
-                        ContainerContentChanging="OnContainerContentChanging"
-                        Grid.Row="1">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Padding" Value="0"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-        </controls:NavigationView.PaneFooter>
-    </controls:NavigationView>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MainColumn"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <controls:NavigationView x:Name="Navigation">
+            <controls:NavigationView.PaneHeader>
+                <Button x:Name="Accounts" Click="Expand_Click" RequestedTheme="Dark" Style="{StaticResource EmptyButtonStyle}">
+                    <Grid Padding="12,8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="NameLabel"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Bottom"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+                        <TextBlock x:Name="PhoneLabel"
+                                   VerticalAlignment="Top"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Grid.Row="1"
+                                   MaxLines="1"/>
+                        <CheckBox x:Name="Expanded" MinWidth="0" IsEnabled="False" Style="{StaticResource NavigationViewExpanderStyle}" Grid.Column="1" Grid.RowSpan="2"/>
+                    </Grid>
+                </Button>
+            </controls:NavigationView.PaneHeader>
+            <controls:NavigationView.PaneFooter>
+                <ListView x:Name="NavigationViewList"
+                            ItemClick="OnItemClick"
+                            IsItemClickEnabled="True"
+                            SelectionMode="None"
+                          ChoosingItemContainer="OnChoosingItemContainer"
+                            ContainerContentChanging="OnContainerContentChanging"
+                            Grid.Row="1">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Padding" Value="0"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </controls:NavigationView.PaneFooter>
+        </controls:NavigationView>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border x:Name="ThemeShadow" Grid.RowSpan="2"/>
+            <Border Background="{ThemeResource PageHeaderBackgroundBrush}"/>
+            <settings:SettingsThemePage x:Name="ThemePage" x:Load="False" Width="320" Grid.Row="1"/>
+        </Grid>
+    </Grid>
 </Page>

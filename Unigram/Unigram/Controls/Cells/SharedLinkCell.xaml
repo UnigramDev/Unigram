@@ -23,9 +23,9 @@
                 Height="48"/>
         </Border>
         <StackPanel Margin="12,0,0,0" Grid.Column="1">
-            <TextBlock x:Name="TitleLabel" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock x:Name="DescriptionLabel" MaxLines="3" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-            <TextBlock x:Name="Description2Label" MaxLines="3" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+            <TextBlock x:Name="TitleLabel" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageForegroundBrush}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource BaseTextBlockStyle}"/>
+            <TextBlock x:Name="DescriptionLabel" MaxLines="3" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageForegroundBrush}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource BodyTextBlockStyle}"/>
+            <TextBlock x:Name="Description2Label" MaxLines="3" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageForegroundBrush}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource BodyTextBlockStyle}"/>
             <Grid x:Name="LinksPanel"/>
         </StackPanel>
     </Grid>

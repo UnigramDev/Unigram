@@ -35,7 +35,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SendFilesView : ContentDialog, IViewWithAutocomplete, INotifyPropertyChanged
+    public sealed partial class SendFilesView : TLContentDialog, IViewWithAutocomplete, INotifyPropertyChanged
     {
         public DialogViewModel ViewModel { get; set; }
         public MvxObservableCollection<StorageMedia> Items { get; private set; }

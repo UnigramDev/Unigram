@@ -30,10 +30,12 @@ namespace Unigram.ViewModels
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
         private readonly IVoIPService _voipService;
+        private readonly IEmojiSetService _emojiSetService;
+        private readonly IPlaybackService _playbackService;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, IPlaybackService playbackService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -44,6 +46,8 @@ namespace Unigram.ViewModels
             _lifetimeService = lifecycle;
             _sessionService = session;
             _voipService = voipService;
+            _emojiSetService = emojiSetService;
+            _playbackService = playbackService;
 
             Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService);
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
@@ -69,6 +73,8 @@ namespace Unigram.ViewModels
 
         public ILiveLocationService LiveLocation => _liveLocationService;
         public IPasscodeService Passcode => _passcodeService;
+
+        public IPlaybackService PlaybackService => _playbackService;
 
         public RelayCommand LiveLocationCommand { get; }
         private async void LiveLocationExecute()
@@ -142,6 +148,7 @@ namespace Unigram.ViewModels
             {
                 Task.Run(() => _pushService.RegisterAsync());
                 Task.Run(() => _contactsService.JumpListAsync());
+                Task.Run(() => _emojiSetService.UpdateAsync());
             }
 
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
@@ -160,6 +167,16 @@ namespace Unigram.ViewModels
         public ContactsViewModel Contacts { get; private set; }
         public CallsViewModel Calls { get; private set; }
         public SettingsViewModel Settings { get; private set; }
+
+        public ChatsViewModel Folder { get; private set; }
+
+        public void SetFolder(IChatFilter filter)
+        {
+            Folder = new ChatsViewModel(ProtoService, CacheService, base.Settings, Aggregator, _pushService, filter);
+            Folder.Dispatcher = Dispatcher;
+            Folder.NavigationService = NavigationService;
+            RaisePropertyChanged(() => Folder);
+        }
     }
 
     public class YoloTimer

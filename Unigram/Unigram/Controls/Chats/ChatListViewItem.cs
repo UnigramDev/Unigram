@@ -48,11 +48,6 @@ namespace Unigram.Controls.Chats
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
-        ~ChatListViewItem()
-        {
-            DetachEventHandlers();
-        }
-
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new ChatListViewAutomationPeer(this);
@@ -121,7 +116,7 @@ namespace Unigram.Controls.Chats
             _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
             _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
             _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
-            _interactionSource.IsPositionYRailsEnabled = true;
+            _interactionSource.IsPositionXRailsEnabled = true;
 
             //Create tracker and associate interaction source
             _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, this);
@@ -149,7 +144,7 @@ namespace Unigram.Controls.Chats
         private void ConfigureAnimations(Visual visual, Visual indicator)
         {
             // Create an animation that changes the offset of the photoVisual and shadowVisual based on the manipulation progress
-            var offsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanForward ? 0 : -tracker.Position.X");
+            var offsetExp = _visual.Compositor.CreateExpressionAnimation("(tracker.Position.X > 0 && !tracker.CanReply) || (tracker.Position.X <= 0 && !tracker.CanForward) ? 0 : -tracker.Position.X");
             //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanForward ? 0 : Max(-72, Min(72, -tracker.Position.X))");
             //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("-tracker.Position.X");
             offsetExp.SetReferenceParameter("tracker", _tracker);
@@ -388,9 +383,9 @@ namespace Unigram.Controls.Chats
 
         protected override string GetNameCore()
         {
-            if (_owner.ContentTemplateRoot is Grid root)
+            if (_owner.ContentTemplateRoot is FrameworkElement content && content is MessageBubble == false)
             {
-                var bubble = root.FindName("Bubble") as MessageBubble;
+                var bubble = content.FindName("Bubble") as MessageBubble;
                 if (bubble != null)
                 {
                     return bubble.GetAutomationName() ?? base.GetNameCore();

@@ -27,7 +27,7 @@ namespace Unigram.Views.Host
     {
         public StandalonePage(INavigationService navigationService)
         {
-            if (!SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default))
+            if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
             {
                 RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             }
@@ -39,7 +39,7 @@ namespace Unigram.Views.Host
             Grid.SetRow(navigationService.Frame, 1);
             LayoutRoot.Children.Add(navigationService.Frame);
 
-            if (navigationService is TLNavigationService service)
+            if (navigationService is TLNavigationService service && service.ProtoService != null)
             {
                 var user = service.ProtoService.GetUser(service.ProtoService.Options.MyId);
                 if (user != null)

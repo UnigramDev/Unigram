@@ -58,6 +58,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock
                         Text="{CustomResource ChannelBlockUser}"
+                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
                         Style="{StaticResource BaseTextBlockStyle}"
                         VerticalAlignment="Center"
                         Margin="12,0"/>
@@ -101,7 +102,7 @@
                     </GroupStyle.HeaderTemplate>
                     <GroupStyle.HeaderContainerStyle>
                         <Style TargetType="ListViewHeaderItem">
-                            <Setter Property="Background" Value="{ThemeResource TelegramSubtitleBarBackgroundBrush}" />
+                            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
                             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                             <Setter Property="Margin" Value="0,0,0,0"/>

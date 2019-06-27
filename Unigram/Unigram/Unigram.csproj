@@ -43,7 +43,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;DEBUG_LOTTIE</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -66,7 +66,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW;DEBUG_LOTTIE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW;DEBUG_LOTTIE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -92,7 +92,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW;DEBUG_LOTTIE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -107,6 +107,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assets\Animations\ChatArchivedAnimation.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\KeyedList.cs" />
     <Compile Include="Collections\MvxObservableCollection.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
+    <Compile Include="Controls\Brushes\TiledBrush.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>
@@ -161,6 +163,9 @@
     </Compile>
     <Compile Include="Controls\Cells\SessionCell.xaml.cs">
       <DependentUpon>SessionCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\SharedAudioCell.xaml.cs">
+      <DependentUpon>SharedAudioCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\SharedFileCell.xaml.cs">
       <DependentUpon>SharedFileCell.xaml</DependentUpon>
@@ -183,9 +188,6 @@
     <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\ChatsListView.cs" />
     <Compile Include="Controls\Chats\ChatActionIndicator.cs" />
-    <Compile Include="Controls\Chats\ChatBackground.xaml.cs">
-      <DependentUpon>ChatBackground.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Chats\ChatBackgroundPresenter.cs" />
     <Compile Include="Controls\Chats\ChatBottomButton.cs" />
     <Compile Include="Controls\Chats\ChatListView.cs" />
@@ -199,6 +201,9 @@
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
+    <Compile Include="Controls\Gallery\EmbedUrlView.xaml.cs">
+      <DependentUpon>EmbedUrlView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
       <DependentUpon>GalleryContentView.xaml</DependentUpon>
     </Compile>
@@ -216,6 +221,9 @@
     <Compile Include="Controls\MasterDetailPanel.cs" />
     <Compile Include="Controls\Messages\Content\AlbumContent.xaml.cs">
       <DependentUpon>AlbumContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\Content\AnimatedStickerContent.xaml.cs">
+      <DependentUpon>AnimatedStickerContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\Content\AudioContent.xaml.cs">
       <DependentUpon>AudioContent.xaml</DependentUpon>
@@ -307,6 +315,7 @@
     <Compile Include="Controls\PlaybackHeader.xaml.cs">
       <DependentUpon>PlaybackHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PlaybackSlider.cs" />
     <Compile Include="Controls\PollOptionControl.xaml.cs">
       <DependentUpon>PollOptionControl.xaml</DependentUpon>
     </Compile>
@@ -352,14 +361,17 @@
     <Compile Include="Controls\Views\DeleteChatView.xaml.cs">
       <DependentUpon>DeleteChatView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\DeleteMessagesView.xaml.cs">
+      <DependentUpon>DeleteMessagesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\EditUserNameView.xaml.cs">
       <DependentUpon>EditUserNameView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\EditYourAboutView.xaml.cs">
       <DependentUpon>EditYourAboutView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\EmojisView.xaml.cs">
-      <DependentUpon>EmojisView.xaml</DependentUpon>
+    <Compile Include="Controls\Views\EmojiView.xaml.cs">
+      <DependentUpon>EmojiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\LiveLocationsView.xaml.cs">
       <DependentUpon>LiveLocationsView.xaml</DependentUpon>
@@ -380,8 +392,11 @@
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\PlaybackView.xaml.cs">
-      <DependentUpon>PlaybackView.xaml</DependentUpon>
+    <Compile Include="Controls\Views\SettingsEmojiSetView.xaml.cs">
+      <DependentUpon>SettingsEmojiSetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\ThemePreviewView.xaml.cs">
+      <DependentUpon>ThemePreviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\ProxyView.xaml.cs">
       <DependentUpon>ProxyView.xaml</DependentUpon>
@@ -416,11 +431,11 @@
     <Compile Include="Controls\Views\SupergroupEventLogFiltersView.xaml.cs">
       <DependentUpon>SupergroupEventLogFiltersView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\UsersPickerView.xaml.cs">
+      <DependentUpon>UsersPickerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\WebPageView.xaml.cs">
-      <DependentUpon>WebPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
@@ -465,6 +480,7 @@
     <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
+    <Compile Include="Services\EmojiSetService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\Settings\AppearanceSettings.cs" />
     <Compile Include="Services\ContactsService.cs" />
@@ -488,6 +504,7 @@
     <Compile Include="Services\ProtoService.cs" />
     <Compile Include="Services\SessionService.cs" />
     <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\Settings\PlaybackSettings.cs" />
     <Compile Include="Services\Settings\StickersSettings.cs" />
     <Compile Include="Services\Settings\VoIPSettings.cs" />
     <Compile Include="Services\Settings\WallpaperSettings.cs" />
@@ -498,8 +515,10 @@
     <Compile Include="Services\Stripe\StripeNetworkUtils.cs" />
     <Compile Include="Services\Stripe\StripeTextUtils.cs" />
     <Compile Include="Services\Stripe\StripeToken.cs" />
+    <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
+    <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
     <Compile Include="Services\Updates\UpdateWallpaper.cs" />
@@ -536,6 +555,7 @@
     <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IBasicAndSupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IChatsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Delegates\IGalleryDelegate.cs" />
@@ -579,7 +599,6 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
-    <Compile Include="ViewModels\PlaybackViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\SecretChats\SecretChatCreateViewModel.cs" />
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneIntroViewModel.cs" />
@@ -588,16 +607,11 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowChatInvitesViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowP2PCallsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysAllowP2PCallsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysAllowCallsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysAllowChatInvitesViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysShowStatusViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysViewModelBase.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverAllowP2PCallsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverAllowCallsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverAllowChatInvitesViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverShowStatusViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowForwardedViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhoneViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhotoViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowStatusViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsAdvancedViewModel.cs" />
@@ -613,6 +627,7 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsVoIPViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWallpapersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
@@ -671,6 +686,9 @@
     </Compile>
     <Compile Include="Views\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatsPage.xaml.cs">
+      <DependentUpon>ChatsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
       <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
@@ -772,29 +790,14 @@
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyAllowP2PCallsPage.xaml.cs">
       <DependentUpon>SettingsPrivacyAllowP2PCallsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowP2PCallsPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyAlwaysAllowP2PCallsPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowForwardedPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyShowForwardedPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowCallsPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyAlwaysAllowCallsPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowPhonePage.xaml.cs">
+      <DependentUpon>SettingsPrivacyShowPhonePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowChatInvitesPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyAlwaysAllowChatInvitesPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyAlwaysShowStatusPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyAlwaysShowStatusPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowP2PCallsPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyNeverAllowP2PCallsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowCallsPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyNeverAllowCallsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowChatInvitesPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyNeverAllowChatInvitesPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Privacy\SettingsPrivacyNeverShowStatusPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyNeverShowStatusPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowPhotoPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyShowPhotoPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowStatusPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowStatusPage.xaml</DependentUpon>
@@ -831,6 +834,12 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsStorageOptimizationPage.xaml.cs">
       <DependentUpon>SettingsStorageOptimizationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsThemePage.xaml.cs">
+      <DependentUpon>SettingsThemePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsThemesPage.xaml.cs">
+      <DependentUpon>SettingsThemesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsVoIPPage.xaml.cs">
       <DependentUpon>SettingsVoIPPage.xaml</DependentUpon>
@@ -1246,13 +1255,12 @@
     <Content Include="Assets\Emojis\2744.png" />
     <Content Include="Assets\Emojis\2753.png" />
     <Content Include="Assets\Emojis\2757.png" />
+    <Content Include="Assets\Emoji\apple.png" />
+    <Content Include="Assets\Emoji\microsoft.png" />
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <Compile Include="Controls\GlyphToggleButton.cs" />
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
-    <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
-      <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Views\StickersView.xaml.cs">
       <DependentUpon>StickersView.xaml</DependentUpon>
     </Compile>
@@ -1400,6 +1408,7 @@
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
     <Content Include="Assets\Fonts\SegMVR2.ttf" />
     <Content Include="Assets\Fonts\SEGMDL2.TTF" />
+    <Content Include="Assets\Emoji\apple.ttf" />
     <None Include="Assets\Fonts\Telegram.json" />
     <PRIResource Include="Strings\uk\Additional.resw">
       <SubType>Designer</SubType>
@@ -1506,9 +1515,11 @@
     <PRIResource Include="Strings\zh-CN\Additional.resw">
       <SubType>Designer</SubType>
     </PRIResource>
+    <Content Include="Assets\Mockup\theme_preview_image.jpg" />
     <Content Include="Assets\secureid_ocr_nn.bin" />
     <PRIResource Include="Strings\tr\Resources.resw" />
     <PRIResource Include="Strings\ca\Resources.resw" />
+    <Content Include="Assets\Themes\DarkBlue.unigram-theme" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1616,7 +1627,6 @@
     <Content Include="Assets\Sounds\Sound6.wav" />
     <Content Include="Assets\Webviews\injected.js" />
     <None Include="Package.StoreAssociation.xml" />
-    <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -1645,6 +1655,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\SharedAudioCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\SharedFileCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1669,13 +1683,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Chats\ChatBackground.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\Chats\ChatSearchMask.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Gallery\EmbedUrlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Gallery\GalleryContentView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1686,6 +1700,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Messages\Content\AlbumContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\Content\AnimatedStickerContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1833,13 +1851,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\DeleteMessagesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Views\EditYourAboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\EmojisView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Controls\Views\EmojiView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\InlineBotResultsView.xaml">
       <SubType>Designer</SubType>
@@ -1869,10 +1891,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\DeleteChannelMessageDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Views\EditYourPhotoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1885,7 +1903,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\PlaybackView.xaml">
+    <Page Include="Controls\Views\SettingsEmojiSetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\ThemePreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1937,11 +1959,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\UsersSelectionView.xaml">
+    <Page Include="Controls\Views\UsersPickerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\WebPageView.xaml">
+    <Page Include="Controls\Views\UsersSelectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1982,6 +2004,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\ThemeSystem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ThemeTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2008,6 +2034,10 @@
     <Page Include="Views\ChatPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\ChatInviteLinkPage.xaml">
       <SubType>Designer</SubType>
@@ -2153,37 +2183,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowP2PCallsPage.xaml">
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyShowForwardedPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowCallsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyAlwaysAllowChatInvitesPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyAlwaysShowStatusPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowP2PCallsPage.xaml">
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyShowPhonePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowCallsPage.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyShowPhotoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyNeverAllowChatInvitesPage.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Privacy\SettingsPrivacyNeverShowStatusPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyShowStatusPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2232,6 +2242,14 @@
     <Page Include="Views\Settings\SettingsStorageOptimizationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsThemePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsThemesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsVoIPPage.xaml">
       <SubType>Designer</SubType>
@@ -2411,7 +2429,7 @@
       <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.1.190405004</Version>
+      <Version>2.1.190405004.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml.Core.Direct">
       <Version>2.0.180924001-prerelease</Version>
@@ -2465,7 +2483,12 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Microsoft.Toolkit.Uwp.UI.Lottie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4aff67a105548ee2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\Lottie\Microsoft.Toolkit.Uwp.UI.Lottie.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

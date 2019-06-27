@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -11,12 +12,125 @@
         <ResourceDictionary x:Key="Default">
             <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlAccentAcrylicElementAccentMediumHighBrush" />
+
+            <StaticResource x:Key="UndoViewBackgroundBrush" ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <StaticResource x:Key="NavigationViewChromePaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
             <StaticResource x:Key="NavigationViewAccentPaneBackground" ResourceKey="SystemControlAccentAcrylicElementAccentMediumHighBrush" />
+
+            <StaticResource x:Key="UndoViewBackgroundBrush" ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
+    <Style x:Key="ChatListToggleButtonStyle" TargetType="ToggleButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CombinedStates">
+                                <VisualState x:Name="Normal" >
+
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.(media:RevealBrush.State)" Value="PointerOver" />
+                                        <Setter Target="BorderPresenter.(media:RevealBrush.State)" Value="PointerOver" />
+                                        <Setter Target="BorderPresenter.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.(media:RevealBrush.State)" Value="Pressed" />
+                                        <Setter Target="BorderPresenter.(media:RevealBrush.State)" Value="Pressed" />
+                                        <Setter Target="BorderPresenter.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+
+                                </VisualState>
+                                <VisualState x:Name="Checked">
+
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.(media:RevealBrush.State)" Value="PointerOver" />
+                                        <Setter Target="BorderPresenter.(media:RevealBrush.State)" Value="PointerOver" />
+                                        <Setter Target="BorderPresenter.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.(media:RevealBrush.State)" Value="Pressed" />
+                                        <Setter Target="BorderPresenter.(media:RevealBrush.State)" Value="Pressed" />
+                                        <Setter Target="BorderPresenter.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundPressed}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedDisabled">
+
+                                </VisualState>
+                                <VisualState x:Name="Indeterminate">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundSelected}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IndeterminatePointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.(media:RevealBrush.State)" Value="PointerOver" />
+                                        <Setter Target="BorderPresenter.(media:RevealBrush.State)" Value="PointerOver" />
+                                        <Setter Target="BorderPresenter.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IndeterminatePressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.(media:RevealBrush.State)" Value="PointerOver" />
+                                        <Setter Target="BorderPresenter.(media:RevealBrush.State)" Value="PointerOver" />
+                                        <Setter Target="BorderPresenter.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPressed}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundSelectedPressed}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IndeterminateDisabled">
+
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border x:Name="BorderPresenter"
+                                BorderBrush="{ThemeResource ListViewItemRevealBorderBrush}"
+                                BorderThickness="{ThemeResource ListViewItemRevealBorderThemeThickness}"/>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            Background="{ThemeResource ListViewItemRevealBackground}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            Content="{TemplateBinding Content}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            Padding="{TemplateBinding Padding}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            Grid.Column="1"/>
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!--<Style x:Key="HeaderGlyphButtonStyle" TargetType="controls:GlyphButton">
         <Setter Property="Background" Value="Transparent" />
@@ -37,7 +151,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding Radius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />

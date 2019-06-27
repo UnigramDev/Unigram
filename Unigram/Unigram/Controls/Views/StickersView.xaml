@@ -46,7 +46,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:PivotRadioButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -119,6 +119,12 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="NarrowState"/>
+                <VisualState x:Name="SidebarState">
+                    <VisualState.Setters>
+                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="3"/>
+                        <Setter Target="Header.(Grid.Row)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="FilledState">
                     <VisualState.Setters>
                         <Setter Target="Show.Width" Value="362*"/>
@@ -145,6 +151,8 @@
             <RowDefinition x:Name="HideRow" Height="0"/>
             <RowDefinition x:Name="ShowRow"/>
         </Grid.RowDefinitions>
+
+        <Border x:Name="ShadowElement" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
 
         <Border Background="Transparent" Grid.Column="1" Grid.Row="1">
             <Grid x:Name="BackgroundElement"
@@ -285,7 +293,7 @@
                                       Grid.Row="1">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <controls:MosaicRow HorizontalAlignment="Stretch"/>
+                                        <controls:MosaicRow HorizontalAlignment="Stretch" ItemContextRequested="Animation_ContextRequested"/>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.ItemContainerStyle>
@@ -318,6 +326,7 @@
                                 ItemsSource="{x:Bind StickersSource.View, Mode=OneWay}"
                                 common:FluidGridView.OrientationOnly="False"
                                 ChoosingGroupHeaderContainer="Stickers_ChoosingGroupHeaderContainer"
+                                ChoosingItemContainer="Stickers_ChoosingItemContainer"
                                 ContainerContentChanging="Stickers_ContainerContentChanging"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
@@ -423,7 +432,7 @@
                             <Grid x:Name="ToolbarContainer">
                                 <Border x:Name="Separator"/>
                                 <!--
-                                     Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"-->
+                                     Background="{ThemeResource PageSubHeaderBackgroundBrush}"-->
                                 <ListView x:Name="Toolbar"
                                           ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
                                           Height="{ThemeResource AppBarThemeCompactHeight}"
@@ -643,13 +652,13 @@
                                                                        Style="{StaticResource GlyphPivotRadioButton}"
                                                                        AutomationProperties.Name="{CustomResource FeaturedStickers}"
                                                                        ToolTipService.ToolTip="{CustomResource FeaturedStickers}">
-                                                <Grid Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                                                <Grid Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                       CornerRadius="10"
                                                       MinWidth="20"
                                                       Height="20">
                                                     <TextBlock Text="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay}"
                                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                               Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                                TextAlignment="Center"
                                                                VerticalAlignment="Center"
                                                                TextLineBounds="TrimToBaseline,TrimToCapHeight"
@@ -668,8 +677,6 @@
                                         <TransitionCollection/>
                                     </ListView.ItemContainerTransitions>
                                 </ListView>
-
-                                <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.Row="2"/>
                             </Grid>
                         </Grid>
                     </PivotItem>
@@ -701,6 +708,7 @@
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource Emoji}"
                             ToolTipService.ToolTip="{CustomResource Emoji}"
+                            GroupName="StickersView"
                             Grid.Column="2"/>
 
                         <controls:PivotRadioButton
@@ -713,6 +721,7 @@
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource AccDescrGIFs}"
                             ToolTipService.ToolTip="{CustomResource AccDescrGIFs}"
+                            GroupName="StickersView"
                             Grid.Column="3"/>
                             
                         <controls:PivotRadioButton
@@ -724,6 +733,7 @@
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource AccDescrStickers}"
                             ToolTipService.ToolTip="{CustomResource AccDescrStickers}"
+                            GroupName="StickersView"
                             Grid.Column="4"/>
                     </Grid>
                 </Grid>

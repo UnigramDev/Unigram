@@ -249,7 +249,14 @@ namespace Unigram.Controls.Chats
             }
             else if (alignment == VerticalAlignment.Center)
             {
-                position.Y -= (ActualHeight - selectorItem.ActualHeight) / 2d;
+                if (selectorItem.ActualHeight < ActualHeight - 48)
+                {
+                    position.Y -= (ActualHeight - selectorItem.ActualHeight) / 2d;
+                }
+                else
+                {
+                    position.Y -= 48 + 4;
+                }
             }
             else if (alignment == VerticalAlignment.Bottom)
             {

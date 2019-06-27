@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class CreatePollView : ContentDialog
+    public sealed partial class CreatePollView : TLContentDialog
     {
         private const int MAXIMUM_OPTIONS = 10;
 

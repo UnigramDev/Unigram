@@ -1,5 +1,6 @@
 ﻿using Template10.Common;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.UI.Xaml;
@@ -31,7 +32,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SuggestCommand { get; }
         private async void SuggestExecute()
         {
-            var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
+            var dialog = new TLContentDialog();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = StickersSuggestionMode.All, Content = Strings.Resources.SuggestStickersAll, IsChecked = SuggestStickers == StickersSuggestionMode.All });

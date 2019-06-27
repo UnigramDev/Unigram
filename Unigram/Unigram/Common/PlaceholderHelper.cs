@@ -115,14 +115,14 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetNameForUser(string firstName, string lastName, int side)
+        public static ImageSource GetNameForUser(string firstName, string lastName, int side, int color = 5)
         {
             var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[5], InitialNameStringConverter.Convert(firstName, lastName), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert(firstName, lastName), stream);
 
                     bitmap.SetSource(stream);
                 }
@@ -132,14 +132,14 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetNameForUser(string name, int side)
+        public static ImageSource GetNameForUser(string name, int side, int color = 5)
         {
             var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[5], InitialNameStringConverter.Convert((object)name), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert((object)name), stream);
 
                     bitmap.SetSource(stream);
                 }
@@ -149,14 +149,14 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetNameForChat(string title, int side)
+        public static ImageSource GetNameForChat(string title, int side, int color = 5)
         {
             var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[5], InitialNameStringConverter.Convert(title), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert(title), stream);
 
                     bitmap.SetSource(stream);
                 }

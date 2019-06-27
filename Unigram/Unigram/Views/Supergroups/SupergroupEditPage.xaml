@@ -28,7 +28,7 @@
             Glyph="&#xE10B;"/>
 
         <controls:ScrollViewerBackground 
-            Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}"
+            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"
             Grid.Row="1"/>
@@ -37,7 +37,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,48">
-                <Grid Background="{ThemeResource TelegramSubtitleBarBackgroundBrush}">
+                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -81,6 +81,7 @@
                         <TextBox
                             x:Name="Title"
                             Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
                             MaxLength="{StaticResource ChannelTitleMaxLength}"/>
                     </Border>
                 </Grid>
@@ -89,6 +90,7 @@
                     <TextBox
                         x:Name="About"
                         Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                         MaxLength="{StaticResource ChannelAboutMaxLength}"
                         PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
                         TextWrapping="Wrap"

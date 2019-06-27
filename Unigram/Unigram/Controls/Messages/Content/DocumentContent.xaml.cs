@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
@@ -24,16 +25,18 @@ namespace Unigram.Controls.Messages.Content
         Download,
         Downloading,
         Uploading,
-        Open,
+        Confirm,
+        Document,
+        Photo,
+        Animation,
         Ttl,
         Play,
         Pause,
+        Theme,
     }
 
     public sealed partial class DocumentContent : Grid, IContentWithFile
     {
-        private MessageContentState _oldState;
-
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
@@ -46,6 +49,7 @@ namespace Unigram.Controls.Messages.Content
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
+
             var document = GetContent(message.Content);
             if (document == null)
             {
@@ -56,7 +60,12 @@ namespace Unigram.Controls.Messages.Content
 
             if (document.Thumbnail != null)
             {
-                UpdateThumbnail(message, document.Thumbnail.Photo);
+                UpdateThumbnail(message, document.Thumbnail, document.Thumbnail.Photo);
+            }
+            else
+            {
+                Texture.Background = null;
+                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
             }
 
             UpdateFile(message, document.DocumentValue);
@@ -81,7 +90,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (document.Thumbnail != null && document.Thumbnail.Photo.Id == file.Id)
             {
-                UpdateThumbnail(message, file);
+                UpdateThumbnail(message, document.Thumbnail, file);
                 return;
             }
             else if (document.DocumentValue.Id != file.Id)
@@ -93,27 +102,23 @@ namespace Unigram.Controls.Messages.Content
             if (file.Local.IsDownloadingActive)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Downloading);
+                Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
-
-                _oldState = MessageContentState.Downloading;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
                 //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(Icons.Cancel, _oldState != MessageContentState.None && _oldState != MessageContentState.Uploading);
+                Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
-
-                _oldState = MessageContentState.Uploading;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 //Button.Glyph = Icons.Download;
-                Button.SetGlyph(Icons.Download, _oldState != MessageContentState.None && _oldState != MessageContentState.Download);
+                Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
@@ -122,45 +127,59 @@ namespace Unigram.Controls.Messages.Content
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
-
-                _oldState = MessageContentState.Download;
             }
             else
             {
+                var theme = document.FileName.EndsWith(".unigram-theme");
+
                 //Button.Glyph = Icons.Document;
-                Button.SetGlyph(Icons.Document, _oldState != MessageContentState.None && _oldState != MessageContentState.Open);
+                Button.SetGlyph(file.Id, theme ? MessageContentState.Theme : MessageContentState.Document);
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
-
-                _oldState = MessageContentState.Open;
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, PhotoSize photoSize, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                //if (Texture.Source == null)
-                //{
-                //    Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
-                //}
+                double ratioX = (double)48 / photoSize.Width;
+                double ratioY = (double)48 / photoSize.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(photoSize.Width * ratio);
+                var height = (int)(photoSize.Height * ratio);
+
+                Texture.Background = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
+
+                Texture.Background = null;
+                Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageDocument)
+            if (content is MessageDocument document)
             {
+#if DEBUG_LOTTIE
+                return !(document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json"));
+#else
                 return true;
+#endif
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
+#if DEBUG_LOTTIE
+                return text.WebPage.Document != null && !(text.WebPage.Document.FileName.StartsWith("tg_secret_sticker") && text.WebPage.Document.FileName.EndsWith("json"));
+#else
                 return text.WebPage.Document != null;
+#endif
             }
 
             return false;

@@ -25,8 +25,6 @@ namespace Unigram.Views.Settings.Privacy
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsPrivacyAllowCallsViewModel>();
-
-            NavigationCacheMode = NavigationCacheMode.Required;
         }
 
         #region Binding
@@ -42,5 +40,10 @@ namespace Unigram.Views.Settings.Privacy
         }
 
         #endregion
+
+        private void P2PCall_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPrivacyAllowP2PCallsPage));
+        }
     }
 }
