@@ -331,6 +331,19 @@
                         <Setter Target="StickersPanel.Margin" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="SidebarState">
+                    <VisualState.Setters>
+                        <Setter Target="KeyboardItems.(Grid.Column)" Value="1"/>
+                        <Setter Target="KeyboardItems.(Grid.Row)" Value="0"/>
+                        <Setter Target="KeyboardItems.(Grid.RowSpan)" Value="5"/>
+                        <Setter Target="StickersPanel.Width" Value="320"/>
+                        <Setter Target="StickersPanel.Height" Value="Auto"/>
+                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
+                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
+                        <Setter Target="StickersPanel.Margin" Value="0"/>
+                        <Setter Target="btnExpand.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="FilledState">
                     <VisualState.Setters>
                         <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
@@ -370,6 +383,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        
         <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" Grid.RowSpan="5"/>
 
         <Grid Padding="0,0,0,4" VerticalAlignment="Bottom" Grid.RowSpan="4">

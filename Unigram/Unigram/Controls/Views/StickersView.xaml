@@ -119,6 +119,12 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="NarrowState"/>
+                <VisualState x:Name="SidebarState">
+                    <VisualState.Setters>
+                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="3"/>
+                        <Setter Target="Header.(Grid.Row)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="FilledState">
                     <VisualState.Setters>
                         <Setter Target="Show.Width" Value="362*"/>

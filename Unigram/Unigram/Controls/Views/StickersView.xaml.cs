@@ -30,6 +30,7 @@ using Unigram.ViewModels.Delegates;
 using System.Reactive.Linq;
 using Windows.Foundation.Metadata;
 using Unigram.Converters;
+using Unigram.Views;
 
 namespace Unigram.Controls.Views
 {
@@ -46,7 +47,7 @@ namespace Unigram.Controls.Views
         private FileContext<ViewModels.Dialogs.StickerViewModel> _stickers = new FileContext<ViewModels.Dialogs.StickerViewModel>();
         private FileContext<Animation> _animations = new FileContext<Animation>();
 
-        private bool _widget;
+        private StickersPanelMode _widget;
 
         public StickersView()
         {
@@ -111,12 +112,16 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public void SetView(bool widget)
+        public void SetView(StickersPanelMode mode)
         {
-            _widget = widget;
+            _widget = mode;
 
-            Emojis?.SetView(widget);
-            VisualStateManager.GoToState(this, widget ? "FilledState" : "NarrowState", false);
+            Emojis?.SetView(mode);
+            VisualStateManager.GoToState(this, mode == StickersPanelMode.Overlay
+                ? "FilledState"
+                : mode == StickersPanelMode.Sidebar
+                ? "SidebarState"
+                : "NarrowState", false);
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
