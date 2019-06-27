@@ -249,6 +249,7 @@ namespace Unigram.Services
         {
             //Logs.Logger.Info(Logs.LoggerTag.Notifications, "UpdateHavePendingNotifications: " + update.HavePendingNotifications);
             //_suppress = update.HavePendingNotifications;
+            //_suppress = update.HaveUnreceivedNotifications || update.HaveDelayedNotifications;
         }
 
         public async void Handle(UpdateNotificationGroup update)

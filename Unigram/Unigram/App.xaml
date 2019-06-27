@@ -137,7 +137,7 @@
                     <SolidColorBrush x:Key="ExpanderButtonStyleIndeterminateDisabledForegroundBrush" Color="{StaticResource SystemBaseHighColor}" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-            
+
             <SolidColorBrush x:Key="GridViewItemCheckBrush" Color="White"/>
 
             <x:Double x:Key="PaneToggleButtonSize">48</x:Double>

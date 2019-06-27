@@ -547,7 +547,7 @@
                     <DataTemplate>
                         <StackPanel Margin="0,12">
                             <controls:ProfilePicture IsHitTestVisible="False" Width="48" Height="48" Margin="8,0"/>
-                            <TextBlock Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </StackPanel>
                     </DataTemplate>
                 </GridView.ItemTemplate>
@@ -642,7 +642,7 @@
                                             </Border>
                                         </Grid>
 
-                                        <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                        <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -687,6 +687,7 @@
                                     <TextBlock VerticalAlignment="Top"
                                                Style="{StaticResource CaptionTextBlockStyle}"
                                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="NoWrap"
                                                Grid.Column="1"

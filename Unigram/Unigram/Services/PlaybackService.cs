@@ -158,6 +158,12 @@ namespace Unigram.Services
             if (sender.Source is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
             {
                 CurrentPlayback = item;
+
+                var message = item.Message;
+                if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
+                {
+                    _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                }
             }
         }
 

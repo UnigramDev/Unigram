@@ -148,9 +148,10 @@ namespace Unigram.Controls
                         {
                             button.Content = inlineButton.Text;
 
-                            if (inlineButton.Type is InlineKeyboardButtonTypeUrl)
+                            if (inlineButton.Type is InlineKeyboardButtonTypeUrl typeUrl)
                             {
                                 button.Glyph = "\uE143";
+                                ToolTipService.SetToolTip(button, typeUrl.Url);
                             }
                             else if (inlineButton.Type is InlineKeyboardButtonTypeSwitchInline)
                             {
