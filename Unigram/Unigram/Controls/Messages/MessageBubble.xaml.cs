@@ -257,6 +257,10 @@ namespace Unigram.Controls.Messages
                 {
                     message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
                 }
+                else if (chatEvent.Event.Action is ChatEventPollStopped pollStopped)
+                {
+                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, pollStopped.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
+                }
             }
         }
 

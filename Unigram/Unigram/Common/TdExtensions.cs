@@ -817,6 +817,8 @@ namespace Unigram.Common
                                 return messageEdited.NewMessage.IsService();
                             case ChatEventMessagePinned messagePinned:
                                 return messagePinned.Message.IsService();
+                            case ChatEventPollStopped pollStopped:
+                                return pollStopped.Message.IsService();
                         }
                     }
                     return true;

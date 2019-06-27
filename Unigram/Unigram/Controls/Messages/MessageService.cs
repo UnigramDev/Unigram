@@ -114,6 +114,8 @@ namespace Unigram.Controls.Messages
                             return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message), active) : UpdateMessagePinned(message, messagePinned, active);
                         case ChatEventUsernameChanged usernameChanged:
                             return UpdateUsernameChanged(message, usernameChanged, active);
+                        case ChatEventPollStopped pollStopped:
+                            return UpdatePollStopped(message, pollStopped, active);
                         default:
                             return (null, null);
                     }
@@ -180,7 +182,7 @@ namespace Unigram.Controls.Messages
 
             var fromUser = message.GetSenderUser();
 
-            if (invitesToggled.AnyoneCanInvite)
+            if (invitesToggled.CanInviteUsers)
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogToggledInvitesOn, "un1", fromUser, ref entities);
             }
@@ -300,6 +302,18 @@ namespace Unigram.Controls.Messages
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogChangedGroupLink, "un1", fromUser, ref entities);
             }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdatePollStopped(MessageViewModel message, ChatEventPollStopped pollStopped, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSenderUser();
+
+            content = ReplaceWithLink(Strings.Resources.EventLogStopPoll, "un1", fromUser, ref entities);
 
             return (content, entities);
         }
