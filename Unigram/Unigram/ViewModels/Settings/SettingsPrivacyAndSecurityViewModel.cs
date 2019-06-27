@@ -48,8 +48,8 @@ namespace Unigram.ViewModels.Settings
             ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
             AccountTTLCommand = new RelayCommand(AccountTTLExecute);
 
-            //Children.Add(_showForwardedRules);
-            //Children.Add(_showPhoneRules);
+            Children.Add(_showForwardedRules);
+            Children.Add(_showPhotoRules);
             //Children.Add(_showPhoneRules);
             Children.Add(_showStatusRules);
             Children.Add(_allowCallsRules);

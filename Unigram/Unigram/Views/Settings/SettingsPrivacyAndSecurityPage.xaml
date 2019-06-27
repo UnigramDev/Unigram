@@ -68,14 +68,14 @@
                         Content="{CustomResource PrivacyLastSeen}"
                         Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
                         Click="StatusTimestamp_Click"/>
-                    <!--<controls:BadgeButton
+                    <controls:BadgeButton
                         Content="{CustomResource PrivacyProfilePhoto}"
                         Badge="{x:Bind ViewModel.ShowPhotoRules.Badge, Mode=OneWay}"
                         Click="ProfilePhoto_Click"/>
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyForwards}"
                         Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"
-                        Click="Forwards_Click"/>-->
+                        Click="Forwards_Click"/>
                     <controls:BadgeButton
                         Content="{CustomResource Calls}"
                         Badge="{x:Bind ViewModel.AllowCallsRules.Badge, Mode=OneWay}"

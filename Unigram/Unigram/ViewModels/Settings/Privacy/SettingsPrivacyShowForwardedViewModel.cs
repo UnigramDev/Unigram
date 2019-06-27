@@ -11,7 +11,7 @@ namespace Unigram.ViewModels.Settings.Privacy
     public class SettingsPrivacyShowForwardedViewModel : SettingsPrivacyViewModelBase
     {
         public SettingsPrivacyShowForwardedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, new UserPrivacySettingShowStatus())
+            : base(protoService, cacheService, settingsService, aggregator, new UserPrivacySettingShowLinkInForwardedMessages())
         {
         }
     }
