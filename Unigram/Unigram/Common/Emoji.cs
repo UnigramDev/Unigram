@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.Services.Settings;
 
 namespace Unigram.Common
@@ -198,23 +199,23 @@ namespace Unigram.Common
             return results;
         }
 
-        public static List<EmojiGroup> Search(string query, EmojiSkinTone skin)
+        public static async Task<List<EmojiGroup>> SearchAsync(IProtoService protoService, string query, EmojiSkinTone skin)
         {
             var result = new List<EmojiData>();
 
-            var suggestions = EmojiSuggestion.GetSuggestions(query);
-            if (suggestions != null)
+            var response = await protoService.SendAsync(new SearchEmojis(query, false));
+            if (response is Emojis suggestions)
             {
-                foreach (var item in suggestions)
+                foreach (var item in suggestions.EmojisValue)
                 {
-                    var emoji = item.Emoji.ToString();
+                    var emoji = item;
                     if (EmojiGroupInternal._skinEmojis.Contains(emoji) || EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
                     {
                         result.Add(new EmojiSkinData(emoji, skin));
                     }
                     else
                     {
-                        result.Add(new EmojiData(item.Emoji));
+                        result.Add(new EmojiData(item));
                     }
                 }
             }

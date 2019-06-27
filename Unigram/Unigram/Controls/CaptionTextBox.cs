@@ -158,7 +158,7 @@ namespace Unigram.Controls
             }
             else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
             {
-                View.Autocomplete = EmojiSuggestion.GetSuggestions(replacement.Length < 2 ? replacement : replacement.ToLower());
+                View.Autocomplete = new ChatTextBox.EmojiCollection(ViewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower());
             }
             else
             {

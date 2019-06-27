@@ -506,7 +506,7 @@ namespace Unigram.Controls.Chats
             }
             else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
             {
-                autocomplete = EmojiSuggestion.GetSuggestions(replacement.Length < 2 ? replacement : replacement.ToLower());
+                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower());
                 return true;
             }
             else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
@@ -597,6 +597,73 @@ namespace Unigram.Controls.Chats
                     }
 
                     return new LoadMoreItemsResult { Count = count };
+                });
+            }
+
+            public bool HasMoreItems => _hasMore;
+        }
+
+        public class EmojiCollection : MvxObservableCollection<EmojiData>, ISupportIncrementalLoading
+        {
+            private readonly IProtoService _protoService;
+            private readonly string _query;
+
+            private bool _hasMore = true;
+
+            public EmojiCollection(IProtoService protoService, string query)
+            {
+                _protoService = protoService;
+                _query = query;
+            }
+
+            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            {
+                return AsyncInfo.Run(async token =>
+                {
+                    count = 0;
+                    _hasMore = false;
+
+                    var response = await _protoService.SendAsync(new SearchEmojis(_query, false));
+                    if (response is Emojis emojis)
+                    {
+                        foreach (var emoji in emojis.EmojisValue)
+                        {
+                            Add(new EmojiData(emoji));
+                            count++;
+                        }
+                    }
+
+                    return new LoadMoreItemsResult { Count = count };
+                });
+            }
+
+            public bool HasMoreItems => _hasMore;
+        }
+
+        public class EmojiGroupCollection : MvxObservableCollection<List<EmojiGroup>>, ISupportIncrementalLoading
+        {
+            private readonly IProtoService _protoService;
+            private readonly string _query;
+            private readonly EmojiSkinTone _skin;
+
+            private bool _hasMore = true;
+
+            public EmojiGroupCollection(IProtoService protoService, string query, EmojiSkinTone skin)
+            {
+                _protoService = protoService;
+                _query = query;
+                _skin = skin;
+            }
+
+            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            {
+                return AsyncInfo.Run(async token =>
+                {
+                    _hasMore = false;
+
+                    Add(await Emoji.SearchAsync(_protoService, _query, _skin));
+
+                    return new LoadMoreItemsResult { Count = 1 };
                 });
             }
 

@@ -88,9 +88,9 @@ namespace Unigram.Controls
             UpdateFile(protoService, sticker.StickerValue);
 
             var response = await protoService.SendAsync(new GetStickerEmojis(new InputFileId(sticker.StickerValue.Id)));
-            if (response is StickerEmojis emojis)
+            if (response is Emojis emojis)
             {
-                Title.Text = string.Join(" ", emojis.Emojis);
+                Title.Text = string.Join(" ", emojis.EmojisValue);
             }
         }
 

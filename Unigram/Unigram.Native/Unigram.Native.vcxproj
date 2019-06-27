@@ -244,9 +244,6 @@
     <ClInclude Include="BufferLock.h" />
     <ClInclude Include="ByteStreamHandler.h" />
     <ClInclude Include="DeviceLostHelper.h" />
-    <ClInclude Include="EmojiSuggestion.h" />
-    <ClInclude Include="emoji_suggestions.h" />
-    <ClInclude Include="emoji_suggestions_data.h" />
     <ClInclude Include="FinalizeAsyncOperation.h" />
     <ClInclude Include="MediaFoundationExtensions.h" />
     <ClInclude Include="MediaSink.h" />
@@ -311,9 +308,6 @@
     <ClCompile Include="BufferLock.cpp" />
     <ClCompile Include="ByteStreamHandler.cpp" />
     <ClCompile Include="DeviceLostHelper.cpp" />
-    <ClCompile Include="EmojiSuggestion.cpp" />
-    <ClCompile Include="emoji_suggestions.cpp" />
-    <ClCompile Include="emoji_suggestions_data.cpp" />
     <ClCompile Include="FinalizeAsyncOperation.cpp" />
     <ClCompile Include="GIF\GIFByteStreamHandler.cpp" />
     <ClCompile Include="GIF\GIFMediaSource.cpp" />

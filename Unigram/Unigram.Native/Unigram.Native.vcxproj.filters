@@ -97,9 +97,6 @@
     <ClCompile Include="NativeUtils.cpp" />
     <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="DeviceLostHelper.cpp" />
-    <ClCompile Include="EmojiSuggestion.cpp" />
-    <ClCompile Include="emoji_suggestions.cpp" />
-    <ClCompile Include="emoji_suggestions_data.cpp" />
     <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="Mrz\MrzRecognizer.cpp">
       <Filter>Mrz</Filter>
@@ -236,9 +233,6 @@
     <ClInclude Include="NativeUtils.h" />
     <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="DeviceLostHelper.h" />
-    <ClInclude Include="EmojiSuggestion.h" />
-    <ClInclude Include="emoji_suggestions.h" />
-    <ClInclude Include="emoji_suggestions_data.h" />
     <ClInclude Include="PlaceholderImageHelper.h" />
     <ClInclude Include="Mrz\MrzRecognizer.h">
       <Filter>Mrz</Filter>

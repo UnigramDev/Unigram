@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
@@ -29,7 +30,7 @@ namespace Unigram.Selectors
             {
                 return CommandTemplate;
             }
-            else if (item is EmojiSuggestion)
+            else if (item is EmojiData)
             {
                 return EmojiTemplate;
             }

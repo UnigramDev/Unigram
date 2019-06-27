@@ -200,13 +200,13 @@ namespace Unigram.Controls.Views
 
             foreach (ViewModels.Dialogs.StickerSetViewModel stickerSet in Toolbar.Items)
             {
-                if (stickerSet.Covers == null)
+                if (stickerSet.Thumbnail == null && stickerSet.Covers == null)
                 {
                     continue;
                 }
 
-                var cover = stickerSet.Covers.FirstOrDefault();
-                if (cover == null || cover.Thumbnail == null)
+                var cover = stickerSet.Thumbnail ?? stickerSet.Covers.FirstOrDefault()?.Thumbnail;
+                if (cover == null)
                 {
                     continue;
                 }
@@ -624,19 +624,19 @@ namespace Unigram.Controls.Views
             else if (args.Item is ViewModels.Dialogs.StickerSetViewModel sticker)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as Image;
-                if (content == null || sticker == null || sticker.Covers == null)
+                if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
                 {
                     return;
                 }
 
-                var cover = sticker.Covers.FirstOrDefault();
-                if (cover == null || cover.Thumbnail == null)
+                var cover = sticker.Thumbnail ?? sticker.Covers.FirstOrDefault()?.Thumbnail;
+                if (cover == null)
                 {
                     content.Source = null;
                     return;
                 }
 
-                var file = cover.Thumbnail.Photo;
+                var file = cover.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
                     content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);

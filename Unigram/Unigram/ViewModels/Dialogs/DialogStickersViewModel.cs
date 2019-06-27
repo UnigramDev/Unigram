@@ -745,6 +745,8 @@ namespace Unigram.ViewModels.Dialogs
         public string Title => _set?.Title ?? _info.Title;
         public long Id => _set?.Id ?? _info.Id;
 
+        public PhotoSize Thumbnail => _set?.Thumbnail ?? _info.Thumbnail;
+
         public IList<Sticker> Covers { get; private set; }
     }
 
@@ -899,26 +901,24 @@ namespace Unigram.ViewModels.Dialogs
                         if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
                             Add(new StickerSetViewModel(_protoService, _aggregator,
-                                new StickerSetInfo(0, _query, "emoji", false, false, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                                new StickerSet(0, _query, "emoji", false, false, false, false, false, stickers.StickersValue, new StickerEmojis[0])));
+                                new StickerSetInfo(0, _query, "emoji", null, false, false, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
+                                new StickerSet(0, _query, "emoji", null, false, false, false, false, false, stickers.StickersValue, new Emojis[0])));
                         }
                     }
                     else
                     {
-                        var emojis = EmojiSuggestion.GetSuggestions(_query);
-                        if (emojis == null)
+                        var emojis = await _protoService.SendAsync(new SearchEmojis(_query, false)) as Emojis;
+                        if (emojis != null)
                         {
-                            emojis = new EmojiSuggestion[0];
-                        }
-
-                        for (int i = 0; i < Math.Min(10, emojis.Length); i++)
-                        {
-                            var response = await _protoService.SendAsync(new GetStickers(emojis[i].Emoji, 100));
-                            if (response is Stickers stickers && stickers.StickersValue.Count > 0)
+                            for (int i = 0; i < Math.Min(10, emojis.EmojisValue.Count); i++)
                             {
-                                Add(new StickerSetViewModel(_protoService, _aggregator,
-                                    new StickerSetInfo(0, emojis[i].Emoji, "emoji", false, false, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                                    new StickerSet(0, emojis[i].Emoji, "emoji", false, false, false, false, false, stickers.StickersValue, new StickerEmojis[0])));
+                                var response = await _protoService.SendAsync(new GetStickers(emojis.EmojisValue[i], 100));
+                                if (response is Stickers stickers && stickers.StickersValue.Count > 0)
+                                {
+                                    Add(new StickerSetViewModel(_protoService, _aggregator,
+                                        new StickerSetInfo(0, emojis.EmojisValue[i], "emoji", null, false, false, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
+                                        new StickerSet(0, emojis.EmojisValue[i], "emoji", null, false, false, false, false, false, stickers.StickersValue, new Emojis[0])));
+                                }
                             }
                         }
                     }

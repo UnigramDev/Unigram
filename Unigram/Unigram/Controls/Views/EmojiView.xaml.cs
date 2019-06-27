@@ -7,7 +7,9 @@ using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Controls.Chats;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -25,6 +27,8 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class EmojisView : UserControl
     {
+        public TLViewModelBase ViewModel => DataContext as TLViewModelBase;
+
         public event ItemClickEventHandler ItemClick;
 
         private EmojiSkinTone _selected;
@@ -128,7 +132,7 @@ namespace Unigram.Controls.Views
             ItemClick?.Invoke(this, e);
         }
 
-        private void FieldEmoji_TextChanged(object sender, TextChangedEventArgs e)
+        private async void FieldEmoji_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(FieldEmoji.Text))
             {
@@ -136,7 +140,7 @@ namespace Unigram.Controls.Views
             }
             else
             {
-                EmojiCollection.Source = Emoji.Search(FieldEmoji.Text, _selected);
+                EmojiCollection.Source = await Emoji.SearchAsync(ViewModel.ProtoService, FieldEmoji.Text, _selected);
             }
         }
 
