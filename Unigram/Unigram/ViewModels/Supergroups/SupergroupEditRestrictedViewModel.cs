@@ -95,45 +95,44 @@ namespace Unigram.ViewModels.Supergroups
 
                 if (member.Status is ChatMemberStatusRestricted restricted)
                 {
-                    CanAddWebPagePreviews = restricted.CanAddWebPagePreviews;
-                    CanSendOtherMessages = restricted.CanSendOtherMessages;
-                    CanSendMediaMessages = restricted.CanSendMediaMessages;
-                    CanSendMessages = restricted.CanSendMessages;
-                    CanViewMessages = true;
+                    CanChangeInfo = restricted.Permissions.CanChangeInfo;
+                    CanPinMessages = restricted.Permissions.CanPinMessages;
+                    CanInviteUsers = restricted.Permissions.CanInviteUsers;
+                    CanSendPolls = restricted.Permissions.CanSendPolls;
+                    CanAddWebPagePreviews = restricted.Permissions.CanAddWebPagePreviews;
+                    CanSendOtherMessages = restricted.Permissions.CanSendOtherMessages;
+                    CanSendMediaMessages = restricted.Permissions.CanSendMediaMessages;
+                    CanSendMessages = restricted.Permissions.CanSendMessages;
                     UntilDate = restricted.RestrictedUntilDate;
                 }
-                else
+                else if (member.Status is ChatMemberStatusBanned banned)
                 {
+                    CanChangeInfo = false;
+                    CanPinMessages = false;
+                    CanInviteUsers = false;
+                    CanSendPolls = false;
                     CanAddWebPagePreviews = false;
                     CanSendOtherMessages = false;
                     CanSendMediaMessages = false;
                     CanSendMessages = false;
-                    CanViewMessages = !(member.Status is ChatMemberStatusBanned);
-                    UntilDate = member.Status is ChatMemberStatusBanned banned ? banned.BannedUntilDate : 0;
+                    UntilDate = banned.BannedUntilDate;
+                }
+                else
+                {
+                    CanChangeInfo = chat.Permissions.CanChangeInfo;
+                    CanPinMessages = chat.Permissions.CanPinMessages;
+                    CanInviteUsers = chat.Permissions.CanInviteUsers;
+                    CanSendPolls = chat.Permissions.CanSendPolls;
+                    CanAddWebPagePreviews = chat.Permissions.CanAddWebPagePreviews;
+                    CanSendOtherMessages = chat.Permissions.CanSendOtherMessages;
+                    CanSendMediaMessages = chat.Permissions.CanSendMediaMessages;
+                    CanSendMessages = chat.Permissions.CanSendMessages;
+                    UntilDate = 0;
                 }
             }
         }
 
         #region Flags
-
-        private bool _canViewMessages;
-        public bool CanViewMessages
-        {
-            get
-            {
-                return _canViewMessages;
-            }
-            set
-            {
-                Set(ref _canViewMessages, value);
-
-                // Don't allow send messages
-                if (!value && _canSendMessages)
-                {
-                    CanSendMessages = false;
-                }
-            }
-        }
 
         private bool _canSendMessages;
         public bool CanSendMessages
@@ -145,12 +144,6 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canSendMessages, value);
-
-                // Allow view
-                if (value && !_canViewMessages)
-                {
-                    CanViewMessages = true;
-                }
 
                 // Don't allow send media
                 if (!value && _canSendMediaMessages)
@@ -210,6 +203,24 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
+        private bool _canSendPolls;
+        public bool CanSendPolls
+        {
+            get
+            {
+                return _canSendPolls;
+            }
+            set
+            {
+                Set(ref _canSendPolls, value);
+
+                if (value && !_canSendMediaMessages)
+                {
+                    CanSendMediaMessages = true;
+                }
+            }
+        }
+
         private bool _canAddWebPagePreviews;
         public bool CanAddWebPagePreviews
         {
@@ -225,6 +236,47 @@ namespace Unigram.ViewModels.Supergroups
                 {
                     CanSendMediaMessages = true;
                 }
+            }
+        }
+
+
+
+        private bool _canInviteUsers;
+        public bool CanInviteUsers
+        {
+            get
+            {
+                return _canInviteUsers;
+            }
+            set
+            {
+                Set(ref _canInviteUsers, value);
+            }
+        }
+
+        private bool _canPinMessages;
+        public bool CanPinMessages
+        {
+            get
+            {
+                return _canPinMessages;
+            }
+            set
+            {
+                Set(ref _canPinMessages, value);
+            }
+        }
+
+        private bool _canChangeInfo;
+        public bool CanChangeInfo
+        {
+            get
+            {
+                return _canChangeInfo;
+            }
+            set
+            {
+                Set(ref _canChangeInfo, value);
             }
         }
 
@@ -276,12 +328,19 @@ namespace Unigram.ViewModels.Supergroups
 
             var status = new ChatMemberStatusRestricted
             {
-                IsMember = _canViewMessages,
-                CanAddWebPagePreviews = _canAddWebPagePreviews,
-                CanSendOtherMessages = _canSendOtherMessages,
-                CanSendMediaMessages = _canSendMediaMessages,
-                CanSendMessages = _canSendMessages,
-                RestrictedUntilDate = _untilDate
+                IsMember = true,
+                RestrictedUntilDate = _untilDate,
+                Permissions = new ChatPermissions
+                {
+                    CanChangeInfo = _canChangeInfo,
+                    CanPinMessages = _canPinMessages,
+                    CanInviteUsers = _canInviteUsers,
+                    CanAddWebPagePreviews = _canAddWebPagePreviews,
+                    CanSendPolls = _canSendPolls,
+                    CanSendOtherMessages = _canSendOtherMessages,
+                    CanSendMediaMessages = _canSendMediaMessages,
+                    CanSendMessages = _canSendMessages,
+                }
             };
 
             var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.UserId, status));

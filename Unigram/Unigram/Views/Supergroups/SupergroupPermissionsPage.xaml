@@ -53,6 +53,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock
                         Text="{CustomResource ChannelPermissions}"
@@ -65,6 +66,12 @@
                         Click="Search_Click"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>
+
+                    <controls:GlyphButton
+                        Glyph="&#xE10B;"
+                        Command="{x:Bind ViewModel.SendCommand}"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Grid.Column="2"/>
                 </Grid>
                 <TextBox x:Name="SearchField"
                          Style="{StaticResource QueryTextBoxStyle}"
@@ -119,7 +126,7 @@
                             <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendOtherMessages, Mode=TwoWay}"
                                           Header="{CustomResource UserRestrictionsSendStickers}"
                                           Style="{StaticResource CheckButtonStyle}"/>
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendPollMessages, Mode=TwoWay}"
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendPolls, Mode=TwoWay}"
                                           Header="{CustomResource UserRestrictionsSendPolls}"
                                           Style="{StaticResource CheckButtonStyle}"/>
                             <ToggleSwitch IsOn="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"

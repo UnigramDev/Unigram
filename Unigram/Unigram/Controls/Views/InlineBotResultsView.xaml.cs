@@ -59,39 +59,13 @@ namespace Unigram.Controls.Views
 
         public event ItemClickEventHandler ItemClick;
 
-        private Visibility ConvertBannedRights(Chat chat, bool invert)
+        public void UpdateChatPermissions(Chat chat)
         {
-            if (chat != null && chat.Type is ChatTypeSupergroup super)
-            {
-                var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
-                if (supergroup != null && supergroup.Status is ChatMemberStatusRestricted restricted && !restricted.CanSendOtherMessages)
-                {
-                    return invert ? Visibility.Collapsed : Visibility.Visible;
-                }
-            }
+            var rights = ViewModel.VerifyRights(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachInlineRestricted, Strings.Resources.AttachInlineRestrictedForever, Strings.Resources.AttachInlineRestricted, out string label);
 
-            return invert ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private string ConvertBannedRights(Chat chat)
-        {
-            if (chat != null && chat.Type is ChatTypeSupergroup super)
-            {
-                var supergroup = ViewModel.ProtoService.GetSupergroup(super.SupergroupId);
-                if (supergroup != null && supergroup.Status is ChatMemberStatusRestricted restricted && !restricted.CanSendOtherMessages)
-                {
-                    if (restricted.IsForever())
-                    {
-                        return Strings.Resources.AttachInlineRestrictedForever;
-                    }
-                    else
-                    {
-                        return string.Format(Strings.Resources.AttachInlineRestricted, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
-                    }
-                }
-            }
-
-            return null;
+            LayoutRoot.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
+            PermissionsPanel.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
+            PermissionsLabel.Text = label ?? string.Empty;
         }
 
         #region Gifs

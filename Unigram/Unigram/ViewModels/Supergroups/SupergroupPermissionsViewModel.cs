@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views.Supergroups;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -15,10 +16,31 @@ namespace Unigram.ViewModels.Supergroups
         public SupergroupPermissionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
             : base(protoService, cacheService, settingsService, aggregator, null, query => new SupergroupMembersFilterRestricted(query))
         {
+            SendCommand = new RelayCommand(SendExecute);
             AddCommand = new RelayCommand(AddExecute);
             BannedCommand = new RelayCommand(BannedExecute);
 
             ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            await  base.OnNavigatedToAsync(parameter, mode, state);
+
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            CanChangeInfo = chat.Permissions.CanChangeInfo;
+            CanPinMessages = chat.Permissions.CanPinMessages;
+            CanInviteUsers = chat.Permissions.CanInviteUsers;
+            CanSendPolls = chat.Permissions.CanSendPolls;
+            CanAddWebPagePreviews = chat.Permissions.CanAddWebPagePreviews;
+            CanSendOtherMessages = chat.Permissions.CanSendOtherMessages;
+            CanSendMediaMessages = chat.Permissions.CanSendMediaMessages;
+            CanSendMessages = chat.Permissions.CanSendMessages;
         }
 
         #region Flags
@@ -92,16 +114,16 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        private bool _canSendPollMessages;
-        public bool CanSendPollMessages
+        private bool _canSendPolls;
+        public bool CanSendPolls
         {
             get
             {
-                return _canSendPollMessages;
+                return _canSendPolls;
             }
             set
             {
-                Set(ref _canSendPollMessages, value);
+                Set(ref _canSendPolls, value);
 
                 // Allow send media
                 if (value && !_canSendMediaMessages)
@@ -171,6 +193,39 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         #endregion
+
+        public RelayCommand SendCommand { get; }
+        private async void SendExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var permissions = new ChatPermissions
+            {
+                CanChangeInfo = _canChangeInfo,
+                CanPinMessages = _canPinMessages,
+                CanInviteUsers = _canInviteUsers,
+                CanAddWebPagePreviews = _canAddWebPagePreviews,
+                CanSendPolls = _canSendPolls,
+                CanSendOtherMessages = _canSendOtherMessages,
+                CanSendMediaMessages = _canSendMediaMessages,
+                CanSendMessages = _canSendMessages
+            };
+
+            var response = await ProtoService.SendAsync(new SetChatPermissions(chat.Id, permissions));
+            if (response is Error error)
+            {
+
+            }
+            else
+            {
+                NavigationService.GoBack();
+                NavigationService.Frame.ForwardStack.Clear();
+            }
+        }
 
         public RelayCommand AddCommand { get; }
         private void AddExecute()

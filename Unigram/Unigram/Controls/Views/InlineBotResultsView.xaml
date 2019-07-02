@@ -107,7 +107,7 @@
                  </Binding.FallbackValue>
                  </Binding>
                  </Grid.Visibility>-->
-            <Grid Visibility="{x:Bind ConvertBannedRights(ViewModel.Chat, x:True), Mode=OneWay}">
+            <Grid x:Name="LayoutRoot">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
@@ -153,8 +153,8 @@
                 </controls:OrientableListView>
             </Grid>
 
-            <Border Visibility="{x:Bind ConvertBannedRights(ViewModel.Chat, x:False), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <TextBlock Text="{x:Bind ConvertBannedRights(ViewModel.Chat), Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
+            <Border x:Name="PermissionsPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <TextBlock x:Name="PermissionsLabel" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
             </Border>
         </Grid>
     </Grid>

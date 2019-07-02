@@ -1402,6 +1402,50 @@ namespace Unigram.Common
                 supergroup.Status is ChatMemberStatusRestricted;
         }
 
+        public static int Count(this ChatPermissions permissions)
+        {
+            var count = 0;
+            if (permissions.CanAddWebPagePreviews)
+            {
+                count++;
+            }
+            if (permissions.CanChangeInfo)
+            {
+                count++;
+            }
+            if (permissions.CanInviteUsers)
+            {
+                count++;
+            }
+            if (permissions.CanPinMessages)
+            {
+                count++;
+            }
+            if (permissions.CanSendMediaMessages)
+            {
+                count++;
+            }
+            if (permissions.CanSendMessages)
+            {
+                count++;
+            }
+            if (permissions.CanSendOtherMessages)
+            {
+                count++;
+            }
+            if (permissions.CanSendPolls)
+            {
+                count++;
+            }
+
+            return count;
+        }
+
+        public static int Total(this ChatPermissions permissions)
+        {
+            return 8;
+        }
+
         public static bool CanPinMessages(this Supergroup supergroup)
         {
             if (supergroup.Status == null)
@@ -1481,10 +1525,10 @@ namespace Unigram.Common
                 return false;
             }
 
-            if (supergroup.AnyoneCanInvite && supergroup.Status is ChatMemberStatusMember)
-            {
-                return true;
-            }
+            //if (supergroup.AnyoneCanInvite && supergroup.Status is ChatMemberStatusMember)
+            //{
+            //    return true;
+            //}
 
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers;
         }
@@ -1496,10 +1540,10 @@ namespace Unigram.Common
                 return false;
             }
 
-            if (basicGroup.EveryoneIsAdministrator)
-            {
-                return true;
-            }
+            //if (basicGroup.EveryoneIsAdministrator)
+            //{
+            //    return true;
+            //}
 
             return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers;
         }

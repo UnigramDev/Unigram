@@ -9,6 +9,7 @@ namespace Unigram.ViewModels.Delegates
     {
         void UpdateChatActions(Chat chat, IDictionary<int, ChatAction> actions);
 
+        void UpdateChatPermissions(Chat chat);
         void UpdateChatReplyMarkup(Chat chat, MessageViewModel message);
         void UpdateChatUnreadMentionCount(Chat chat, int unreadMentionCount);
         void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);

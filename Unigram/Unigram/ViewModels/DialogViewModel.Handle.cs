@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 namespace Unigram.ViewModels
 {
     public partial class DialogViewModel :
+        IHandle<UpdateChatPermissions>,
         IHandle<UpdateChatReplyMarkup>,
         IHandle<UpdateChatUnreadMentionCount>,
         IHandle<UpdateChatReadOutbox>,
@@ -226,6 +227,14 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        public void Handle(UpdateChatPermissions update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatPermissions(_chat));
+            }
+        }
 
         public async void Handle(UpdateChatReplyMarkup update)
         {

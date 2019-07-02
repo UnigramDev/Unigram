@@ -29,7 +29,7 @@ namespace Unigram.Converters
             }
         }
 
-        private static string formatUserPermissions(ChatMemberStatusRestricted rights, ChatMemberStatusRestricted defaultBannedRights)
+        private static string formatUserPermissions(ChatPermissions rights, ChatPermissions defaultBannedRights)
         {
             if (rights == null)
             {
@@ -64,14 +64,14 @@ namespace Unigram.Converters
                 }
                 builder.Append(Strings.Resources.UserRestrictionsNoSendStickers);
             }
-            //if (rights.send_polls && defaultBannedRights.send_polls != rights.send_polls)
-            //{
-            //    if (builder.Length > 0)
-            //    {
-            //        builder.Append(", ");
-            //    }
-            //    builder.Append(Strings.Resources.UserRestrictionsNoSendPolls);
-            //}
+            if (rights.CanSendPolls && defaultBannedRights.CanSendPolls != rights.CanSendPolls)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(Strings.Resources.UserRestrictionsNoSendPolls);
+            }
             if (rights.CanAddWebPagePreviews && defaultBannedRights.CanAddWebPagePreviews != rights.CanAddWebPagePreviews)
             {
                 if (builder.Length > 0)
@@ -80,30 +80,30 @@ namespace Unigram.Converters
                 }
                 builder.Append(Strings.Resources.UserRestrictionsNoEmbedLinks);
             }
-            //if (rights.invite_users && defaultBannedRights.invite_users != rights.invite_users)
-            //{
-            //    if (builder.Length > 0)
-            //    {
-            //        builder.Append(", ");
-            //    }
-            //    builder.Append(Strings.Resources.UserRestrictionsNoInviteUsers);
-            //}
-            //if (rights.pin_messages && defaultBannedRights.pin_messages != rights.pin_messages)
-            //{
-            //    if (builder.Length > 0)
-            //    {
-            //        builder.Append(", ");
-            //    }
-            //    builder.Append(Strings.Resources.UserRestrictionsNoPinMessages);
-            //}
-            //if (rights.change_info && defaultBannedRights.change_info != rights.change_info)
-            //{
-            //    if (builder.Length > 0)
-            //    {
-            //        builder.Append(", ");
-            //    }
-            //    builder.Append(Strings.Resources.UserRestrictionsNoChangeInfo);
-            //}
+            if (rights.CanInviteUsers && defaultBannedRights.CanInviteUsers != rights.CanInviteUsers)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(Strings.Resources.UserRestrictionsNoInviteUsers);
+            }
+            if (rights.CanPinMessages && defaultBannedRights.CanPinMessages != rights.CanPinMessages)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(Strings.Resources.UserRestrictionsNoPinMessages);
+            }
+            if (rights.CanChangeInfo && defaultBannedRights.CanChangeInfo != rights.CanChangeInfo)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(Strings.Resources.UserRestrictionsNoChangeInfo);
+            }
             if (builder.Length > 0)
             {
                 //builder.Replace(0, 1, builder.ToString().Substring(0, 1).ToUpper());

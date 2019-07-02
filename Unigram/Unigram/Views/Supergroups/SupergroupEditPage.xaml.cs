@@ -161,6 +161,7 @@ namespace Unigram.Views.Supergroups
             ChannelSignMessagesPanel.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
+            Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             Blacklist.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
@@ -256,6 +257,7 @@ namespace Unigram.Views.Supergroups
             ChannelSignMessagesPanel.Visibility = Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
+            Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = Visibility.Visible;
             Blacklist.Visibility = Visibility.Collapsed;
 

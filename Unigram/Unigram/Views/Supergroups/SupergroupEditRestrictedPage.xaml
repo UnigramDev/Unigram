@@ -62,9 +62,6 @@
                 </Grid>
 
                 <StackPanel x:Name="PermissionsPanel" Visibility="Collapsed">
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.CanViewMessages, Mode=TwoWay}"
-                                  Header="{CustomResource UserRestrictionsRead}"
-                                  Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendMessages, Mode=TwoWay}"
                                   Header="{CustomResource UserRestrictionsSend}"
                                   Style="{StaticResource CheckButtonStyle}"/>
@@ -74,19 +71,33 @@
                     <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendOtherMessages, Mode=TwoWay}"
                                   Header="{CustomResource UserRestrictionsSendStickers}"
                                   Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.CanSendPolls, Mode=TwoWay}"
+                                  Header="{CustomResource UserRestrictionsSendPolls}"
+                                  Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"
                                   Header="{CustomResource UserRestrictionsEmbedLinks}"
                                   Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
+                                  Header="{CustomResource UserRestrictionsInviteUsers}"
+                                  Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch x:Name="PinMessages"
+                                  IsOn="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
+                                  Header="{CustomResource UserRestrictionsPinMessages}"
+                                  Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch x:Name="ChangeInfo"
+                                  IsOn="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
+                                  Header="{CustomResource UserRestrictionsChangeInfo}"
+                                  Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
 
-                <controls:BadgeButton Content="{CustomResource UserRestrictionsUntil}"
+                <controls:BadgeButton Content="{CustomResource UserRestrictionsDuration}"
                                       Badge="{x:Bind ConvertUntilDate(ViewModel.UntilDate), Mode=OneWay}"
                                       Command="{x:Bind ViewModel.EditUntilCommand}"/>
 
                 <StackPanel x:Name="DismissPanel" Visibility="Collapsed" Margin="0,24">
                     <controls:BadgeButton
                         Command="{x:Bind ViewModel.DismissCommand}"
-                        Content="{CustomResource ChannelBlockUser}"
+                        Content="{CustomResource UserRestrictionsBlock}"
                         Foreground="Red"/>
                 </StackPanel>
             </StackPanel>

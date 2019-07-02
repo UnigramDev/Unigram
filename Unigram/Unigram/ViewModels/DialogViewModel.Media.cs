@@ -52,7 +52,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
+            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
             if (restricted)
             {
                 return;
@@ -99,7 +99,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
+            var restricted = await VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted);
             if (restricted)
             {
                 return;
@@ -119,7 +119,7 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public async Task<bool> VerifyRightsAsync(Chat chat, Func<ChatMemberStatusRestricted, bool> permission, string forever, string temporary)
+        public async Task<bool> VerifyRightsAsync(Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary)
         {
             if (chat.Type is ChatTypeSupergroup super)
             {
@@ -129,7 +129,7 @@ namespace Unigram.ViewModels
                     return false;
                 }
 
-                if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted))
+                if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
                 {
                     if (restricted.IsForever())
                     {
@@ -142,13 +142,30 @@ namespace Unigram.ViewModels
 
                     return true;
                 }
+                else if (supergroup.Status is ChatMemberStatusMember)
+                {
+                    if (!permission(chat.Permissions))
+                    {
+                        await TLMessageDialog.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                if (!permission(chat.Permissions))
+                {
+                    await TLMessageDialog.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                    return true;
+                }
             }
 
             return false;
         }
 
-        public bool VerifyRights(Chat chat, Func<ChatMemberStatusRestricted, bool> permission, string forever, string temporary, out string label)
+        public bool VerifyRights(Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary, out string label)
         {
+
             if (chat.Type is ChatTypeSupergroup super)
             {
                 var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
@@ -158,7 +175,7 @@ namespace Unigram.ViewModels
                     return false;
                 }
 
-                if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted))
+                if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
                 {
                     if (restricted.IsForever())
                     {
@@ -169,6 +186,22 @@ namespace Unigram.ViewModels
                         label = string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
                     }
 
+                    return true;
+                }
+                else if (supergroup.Status is ChatMemberStatusMember)
+                {
+                    if (!permission(chat.Permissions))
+                    {
+                        label = global;
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                if (!permission(chat.Permissions))
+                {
+                    label = global;
                     return true;
                 }
             }

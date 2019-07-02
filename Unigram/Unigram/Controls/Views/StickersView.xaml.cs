@@ -692,5 +692,21 @@ namespace Unigram.Controls.Views
 
             args.ShowAt(flyout, element);
         }
+
+
+
+        public void UpdateChatPermissions(Chat chat)
+        {
+            var stickersRights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted, out string stickersLabel);
+            var animationsRights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted, out string animationsLabel);
+
+            StickersRoot.Visibility = stickersRights ? Visibility.Collapsed : Visibility.Visible;
+            StickersPermission.Visibility = stickersRights ? Visibility.Visible : Visibility.Collapsed;
+            StickersPermission.Text = stickersLabel ?? string.Empty;
+
+            AnimationsRoot.Visibility = animationsRights ? Visibility.Collapsed : Visibility.Visible;
+            AnimationsPermission.Visibility = animationsRights ? Visibility.Visible : Visibility.Collapsed;
+            AnimationsPermission.Text = animationsLabel ?? string.Empty;
+        }
     }
 }

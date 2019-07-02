@@ -236,9 +236,11 @@ namespace Unigram.Views
         {
             Subtitle.Text = Locale.Declension("Members", group.MemberCount);
 
-            GroupInvite.Visibility = group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || group.EveryoneIsAdministrator ? Visibility.Visible : Visibility.Collapsed;
+            DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
 
-            Edit.Visibility = group.EveryoneIsAdministrator || group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
+            GroupInvite.Visibility = group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers ? Visibility.Visible : Visibility.Collapsed;
+
+            Edit.Visibility = chat.Permissions.CanChangeInfo || group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
             Edit.Glyph = Icons.Edit;
 
             ToolTipService.SetToolTip(Edit, Strings.Resources.ChannelEdit);
@@ -272,6 +274,9 @@ namespace Unigram.Views
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
+            GetEntities(fullInfo.Description);
+            DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
+
             ViewModel.Members = new SortedObservableCollection<ChatMember>(new ChatMemberComparer(ViewModel.ProtoService, true), fullInfo.Members);
         }
 
@@ -562,7 +567,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                if (basicGroup.EveryoneIsAdministrator || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)
+                if (chat.Permissions.CanChangeInfo || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)
                 {
                     flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ChannelEdit, new FontIcon { Glyph = Icons.Edit });
                 }
@@ -946,13 +951,17 @@ namespace Unigram.Views
             header.Clip.StartAnimation("BottomInset", animClip);
 
 
-            var animPhotoOffset = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 41)");
-            animPhotoOffset.SetReferenceParameter("scrollViewer", properties);
+            var animPhotoOffsetY = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 41)");
+            animPhotoOffsetY.SetReferenceParameter("scrollViewer", properties);
+
+            var animPhotoOffsetX = header.Compositor.CreateExpressionAnimation("Min(76, -scrollViewer.Translation.Y) / 76 * 28");
+            animPhotoOffsetX.SetReferenceParameter("scrollViewer", properties);
 
             var animPhotoScale = header.Compositor.CreateExpressionAnimation("1 -(Min(76, -scrollViewer.Translation.Y) / 76 * (34 / 64))");
             animPhotoScale.SetReferenceParameter("scrollViewer", properties);
 
-            photo.StartAnimation("Offset.Y", animPhotoOffset);
+            photo.StartAnimation("Offset.Y", animPhotoOffsetY);
+            photo.StartAnimation("Offset.X", animPhotoOffsetX);
             photo.StartAnimation("Scale.X", animPhotoScale);
             photo.StartAnimation("Scale.Y", animPhotoScale);
 
@@ -960,7 +969,7 @@ namespace Unigram.Views
             var animTitleY = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 58)");
             animTitleY.SetReferenceParameter("scrollViewer", properties);
 
-            var animTitleX = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 34)");
+            var animTitleX = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 6)");
             animTitleX.SetReferenceParameter("scrollViewer", properties);
 
             title.StartAnimation("Offset.Y", animTitleY);

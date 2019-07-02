@@ -961,6 +961,13 @@ namespace Unigram.Services
                     value.Order = updateChatOrder.Order;
                 }
             }
+            else if (update is UpdateChatPermissions updateChatPermissions)
+            {
+                if (_chats.TryGetValue(updateChatPermissions.ChatId, out Chat value))
+                {
+                    value.Permissions = updateChatPermissions.Permissions;
+                }
+            }
             else if (update is UpdateChatPhoto updateChatPhoto)
             {
                 if (_chats.TryGetValue(updateChatPhoto.ChatId, out Chat value))
