@@ -180,7 +180,7 @@ namespace Unigram.ViewModels.SignIn
 
             await _notificationsService.CloseAsync();
 
-            var response = await ProtoService.SendAsync(new SetAuthenticationPhoneNumber(phoneNumber, false, false));
+            var response = await ProtoService.SendAsync(new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, string.Empty, string.Empty)));
             if (response is Error error)
             {
                 IsLoading = false;

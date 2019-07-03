@@ -224,7 +224,7 @@ namespace Unigram.ViewModels.Settings
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                Settings.AutoDownload = AutoDownloadSettings.Default;
+                Settings.AutoDownload = Unigram.Services.Settings.AutoDownloadSettings.Default;
                 RaisePropertyChanged(() => AutoDownloadEnabled);
             }
         }
