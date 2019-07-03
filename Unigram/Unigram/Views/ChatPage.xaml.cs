@@ -1515,7 +1515,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
+            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
             if (restricted)
             {
                 return;
@@ -1966,7 +1966,7 @@ namespace Unigram.Views
                 }
                 else if (supergroup.Status is ChatMemberStatusRestricted restricted)
                 {
-                    return restricted.CanSendMessages;
+                    return restricted.Permissions.CanSendMessages;
                 }
             }
 
@@ -2582,9 +2582,9 @@ namespace Unigram.Views
                 //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
             }
-            else if (e.ClickedItem is EmojiSuggestion emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
+            else if (e.ClickedItem is EmojiData emoji && ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
-                var insert = $"{emoji.Emoji} ";
+                var insert = $"{emoji.Value} ";
                 var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
                 var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
@@ -3002,6 +3002,15 @@ namespace Unigram.Views
 
             Call.Visibility = Visibility.Collapsed;
             CallPlaceholder.Visibility = Visibility.Collapsed;
+
+            StickersPanel.UpdateChatPermissions(chat);
+            InlinePanel.UpdateChatPermissions(chat);
+        }
+
+        public void UpdateChatPermissions(Chat chat)
+        {
+            StickersPanel.UpdateChatPermissions(chat);
+            InlinePanel.UpdateChatPermissions(chat);
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -3170,7 +3179,8 @@ namespace Unigram.Views
                 AttachMedia.Command = ViewModel.SendMediaCommand;
                 AttachDocument.Command = ViewModel.SendDocumentCommand;
 
-                var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
+                var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
+                var pollsRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
 
                 AttachRecent.Height = rights ? 0 : double.NaN;
                 AttachRestriction.Tag = label ?? string.Empty;
@@ -3178,7 +3188,7 @@ namespace Unigram.Views
                 AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                 AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                 AttachLocation.Visibility = Visibility.Visible;
-                AttachPoll.Visibility = chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup ? Visibility.Visible : Visibility.Collapsed;
+                AttachPoll.Visibility = (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup) && !pollsRights ? Visibility.Visible : Visibility.Collapsed;
                 AttachContact.Visibility = Visibility.Visible;
                 AttachCurrent.Visibility = Visibility.Collapsed;
 
@@ -3249,7 +3259,8 @@ namespace Unigram.Views
                     AttachMedia.Command = ViewModel.SendMediaCommand;
                     AttachDocument.Command = ViewModel.SendDocumentCommand;
 
-                    var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
+                    var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
+                    var pollsRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
 
                     AttachRecent.Height = rights ? 0 : double.NaN;
                     AttachRestriction.Tag = label ?? string.Empty;
@@ -3257,7 +3268,7 @@ namespace Unigram.Views
                     AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                     AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                     AttachLocation.Visibility = Visibility.Visible;
-                    AttachPoll.Visibility = chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup ? Visibility.Visible : Visibility.Collapsed;
+                    AttachPoll.Visibility = (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup) && !pollsRights ? Visibility.Visible : Visibility.Collapsed;
                     AttachContact.Visibility = Visibility.Visible;
                     AttachCurrent.Visibility = Visibility.Collapsed;
 
@@ -3519,7 +3530,7 @@ namespace Unigram.Views
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
                 }
-                else if (group.Status is ChatMemberStatusRestricted restrictedSend && !restrictedSend.CanSendMessages)
+                else if (group.Status is ChatMemberStatusRestricted restrictedSend && !restrictedSend.Permissions.CanSendMessages)
                 {
                     if (restrictedSend.IsForever())
                     {
@@ -3533,6 +3544,10 @@ namespace Unigram.Views
                 else if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
                 {
                     ShowAction(Strings.Resources.DeleteChat, true);
+                }
+                else if (!chat.Permissions.CanSendMessages)
+                {
+                    ShowAction(Strings.Resources.GlobalSendMessageRestricted, true);
                 }
                 else
                 {
@@ -3573,6 +3588,7 @@ namespace Unigram.Views
             }
 
             UpdateComposerHeader(chat, ViewModel.ComposerHeader);
+            UpdateChatPermissions(chat);
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
