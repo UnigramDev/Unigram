@@ -312,7 +312,7 @@ namespace Unigram.Common
 #if DEBUG_LOTTIE
             if (message.Content is MessageDocument document)
             {
-                return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");
+                return document.Document.MimeType.Equals("application/x-tgsticker") && document.Document.FileName.EndsWith(".tgs");
             }
 #endif
 
@@ -324,7 +324,7 @@ namespace Unigram.Common
 #if DEBUG_LOTTIE
             if (message.Content is MessageDocument document)
             {
-                return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");
+                return document.Document.MimeType.Equals("application/x-tgsticker") && document.Document.FileName.EndsWith(".tgs");
             }
 #endif
 
