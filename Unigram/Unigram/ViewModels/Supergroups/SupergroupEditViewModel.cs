@@ -214,38 +214,27 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            var about = _about.Format();
+            var title = _title.Trim();
+            string oldAbout = null;
+            Supergroup supergroup = null;
+            SupergroupFullInfo fullInfo = null;
+
+            if (chat.Type is ChatTypeSupergroup)
             {
-                var item = ProtoService.GetSupergroup(supergroup.SupergroupId);
-                var cache = ProtoService.GetSupergroupFull(supergroup.SupergroupId);
+                var item = ProtoService.GetSupergroup(chat);
+                var cache = ProtoService.GetSupergroupFull(chat);
 
                 if (item == null || cache == null)
                 {
                     return;
                 }
 
-                var about = _about.Format();
-                var title = _title.Trim();
+                oldAbout = cache.Description;
+                supergroup = item;
+                fullInfo = cache;
 
-                if (!string.Equals(title, chat.Title))
-                {
-                    var response = await ProtoService.SendAsync(new SetChatTitle(chat.Id, title));
-                    if (response is Error)
-                    {
-                        // TODO:
-                    }
-                }
-
-                if (!string.Equals(about, cache.Description))
-                {
-                    var response = await ProtoService.SendAsync(new SetSupergroupDescription(item.Id, about));
-                    if (response is Error)
-                    {
-                        // TODO:
-                    }
-                }
-
-                if (_isSignatures != item.SignMessages)
+                if (item.IsChannel && _isSignatures != item.SignMessages)
                 {
                     var response = await ProtoService.SendAsync(new ToggleSupergroupSignMessages(item.Id, _isSignatures));
                     if (response is Error)
@@ -253,49 +242,74 @@ namespace Unigram.ViewModels.Supergroups
                         // TODO:
                     }
                 }
-
-                if (_photo != null)
-                {
-                    var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, await _photo.ToGeneratedAsync()));
-                    if (response is Error)
-                    {
-                        // TODO:
-                    }
-                }
-                else if (_deletePhoto)
-                {
-                    var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputFileId(0)));
-                    if (response is Error)
-                    {
-                        // TODO:
-                    }
-                }
-
-                if (_isAllHistoryAvailable && chat.Type is ChatTypeBasicGroup)
-                {
-                    var response = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
-                    if (response is Chat result && result.Type is ChatTypeSupergroup super)
-                    {
-                        chat = result;
-                        cache = await ProtoService.SendAsync(new GetSupergroupFullInfo(super.SupergroupId)) as SupergroupFullInfo;
-                    }
-                    else if (response is Error)
-                    {
-                        // TODO:
-                    }
-                }
-
-                if (_isAllHistoryAvailable != cache.IsAllHistoryAvailable)
-                {
-                    var response = await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(item.Id, _isAllHistoryAvailable));
-                    if (response is Error)
-                    {
-                        // TODO:
-                    }
-                }
-
-                NavigationService.GoBack();
             }
+            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                var item = ProtoService.GetBasicGroup(basicGroup.BasicGroupId);
+                var cache = ProtoService.GetBasicGroupFull(basicGroup.BasicGroupId);
+
+                oldAbout = cache.Description;
+            }
+
+            if (!string.Equals(title, chat.Title))
+            {
+                var response = await ProtoService.SendAsync(new SetChatTitle(chat.Id, title));
+                if (response is Error)
+                {
+                    // TODO:
+                }
+            }
+
+            if (!string.Equals(about, oldAbout))
+            {
+                var response = await ProtoService.SendAsync(new SetChatDescription(chat.Id, about));
+                if (response is Error)
+                {
+                    // TODO:
+                }
+            }
+
+            if (_photo != null)
+            {
+                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, await _photo.ToGeneratedAsync()));
+                if (response is Error)
+                {
+                    // TODO:
+                }
+            }
+            else if (_deletePhoto)
+            {
+                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputFileId(0)));
+                if (response is Error)
+                {
+                    // TODO:
+                }
+            }
+
+            if (_isAllHistoryAvailable && chat.Type is ChatTypeBasicGroup)
+            {
+                var response = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
+                if (response is Chat result && result.Type is ChatTypeSupergroup super)
+                {
+                    chat = result;
+                    fullInfo = await ProtoService.SendAsync(new GetSupergroupFullInfo(super.SupergroupId)) as SupergroupFullInfo;
+                }
+                else if (response is Error)
+                {
+                    // TODO:
+                }
+            }
+
+            if (fullInfo !=  null && _isAllHistoryAvailable != fullInfo.IsAllHistoryAvailable)
+            {
+                var response = await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(supergroup.Id, _isAllHistoryAvailable));
+                if (response is Error)
+                {
+                    // TODO:
+                }
+            }
+
+            NavigationService.GoBack();
         }
 
         public RelayCommand<StorageFile> EditPhotoCommand { get; }
@@ -333,24 +347,31 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var supergroup = CacheService.GetSupergroup(chat);
-            if (supergroup == null)
-            {
-                return;
-            }
+            var initialValue = false;
 
-            var full = CacheService.GetSupergroupFull(chat);
-            if (full == null)
+            if (chat.Type is ChatTypeSupergroup)
             {
-                return;
+                var supergroup = CacheService.GetSupergroup(chat);
+                if (supergroup == null)
+                {
+                    return;
+                }
+
+                var full = CacheService.GetSupergroupFull(chat);
+                if (full == null)
+                {
+                    return;
+                }
+
+                initialValue = full.IsAllHistoryAvailable;
             }
 
             var dialog = new TLContentDialog();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = true, Content = Strings.Resources.ChatHistoryVisible, IsChecked = full.IsAllHistoryAvailable });
+            stack.Children.Add(new RadioButton { Tag = true, Content = Strings.Resources.ChatHistoryVisible, IsChecked = initialValue });
             stack.Children.Add(new TextBlock { Text = Strings.Resources.ChatHistoryVisibleInfo, Margin = new Thickness(28, -6, 0, 8), Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style });
-            stack.Children.Add(new RadioButton { Tag = false, Content = Strings.Resources.ChatHistoryHidden, IsChecked = !full.IsAllHistoryAvailable });
+            stack.Children.Add(new RadioButton { Tag = false, Content = Strings.Resources.ChatHistoryHidden, IsChecked = !initialValue });
             stack.Children.Add(new TextBlock { Text = Strings.Resources.ChatHistoryHiddenInfo, Margin = new Thickness(28, -6, 0, 8), Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style });
 
             dialog.Title = Strings.Resources.ChatHistory;
