@@ -269,7 +269,7 @@
 
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
-                        Header="Replace emojis"
+                        Header="Replace Emojis"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </StackPanel>
             </StackPanel>

@@ -40,7 +40,7 @@
                     <ToggleSwitch
                         x:Name="AdaptiveWide"
                         IsOn="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
-                        Header="Adaptive layout for wide screens"
+                        Header="Adaptive Layout for Wide Screens"
                         Style="{StaticResource CheckButtonStyle}"/>
 
                     <ToggleSwitch
@@ -51,7 +51,7 @@
                     <ToggleSwitch
                         x:Name="TraySwitch"
                         IsOn="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"
-                        Header="Show tray icon"
+                        Header="Show Tray Icon"
                         Style="{StaticResource CheckButtonStyle}"/>
 
                     <controls:StartupSwitch Margin="0,24"/>
