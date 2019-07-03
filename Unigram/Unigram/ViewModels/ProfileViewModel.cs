@@ -1371,7 +1371,7 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class ChatMemberGroupedCollection : IncrementalCollection<ChatMember>
+    public class ChatMemberGroupedCollection : IncrementalCollection<object>
     {
         private readonly IProtoService _protoService;
         private readonly long _chatId;
@@ -1395,11 +1395,11 @@ namespace Unigram.ViewModels
         {
             _protoService = protoService;
             _supergroupId = supergroupId;
-            _filter = new SupergroupMembersFilterBots();
+            _filter = new SupergroupMembersFilterContacts();
             _hasMore = true;
         }
 
-        public override async Task<IList<ChatMember>> LoadDataAsync()
+        public override async Task<IList<object>> LoadDataAsync()
         {
             if (_chatId != 0)
             {
@@ -1416,12 +1416,56 @@ namespace Unigram.ViewModels
                 var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, _offset, 200));
                 if (response is ChatMembers members)
                 {
+
+                    List<ChatMember> items;
+                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && _offset == 0 && members.TotalCount <= 200)
+                    {
+                        items = members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
+                    }
+                    else
+                    {
+                        items = members.Members.ToList();
+                    }
+
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        var already = this.OfType<ChatMember>().FirstOrDefault(x => x.UserId == items[i].UserId);
+                        if (already != null)
+                        {
+                            items.RemoveAt(i);
+                            i--;
+                        }
+                    }
+
+                    string title = null;
+                    if (_offset == 0)
+                    {
+                        switch (_filter)
+                        {
+                            case SupergroupMembersFilterContacts contacts:
+                                title = Strings.Resources.GroupContacts;
+                                break;
+                            case SupergroupMembersFilterBots bots:
+                                title = Strings.Resources.ChannelBots;
+                                break;
+                            case SupergroupMembersFilterRecent recent:
+                                title = Strings.Resources.ChannelOtherMembers;
+                                break;
+                        }
+                    }
+
+
+
                     _offset += members.Members.Count;
 
                     if (members.Members.Count < 200)
                     {
                         switch (_filter)
                         {
+                            case SupergroupMembersFilterContacts contacts:
+                                _filter = new SupergroupMembersFilterBots();
+                                _offset = 0;
+                                break;
                             case SupergroupMembersFilterBots bots:
                                 _filter = new SupergroupMembersFilterRecent();
                                 _offset = 0;
@@ -1432,12 +1476,14 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && _offset == 0 && members.TotalCount <= 200)
+                    if (title != null)
                     {
-                        return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
+                        return new object[] { title }.Union(items).ToArray();
                     }
-
-                    return members.Members;
+                    else
+                    {
+                        return items.Cast<object>().ToArray();
+                    }
                 }
             }
 

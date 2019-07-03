@@ -182,6 +182,10 @@ namespace Unigram.Views.Supergroups
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
+            if (member == null)
+            {
+                return;
+            }
 
             content.Tag = args.Item;
 

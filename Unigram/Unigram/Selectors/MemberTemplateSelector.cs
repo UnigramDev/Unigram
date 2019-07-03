@@ -14,6 +14,7 @@ namespace Unigram.Selectors
         public DataTemplate ItemTemplate { get; set; }
         public DataTemplate AdminTemplate { get; set; }
         public DataTemplate CreatorTemplate { get; set; }
+        public DataTemplate GroupTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -25,7 +26,7 @@ namespace Unigram.Selectors
             var member = item as ChatMember;
             if (member == null)
             {
-                return base.SelectTemplateCore(item);
+                return GroupTemplate;
             }
 
             switch (member.Status)

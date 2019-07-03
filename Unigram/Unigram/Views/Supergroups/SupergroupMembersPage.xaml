@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Channels"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -96,7 +97,6 @@
         <Grid x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1">
             <ListView x:Name="ScrollingHost"
                       ItemsSource="{x:Bind ViewModel.Members}"
-                      ItemTemplate="{StaticResource MemberTemplate}"
                       ItemClick="ListView_ItemClick"
                       IsItemClickEnabled="True"
                       ContainerContentChanging="OnContainerContentChanging"
@@ -115,8 +115,20 @@
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="MinHeight" Value="0"/>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <ListView.ItemTemplateSelector>
+                    <selectors:MemberTemplateSelector ItemTemplate="{StaticResource MemberTemplate}">
+                        <selectors:MemberTemplateSelector.GroupTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                    <TextBlock Text="{x:Bind}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                </Border>
+                            </DataTemplate>
+                        </selectors:MemberTemplateSelector.GroupTemplate>
+                    </selectors:MemberTemplateSelector>
+                </ListView.ItemTemplateSelector>
                 <ListView.Footer>
                     <TextBlock
                         x:Name="Footer"
