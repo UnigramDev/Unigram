@@ -89,7 +89,14 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (webPage.Document != null)
                 {
-                    Media.Child = new DocumentContent(message);
+                    if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Media.Child = new DocumentPhotoContent(message);
+                    }
+                    else
+                    {
+                        Media.Child = new DocumentContent(message);
+                    }
                 }
                 else if (webPage.Sticker != null)
                 {

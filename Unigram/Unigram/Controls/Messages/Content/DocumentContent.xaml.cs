@@ -176,9 +176,9 @@ namespace Unigram.Controls.Messages.Content
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
 #if DEBUG_LOTTIE
-                return text.WebPage.Document != null && !(text.WebPage.Document.FileName.StartsWith("tg_secret_sticker") && text.WebPage.Document.FileName.EndsWith("json"));
+                return text.WebPage.Document != null && !(text.WebPage.Document.FileName.StartsWith("tg_secret_sticker") && text.WebPage.Document.FileName.EndsWith("json")) && !string.Equals(text.WebPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase);
 #else
-                return text.WebPage.Document != null;
+                return text.WebPage.Document != null && !string.Equals(text.WebPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase);
 #endif
             }
 

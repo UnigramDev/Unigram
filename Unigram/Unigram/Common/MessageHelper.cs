@@ -541,6 +541,10 @@ namespace Unigram.Common
                             {
                                 NavigateToMessage(protoService, navigation, post, uri.Segments[3].Replace("/", string.Empty));
                             }
+                            else if (username.Equals("bg", StringComparison.OrdinalIgnoreCase))
+                            {
+                                NavigateToBackground(protoService, navigation, post);
+                            }
                             else
                             {
                                 NavigateToUsername(protoService, navigation, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game, pageKind);
@@ -549,6 +553,17 @@ namespace Unigram.Common
                     }
                 }
             }
+        }
+
+        private static async void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
+        {
+            navigation.Navigate(typeof(WallpaperPage), slug);
+
+            //var response = await protoService.SendAsync(new SearchBackground(slug));
+            //if (response is Background background)
+            //{
+
+            //}
         }
 
         private static async void NavigateToMessage(IProtoService protoService, INavigationService navigation, string post, string message)

@@ -104,7 +104,12 @@ namespace Unigram.Controls
             }
             else if (constraint is MessageText textMessage)
             {
-                if (textMessage?.WebPage?.Animation != null)
+                if (string.Equals(textMessage?.WebPage?.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+                {
+                    width = 900;
+                    height = 1600;
+                }
+                else if (textMessage?.WebPage?.Animation != null)
                 {
                     constraint = textMessage?.WebPage?.Animation;
                 }
@@ -245,7 +250,7 @@ namespace Unigram.Controls
                 height = map.Height;
             }
 
-            if (constraint is Wallpaper wallpaper)
+            if (constraint is Background wallpaper)
             {
                 width = 900;
                 height = 1600;

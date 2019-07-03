@@ -248,7 +248,7 @@ namespace Unigram.Services
                 });
             }
 
-            _aggregator.Publish(new UpdateWallpaper(0, 0));
+            //_aggregator.Publish(new UpdateWallpaper(0, 0));
         }
 
         public async void Refresh()

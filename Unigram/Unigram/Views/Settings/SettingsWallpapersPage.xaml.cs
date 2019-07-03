@@ -50,7 +50,7 @@ namespace Unigram.Views.Settings
                 return;
             }
 
-            var wallpaper = args.Item as Wallpaper;
+            var wallpaper = args.Item as Background;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
 
             var check = root.Children[1] as UIElement;
@@ -75,9 +75,9 @@ namespace Unigram.Views.Settings
                     content.Source = bitmap;
                 }
             }
-            else if (wallpaper.Sizes.Count > 0)
+            else if (wallpaper.Document != null)
             {
-                var small = wallpaper.GetSmall();
+                var small = wallpaper.Document.Thumbnail;
                 if (small == null)
                 {
                     return;
@@ -86,10 +86,10 @@ namespace Unigram.Views.Settings
                 var content = root.Children[0] as Image;
                 content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 64, 64);                
             }
-            else
+            else if (wallpaper.Type is BackgroundTypeSolid solid)
             {
                 var content = root.Children[0] as Rectangle;
-                content.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)((wallpaper.Color >> 16) & 0xFF), (byte)((wallpaper.Color >> 8) & 0xFF), (byte)(wallpaper.Color & 0xFF)));
+                content.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)((solid.Color >> 16) & 0xFF), (byte)((solid.Color >> 8) & 0xFF), (byte)(solid.Color & 0xFF)));
             }
         }
 
@@ -119,7 +119,7 @@ namespace Unigram.Views.Settings
                             return;
                         }
 
-                        var small = item.GetSmall();
+                        var small = item.Document?.Thumbnail;
                         if (small == null)
                         {
                             return;
@@ -133,9 +133,9 @@ namespace Unigram.Views.Settings
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is Wallpaper wallpaper)
+            if (e.ClickedItem is Background wallpaper)
             {
-                ViewModel.NavigationService.Navigate(typeof(WallpaperPage), wallpaper.Id);
+                ViewModel.NavigationService.Navigate(typeof(WallpaperPage), wallpaper.Name);
             }
         }
     }

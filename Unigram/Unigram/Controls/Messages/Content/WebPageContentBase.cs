@@ -24,54 +24,64 @@ namespace Unigram.Controls.Messages.Content
         {
             var empty = true;
 
-            if (!string.IsNullOrWhiteSpace(webPage.SiteName))
+            if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
             {
                 empty = false;
-                title.Text = webPage.SiteName;
-            }
-            else
-            {
-                title.Text = string.Empty;
-            }
-
-            if (!string.IsNullOrWhiteSpace(webPage.Title))
-            {
-                if (title.Text.Length > 0)
-                {
-                    subtitle.Text = Environment.NewLine;
-                }
-
-                empty = false;
-                subtitle.Text += webPage.Title;
-            }
-            else if (!string.IsNullOrWhiteSpace(webPage.Author))
-            {
-                if (title.Text.Length > 0)
-                {
-                    subtitle.Text = Environment.NewLine;
-                }
-
-                empty = false;
-                subtitle.Text += webPage.Author;
-            }
-            else
-            {
+                title.Text = Strings.Resources.ChatBackground;
                 subtitle.Text = string.Empty;
-            }
-
-            if (!string.IsNullOrWhiteSpace(webPage.Description))
-            {
-                if (title.Text.Length > 0 || subtitle.Text.Length > 0)
-                {
-                    content.Text = Environment.NewLine;
-                }
-
-                empty = false;
-                content.Text += webPage.Description;
+                content.Text = string.Empty;
             }
             else
             {
-                content.Text = string.Empty;
+                if (!string.IsNullOrWhiteSpace(webPage.SiteName))
+                {
+                    empty = false;
+                    title.Text = webPage.SiteName;
+                }
+                else
+                {
+                    title.Text = string.Empty;
+                }
+
+                if (!string.IsNullOrWhiteSpace(webPage.Title))
+                {
+                    if (title.Text.Length > 0)
+                    {
+                        subtitle.Text = Environment.NewLine;
+                    }
+
+                    empty = false;
+                    subtitle.Text += webPage.Title;
+                }
+                else if (!string.IsNullOrWhiteSpace(webPage.Author))
+                {
+                    if (title.Text.Length > 0)
+                    {
+                        subtitle.Text = Environment.NewLine;
+                    }
+
+                    empty = false;
+                    subtitle.Text += webPage.Author;
+                }
+                else
+                {
+                    subtitle.Text = string.Empty;
+                }
+
+                if (!string.IsNullOrWhiteSpace(webPage.Description))
+                {
+                    if (title.Text.Length > 0 || subtitle.Text.Length > 0)
+                    {
+                        content.Text = Environment.NewLine;
+                    }
+
+                    empty = false;
+                    content.Text += webPage.Description;
+                }
+                else
+                {
+                    content.Text = string.Empty;
+                }
             }
 
             label.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
@@ -125,6 +135,17 @@ namespace Unigram.Controls.Messages.Content
                 {
                     run1.Text = run3.Text = string.Empty;
                     run2.Text = Strings.Resources.OpenMessage;
+                    run3.Foreground = null;
+                }
+
+                button.Visibility = Visibility.Visible;
+            }
+            else if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+            {
+                if (run1 != null)
+                {
+                    run1.Text = run3.Text = string.Empty;
+                    run2.Text = Strings.Resources.OpenBackground;
                     run3.Foreground = null;
                 }
 

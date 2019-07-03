@@ -71,7 +71,7 @@
             <GridView.ItemTemplateSelector>
                 <selectors:WallPaperTemplateSelector>
                     <selectors:WallPaperTemplateSelector.DefaultTemplate>
-                        <DataTemplate x:DataType="td:Wallpaper">
+                        <DataTemplate x:DataType="td:Background">
                             <controls:AspectView Constraint="{x:Bind}">
                                 <Image Source="{ThemeResource DefaultBackgroundBrush}" Stretch="UniformToFill"/>
                                 
@@ -95,7 +95,7 @@
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.DefaultTemplate>
                     <selectors:WallPaperTemplateSelector.ItemTemplate>
-                        <DataTemplate x:DataType="td:Wallpaper">
+                        <DataTemplate x:DataType="td:Background">
                             <controls:AspectView Constraint="{x:Bind}">
                                 <Image Stretch="UniformToFill"/>
                                 
@@ -119,7 +119,7 @@
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.ItemTemplate>
                     <selectors:WallPaperTemplateSelector.SolidTemplate>
-                        <DataTemplate x:DataType="td:Wallpaper">
+                        <DataTemplate x:DataType="td:Background">
                             <controls:AspectView Constraint="{x:Bind}">
                                 <Rectangle/>
 

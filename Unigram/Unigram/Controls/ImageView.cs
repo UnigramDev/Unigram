@@ -279,7 +279,7 @@ namespace Unigram.Controls
                 height = map.Height;
             }
 
-            if (constraint is Wallpaper wallpaper)
+            if (constraint is Background wallpaper)
             {
                 width = 900;
                 height = 1600;

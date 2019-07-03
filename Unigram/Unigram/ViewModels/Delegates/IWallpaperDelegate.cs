@@ -9,6 +9,6 @@ namespace Unigram.ViewModels.Delegates
 {
     public interface IWallpaperDelegate : IViewModelDelegate
     {
-        void UpdateWallpaper(Wallpaper wallpaper);
+        void UpdateWallpaper(Background wallpaper);
     }
 }

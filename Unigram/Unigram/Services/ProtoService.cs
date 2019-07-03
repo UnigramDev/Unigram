@@ -37,6 +37,8 @@ namespace Unigram.Services
 
         IOptionsService Options { get; }
 
+        Background SelectedBackground { get; }
+
         AuthorizationState GetAuthorizationState();
         ConnectionState GetConnectionState();
 
@@ -124,6 +126,8 @@ namespace Unigram.Services
 
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
+
+        private Background _selectedBackground;
 
         public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
@@ -462,6 +466,11 @@ namespace Unigram.Services
         public IOptionsService Options
         {
             get { return _options; }
+        }
+
+        public Background SelectedBackground
+        {
+            get { return _selectedBackground; }
         }
 
         public string GetTitle(Chat chat, bool tiny = false)
@@ -1165,6 +1174,10 @@ namespace Unigram.Services
             else if (update is UpdateSecretChat updateSecretChat)
             {
                 _secretChats[updateSecretChat.SecretChat.Id] = updateSecretChat.SecretChat;
+            }
+            else if (update is UpdateSelectedBackground updateSelectedBackground)
+            {
+                _selectedBackground = updateSelectedBackground.Background;
             }
             else if (update is UpdateServiceNotification updateServiceNotification)
             {

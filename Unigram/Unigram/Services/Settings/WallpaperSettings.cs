@@ -15,20 +15,20 @@ namespace Unigram.Services.Settings
 
         }
 
-        private int? _selectedBackground;
-        public int SelectedBackground
+        private long? _selectedBackground;
+        public long SelectedBackground
         {
             get
             {
                 if (_selectedBackground == null)
-                    _selectedBackground = GetValueOrDefault("SelectedBackground", 1000001);
+                    _selectedBackground = GetValueOrDefault("SelectedBackgroundL", 1000001L);
 
-                return _selectedBackground ?? 1000001;
+                return _selectedBackground ?? 1000001L;
             }
             set
             {
                 _selectedBackground = value;
-                AddOrUpdateValue("SelectedBackground", value);
+                AddOrUpdateValue("SelectedBackgroundL", value);
             }
         }
 

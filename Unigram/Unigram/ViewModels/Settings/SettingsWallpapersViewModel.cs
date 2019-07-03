@@ -23,13 +23,13 @@ namespace Unigram.ViewModels.Settings
         public SettingsWallpapersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<Wallpaper>();
+            Items = new MvxObservableCollection<Background>();
 
-            ProtoService.Send(new GetWallpapers(), result =>
+            ProtoService.Send(new GetBackgrounds(Settings.Appearance.IsDarkTheme()), result =>
             {
-                if (result is Wallpapers wallpapers)
+                if (result is Backgrounds wallpapers)
                 {
-                    var items = wallpapers.WallpapersValue.ToList();
+                    var items = wallpapers.BackgroundsValue.ToList();
                     var id = Settings.Wallpaper.SelectedBackground;
 
                     var predefined = items.FirstOrDefault(x => x.Id == 1000001);
@@ -47,7 +47,7 @@ namespace Unigram.ViewModels.Settings
                     }
                     else if (id == Constants.WallpaperLocalId)
                     {
-                        items.Insert(0, selected = new Wallpaper(Constants.WallpaperLocalId, new PhotoSize[0], 0));
+                        //items.Insert(0, selected = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0));
                     }
 
                     BeginOnUIThread(() =>
@@ -66,8 +66,8 @@ namespace Unigram.ViewModels.Settings
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        private Wallpaper _selectedItem;
-        public Wallpaper SelectedItem
+        private Background _selectedItem;
+        public Background SelectedItem
         {
             get
             {
@@ -79,7 +79,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public MvxObservableCollection<Wallpaper> Items { get; private set; }
+        public MvxObservableCollection<Background> Items { get; private set; }
 
         public RelayCommand LocalCommand { get; }
         private async void LocalExecute()

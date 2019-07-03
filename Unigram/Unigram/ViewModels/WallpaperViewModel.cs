@@ -30,22 +30,22 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (parameter is int id)
+            if (parameter is string name)
             {
-                if (id == Constants.WallpaperLocalId)
+                //if (id == Constants.WallpaperLocalId)
+                //{
+                //    //Item = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0);
+                //}
+                //else
                 {
-                    Item = new Wallpaper(Constants.WallpaperLocalId, new PhotoSize[0], 0);
-                }
-                else
-                {
-                    var response = await ProtoService.SendAsync(new GetWallpapers());
-                    if (response is Wallpapers wallpapers)
+                    var response = await ProtoService.SendAsync(new SearchBackground(name));
+                    if (response is Background background)
                     {
-                        Item = wallpapers.WallpapersValue.FirstOrDefault(x => x.Id == id);
+                        Item = background;
                     }
                 }
 
-                if (id == Settings.Wallpaper.SelectedBackground)
+                if (_item?.Id == Settings.Wallpaper.SelectedBackground)
                 {
                     IsBlurEnabled = Settings.Wallpaper.IsBlurEnabled;
                     IsMotionEnabled = Settings.Wallpaper.IsMotionEnabled;
@@ -55,8 +55,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private Wallpaper _item;
-        public Wallpaper Item
+        private Background _item;
+        public Background Item
         {
             get { return _item; }
             set { Set(ref _item, value); }
@@ -81,11 +81,11 @@ namespace Unigram.ViewModels
         public RelayCommand DoneCommand { get; }
         private async void DoneExecute()
         {
-            var background = 1000001;
+            var background = 1000001L;
             var color = 0;
 
             var wallpaper = _item;
-            if (wallpaper != null && wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Sizes.Count > 0)
+            if (wallpaper != null && wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Document != null)
             {
                 if (wallpaper.Id != 1000001)
                 {
@@ -98,13 +98,13 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var big = wallpaper.GetBig();
-                        if (big == null || !big.Photo.Local.IsDownloadingCompleted)
+                        var file = wallpaper.Document.DocumentValue;
+                        if (file == null || !file.Local.IsDownloadingCompleted)
                         {
                             return;
                         }
 
-                        item = await StorageFile.GetFileFromPathAsync(big.Photo.Local.Path);
+                        item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
                     }
 
                     if (_isBlurEnabled)
@@ -158,15 +158,15 @@ namespace Unigram.ViewModels
                 Settings.Wallpaper.SelectedBackground = background = wallpaper.Id;
                 Settings.Wallpaper.SelectedColor = color = 0;
             }
-            else if (wallpaper != null)
+            else if (wallpaper?.Type is BackgroundTypeSolid solid)
             {
                 Settings.Wallpaper.IsBlurEnabled = false;
                 Settings.Wallpaper.IsMotionEnabled = false;
                 Settings.Wallpaper.SelectedBackground = background = wallpaper.Id;
-                Settings.Wallpaper.SelectedColor = color = wallpaper.Color;
+                Settings.Wallpaper.SelectedColor = color = solid.Color;
             }
 
-            Aggregator.Publish(new UpdateWallpaper(background, color));
+            //Aggregator.Publish(new UpdateWallpaper(background, color));
             NavigationService.GoBack();
         }
     }

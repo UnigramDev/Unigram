@@ -13,14 +13,14 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is Wallpaper wallpaper)
+            if (item is Background wallpaper)
             {
                 if (wallpaper.Id == 1000001)
                 {
                     return DefaultTemplate;
                 }
 
-                if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Sizes.Count > 0)
+                if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Document != null)
                 {
                     return ItemTemplate;
                 }

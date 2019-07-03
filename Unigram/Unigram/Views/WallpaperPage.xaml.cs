@@ -155,7 +155,7 @@ namespace Unigram.Views
 
         private async void Image_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            var wallpaper = args.NewValue as Wallpaper;
+            var wallpaper = args.NewValue as Background;
             if (wallpaper == null)
             {
                 return;
@@ -175,39 +175,45 @@ namespace Unigram.Views
             }
             else
             {
-                var big = wallpaper.GetBig();
+                var big = wallpaper.Document;
                 if (big == null)
                 {
                     return;
                 }
 
                 var content = sender as Rectangle;
-                content.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.Photo, big.Width, big.Height), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                content.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
             }
         }
 
         private void Rectangle_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            var wallpaper = args.NewValue as Wallpaper;
+            var wallpaper = args.NewValue as Background;
             if (wallpaper == null)
             {
                 return;
             }
 
+            var solid = wallpaper.Type as BackgroundTypeSolid;
+            if (solid == null)
+            {
+                return;
+            }
+
             var content = sender as Rectangle;
-            content.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, (byte)((wallpaper.Color >> 16) & 0xFF), (byte)((wallpaper.Color >> 8) & 0xFF), (byte)(wallpaper.Color & 0xFF)));
+            content.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, (byte)((solid.Color >> 16) & 0xFF), (byte)((solid.Color >> 8) & 0xFF), (byte)(solid.Color & 0xFF)));
         }
 
         #region Delegates
 
-        public async void UpdateWallpaper(Wallpaper wallpaper)
+        public async void UpdateWallpaper(Background wallpaper)
         {
             if (wallpaper == null)
             {
                 return;
             }
 
-            if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Sizes.Count > 0)
+            if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Document != null)
             {
                 Blur.Visibility = Visibility.Visible;
                 Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
@@ -228,16 +234,16 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                if (Presenter.Content is Wallpaper wallpaper && wallpaper.UpdateFile(update.File))
+                if (Presenter.Content is Background wallpaper && wallpaper.UpdateFile(update.File))
                 {
-                    var big = wallpaper.GetBig();
+                    var big = wallpaper.Document;
                     if (big == null)
                     {
                         return;
                     }
 
                     var content = Presenter.ContentTemplateRoot as Rectangle;
-                    content.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.Photo, big.Width, big.Height), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    content.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
                 }
             });
         }

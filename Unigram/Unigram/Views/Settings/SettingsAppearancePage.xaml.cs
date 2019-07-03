@@ -45,7 +45,7 @@ namespace Unigram.Views.Settings
             Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
 
             //UpdatePreview(true);
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {

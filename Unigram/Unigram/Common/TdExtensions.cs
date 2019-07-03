@@ -712,7 +712,7 @@ namespace Unigram.Common
 
         public static Photo ToPhoto(this ChatPhoto chatPhoto)
         {
-            return new Photo(false, new PhotoSize[] { new PhotoSize("t", chatPhoto.Small, 160, 160), new PhotoSize("i", chatPhoto.Big, 640, 640) });
+            return new Photo(false, null, new PhotoSize[] { new PhotoSize("t", chatPhoto.Small, 160, 160), new PhotoSize("i", chatPhoto.Big, 640, 640) });
         }
 
         public static bool IsSimple(this WebPage webPage)
@@ -1046,107 +1046,32 @@ namespace Unigram.Common
             return user.LastName;
         }
 
-        public static PhotoSize GetSize(this Wallpaper wallpaper, bool thumbnail)
-        {
-            return thumbnail ? wallpaper.GetSmall() : wallpaper.GetBig();
-        }
-
         public static PhotoSize GetSize(this Photo photo, bool thumbnail)
         {
             return thumbnail ? photo.GetSmall() : photo.GetBig();
         }
 
-        public static bool UpdateFile(this Wallpaper wallpaper, File file)
+        public static bool UpdateFile(this Background background, File file)
         {
             var any = false;
-            foreach (var size in wallpaper.Sizes)
+            if (background.Document == null)
             {
-                if (size.Photo.Id == file.Id)
-                {
-                    size.Photo = file;
-                    any = true;
-                }
+                return false;
+            }
+
+            if (background.Document.Thumbnail != null && background.Document.Thumbnail.Photo.Id == file.Id)
+            {
+                background.Document.Thumbnail.Photo = file;
+                any = true;
+            }
+
+            if (background.Document.DocumentValue.Id == file.Id)
+            {
+                background.Document.DocumentValue = file;
+                any = true;
             }
 
             return any;
-        }
-
-        public static PhotoSize GetSmall(this Wallpaper wallpaper)
-        {
-            return wallpaper.Sizes.OrderBy(x => x.Width).FirstOrDefault();
-
-            PhotoSize thumb = null;
-            int thumbLevel = -1;
-
-            foreach (var i in wallpaper.Sizes)
-            {
-                var size = i.Type.Length > 0 ? i.Type[0] : 'z';
-                int newThumbLevel = -1;
-
-                switch (size)
-                {
-                    case 's': newThumbLevel = 0; break; // box 100x100
-                    case 'm': newThumbLevel = 2; break; // box 320x320
-                    case 'x': newThumbLevel = 5; break; // box 800x800
-                    case 'y': newThumbLevel = 6; break; // box 1280x1280
-                    case 'w': newThumbLevel = 8; break; // box 2560x2560
-                    case 'a': newThumbLevel = 1; break; // crop 160x160
-                    case 'b': newThumbLevel = 3; break; // crop 320x320
-                    case 'c': newThumbLevel = 4; break; // crop 640x640
-                    case 'd': newThumbLevel = 7; break; // crop 1280x1280
-                }
-
-                if (newThumbLevel < 0)
-                {
-                    continue;
-                }
-                if (thumbLevel < 0 || newThumbLevel < thumbLevel)
-                {
-                    thumbLevel = newThumbLevel;
-                    thumb = i;
-                }
-            }
-
-            return thumb;
-        }
-
-        public static PhotoSize GetBig(this Wallpaper wallpaper)
-        {
-            return wallpaper.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
-
-            PhotoSize full = null;
-            int fullLevel = -1;
-
-            foreach (var i in wallpaper.Sizes)
-            {
-                var size = i.Type.Length > 0 ? i.Type[0] : 'z';
-                int newFullLevel = -1;
-
-                switch (size)
-                {
-                    case 's': newFullLevel = 4; break; // box 100x100
-                    case 'm': newFullLevel = 3; break; // box 320x320
-                    case 'x': newFullLevel = 1; break; // box 800x800
-                    case 'y': newFullLevel = 0; break; // box 1280x1280
-                    case 'w': newFullLevel = 2; break; // box 2560x2560
-                    case 'a': newFullLevel = 8; break; // crop 160x160
-                    case 'b': newFullLevel = 7; break; // crop 320x320
-                    case 'c': newFullLevel = 6; break; // crop 640x640
-                    case 'd': newFullLevel = 5; break; // crop 1280x1280
-                }
-
-                if (newFullLevel < 0)
-                {
-                    continue;
-                }
-                if (fullLevel < 0 || newFullLevel < fullLevel)
-                {
-                    fullLevel = newFullLevel;
-                    full = i;
-                }
-            }
-
-            return full;
         }
 
         public static PhotoSize GetSmall(this Photo photo)
@@ -1580,7 +1505,16 @@ namespace Unigram.Common
 
 
 
+        public static bool UpdateFile(this PhotoSize size, File file)
+        {
+            if (size.Photo.Id == file.Id)
+            {
+                size.Photo = file;
+                return true;
+            }
 
+            return false;
+        }
 
         public static bool UpdateFile(this Chat chat, File file)
         {
