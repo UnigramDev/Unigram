@@ -9,18 +9,15 @@
     The Telegram client optimised for the Windows 10 platform.
     <br>
     <br>
-    <a href='//www.microsoft.com/store/apps/9n97zckpd60q?cid=storebadge&ocid=badge'><img src='https://assets.windowsphone.com/85864462-9c82-451e-9355-a3d5f874397a/English_get-it-from-MS_InvariantCulture_Default.png' alt='English badge' width="142" height="52"/></a>
+    <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Download</a>
+    &middot;
+    <a href="https://t.me/unigraminsiders">Insiders Group</a>
   </p>
 </p>
 
 <br>
 
-Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience.
-
-<p align="center">
-  <a href="https://t.me/unigraminsiders">
-    <img src="https://img.shields.io/badge/Insiders-Group-blue.svg" width=100 height=20>
-  </a>
+Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience. 
 
 ## Table of contents
 - [Features](#features)
