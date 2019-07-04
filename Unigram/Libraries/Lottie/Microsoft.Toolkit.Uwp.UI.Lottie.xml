@@ -142,6 +142,13 @@
             <param name="sourceUri">A URI that refers to a JSON Lottie file.</param>
             <returns>An <see cref="T:Windows.Foundation.IAsyncAction"/> that completes when the load completes or fails.</returns>
         </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.SetSource(System.IO.Stream)">
+            <summary>
+            Sets the source for the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/>.
+            </summary>
+            <param name="stream">A URI that refers to a JSON Lottie file.</param>
+            <returns>An <see cref="T:Windows.Foundation.IAsyncAction"/> that completes when the load completes or fails.</returns>
+        </member>
         <member name="E:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.AnimatedVisualInvalidated">
             <summary>
             Implements <see cref="T:Microsoft.UI.Xaml.Controls.IDynamicAnimatedVisualSource"/>.
@@ -161,9 +168,19 @@
             </summary>
             <returns>A string representation of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource"/> for debugging purposes.</returns>
         </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.IsRuntimeCompatible(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ApiCompatibility)">
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieVisualSource.IsRuntimeCompatible(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.ApiCompatibility)">
             <summary>
             Returns true if the given compatibility describes compatibility with the current operating system.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeFillType">
+            <summary>
+            Types of <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerFill"/> objects.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerFill.FillType">
+            <summary>
+            Gets the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeFillType"/> of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerFill"/> object.
             </summary>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Animatable`1">
@@ -316,12 +333,47 @@
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.Ellipse.ObjectType">
             <inheritdoc/>
         </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.EmbeddedImageAsset">
+            <summary>
+            An image embedded in the Lottie file.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.EmbeddedImageAsset.Bytes">
+            <summary>
+            The data of the image. The interpretation of the data depends on the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.EmbeddedImageAsset.Format"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.EmbeddedImageAsset.Format">
+            <summary>
+            The format of the <see cref="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.EmbeddedImageAsset.Bytes"/>. Typically this is jpg or png.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.EmbeddedImageAsset.ImageType">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ExternalImageAsset">
+            <summary>
+            A reference to an image.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ExternalImageAsset.ImageType">
+            <inheritdoc/>
+        </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop.GetFirstColor(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop[])">
             <summary>
             Returns the first gradient stop in a sequence that is a color. Opacity will always be
             set to 1.
             </summary>
             <returns>The first gradient stop in the sequence.</returns>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop.GetHashCode">
+            <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.GradientStop.ToString">
             <inheritdoc/>
@@ -359,7 +411,7 @@
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ImageAsset">
             <summary>
-            A reference to an image.
+            An image.
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ImageAsset.Type">
@@ -498,6 +550,9 @@
             <inheritdoc/>
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearEasing.Equals(Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearEasing)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearGradientFill.FillType">
             <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.LinearGradientFill.ContentType">
@@ -676,6 +731,9 @@
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.PreCompLayer.ObjectType">
             <inheritdoc/>
         </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RadialGradientFill.FillType">
+            <inheritdoc/>
+        </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.RadialGradientFill.ContentType">
             <inheritdoc/>
         </member>
@@ -823,6 +881,9 @@
             <summary>
             Gets the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeContentType"/> of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.ShapeLayerContent"/> object.
             </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.SolidColorFill.FillType">
+            <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.LottieData.SolidColorFill.ContentType">
             <inheritdoc/>
@@ -1004,352 +1065,6 @@
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.AnimationController.Type">
             <inheritdoc/>
         </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder.ToString">
-            <inheritdoc/>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CppStringifier">
-            <summary>
-            Stringifiers for C++ syntax.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CppStringifier.GeoSourceClass">
-            <summary>
-            Gets the code for a class that wraps an ID2D1Geometry in an IGeometrySource2DInterop
-            as required by CompositionPath.
-            This class will be included inline in every codegen so that the generated code
-            doesn't need to depend on another file.
-            The implementation is very simple - just enough to satisfy CompositionPath.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.CreateFactoryCode(System.String,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual,System.Single,System.Single,System.TimeSpan,System.Boolean)">
-            <summary>
-            Returns the C# code for a factory that will instantiate the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> as a
-            Windows.UI.Composition Visual.
-            </summary>
-            <returns>The C# code.</returns>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteFileStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteInstantiatorStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteFileEnd(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryCombinationFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryEllipseFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryGroupFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryPathFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryRoundedRectangleFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryTransformedGeometryFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.CreateFactoryCode(System.String,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual,System.Single,System.Single,System.TimeSpan,System.String,System.String@,System.String@,System.Boolean)">
-            <summary>
-            Returns the Cx code for a factory that will instantiate the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> as a
-            Windows.UI.Composition Visual.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteFileStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteInstantiatorStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteFileEnd(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryCombinationFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryEllipseFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryGroupFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryPathFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryRoundedRectangleFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryTransformedGeometryFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry,System.String,System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.TrySynthesizeClassName(System.String)">
-            <summary>
-            Takes a name and modifies it as necessary to be suited for use as a class name in languages such
-            as  C# and C++.
-            Returns null on failure.
-            </summary>
-            <returns>A name, or null.</returns>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.AutoGeneratedHeaderText">
-            <summary>
-            Gets the standard header text used to indicate that a file contains auto-generated content.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteFileStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <summary>
-            Writes the start of the file, e.g. using namespace statements and includes at the top of the file.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteInstantiatorStart(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <summary>
-            Writes the start of the Instantiator class.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteFileEnd(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
-            <summary>
-            Writes the end of the class.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryCombinationFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination,System.String,System.String)">
-            <summary>
-            Writes CanvasGeometery.Combination factory code.
-            </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
-            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
-            <param name="typeName">The type of the result.</param>
-            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryEllipseFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse,System.String,System.String)">
-            <summary>
-            Writes CanvasGeometery.Ellipse factory code.
-            </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
-            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
-            <param name="typeName">The type of the result.</param>
-            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryGroupFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group,System.String,System.String)">
-            <summary>
-            Writes CanvasGeometery.Ellipse factory code.
-            </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
-            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
-            <param name="typeName">The type of the result.</param>
-            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryPathFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path,System.String,System.String)">
-            <summary>
-            Writes CanvasGeometery.Path factory code.
-            </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
-            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
-            <param name="typeName">The type of the result.</param>
-            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryRoundedRectangleFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle,System.String,System.String)">
-            <summary>
-            Writes CanvasGeometery.RoundedRectangle factory code.
-            </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
-            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
-            <param name="typeName">The type of the result.</param>
-            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryTransformedGeometryFactory(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry,System.String,System.String)">
-            <summary>
-            Writes CanvasGeometery.TransformedGeometry factory code.
-            </summary>
-            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CodeBuilder"/> used to create the code.</param>
-            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
-            <param name="typeName">The type of the result.</param>
-            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.GenerateCode(System.String,System.Single,System.Single)">
-            <summary>
-            Call this to generate the code. Returns a string containing the generated code.
-            </summary>
-            <returns>The code.</returns>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CallFactoryFor(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry)">
-            <summary>
-            Returns the code to call the factory for the given object.
-            </summary>
-            <returns>The code to call the factory for the given object.</returns>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo">
-            <summary>
-            Holds information about the code being generated.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.ClassName">
-            <summary>
-            Gets the name of the class that will be exposed to users.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.CompositionDeclaredSize">
-            <summary>
-            Gets the declared size of the composition.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.DurationTicksFieldName">
-            <summary>
-            Gets the constant holding the duration of the composition in ticks.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.UsesCanvas">
-            <summary>
-            Gets a value indicating whether the composition depends on the Microsoft.Graphics.Canvas namespace.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.UsesCanvasEffects">
-            <summary>
-            Gets a value indicating whether the composition depends on the Microsoft.Graphics.Canvas.Effects namespace.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.UsesCanvasGeometry">
-            <summary>
-            Gets a value indicating whether the composition depends the Microsoft.Graphics.Canvas.Geometry namespace.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.ReusableExpressionAnimationFieldName">
-            <summary>
-            Gets the name of the field in the instantiator class that hold the reusable ExpressionAnimation.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.RootVisual">
-            <summary>
-            Gets the Visual at the root of the composition.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase">
-            <summary>
-            A stringifier implementation for some common string formats that are shared
-            by most languages.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Deref">
-            <inheritdoc/>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.IListAdd">
-            <inheritdoc/>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int64TypeName">
-            <inheritdoc/>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.MemberSelect">
-            <inheritdoc/>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.New">
-            <inheritdoc/>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Null">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Readonly(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.ScopeResolve">
-            <inheritdoc/>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Var">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Bool(System.Boolean)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.CanvasFigureLoop(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasFigureLoop)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.CanvasGeometryCombine(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometryCombine)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Color(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.FactoryCall(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.FilledRegionDetermination(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasFilledRegionDetermination)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Float(System.Single)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int32(System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int64(System.Int64)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Matrix3x2(System.Numerics.Matrix3x2)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Matrix4x4(System.Numerics.Matrix4x4)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.ReferenceTypeName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.String(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.TimeSpan(System.TimeSpan)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.TimeSpan(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Vector2(System.Numerics.Vector2)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Vector3(System.Numerics.Vector3)">
-            <inheritdoc/>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.NodeNamer`1">
-            <summary>
-            Generates names for the nodes in an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ObjectGraph`1"/>.
-            </summary>
-            <typeparam name="TNode">The type of the data associated with each node.</typeparam>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.NodeNamer`1.GenerateNodeNames(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Takes a list of nodes and generates unique names for them. Returns a list of node + name pairs.
-            The names are chosen to be descriptive and usable in code generation.
-            </summary>
-            <returns>A lot of node + name pairs usable in code generation.</returns>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.Optimizer">
-            <summary>
-            Transforms a WinCompData tree to an equivalent tree, optimizing the tree
-            where possible.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.Optimizer.GetCompositionObject(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject)">
-            <summary>
-            Returns a copy of the graph of composition objects starting at the given object.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.TreeReducer">
-            <summary>
-            Optimizes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> tree by combining and removing containers.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CanonicalizedNode`1.Canonical">
-            <summary>
-            Gets or sets the node that is equivalent to this node. Initially set to this.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CodeGen.CanonicalizedNode`1.NodesInGroup">
-            <summary>
-            Gets or sets the nodes that are canonicalized to the canonical node.
-            </summary>
-        </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ColorKeyFrameAnimation.Type">
             <inheritdoc/>
         </member>
@@ -1362,6 +1077,9 @@
             </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionColorBrush.Type">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionColorGradientStop.Type">
             <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionContainerShape.Shapes">
@@ -1377,6 +1095,9 @@
             <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionGeometricClip.Type">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionLinearGradientBrush.Type">
             <inheritdoc/>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject.LongDescription">
@@ -1443,6 +1164,9 @@
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionPropertySet.Type">
             <inheritdoc/>
         </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionRadialGradientBrush.Type">
+            <inheritdoc/>
+        </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionRectangleGeometry.Type">
             <inheritdoc/>
         </member>
@@ -1451,14 +1175,6 @@
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionSpriteShape.Type">
             <inheritdoc/>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionSurfaceBase">
-            <summary>
-            This is the base for Composition Surface objects and ensures that
-            all Composition Surface objects are also CompositionObjects. Composition
-            Surface objects use this as a base instead of an interface to avoid
-            dynamic type casting.
-            </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionSurfaceBrush.Type">
             <inheritdoc/>
@@ -1906,54 +1622,12 @@
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ScalarKeyFrameAnimation.Type">
             <inheritdoc/>
         </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.CompositionObjectDgmlSerializer">
-            <summary>
-            Serializes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> graph into DGML format.
-            </summary>
-        </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.CompositionObjectXmlSerializer">
             <summary>
             Serializes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> graph into an XML format.
             </summary>
             <remarks>The format is only designed for human consumption, and should
             not be relied upon for deserialization.</remarks>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ApiCompatibility">
-            <summary>
-            Analyzes a tree to determine the features of the runtime required to instantiate it.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ApiCompatibility.Analyze(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject)">
-            <summary>
-            Analyzes the given tree and returns information about its compatibility with a runtime.
-            </summary>
-            <returns>An object with properties describing the compatibility requirements of the tree.</returns>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.FromCompositionObject(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject,System.Boolean)">
-            <summary>
-            Returns the graph of nodes reachable from the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> root.
-            </summary>
-            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph"/> from the given Composition tree.</returns>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node">
-            <summary>
-            A simple non-extensible node type.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node`1.Position">
-            <summary>
-            The position of this node in a traversal of the graph.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node`1.Vertex.Position">
-            <summary>
-            The position of this vertex in a traversal of the graph.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node`1.Vertex.Node">
-            <summary>
-            The node at the other end of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph.Node`1.Vertex"/>.
-            </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.Item(System.Int32)">
             <inheritdoc/>
@@ -1984,24 +1658,6 @@
         </member>
         <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ListOfNeverNull`1.ToString">
             <inheritdoc/>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ObjectGraph`1">
-            <summary>
-            The graph of creatable objects reachable from a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/>.
-            </summary>
-            <typeparam name="T">The type of the data associated with each node.</typeparam>
-        </member>
-        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.ObjectGraph`1.FromCompositionObject(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject,System.Boolean)">
-            <summary>
-            Returns the graph of nodes reachable from the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> root.
-            </summary>
-            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Graph"/> for the given Composition tree.</returns>
-        </member>
-        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Tools.Stats">
-            <summary>
-            Calculates stats for a WinCompData tree. Used to report the size of data
-            and the effectiveness of optimization.
-            </summary>
         </member>
         <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.ShapeVisual.Shapes">
             <inheritdoc/>
@@ -2051,6 +1707,478 @@
             <summary>
             Gets the hex representation of this color.
             </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CanonicalizedNode`1.Canonical">
+            <summary>
+            Gets or sets the node that is equivalent to this node. Initially set to this.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CanonicalizedNode`1.NodesInGroup">
+            <summary>
+            Gets or sets the nodes that are canonicalized to the canonical node.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CppStringifier">
+            <summary>
+            Stringifiers for C++ syntax.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CppStringifier.GeoSourceClass">
+            <summary>
+            Gets the code for a class that wraps an ID2D1Geometry in an IGeometrySource2DInterop
+            as required by CompositionPath.
+            This class will be included inline in every codegen so that the generated code
+            doesn't need to depend on another file.
+            The implementation is very simple - just enough to satisfy CompositionPath.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.CreateFactoryCode(System.String,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual,System.Single,System.Single,System.TimeSpan,System.Boolean)">
+            <summary>
+            Returns the C# code for a factory that will instantiate the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> as a
+            Windows.UI.Composition Visual.
+            </summary>
+            <returns>The C# code.</returns>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteFileStart(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteInstantiatorStart(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteFileEnd(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryCombinationFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryEllipseFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryGroupFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryPathFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryRoundedRectangleFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CSharpInstantiatorGenerator.WriteCanvasGeometryTransformedGeometryFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.CreateFactoryCode(System.String,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual,System.Single,System.Single,System.TimeSpan,System.String,System.String@,System.String@,System.Boolean)">
+            <summary>
+            Returns the Cx code for a factory that will instantiate the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> as a
+            Windows.UI.Composition Visual.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteFileStart(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteInstantiatorStart(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteFileEnd(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryCombinationFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryEllipseFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryGroupFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryPathFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryRoundedRectangleFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CxInstantiatorGenerator.WriteCanvasGeometryTransformedGeometryFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.TrySynthesizeClassName(System.String)">
+            <summary>
+            Takes a name and modifies it as necessary to be suited for use as a class name in languages such
+            as  C# and C++.
+            Returns null on failure.
+            </summary>
+            <returns>A name, or null.</returns>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.AutoGeneratedHeaderText">
+            <summary>
+            Gets the standard header text used to indicate that a file contains auto-generated content.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteFileStart(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <summary>
+            Writes the start of the file, e.g. using namespace statements and includes at the top of the file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteInstantiatorStart(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <summary>
+            Writes the start of the Instantiator class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteFileEnd(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo)">
+            <summary>
+            Writes the end of the class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryCombinationFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Combination,System.String,System.String)">
+            <summary>
+            Writes CanvasGeometery.Combination factory code.
+            </summary>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder"/> used to create the code.</param>
+            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
+            <param name="typeName">The type of the result.</param>
+            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryEllipseFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Ellipse,System.String,System.String)">
+            <summary>
+            Writes CanvasGeometery.Ellipse factory code.
+            </summary>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder"/> used to create the code.</param>
+            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
+            <param name="typeName">The type of the result.</param>
+            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryGroupFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Group,System.String,System.String)">
+            <summary>
+            Writes CanvasGeometery.Ellipse factory code.
+            </summary>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder"/> used to create the code.</param>
+            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
+            <param name="typeName">The type of the result.</param>
+            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryPathFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.Path,System.String,System.String)">
+            <summary>
+            Writes CanvasGeometery.Path factory code.
+            </summary>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder"/> used to create the code.</param>
+            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
+            <param name="typeName">The type of the result.</param>
+            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryRoundedRectangleFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.RoundedRectangle,System.String,System.String)">
+            <summary>
+            Writes CanvasGeometery.RoundedRectangle factory code.
+            </summary>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder"/> used to create the code.</param>
+            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
+            <param name="typeName">The type of the result.</param>
+            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.WriteCanvasGeometryTransformedGeometryFactory(Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder,Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry.TransformedGeometry,System.String,System.String)">
+            <summary>
+            Writes CanvasGeometery.TransformedGeometry factory code.
+            </summary>
+            <param name="builder">A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.CodeBuilder"/> used to create the code.</param>
+            <param name="obj">Describes the object that should be instantiated by the factory code.</param>
+            <param name="typeName">The type of the result.</param>
+            <param name="fieldName">If not null, the name of the field in which the result is stored.</param>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.GenerateCode(System.String,System.Single,System.Single)">
+            <summary>
+            Call this to generate the code. Returns a string containing the generated code.
+            </summary>
+            <returns>The code.</returns>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CallFactoryFor(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometry)">
+            <summary>
+            Returns the code to call the factory for the given object.
+            </summary>
+            <returns>The code to call the factory for the given object.</returns>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo">
+            <summary>
+            Holds information about the code being generated.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.ClassName">
+            <summary>
+            Gets the name of the class that will be exposed to users.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.CompositionDeclaredSize">
+            <summary>
+            Gets the declared size of the composition.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.DurationTicksFieldName">
+            <summary>
+            Gets the constant holding the duration of the composition in ticks.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.UsesCanvas">
+            <summary>
+            Gets a value indicating whether the composition depends on the Microsoft.Graphics.Canvas namespace.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.UsesCanvasEffects">
+            <summary>
+            Gets a value indicating whether the composition depends on the Microsoft.Graphics.Canvas.Effects namespace.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.UsesCanvasGeometry">
+            <summary>
+            Gets a value indicating whether the composition depends the Microsoft.Graphics.Canvas.Geometry namespace.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.ReusableExpressionAnimationFieldName">
+            <summary>
+            Gets the name of the field in the instantiator class that hold the reusable ExpressionAnimation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.CodeGenInfo.RootVisual">
+            <summary>
+            Gets the Visual at the root of the composition.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase">
+            <summary>
+            A stringifier implementation for some common string formats that are shared
+            by most languages.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Deref">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.IListAdd">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int64TypeName">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.MemberSelect">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.New">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Null">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Readonly(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.ScopeResolve">
+            <inheritdoc/>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Var">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Bool(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.CanvasFigureLoop(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasFigureLoop)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.CanvasGeometryCombine(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasGeometryCombine)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Color(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Wui.Color)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.FactoryCall(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.FilledRegionDetermination(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Mgcg.CanvasFilledRegionDetermination)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Float(System.Single)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int32(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Int64(System.Int64)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Matrix3x2(System.Numerics.Matrix3x2)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Matrix4x4(System.Numerics.Matrix4x4)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.ReferenceTypeName(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.String(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.TimeSpan(System.TimeSpan)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.TimeSpan(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Vector2(System.Numerics.Vector2)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.InstantiatorGeneratorBase.StringifierBase.Vector3(System.Numerics.Vector3)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.NodeNamer`1">
+            <summary>
+            Generates names for the nodes in an <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.ObjectGraph`1"/>.
+            </summary>
+            <typeparam name="TNode">The type of the data associated with each node.</typeparam>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.NodeNamer`1.GenerateNodeNames(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Takes a list of nodes and generates unique names for them. Returns a list of node + name pairs.
+            The names are chosen to be descriptive and usable in code generation.
+            </summary>
+            <returns>A lot of node + name pairs usable in code generation.</returns>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.Optimizer">
+            <summary>
+            Transforms a WinCompData tree to an equivalent tree, optimizing the tree
+            where possible.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.Optimizer.GetCompositionObject(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject)">
+            <summary>
+            Returns a copy of the graph of composition objects starting at the given object.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.CodeGen.TreeReducer">
+            <summary>
+            Optimizes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.Visual"/> tree by combining and removing containers.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.CompositionObjectDgmlSerializer">
+            <summary>
+            Serializes a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> graph into DGML format.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.ApiCompatibility">
+            <summary>
+            Analyzes a tree to determine the features of the runtime required to instantiate it.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.ApiCompatibility.Analyze(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject)">
+            <summary>
+            Analyzes the given tree and returns information about its compatibility with a runtime.
+            </summary>
+            <returns>An object with properties describing the compatibility requirements of the tree.</returns>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Graph.FromCompositionObject(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject,System.Boolean)">
+            <summary>
+            Returns the graph of nodes reachable from the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> root.
+            </summary>
+            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Graph"/> from the given Composition tree.</returns>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Graph.Node">
+            <summary>
+            A simple non-extensible node type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Graph.Node`1.Position">
+            <summary>
+            The position of this node in a traversal of the graph.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Graph.Node`1.Vertex.Position">
+            <summary>
+            The position of this vertex in a traversal of the graph.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Graph.Node`1.Vertex.Node">
+            <summary>
+            The node at the other end of the <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Graph.Node`1.Vertex"/>.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.ObjectGraph`1">
+            <summary>
+            The graph of creatable objects reachable from a <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/>.
+            </summary>
+            <typeparam name="T">The type of the data associated with each node.</typeparam>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.ObjectGraph`1.FromCompositionObject(Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject,System.Boolean)">
+            <summary>
+            Returns the graph of nodes reachable from the given <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.WinCompData.CompositionObject"/> root.
+            </summary>
+            <returns>A <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Graph"/> for the given Composition tree.</returns>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.UIData.Tools.Stats">
+            <summary>
+            Calculates stats for a WinCompData tree. Used to report the size of data
+            and the effectiveness of optimization.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlFactory">
+            <summary>
+            Base class for factories that create YAML representations of scalars.
+            </summary>
+            <remarks>Serializers should subclass this class and add their own methods for the
+            scalar types they wish to serialize.</remarks>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlMap">
+            <summary>
+            A list of named properties.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlMap.Add(System.String,Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlObject)">
+            <summary>
+            Adds the given value to the map.
+            </summary>
+            <param name="key">The property name.</param>
+            <param name="value">The property value.</param>
+            <exception cref="T:System.InvalidOperationException">The property name has already been added.</exception>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlMap.Add(System.String,Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlScalar)">
+            <summary>
+            Adds the given scalar to the map.
+            </summary>
+            <param name="key">The property name.</param>
+            <param name="value">The property value.</param>
+            <exception cref="T:System.InvalidOperationException">The property name has already been added.</exception>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlObject">
+            <summary>
+            Common base class for <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlScalar"/>, <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlMap"/>, and <see cref="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlSequence"/>.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlScalar">
+            <summary>
+            A scalar value.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlSequence">
+            <summary>
+            A sequence of objects.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlSequence.Add(Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlObject)">
+            <summary>
+            Appends the given object to the sequence.
+            </summary>
+            <param name="obj">The object to append.</param>
+        </member>
+        <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlWriter">
+            <summary>
+            Serializes a Yaml object into a <see cref="T:System.IO.TextWriter"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlWriter.WriteObject(Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlObject)">
+            <summary>
+            Writes the given object to the output.
+            </summary>
+            <param name="obj">The object to write.</param>
+        </member>
+        <member name="M:Microsoft.Toolkit.Uwp.UI.Lottie.YamlData.YamlWriter.Write(System.String)">
+            <summary>
+            Writes the given string to the output.
+            </summary>
+            <param name="value">The string to write.</param>
         </member>
         <member name="T:Microsoft.Toolkit.Uwp.UI.Lottie.Lottie_XamlTypeInfo.XamlMetaDataProvider">
             <summary>

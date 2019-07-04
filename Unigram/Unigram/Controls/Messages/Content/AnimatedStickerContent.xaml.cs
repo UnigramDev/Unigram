@@ -1,8 +1,10 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Lottie;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
@@ -80,11 +82,18 @@ namespace Unigram.Controls.Messages.Content
                 try
                 {
                     var storage = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var content = await DecompressAsync(storage);
                     var source = new LottieVisualSource();
 
                     Player.Source = source;
 
-                    await source.SetSourceAsync(storage);
+                    try
+                    {
+                        await source.SetSource(content);
+                    }
+                    catch { }
+
+                    content.Dispose();
                 }
                 catch
                 {
@@ -96,6 +105,25 @@ namespace Unigram.Controls.Messages.Content
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
             }
+        }
+
+        private async Task<System.IO.MemoryStream> DecompressAsync(StorageFile file)
+        {
+            System.IO.MemoryStream text;
+
+            using (var originalFileStream = await System.IO.WindowsRuntimeStorageExtensions.OpenStreamForReadAsync(file))
+            {
+                var decompressedFileStream = new System.IO.MemoryStream();
+                using (var decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
+                {
+                    await decompressionStream.CopyToAsync(decompressedFileStream);
+                }
+
+                decompressedFileStream.Seek(0, System.IO.SeekOrigin.Begin);
+                text = decompressedFileStream;
+            }
+
+            return text;
         }
 
         private async void UpdateThumbnail(MessageViewModel message, File file)
@@ -114,11 +142,11 @@ namespace Unigram.Controls.Messages.Content
         {
             if (content is MessageDocument document)
             {
-                return document.Document.FileName.StartsWith("tg_secret_sticker") && document.Document.FileName.EndsWith("json");
+                return document.Document.MimeType.Equals("application/x-tgsticker") && document.Document.FileName.EndsWith(".tgs");
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.Document != null && text.WebPage.Document.FileName.StartsWith("tg_secret_sticker") && text.WebPage.Document.FileName.EndsWith("json");
+                return text.WebPage.Document != null && text.WebPage.Document.MimeType.Equals("application/x-tgsticker") && text.WebPage.Document.FileName.EndsWith(".tgs");
             }
 
             return false;

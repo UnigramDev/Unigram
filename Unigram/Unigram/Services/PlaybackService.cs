@@ -171,7 +171,7 @@ namespace Unigram.Services
         {
             if (sender.Source is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
             {
-                if (_isRepeatEnabled == null)
+                if (item.Message.Content is MessageAudio && _isRepeatEnabled == null)
                 {
                     _mediaPlayer.Play();
                 }
@@ -180,7 +180,7 @@ namespace Unigram.Services
                     var index = _items.IndexOf(item);
                     if (index == -1 || index == _items.Count - 1)
                     {
-                        if (_isRepeatEnabled == true)
+                        if (item.Message.Content is MessageAudio && _isRepeatEnabled == true)
                         {
                             _mediaPlayer.Source = _items[0].Source;
                             _mediaPlayer.Play();
