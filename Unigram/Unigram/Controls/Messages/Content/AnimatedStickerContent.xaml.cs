@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AnimatedStickerContent : UserControl, IContentWithFile
+    public sealed partial class AnimatedStickerContent : HyperlinkButton, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -46,12 +46,12 @@ namespace Unigram.Controls.Messages.Content
             //Texture.Source = null;
             //Texture.Constraint = message;
 
-            if (sticker.Thumbnail != null && !sticker.DocumentValue.Local.IsDownloadingCompleted)
+            if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
                 UpdateThumbnail(message, sticker.Thumbnail.Photo);
             }
 
-            UpdateFile(message, sticker.DocumentValue);
+            UpdateFile(message, sticker.StickerValue);
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message) { }
@@ -69,7 +69,7 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, file);
                 return;
             }
-            else if (sticker.DocumentValue.Id != file.Id)
+            else if (sticker.StickerValue.Id != file.Id)
             {
                 return;
             }
@@ -130,7 +130,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
+                LayoutRoot.Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -140,27 +140,27 @@ namespace Unigram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageDocument document)
+            if (content is MessageSticker sticker)
             {
-                return document.Document.MimeType.Equals("application/x-tgsticker") && document.Document.FileName.EndsWith(".tgs");
+                return sticker.Sticker.IsAnimated;
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.Document != null && text.WebPage.Document.MimeType.Equals("application/x-tgsticker") && text.WebPage.Document.FileName.EndsWith(".tgs");
+                return text.WebPage.Sticker != null && text.WebPage.Sticker.IsAnimated;
             }
 
             return false;
         }
 
-        private Document GetContent(MessageContent content)
+        private Sticker GetContent(MessageContent content)
         {
-            if (content is MessageDocument sticker)
+            if (content is MessageSticker sticker)
             {
-                return sticker.Document;
+                return sticker.Sticker;
             }
             else if (content is MessageText text && text.WebPage != null)
             {
-                return text.WebPage.Document;
+                return text.WebPage.Sticker;
             }
 
             return null;
@@ -168,13 +168,13 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //var sticker = GetContent(_message.Content);
-            //if (sticker == null)
-            //{
-            //    return;
-            //}
+            var sticker = GetContent(_message.Content);
+            if (sticker == null)
+            {
+                return;
+            }
 
-            //_message.Delegate.OpenSticker(sticker);
+            _message.Delegate.OpenSticker(sticker);
         }
     }
 }

@@ -99,13 +99,13 @@ namespace Unigram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageSticker)
+            if (content is MessageSticker sticker)
             {
-                return true;
+                return !sticker.Sticker.IsAnimated;
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.Sticker != null;
+                return text.WebPage.Sticker != null && !text.WebPage.Sticker.IsAnimated;
             }
 
             return false;
