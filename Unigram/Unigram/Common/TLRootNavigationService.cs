@@ -46,7 +46,10 @@ namespace Unigram.Common
                     }
                     break;
                 case AuthorizationStateWaitCode waitCode:
-                    Navigate(waitCode.IsRegistered ? typeof(SignInSentCodePage) : typeof(SignUpPage));
+                    Navigate(typeof(SignInSentCodePage));
+                    break;
+                case AuthorizationStateWaitRegistration waitRegistration:
+                    Navigate(typeof(SignUpPage));
                     break;
                 case AuthorizationStateWaitPassword waitPassword:
                     if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))

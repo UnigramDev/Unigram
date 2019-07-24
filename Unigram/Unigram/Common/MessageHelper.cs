@@ -673,7 +673,7 @@ namespace Unigram.Common
                     lastName = lastValue;
                 }
 
-                var response = await protoService.SendAsync(new CheckAuthenticationCode(phoneCode, firstName, lastName));
+                var response = await protoService.SendAsync(new CheckAuthenticationCode(phoneCode));
                 if (response is Error error)
                 {
                     if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))

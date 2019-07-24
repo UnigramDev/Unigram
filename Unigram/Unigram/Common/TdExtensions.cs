@@ -307,30 +307,6 @@ namespace Unigram.Common
             return x.Id == y.Id && x.ChatId == y.ChatId;
         }
 
-        public static bool IsAnimatedSticker(this Message message)
-        {
-#if DEBUG_LOTTIE
-            if (message.Content is MessageDocument document)
-            {
-                return document.Document.MimeType.Equals("application/x-tgsticker") && document.Document.FileName.EndsWith(".tgs");
-            }
-#endif
-
-            return false;
-        }
-
-        public static bool IsAnimatedSticker(this MessageViewModel message)
-        {
-#if DEBUG_LOTTIE
-            if (message.Content is MessageDocument document)
-            {
-                return document.Document.MimeType.Equals("application/x-tgsticker") && document.Document.FileName.EndsWith(".tgs");
-            }
-#endif
-
-            return false;
-        }
-
         public static IEnumerable<FormattedText> Split(this FormattedText text, int maxLength)
         {
             int count = (int)Math.Ceiling(text.Text.Length / (double)maxLength);

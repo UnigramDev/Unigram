@@ -74,7 +74,7 @@ namespace Unigram.Controls.Messages
         {
             var chat = message.GetChat();
 
-            var sticker = message.Content is MessageSticker || message.IsAnimatedSticker();
+            var sticker = message.Content is MessageSticker;
             var light = sticker || message.Content is MessageVideoNote;
 
             var title = string.Empty;
@@ -207,14 +207,14 @@ namespace Unigram.Controls.Messages
 
             if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
             {
-                if (!(message.Content is MessageSticker || message.Content is MessageVideoNote || message.IsAnimatedSticker()))
+                if (!(message.Content is MessageSticker || message.Content is MessageVideoNote))
                 {
                     ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, 4, 4);
                 }
 
                 Markup.CornerRadius = new CornerRadius(4, 4, bottomRight, bottomLeft);
             }
-            else if (message.Content is MessageSticker || message.Content is MessageVideoNote || message.IsAnimatedSticker())
+            else if (message.Content is MessageSticker || message.Content is MessageVideoNote)
             {
                 ContentPanel.CornerRadius = new CornerRadius();
             }
@@ -281,7 +281,7 @@ namespace Unigram.Controls.Messages
 
             var chat = message.GetChat();
 
-            var sticker = message.Content is MessageSticker || message.IsAnimatedSticker();
+            var sticker = message.Content is MessageSticker;
             var light = sticker || message.Content is MessageVideoNote;
             var shown = false;
 
@@ -588,7 +588,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, caption ? 4 : 3);
                 Grid.SetRow(Message, caption ? 4 : 2);
             }
-            else if (message.Content is MessageSticker || message.Content is MessageVideoNote || message.IsAnimatedSticker())
+            else if (message.Content is MessageSticker || message.Content is MessageVideoNote)
             {
                 Media.Margin = new Thickness(-10, -4, -10, -6);
                 Placeholder.Visibility = Visibility.Collapsed;
@@ -705,16 +705,9 @@ namespace Unigram.Controls.Messages
                 {
                     Media.Child = new ContactContent(message);
                 }
-                else if (message.Content is MessageDocument document)
+                else if (message.Content is MessageDocument)
                 {
-                    if (message.IsAnimatedSticker())
-                    {
-                        Media.Child = new AnimatedStickerContent(message);
-                    }
-                    else
-                    {
-                        Media.Child = new DocumentContent(message);
-                    }
+                    Media.Child = new DocumentContent(message);
                 }
                 else if (message.Content is MessageGame)
                 {
@@ -743,9 +736,16 @@ namespace Unigram.Controls.Messages
                 {
                     Media.Child = new PollContent(message);
                 }
-                else if (message.Content is MessageSticker)
+                else if (message.Content is MessageSticker sticker)
                 {
-                    Media.Child = new StickerContent(message);
+                    if (sticker.Sticker.IsAnimated)
+                    {
+                        Media.Child = new AnimatedStickerContent(message);
+                    }
+                    else
+                    {
+                        Media.Child = new StickerContent(message);
+                    }
                 }
                 else if (message.Content is MessageVenue)
                 {

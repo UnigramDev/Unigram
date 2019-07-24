@@ -104,20 +104,7 @@ namespace Unigram.ViewModels.SignIn
 
             IsLoading = true;
 
-            var firstName = string.Empty;
-            var lastName = string.Empty;
-
-            if (CacheService.Options.TryGetValue("x_firstname", out string firstValue))
-            {
-                firstName = firstValue;
-            }
-            
-            if (CacheService.Options.TryGetValue("x_lastname", out string lastValue))
-            {
-                lastName = lastValue;
-            }
-
-            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode, firstName, lastName));
+            var response = await ProtoService.SendAsync(new CheckAuthenticationCode(_phoneCode));
             if (response is Error error)
             {
                 IsLoading = false;

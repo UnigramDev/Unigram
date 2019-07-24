@@ -177,7 +177,10 @@ namespace Unigram.Views.Host
                         service.Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));
                         break;
                     case AuthorizationStateWaitCode waitCode:
-                        service.Navigate(waitCode.IsRegistered ? typeof(SignInSentCodePage) : typeof(SignUpPage));
+                        service.Navigate(typeof(SignInSentCodePage));
+                        break;
+                    case AuthorizationStateWaitRegistration waitRegistration:
+                        service.Navigate(typeof(SignUpPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         service.Navigate(typeof(SignInPasswordPage));

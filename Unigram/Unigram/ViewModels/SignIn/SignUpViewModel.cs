@@ -65,7 +65,7 @@ namespace Unigram.ViewModels.SignIn
             }
 
             var state = ProtoService.GetAuthorizationState();
-            if (state is AuthorizationStateWaitCode waitCode && waitCode.TermsOfService != null && waitCode.TermsOfService.ShowPopup)
+            if (state is AuthorizationStateWaitRegistration waitRegistration && waitRegistration.TermsOfService != null && waitRegistration.TermsOfService.ShowPopup)
             {
                 async void CancelSignUp()
                 {
@@ -86,16 +86,16 @@ namespace Unigram.ViewModels.SignIn
                     ProtoService.Send(new LogOut());
                 }
 
-                var confirm = await TLMessageDialog.ShowAsync(waitCode.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
+                var confirm = await TLMessageDialog.ShowAsync(waitRegistration.TermsOfService.Text, Strings.Resources.TermsOfService, Strings.Resources.SignUp, Strings.Resources.Decline);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     CancelSignUp();
                     return;
                 }
 
-                if (waitCode.TermsOfService.MinUserAge > 0)
+                if (waitRegistration.TermsOfService.MinUserAge > 0)
                 {
-                    var age = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.TosAgeText, waitCode.TermsOfService.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    var age = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.TosAgeText, waitRegistration.TermsOfService.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
                     if (age != ContentDialogResult.Primary)
                     {
                         CancelSignUp();
@@ -104,10 +104,11 @@ namespace Unigram.ViewModels.SignIn
                 }
             }
 
-            await ProtoService.SendAsync(new SetOption("x_firstname", new OptionValueString(_firstName ?? string.Empty)));
-            await ProtoService.SendAsync(new SetOption("x_lastname", new OptionValueString(_lastName ?? string.Empty)));
+            var response = await ProtoService.SendAsync(new RegisterUser(_firstName ?? string.Empty, _lastName ?? string.Empty));
+            if (response is Error error)
+            {
 
-            NavigationService.Navigate(typeof(SignInSentCodePage));
+            }
 
             //var phoneNumber = _phoneNumber;
             //var phoneCodeHash = _sentCode.PhoneCodeHash;

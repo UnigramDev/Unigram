@@ -248,7 +248,10 @@ namespace Unigram.Common
                         service.Navigate(service.CurrentPageType != null ? typeof(SignInPage) : typeof(IntroPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
-                        service.Navigate(waitCode.IsRegistered ? typeof(SignInSentCodePage) : typeof(SignUpPage));
+                        service.Navigate(typeof(SignInSentCodePage));
+                        break;
+                    case AuthorizationStateWaitRegistration waitRegistration:
+                        service.Navigate(typeof(SignUpPage));
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))

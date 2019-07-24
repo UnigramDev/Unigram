@@ -217,7 +217,7 @@ namespace Unigram.ViewModels.Supergroups
                 var response = await ProtoService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
                 if (response is StickerSet set)
                 {
-                    SelectedItem = new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.IsInstalled, set.IsArchived, set.IsOfficial, set.IsMasks, set.IsViewed, set.Stickers.Count, set.Stickers);
+                    SelectedItem = new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.IsInstalled, set.IsArchived, set.IsOfficial, set.IsAnimated, set.IsMasks, set.IsViewed, set.Stickers.Count, set.Stickers);
                     ShortName = set.Name;
                 }
             }
@@ -274,7 +274,7 @@ namespace Unigram.ViewModels.Supergroups
             {
                 IsLoading = false;
                 IsAvailable = true;
-                SelectedItem = new StickerSetInfo(stickerSet.Id, stickerSet.Title, stickerSet.Name, stickerSet.Thumbnail, stickerSet.IsInstalled, stickerSet.IsArchived, stickerSet.IsOfficial, stickerSet.IsMasks, stickerSet.IsViewed, stickerSet.Stickers.Count, stickerSet.Stickers);
+                SelectedItem = new StickerSetInfo(stickerSet.Id, stickerSet.Title, stickerSet.Name, stickerSet.Thumbnail, stickerSet.IsInstalled, stickerSet.IsArchived, stickerSet.IsOfficial, stickerSet.IsAnimated, stickerSet.IsMasks, stickerSet.IsViewed, stickerSet.Stickers.Count, stickerSet.Stickers);
                 ShortName = stickerSet.Name;
             }
             else
