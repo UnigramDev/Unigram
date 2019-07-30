@@ -5,6 +5,7 @@
 #include <D2d1_3.h>
 #include <map>
 #include "Helpers\COMHelper.h"
+#include "Opus\OpusByteStreamHandler.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;

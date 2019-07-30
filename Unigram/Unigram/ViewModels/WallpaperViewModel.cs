@@ -105,6 +105,8 @@ namespace Unigram.ViewModels
                         }
 
                         item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+
+                        ProtoService.Send(new SetBackground(new InputBackgroundRemote(wallpaper.Id), new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled), false));
                     }
 
                     if (_isBlurEnabled)

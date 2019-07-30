@@ -15,12 +15,12 @@
   <Identity
     Name="38833FF26BA1D.UnigramExperimental"
     Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB"
-    Version="3.7.2341.0" />
+    Version="3.10.2510.0" />
 
   <Properties>
     <DisplayName>Unigram Experimental</DisplayName>
     <PublisherDisplayName>Unigram, Inc.</PublisherDisplayName>
-    <Logo>Images\StoreLogo.png</Logo>
+    <Logo>Assets\Logos\StoreLogo\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
@@ -57,7 +57,7 @@
           </uap3:AppUriHandler>
         </uap3:Extension>
         <uap4:Extension Category="windows.contactPanel" />
-        <uap5:Extension Category="windows.startupTask" Executable="Unigram.exe" EntryPoint="Unigram.App">
+        <uap5:Extension Category="windows.startupTask" Executable="UnigramBridge\UnigramBridge.exe" EntryPoint="Windows.FullTrustApplication">
           <uap5:StartupTask TaskId="Telegram" Enabled="false" DisplayName="Unigram" />
         </uap5:Extension>
         <uap5:Extension Category="windows.appExecutionAlias" Executable="Unigram.exe" EntryPoint="Unigram.App">
@@ -110,13 +110,20 @@
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.appService">
-          <uap:AppService Name="org.unigram.bridge"/>
+          <uap:AppService Name="org.telegram.bridge"/>
         </uap:Extension>
         <desktop:Extension Category="windows.fullTrustProcess" Executable="UnigramBridge\UnigramBridge.exe" />
       </Extensions>
     </Application>
   </Applications>
-
+  <Extensions>
+	  <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>Unigram.Native.dll</Path>
+        <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both"/>
+      </InProcessServer>
+    </Extension>
+  </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />
     <Capability Name="privateNetworkClientServer" />
@@ -124,6 +131,7 @@
     <uap:Capability Name="picturesLibrary" />
     <uap:Capability Name="voipCall" />
     <uap:Capability Name="contacts" />
+	<!--<uap3:Capability Name="backgroundMediaPlayback" />-->
     <rescap:Capability Name="runFullTrust" />
     <DeviceCapability Name="location" />
     <DeviceCapability Name="microphone" />

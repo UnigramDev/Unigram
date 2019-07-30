@@ -116,15 +116,35 @@ namespace Unigram.Controls.Chats
             }
             else if (background.Type is BackgroundTypeWallpaper wallpaper && background.Document != null)
             {
-                var file = background.Document.DocumentValue;
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                //var file = background.Document.DocumentValue;
+                //if (file.Local.IsDownloadingCompleted)
+                //{
+                //    var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
 
+                //    if (_imageBackground == null)
+                //        _imageBackground = new Rectangle();
+
+                //    using (var stream = await item.OpenReadAsync())
+                //    {
+                //        var bitmap = new BitmapImage();
+                //        await bitmap.SetSourceAsync(stream);
+                //        _imageBackground.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                //    }
+
+                //    _container.Content = _imageBackground;
+                //}
+                //else
+                //{
+
+                //}
+
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync($"{session}\\{Constants.WallpaperFileName}");
+                if (item is StorageFile file)
+                {
                     if (_imageBackground == null)
                         _imageBackground = new Rectangle();
 
-                    using (var stream = await item.OpenReadAsync())
+                    using (var stream = await file.OpenReadAsync())
                     {
                         var bitmap = new BitmapImage();
                         await bitmap.SetSourceAsync(stream);
@@ -132,10 +152,6 @@ namespace Unigram.Controls.Chats
                     }
 
                     _container.Content = _imageBackground;
-                }
-                else
-                {
-
                 }
             }
             else if (background.Type is BackgroundTypeSolid solid)
