@@ -281,7 +281,7 @@ namespace Unigram.Services
             if (confirm == ContentDialogResult.Primary)
             {
                 // We need updates here
-                await ProtoService.SendAsync(new SendCallRating(callId, dialog.Rating, dialog.Rating >= 1 && dialog.Rating <= 4 ? dialog.Comment : string.Empty));
+                //await ProtoService.SendAsync(new SendCallRating(callId, dialog.Rating, dialog.Rating >= 1 && dialog.Rating <= 4 ? dialog.Comment : string.Empty));
 
                 if (dialog.IncludeDebugLogs && dialog.Rating <= 3)
                 {
