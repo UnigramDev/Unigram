@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -65,6 +66,14 @@ namespace Unigram.Services
 
             foreach (var protoService in TLContainer.Current.ResolveAll<IProtoService>())
             {
+                var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
+                if (test is LanguagePackStrings strings)
+                {
+                    saveRemoteLocaleStrings(info.Id, strings);
+                }
+
+                return new Error();
+
                 var response = await protoService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));
                 if (response is Ok && refresh)
                 {
@@ -88,6 +97,216 @@ namespace Unigram.Services
 
             return new Ok();
         }
+
+        public void saveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
+        {
+            string GetName(string value)
+            {
+                var split = value.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+                var result = string.Empty;
+
+                foreach (var item in split)
+                {
+                    result += item.Substring(0, 1).ToUpper();
+                    result += item.Substring(1);
+                }
+
+                return result;
+            }
+
+            string GetValue(string value)
+            {
+                if (value.StartsWith("\"") && value.EndsWith("\""))
+                {
+                    value = value.Trim('"');
+                }
+
+                return Regex.Replace(value, "%([0-9]*?)\\$[ds]", match =>
+                {
+                    var index = int.Parse(match.Groups[1].Value);
+                    return "{" + (index - 1) + "}";
+                });
+            }
+
+            var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");
+            try
+            {
+                Dictionary<String, String> values;
+                values = new Dictionary<string, string>();
+                for (int a = 0; a < difference.Strings.Count; a++)
+                {
+                    if (difference.Strings[a].Value is LanguagePackStringValueOrdinary single)
+                    {
+                        values[GetName(difference.Strings[a].Key)] = GetValue(single.Value);
+                    }
+                    else if (difference.Strings[a].Value is LanguagePackStringValuePluralized pluralized)
+                    {
+                        values[GetName(difference.Strings[a].Key) + "Zero"] = GetValue(pluralized.ZeroValue ?? string.Empty);
+                        values[GetName(difference.Strings[a].Key) + "One"] = GetValue(pluralized.OneValue ?? string.Empty);
+                        values[GetName(difference.Strings[a].Key) + "Two"] = GetValue(pluralized.TwoValue ?? string.Empty);
+                        values[GetName(difference.Strings[a].Key) + "Few"] = GetValue(pluralized.FewValue ?? string.Empty);
+                        values[GetName(difference.Strings[a].Key) + "Many"] = GetValue(pluralized.ManyValue ?? string.Empty);
+                        values[GetName(difference.Strings[a].Key) + "Other"] = GetValue(pluralized.OtherValue ?? string.Empty);
+                    }
+                    else if (difference.Strings[a].Value is LanguagePackStringValueDeleted deleted)
+                    {
+                        values.Remove(GetName(difference.Strings[a].Key));
+                    }
+                }
+
+                Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+                System.IO.File.Delete(fileName);
+
+                var writer = new StreamWriter(new FileStream(fileName, FileMode.OpenOrCreate));
+                //writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+                //writer.Write("<resources>\n");
+                writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+                writer.Write("<root>\n");
+                writer.Write("  <xsd:schema id=\"root\" xmlns=\"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\n");
+                writer.Write("    <xsd:import namespace=\"http://www.w3.org/XML/1998/namespace\" />\n");
+                writer.Write("    <xsd:element name=\"root\" msdata:IsDataSet=\"true\">\n");
+                writer.Write("      <xsd:complexType>\n");
+                writer.Write("        <xsd:choice maxOccurs=\"unbounded\">\n");
+                writer.Write("          <xsd:element name=\"metadata\">\n");
+                writer.Write("            <xsd:complexType>\n");
+                writer.Write("              <xsd:sequence>\n");
+                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" />\n");
+                writer.Write("              </xsd:sequence>\n");
+                writer.Write("              <xsd:attribute name=\"name\" use=\"required\" type=\"xsd:string\" />\n");
+                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" />\n");
+                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" />\n");
+                writer.Write("              <xsd:attribute ref=\"xml:space\" />\n");
+                writer.Write("            </xsd:complexType>\n");
+                writer.Write("          </xsd:element>\n");
+                writer.Write("          <xsd:element name=\"assembly\">\n");
+                writer.Write("            <xsd:complexType>\n");
+                writer.Write("              <xsd:attribute name=\"alias\" type=\"xsd:string\" />\n");
+                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" />\n");
+                writer.Write("            </xsd:complexType>\n");
+                writer.Write("          </xsd:element>\n");
+                writer.Write("          <xsd:element name=\"data\">\n");
+                writer.Write("            <xsd:complexType>\n");
+                writer.Write("              <xsd:sequence>\n");
+                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\n");
+                writer.Write("                <xsd:element name=\"comment\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"2\" />\n");
+                writer.Write("              </xsd:sequence>\n");
+                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" msdata:Ordinal=\"1\" />\n");
+                writer.Write("              <xsd:attribute name=\"type\" type=\"xsd:string\" msdata:Ordinal=\"3\" />\n");
+                writer.Write("              <xsd:attribute name=\"mimetype\" type=\"xsd:string\" msdata:Ordinal=\"4\" />\n");
+                writer.Write("              <xsd:attribute ref=\"xml:space\" />\n");
+                writer.Write("            </xsd:complexType>\n");
+                writer.Write("          </xsd:element>\n");
+                writer.Write("          <xsd:element name=\"resheader\">\n");
+                writer.Write("            <xsd:complexType>\n");
+                writer.Write("              <xsd:sequence>\n");
+                writer.Write("                <xsd:element name=\"value\" type=\"xsd:string\" minOccurs=\"0\" msdata:Ordinal=\"1\" />\n");
+                writer.Write("              </xsd:sequence>\n");
+                writer.Write("              <xsd:attribute name=\"name\" type=\"xsd:string\" use=\"required\" />\n");
+                writer.Write("            </xsd:complexType>\n");
+                writer.Write("          </xsd:element>\n");
+                writer.Write("        </xsd:choice>\n");
+                writer.Write("      </xsd:complexType>\n");
+                writer.Write("    </xsd:element>\n");
+                writer.Write("  </xsd:schema>\n");
+                writer.Write("  <resheader name=\"resmimetype\">\n");
+                writer.Write("    <value>text/microsoft-resx</value>\n");
+                writer.Write("  </resheader>\n");
+                writer.Write("  <resheader name=\"version\">\n");
+                writer.Write("    <value>2.0</value>\n");
+                writer.Write("  </resheader>\n");
+                writer.Write("  <resheader name=\"reader\">\n");
+                writer.Write("    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\n");
+                writer.Write("  </resheader>\n");
+                writer.Write("  <resheader name=\"writer\">\n");
+                writer.Write("    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>\n");
+                writer.Write("  </resheader>\n");
+
+
+                foreach (var entry in values)
+                {
+                    //writer.Write($"<string name=\"{entry.Key}\">{entry.Value}</string>\n");
+                    writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\n");
+                    if (string.IsNullOrEmpty(entry.Value))
+                    {
+                        writer.Write($"    <value/>\n");
+                    }
+                    else
+                    {
+                        writer.Write($"    <value>{entry.Value.Replace("&", "&amp;")}</value>\n");
+                    }
+                    writer.Write($"  </data>\n");
+                }
+
+                writer.Write("</root>");
+                //writer.Write("</resources>");
+                writer.Dispose();
+
+                //var valuesToSet = getLocaleFileStrings(finalFile);
+                //{
+                //    LocaleInfo localeInfo = getLanguageFromDict(difference.lang_code);
+                //    if (localeInfo != null)
+                //    {
+                //        localeInfo.version = difference.version;
+                //    }
+                //    saveOtherLanguages();
+                //    if (currentLocaleInfo != null && currentLocaleInfo.isLocal())
+                //    {
+                //        return;
+                //    }
+                //    try
+                //    {
+                //        Locale newLocale;
+                //        String[] args = localeInfo.shortName.split("_");
+                //        if (args.length == 1)
+                //        {
+                //            newLocale = new Locale(localeInfo.shortName);
+                //        }
+                //        else
+                //        {
+                //            newLocale = new Locale(args[0], args[1]);
+                //        }
+                //        if (newLocale != null)
+                //        {
+                //            languageOverride = localeInfo.shortName;
+
+                //            SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
+                //            SharedPreferences.Editor editor = preferences.edit();
+                //            editor.putString("language", localeInfo.getKey());
+                //            editor.commit();
+                //        }
+                //        if (newLocale != null)
+                //        {
+                //            localeValues = valuesToSet;
+                //            currentLocale = newLocale;
+                //            currentLocaleInfo = localeInfo;
+                //            currentPluralRules = allRules.get(currentLocale.getLanguage());
+                //            if (currentPluralRules == null)
+                //            {
+                //                currentPluralRules = allRules.get("en");
+                //            }
+                //            changingConfiguration = true;
+                //            Locale.setDefault(currentLocale);
+                //            android.content.res.Configuration config = new android.content.res.Configuration();
+                //            config.locale = currentLocale;
+                //            ApplicationLoader.applicationContext.getResources().updateConfiguration(config, ApplicationLoader.applicationContext.getResources().getDisplayMetrics());
+                //            changingConfiguration = false;
+                //        }
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        FileLog.e(e);
+                //        changingConfiguration = false;
+                //    }
+                //    recreateFormatters();
+                //    NotificationCenter.getInstance().postNotificationName(NotificationCenter.reloadInterface);
+                //}
+            }
+            catch (Exception ignore)
+            {
+
+            }
+        }
+
 
         public string GetString(string key)
         {
