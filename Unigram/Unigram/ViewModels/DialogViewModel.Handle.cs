@@ -827,9 +827,7 @@ namespace Unigram.ViewModels
                 {
                     var messageCommon = _messageFactory.Create(this, message);
                     var result = new List<MessageViewModel> { messageCommon };
-                    ProcessAlbums(_chat, result);
-                    ProcessFiles(_chat, result);
-                    ProcessReplies(_chat, result);
+                    await ProcessMessagesAsync(_chat, result);
 
                     if (result.Count > 0)
                     {

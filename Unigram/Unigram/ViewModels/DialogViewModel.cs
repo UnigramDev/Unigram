@@ -682,9 +682,7 @@ namespace Unigram.ViewModels
                     }
 
                     var replied = messages.MessagesValue.OrderByDescending(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
-                    ProcessAlbums(chat, replied);
-                    ProcessFiles(chat, replied);
-                    ProcessReplies(chat, replied);
+                    await ProcessMessagesAsync(chat, replied);
 
                     foreach (var message in replied)
                     {
@@ -793,9 +791,7 @@ namespace Unigram.ViewModels
                     var added = false;
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
-                    ProcessAlbums(chat, replied);
-                    ProcessFiles(chat, replied);
-                    ProcessReplies(chat, replied);
+                    await ProcessMessagesAsync(chat, replied);
 
                     foreach (var message in replied)
                     {
@@ -1110,9 +1106,7 @@ namespace Unigram.ViewModels
                     }
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
-                    ProcessAlbums(chat, replied);
-                    ProcessFiles(chat, replied);
-                    ProcessReplies(chat, replied);
+                    await ProcessMessagesAsync(chat, replied);
 
                     // If we're loading from the last read message
                     // then we want to skip it to align first unread message at top
@@ -1234,9 +1228,41 @@ namespace Unigram.ViewModels
 
         public MessageCollection Items { get; } = new MessageCollection();
 
-        private void ProcessView(Chat chat, IList<MessageViewModel> messages)
+        private async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
         {
+            StickerSet set = null;
 
+            foreach (var message in messages)
+            {
+                if (message.Content is MessageText text)
+                {
+                    if (Emoji.TryCountEmojis(text.Text.Text, out int count, 1))
+                    {
+                        if (set == null)
+                        {
+                            set = await ProtoService.SendAsync(new SearchStickerSet("AnimatedEmojies")) as StickerSet;
+                        }
+
+                        if (set == null)
+                        {
+                            break;
+                        }
+
+                        foreach (var sticker in set.Stickers)
+                        {
+                            if (string.Equals(sticker.Emoji, text.Text.Text, StringComparison.OrdinalIgnoreCase))
+                            {
+                                message.Content = new MessageSticker(sticker);
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+            ProcessAlbums(chat, messages);
+            ProcessFiles(chat, messages);
+            ProcessReplies(chat, messages);
         }
 
         private void ProcessFiles(Chat chat, IList<MessageViewModel> messages, MessageViewModel parent = null)
