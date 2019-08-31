@@ -379,12 +379,11 @@ namespace Unigram.ViewModels
                 {
                     if (IsWithMyScore)
                     {
-                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true)));
+                        var response = await ProtoService.SendAsync(new SendMessage(chat.Id, 0, false, false, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, false, false)));
                     }
                     else
                     {
-                        //var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, true));
-                        await _messageFactory.ForwardMessagesAsync(chat.Id, _messages[0].ChatId, _messages, _sendAsCopy, !_removeCaptions);
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), false, false, true, _sendAsCopy, _removeCaptions));
                     }
                 }
 

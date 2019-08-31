@@ -302,7 +302,7 @@ namespace Unigram.Services.Factories
             {
                 if (chunk.Count > 0)
                 {
-                    await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk, false, false, albumId != 0));
+                    await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk, false, false, albumId != 0, false, false));
                 }
 
                 albumId = 0L;
