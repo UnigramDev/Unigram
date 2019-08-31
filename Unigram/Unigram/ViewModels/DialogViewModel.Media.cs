@@ -603,7 +603,7 @@ namespace Unigram.ViewModels
             return SendMessageAsync(0, new InputMessageContact(contact));
         }
 
-        private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent)
+        private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent, bool disableNotification = false)
         {
             var chat = _chat;
             if (chat == null)
@@ -611,7 +611,7 @@ namespace Unigram.ViewModels
                 return null;
             }
 
-            var response = await ProtoService.SendAsync(new SendMessage(chat.Id, replyToMessageId, false, false, null, inputMessageContent));
+            var response = await ProtoService.SendAsync(new SendMessage(chat.Id, replyToMessageId, disableNotification, false, null, inputMessageContent));
             if (response is Error error)
             {
 

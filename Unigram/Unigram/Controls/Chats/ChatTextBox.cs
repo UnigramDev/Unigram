@@ -747,9 +747,9 @@ namespace Unigram.Controls.Chats
             Document.Selection.SetRange(caretPosition, caretPosition);
         }
 
-        public async Task SendAsync()
+        public async Task SendAsync(bool disableNotification = false)
         {
-            await ViewModel.SendMessageAsync(GetFormattedText(true));
+            await ViewModel.SendMessageAsync(GetFormattedText(true), disableNotification);
         }
 
         protected override void OnGettingFormattedText()

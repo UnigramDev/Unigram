@@ -1797,6 +1797,14 @@ namespace Unigram.Views
             }
         }
 
+        private void Send_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
+
+            args.ShowAt(flyout, sender as FrameworkElement);
+        }
+
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();

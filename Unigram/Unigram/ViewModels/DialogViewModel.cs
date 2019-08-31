@@ -2251,12 +2251,12 @@ namespace Unigram.ViewModels
             await SendMessageAsync(args);
         }
 
-        public Task SendMessageAsync(FormattedText formattedText)
+        public Task SendMessageAsync(FormattedText formattedText, bool disableNotification = false)
         {
-            return SendMessageAsync(formattedText.Text, formattedText.Entities);
+            return SendMessageAsync(formattedText.Text, formattedText.Entities, disableNotification);
         }
 
-        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null)
+        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, bool disableNotification = false)
         {
             text = text.Replace('\v', '\n').Replace('\r', '\n');
 
@@ -2350,13 +2350,13 @@ namespace Unigram.ViewModels
                     foreach (var split in formattedText.Split(CacheService.Options.MessageTextLengthMax))
                     {
                         var input = new InputMessageText(split, disablePreview, true);
-                        await SendMessageAsync(reply, input);
+                        await SendMessageAsync(reply, input, disableNotification);
                     }
                 }
                 else if (text.Length > 0)
                 {
                     var input = new InputMessageText(formattedText, disablePreview, true);
-                    await SendMessageAsync(reply, input);
+                    await SendMessageAsync(reply, input, disableNotification);
                 }
                 else
                 {

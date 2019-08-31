@@ -1184,6 +1184,7 @@
 
                     <controls:GlyphButton
                         x:Name="btnSendMessage"
+                        ContextRequested="Send_ContextRequested"
                         VerticalAlignment="Bottom"
                         Click="btnSendMessage_Click"
                         Glyph="&#xE919;"
