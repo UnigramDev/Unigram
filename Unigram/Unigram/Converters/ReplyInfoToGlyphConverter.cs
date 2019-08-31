@@ -35,6 +35,8 @@ namespace Unigram.Converters
         public const string Animation = "\uE906";
         public const string Theme = "\uE2B1";
 
+        public const string Retry = "\uE72C";
+
         public const string Undo = "\uE7A7";
         public const string Redo = "\uE7A6";
         public const string Cut = "\uE8C6";

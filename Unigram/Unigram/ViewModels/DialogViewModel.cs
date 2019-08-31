@@ -176,6 +176,7 @@ namespace Unigram.ViewModels
             MessageReplyPreviousCommand = new RelayCommand(MessageReplyPreviousExecute);
             MessageReplyNextCommand = new RelayCommand(MessageReplyNextExecute);
             MessageReplyCommand = new RelayCommand<MessageViewModel>(MessageReplyExecute);
+            MessageRetryCommand = new RelayCommand<MessageViewModel>(MessageRetryExecute);
             MessageDeleteCommand = new RelayCommand<MessageViewModel>(MessageDeleteExecute);
             MessageForwardCommand = new RelayCommand<MessageViewModel>(MessageForwardExecute);
             MessageShareCommand = new RelayCommand<MessageViewModel>(MessageShareExecute);

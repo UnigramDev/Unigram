@@ -1870,6 +1870,8 @@ namespace Unigram.Views
 
             if (message.SendingState is MessageSendingStateFailed || message.SendingState is MessageSendingStatePending)
             {
+                flyout.CreateFlyoutItem(MessageRetry_Loaded, ViewModel.MessageRetryCommand, message, Strings.Resources.Retry, new FontIcon { Glyph = Icons.Retry });
+                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy, new FontIcon { Glyph = Icons.Copy });
                 flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
             }
             else
@@ -2064,6 +2066,16 @@ namespace Unigram.Views
 
             var myId = ViewModel.CacheService.Options.MyId;
             return message.SenderUserId != myId;
+        }
+
+        private bool MessageRetry_Loaded(MessageViewModel message)
+        {
+            if (message.SendingState is MessageSendingStateFailed failed)
+            {
+                return failed.CanRetry;
+            }
+
+            return false;
         }
 
         private bool MessageCopy_Loaded(MessageViewModel message)

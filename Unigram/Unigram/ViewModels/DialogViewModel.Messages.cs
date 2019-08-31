@@ -556,6 +556,16 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Retry
+
+        public RelayCommand<MessageViewModel> MessageRetryCommand { get; }
+        private async void MessageRetryExecute(MessageViewModel message)
+        {
+            ProtoService.Send(new ResendMessages(message.ChatId, new[] { message.Id }));
+        }
+
+        #endregion
+
         #region Copy
 
         public RelayCommand<MessageViewModel> MessageCopyCommand { get; }
