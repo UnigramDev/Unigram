@@ -66,13 +66,13 @@ namespace Unigram.Services
 
             foreach (var protoService in TLContainer.Current.ResolveAll<IProtoService>())
             {
-                var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
-                if (test is LanguagePackStrings strings)
-                {
-                    saveRemoteLocaleStrings(info.Id, strings);
-                }
+                //var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
+                //if (test is LanguagePackStrings strings)
+                //{
+                //    saveRemoteLocaleStrings(info.Id, strings);
+                //}
 
-                return new Error();
+                //return new Error();
 
                 var response = await protoService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));
                 if (response is Ok && refresh)
@@ -131,13 +131,19 @@ namespace Unigram.Services
             var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");
             try
             {
-                Dictionary<String, String> values;
-                values = new Dictionary<string, string>();
+                var values = new Dictionary<string, string>();
+                var already = new List<string>();
                 for (int a = 0; a < difference.Strings.Count; a++)
                 {
                     if (difference.Strings[a].Value is LanguagePackStringValueOrdinary single)
                     {
+                        if (already.Contains(GetName(difference.Strings[a].Key).ToLower()))
+                        {
+                            continue;
+                        }
+
                         values[GetName(difference.Strings[a].Key)] = GetValue(single.Value);
+                        already.Add(GetName(difference.Strings[a].Key).ToLower());
                     }
                     else if (difference.Strings[a].Value is LanguagePackStringValuePluralized pluralized)
                     {
@@ -222,7 +228,7 @@ namespace Unigram.Services
                 writer.Write("  </resheader>\n");
 
 
-                foreach (var entry in values)
+                foreach (var entry in values.OrderBy(x => x.Key))
                 {
                     //writer.Write($"<string name=\"{entry.Key}\">{entry.Value}</string>\n");
                     writer.Write($"  <data name=\"{entry.Key}\" xml:space=\"preserve\">\n");
