@@ -239,7 +239,7 @@
     <value>Profielfoto</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>Ontvangen %s</value>
+    <value>Ontvangen {0}</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>Afspeellijst, herhalen</value>
@@ -269,7 +269,7 @@
     <value>Geheime chat</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>Gestuurd %s</value>
+    <value>Gestuurd {0}</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Accounts weergeven</value>
@@ -1268,7 +1268,7 @@ Bekijk ook de <![CDATA[<a href="https://telegram.org/faq#general-questions">veel
     <value>Drempelwaarde omgevingslicht</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Schakel om naar je nachtthema als het omgevingslicht minder dan  {0}%% is.</value>
+    <value>Schakel om naar je nachtthema als het omgevingslicht minder dan  {0}% is.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Uitgeschakeld</value>
@@ -1325,7 +1325,7 @@ Zonsopkomst: {1}</value>
     <value>Beschikbaar</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>Wachten tot %s online komt</value>
+    <value>Wachten tot {0} online komt</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>{0} van jou</value>
@@ -1538,7 +1538,7 @@ Zonsopkomst: {1}</value>
     <value>Terugbellen</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Als deze emoji's gelijk zijn bij {0} is dit gesprek 100%% veilig.</value>
+    <value>Als deze emoji's gelijk zijn bij {0} is dit gesprek 100% veilig.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>We bellen je</value>
@@ -2924,7 +2924,7 @@ Alle abonnees van het kanaal kunnen de berichten in deze groep zien.</value>
     <value>Gereed</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>Je hebt Telegram nodig om in te loggen op **%s**, nu installeren?</value>
+    <value>Je hebt Telegram nodig om in te loggen op **{0}**, nu installeren?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Concept</value>
@@ -3144,7 +3144,7 @@ Als je inlogt op je Telegram-account heb je het ingestelde wachtwoord nodig.</va
     <value>Toegevoegd aan de geheime chat.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s neemt deel aan je geheime chat.</value>
+    <value>{0} neemt deel aan je geheime chat.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>End-to-end-encryptie</value>
@@ -3162,10 +3162,10 @@ Als je inlogt op je Telegram-account heb je het ingestelde wachtwoord nodig.</va
     <value>Geheime chat functies:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s heeft je uitgenodigd voor een geheime chat.</value>
+    <value>{0} heeft je uitgenodigd voor een geheime chat.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>Je hebt %s uitgenodigd voor een geheime chat.</value>
+    <value>Je hebt {0} uitgenodigd voor een geheime chat.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>Encryptiesleutel</value>
@@ -4423,7 +4423,7 @@ Alle media zal in de Telegram-cloud bewaard blijven en kan opnieuw worden gedown
     <value>Taal</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Je staat op het punt om een aangepast taalbestand toe te passen, dit taalbestand (**{0}**) is {1}%% compleet.
+    <value>Je staat op het punt om een aangepast taalbestand toe te passen, dit taalbestand (**{0}**) is {1}% compleet.
 
 Hiermee vertaal je de complete app, correcties kun je doorgeven via het [vertalingsplatform].
 
@@ -4436,7 +4436,7 @@ Je kunt je taal altijd aanpassen via Instellingen.</value>
     <value>Aangepast</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Je staat op het punt om een aangepast taalbestand toe te passen, dit taalbestand (**{0}**) is {1}%% compleet.
+    <value>Je staat op het punt om een aangepast taalbestand toe te passen, dit taalbestand (**{0}**) is {1}% compleet.
 
 Hiermee vertaal je de complete app, correctie kun je doorgeven via het [vertalingsplatform].
 
@@ -6449,7 +6449,7 @@ Je kunt onze *Veelgestelde vragen* bekijken voor meer informatie.</value>
     <value>Annuleren</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>Je hebt Telegram nodig om in te loggen op **%s**. Telegram nu installeren?</value>
+    <value>Je hebt Telegram nodig om in te loggen op **{0}**. Telegram nu installeren?</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>Inloggen met Telegram</value>
@@ -8905,7 +8905,7 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
     <value>Opnemen</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>Antwoorden als %s</value>
+    <value>Antwoorden als {0}</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -8950,7 +8950,7 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
     <value>Telegram-oproep</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>Telegram-oproep naar %s</value>
+    <value>Telegram-oproep naar {0}</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Inkomende oproep</value>

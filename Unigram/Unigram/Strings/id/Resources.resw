@@ -239,7 +239,7 @@
     <value>Foto profil</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>Diterima %s</value>
+    <value>Diterima {0}</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>Ulangi, daftar putar</value>
@@ -269,7 +269,7 @@
     <value>Secret chat</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>Kirim %s</value>
+    <value>Kirim {0}</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Tampilkan akun</value>
@@ -1264,7 +1264,7 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
     <value>Batas kecerahan</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Ganti ke tema gelap saat kecerahan sekitar pada {0}%% atau kurang. </value>
+    <value>Ganti ke tema gelap saat kecerahan sekitar pada {0}% atau kurang. </value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Non aktif</value>
@@ -1318,7 +1318,7 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
     <value>Tersedia</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>Menunggu %s online...</value>
+    <value>Menunggu {0} online...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>jarak {0} </value>
@@ -1531,7 +1531,7 @@ Mohon untuk membaca <![CDATA[<a href="https://telegram.org/faq#general">Telegram
     <value>Panggil Ulang</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Jika emoji di layar {0} sama, maka panggilan ini 100%% aman.</value>
+    <value>Jika emoji di layar {0} sama, maka panggilan ini 100% aman.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>Menghubungi Anda...</value>
@@ -2919,7 +2919,7 @@ Pelanggan dari channel akan dapat melihat semua pesan di grup ini.</value>
     <value>Selesai</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>Anda membutuhkan Telegram untuk masuk ke %s. Apakah Anda ingin memasangnya sekarang?</value>
+    <value>Anda membutuhkan Telegram untuk masuk ke {0}. Apakah Anda ingin memasangnya sekarang?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Draf</value>
@@ -3141,7 +3141,7 @@ Pelanggan dari channel akan dapat melihat semua pesan di grup ini.</value>
     <value>Anda bergabung dalam secret chat.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s bergabung dalam secret chat Anda.</value>
+    <value>{0} bergabung dalam secret chat Anda.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>Menggunakan enkripsi end-to-end</value>
@@ -3159,10 +3159,10 @@ Pelanggan dari channel akan dapat melihat semua pesan di grup ini.</value>
     <value>Secret chat:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s mengundang Anda bergabung dalam secret chat.</value>
+    <value>{0} mengundang Anda bergabung dalam secret chat.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>Anda telah mengundang %s bergabung dalam secret chat.</value>
+    <value>Anda telah mengundang {0} bergabung dalam secret chat.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>Kunci Enkripsi</value>
@@ -4366,7 +4366,7 @@ Semua media yang akan tetap berada di Telegram cloud dan dapat diunduh kembali j
     <value>Bahasa</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Anda ingin memasang set bahasa  %d%%  yang sudah tersedia.
+    <value>Anda ingin memasang set bahasa  %d%  yang sudah tersedia.
 
 Hal ini akan mengubah seluruh tampilan. Anda dapat memberikan saran dan tambahan pada "panel translasi".
 
@@ -4379,7 +4379,7 @@ Anda dapat mengganti bahasa Anda kapan saja di Pengaturan.</value>
     <value>Kustomisasi</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Anda ingin memasang set bahasa tidak resmi (**{0}**) di mana {1}%% telah tersedia. 
+    <value>Anda ingin memasang set bahasa tidak resmi (**{0}**) di mana {1}% telah tersedia. 
 
 Hal ini akan mengubah semua tampilan. Anda dapat memberikan saran dan masukkan di panel translasi. 
 
@@ -6389,7 +6389,7 @@ Anda dapat mengunjungi * FAQ * kami untuk mempelajari lebih lanjut.</value>
     <value>Batal</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>Anda memerlukan Telegram untuk masuk ke **%s**. Apakah Anda ingin memasangnya sekarang?</value>
+    <value>Anda memerlukan Telegram untuk masuk ke **{0}**. Apakah Anda ingin memasangnya sekarang?</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>Masuk dengan Telegram</value>
@@ -8848,7 +8848,7 @@ Anda dapat menggunakan **a–z**, **0–9** dan underscore. Panjang minimal **5*
     <value>Jawab</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>Jawab sebagai  %s</value>
+    <value>Jawab sebagai  {0}</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -8893,7 +8893,7 @@ Anda dapat menggunakan **a–z**, **0–9** dan underscore. Panjang minimal **5*
     <value>Panggilan Telegram</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>Panggilan Telegram ke  %s</value>
+    <value>Panggilan Telegram ke  {0}</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Panggilan masuk</value>

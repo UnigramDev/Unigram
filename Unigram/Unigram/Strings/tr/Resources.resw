@@ -239,7 +239,7 @@
     <value>Profil fotoğrafı</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>%s tarihinde alındı</value>
+    <value>{0} tarihinde alındı</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>Oynatma listesini tekrarla</value>
@@ -269,7 +269,7 @@
     <value>Gizli sohbet</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>%s tarihinde gönderildi</value>
+    <value>{0} tarihinde gönderildi</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Hesapları göster</value>
@@ -1267,7 +1267,7 @@ Birçok sorunun cevabına ve <![CDATA[<a href="https://telegram.org/faq/tr#sorun
     <value>Parlaklık eşiği</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Ortam aydınlatması %%{0} altına düştüğünde tercih ettiğiniz gece temasına geçin.</value>
+    <value>Ortam aydınlatması %{0} altına düştüğünde tercih ettiğiniz gece temasına geçin.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Kapalı</value>
@@ -1324,7 +1324,7 @@ Gün doğumu: {1}</value>
     <value>Mevcut</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>%s kişisinin çevrimiçi olması bekleniyor...</value>
+    <value>{0} kişisinin çevrimiçi olması bekleniyor...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>{0} uzakta</value>
@@ -1537,7 +1537,7 @@ Gün doğumu: {1}</value>
     <value>Geri Ara</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>{0} ile ekrandaki ifadeler aynıysa, bu arama %%100 güvenlidir.</value>
+    <value>{0} ile ekrandaki ifadeler aynıysa, bu arama %100 güvenlidir.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>Sizi arıyoruz...</value>
@@ -2923,7 +2923,7 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
     <value>Bitti</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>**%s** giriş yapmak için Telegram'a ihtiyacınız var. Şimdi yüklemek ister misiniz?</value>
+    <value>**{0}** giriş yapmak için Telegram'a ihtiyacınız var. Şimdi yüklemek ister misiniz?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Taslak</value>
@@ -3142,7 +3142,7 @@ Telegram hesabına giriş yapmak için burada belirlediğiniz şifreye ihtiyacı
     <value>Gizli sohbete katıldınız.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s gizli sohbetinize katıldı.</value>
+    <value>{0} gizli sohbetinize katıldı.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>Uçtan uca şifreleme kullanır</value>
@@ -3160,10 +3160,10 @@ Telegram hesabına giriş yapmak için burada belirlediğiniz şifreye ihtiyacı
     <value>Gizli sohbetler:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s sizi gizli sohbete davet etti.</value>
+    <value>{0} sizi gizli sohbete davet etti.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>%s kişisini gizli sohbete davet ettiniz.</value>
+    <value>{0} kişisini gizli sohbete davet ettiniz.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>Şifreleme Anahtarı</value>
@@ -4367,7 +4367,7 @@ Tüm medya dosyalarınız Telegram bulut sisteminde duracaktır ve istediğiniz 
     <value>Dil</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Uygulamak istediğiniz dil paketi (**{0}**) %%{1} oranında çevrilmiş.
+    <value>Uygulamak istediğiniz dil paketi (**{0}**) %{1} oranında çevrilmiş.
 
 Bu paket uygulama arayüzünü çevirecek. Düzeltmeleri [çeviri platformu] üzerinden önerebilirsiniz.
 
@@ -4380,7 +4380,7 @@ Dilinizi Ayarlar'dan dilediğiniz zaman eski haline geri döndürebilirsiniz.</v
     <value>Özel</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>%%{1} oranında çevrilen özel bir dil paketini ({0}) uygulamak üzeresiniz.
+    <value>%{1} oranında çevrilen özel bir dil paketini ({0}) uygulamak üzeresiniz.
 
 Bu, tüm arayüzü çevirecektir. [Çeviri platformu] aracılığıyla düzeltmeler önerebilirsiniz.
 
@@ -6389,7 +6389,7 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Vazgeç</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value> **%s** giriş yapmak için Telegram'a ihtiyacınız var. Şimdi yüklemek ister misiniz?</value>
+    <value> **{0}** giriş yapmak için Telegram'a ihtiyacınız var. Şimdi yüklemek ister misiniz?</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>Telegram ile giriş yap</value>
@@ -8842,7 +8842,7 @@ Uzunluk en az **5** karakterdir.</value>
     <value>Cevapla</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>%s olarak yanıtlanıyor</value>
+    <value>{0} olarak yanıtlanıyor</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -8887,7 +8887,7 @@ Uzunluk en az **5** karakterdir.</value>
     <value>Telegram Araması</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>%s ile Telegram Araması</value>
+    <value>{0} ile Telegram Araması</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Gelen arama</value>

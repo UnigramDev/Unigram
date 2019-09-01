@@ -239,7 +239,7 @@
     <value>Profile picture</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>Received %s</value>
+    <value>Received {0}</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>Repeat, playlist</value>
@@ -269,7 +269,7 @@
     <value>Secret chat</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>Sent %s</value>
+    <value>Sent {0}</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Show accounts</value>
@@ -1270,7 +1270,7 @@ Please take a look at the <![CDATA[<a href="https://telegram.org/faq#general-que
     <value>Brightness threshold</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Switch to your preferred night theme when ambient lighting falls below {0}%%.</value>
+    <value>Switch to your preferred night theme when ambient lighting falls below {0}%.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Disabled</value>
@@ -1327,7 +1327,7 @@ Sunrise: {1}</value>
     <value>Available</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>Waiting for %s to get online...</value>
+    <value>Waiting for {0} to get online...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>{0} away</value>
@@ -1540,7 +1540,7 @@ Sunrise: {1}</value>
     <value>Call Back</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>If emoji on {0}'s screen are the same, this call is 100%% secure.</value>
+    <value>If emoji on {0}'s screen are the same, this call is 100% secure.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>Calling you...</value>
@@ -2929,7 +2929,7 @@ Anyone from the channel will be able to see messages in this group.</value>
     <value>Done</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>You need Telegram to log in to **%s**. Would you like to install it now?</value>
+    <value>You need Telegram to log in to **{0}**. Would you like to install it now?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Draft</value>
@@ -3149,7 +3149,7 @@ You'll need the password you set up here to log in to your Telegram account.</va
     <value>You joined the secret chat.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s joined your secret chat.</value>
+    <value>{0} joined your secret chat.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>Use end-to-end encryption</value>
@@ -3167,10 +3167,10 @@ You'll need the password you set up here to log in to your Telegram account.</va
     <value>Secret chats:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s invited you to join a secret chat.</value>
+    <value>{0} invited you to join a secret chat.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>You have invited %s to join a secret chat.</value>
+    <value>You have invited {0} to join a secret chat.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>Encryption Key</value>
@@ -4428,7 +4428,7 @@ All media will stay in the Telegram cloud and can be re-downloaded if you need i
     <value>Language</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>You are about to apply a language pack (**{0}**) that is {1}%% complete.
+    <value>You are about to apply a language pack (**{0}**) that is {1}% complete.
 
 This will translate the entire interface. You can suggest corrections via the [translation platform].
 
@@ -4441,7 +4441,7 @@ You can change your language back at any time in Settings.</value>
     <value>Custom</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>You are about to apply a custom language pack (**{0}**) that is {1}%% complete.
+    <value>You are about to apply a custom language pack (**{0}**) that is {1}% complete.
 
 This will translate the entire interface. You can suggest corrections via the [translation platform].
 
@@ -6453,7 +6453,7 @@ You can visit our *FAQ* to learn more.</value>
     <value>Cancel</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>You need Telegram to log in to **%s**. Would you like to install it now?</value>
+    <value>You need Telegram to log in to **{0}**. Would you like to install it now?</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>Log in with Telegram</value>
@@ -8926,7 +8926,7 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
     <value>Answer</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>answering as %s</value>
+    <value>answering as {0}</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -8971,7 +8971,7 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
     <value>Telegram Call</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>Telegram Call to %s</value>
+    <value>Telegram Call to {0}</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Incoming call</value>

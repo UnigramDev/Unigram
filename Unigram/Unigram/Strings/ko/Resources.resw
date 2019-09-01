@@ -239,7 +239,7 @@
     <value>프로필 사진</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>%s 받음</value>
+    <value>{0} 받음</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>반복, 재생 목록</value>
@@ -269,7 +269,7 @@
     <value>비밀 대화</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>%s 보냄</value>
+    <value>{0} 보냄</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>계정 보이기</value>
@@ -1268,7 +1268,7 @@
     <value>밝기 경계</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>주변 밝기가 {0}%% 아래일 때 선호하시는 야간 테마로 전환합니다.</value>
+    <value>주변 밝기가 {0}% 아래일 때 선호하시는 야간 테마로 전환합니다.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>끄기</value>
@@ -1325,7 +1325,7 @@
     <value>사용 가능</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>%s 님을 기다리고 있습니다...</value>
+    <value>{0} 님을 기다리고 있습니다...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>{0} 떨어짐</value>
@@ -2923,7 +2923,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>완료</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>%s에 로그인하려면 텔레그램이 필요합니다. 지금 설치하시겠습니까?</value>
+    <value>{0}에 로그인하려면 텔레그램이 필요합니다. 지금 설치하시겠습니까?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>임시 저장</value>
@@ -3142,7 +3142,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>비밀 대화에 들어오셨습니다.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s 님이 비밀 대화에 들어왔습니다.</value>
+    <value>{0} 님이 비밀 대화에 들어왔습니다.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>단대단 암호화를 사용합니다</value>
@@ -3160,10 +3160,10 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>비밀 대화는</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s 님이 회원님을 비밀 대화에 초대했습니다.</value>
+    <value>{0} 님이 회원님을 비밀 대화에 초대했습니다.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>%s 님을 비밀 대화에 초대하셨습니다.</value>
+    <value>{0} 님을 비밀 대화에 초대하셨습니다.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>암호화 키</value>
@@ -4418,7 +4418,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>언어</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>{1}%% 완성된 언어 묶음(**{0}**)을 적용하시려고 합니다.
+    <value>{1}% 완성된 언어 묶음(**{0}**)을 적용하시려고 합니다.
 
 인터페이스 전체가 번역됩니다. [번역 플랫폼]을 통해 오역을 바로잡으실 수 있습니다.
 
@@ -4431,7 +4431,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>맞춤</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>{1}%% 완성된 비공식 언어 묶음(**{0}**)을 적용하시려고 합니다.
+    <value>{1}% 완성된 비공식 언어 묶음(**{0}**)을 적용하시려고 합니다.
 
 인터페이스 전체가 번역됩니다. [번역 플랫폼]을 통해 오역을 바로잡으실 수 있습니다.
 
@@ -6443,7 +6443,7 @@ FAQ를 방문하여 더 많은 정보를 얻으실 수 있습니다.</value>
     <value>취소</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>**%s**에 로그인하려면 텔레그램이 있어야 합니다. 지금 설치하시겠습니까?</value>
+    <value>**{0}**에 로그인하려면 텔레그램이 있어야 합니다. 지금 설치하시겠습니까?</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>텔레그램으로 로그인</value>
@@ -8899,7 +8899,7 @@ FAQ를 방문하여 더 많은 정보를 얻으실 수 있습니다.</value>
     <value>받기</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>%s 님으로 받는 중</value>
+    <value>{0} 님으로 받는 중</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>블루투스</value>
@@ -8944,7 +8944,7 @@ FAQ를 방문하여 더 많은 정보를 얻으실 수 있습니다.</value>
     <value>텔레그램 전화</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>%s님에게 텔레그램으로 전화</value>
+    <value>{0}님에게 텔레그램으로 전화</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>수신 전화</value>

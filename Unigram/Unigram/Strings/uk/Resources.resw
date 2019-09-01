@@ -239,7 +239,7 @@
     <value>Фото профілю</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>Отримано %s</value>
+    <value>Отримано {0}</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>Повторювати: плейлист</value>
@@ -269,7 +269,7 @@
     <value>Секретний чат</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>Надіслано %s</value>
+    <value>Надіслано {0}</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Показати акаунти</value>
@@ -1266,7 +1266,7 @@
     <value>Поріг освітленості</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Перемикатися на нічну тему, якщо освітленість приміщення менша за {0}%%.</value>
+    <value>Перемикатися на нічну тему, якщо освітленість приміщення менша за {0}%.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Вимкнено</value>
@@ -1323,7 +1323,7 @@
     <value>Доступний</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>Чекаємо, коли %s зʼявиться в мережі...</value>
+    <value>Чекаємо, коли {0} зʼявиться в мережі...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>{0} звідси</value>
@@ -1536,7 +1536,7 @@
     <value>Перетелефонувати</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Якщо {0} бачить ці ж емодзі, виклик на 100%% захищений.</value>
+    <value>Якщо {0} бачить ці ж емодзі, виклик на 100% захищений.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>Телефонуємо вам...</value>
@@ -2926,7 +2926,7 @@
     <value>Готово</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>Для входу в **%s** потрібен Telegram. Бажаєте встановити його зараз?</value>
+    <value>Для входу в **{0}** потрібен Telegram. Бажаєте встановити його зараз?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Чернетка</value>
@@ -3145,7 +3145,7 @@
     <value>Ви приєдналися до секретного чату.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s приєднується до вашого секретного чату.</value>
+    <value>{0} приєднується до вашого секретного чату.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>Наскрізно зашифровані</value>
@@ -3163,10 +3163,10 @@
     <value>Секретні чати:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s запрошує вас приєднатися до секретного чату.</value>
+    <value>{0} запрошує вас приєднатися до секретного чату.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>Ви запросили %s приєднатися до секретного чату.</value>
+    <value>Ви запросили {0} приєднатися до секретного чату.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>Ключ шифрування</value>
@@ -4369,7 +4369,7 @@
     <value>Мова</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Ви збираєтеся застосувати переклад (**{0}**), який готовий на {1}%%.
+    <value>Ви збираєтеся застосувати переклад (**{0}**), який готовий на {1}%.
 
 Увесь інтерфейс буде перекладено. Ви можете повідомляти про помилки на [платформі перекладів].
 
@@ -4382,7 +4382,7 @@
     <value>Власна</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Ви збираєтеся застосувати переклад (**{0}**), який готовий на {1}%%.
+    <value>Ви збираєтеся застосувати переклад (**{0}**), який готовий на {1}%.
 
 Увесь інтерфейс буде перекладено. Ви можете повідомляти про помилки на [платформі перекладів].
 
@@ -6413,7 +6413,7 @@
     <value>Скасувати</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>Для входу в **%s** потрібен Telegram. Бажаєте встановити його зараз?</value>
+    <value>Для входу в **{0}** потрібен Telegram. Бажаєте встановити його зараз?</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>Увійти через Telegram</value>
@@ -8876,7 +8876,7 @@ http://telegram.org/update</value>
     <value>Відповісти</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>відповідаєте як %s</value>
+    <value>відповідаєте як {0}</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -8921,7 +8921,7 @@ http://telegram.org/update</value>
     <value>Виклик Telegram</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>Виклик Telegram до %s</value>
+    <value>Виклик Telegram до {0}</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Вхідний виклик</value>

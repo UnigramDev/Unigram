@@ -239,7 +239,7 @@
     <value>عکس پروفایل</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>⁨%s⁩ دریافت شد</value>
+    <value>⁨{0}⁩ دریافت شد</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>تکرار، فهرست پخش</value>
@@ -269,7 +269,7 @@
     <value>گفتگوی محرمانه</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>⁨%s⁩ ارسال شد</value>
+    <value>⁨{0}⁩ ارسال شد</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>نمایش حساب‌های کاربری</value>
@@ -1268,7 +1268,7 @@
     <value>آستانه روشنایی</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>هنگامی که روشنایی محیط از ⁨{0}⁩%% کمتر شد، به پوسته شب ترجیحی خود تغییر دهید.</value>
+    <value>هنگامی که روشنایی محیط از ⁨{0}⁩% کمتر شد، به پوسته شب ترجیحی خود تغییر دهید.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>غیرفعال</value>
@@ -1325,7 +1325,7 @@
     <value>در دسترس</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>در انتظار آنلاین شدن ⁨%s⁩...</value>
+    <value>در انتظار آنلاین شدن ⁨{0}⁩...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>⁨{0}⁩ دورتر</value>
@@ -1538,7 +1538,7 @@
     <value>تماس</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>اگر اموجی‌های روی صفحه ⁨{0}⁩ با این اموجی‌ها یکسان باشند، این مکالمه 100%% امن است.</value>
+    <value>اگر اموجی‌های روی صفحه ⁨{0}⁩ با این اموجی‌ها یکسان باشند، این مکالمه 100% امن است.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>در حال تماس با شما...</value>
@@ -2924,7 +2924,7 @@
     <value>تأیید</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>شما جهت ورود به حساب کاربری خود در **⁨%s⁩** به تلگرام احتیاج دارید. آیا تمایل دارید آن را الان نصب کنید؟</value>
+    <value>شما جهت ورود به حساب کاربری خود در **⁨{0}⁩** به تلگرام احتیاج دارید. آیا تمایل دارید آن را الان نصب کنید؟</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>پیش‌نویس</value>
@@ -3143,7 +3143,7 @@
     <value>شما به گفتگوی محرمانه پیوستید.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>⁨%s⁩ به گفتگوی محرمانه شما پیوست.</value>
+    <value>⁨{0}⁩ به گفتگوی محرمانه شما پیوست.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>از رمزگذاری سرتاسر استفاده می‌کنند</value>
@@ -3161,10 +3161,10 @@
     <value>گفتگوهای محرمانه:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>⁨%s⁩ شما را به یک گفتگوی محرمانه دعوت کرد.</value>
+    <value>⁨{0}⁩ شما را به یک گفتگوی محرمانه دعوت کرد.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>شما ⁨%s⁩ را به یک گفتگوی محرمانه دعوت کردید.</value>
+    <value>شما ⁨{0}⁩ را به یک گفتگوی محرمانه دعوت کردید.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>کلید رمزگذاری</value>
@@ -4367,7 +4367,7 @@
     <value>زبان</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>شما می‌خواهید بسته زبانی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩%% آن کامل است.
+    <value>شما می‌خواهید بسته زبانی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩% آن کامل است.
 
 این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را از طریق [پلتفرم ترجمه] پیشنهاد دهید.
 
@@ -4380,7 +4380,7 @@
     <value>دلخواه</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>شما می‌خواهید یک بسته زبان غیر رسمی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩%% آن کامل است.
+    <value>شما می‌خواهید یک بسته زبان غیر رسمی (**⁨{0}⁩**) را اعمال کنید که ⁨{1}⁩% آن کامل است.
 
 این کار تمامی رابط کاربری را ترجمه می‌کند. شما می‌توانید اصلاحاتی را از طریق [پلتفرم ترجمه] پیشنهاد دهید.
 
@@ -6390,7 +6390,7 @@
     <value>لغو</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>شما جهت ورود به حساب کاربری خود در **⁨%s⁩** به تلگرام احتیاج دارید. آیا تمایل دارید آن را الان نصب کنید؟</value>
+    <value>شما جهت ورود به حساب کاربری خود در **⁨{0}⁩** به تلگرام احتیاج دارید. آیا تمایل دارید آن را الان نصب کنید؟</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>ورود با حساب کاربری تلگرام</value>
@@ -8845,7 +8845,7 @@
     <value>پاسخ</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>در حال پاسخ به عنوان ⁨%s⁩</value>
+    <value>در حال پاسخ به عنوان ⁨{0}⁩</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>بلوتوث</value>
@@ -8890,7 +8890,7 @@
     <value>تماس تلگرامی</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>تماس تلگرامی با ⁨%s⁩
+    <value>تماس تلگرامی با ⁨{0}⁩
 </value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">

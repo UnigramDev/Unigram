@@ -239,7 +239,7 @@
     <value>Gambar profil</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>Terima %s</value>
+    <value>Terima {0}</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>Ulang, senarai main</value>
@@ -269,7 +269,7 @@
     <value>Secret chat</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>Kirim %s</value>
+    <value>Kirim {0}</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Tunjuk akaun</value>
@@ -1265,7 +1265,7 @@ Sila lihat  <![CDATA[<a href="https://telegram.org/faq#general">Soalan Lazim Tel
     <value>Batasan kecerahan</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Tukar ke tema malam pilihan anda bila kecerahan sekitar jatuh di bawah  {0}%%.</value>
+    <value>Tukar ke tema malam pilihan anda bila kecerahan sekitar jatuh di bawah  {0}%.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Nyahdaya</value>
@@ -1322,7 +1322,7 @@ Matahari naik: {1}</value>
     <value>Ada</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>Menunggu %s untuk di talian...</value>
+    <value>Menunggu {0} untuk di talian...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>{0} tiada di sini</value>
@@ -1535,7 +1535,7 @@ Matahari naik: {1}</value>
     <value>Panggil Balik</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Sekirnya emoji di skrin {0} adalah sama, panggilan ini adalah 100%% selamat.</value>
+    <value>Sekirnya emoji di skrin {0} adalah sama, panggilan ini adalah 100% selamat.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>Memanggil anda...</value>
@@ -2925,7 +2925,7 @@ Sesiapa dari channel akan dapat lihat mesej dalam group ini.</value>
     <value>Siap</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>Anda perlu Telegram untuk log masuk ke  **%s**. Adakah anda ingin pasangnya sekarang?</value>
+    <value>Anda perlu Telegram untuk log masuk ke  **{0}**. Adakah anda ingin pasangnya sekarang?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Draf</value>
@@ -3144,7 +3144,7 @@ Anda perlukan kata laluan ini untuk log masuk ke akaun Telegram anda.</value>
     <value>Anda sertai secret chat.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s sertai secret chat anda.</value>
+    <value>{0} sertai secret chat anda.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>Penyulitan awal-ke-akhir</value>
@@ -3162,10 +3162,10 @@ Anda perlukan kata laluan ini untuk log masuk ke akaun Telegram anda.</value>
     <value>Secret chat </value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s jemput anda ke secret chat.</value>
+    <value>{0} jemput anda ke secret chat.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>Anda jemput %s sertai secret chat.</value>
+    <value>Anda jemput {0} sertai secret chat.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>Kunci Penyulitan</value>
@@ -4375,7 +4375,7 @@ Semua media akan berada di awan Telegram dan boleh dimuat turun jika perlu. </va
     <value>Bahasa</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Anda hampir mengguna pek bahasa (**{0}**) yang telah {1}%% siap..
+    <value>Anda hampir mengguna pek bahasa (**{0}**) yang telah {1}% siap..
 
 Ini akan menterjemah keseluruhan interfes. Anda boleh cadang pembebetulan di [platfom terjemahan].
 
@@ -4388,7 +4388,7 @@ Anda boleh tukar balik ke bahasa anda pada bila-bila masa di Aturan.</value>
     <value>Tersuai</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Anda hampir mengguna pek bahasa tersuai (**{0}**) yang  {1}%% siap.
+    <value>Anda hampir mengguna pek bahasa tersuai (**{0}**) yang  {1}% siap.
 
 Ini akan terjemah kesemua interfes. Anda boleh cadang pembetulan di [platfom terjemahanl].
 
@@ -6429,7 +6429,7 @@ Anda boleh melawat *FAQ* kami untuk maklumat lanjut.</value>
     <value>Batal</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>Anda perlu Telegram untuk log masuk ke  **%s**. Adakah anda ingin pasangnya sekarang?</value>
+    <value>Anda perlu Telegram untuk log masuk ke  **{0}**. Adakah anda ingin pasangnya sekarang?</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>Log masuk dengan Telegram</value>
@@ -8965,7 +8965,7 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
     <value>Jawab</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>menjawab sebagai %s</value>
+    <value>menjawab sebagai {0}</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -9010,7 +9010,7 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
     <value>Panggilan Telegram</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>Panggilan Telegram ke %s</value>
+    <value>Panggilan Telegram ke {0}</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Panggilan masuk</value>

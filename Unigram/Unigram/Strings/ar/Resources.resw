@@ -239,7 +239,7 @@
     <value>الصورة الشخصية</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>تم التسليم ⁨%s⁩</value>
+    <value>تم التسليم ⁨{0}⁩</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>التكرار، قائمة التشغيل</value>
@@ -269,7 +269,7 @@
     <value>محادثة سرية</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>تم الإرسال ⁨%s⁩</value>
+    <value>تم الإرسال ⁨{0}⁩</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>إظهار الحسابات</value>
@@ -1270,7 +1270,7 @@
     <value>مؤشر السطوع</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>قم بالتبديل للنمط الليلي عند انخفاض الإضاءة المحيطة إلى ⁨{0}⁩%% أو أقل.</value>
+    <value>قم بالتبديل للنمط الليلي عند انخفاض الإضاءة المحيطة إلى ⁨{0}⁩% أو أقل.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>معطَّل</value>
@@ -1327,7 +1327,7 @@
     <value>متاح</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>في انتظار اتصال ⁨%s⁩ بالإنترنت...</value>
+    <value>في انتظار اتصال ⁨{0}⁩ بالإنترنت...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>على بُعد ⁨{0}⁩</value>
@@ -1542,7 +1542,7 @@
     <value>معاودة الاتصال</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>إذا كانت هذه الرموز مطابقة للتي تظهر على شاشة ⁨{0}⁩ فالمكالمة آمنة 100%%.</value>
+    <value>إذا كانت هذه الرموز مطابقة للتي تظهر على شاشة ⁨{0}⁩ فالمكالمة آمنة 100%.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>يتم الاتصال بك...</value>
@@ -2920,7 +2920,7 @@
     <value>تم</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>تحتاج إلى تطبيق تيليجرام لتسجيل الدخول إلى **⁨%s⁩**، هل ترغب في تثبيته الآن؟</value>
+    <value>تحتاج إلى تطبيق تيليجرام لتسجيل الدخول إلى **⁨{0}⁩**، هل ترغب في تثبيته الآن؟</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>مسودة</value>
@@ -3138,7 +3138,7 @@
     <value>لقد انضممت للمحادثة السرية</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>انضم ⁨%s⁩ لمحادثتك السرية.</value>
+    <value>انضم ⁨{0}⁩ لمحادثتك السرية.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>تستخدم التشفير من البداية للنهاية</value>
@@ -3156,10 +3156,10 @@
     <value>المحادثات السرية:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>⁨%s⁩ دعاك للانضمام لمحادثة سرية.</value>
+    <value>⁨{0}⁩ دعاك للانضمام لمحادثة سرية.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>لقد قمت بدعوة ⁨%s⁩ لمحادثة سرية.</value>
+    <value>لقد قمت بدعوة ⁨{0}⁩ لمحادثة سرية.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>مفتاح التشفير</value>
@@ -4416,7 +4416,7 @@
     <value>اللغة</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>أنت على وشك تطبيق حزمة اللغة (**⁨{0}⁩**) والمكتملة بنسبة ⁨{1}⁩%%.
+    <value>أنت على وشك تطبيق حزمة اللغة (**⁨{0}⁩**) والمكتملة بنسبة ⁨{1}⁩%.
 
 سيؤدي هذا إلى ترجمة الواجهة بالكامل، يمكنك اقتراح التصحيحات في [منصة الترجمة].
 
@@ -4429,7 +4429,7 @@
     <value>مخصص</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>أنت على وشك تطبيق حزمة اللغة المخصصة (**⁨{0}⁩**) والمكتملة بنسبة ⁨{1}⁩%%.
+    <value>أنت على وشك تطبيق حزمة اللغة المخصصة (**⁨{0}⁩**) والمكتملة بنسبة ⁨{1}⁩%.
 
 سيؤدي هذا إلى ترجمة الواجهة بالكامل، يمكنك اقتراح التصحيحات في [منصة الترجمة].
 
@@ -6442,7 +6442,7 @@
     <value>إلغاء</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>تحتاج إلى تطبيق تيليجرام لتسجيل الدخول إلى **⁨%s⁩**، هل ترغب في تثبيته الآن؟</value>
+    <value>تحتاج إلى تطبيق تيليجرام لتسجيل الدخول إلى **⁨{0}⁩**، هل ترغب في تثبيته الآن؟</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>تسجيل الدخول عبر تيليجرام</value>
@@ -8895,7 +8895,7 @@
     <value>إجابة</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>سيتم الرد باسم ⁨%s⁩</value>
+    <value>سيتم الرد باسم ⁨{0}⁩</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>بلوتوث</value>
@@ -8940,7 +8940,7 @@
     <value>مكالمة تيليجرام</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>مكالمة تيليجرام مع ⁨%s⁩</value>
+    <value>مكالمة تيليجرام مع ⁨{0}⁩</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>مكالمة واردة</value>

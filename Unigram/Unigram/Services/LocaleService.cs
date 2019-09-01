@@ -66,13 +66,13 @@ namespace Unigram.Services
 
             foreach (var protoService in TLContainer.Current.ResolveAll<IProtoService>())
             {
-                //var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
-                //if (test is LanguagePackStrings strings)
-                //{
-                //    saveRemoteLocaleStrings(info.Id, strings);
-                //}
+                var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
+                if (test is LanguagePackStrings strings)
+                {
+                    saveRemoteLocaleStrings(info.Id, strings);
+                }
 
-                //return new Error();
+                return new Error();
 
                 var response = await protoService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));
                 if (response is Ok && refresh)
@@ -112,20 +112,6 @@ namespace Unigram.Services
                 }
 
                 return result;
-            }
-
-            string GetValue(string value)
-            {
-                if (value.StartsWith("\"") && value.EndsWith("\""))
-                {
-                    value = value.Trim('"');
-                }
-
-                return Regex.Replace(value, "%([0-9]*?)\\$[ds]", match =>
-                {
-                    var index = int.Parse(match.Groups[1].Value);
-                    return "{" + (index - 1) + "}";
-                });
             }
 
             var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");

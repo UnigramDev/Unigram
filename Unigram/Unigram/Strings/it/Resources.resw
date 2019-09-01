@@ -239,7 +239,7 @@
     <value>Foto profilo</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
-    <value>Ricevuto %s</value>
+    <value>Ricevuto {0}</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
     <value>Ripeti, playlist</value>
@@ -269,7 +269,7 @@
     <value>Chat segreta</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
-    <value>Inviato %s</value>
+    <value>Inviato {0}</value>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Mostra account</value>
@@ -1270,7 +1270,7 @@ Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-gener
     <value>Soglia luminosità</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Passa al tema notte quando la luce ambientale è inferiore al {0}%%.</value>
+    <value>Passa al tema notte quando la luce ambientale è inferiore al {0}%.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Disattivata</value>
@@ -1327,7 +1327,7 @@ Alba: {1}</value>
     <value>Disponibile</value>
   </data>
   <data name="AwaitingEncryption" xml:space="preserve">
-    <value>Attendo che %s si colleghi...</value>
+    <value>Attendo che {0} si colleghi...</value>
   </data>
   <data name="AwayTo" xml:space="preserve">
     <value>distante {0}</value>
@@ -1540,7 +1540,7 @@ Alba: {1}</value>
     <value>Richiama</value>
   </data>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
-    <value>Se le emoji sono uguali sullo schermo di {0}, la chiamata è sicura al 100%%.</value>
+    <value>Se le emoji sono uguali sullo schermo di {0}, la chiamata è sicura al 100%.</value>
   </data>
   <data name="Calling" xml:space="preserve">
     <value>Ti stiamo chiamando...</value>
@@ -2929,7 +2929,7 @@ Chiunque dal canale potrà vedere i messaggi in questo gruppo.</value>
     <value>Fatto</value>
   </data>
   <data name="DownloadTelegramText" xml:space="preserve">
-    <value>Hai bisogno di Telegram per accedere a **%s**. Vuoi installarlo ora?</value>
+    <value>Hai bisogno di Telegram per accedere a **{0}**. Vuoi installarlo ora?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Bozza</value>
@@ -3148,7 +3148,7 @@ Avrai bisogno della password che hai impostato per accedere al tuo account Teleg
     <value>Ti sei unito alla chat segreta.</value>
   </data>
   <data name="EncryptedChatStartedOutgoing" xml:space="preserve">
-    <value>%s si è unito alla tua chat segreta.</value>
+    <value>{0} si è unito alla tua chat segreta.</value>
   </data>
   <data name="EncryptedDescription1" xml:space="preserve">
     <value>Crittografia end-to-end</value>
@@ -3166,10 +3166,10 @@ Avrai bisogno della password che hai impostato per accedere al tuo account Teleg
     <value>Chat segrete:</value>
   </data>
   <data name="EncryptedPlaceholderTitleIncoming" xml:space="preserve">
-    <value>%s ti ha invitato a unirti ad una chat segreta.</value>
+    <value>{0} ti ha invitato a unirti ad una chat segreta.</value>
   </data>
   <data name="EncryptedPlaceholderTitleOutgoing" xml:space="preserve">
-    <value>Hai invitato %s a unirsi ad una chat segreta.</value>
+    <value>Hai invitato {0} a unirsi ad una chat segreta.</value>
   </data>
   <data name="EncryptionKey" xml:space="preserve">
     <value>Chiave di crittografia</value>
@@ -4433,7 +4433,7 @@ Tutti i media rimarranno nel cloud Telegram e potranno essere riscaricati ogni v
     <value>Lingua</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Stai per applicare una lingua (**{0}**) che è completa al {1}%%.
+    <value>Stai per applicare una lingua (**{0}**) che è completa al {1}%.
 
 Questo tradurrà l'intera interfaccia. Puoi suggerire correzioni nella [piattaforma di traduzione].
 
@@ -4446,7 +4446,7 @@ Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</value>
     <value>Personalizzata</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Stai per applicare una lingua (**{0}**) che è completa al {1}%%.
+    <value>Stai per applicare una lingua (**{0}**) che è completa al {1}%.
 
 Questo tradurrà l'intera interfaccia. Puoi suggerire correzioni nella [piattaforma di traduzione].
 
@@ -6492,7 +6492,7 @@ Puoi visitare le nostre *FAQ* per saperne di più.</value>
     <value>Annulla</value>
   </data>
   <data name="PassportSDKDownloadTelegram" xml:space="preserve">
-    <value>Hai bisogno di Telegram per accedere a **%s**. Vuoi installarlo ora?</value>
+    <value>Hai bisogno di Telegram per accedere a **{0}**. Vuoi installarlo ora?</value>
   </data>
   <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
     <value>Accedi con Telegram</value>
@@ -9031,7 +9031,7 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è di **5** ca
     <value>Rispondi</value>
   </data>
   <data name="VoipAnsweringAsAccount" xml:space="preserve">
-    <value>rispondi come %s</value>
+    <value>rispondi come {0}</value>
   </data>
   <data name="VoipAudioRoutingBluetooth" xml:space="preserve">
     <value>Bluetooth</value>
@@ -9076,7 +9076,7 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è di **5** ca
     <value>Chiamata Telegram</value>
   </data>
   <data name="VoipInCallBrandingWithName" xml:space="preserve">
-    <value>Chiamata Telegram a %s</value>
+    <value>Chiamata Telegram a {0}</value>
   </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Chiamata in entrata</value>
