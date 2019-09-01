@@ -16,7 +16,8 @@
         <Grid x:Name="ContentPanel"
               MinHeight="30"
               Padding="{StaticResource MessageContentPadding}"
-              Background="{ThemeResource MessageBackgroundBrush}">
+              Background="{ThemeResource MessageBackgroundBrush}"
+              SizeChanged="Knockout_SizeChanged">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>
@@ -151,6 +152,23 @@
                 Margin="-8,0,-6,-2"
                 Grid.Column="1"
                 Grid.Row="4"/>
+            
+            <Path Fill="Red"
+                  x:Name="Knockout"
+                  x:DeferLoadStrategy="Lazy"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Grid.ColumnSpan="3"
+                  Grid.RowSpan="5">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathGeometry.Figures>
+                            <PathFigure x:Name="KnockoutFill" IsClosed="True" IsFilled="True"/>
+                            <PathFigure x:Name="KnockoutMask"/>
+                        </PathGeometry.Figures>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
         </Grid>
     </UserControl>
 

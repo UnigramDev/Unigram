@@ -28,6 +28,8 @@ namespace Unigram.Controls.Messages
     {
         private MessageViewModel _message;
 
+        private bool _knockout = false;
+
         public MessageBubble()
         {
             InitializeComponent();
@@ -207,14 +209,18 @@ namespace Unigram.Controls.Messages
 
             if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
             {
-                if (!(message.Content is MessageSticker || message.Content is MessageVideoNote))
+                if (message.Content is MessageSticker || message.Content is MessageVideoNote || _knockout)
+                {
+                    ContentPanel.CornerRadius = new CornerRadius();
+                }
+                else
                 {
                     ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, 4, 4);
                 }
 
                 Markup.CornerRadius = new CornerRadius(4, 4, bottomRight, bottomLeft);
             }
-            else if (message.Content is MessageSticker || message.Content is MessageVideoNote)
+            else if (message.Content is MessageSticker || message.Content is MessageVideoNote || _knockout)
             {
                 ContentPanel.CornerRadius = new CornerRadius();
             }
@@ -225,7 +231,18 @@ namespace Unigram.Controls.Messages
 
             Margin = new Thickness(0, message.IsFirst ? 2 : 1, 0, message.IsLast ? 2 : 1);
 
+
             //UpdateMessageContent(message, true);
+
+
+
+            if (_knockout && Knockout != null)
+            {
+                Knockout.Margin = new Thickness(-10 - 60, -4 - (message.IsFirst ? 3 : 2), -10 - 24, -6 - (message.IsLast ? 3 : 2));
+                ContentPanel.Background = null;
+
+                UpdateKnockout(topLeft, topRight, bottomRight, bottomLeft, 60, 24, message.IsFirst ? 3 : 2, message.IsLast ? 3 : 2, ContentPanel.ActualWidth, ContentPanel.ActualHeight);
+            }
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -1650,6 +1667,36 @@ namespace Unigram.Controls.Messages
                 default:
                     return false;
             }
+        }
+
+        private void Knockout_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_knockout && Knockout != null)
+            {
+                UpdateAttach(_message);
+            }
+        }
+
+        private void UpdateKnockout(double topLeft, double topRight, double bottomRight, double bottomLeft, double left, double right, double top, double bottom, double width, double height)
+        {
+            width += left + right;
+            height += top + bottom;
+
+            KnockoutFill.Segments.Clear();
+            KnockoutFill.Segments.Add(new LineSegment { Point = new Point(width, 0) });
+            KnockoutFill.Segments.Add(new LineSegment { Point = new Point(width, height) });
+            KnockoutFill.Segments.Add(new LineSegment { Point = new Point(0, height) });
+
+            KnockoutMask.StartPoint = new Point(left, topLeft + top);
+            KnockoutMask.Segments.Clear();
+            KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(topLeft + left, top), Size = new Size(topLeft, topLeft), SweepDirection = SweepDirection.Clockwise });
+            KnockoutMask.Segments.Add(new LineSegment { Point = new Point(width - topRight - right, top) });
+            KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(width - right, topRight + top), Size = new Size(topRight, topRight), SweepDirection = SweepDirection.Clockwise });
+            KnockoutMask.Segments.Add(new LineSegment { Point = new Point(width - right, height - bottomRight - bottom) });
+            KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(width - bottomRight - right, height - bottom), Size = new Size(bottomRight, bottomRight), SweepDirection = SweepDirection.Clockwise });
+            KnockoutMask.Segments.Add(new LineSegment { Point = new Point(bottomLeft + left, height - bottom) });
+            KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(left, height - bottomLeft - bottom), Size = new Size(bottomLeft, bottomLeft), SweepDirection = SweepDirection.Clockwise });
+            //KnockoutMask.Segments.Add(new LineSegment { Point = new Point(1, topLeft + 1) });
         }
     }
 }
