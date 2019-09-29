@@ -95,6 +95,9 @@ namespace Unigram
                     .WithParameter("online", session == SettingsService.Current.ActiveSession)
                     .As<IProtoService, ICacheService>()
                     .SingleInstance();
+                builder.RegisterType<TonlibService>()
+                    .As<ITonlibService>()
+                    .SingleInstance();
                 builder.RegisterType<SettingsService>()
                     .WithParameter("session", session)
                     .As<ISettingsService>()

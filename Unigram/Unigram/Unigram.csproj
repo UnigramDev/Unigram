@@ -520,6 +520,7 @@
     <Compile Include="Services\Stripe\StripeToken.cs" />
     <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
+    <Compile Include="Services\TonlibService.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
     <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
@@ -2482,6 +2483,9 @@
     <SDKReference Include="Telegram.Td.UWP, Version=1.0">
       <Name>TDLib for Universal Windows Platform</Name>
     </SDKReference>
+    <SDKReference Include="Ton.Tonlib.UWP, Version=1.0">
+      <Name>Tonlib for Universal Windows Platform</Name>
+    </SDKReference>
     <SDKReference Include="WindowsDesktop, Version=10.0.18362.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
@@ -2494,6 +2498,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\Lottie\Microsoft.Toolkit.Uwp.UI.Lottie.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Wallet\" />
+    <Folder Include="Views\Wallet\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
