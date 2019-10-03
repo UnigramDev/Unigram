@@ -1,0 +1,54 @@
+﻿<Page
+    x:Class="Unigram.Views.Wallet.WalletTestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Wallet"
+    xmlns:common="using:Unigram.Common"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <controls:WalkthroughControl
+            HeaderSource="ms-appx:///Assets/Animations/WalletWordCheck.tgs"
+            Title="{CustomResource WalletTestTimeTitle}"
+            Text="{x:Bind ConvertInfo(ViewModel.Indices), Mode=OneWay}"
+            ButtonText="{CustomResource WalletContinue}"
+            ButtonCommand="{x:Bind ViewModel.SendCommand}">
+
+            <StackPanel x:Name="WordListPanel" Margin="12,0">
+                <AutoSuggestBox
+                    Text="{x:Bind ViewModel.Word0, Mode=TwoWay}"
+                    PlaceholderText="{x:Bind ConvertPlaceholder(ViewModel.Indices[0]), Mode=OneWay}"
+                    TextBoxStyle="{StaticResource InlinePlaceholderTextBoxStyle}"
+                    HorizontalAlignment="Stretch"
+                    TextChanged="Word_TextChanged"
+                    SuggestionChosen="Word_SuggestionChosen"
+                    KeyDown="Word_KeyDown"
+                    Margin="0,0,0,8"
+                    TabIndex="1"/>
+                <AutoSuggestBox
+                    Text="{x:Bind ViewModel.Word1, Mode=TwoWay}"
+                    PlaceholderText="{x:Bind ConvertPlaceholder(ViewModel.Indices[1]), Mode=OneWay}"
+                    TextBoxStyle="{StaticResource InlinePlaceholderTextBoxStyle}"
+                    HorizontalAlignment="Stretch"
+                    TextChanged="Word_TextChanged"
+                    SuggestionChosen="Word_SuggestionChosen"
+                    KeyDown="Word_KeyDown"
+                    Margin="0,0,0,8"
+                    TabIndex="2"/>
+                <AutoSuggestBox
+                    Text="{x:Bind ViewModel.Word2, Mode=TwoWay}"
+                    PlaceholderText="{x:Bind ConvertPlaceholder(ViewModel.Indices[2]), Mode=OneWay}"
+                    TextBoxStyle="{StaticResource InlinePlaceholderTextBoxStyle}"
+                    HorizontalAlignment="Stretch"
+                    TextChanged="Word_TextChanged"
+                    SuggestionChosen="Word_SuggestionChosen"
+                    KeyDown="Word_KeyDown"
+                    Margin="0,0,0,8"
+                    TabIndex="3"/>
+            </StackPanel>
+        </controls:WalkthroughControl>
+    </Grid>
+</Page>

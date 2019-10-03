@@ -1,0 +1,37 @@
+﻿<Page
+    x:Class="Unigram.Views.Wallet.WalletImportPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Wallet"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:wallet="using:Unigram.ViewModels.Wallet"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <!--<controls:PageHeader
+            Text="{CustomResource WalletSecretWordsTitle}"/>-->
+
+        <controls:WalkthroughControl
+            HeaderSource="ms-appx:///Assets/Animations/WalletWordList.tgs"
+            Title="{CustomResource WalletSecretWords}"
+            Text="{CustomResource WalletImportInfo}"
+            ButtonText="{CustomResource WalletContinue}"
+            ButtonCommand="{x:Bind ViewModel.SendCommand}"
+            Grid.Row="1">
+
+            <Grid x:Name="WordListPanel" Margin="12,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+        </controls:WalkthroughControl>
+    </Grid>
+</Page>

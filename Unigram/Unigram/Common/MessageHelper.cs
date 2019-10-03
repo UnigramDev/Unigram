@@ -428,7 +428,7 @@ namespace Unigram.Common
 
         public static void OpenTonScheme(INavigationService navigation, Uri uri)
         {
-            navigation.NavigateToWallet(uri.Host.Length > 0 ? uri.Host : null);
+            navigation.NavigateToWallet(uri.Host.Length > 0 ? uri.OriginalString : null);
         }
 
         public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)

@@ -94,7 +94,9 @@ namespace Unigram.Services
     public class ProtoService : IProtoService, ClientResultHandler
     {
         private Client _client;
+
         private readonly int _session;
+
         private readonly IDeviceInfoService _deviceInfoService;
         private readonly ISettingsService _settings;
         private readonly IOptionsService _options;
@@ -270,7 +272,6 @@ namespace Unigram.Services
 
             Task.Run(() =>
             {
-
                 _client.Send(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"), 10 * 1024 * 1024)));
                 _client.Send(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
 
@@ -290,7 +291,13 @@ namespace Unigram.Services
         {
             Send(new GetChats(long.MaxValue, 0, 20));
 
+            UpdateWallet();
             UpdateVersion();
+        }
+
+        private async void UpdateWallet()
+        {
+
         }
 
         private async void UpdateVersion()

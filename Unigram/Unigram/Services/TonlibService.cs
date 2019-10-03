@@ -1,17 +1,209 @@
-﻿using System;
+﻿#define TEST_TON
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
+using Ton.Tonlib;
+using Ton.Tonlib.Api;
+using Windows.Storage;
 
 namespace Unigram.Services
 {
     public interface ITonlibService
     {
+        BaseObject Execute(Function function);
 
+        void Send(Function function);
+        void Send(Function function, ClientResultHandler handler);
+        void Send(Function function, Action<BaseObject> handler);
+        Task<BaseObject> SendAsync(Function function);
+
+        void SetCreationState(WalletCreationState state);
+        bool TryGetCreationState(out WalletCreationState state);
+        WalletCreationState CreationState { get; }
+
+        bool IsCreating { get; }
     }
 
-    public class TonlibService : ITonlibService
+    public class TonlibService : ITonlibService, ClientResultHandler
     {
+        private Client _client;
+
+        private readonly int _session;
+
+        private readonly IProtoService _protoService;
+        private readonly ISettingsService _settingsService;
+        private readonly IEventAggregator _aggregator;
+
+        private TaskCompletionSource<bool> _initializeTask;
+
+        private WalletCreationState _creationState;
+
+        public TonlibService(int session, IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
+        {
+            _session = session;
+
+            _protoService = protoService;
+            _settingsService = settingsService;
+            _aggregator = aggregator;
+
+            _initializeTask = new TaskCompletionSource<bool>();
+
+            Initialize();
+        }
+
+        private async void Initialize()
+        {
+            _client = Client.Create(this);
+
+            // TODO: no buono
+            var config = await GetConfigAsync();
+            if (config == null)
+            {
+                return;
+            }
+
+            await Task.Run(() =>
+            {
+                Directory.CreateDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}", "ton"));
+
+                _client.Send(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}", "ton", "log.txt"), 10 * 1024 * 1024)));
+                _client.Send(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
+
+                _client.Send(new Init(new Options(config, new KeyStoreTypeDirectory(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}", "ton")))), result =>
+                {
+                    _initializeTask.SetResult(true);
+                });
+                _client.Run();
+            });
+        }
+
+        private async Task<Config> GetConfigAsync()
+        {
+            var config = _settingsService.Wallet.Config;
+            var name = _settingsService.Wallet.Name;
+
+            var response = await _protoService.SendAsync(new Telegram.Td.Api.GetApplicationConfig());
+            if (response is Telegram.Td.Api.JsonValueObject json)
+            {
+                foreach (var member in json.Members)
+                {
+                    if (string.Equals(member.Key, "wallet_config", StringComparison.OrdinalIgnoreCase) && member.Value is Telegram.Td.Api.JsonValueString configValue)
+                    {
+                        _settingsService.Wallet.Config = configValue.Value;
+                        config = configValue.Value;
+                    }
+                    else if (string.Equals(member.Key, "wallet_blockchain_name", StringComparison.OrdinalIgnoreCase) && member.Value is Telegram.Td.Api.JsonValueString nameValue)
+                    {
+                        _settingsService.Wallet.Name = nameValue.Value;
+                        name = nameValue.Value;
+                    }
+                }
+            }
+
+#if TEST_TON
+            if (name == null)
+            {
+                name = "test";
+                config = @"{
+  ""liteservers"": [
+    {
+      ""ip"": 1137658550,
+      ""port"": 4924,
+      ""id"": {
+        ""@type"": ""pub.ed25519"",
+        ""key"": ""peJTw/arlRfssgTuf9BMypJzqOi7SXEqSPSWiEw2U1M=""
+      }
+}
+  ],
+  ""validator"": {
+    ""@type"": ""validator.config.global"",
+    ""zero_state"": {
+      ""workchain"": -1,
+      ""shard"": -9223372036854775808,
+      ""seqno"": 0,
+      ""root_hash"": ""VCSXxDHhTALFxReyTZRd8E4Ya3ySOmpOWAS4rBX9XBY="",
+      ""file_hash"": ""eh9yveSz1qMdJ7mOsO+I+H77jkLr9NpAuEkoJuseXBo=""
+    }
+  }
+}";
+            }
+#endif
+
+            // TODO: useCallbacksForNetwork requires TDLib 1.5.1.
+            return new Config(config, name, false, false);
+        }
+
+
+        public BaseObject Execute(Function function)
+        {
+            return Client.Execute(function);
+        }
+
+
+
+        public void Send(Function function)
+        {
+            _client.Send(function);
+        }
+
+        public void Send(Function function, ClientResultHandler handler)
+        {
+            _client.Send(function, handler);
+        }
+
+        public void Send(Function function, Action<BaseObject> handler)
+        {
+            _client.Send(function, handler);
+        }
+
+        public async Task<BaseObject> SendAsync(Function function)
+        {
+            await _initializeTask.Task;
+            return await _client.SendAsync(function);
+        }
+
+
+
+        public void OnResult(BaseObject update)
+        {
+            if (update is UpdateSendLiteServerQuery updateSendLiteServerQuery)
+            {
+                // TODO: TDLib 1.5.1
+            }
+
+            _aggregator.Publish(update);
+        }
+
+
+
+        public void SetCreationState(WalletCreationState state)
+        {
+            if (_creationState != null && state != null)
+            {
+                throw new InvalidOperationException("Wallet is being created already");
+            }
+
+            _creationState = state;
+        }
+
+        public bool TryGetCreationState(out WalletCreationState state)
+        {
+            state = _creationState;
+            return state != null;
+        }
+
+        public WalletCreationState CreationState => _creationState;
+        public bool IsCreating => _creationState != null;
+    }
+
+    public class WalletCreationState
+    {
+        public Key Key { get; set; }
+
+        public IList<string> WordList { get; set; }
+
+        public IList<int> Indices { get; set; }
     }
 }

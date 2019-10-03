@@ -19,6 +19,7 @@ namespace Unigram.Services
 
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
+        WalletSettings Wallet { get; }
         AutoDownloadSettings AutoDownload { get; set; }
         AppearanceSettings Appearance { get; }
         WallpaperSettings Wallpaper { get; }
@@ -213,6 +214,15 @@ namespace Unigram.Services
             get
             {
                 return _stickers = _stickers ?? new StickersSettings(_local);
+            }
+        }
+
+        private WalletSettings _wallet;
+        public WalletSettings Wallet
+        {
+            get
+            {
+                return _wallet = _wallet ?? new WalletSettings(_own);
             }
         }
 

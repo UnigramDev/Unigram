@@ -20,6 +20,7 @@ using Unigram.ViewModels.Settings.Privacy;
 using Unigram.ViewModels.SignIn;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
+using Unigram.ViewModels.Wallet;
 using Unigram.Views;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
@@ -96,6 +97,7 @@ namespace Unigram
                     .As<IProtoService, ICacheService>()
                     .SingleInstance();
                 builder.RegisterType<TonlibService>()
+                    .WithParameter("session", session)
                     .As<ITonlibService>()
                     .SingleInstance();
                 builder.RegisterType<SettingsService>()
@@ -257,6 +259,17 @@ namespace Unigram
                 builder.RegisterType<PassportDocumentViewModelBase>();
                 builder.RegisterType<PassportAddressViewModel>();
                 builder.RegisterType<InviteViewModel>();
+
+                builder.RegisterType<WalletViewModel>();
+                builder.RegisterType<WalletSettingsViewModel>();
+                builder.RegisterType<WalletCreateViewModel>();
+                builder.RegisterType<WalletTestViewModel>();
+                builder.RegisterType<WalletImportViewModel>();
+                builder.RegisterType<WalletExportViewModel>();
+                builder.RegisterType<WalletReceiveViewModel>();
+                builder.RegisterType<WalletSendViewModel>();
+                builder.RegisterType<WalletTransactionViewModel>();
+                builder.RegisterType<WalletInfoViewModel>();
 
                 return builder.Build();
             });
