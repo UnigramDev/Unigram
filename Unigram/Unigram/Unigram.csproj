@@ -327,6 +327,7 @@
     <Compile Include="Controls\ProxyStatusControl.xaml.cs">
       <DependentUpon>ProxyStatusControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LottieView.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -1412,6 +1413,28 @@
     <Content Include="Assets\Fonts\SegMVR2.ttf" />
     <Content Include="Assets\Fonts\SEGMDL2.TTF" />
     <Content Include="Assets\Emoji\apple.ttf" />
+    <Content Include="Assets\Animations\celebrate.tgs" />
+    <Content Include="Assets\Animations\cry.tgs" />
+    <Content Include="Assets\Animations\heart.tgs" />
+    <Content Include="Assets\Animations\lol.tgs" />
+    <Content Include="Assets\Animations\meh.tgs" />
+    <Content Include="Assets\Animations\ok.tgs" />
+    <Content Include="Assets\Animations\poker.tgs" />
+    <Content Include="Assets\Animations\poop.tgs" />
+    <Content Include="Assets\Animations\sad.tgs" />
+    <Content Include="Assets\Animations\SendingGrams.tgs" />
+    <Content Include="Assets\Animations\smile.tgs" />
+    <Content Include="Assets\Animations\surprised.tgs" />
+    <Content Include="Assets\Animations\thumbsup.tgs" />
+    <Content Include="Assets\Animations\WalletCreated.tgs" />
+    <Content Include="Assets\Animations\WalletEmpty.tgs" />
+    <Content Include="Assets\Animations\WalletIntroLoading.tgs" />
+    <Content Include="Assets\Animations\WalletIntroStatic.tgs" />
+    <Content Include="Assets\Animations\WalletKeyLock.tgs" />
+    <Content Include="Assets\Animations\WalletWordCheck.tgs" />
+    <Content Include="Assets\Animations\WalletWordList.tgs" />
+    <Content Include="Assets\Animations\WalletDone.tgs" />
+    <Content Include="Assets\Animations\WalletNotAvailable.tgs" />
     <None Include="Assets\Fonts\Telegram.json" />
     <PRIResource Include="Strings\uk\Additional.resw">
       <SubType>Designer</SubType>
@@ -1505,6 +1528,7 @@
     <Content Include="Assets\Images\Reply.scale-150.png" />
     <Content Include="Assets\Images\Reply.scale-200.png" />
     <Content Include="Assets\Images\Reply.scale-400.png" />
+    <Content Include="Assets\Images\WalletGem.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16_altform-lightunplated.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24_altform-lightunplated.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256_altform-lightunplated.png" />
@@ -2494,10 +2518,13 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Toolkit.Uwp.UI.Lottie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4aff67a105548ee2, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libraries\Lottie\Microsoft.Toolkit.Uwp.UI.Lottie.dll</HintPath>
+    <Reference Include="RLottie">
+      <HintPath>..\Libraries\rlottie\$(Platform)\RLottie.winmd</HintPath>
+      <Implementation>RLottie.dll</Implementation>
     </Reference>
+    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.dll" />
+    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.pri" />
+    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\Wallet\" />
