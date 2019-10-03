@@ -15,8 +15,8 @@ namespace Unigram.ViewModels.Wallet
 {
     public class WalletTestViewModel : TonViewModelBase
     {
-        public WalletTestViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletTestViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
         }
@@ -56,12 +56,12 @@ namespace Unigram.ViewModels.Wallet
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (TonlibService.TryGetCreationState(out WalletCreationState creationState))
+            if (TonService.TryGetCreationState(out WalletCreationState creationState))
             {
                 Indices = creationState.Indices;
             }
 
-            var response = await TonlibService.SendAsync(new GetBip39Hints());
+            var response = await TonService.SendAsync(new GetBip39Hints());
             if (response is Bip39Hints hints)
             {
                 Hints = hints.Words;
@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Wallet
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (TonlibService.TryGetCreationState(out WalletCreationState creationState))
+            if (TonService.TryGetCreationState(out WalletCreationState creationState))
             {
                 for (int i = 0; i < creationState.Indices.Count; i++)
                 {
@@ -91,7 +91,7 @@ namespace Unigram.ViewModels.Wallet
                     }
                 }
 
-                TonlibService.SetCreationState(null);
+                TonService.SetCreationState(null);
                 NavigationService.Navigate(typeof(WalletInfoPage), WalletInfoState.Ready);
             }
         }

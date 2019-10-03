@@ -18,8 +18,8 @@ namespace Unigram.ViewModels.Wallet
 {
     public class WalletViewModel : TonViewModelBase
     {
-        public WalletViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             Transactions = new MvxObservableCollection<RawTransaction>();
 
@@ -67,7 +67,7 @@ namespace Unigram.ViewModels.Wallet
 
             IsLoading = true;
 
-            var response = await TonlibService.SendAsync(new GenericGetAccountState(address));
+            var response = await TonService.SendAsync(new GenericGetAccountState(address));
             if (response is GenericAccountState accountState)
             {
                 IsLoading = false;
@@ -80,7 +80,7 @@ namespace Unigram.ViewModels.Wallet
                     return;
                 }
 
-                var transactions = await TonlibService.SendAsync(new RawGetTransactions(address, lastTransactionId)) as RawTransactions;
+                var transactions = await TonService.SendAsync(new RawGetTransactions(address, lastTransactionId)) as RawTransactions;
                 if (transactions == null)
                 {
                     Transactions.Clear();

@@ -12,8 +12,8 @@ namespace Unigram.ViewModels.Wallet
 {
     public class WalletSendViewModel : TonViewModelBase
     {
-        public WalletSendViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletSendViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
         }
@@ -86,7 +86,7 @@ namespace Unigram.ViewModels.Wallet
             var address = _address.Replace("ton://", string.Empty);
 
             //var response = await TonlibService.SendAsync(new WalletSendGrams(privateKey, new AccountAddress(address), state.Seqno, long.MaxValue, _amount, message));
-            var response = await TonlibService.SendAsync(new GenericSendGrams(privateKey, new AccountAddress(self), new AccountAddress(address), _amount, 0, false, message));
+            var response = await TonService.SendAsync(new GenericSendGrams(privateKey, new AccountAddress(self), new AccountAddress(address), _amount, 0, false, message));
         }
 
         public bool TryParseUrl(string text)

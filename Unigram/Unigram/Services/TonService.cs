@@ -10,7 +10,7 @@ using Windows.Storage;
 
 namespace Unigram.Services
 {
-    public interface ITonlibService
+    public interface ITonService
     {
         BaseObject Execute(Function function);
 
@@ -26,7 +26,7 @@ namespace Unigram.Services
         bool IsCreating { get; }
     }
 
-    public class TonlibService : ITonlibService, ClientResultHandler
+    public class TonService : ITonService, ClientResultHandler
     {
         private Client _client;
 
@@ -40,7 +40,7 @@ namespace Unigram.Services
 
         private WalletCreationState _creationState;
 
-        public TonlibService(int session, IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
+        public TonService(int session, IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _session = session;
 

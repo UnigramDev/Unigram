@@ -524,7 +524,7 @@
     <Compile Include="Services\Stripe\StripeToken.cs" />
     <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
-    <Compile Include="Services\TonlibService.cs" />
+    <Compile Include="Services\TonService.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
     <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
@@ -2615,10 +2615,7 @@
     <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Wallet\" />
-    <Folder Include="Views\Wallet\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

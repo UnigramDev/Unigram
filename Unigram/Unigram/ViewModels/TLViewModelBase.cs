@@ -94,14 +94,14 @@ namespace Unigram.ViewModels
 
     public class TonViewModelBase : TLViewModelBase
     {
-        private readonly ITonlibService _tonlibService;
+        private readonly ITonService _tonService;
 
-        public TonViewModelBase(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public TonViewModelBase(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _tonlibService = tonlibService;
+            _tonService = tonService;
         }
 
-        public ITonlibService TonlibService => _tonlibService;
+        public ITonService TonService => _tonService;
     }
 }

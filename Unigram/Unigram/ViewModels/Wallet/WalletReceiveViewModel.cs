@@ -16,8 +16,8 @@ namespace Unigram.ViewModels.Wallet
     {
         public IWalletReceiveDelegate Delegate { get; set; }
 
-        public WalletReceiveViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletReceiveViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             CopyCommand = new RelayCommand(CopyExecute);
             ShareCommand = new RelayCommand(ShareExecute);

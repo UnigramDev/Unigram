@@ -19,8 +19,8 @@ namespace Unigram.ViewModels.Wallet
 {
     public class WalletImportViewModel : TonViewModelBase
     {
-        public WalletImportViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletImportViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<WalletWordViewModel>();
 
@@ -44,7 +44,7 @@ namespace Unigram.ViewModels.Wallet
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var response = await TonlibService.SendAsync(new GetBip39Hints());
+            var response = await TonService.SendAsync(new GetBip39Hints());
             if (response is Bip39Hints hints)
             {
                 Hints = hints.Words;
@@ -61,10 +61,10 @@ namespace Unigram.ViewModels.Wallet
             var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
             var words = Items.OrderBy(x => x.Index).Select(x => x.Text).ToArray();
 
-            var response = await TonlibService.SendAsync(new ImportKey(local_password, new byte[0], new ExportedKey(words)));
+            var response = await TonService.SendAsync(new ImportKey(local_password, new byte[0], new ExportedKey(words)));
             if (response is Key key)
             {
-                var address = TonlibService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(key.PublicKey))) as AccountAddress;
+                var address = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(key.PublicKey))) as AccountAddress;
 
                 ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_public_key", new Telegram.Td.Api.OptionValueString(key.PublicKey)));
                 ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_secret", new Telegram.Td.Api.OptionValueString(Utils.ByteArrayToString(key.Secret))));

@@ -20,8 +20,8 @@ namespace Unigram.ViewModels.Wallet
 
         public IWalletExportDelegate Delegate { get; set; }
 
-        public WalletExportViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletExportViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
         }
@@ -41,7 +41,7 @@ namespace Unigram.ViewModels.Wallet
             }
 
             IList<string> wordList = null;
-            if (TonlibService.TryGetCreationState(out WalletCreationState creationState))
+            if (TonService.TryGetCreationState(out WalletCreationState creationState))
             {
                 wordList = creationState.WordList;
             }
@@ -54,7 +54,7 @@ namespace Unigram.ViewModels.Wallet
 
                 var privateKey = new InputKey(new Key(publicKey, secret), local_password);
 
-                var response = await TonlibService.SendAsync(new ExportKey(privateKey));
+                var response = await TonService.SendAsync(new ExportKey(privateKey));
                 if (response is ExportedKey exportedKey)
                 {
                     wordList = exportedKey.WordList;
@@ -85,7 +85,7 @@ namespace Unigram.ViewModels.Wallet
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (TonlibService.IsCreating)
+            if (TonService.IsCreating)
             {
                 var wait = 60;
 

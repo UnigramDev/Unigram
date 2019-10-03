@@ -13,8 +13,8 @@ namespace Unigram.ViewModels.Wallet
 {
     public class WalletCreateViewModel : TonViewModelBase
     {
-        public WalletCreateViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletCreateViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
             ImportCommand = new RelayCommand(ImportExecute);
@@ -25,10 +25,10 @@ namespace Unigram.ViewModels.Wallet
         {
             var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
 
-            var response = await TonlibService.SendAsync(new CreateNewKey(local_password, new byte[0], new byte[0]));
+            var response = await TonService.SendAsync(new CreateNewKey(local_password, new byte[0], new byte[0]));
             if (response is Key key)
             {
-                var address = TonlibService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(key.PublicKey))) as AccountAddress;
+                var address = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(key.PublicKey))) as AccountAddress;
 
                 ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_public_key", new Telegram.Td.Api.OptionValueString(key.PublicKey)));
                 ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_secret", new Telegram.Td.Api.OptionValueString(Utils.ByteArrayToString(key.Secret))));
@@ -44,7 +44,7 @@ namespace Unigram.ViewModels.Wallet
 
         private async Task ContinueAsync(Key key, byte[] localPassword)
         {
-            var response = await TonlibService.SendAsync(new ExportKey(new InputKey(key, localPassword)));
+            var response = await TonService.SendAsync(new ExportKey(new InputKey(key, localPassword)));
             if (response is ExportedKey exportedKey)
             {
                 var indices = new List<int>();
@@ -61,7 +61,7 @@ namespace Unigram.ViewModels.Wallet
 
                 indices.Sort();
 
-                TonlibService.SetCreationState(new WalletCreationState
+                TonService.SetCreationState(new WalletCreationState
                 {
                     Key = key,
                     WordList = exportedKey.WordList,

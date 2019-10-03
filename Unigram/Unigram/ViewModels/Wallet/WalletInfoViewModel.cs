@@ -9,6 +9,7 @@ using Unigram.Services;
 using Unigram.Views.Wallet;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -17,8 +18,8 @@ namespace Unigram.ViewModels.Wallet
 {
     public class WalletInfoViewModel : TonViewModelBase
     {
-        public WalletInfoViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletInfoViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute);
         }

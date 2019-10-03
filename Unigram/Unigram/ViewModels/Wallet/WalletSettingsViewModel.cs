@@ -14,8 +14,8 @@ namespace Unigram.ViewModels.Wallet
 {
     public class WalletSettingsViewModel : TonViewModelBase
     {
-        public WalletSettingsViewModel(ITonlibService tonlibService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(tonlibService, protoService, cacheService, settingsService, aggregator)
+        public WalletSettingsViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             ExportCommand = new RelayCommand(ExportExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
@@ -43,7 +43,7 @@ namespace Unigram.ViewModels.Wallet
 
             var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
 
-            var response = await TonlibService.SendAsync(new DeleteKey(new Key(publicKey, secret)));
+            var response = await TonService.SendAsync(new DeleteKey(new Key(publicKey, secret)));
             if (response is Ok)
             {
                 ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_address", new Telegram.Td.Api.OptionValueEmpty()));
