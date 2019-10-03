@@ -63,23 +63,10 @@ namespace Unigram.Views.Wallet
             }
         }
 
-        private void Word_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        private void Word_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             sender.ItemsSource = null;
             FocusNext(sender.TabIndex);
-        }
-
-        private void Word_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key != Windows.System.VirtualKey.Enter)
-            {
-                return;
-            }
-
-            e.Handled = true;
-
-            var text = sender as AutoSuggestBox;
-            FocusNext(text.TabIndex);
         }
 
         private void FocusNext(int index)

@@ -24,8 +24,7 @@
                     TextBoxStyle="{StaticResource InlinePlaceholderTextBoxStyle}"
                     HorizontalAlignment="Stretch"
                     TextChanged="Word_TextChanged"
-                    SuggestionChosen="Word_SuggestionChosen"
-                    KeyDown="Word_KeyDown"
+                    QuerySubmitted="Word_QuerySubmitted"
                     Margin="0,0,0,8"
                     TabIndex="1"/>
                 <AutoSuggestBox
@@ -34,8 +33,7 @@
                     TextBoxStyle="{StaticResource InlinePlaceholderTextBoxStyle}"
                     HorizontalAlignment="Stretch"
                     TextChanged="Word_TextChanged"
-                    SuggestionChosen="Word_SuggestionChosen"
-                    KeyDown="Word_KeyDown"
+                    QuerySubmitted="Word_QuerySubmitted"
                     Margin="0,0,0,8"
                     TabIndex="2"/>
                 <AutoSuggestBox
@@ -44,8 +42,7 @@
                     TextBoxStyle="{StaticResource InlinePlaceholderTextBoxStyle}"
                     HorizontalAlignment="Stretch"
                     TextChanged="Word_TextChanged"
-                    SuggestionChosen="Word_SuggestionChosen"
-                    KeyDown="Word_KeyDown"
+                    QuerySubmitted="Word_QuerySubmitted"
                     Margin="0,0,0,8"
                     TabIndex="3"/>
             </StackPanel>

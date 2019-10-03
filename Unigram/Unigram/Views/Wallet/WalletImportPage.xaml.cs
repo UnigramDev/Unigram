@@ -49,8 +49,7 @@ namespace Unigram.Views.Wallet
                 text.DataContext = item;
 
                 text.TextChanged += Word_TextChanged;
-                text.SuggestionChosen += Word_SuggestionChosen;
-                text.KeyDown += Word_KeyDown;
+                text.QuerySubmitted += Word_QuerySubmitted;
 
                 text.SetBinding(AutoSuggestBox.TextProperty, binding);
 
@@ -96,23 +95,10 @@ namespace Unigram.Views.Wallet
             }
         }
 
-        private void Word_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        private void Word_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             sender.ItemsSource = null;
             FocusNext(sender.TabIndex);
-        }
-
-        private void Word_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key != Windows.System.VirtualKey.Enter)
-            {
-                return;
-            }
-
-            e.Handled = true;
-
-            var text = sender as AutoSuggestBox;
-            FocusNext(text.TabIndex);
         }
 
         private void FocusNext(int index)
