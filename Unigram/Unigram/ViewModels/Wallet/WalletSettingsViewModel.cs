@@ -38,17 +38,21 @@ namespace Unigram.ViewModels.Wallet
                 return;
             }
 
-            var publicKey = ProtoService.Options.GetValue<string>("x_wallet_public_key");
-            var secret = Utils.StringToByteArray(ProtoService.Options.GetValue<string>("x_wallet_secret"));
+            var publicKey = ProtoService.Options.WalletPublicKey;
+            var secret = await TonService.Encryption.DecryptAsync(publicKey);
+            if (secret == null)
+            {
+                // TODO:
+                return;
+            }
 
             var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
 
             var response = await TonService.SendAsync(new DeleteKey(new Key(publicKey, secret)));
             if (response is Ok)
             {
-                ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_address", new Telegram.Td.Api.OptionValueEmpty()));
-                ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_public_key", new Telegram.Td.Api.OptionValueEmpty()));
-                ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_secret", new Telegram.Td.Api.OptionValueEmpty()));
+                TonService.Encryption.Delete(publicKey);
+                ProtoService.Options.WalletPublicKey = null;
 
                 NavigationService.Navigate(typeof(WalletCreatePage));
             }

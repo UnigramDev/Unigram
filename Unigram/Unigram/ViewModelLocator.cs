@@ -100,6 +100,10 @@ namespace Unigram
                     .WithParameter("session", session)
                     .As<ITonService>()
                     .SingleInstance();
+                builder.RegisterType<EncryptionService>()
+                    .WithParameter("session", session)
+                    .As<IEncryptionService>()
+                    .SingleInstance();
                 builder.RegisterType<SettingsService>()
                     .WithParameter("session", session)
                     .As<ISettingsService>()

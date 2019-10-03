@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views;
@@ -22,34 +23,40 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class SettingsPasscodeConfirmView : TLContentDialog
     {
-        private readonly IPasscodeService _passcodeService;
+        private readonly Func<string, Task<bool>> _verify;
 
-        public SettingsPasscodeConfirmView(IPasscodeService passcodeService)
+        public SettingsPasscodeConfirmView(Func<string, Task<bool>> verify, bool simple)
         {
             InitializeComponent();
 
-            _passcodeService = passcodeService;
+            _verify = verify;
 
             Title = Strings.Resources.Passcode;
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirmScope = new InputScope();
-            confirmScope.Names.Add(new InputScopeName(passcodeService.IsSimple ? InputScopeNameValue.NumericPin : InputScopeNameValue.Password));
+            confirmScope.Names.Add(new InputScopeName(simple ? InputScopeNameValue.NumericPin : InputScopeNameValue.Password));
             Confirm.InputScope = confirmScope;
-            Confirm.MaxLength = passcodeService.IsSimple ? 4 : int.MaxValue;
+            Confirm.MaxLength = simple ? 4 : int.MaxValue;
         }
 
         public bool IsSimple { get; set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        public string Passcode { get; private set; }
+
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (/*Confirm.Password.Length != 4 || !Confirm.Password.All(x => x >= '0' && x <= '9') ||*/ !_passcodeService.Check(Confirm.Password))
+
+            //if (/*Confirm.Password.Length != 4 || !Confirm.Password.All(x => x >= '0' && x <= '9') ||*/ !_passcodeService.Check(Confirm.Password))
+            if (await _verify(Confirm.Password))
             {
                 VisualUtilities.ShakeView(Confirm);
                 Confirm.Password = string.Empty;
                 args.Cancel = true;
             }
+
+            Passcode = Confirm.Password.ToString();
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

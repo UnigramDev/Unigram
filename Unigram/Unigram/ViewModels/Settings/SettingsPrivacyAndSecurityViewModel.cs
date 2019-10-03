@@ -180,21 +180,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand PasscodeCommand { get; }
         private async void PasscodeExecute()
         {
-            if (_passcodeService.IsEnabled)
-            {
-                var dialog = new SettingsPasscodeConfirmView(_passcodeService);
-                dialog.IsSimple = _passcodeService.IsSimple;
-
-                var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    NavigationService.Navigate(typeof(SettingsPasscodePage));
-                }
-            }
-            else
-            {
-                NavigationService.Navigate(typeof(SettingsPasscodePage));
-            }
+            NavigationService.NavigateToPasscode();
         }
 
         public RelayCommand PasswordCommand { get; }

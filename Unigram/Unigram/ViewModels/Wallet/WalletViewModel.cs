@@ -54,16 +54,13 @@ namespace Unigram.ViewModels.Wallet
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            AccountAddress address;
-            if (ProtoService.Options.TryGetValue("x_wallet_address", out string addressValue))
-            {
-                Address = addressValue;
-                address = new AccountAddress(addressValue);
-            }
-            else
+            var address = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(ProtoService.Options.WalletPublicKey))) as AccountAddress;
+            if (address == null)
             {
                 return;
             }
+
+            Address = address.AccountAddressValue;
 
             IsLoading = true;
 

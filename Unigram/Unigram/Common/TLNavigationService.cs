@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
@@ -56,7 +57,7 @@ namespace Unigram.Common
         public async void NavigateToWallet(string address = null)
         {
             Type page;
-            if (_protoService.Options.TryGetValue("x_wallet_address", out string _))
+            if (_protoService.Options.WalletPublicKey != null)
             {
                 if (address == null)
                 {
@@ -228,7 +229,7 @@ namespace Unigram.Common
         {
             if (_passcodeService.IsEnabled)
             {
-                var dialog = new SettingsPasscodeConfirmView(_passcodeService);
+                var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(_passcodeService.Check(passcode)), _passcodeService.IsSimple);
                 dialog.IsSimple = _passcodeService.IsSimple;
 
                 var confirm = await dialog.ShowAsync();

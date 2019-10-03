@@ -12,6 +12,8 @@ namespace Unigram.Services
 {
     public interface ITonService
     {
+        IEncryptionService Encryption { get; }
+
         BaseObject Execute(Function function);
 
         void Send(Function function);
@@ -33,6 +35,7 @@ namespace Unigram.Services
         private readonly int _session;
 
         private readonly IProtoService _protoService;
+        private readonly IEncryptionService _encryptionService;
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
@@ -40,7 +43,7 @@ namespace Unigram.Services
 
         private WalletCreationState _creationState;
 
-        public TonService(int session, IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
+        public TonService(int session, IProtoService protoService, IEncryptionService encryptionService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _session = session;
 
@@ -134,6 +137,9 @@ namespace Unigram.Services
             // TODO: useCallbacksForNetwork requires TDLib 1.5.1.
             return new Config(config, name, false, false);
         }
+
+        public IEncryptionService Encryption => _encryptionService;
+
 
 
         public BaseObject Execute(Function function)

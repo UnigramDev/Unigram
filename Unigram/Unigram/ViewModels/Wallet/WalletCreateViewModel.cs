@@ -28,13 +28,12 @@ namespace Unigram.ViewModels.Wallet
             var response = await TonService.SendAsync(new CreateNewKey(local_password, new byte[0], new byte[0]));
             if (response is Key key)
             {
-                var address = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(key.PublicKey))) as AccountAddress;
-
-                ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_public_key", new Telegram.Td.Api.OptionValueString(key.PublicKey)));
-                ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_secret", new Telegram.Td.Api.OptionValueString(Utils.ByteArrayToString(key.Secret))));
-                ProtoService.Send(new Telegram.Td.Api.SetOption("x_wallet_address", new Telegram.Td.Api.OptionValueString(address.AccountAddressValue)));
-
-                await ContinueAsync(key, local_password);
+                var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret);
+                if (encrypt)
+                {
+                    ProtoService.Options.WalletPublicKey = key.PublicKey;
+                    await ContinueAsync(key, local_password);
+                }
             }
             else if (response is Error error)
             {

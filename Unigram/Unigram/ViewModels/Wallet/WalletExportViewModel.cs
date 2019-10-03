@@ -47,8 +47,13 @@ namespace Unigram.ViewModels.Wallet
             }
             else
             {
-                var publicKey = ProtoService.Options.GetValue<string>("x_wallet_public_key");
-                var secret = Utils.StringToByteArray(ProtoService.Options.GetValue<string>("x_wallet_secret"));
+                var publicKey = ProtoService.Options.WalletPublicKey;
+                var secret = await TonService.Encryption.DecryptAsync(publicKey);
+                if (secret == null)
+                {
+                    // TODO:
+                    return;
+                }
 
                 var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
 

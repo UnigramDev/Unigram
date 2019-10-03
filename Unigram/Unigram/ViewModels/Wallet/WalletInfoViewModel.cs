@@ -47,8 +47,8 @@ namespace Unigram.ViewModels.Wallet
             switch (_state)
             {
                 case WalletInfoState.Created:
-                    //await ContinueCreatedAsync();
-                    NavigationService.Navigate(typeof(WalletExportPage));
+                    await ContinueCreatedAsync();
+                    //NavigationService.Navigate(typeof(WalletExportPage));
                     break;
                 case WalletInfoState.Ready:
                     NavigationService.Navigate(typeof(WalletPage));
@@ -56,30 +56,18 @@ namespace Unigram.ViewModels.Wallet
             }
         }
 
-        //private async Task ContinueCreatedAsync()
-        //{
-        //    IBuffer keyMaterial;
-
-        //    if (await KeyCredentialManager.IsSupportedAsync())
-        //    {
-
-        //    }
-        //    else
-        //    {
-        //        var dialog = new SettingsPasscodeInputView();
-
-        //        var confirm = await dialog.ShowQueuedAsync();
-        //        if (confirm != ContentDialogResult.Primary)
-        //        {
-        //            return;
-        //        }
-
-        //        var salt = CryptographicBuffer.GenerateRandom(32);
-        //        var test = Utils.PBKDF2(dialog.Passcode, salt);
-        //    }
-
-        //    NavigationService.Navigate(typeof(WalletExportPage));
-        //}
+        private async Task ContinueCreatedAsync()
+        {
+            if (TonService.TryGetCreationState(out WalletCreationState state))
+            {
+                var encrypt = await TonService.Encryption.EncryptAsync(state.Key.PublicKey, state.Key.Secret);
+                if (encrypt)
+                {
+                    ProtoService.Options.WalletPublicKey = state.Key.PublicKey;
+                    NavigationService.Navigate(typeof(WalletExportPage));
+                }
+            }
+        }
     }
 
     public enum WalletInfoState

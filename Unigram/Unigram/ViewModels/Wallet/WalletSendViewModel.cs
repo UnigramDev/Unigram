@@ -75,18 +75,22 @@ namespace Unigram.ViewModels.Wallet
                 message = Encoding.UTF8.GetBytes(_comment.Substring(0, Math.Min(128, _comment.Length)));
             }
 
-            var self = ProtoService.Options.GetValue<string>("x_wallet_address");
-            var publicKey = ProtoService.Options.GetValue<string>("x_wallet_public_key");
-            var secret = Utils.StringToByteArray(ProtoService.Options.GetValue<string>("x_wallet_secret"));
+            var publicKey = ProtoService.Options.WalletPublicKey;
+            var secret = await TonService.Encryption.DecryptAsync(publicKey);
+            if (secret == null)
+            {
+                // TODO:
+                return;
+            }
 
             var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
 
             var privateKey = new InputKey(new Key(publicKey, secret), local_password);
 
+            var self = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(publicKey))) as AccountAddress;
             var address = _address.Replace("ton://", string.Empty);
 
-            //var response = await TonlibService.SendAsync(new WalletSendGrams(privateKey, new AccountAddress(address), state.Seqno, long.MaxValue, _amount, message));
-            var response = await TonService.SendAsync(new GenericSendGrams(privateKey, new AccountAddress(self), new AccountAddress(address), _amount, 0, false, message));
+            var response = await TonService.SendAsync(new GenericSendGrams(privateKey, self, new AccountAddress(address), _amount, 0, false, message));
         }
 
         public bool TryParseUrl(string text)

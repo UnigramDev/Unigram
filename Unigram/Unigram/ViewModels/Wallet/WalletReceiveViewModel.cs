@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ton.Tonlib.Api;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Services;
@@ -32,10 +33,11 @@ namespace Unigram.ViewModels.Wallet
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (ProtoService.Options.TryGetValue("x_wallet_address", out string address))
+            var address = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(ProtoService.Options.WalletPublicKey))) as AccountAddress;
+            if (address != null)
             {
-                Address = address;
-                Delegate?.UpdateAddress(address);
+                Address = address.AccountAddressValue;
+                Delegate?.UpdateAddress(address.AccountAddressValue);
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
