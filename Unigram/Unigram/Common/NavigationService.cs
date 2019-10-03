@@ -132,6 +132,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void NavigateToWallet(this INavigationService service, string address = null)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToWallet(address);
+            }
+        }
+
         public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
             if (service is TLNavigationService serviceEx)

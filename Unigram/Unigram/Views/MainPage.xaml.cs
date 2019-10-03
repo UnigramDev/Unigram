@@ -1940,6 +1940,10 @@ namespace Unigram.Views
             {
                 MasterDetail.NavigationService.Navigate(typeof(InvitePage));
             }
+            else if (destination == RootDestination.Wallet)
+            {
+                MasterDetail.NavigationService.NavigateToWallet();
+            }
             else if (destination == RootDestination.SavedMessages)
             {
                 var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));

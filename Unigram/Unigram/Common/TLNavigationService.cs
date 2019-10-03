@@ -8,6 +8,7 @@ using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Settings;
+using Unigram.Views.Wallet;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Core;
@@ -24,6 +25,7 @@ namespace Unigram.Common
         private readonly IPasscodeService _passcodeService;
 
         private ViewLifetimeControl _instantLifetime;
+        private ViewLifetimeControl _walletLifetime;
 
         public TLNavigationService(IProtoService protoService, Frame frame, int session, string id)
             : base(frame, session, id)
@@ -48,6 +50,49 @@ namespace Unigram.Common
                     _instantLifetime.NavigationService.Navigate(typeof(InstantPage), url);
                 });
                 await ApplicationViewSwitcher.TryShowAsStandaloneAsync(_instantLifetime.Id, ViewSizePreference.Default, ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), ViewSizePreference.UseHalf);
+            }
+        }
+
+        public async void NavigateToWallet(string address = null)
+        {
+            Type page;
+            if (_protoService.Options.TryGetValue("x_wallet_address", out string _))
+            {
+                if (address == null)
+                {
+                    page = typeof(WalletPage);
+                }
+                else
+                {
+                    page = typeof(WalletSendPage);
+                }
+            }
+            else
+            {
+                page = typeof(WalletCreatePage);
+            }
+
+            //page = typeof(WalletCreatePage);
+
+            //Navigate(page, address);
+            //return;
+
+            if (_walletLifetime == null)
+            {
+                _walletLifetime = await OpenAsync(page, address);
+                if (_walletLifetime.NavigationService is NavigationService service)
+                {
+                    service.SerializationService = TLSerializationService.Current;
+                }
+            }
+            else
+            {
+                await _walletLifetime.CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    _walletLifetime.NavigationService.Navigate(page, address);
+                });
+
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(_walletLifetime.Id, ViewSizePreference.Default, ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), ViewSizePreference.UseHalf);
             }
         }
 

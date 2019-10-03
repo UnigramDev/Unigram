@@ -218,12 +218,17 @@ namespace Unigram.Common
             //    return uri.Host.Equals(meUri.Host, StringComparison.OrdinalIgnoreCase);
             //}
 
-            return IsTelegramScheme(uri);
+            return IsTelegramScheme(uri) || IsTonScheme(uri);
         }
 
         public static bool IsTelegramScheme(Uri uri)
         {
             return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsTonScheme(Uri uri)
+        {
+            return string.Equals(uri.Scheme, "ton", StringComparison.OrdinalIgnoreCase);
         }
 
         public static async void OpenTelegramScheme(IProtoService protoService, INavigationService navigation, Uri scheme)
@@ -421,11 +426,20 @@ namespace Unigram.Common
             }
         }
 
+        public static void OpenTonScheme(INavigationService navigation, Uri uri)
+        {
+            navigation.NavigateToWallet(uri.Host.Length > 0 ? uri.Host : null);
+        }
+
         public static void OpenTelegramUrl(IProtoService protoService, INavigationService navigation, Uri uri)
         {
             if (IsTelegramScheme(uri))
             {
                 OpenTelegramScheme(protoService, navigation, uri);
+            }
+            else if (IsTonScheme(uri))
+            {
+                OpenTonScheme(navigation, uri);
             }
             else
             {
