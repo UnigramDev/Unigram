@@ -32,11 +32,12 @@ namespace Unigram.ViewModels
         {
             if (parameter is string name)
             {
-                //if (id == Constants.WallpaperLocalId)
-                //{
-                //    //Item = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0);
-                //}
-                //else
+                if (name == Constants.WallpaperLocalFileName)
+                {
+                    //Item = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0);
+                    Item = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperLocalFileName, null, null);
+                }
+                else
                 {
                     var response = await ProtoService.SendAsync(new SearchBackground(name));
                     if (response is Background background)
@@ -81,9 +82,6 @@ namespace Unigram.ViewModels
         public RelayCommand DoneCommand { get; }
         private async void DoneExecute()
         {
-            var background = 1000001L;
-            var color = 0;
-
             var wallpaper = _item;
             if (wallpaper != null && wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Document != null)
             {
@@ -95,6 +93,8 @@ namespace Unigram.ViewModels
                     if (wallpaper.Id == Constants.WallpaperLocalId)
                     {
                         item = await ApplicationData.Current.LocalFolder.GetFileAsync($"{SessionId}\\{Constants.WallpaperLocalFileName}");
+
+                        ProtoService.Send(new SetBackground(new InputBackgroundLocal(new InputFileLocal(item.Path)), new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled), false));
                     }
                     else
                     {
@@ -153,22 +153,24 @@ namespace Unigram.ViewModels
                 {
                     Theme.Current.AddOrUpdateColor("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96));
                     Theme.Current.AddOrUpdateColor("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96));
+
+                    ProtoService.Send(new SetBackground(null, null, false));
                 }
 
                 Settings.Wallpaper.IsBlurEnabled = _isBlurEnabled;
                 Settings.Wallpaper.IsMotionEnabled = _isMotionEnabled;
-                Settings.Wallpaper.SelectedBackground = background = wallpaper.Id;
-                Settings.Wallpaper.SelectedColor = color = 0;
+                Settings.Wallpaper.SelectedBackground = wallpaper.Id;
+                Settings.Wallpaper.SelectedColor = 0;
             }
             else if (wallpaper?.Type is BackgroundTypeSolid solid)
             {
                 Settings.Wallpaper.IsBlurEnabled = false;
                 Settings.Wallpaper.IsMotionEnabled = false;
-                Settings.Wallpaper.SelectedBackground = background = wallpaper.Id;
-                Settings.Wallpaper.SelectedColor = color = solid.Color;
+                Settings.Wallpaper.SelectedBackground = wallpaper.Id;
+                Settings.Wallpaper.SelectedColor = solid.Color;
             }
 
-            //Aggregator.Publish(new UpdateWallpaper(background, color));
+            Aggregator.Publish(new UpdateWallpaper(0, 0));
             NavigationService.GoBack();
         }
     }

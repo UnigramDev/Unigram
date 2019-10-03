@@ -117,12 +117,12 @@ namespace Unigram.Views
 
                 Header.Visibility = Visibility.Collapsed;
                 FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
+                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
             }
             else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
             {
                 FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
+                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
             }
 
             ViewModel.TextField = TextField;

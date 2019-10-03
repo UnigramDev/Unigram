@@ -5,7 +5,6 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Brushes;
 using Unigram.Services;
@@ -23,11 +22,11 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatBackgroundPresenter : Grid, IHandle<UpdateSelectedBackground>
+    public class ChatBackgroundPresenter : Grid, IHandle<UpdateWallpaper>
     {
         private int _session;
         private IEventAggregator _aggregator;
-        private IProtoService _protoService;
+        private ISettingsService _settings;
 
         private ContentControl _container;
 
@@ -59,9 +58,7 @@ namespace Unigram.Controls.Chats
 
         private async void OnOpacityChanged(DependencyObject sender, DependencyProperty dp)
         {
-            var background = _protoService?.SelectedBackground;
-            if (Opacity > 0 && background != null && background.Type is BackgroundTypeWallpaper wallpaper && wallpaper.IsMoving && await _parallaxEffect.IsSupportedAsync())
-
+            if (Opacity > 0 && _settings != null && _settings.Wallpaper.IsMotionEnabled && await _parallaxEffect.IsSupportedAsync())
             {
                 await _parallaxEffect.RegisterAsync(OnParallaxChanged);
             }
@@ -80,8 +77,7 @@ namespace Unigram.Controls.Chats
         {
             _motionVisual.Size = e.NewSize.ToVector2();
 
-            var background = _protoService?.SelectedBackground;
-            if (background != null && background.Type is BackgroundTypeWallpaper wallpaper && wallpaper.IsMoving && await _parallaxEffect.IsSupportedAsync())
+            if (_settings != null && _settings.Wallpaper.IsMotionEnabled && await _parallaxEffect.IsSupportedAsync())
             {
                 _motionVisual.CenterPoint = new Vector3((float)e.NewSize.Width / 2, (float)e.NewSize.Height / 2, 0);
                 _motionVisual.Scale = new Vector3(_parallaxEffect.getScale(e.NewSize.Width, e.NewSize.Height));
@@ -93,178 +89,99 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        public void Handle(UpdateSelectedBackground update)
+        public void Handle(UpdateWallpaper update)
         {
-            this.BeginOnUIThread(() => Update(_session, update.Background));
+            this.BeginOnUIThread(() => Update(_session, _settings.Wallpaper));
         }
 
-        public void Update(int session, IProtoService protoService, IEventAggregator aggregator)
+        public void Update(int session, ISettingsService settings, IEventAggregator aggregator)
         {
             _session = session;
             _aggregator = aggregator;
-            _protoService = protoService;
+            _settings = settings;
 
             aggregator.Subscribe(this);
-            Update(session, protoService.SelectedBackground);
+            Update(session, settings.Wallpaper);
         }
 
-        private async void Update(int session, Background background)
+        private async void Update(int session, WallpaperSettings settings)
         {
-            if (background == null)
+            try
             {
-                SetDefault();
-            }
-            else if (background.Type is BackgroundTypeWallpaper wallpaper && background.Document != null)
-            {
-                //var file = background.Document.DocumentValue;
-                //if (file.Local.IsDownloadingCompleted)
-                //{
-                //    var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-
-                //    if (_imageBackground == null)
-                //        _imageBackground = new Rectangle();
-
-                //    using (var stream = await item.OpenReadAsync())
-                //    {
-                //        var bitmap = new BitmapImage();
-                //        await bitmap.SetSourceAsync(stream);
-                //        _imageBackground.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                //    }
-
-                //    _container.Content = _imageBackground;
-                //}
-                //else
-                //{
-
-                //}
-
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync($"{session}\\{Constants.WallpaperFileName}");
-                if (item is StorageFile file)
+                if (settings.SelectedColor == 0)
                 {
-                    if (_imageBackground == null)
-                        _imageBackground = new Rectangle();
-
-                    using (var stream = await file.OpenReadAsync())
+                    if (settings.SelectedBackground != 1000001)
                     {
-                        var bitmap = new BitmapImage();
-                        await bitmap.SetSourceAsync(stream);
-                        _imageBackground.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                        var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync($"{session}\\{Constants.WallpaperFileName}");
+                        if (item is StorageFile file)
+                        {
+                            if (_imageBackground == null)
+                                _imageBackground = new Rectangle();
+
+                            using (var stream = await file.OpenReadAsync())
+                            {
+                                var bitmap = new BitmapImage();
+                                await bitmap.SetSourceAsync(stream);
+                                _imageBackground.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                            }
+
+                            _container.Content = _imageBackground;
+                        }
                     }
+                    else if (SettingsService.Current.Appearance.IsLightTheme())
+                    {
+                        if (_colorBackground == null)
+                            _colorBackground = new Rectangle();
 
-                    _container.Content = _imageBackground;
+                        _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
+                        _container.Content = _colorBackground;
+                    }
+                    else
+                    {
+                        if (_colorBackground == null)
+                            _colorBackground = new Rectangle();
+
+                        _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
+                        _container.Content = _colorBackground;
+
+                        //_container.Content = null;
+                    }
                 }
+                else
+                {
+                    if (_colorBackground == null)
+                        _colorBackground = new Rectangle();
+
+                    _colorBackground.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF,
+                        (byte)((settings.SelectedColor >> 16) & 0xFF),
+                        (byte)((settings.SelectedColor >> 8) & 0xFF),
+                        (byte)((settings.SelectedColor & 0xFF))));
+
+                    _container.Content = _colorBackground;
+                }
+
+                InitializeMotion(settings);
             }
-            else if (background.Type is BackgroundTypeSolid solid)
+            catch
             {
-                if (_colorBackground == null)
-                    _colorBackground = new Rectangle();
+                if (SettingsService.Current.Appearance.IsLightTheme())
+                {
+                    if (_colorBackground == null)
+                        _colorBackground = new Rectangle();
 
-                _colorBackground.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF,
-                    (byte)((solid.Color >> 16) & 0xFF),
-                    (byte)((solid.Color >> 8) & 0xFF),
-                    (byte)((solid.Color & 0xFF))));
+                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
+                    _container.Content = _colorBackground;
+                }
+                else
+                {
+                    if (_colorBackground == null)
+                        _colorBackground = new Rectangle();
 
-                _container.Content = _colorBackground;
-            }
+                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
+                    _container.Content = _colorBackground;
 
-            //try
-            //{
-            //    if (settings.SelectedColor == 0)
-            //    {
-            //        if (settings.SelectedBackground != 1000001)
-            //        {
-            //            var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync($"{session}\\{Constants.WallpaperFileName}");
-            //            if (item is StorageFile file)
-            //            {
-            //                if (_imageBackground == null)
-            //                    _imageBackground = new Rectangle();
-
-            //                using (var stream = await file.OpenReadAsync())
-            //                {
-            //                    var bitmap = new BitmapImage();
-            //                    await bitmap.SetSourceAsync(stream);
-            //                    _imageBackground.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-            //                }
-
-            //                _container.Content = _imageBackground;
-            //            }
-            //        }
-            //        else if (SettingsService.Current.Appearance.IsLightTheme())
-            //        {
-            //            if (_colorBackground == null)
-            //                _colorBackground = new Rectangle();
-
-            //            _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
-            //            _container.Content = _colorBackground;
-            //        }
-            //        else
-            //        {
-            //            if (_colorBackground == null)
-            //                _colorBackground = new Rectangle();
-
-            //            _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
-            //            _container.Content = _colorBackground;
-
-            //            //_container.Content = null;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (_colorBackground == null)
-            //            _colorBackground = new Rectangle();
-
-            //        _colorBackground.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF,
-            //            (byte)((settings.SelectedColor >> 16) & 0xFF),
-            //            (byte)((settings.SelectedColor >> 8) & 0xFF),
-            //            (byte)((settings.SelectedColor & 0xFF))));
-
-            //        _container.Content = _colorBackground;
-            //    }
-
-            //    InitializeMotion(settings);
-            //}
-            //catch
-            //{
-            //    if (SettingsService.Current.Appearance.IsLightTheme())
-            //    {
-            //        if (_colorBackground == null)
-            //            _colorBackground = new Rectangle();
-
-            //        _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
-            //        _container.Content = _colorBackground;
-            //    }
-            //    else
-            //    {
-            //        if (_colorBackground == null)
-            //            _colorBackground = new Rectangle();
-
-            //        _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
-            //        _container.Content = _colorBackground;
-
-            //        //_container.Content = null;
-            //    }
-            //}
-        }
-
-        private void SetDefault()
-        {
-            if (SettingsService.Current.Appearance.IsLightTheme())
-            {
-                if (_colorBackground == null)
-                    _colorBackground = new Rectangle();
-
-                _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
-                _container.Content = _colorBackground;
-            }
-            else
-            {
-                if (_colorBackground == null)
-                    _colorBackground = new Rectangle();
-
-                _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
-                _container.Content = _colorBackground;
-
-                //_container.Content = null;
+                    //_container.Content = null;
+                }
             }
         }
 
