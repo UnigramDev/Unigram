@@ -99,12 +99,40 @@
                     </StackPanel>
 
                     <Grid
+                        x:Name="LoadingPanel"
+                        x:Load="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                        Loaded="CreatedPanel_Loaded"
+                        Unloaded="CreatedPanel_Unloaded"
+                        Grid.Row="1">
+
+                        <StackPanel VerticalAlignment="Center">
+                            <ProgressRing
+                                IsActive="True"
+                                Margin="0,-24,0,12"
+                                Width="160"
+                                Height="160"/>
+
+                            <TextBlock
+                                Text="Wallet is syncing"
+                                Style="{StaticResource TitleTextBlockStyle}"
+                                TextAlignment="Center"
+                                Margin="12,0"/>
+                            <TextBlock
+                                Text="This might take a few minutes"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                TextAlignment="Center"
+                                Margin="12,0"/>
+
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid
                         x:Name="CreatedPanel"
                         x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
                         Loaded="CreatedPanel_Loaded"
                         Unloaded="CreatedPanel_Unloaded"
                         Grid.Row="1">
-                        
+
                         <StackPanel VerticalAlignment="Center">
                             <controls:LottieView
                                 Source="ms-appx:///Assets/Animations/WalletEmpty.tgs"
@@ -157,7 +185,7 @@
                             <TextBlock
                                 Grid.ColumnSpan="2"
                                 Grid.Row="2"/>
-                        
+
                             <TextBlock
                                 Style="{StaticResource InfoCaptionTextBlockStyle}"
                                 Grid.Column="1"/>

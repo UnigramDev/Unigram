@@ -160,17 +160,31 @@ namespace Unigram.Views.Wallet
 
         private void CreatedPanel_Loaded(object sender, RoutedEventArgs e)
         {
-            HeaderPanel.Height = ScrollingHost.ActualHeight;
+            if (CreatedPanel != null || LoadingPanel != null)
+            {
+                HeaderPanel.Height = ScrollingHost.ActualHeight;
+            }
+            else
+            {
+                HeaderPanel.Height = double.NaN;
+            }
         }
 
         private void CreatedPanel_Unloaded(object sender, RoutedEventArgs e)
         {
-            HeaderPanel.Height = double.NaN;
+            if (CreatedPanel != null || LoadingPanel != null)
+            {
+                HeaderPanel.Height = ScrollingHost.ActualHeight;
+            }
+            else
+            {
+                HeaderPanel.Height = double.NaN;
+            }
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (CreatedPanel != null)
+            if (CreatedPanel != null || LoadingPanel != null)
             {
                 HeaderPanel.Height = ScrollingHost.ActualHeight;
             }

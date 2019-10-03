@@ -43,7 +43,7 @@ namespace Unigram.Views.Wallet
                 text.Inlines.Add(new Run { Text = $"{item.Index}. ", Foreground = App.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as SolidColorBrush });
                 text.Inlines.Add(new Run { Text = item.Text, FontWeight = FontWeights.SemiBold });
                 text.HorizontalAlignment = HorizontalAlignment.Stretch;
-                text.Margin = new Thickness(0, 0, right ? 0 : 12, 8);
+                text.Margin = new Thickness(24, 0, right ? 0 : 12, 8);
 
                 return text;
             }

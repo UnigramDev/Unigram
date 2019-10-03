@@ -28,6 +28,14 @@ namespace Unigram.Views.Wallet
             DataContext = TLContainer.Current.Resolve<WalletSendViewModel>();
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (Frame.BackStack.IsEmpty())
+            {
+                Frame.BackStack.Add(new PageStackEntry(typeof(WalletPage), null, null));
+            }
+        }
+
         #region Binding
 
         private string ConvertAmount(long value)

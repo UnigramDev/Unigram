@@ -64,9 +64,9 @@ namespace Unigram.Views.Host
                 RootDestination.Calls,
                 RootDestination.Settings,
 
-                RootDestination.Separator,
+                //RootDestination.Separator,
 
-                RootDestination.Wallet,
+                //RootDestination.Wallet,
 
                 RootDestination.Separator,
 
