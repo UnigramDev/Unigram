@@ -27,8 +27,6 @@ namespace Unigram.Controls
         private Animation _animation;
         private CanvasBitmap[] _cache;
 
-        private int _index;
-
         private bool _isLoopingEnabled = true;
 
         public LottieView()
@@ -103,6 +101,8 @@ namespace Unigram.Controls
             {
                 sender.Paused = true;
                 sender.ResetElapsedTime();
+
+                Dispose();
             }
 
             if (_cache[index] == null)
@@ -111,25 +111,33 @@ namespace Unigram.Controls
                 _cache[index] = CanvasBitmap.CreateFromBytes(sender, bytes, 512, 512, DirectXPixelFormat.B8G8R8A8UIntNormalized);
             }
 
-            args.DrawingSession.DrawImage(_cache[index], new Rect(0, 0, 160, 160));
-            _index = (_index + 1) % _animation.TotalFrame;
+            args.DrawingSession.DrawImage(_cache[index], new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+        }
+
+        private void OnSourceChanged(Uri newValue, Uri oldValue)
+        {
+            OnSourceChanged(UriToPath(newValue), UriToPath(oldValue));
         }
 
         private void OnSourceChanged(string newValue, string oldValue)
         {
-            if (newValue == null)
-            {
-                // TODO
-                return;
-            }
-
-            if (newValue == oldValue)
-            {
-                return;
-            }
-
             var canvas = Canvas;
             if (canvas == null)
+            {
+                return;
+            }
+
+            if (newValue == null)
+            {
+                Canvas.Paused = true;
+                Canvas.ResetElapsedTime();
+
+                Dispose();
+                return;
+            }
+
+            if (string.Equals(newValue, oldValue, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
@@ -139,12 +147,12 @@ namespace Unigram.Controls
             _cache = new CanvasBitmap[_animation.TotalFrame];
 
             canvas.Paused = true;
+            canvas.ResetElapsedTime();
             canvas.TargetElapsedTime = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
 
             if (AutoPlay)
             {
                 canvas.Paused = false;
-                canvas.ResetElapsedTime();
                 canvas.Invalidate();
             }
         }
@@ -216,7 +224,12 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(Uri), typeof(LottieView), new PropertyMetadata(null));
+            DependencyProperty.Register("Source", typeof(Uri), typeof(LottieView), new PropertyMetadata(null, OnSourceChanged));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d).OnSourceChanged((Uri)e.NewValue, (Uri)e.OldValue);
+        }
 
         #endregion
     }

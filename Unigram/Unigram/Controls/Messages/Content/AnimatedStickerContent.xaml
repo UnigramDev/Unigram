@@ -11,9 +11,15 @@
     d:DesignWidth="400"
     Width="200"
     Height="200"
+    Padding="0"
+    HorizontalContentAlignment="Stretch"
+    VerticalContentAlignment="Stretch"
     Click="Button_Click">
 
     <Grid x:Name="LayoutRoot">
-        <controls:LottieView x:Name="Player" Source="ms-appx:///Assets/Animations/WalletIntroLoading.tgs"/>
+        <controls:LottieView
+            x:Name="Player"
+            Width="200"
+            Height="200"/>
     </Grid>
 </HyperlinkButton>
