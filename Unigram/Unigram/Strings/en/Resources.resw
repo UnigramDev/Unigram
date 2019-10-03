@@ -9239,4 +9239,389 @@ If you forget your password, you will lose access to your Telegram account. Ther
   <data name="YouWereKicked" xml:space="preserve">
     <value>you were removed from the group</value>
   </data>
+  <data name="GramWallet" xml:space="preserve">
+    <value>Gram Wallet</value>
+  </data>
+  <data name="GramWalletInfo" xml:space="preserve">
+    <value>The gram wallet allows you to make fast and secure blockchain-based payments without intermediaries.</value>
+  </data>
+  <data name="CreateMyWallet" xml:space="preserve">
+    <value>Create My Wallet</value>
+  </data>
+  <data name="CreateMyWalletTerms" xml:space="preserve">
+    <value>By creating a wallet you accept the
+*Terms and Conditions*.</value>
+  </data>
+  <data name="ImportExistingWallet" xml:space="preserve">
+    <value>Import existing wallet</value>
+  </data>
+  <data name="Wallet" xml:space="preserve">
+    <value>Wallet</value>
+  </data>
+  <data name="WalletAddressCopy" xml:space="preserve">
+    <value>Copy the 48-letter wallet address of the recipient here or ask them to send you a ton:// link.</value>
+  </data>
+  <data name="WalletAddressIncorrect" xml:space="preserve">
+    <value>You have entered an incorrect wallet address.</value>
+  </data>
+  <data name="WalletAmount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="WalletBiometricTooManyAttempts" xml:space="preserve">
+    <value>Too many attempts. Please try again later.</value>
+  </data>
+  <data name="WalletChangePasscode" xml:space="preserve">
+    <value>Change Passcode</value>
+  </data>
+  <data name="WalletComment" xml:space="preserve">
+    <value>Comment (optional)</value>
+  </data>
+  <data name="WalletConfirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="WalletConfirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="WalletConfirmationText" xml:space="preserve">
+    <value>Do you want to send **{0} Grams** to:</value>
+  </data>
+  <data name="WalletCongratulations" xml:space="preserve">
+    <value>Congratulations</value>
+  </data>
+  <data name="WalletCongratulationsinfo" xml:space="preserve">
+    <value>Your Gram wallet has just been created. Only you control it.
+    
+To be able to always have access to it, please write down secret words and set up a secure passcode.</value>
+  </data>
+  <data name="WalletContinue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="WalletCopyAddress" xml:space="preserve">
+    <value>Copy wallet address</value>
+  </data>
+  <data name="WalletCreateInvoice" xml:space="preserve">
+    <value>Create invoice</value>
+  </data>
+  <data name="WalletCreateInvoiceTitle" xml:space="preserve">
+    <value>Create Invoice</value>
+  </data>
+  <data name="WalletCreated" xml:space="preserve">
+    <value>Wallet Created</value>
+  </data>
+  <data name="WalletDelete" xml:space="preserve">
+    <value>Delete Wallet</value>
+  </data>
+  <data name="WalletDeleteInfo" xml:space="preserve">
+    <value>This will disconnect the wallet from this app. You will be able to restore your wallet using 24 secret words – or import another wallet.
+    
+Wallets are located in the TON Blockchain, which is not controlled by Telegram. If you want a wallet to be deleted, simply transfer all the grams from it and leave it empty.</value>
+  </data>
+  <data name="WalletDeleteText" xml:space="preserve">
+    <value>Are you sure you want to delete this wallet?</value>
+  </data>
+  <data name="WalletDeleteTitle" xml:space="preserve">
+    <value>Delete wallet</value>
+  </data>
+  <data name="WalletDone" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="WalletEnterPasscode" xml:space="preserve">
+    <value>Enter passcode</value>
+  </data>
+  <data name="WalletEnterWalletAddress" xml:space="preserve">
+    <value>Enter wallet address</value>
+  </data>
+  <data name="WalletExport" xml:space="preserve">
+    <value>Export Wallet</value>
+  </data>
+  <data name="WalletExportConfirmCredentials" xml:space="preserve">
+    <value>Please confirm your credentials to export your wallet.</value>
+  </data>
+  <data name="WalletFrom" xml:space="preserve">
+    <value>from:</value>
+  </data>
+  <data name="WalletGramsToReceive" xml:space="preserve">
+    <value>Number of Grams you expect to receive...</value>
+  </data>
+  <data name="WalletGramsToSend" xml:space="preserve">
+    <value>Grams to send...</value>
+  </data>
+  <data name="WalletImportAlertText" xml:space="preserve">
+    <value>Sorry, you have entered incorrect secret words. Please double check and try again.</value>
+  </data>
+  <data name="WalletImportAlertTitle" xml:space="preserve">
+    <value>Incorrect words</value>
+  </data>
+  <data name="WalletImportDontHave" xml:space="preserve">
+    <value>I don’t have them</value>
+  </data>
+  <data name="WalletImportInfo" xml:space="preserve">
+    <value>You can restore access to your wallet by entering the 24 words you wrote down when creating the wallet.</value>
+  </data>
+  <data name="WalletInvoiceInfo" xml:space="preserve">
+    <value>You can specify the amount and purpose of the payment to save the sender some time.</value>
+  </data>
+  <data name="WalletKeystoreInvalidated" xml:space="preserve">
+    <value>Unfortunately, your wallet is no longer available because your of a change in your device's lockscreen parameters. Please use your secret words to restore the wallet.</value>
+  </data>
+  <data name="WalletPasscodeLength" xml:space="preserve">
+    <value>Your passcode contains {0}.</value>
+  </data>
+  <data name="WalletPerfect" xml:space="preserve">
+    <value>Perfect!</value>
+  </data>
+  <data name="WalletPerfectInfo" xml:space="preserve">
+    <value>Now set up a passcode to secure your transactions.</value>
+  </data>
+  <data name="WalletPerfectSetPasscode" xml:space="preserve">
+    <value>Set a Passcode</value>
+  </data>
+  <data name="WalletPermissionNoCamera" xml:space="preserve">
+    <value>Telegram needs access to your camera so that you can scan QR codes.</value>
+  </data>
+  <data name="WalletProcessingFee" xml:space="preserve">
+    <value>Processing fee</value>
+  </data>
+  <data name="WalletQRCode" xml:space="preserve">
+    <value>QR Code</value>
+  </data>
+  <data name="WalletReady" xml:space="preserve">
+    <value>Ready to go!</value>
+  </data>
+  <data name="WalletReadyInfo" xml:space="preserve">
+    <value>You are all set. Now you have a wallet that only you control — directly, without middlemen or bankers.</value>
+  </data>
+  <data name="WalletReceive" xml:space="preserve">
+    <value>Receive</value>
+  </data>
+  <data name="WalletReceiveYourAddress" xml:space="preserve">
+    <value>Your Wallet Address</value>
+  </data>
+  <data name="WalletReleaseToRefresh" xml:space="preserve">
+    <value>Release to refresh</value>
+  </data>
+  <data name="WalletScanCode" xml:space="preserve">
+    <value>Scan QR Code</value>
+  </data>
+  <data name="WalletScanCodeNotFound" xml:space="preserve">
+    <value>No wallet address found</value>
+  </data>
+  <data name="WalletScanImageNotFound" xml:space="preserve">
+    <value>No wallet address found in the selected image.</value>
+  </data>
+  <data name="WalletSecretWords" xml:space="preserve">
+    <value>24 Secret Words</value>
+  </data>
+  <data name="WalletSecretWordsAlertButton" xml:space="preserve">
+    <value>OK, SORRY</value>
+  </data>
+  <data name="WalletSecretWordsAlertText" xml:space="preserve">
+    <value>You didn’t have enough time to write these words down.</value>
+  </data>
+  <data name="WalletSecretWordsAlertTitle" xml:space="preserve">
+    <value>Sure done?</value>
+  </data>
+  <data name="WalletSecretWordsInfo" xml:space="preserve">
+    <value>Write down these 24 words in the correct order and store them in a secret place.
+    
+Use these secret words to restore access to your wallet if you lose your passcode or Telegram account.</value>
+  </data>
+  <data name="WalletSecretWordsTitle" xml:space="preserve">
+    <value>Secret Words</value>
+  </data>
+  <data name="WalletSecurityAlertCreateContinue" xml:space="preserve">
+    <value>Create anyway</value>
+  </data>
+  <data name="WalletSecurityAlertImportContinue" xml:space="preserve">
+    <value>Import anyway</value>
+  </data>
+  <data name="WalletSecurityAlertSetup" xml:space="preserve">
+    <value>Setup</value>
+  </data>
+  <data name="WalletSecurityAlertTextBiometric" xml:space="preserve">
+    <value>For better security, we recommend you to set up lockscreen biometric authentication.</value>
+  </data>
+  <data name="WalletSecurityAlertTextLockscreen" xml:space="preserve">
+    <value>For better security, we recommend you to set up a lockscreen password or pin.</value>
+  </data>
+  <data name="WalletSecurityAlertTextLockscreenBiometric" xml:space="preserve">
+    <value>For better security, we recommend you to set up a lockscreen password and biometric authentication.</value>
+  </data>
+  <data name="WalletSecurityAlertTitle" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="WalletSend" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="WalletSendBalance" xml:space="preserve">
+    <value>Balance: {0}</value>
+  </data>
+  <data name="WalletSendConfirmCredentials" xml:space="preserve">
+    <value>Please confirm your credentials to send Grams.</value>
+  </data>
+  <data name="WalletSendDone" xml:space="preserve">
+    <value>Done!</value>
+  </data>
+  <data name="WalletSendDoneText" xml:space="preserve">
+    <value>{0} Grams have been sent to</value>
+  </data>
+  <data name="WalletSendGrams" xml:space="preserve">
+    <value>Send Grams</value>
+  </data>
+  <data name="WalletSendRecipient" xml:space="preserve">
+    <value>Recipient wallet address</value>
+  </data>
+  <data name="WalletSendWarningSendAnyway" xml:space="preserve">
+    <value>Send anyway</value>
+  </data>
+  <data name="WalletSendWarningText" xml:space="preserve">
+    <value>This address belongs to an empty wallet. Are you sure you want to transfer grams to it?</value>
+  </data>
+  <data name="WalletSendWarningTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="WalletSendingGrams" xml:space="preserve">
+    <value>Sending Grams</value>
+  </data>
+  <data name="WalletSendingGramsInfo" xml:space="preserve">
+    <value>Please wait a few seconds for your transaction to be processed...</value>
+  </data>
+  <data name="WalletSetPasscode" xml:space="preserve">
+    <value>Set a Passcode</value>
+  </data>
+  <data name="WalletSetPasscode4Digit" xml:space="preserve">
+    <value>4-Digit code</value>
+  </data>
+  <data name="WalletSetPasscode6Digit" xml:space="preserve">
+    <value>6-Digit code</value>
+  </data>
+  <data name="WalletSetPasscodeChooseType" xml:space="preserve">
+    <value>Choose code type</value>
+  </data>
+  <data name="WalletSetPasscodeCustom" xml:space="preserve">
+    <value>Custom numeric code</value>
+  </data>
+  <data name="WalletSetPasscodeEnterCode" xml:space="preserve">
+    <value>Enter code</value>
+  </data>
+  <data name="WalletSetPasscodeError" xml:space="preserve">
+    <value>Passcodes do not match</value>
+  </data>
+  <data name="WalletSetPasscodeMinLength" xml:space="preserve">
+    <value>Minimum passcode length is 4</value>
+  </data>
+  <data name="WalletSetPasscodeOptions" xml:space="preserve">
+    <value>Passcode options</value>
+  </data>
+  <data name="WalletSetPasscodeRepeat" xml:space="preserve">
+    <value>Repeat the Passcode</value>
+  </data>
+  <data name="WalletSettings" xml:space="preserve">
+    <value>Wallet Settings</value>
+  </data>
+  <data name="WalletShareAddress" xml:space="preserve">
+    <value>Share Wallet Address</value>
+  </data>
+  <data name="WalletShareInfo" xml:space="preserve">
+    <value>Share this address with other Gram
+wallet owners to receive Grams from them.</value>
+  </data>
+  <data name="WalletShareInvoiceUrl" xml:space="preserve">
+    <value>Share Invoice URL</value>
+  </data>
+  <data name="WalletShareInvoiceUrlInfo" xml:space="preserve">
+    <value>Share this address with other Gram wallet owners to receive Grams from them.</value>
+  </data>
+  <data name="WalletShareQr" xml:space="preserve">
+    <value>Share QR</value>
+  </data>
+  <data name="WalletSwipeToRefresh" xml:space="preserve">
+    <value>Swipe down to refresh</value>
+  </data>
+  <data name="WalletTestTime" xml:space="preserve">
+    <value>Test time!</value>
+  </data>
+  <data name="WalletTestTimeAlertButtonSee" xml:space="preserve">
+    <value>See words</value>
+  </data>
+  <data name="WalletTestTimeAlertButtonTry" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="WalletTestTimeAlertText" xml:space="preserve">
+    <value>The secret words you have entered do not match the ones in the list.</value>
+  </data>
+  <data name="WalletTestTimeAlertTitle" xml:space="preserve">
+    <value>Incorrect words</value>
+  </data>
+  <data name="WalletTestTimeInfo" xml:space="preserve">
+    <value>Now let’s check that you wrote your secret words correctly.
+    
+Please enter words **{0}**, **{1}** and **{2}** below:</value>
+  </data>
+  <data name="WalletTestTimeTitle" xml:space="preserve">
+    <value>Test Time!</value>
+  </data>
+  <data name="WalletTo" xml:space="preserve">
+    <value>to:</value>
+  </data>
+  <data name="WalletTooBad" xml:space="preserve">
+    <value>Too Bad!</value>
+  </data>
+  <data name="WalletTooBadCreate" xml:space="preserve">
+    <value>Create a new empty wallet instead</value>
+  </data>
+  <data name="WalletTooBadEnter" xml:space="preserve">
+    <value>Enter 24 secret words</value>
+  </data>
+  <data name="WalletTooBadInfo" xml:space="preserve">
+    <value>Without the secret words you can’t restore access to the wallet.</value>
+  </data>
+  <data name="WalletTosUrl" xml:space="preserve">
+    <value>https://telegram.org/tos/wallet</value>
+  </data>
+  <data name="WalletTouchFingerprint" xml:space="preserve">
+    <value>Touch the fingerprint sensor</value>
+  </data>
+  <data name="WalletTouchFingerprintNotRecognized" xml:space="preserve">
+    <value>Fingerprint not recognized. Try again.</value>
+  </data>
+  <data name="WalletTransaction" xml:space="preserve">
+    <value>Transaction</value>
+  </data>
+  <data name="WalletTransactionAddressCopied" xml:space="preserve">
+    <value>Address copied to clipboard</value>
+  </data>
+  <data name="WalletTransactionComment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="WalletTransactionCopyAddress" xml:space="preserve">
+    <value>Copy Wallet Address</value>
+  </data>
+  <data name="WalletTransactionRecipient" xml:space="preserve">
+    <value>Recipient</value>
+  </data>
+  <data name="WalletTransactionSendGrams" xml:space="preserve">
+    <value>Send Grams</value>
+  </data>
+  <data name="WalletTransactionSender" xml:space="preserve">
+    <value>Sender</value>
+  </data>
+  <data name="WalletUpdatedFewSecondsAgo" xml:space="preserve">
+    <value>updated a few seconds ago</value>
+  </data>
+  <data name="WalletUpdatedTimeAgo" xml:space="preserve">
+    <value>updated {0} ago</value>
+  </data>
+  <data name="WalletUpdating" xml:space="preserve">
+    <value>updating</value>
+  </data>
+  <data name="WalletView" xml:space="preserve">
+    <value>View My Wallet</value>
+  </data>
+  <data name="WalletYourAddress" xml:space="preserve">
+    <value>Your wallet address</value>
+  </data>
+  <data name="WalletYourBalance" xml:space="preserve">
+    <value>Your balance</value>
+  </data>
 </root>

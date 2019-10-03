@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 09/01/2019 13:11:31
+// 	Generated: 10/03/2019 09:50:21
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -696,7 +696,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Received %s"
+        /// Localized resource similar to "Received {0}"
         /// </summary>
         public static string AccDescrReceivedDate
         {
@@ -806,7 +806,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sent %s"
+        /// Localized resource similar to "Sent {0}"
         /// </summary>
         public static string AccDescrSentDate
         {
@@ -4455,7 +4455,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Switch to your preferred night theme when ambient lighting falls below {0}%%."
+        /// Localized resource similar to "Switch to your preferred night theme when ambient lighting falls below {0}%."
         /// </summary>
         public static string AutoNightBrightnessInfo
         {
@@ -4656,7 +4656,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Waiting for %s to get online..."
+        /// Localized resource similar to "Waiting for {0} to get online..."
         /// </summary>
         public static string AwaitingEncryption
         {
@@ -5437,7 +5437,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "If emoji on {0}'s screen are the same, this call is 100%% secure."
+        /// Localized resource similar to "If emoji on {0}'s screen are the same, this call is 100% secure."
         /// </summary>
         public static string CallEmojiKeyTooltip
         {
@@ -10450,7 +10450,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You need Telegram to log in to **%s**. Would you like to install it now?"
+        /// Localized resource similar to "You need Telegram to log in to **{0}**. Would you like to install it now?"
         /// </summary>
         public static string DownloadTelegramText
         {
@@ -11238,7 +11238,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "%s joined your secret chat."
+        /// Localized resource similar to "{0} joined your secret chat."
         /// </summary>
         public static string EncryptedChatStartedOutgoing
         {
@@ -11304,7 +11304,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "%s invited you to join a secret chat."
+        /// Localized resource similar to "{0} invited you to join a secret chat."
         /// </summary>
         public static string EncryptedPlaceholderTitleIncoming
         {
@@ -11315,7 +11315,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You have invited %s to join a secret chat."
+        /// Localized resource similar to "You have invited {0} to join a secret chat."
         /// </summary>
         public static string EncryptedPlaceholderTitleOutgoing
         {
@@ -15869,7 +15869,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You are about to apply a language pack (**{0}**) that is {1}%% complete.
+        /// Localized resource similar to "You are about to apply a language pack (**{0}**) that is {1}% complete.
         ///
         ///This will translate the entire interface. You can suggest corrections via the [translation platform].
         ///
@@ -15906,7 +15906,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You are about to apply a custom language pack (**{0}**) that is {1}%% complete.
+        /// Localized resource similar to "You are about to apply a custom language pack (**{0}**) that is {1}% complete.
         ///
         ///This will translate the entire interface. You can suggest corrections via the [translation platform].
         ///
@@ -23174,7 +23174,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You need Telegram to log in to **%s**. Would you like to install it now?"
+        /// Localized resource similar to "You need Telegram to log in to **{0}**. Would you like to install it now?"
         /// </summary>
         public static string PassportSDKDownloadTelegram
         {
@@ -32135,7 +32135,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "answering as %s"
+        /// Localized resource similar to "answering as {0}"
         /// </summary>
         public static string VoipAnsweringAsAccount
         {
@@ -32300,7 +32300,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Telegram Call to %s"
+        /// Localized resource similar to "Telegram Call to {0}"
         /// </summary>
         public static string VoipInCallBrandingWithName
         {
@@ -33277,6 +33277,1391 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("YouWereKicked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Gram Wallet"
+        /// </summary>
+        public static string GramWallet
+        {
+            get
+            {
+                return resourceLoader.GetString("GramWallet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The gram wallet allows you to make fast and secure blockchain-based payments without intermediaries."
+        /// </summary>
+        public static string GramWalletInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("GramWalletInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create My Wallet"
+        /// </summary>
+        public static string CreateMyWallet
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateMyWallet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "By creating a wallet you accept the
+        ///*Terms and Conditions*."
+        /// </summary>
+        public static string CreateMyWalletTerms
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateMyWalletTerms");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Import existing wallet"
+        /// </summary>
+        public static string ImportExistingWallet
+        {
+            get
+            {
+                return resourceLoader.GetString("ImportExistingWallet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wallet"
+        /// </summary>
+        public static string Wallet
+        {
+            get
+            {
+                return resourceLoader.GetString("Wallet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy the 48-letter wallet address of the recipient here or ask them to send you a ton:// link."
+        /// </summary>
+        public static string WalletAddressCopy
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletAddressCopy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have entered an incorrect wallet address."
+        /// </summary>
+        public static string WalletAddressIncorrect
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletAddressIncorrect");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Amount"
+        /// </summary>
+        public static string WalletAmount
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletAmount");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too many attempts. Please try again later."
+        /// </summary>
+        public static string WalletBiometricTooManyAttempts
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletBiometricTooManyAttempts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change Passcode"
+        /// </summary>
+        public static string WalletChangePasscode
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletChangePasscode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Comment (optional)"
+        /// </summary>
+        public static string WalletComment
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletComment");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm"
+        /// </summary>
+        public static string WalletConfirm
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletConfirm");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirmation"
+        /// </summary>
+        public static string WalletConfirmation
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletConfirmation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to send **{0} Grams** to:"
+        /// </summary>
+        public static string WalletConfirmationText
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletConfirmationText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Congratulations"
+        /// </summary>
+        public static string WalletCongratulations
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletCongratulations");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your Gram wallet has just been created. Only you control it.
+        ///    
+        ///To be able to always have access to it, please write down secret words and set up a secure passcode."
+        /// </summary>
+        public static string WalletCongratulationsinfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletCongratulationsinfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Continue"
+        /// </summary>
+        public static string WalletContinue
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletContinue");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy wallet address"
+        /// </summary>
+        public static string WalletCopyAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletCopyAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create invoice"
+        /// </summary>
+        public static string WalletCreateInvoice
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletCreateInvoice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create Invoice"
+        /// </summary>
+        public static string WalletCreateInvoiceTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletCreateInvoiceTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wallet Created"
+        /// </summary>
+        public static string WalletCreated
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletCreated");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete Wallet"
+        /// </summary>
+        public static string WalletDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will disconnect the wallet from this app. You will be able to restore your wallet using 24 secret words – or import another wallet.
+        ///    
+        ///Wallets are located in the TON Blockchain, which is not controlled by Telegram. If you want a wallet to be deleted, simply transfer all the grams from it and leave it empty."
+        /// </summary>
+        public static string WalletDeleteInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletDeleteInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete this wallet?"
+        /// </summary>
+        public static string WalletDeleteText
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletDeleteText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete wallet"
+        /// </summary>
+        public static string WalletDeleteTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletDeleteTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Done"
+        /// </summary>
+        public static string WalletDone
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletDone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter passcode"
+        /// </summary>
+        public static string WalletEnterPasscode
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletEnterPasscode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter wallet address"
+        /// </summary>
+        public static string WalletEnterWalletAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletEnterWalletAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Export Wallet"
+        /// </summary>
+        public static string WalletExport
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletExport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please confirm your credentials to export your wallet."
+        /// </summary>
+        public static string WalletExportConfirmCredentials
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletExportConfirmCredentials");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "from:"
+        /// </summary>
+        public static string WalletFrom
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletFrom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Number of Grams you expect to receive..."
+        /// </summary>
+        public static string WalletGramsToReceive
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletGramsToReceive");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Grams to send..."
+        /// </summary>
+        public static string WalletGramsToSend
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletGramsToSend");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you have entered incorrect secret words. Please double check and try again."
+        /// </summary>
+        public static string WalletImportAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletImportAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incorrect words"
+        /// </summary>
+        public static string WalletImportAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletImportAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "I don’t have them"
+        /// </summary>
+        public static string WalletImportDontHave
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletImportDontHave");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can restore access to your wallet by entering the 24 words you wrote down when creating the wallet."
+        /// </summary>
+        public static string WalletImportInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletImportInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can specify the amount and purpose of the payment to save the sender some time."
+        /// </summary>
+        public static string WalletInvoiceInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletInvoiceInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unfortunately, your wallet is no longer available because your of a change in your device's lockscreen parameters. Please use your secret words to restore the wallet."
+        /// </summary>
+        public static string WalletKeystoreInvalidated
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletKeystoreInvalidated");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your passcode contains {0}."
+        /// </summary>
+        public static string WalletPasscodeLength
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletPasscodeLength");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Perfect!"
+        /// </summary>
+        public static string WalletPerfect
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletPerfect");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Now set up a passcode to secure your transactions."
+        /// </summary>
+        public static string WalletPerfectInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletPerfectInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Set a Passcode"
+        /// </summary>
+        public static string WalletPerfectSetPasscode
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletPerfectSetPasscode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram needs access to your camera so that you can scan QR codes."
+        /// </summary>
+        public static string WalletPermissionNoCamera
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletPermissionNoCamera");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Processing fee"
+        /// </summary>
+        public static string WalletProcessingFee
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletProcessingFee");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "QR Code"
+        /// </summary>
+        public static string WalletQRCode
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletQRCode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ready to go!"
+        /// </summary>
+        public static string WalletReady
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletReady");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are all set. Now you have a wallet that only you control — directly, without middlemen or bankers."
+        /// </summary>
+        public static string WalletReadyInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletReadyInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Receive"
+        /// </summary>
+        public static string WalletReceive
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletReceive");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your Wallet Address"
+        /// </summary>
+        public static string WalletReceiveYourAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletReceiveYourAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Release to refresh"
+        /// </summary>
+        public static string WalletReleaseToRefresh
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletReleaseToRefresh");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan QR Code"
+        /// </summary>
+        public static string WalletScanCode
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletScanCode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No wallet address found"
+        /// </summary>
+        public static string WalletScanCodeNotFound
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletScanCodeNotFound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No wallet address found in the selected image."
+        /// </summary>
+        public static string WalletScanImageNotFound
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletScanImageNotFound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "24 Secret Words"
+        /// </summary>
+        public static string WalletSecretWords
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecretWords");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "OK, SORRY"
+        /// </summary>
+        public static string WalletSecretWordsAlertButton
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecretWordsAlertButton");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You didn’t have enough time to write these words down."
+        /// </summary>
+        public static string WalletSecretWordsAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecretWordsAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sure done?"
+        /// </summary>
+        public static string WalletSecretWordsAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecretWordsAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Write down these 24 words in the correct order and store them in a secret place.
+        ///    
+        ///Use these secret words to restore access to your wallet if you lose your passcode or Telegram account."
+        /// </summary>
+        public static string WalletSecretWordsInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecretWordsInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Secret Words"
+        /// </summary>
+        public static string WalletSecretWordsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecretWordsTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create anyway"
+        /// </summary>
+        public static string WalletSecurityAlertCreateContinue
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecurityAlertCreateContinue");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Import anyway"
+        /// </summary>
+        public static string WalletSecurityAlertImportContinue
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecurityAlertImportContinue");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Setup"
+        /// </summary>
+        public static string WalletSecurityAlertSetup
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecurityAlertSetup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For better security, we recommend you to set up lockscreen biometric authentication."
+        /// </summary>
+        public static string WalletSecurityAlertTextBiometric
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecurityAlertTextBiometric");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For better security, we recommend you to set up a lockscreen password or pin."
+        /// </summary>
+        public static string WalletSecurityAlertTextLockscreen
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecurityAlertTextLockscreen");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For better security, we recommend you to set up a lockscreen password and biometric authentication."
+        /// </summary>
+        public static string WalletSecurityAlertTextLockscreenBiometric
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecurityAlertTextLockscreenBiometric");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Security"
+        /// </summary>
+        public static string WalletSecurityAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSecurityAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send"
+        /// </summary>
+        public static string WalletSend
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSend");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Balance: {0}"
+        /// </summary>
+        public static string WalletSendBalance
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendBalance");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please confirm your credentials to send Grams."
+        /// </summary>
+        public static string WalletSendConfirmCredentials
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendConfirmCredentials");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Done!"
+        /// </summary>
+        public static string WalletSendDone
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendDone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Grams have been sent to"
+        /// </summary>
+        public static string WalletSendDoneText
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendDoneText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send Grams"
+        /// </summary>
+        public static string WalletSendGrams
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendGrams");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recipient wallet address"
+        /// </summary>
+        public static string WalletSendRecipient
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendRecipient");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send anyway"
+        /// </summary>
+        public static string WalletSendWarningSendAnyway
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendWarningSendAnyway");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This address belongs to an empty wallet. Are you sure you want to transfer grams to it?"
+        /// </summary>
+        public static string WalletSendWarningText
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendWarningText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Warning"
+        /// </summary>
+        public static string WalletSendWarningTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendWarningTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending Grams"
+        /// </summary>
+        public static string WalletSendingGrams
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendingGrams");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please wait a few seconds for your transaction to be processed..."
+        /// </summary>
+        public static string WalletSendingGramsInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSendingGramsInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Set a Passcode"
+        /// </summary>
+        public static string WalletSetPasscode
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "4-Digit code"
+        /// </summary>
+        public static string WalletSetPasscode4Digit
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscode4Digit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "6-Digit code"
+        /// </summary>
+        public static string WalletSetPasscode6Digit
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscode6Digit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose code type"
+        /// </summary>
+        public static string WalletSetPasscodeChooseType
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscodeChooseType");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Custom numeric code"
+        /// </summary>
+        public static string WalletSetPasscodeCustom
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscodeCustom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter code"
+        /// </summary>
+        public static string WalletSetPasscodeEnterCode
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscodeEnterCode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Passcodes do not match"
+        /// </summary>
+        public static string WalletSetPasscodeError
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscodeError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Minimum passcode length is 4"
+        /// </summary>
+        public static string WalletSetPasscodeMinLength
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscodeMinLength");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Passcode options"
+        /// </summary>
+        public static string WalletSetPasscodeOptions
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscodeOptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Repeat the Passcode"
+        /// </summary>
+        public static string WalletSetPasscodeRepeat
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSetPasscodeRepeat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wallet Settings"
+        /// </summary>
+        public static string WalletSettings
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share Wallet Address"
+        /// </summary>
+        public static string WalletShareAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletShareAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share this address with other Gram
+        ///wallet owners to receive Grams from them."
+        /// </summary>
+        public static string WalletShareInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletShareInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share Invoice URL"
+        /// </summary>
+        public static string WalletShareInvoiceUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletShareInvoiceUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share this address with other Gram wallet owners to receive Grams from them."
+        /// </summary>
+        public static string WalletShareInvoiceUrlInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletShareInvoiceUrlInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share QR"
+        /// </summary>
+        public static string WalletShareQr
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletShareQr");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Swipe down to refresh"
+        /// </summary>
+        public static string WalletSwipeToRefresh
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletSwipeToRefresh");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Test time!"
+        /// </summary>
+        public static string WalletTestTime
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTestTime");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "See words"
+        /// </summary>
+        public static string WalletTestTimeAlertButtonSee
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTestTimeAlertButtonSee");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Try again"
+        /// </summary>
+        public static string WalletTestTimeAlertButtonTry
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTestTimeAlertButtonTry");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The secret words you have entered do not match the ones in the list."
+        /// </summary>
+        public static string WalletTestTimeAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTestTimeAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incorrect words"
+        /// </summary>
+        public static string WalletTestTimeAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTestTimeAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Now let’s check that you wrote your secret words correctly.
+        ///    
+        ///Please enter words **{0}**, **{1}** and **{2}** below:"
+        /// </summary>
+        public static string WalletTestTimeInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTestTimeInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Test Time!"
+        /// </summary>
+        public static string WalletTestTimeTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTestTimeTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "to:"
+        /// </summary>
+        public static string WalletTo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too Bad!"
+        /// </summary>
+        public static string WalletTooBad
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTooBad");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create a new empty wallet instead"
+        /// </summary>
+        public static string WalletTooBadCreate
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTooBadCreate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enter 24 secret words"
+        /// </summary>
+        public static string WalletTooBadEnter
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTooBadEnter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Without the secret words you can’t restore access to the wallet."
+        /// </summary>
+        public static string WalletTooBadInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTooBadInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "https://telegram.org/tos/wallet"
+        /// </summary>
+        public static string WalletTosUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTosUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Touch the fingerprint sensor"
+        /// </summary>
+        public static string WalletTouchFingerprint
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTouchFingerprint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Fingerprint not recognized. Try again."
+        /// </summary>
+        public static string WalletTouchFingerprintNotRecognized
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTouchFingerprintNotRecognized");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Transaction"
+        /// </summary>
+        public static string WalletTransaction
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTransaction");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Address copied to clipboard"
+        /// </summary>
+        public static string WalletTransactionAddressCopied
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTransactionAddressCopied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Comment"
+        /// </summary>
+        public static string WalletTransactionComment
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTransactionComment");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Wallet Address"
+        /// </summary>
+        public static string WalletTransactionCopyAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTransactionCopyAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recipient"
+        /// </summary>
+        public static string WalletTransactionRecipient
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTransactionRecipient");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send Grams"
+        /// </summary>
+        public static string WalletTransactionSendGrams
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTransactionSendGrams");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sender"
+        /// </summary>
+        public static string WalletTransactionSender
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletTransactionSender");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "updated a few seconds ago"
+        /// </summary>
+        public static string WalletUpdatedFewSecondsAgo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletUpdatedFewSecondsAgo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "updated {0} ago"
+        /// </summary>
+        public static string WalletUpdatedTimeAgo
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletUpdatedTimeAgo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "updating"
+        /// </summary>
+        public static string WalletUpdating
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletUpdating");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View My Wallet"
+        /// </summary>
+        public static string WalletView
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletView");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your wallet address"
+        /// </summary>
+        public static string WalletYourAddress
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletYourAddress");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your balance"
+        /// </summary>
+        public static string WalletYourBalance
+        {
+            get
+            {
+                return resourceLoader.GetString("WalletYourBalance");
             }
         }
     }
