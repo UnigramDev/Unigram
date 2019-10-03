@@ -87,7 +87,7 @@ namespace Unigram.Services
             var salt = CryptographicBuffer.DecodeFromHexString(saltString);
             var data = CryptographicBuffer.DecodeFromHexString(dataString);
 
-            var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(true), true);
+            var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(false), true);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)

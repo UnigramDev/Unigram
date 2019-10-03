@@ -48,6 +48,7 @@ namespace Unigram.Services
             _session = session;
 
             _protoService = protoService;
+            _encryptionService = encryptionService;
             _settingsService = settingsService;
             _aggregator = aggregator;
 

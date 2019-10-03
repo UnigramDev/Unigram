@@ -229,7 +229,7 @@ namespace Unigram.Common
         {
             if (_passcodeService.IsEnabled)
             {
-                var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(_passcodeService.Check(passcode)), _passcodeService.IsSimple);
+                var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(!_passcodeService.Check(passcode)), _passcodeService.IsSimple);
                 dialog.IsSimple = _passcodeService.IsSimple;
 
                 var confirm = await dialog.ShowAsync();

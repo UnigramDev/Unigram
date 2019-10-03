@@ -28,12 +28,12 @@ namespace Unigram.ViewModels.Wallet
             var response = await TonService.SendAsync(new CreateNewKey(local_password, new byte[0], new byte[0]));
             if (response is Key key)
             {
-                var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret);
-                if (encrypt)
-                {
-                    ProtoService.Options.WalletPublicKey = key.PublicKey;
-                    await ContinueAsync(key, local_password);
-                }
+                await ContinueAsync(key, local_password);
+                //var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret);
+                //if (encrypt)
+                //{
+                //    ProtoService.Options.WalletPublicKey = key.PublicKey;
+                //}
             }
             else if (response is Error error)
             {
