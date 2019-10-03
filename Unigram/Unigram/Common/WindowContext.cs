@@ -55,7 +55,7 @@ namespace Unigram.Common
             _placeholderHelper = PlaceholderImageHelper.GetForCurrentView();
 
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
 
             UpdateTitleBar();
 

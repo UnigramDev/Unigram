@@ -440,5 +440,10 @@ namespace Unigram.Views.Chats
                 Header.SelectedItem = VoiceHeader;
             }
         }
+
+        private void Header_BackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
+        {
+            Frame.GoBack();
+        }
     }
 }
