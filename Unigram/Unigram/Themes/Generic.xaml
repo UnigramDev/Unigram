@@ -153,11 +153,13 @@
                                 <ColumnDefinition x:Name="IconColumn" Width="48" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Viewbox x:Name="IconBox" Margin="16,12">
-                                <FontIcon Glyph="{TemplateBinding Glyph}" FontFamily="{TemplateBinding FontFamily}"/>
-                            </Viewbox>
+                            <FontIcon x:Name="IconBox"
+                                      Glyph="{TemplateBinding Glyph}" 
+                                      FontFamily="{TemplateBinding FontFamily}"
+                                      FontSize="16"/>
                             <ContentPresenter x:Name="ContentPresenter"
                                               Grid.Column="1"
+                                              FontSize="{ThemeResource ControlContentThemeFontSize}"
                                               FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
                                               Content="{TemplateBinding Text}"
@@ -1467,7 +1469,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="local:OrientableListView" BasedOn="{StaticResource ZoomableListViewStyle}"/>
 
     <Style TargetType="local:SelfDestructTimer">

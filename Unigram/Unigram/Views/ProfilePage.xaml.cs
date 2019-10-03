@@ -938,26 +938,26 @@ namespace Unigram.Views
 
                 ElementCompositionPreview.SetElementChildVisual(HeaderOverlay, overlay);
 
-                var animOverlay = header.Compositor.CreateExpressionAnimation("Min(76, -scrollViewer.Translation.Y) / 38");
+                var animOverlay = header.Compositor.CreateExpressionAnimation("Min(76, -Min(scrollViewer.Translation.Y, 0)) / 38");
                 animOverlay.SetReferenceParameter("scrollViewer", properties);
 
                 overlay.StartAnimation("Scale.Y", animOverlay);
             }
 
-            var animClip = header.Compositor.CreateExpressionAnimation("Min(76, -scrollViewer.Translation.Y)");
+            var animClip = header.Compositor.CreateExpressionAnimation("Min(76, -Min(scrollViewer.Translation.Y, 0))");
             animClip.SetReferenceParameter("scrollViewer", properties);
 
             header.Clip = header.Compositor.CreateInsetClip(0, -32, -12, 0);
             header.Clip.StartAnimation("BottomInset", animClip);
 
 
-            var animPhotoOffsetY = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 41)");
+            var animPhotoOffsetY = header.Compositor.CreateExpressionAnimation("-(Min(76, -Min(scrollViewer.Translation.Y, 0)) / 76 * 41)");
             animPhotoOffsetY.SetReferenceParameter("scrollViewer", properties);
 
-            var animPhotoOffsetX = header.Compositor.CreateExpressionAnimation("Min(76, -scrollViewer.Translation.Y) / 76 * 28");
+            var animPhotoOffsetX = header.Compositor.CreateExpressionAnimation("Min(76, -Min(scrollViewer.Translation.Y, 0)) / 76 * 28");
             animPhotoOffsetX.SetReferenceParameter("scrollViewer", properties);
 
-            var animPhotoScale = header.Compositor.CreateExpressionAnimation("1 -(Min(76, -scrollViewer.Translation.Y) / 76 * (34 / 64))");
+            var animPhotoScale = header.Compositor.CreateExpressionAnimation("1 -(Min(76, -Min(scrollViewer.Translation.Y, 0)) / 76 * (34 / 64))");
             animPhotoScale.SetReferenceParameter("scrollViewer", properties);
 
             photo.StartAnimation("Offset.Y", animPhotoOffsetY);
@@ -966,10 +966,10 @@ namespace Unigram.Views
             photo.StartAnimation("Scale.Y", animPhotoScale);
 
 
-            var animTitleY = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 58)");
+            var animTitleY = header.Compositor.CreateExpressionAnimation("-(Min(76, -Min(scrollViewer.Translation.Y, 0)) / 76 * 58)");
             animTitleY.SetReferenceParameter("scrollViewer", properties);
 
-            var animTitleX = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 6)");
+            var animTitleX = header.Compositor.CreateExpressionAnimation("-(Min(76, -Min(scrollViewer.Translation.Y, 0)) / 76 * 6)");
             animTitleX.SetReferenceParameter("scrollViewer", properties);
 
             title.StartAnimation("Offset.Y", animTitleY);
@@ -978,10 +978,10 @@ namespace Unigram.Views
             subtitle.StartAnimation("Offset.X", animTitleX);
 
 
-            var animInfoY = header.Compositor.CreateExpressionAnimation("-(Min(76, -scrollViewer.Translation.Y) / 76 * 40)");
+            var animInfoY = header.Compositor.CreateExpressionAnimation("-(Min(76, -Min(scrollViewer.Translation.Y, 0)) / 76 * 40)");
             animInfoY.SetReferenceParameter("scrollViewer", properties);
 
-            var animOpacity = header.Compositor.CreateExpressionAnimation("1 -(Min(76, -scrollViewer.Translation.Y) / 76)");
+            var animOpacity = header.Compositor.CreateExpressionAnimation("1 -(Min(76, -Min(scrollViewer.Translation.Y, 0)) / 76)");
             animOpacity.SetReferenceParameter("scrollViewer", properties);
 
             info.StartAnimation("Offset.Y", animInfoY);

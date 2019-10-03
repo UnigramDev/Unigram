@@ -633,7 +633,7 @@ namespace Unigram.ViewModels
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetText($"@{supergroup.Description}");
+                dataPackage.SetText(supergroup.Description);
                 ClipboardEx.TrySetContent(dataPackage);
             }
             else
@@ -645,7 +645,7 @@ namespace Unigram.ViewModels
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetText($"@{user.Bio}");
+                dataPackage.SetText(user.Bio);
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }

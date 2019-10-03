@@ -1802,7 +1802,14 @@ namespace Unigram.Views
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
 
-            args.ShowAt(flyout, sender as FrameworkElement);
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
+            {
+                flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
+            }
+            else
+            {
+                flyout.ShowAt(sender as FrameworkElement);
+            }
         }
 
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

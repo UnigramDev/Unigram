@@ -63,7 +63,7 @@ namespace Unigram.Views.Host
             }
             else
             {
-                Navigation.Padding = new Thickness(sender.IsVisible ? sender.SystemOverlayLeftInset : 0, 0, 0, 0);
+                Navigation.Padding = new Thickness(sender.IsVisible ? Math.Max(sender.SystemOverlayLeftInset, 6) : 0, 0, 0, 0);
                 Navigation.Height = sender.IsVisible ? sender.Height : 0;
             }
 
@@ -74,7 +74,7 @@ namespace Unigram.Views.Host
 
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            Navigation.Padding = new Thickness(sender.IsVisible ? sender.SystemOverlayLeftInset : 0, 0, 0, 0);
+            Navigation.Padding = new Thickness(sender.IsVisible ? Math.Max(sender.SystemOverlayLeftInset, 6) : 0, 0, 0, 0);
             Navigation.Height = sender.IsVisible ? sender.Height : 0;
 
             var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
