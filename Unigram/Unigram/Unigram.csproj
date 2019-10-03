@@ -441,6 +441,7 @@
     <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="Controls\ZoomableGridView.cs" />

@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Markup;
 
 namespace Unigram.Controls
 {
+    [TemplatePart(Name = "BackButton", Type = typeof(Button))]
     public class PageHeader : Control
     {
         public PageHeader()
@@ -168,6 +169,7 @@ namespace Unigram.Controls
         #endregion
     }
 
+    [TemplatePart(Name = "BackButton", Type = typeof(Button))]
     public class ContentPageHeader : ContentControl
     {
         public ContentPageHeader()

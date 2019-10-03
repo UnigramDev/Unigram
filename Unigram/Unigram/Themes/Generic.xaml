@@ -1655,6 +1655,99 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:WalkthroughControl">
+        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:WalkthroughControl">
+                    <Grid Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ContentStates">
+                                <VisualState x:Name="NoContent"/>
+                                <VisualState x:Name="ContentVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="FitRow.Height" Value="0"/>
+                                        <Setter Target="Header.Margin" Value="0,24,0,12"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        
+                        <ScrollViewer
+                            x:Name="ScrollingHost"
+                            VerticalScrollBarVisibility="Auto"
+                            VerticalScrollMode="Auto">
+                            
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition x:Name="FitRow"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel VerticalAlignment="Center" Grid.Row="1">
+                                    <local:LottieView
+                                        x:Name="Header"
+                                        Source="{TemplateBinding HeaderSource}"
+                                        Margin="0,-24,0,12"
+                                        Width="160"
+                                        Height="160"/>
+
+                                    <TextBlock
+                                        Text="{TemplateBinding Title}"
+                                        Style="{StaticResource TitleTextBlockStyle}"
+                                        TextAlignment="Center"
+                                        Margin="12,0"/>
+                                    <TextBlock
+                                        common:TextBlockHelper.Markdown="{TemplateBinding Text}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        TextAlignment="Center"
+                                        Margin="12,0"/>
+                                </StackPanel>
+
+                                <ContentPresenter
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"
+                                    Margin="0,16"
+                                    Grid.Row="2"/>
+
+                                <StackPanel
+                                    VerticalAlignment="Bottom"
+                                    Margin="0,0,0,24"
+                                    Grid.Row="4">
+                                    
+                                    <Button
+                                        Content="{TemplateBinding ButtonText}"
+                                        Command="{TemplateBinding ButtonCommand}"
+                                        Style="{StaticResource StartButtonStyle}"
+                                        Margin="0"/>
+
+                                    <Border
+                                        Child="{TemplateBinding Footer}"/>
+                                </StackPanel>
+                            </Grid>
+                        </ScrollViewer>
+
+                        <local:GlyphButton
+                            x:Name="BackButton"
+                            Glyph="&#xE72B;"
+                            Height="{ThemeResource AppBarThemeCompactHeight}"
+                            FontSize="15"
+                            Width="40"
+                            Margin="0,0,-12,0"
+                            Visibility="{TemplateBinding BackVisibility}"
+                            AutomationProperties.Name="{CustomResource AccDescrGoBack}"
+                            ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"/>
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:ButtonPageHeader">
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
