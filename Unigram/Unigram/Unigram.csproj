@@ -2615,7 +2615,7 @@
     </Reference>
     <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.dll" />
     <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\zlib1.dll" />
+    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="..\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
