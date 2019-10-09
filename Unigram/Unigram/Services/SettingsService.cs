@@ -169,8 +169,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (9UL << 32) | (2494UL << 16);
-        public const string CurrentChangelog = "• Improved navigation for busy chats: Scroll up to see the message date.\r\n• \"Flash window when receiving a notification\" can be disabled from Settings > Notifications and Sounds.";
+        public const ulong CurrentVersion = (3UL << 48) | (11UL << 32) | (2494UL << 16);
+        public const string CurrentChangelog = "INTRODUCING ANIMATED STICKERS\n\n• Send ultra-lightweight high-quality animated stickers to express emotion with motion.\n• Receive animated stickers instantly on any connection at just 20-30 KB per sticker.\n• Enjoy smooth animations at 60 frames per second.\n• Create new animated sets and upload them to @stickers for everybody to use.\n• Try animated stickers from the Trending tab in your sticker panel.\n\n• Global permissions for groups. Restrict all members in any group from posting certain types of content.\n• Unified group settings. Make groups public, set admins with granular permissions and toggle persistent history in just a few taps in any group. \n• Control whether your messages link back to your account when forwarded.\n• Control who may see your profile picture.\n• Search for individual stickers using words (based on the relevant emoji), enjoy improved GIF search.\n• Share and set backgrounds via links that work on all platforms.\n• Set a different background for each theme (e.g., light and dark).\n• Use backgrounds you set on one device on your other devices.\n• Enjoy a selection of new backgrounds.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
