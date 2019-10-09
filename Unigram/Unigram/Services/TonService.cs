@@ -135,8 +135,7 @@ namespace Unigram.Services
             }
 #endif
 
-            // TODO: useCallbacksForNetwork requires TDLib 1.5.1.
-            return new Config(config, name, false, false);
+            return new Config(config, name, true, false);
         }
 
         public IEncryptionService Encryption => _encryptionService;
@@ -177,10 +176,23 @@ namespace Unigram.Services
         {
             if (update is UpdateSendLiteServerQuery updateSendLiteServerQuery)
             {
-                // TODO: TDLib 1.5.1
+                Handle(updateSendLiteServerQuery);
             }
 
             _aggregator.Publish(update);
+        }
+
+        private async void Handle(UpdateSendLiteServerQuery update)
+        {
+            var response = await _protoService.SendAsync(new Telegram.Td.Api.SendTonLiteServerRequest(update.Data));
+            if (response is Telegram.Td.Api.TonLiteServerResponse liteServerResponse)
+            {
+                Send(new OnLiteServerQueryResult(update.Id, liteServerResponse.Response));
+            }
+            else if (response is Telegram.Td.Api.Error error)
+            {
+                Send(new OnLiteServerQueryError(update.Id, new Error(error.Code, error.Message)));
+            }
         }
 
 
