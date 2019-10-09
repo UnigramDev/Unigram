@@ -53,30 +53,32 @@ namespace Unigram.Controls
 
         public void Dispose()
         {
-            var cache = _cache;
-            if (cache != null)
+            if (_cache == null)
             {
-                for (int i = 0; i < cache.Length; i++)
+                return;
+            }
+
+            for (int i = 0; i < _cache.Length; i++)
+            {
+                if (_cache[i] != null)
                 {
-                    if (cache[i] != null)
-                    {
-                        cache[i].Dispose();
-                        cache[i] = null;
-                    }
+                    _cache[i].Dispose();
+                    _cache[i] = null;
                 }
             }
+
+            _cache = null;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            var canvas = Canvas;
-            if (canvas != null)
-            {
-                canvas.RemoveFromVisualTree();
-                Canvas = null;
-            }
-
             Dispose();
+
+            Canvas.Unloaded -= OnUnloaded;
+            Canvas.CreateResources -= OnCreateResources;
+            Canvas.Draw -= OnDraw;
+            Canvas.RemoveFromVisualTree();
+            Canvas = null;
         }
 
         private void OnCreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
