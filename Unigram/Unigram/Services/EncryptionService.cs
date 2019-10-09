@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Windows.Security.Credentials;
@@ -15,10 +16,20 @@ namespace Unigram.Services
 {
     public interface IEncryptionService
     {
-        Task<bool> EncryptAsync(string publicKey, IList<byte> data);
-        Task<IList<byte>> DecryptAsync(string publicKey);
+        Task<ByteTuple> GenerateLocalPasswordAsync();
+
+        Task<bool> EncryptAsync(string publicKey, IList<byte> data, IList<byte> localPassword);
+        Task<ByteTuple> DecryptAsync(string publicKey);
 
         void Delete(string publicKey);
+    }
+
+    public class ByteTuple : Tuple<IList<byte>, IList<byte>>
+    {
+        public ByteTuple(IList<byte> item1, IList<byte> item2)
+            : base(item1, item2)
+        {
+        }
     }
 
     public class EncryptionService : IEncryptionService
@@ -34,7 +45,26 @@ namespace Unigram.Services
             _protoService = protoService;
         }
 
-        public async Task<bool> EncryptAsync(string publicKey, IList<byte> dataArray)
+        public async Task<ByteTuple> GenerateLocalPasswordAsync()
+        {
+            var response = await _protoService.SendAsync(new GetTonWalletPasswordSalt());
+            if (response is TonWalletPasswordSalt passwordSalt)
+            {
+                var passwordBuffer = CryptographicBuffer.GenerateRandom(64);
+                var saltBuffer = CryptographicBuffer.GenerateRandom(32);
+
+                CryptographicBuffer.CopyToByteArray(passwordBuffer, out byte[] password);
+                CryptographicBuffer.CopyToByteArray(saltBuffer, out byte[] salt);
+
+                System.Buffer.BlockCopy(passwordSalt.Salt.ToArray(), 0, password, 32, 32);
+
+                return new ByteTuple(password, salt);
+            }
+
+            return null;
+        }
+
+        public async Task<bool> EncryptAsync(string publicKey, IList<byte> dataArray, IList<byte> localPassword)
         {
             IBuffer keyMaterial;
 
@@ -69,23 +99,32 @@ namespace Unigram.Services
                 var saltString = CryptographicBuffer.EncodeToHexString(salt);
                 var dataString = CryptographicBuffer.EncodeToHexString(encrypt);
 
+                var localPasswordBuffer = CryptographicBuffer.CreateFromByteArray(localPassword.ToArray());
+                var localPasswordString = CryptographicBuffer.EncodeToHexString(localPasswordBuffer);
+
                 var vault = new PasswordVault();
-                vault.Add(new PasswordCredential($"{_session}", publicKey, $"{saltString};{dataString}"));
+                var password = $"{saltString};{dataString};{localPasswordString};{(dialog.IsSimple ? 1 : 2)}";
+                vault.Add(new PasswordCredential($"{_session}", publicKey, password));
             }
 
             return true;
         }
 
-        public async Task<IList<byte>> DecryptAsync(string publicKey)
+        public async Task<ByteTuple> DecryptAsync(string publicKey)
         {
             var vault = new PasswordVault();
             var credential = vault.Retrieve($"{_session}", publicKey);
 
-            var saltString = credential.Password.Split(';')[0];
-            var dataString = credential.Password.Split(';')[1];
+            var split = credential.Password.Split(';');
+
+            var saltString = split[0];
+            var dataString = split[1];
+            var localPasswordString = split[2];
+            var typeString = split[3];
 
             var salt = CryptographicBuffer.DecodeFromHexString(saltString);
             var data = CryptographicBuffer.DecodeFromHexString(dataString);
+            var localPassword = CryptographicBuffer.DecodeFromHexString(localPasswordString);
 
             var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(false), true);
 
@@ -103,8 +142,10 @@ namespace Unigram.Services
 
             var decrypt = CryptographicEngine.Decrypt(key, data, null);
             CryptographicBuffer.CopyToByteArray(decrypt, out byte[] result);
+            CryptographicBuffer.CopyToByteArray(localPassword, out byte[] local);
 
-            return result;
+
+            return new ByteTuple(result, local);
         }
 
         private IBuffer PBKDF2(IBuffer buffSecret, IBuffer buffSalt)

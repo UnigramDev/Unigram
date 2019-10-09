@@ -76,6 +76,7 @@ namespace Unigram.ViewModels.Wallet
             }
 
             var publicKey = ProtoService.Options.WalletPublicKey;
+            
             var secret = await TonService.Encryption.DecryptAsync(publicKey);
             if (secret == null)
             {
@@ -83,9 +84,8 @@ namespace Unigram.ViewModels.Wallet
                 return;
             }
 
-            var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
-
-            var privateKey = new InputKey(new Key(publicKey, secret), local_password);
+            var localPassword = secret.Item2;
+            var privateKey = new InputKey(new Key(publicKey, secret.Item1), localPassword);
 
             var self = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(publicKey))) as AccountAddress;
             var address = _address.Replace("ton://", string.Empty);

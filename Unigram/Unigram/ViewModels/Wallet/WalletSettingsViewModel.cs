@@ -39,6 +39,7 @@ namespace Unigram.ViewModels.Wallet
             }
 
             var publicKey = ProtoService.Options.WalletPublicKey;
+            
             var secret = await TonService.Encryption.DecryptAsync(publicKey);
             if (secret == null)
             {
@@ -46,9 +47,7 @@ namespace Unigram.ViewModels.Wallet
                 return;
             }
 
-            var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
-
-            var response = await TonService.SendAsync(new DeleteKey(new Key(publicKey, secret)));
+            var response = await TonService.SendAsync(new DeleteKey(new Key(publicKey, secret.Item1)));
             if (response is Ok)
             {
                 TonService.Encryption.Delete(publicKey);

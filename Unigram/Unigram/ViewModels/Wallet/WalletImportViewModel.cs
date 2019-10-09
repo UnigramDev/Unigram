@@ -58,13 +58,19 @@ namespace Unigram.ViewModels.Wallet
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
+            var localPassword = await TonService.Encryption.GenerateLocalPasswordAsync();
+            if (localPassword == null)
+            {
+                // TODO: ???
+                return;
+            }
+
             var words = Items.OrderBy(x => x.Index).Select(x => x.Text).ToArray();
 
-            var response = await TonService.SendAsync(new ImportKey(local_password, new byte[0], new ExportedKey(words)));
+            var response = await TonService.SendAsync(new ImportKey(localPassword.Item2, new byte[0], new ExportedKey(words)));
             if (response is Key key)
             {
-                var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret);
+                var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret, localPassword.Item1);
                 if (encrypt)
                 {
                     ProtoService.Options.WalletPublicKey = key.PublicKey;

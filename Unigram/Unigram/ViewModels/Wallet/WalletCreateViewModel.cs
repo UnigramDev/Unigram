@@ -23,12 +23,17 @@ namespace Unigram.ViewModels.Wallet
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var local_password = Encoding.UTF8.GetBytes("local_passwordlocal_passwordlocal_passwordlocal_passwordlocal_pa");
+            var localPassword = await TonService.Encryption.GenerateLocalPasswordAsync();
+            if (localPassword == null)
+            {
+                // TODO: ???
+                return;
+            }
 
-            var response = await TonService.SendAsync(new CreateNewKey(local_password, new byte[0], new byte[0]));
+            var response = await TonService.SendAsync(new CreateNewKey(localPassword.Item1, new byte[0], localPassword.Item2));
             if (response is Key key)
             {
-                await ContinueAsync(key, local_password);
+                await ContinueAsync(key, localPassword.Item1);
                 //var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret);
                 //if (encrypt)
                 //{
@@ -41,7 +46,7 @@ namespace Unigram.ViewModels.Wallet
             }
         }
 
-        private async Task ContinueAsync(Key key, byte[] localPassword)
+        private async Task ContinueAsync(Key key, IList<byte> localPassword)
         {
             var response = await TonService.SendAsync(new ExportKey(new InputKey(key, localPassword)));
             if (response is ExportedKey exportedKey)
@@ -62,6 +67,7 @@ namespace Unigram.ViewModels.Wallet
 
                 TonService.SetCreationState(new WalletCreationState
                 {
+                    LocalPassword = localPassword,
                     Key = key,
                     WordList = exportedKey.WordList,
                     Indices = indices

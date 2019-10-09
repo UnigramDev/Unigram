@@ -219,6 +219,8 @@ namespace Unigram.Services
 
     public class WalletCreationState
     {
+        public IList<byte> LocalPassword { get; set; }
+
         public Key Key { get; set; }
 
         public IList<string> WordList { get; set; }
