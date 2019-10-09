@@ -103,6 +103,7 @@
                         x:Load="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                         Loaded="CreatedPanel_Loaded"
                         Unloaded="CreatedPanel_Unloaded"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         Grid.Row="1">
 
                         <StackPanel VerticalAlignment="Center">
@@ -131,6 +132,7 @@
                         x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
                         Loaded="CreatedPanel_Loaded"
                         Unloaded="CreatedPanel_Unloaded"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         Grid.Row="1">
 
                         <StackPanel VerticalAlignment="Center">

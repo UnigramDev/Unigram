@@ -487,7 +487,7 @@ namespace Unigram.Views
 
                 var button = new BadgeButton { HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Stretch, Margin = new Thickness(-12, 0, -12, 0) };
                 button.Content = grid;
-                button.Click += (s, args) => Hyperlink_Click(new RichTextUrl(null, article.Url));
+                button.Click += (s, args) => Hyperlink_Click(new RichTextUrl(null, article.Url, true));
 
                 panel.Children.Add(button);
             }
