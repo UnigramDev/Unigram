@@ -399,7 +399,7 @@
         </Grid>
 
         <controls:ContentPageHeader x:Name="Header" Canvas.ZIndex="1">
-            <Grid>
+            <Grid Margin="12,0,0,0">
                 <Grid x:Name="InfoPanel">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -419,7 +419,7 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture x:Name="Photo" Width="{ThemeResource ChatPhotoSize}" Height="{ThemeResource ChatPhotoSize}" Margin="12,0" IsEnabled="False"/>
+                                <controls:ProfilePicture x:Name="Photo" Width="{ThemeResource ChatPhotoSize}" Height="{ThemeResource ChatPhotoSize}" Margin="0,0,12,0" IsEnabled="False"/>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
                                     <TextBlock x:Name="Title"
