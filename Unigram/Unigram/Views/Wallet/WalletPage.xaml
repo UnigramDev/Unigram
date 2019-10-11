@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Wallet"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -70,7 +71,7 @@
                             Style="{StaticResource InfoCaptionTextBlockStyle}"/>
 
                         <Grid
-                            Margin="0,12,0,16">
+                            Margin="0,12,0,12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition x:Name="SendColumn"/>
@@ -162,42 +163,54 @@
                     </Grid>
                 </Grid>
             </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="360*" MaxWidth="360" MinWidth="320"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Grid Margin="0,8">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock/>
-                            <TextBlock
-                                FontFamily="Consolas"
-                                Grid.ColumnSpan="2"
-                                Grid.Row="1"/>
-                            <TextBlock
-                                Grid.ColumnSpan="2"
-                                Grid.Row="2"/>
+            <ListView.ItemTemplateSelector>
+                <selectors:RawTransactionTemplateSelector>
+                    <selectors:RawTransactionTemplateSelector.TransactionTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="360*" MaxWidth="360" MinWidth="320"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid Margin="0,8">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock/>
+                                    <TextBlock
+                                        FontFamily="Consolas"
+                                        Grid.ColumnSpan="2"
+                                        Grid.Row="1"/>
+                                    <TextBlock
+                                        Grid.ColumnSpan="2"
+                                        Grid.Row="2"/>
 
-                            <TextBlock
-                                Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                Grid.Column="1"/>
-                        </Grid>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+                                    <TextBlock
+                                        Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                        Grid.Column="1"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:RawTransactionTemplateSelector.TransactionTemplate>
+                    <selectors:RawTransactionTemplateSelector.DateHeaderTemplate>
+                        <DataTemplate>
+                            <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                            </Border>
+                        </DataTemplate>
+                    </selectors:RawTransactionTemplateSelector.DateHeaderTemplate>
+                </selectors:RawTransactionTemplateSelector>
+            </ListView.ItemTemplateSelector>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MinHeight" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>

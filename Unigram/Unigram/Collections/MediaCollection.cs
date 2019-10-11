@@ -85,7 +85,7 @@ namespace Unigram.Collections
             {
                 var itemDate = Utils.UnixTimestampToDateTime(item.Date);
                 var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
-                if (previousDate.Year != itemDate.Year && previousDate.Month != itemDate.Month)
+                if (previousDate.Year != itemDate.Year || previousDate.Month != itemDate.Month)
                 {
                     var service = new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null);
                     return service;

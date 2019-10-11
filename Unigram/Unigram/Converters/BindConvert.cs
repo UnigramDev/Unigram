@@ -60,6 +60,42 @@ namespace Unigram.Converters
             DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
         }
 
+        public static string MonthGrouping(DateTime date)
+        {
+            var now = System.DateTime.Now;
+
+            var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
+            if (difference >= 12)
+            {
+                return Current.MonthFullYear.Format(date);
+            }
+
+            return Current.MonthFull.Format(date);
+        }
+
+        public static string DayGrouping(DateTime date)
+        {
+            var now = System.DateTime.Now;
+
+            var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
+            if (difference >= 12)
+            {
+                return Current.DayMonthFullYear.Format(date);
+            }
+
+            return Current.DayMonthFull.Format(date);
+        }
+
+        public static string Grams(long value, bool gem)
+        {
+            if (gem)
+            {
+                return string.Format("{0:0.000000000} \uD83D\uDC8E", value / 1000000000d);
+            }
+
+            return string.Format("{0:0.000000000}", value / 1000000000d);
+        }
+
         public string PhoneNumber(string number)
         {
             if (number == null)

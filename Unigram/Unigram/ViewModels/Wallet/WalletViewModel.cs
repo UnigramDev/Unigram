@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Ton.Tonlib.Api;
@@ -11,17 +13,26 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views.Wallet;
+using Windows.Foundation;
 using Windows.Storage;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Wallet
 {
-    public class WalletViewModel : TonViewModelBase
+    public class WalletViewModel : TonViewModelBase, ISupportIncrementalLoading
     {
+        private TaskCompletionSource<bool> _navigationTask;
+
+        private InternalTransactionId _lastTransactionId;
+        private bool _hasMoreItems;
+
         public WalletViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
-            Transactions = new MvxObservableCollection<RawTransaction>();
+            _navigationTask = new TaskCompletionSource<bool>();
+
+            Transactions = new IncrementalCollectionWithDelegate<object>(this);
 
             RefreshCommand = new RelayCommand(RefreshExecute);
             SettingsCommand = new RelayCommand(SettingsExecute);
@@ -50,7 +61,7 @@ namespace Unigram.ViewModels.Wallet
             set => Set(ref _isEmpty, value);
         }
 
-        public MvxObservableCollection<RawTransaction> Transactions { get; private set; }
+        public IncrementalCollectionWithDelegate<object> Transactions { get; private set; }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
@@ -74,6 +85,8 @@ namespace Unigram.ViewModels.Wallet
                 if (lastTransactionId == null)
                 {
                     Transactions.Clear();
+
+                    _navigationTask.SetResult(false);
                     return;
                 }
 
@@ -81,22 +94,75 @@ namespace Unigram.ViewModels.Wallet
                 if (transactions == null)
                 {
                     Transactions.Clear();
+
+                    _navigationTask.SetResult(false);
                     return;
                 }
 
                 IsEmpty = transactions.Transactions.Count == 0;
                 Transactions.Clear();
 
-                foreach (var transaction in transactions.Transactions)
-                {
-                    Transactions.Add(transaction);
-                }
+                InsertTransactions(transactions);
             }
             else if (response is Error error)
             {
                 await TLMessageDialog.ShowAsync(error.Message, error.Code.ToString(), Strings.Resources.OK);
             }
+
+            _navigationTask.TrySetResult(true);
         }
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            return AsyncInfo.Run(async token =>
+            {
+                await _navigationTask.Task;
+
+                if (_address == null || _lastTransactionId == null)
+                {
+                    return new LoadMoreItemsResult { Count = 0 };
+                }
+
+                count = 0;
+
+                var response = await TonService.SendAsync(new RawGetTransactions(new AccountAddress(_address), _lastTransactionId));
+                if (response is RawTransactions transactions)
+                {
+                    count = InsertTransactions(transactions);
+                }
+
+                return new LoadMoreItemsResult { Count = count };
+            });
+        }
+
+        private uint InsertTransactions(RawTransactions transactions)
+        {
+            var count = 0u;
+
+            _lastTransactionId = transactions.PreviousTransactionId;
+            _hasMoreItems = transactions.PreviousTransactionId.Lt != 0;
+
+            Debug.WriteLine(transactions.PreviousTransactionId.ToString());
+
+            DateTime? previous = null;
+            foreach (var item in transactions.Transactions)
+            {
+                var itemDate = Utils.UnixTimestampToDateTime(item.Utime).Date;
+                if (itemDate != previous)
+                {
+                    Transactions.Add(itemDate);
+                }
+
+                Transactions.Add(item);
+                count++;
+
+                previous = itemDate;
+            }
+
+            return count;
+        }
+
+        public bool HasMoreItems => _hasMoreItems;
 
         public RelayCommand RefreshCommand { get; }
         private async void RefreshExecute()

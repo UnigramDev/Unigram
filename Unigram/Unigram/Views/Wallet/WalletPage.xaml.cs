@@ -63,6 +63,16 @@ namespace Unigram.Views.Wallet
                 return;
             }
 
+            if (args.Item is DateTime dateHeader)
+            {
+                var border = args.ItemContainer.ContentTemplateRoot as Border;
+                var label = border.Child as TextBlock;
+
+                label.Text = BindConvert.DayGrouping(dateHeader);
+
+                return;
+            }
+
             var item = args.Item as RawTransaction;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
             var content = root.Children[0] as Grid;
@@ -130,14 +140,14 @@ namespace Unigram.Views.Wallet
                 message.Visibility = Visibility.Collapsed;
             }
 
-            timestamp.Text = BindConvert.Current.DateExtended((int)item.Utime);
+            timestamp.Text = BindConvert.Current.Date((int)item.Utime);
         }
 
         #region Binding
 
         private string ConvertAmount(long value)
         {
-            return string.Format("{0:0.000000000} \uD83D\uDC8E", value / 1000000000d);
+            return BindConvert.Grams(value, true);
         }
 
         private string ConvertAddress(string address)
