@@ -1,0 +1,72 @@
+﻿<Page
+    x:Class="Unigram.Views.Wallet.WalletInvoicePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Wallet"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <controls:PageHeader
+            Text="{CustomResource WalletCreateInvoiceTitle}"/>
+
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto"
+            Grid.Row="1">
+
+            <StackPanel>
+                <TextBlock
+                    Text="{CustomResource WalletAmount}"
+                    Style="{StaticResource SettingsGroupTextBlockStyle}"
+                    Margin="12,16,12,0"/>
+                
+                <TextBox
+                    PlaceholderText="{CustomResource WalletGramsToSend}"
+                    Text="{x:Bind ConvertAmount(ViewModel.Amount), Mode=TwoWay, BindBack=ConvertAmountBack, UpdateSourceTrigger=PropertyChanged}"
+                    Margin="12,8,12,8"/>
+
+                <TextBox
+                    PlaceholderText="{CustomResource WalletComment}"
+                    Text="{x:Bind ViewModel.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    MaxLength="128"
+                    Margin="12,0"/>
+
+                <TextBlock
+                    Text="{CustomResource WalletInvoiceInfo}"
+                    Style="{StaticResource InfoCaptionTextBlockStyle}"
+                    Margin="12,8,12,0"/>
+
+                <controls:QRCodeView
+                    Text="{x:Bind ConvertUrl(ViewModel.Address, ViewModel.Amount, ViewModel.Comment), Mode=OneWay}"
+                    Width="256"
+                    Height="256"/>
+
+                <TextBlock
+                    Text="{x:Bind ConvertUrl(ViewModel.Address, ViewModel.Amount, ViewModel.Comment), Mode=OneWay}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    FontFamily="Consolas"
+                    Margin="12,0"/>
+
+                <controls:BadgeButton
+                    Content="{CustomResource WalletShareInvoiceUrl}"
+                    Command="{x:Bind ViewModel.ShareCommand}"
+                    CommandParameter="{x:Bind ConvertUrl(ViewModel.Address, ViewModel.Amount, ViewModel.Comment), Mode=OneWay}"/>
+
+                <TextBlock
+                    Text="{CustomResource WalletShareInvoiceUrlInfo}"
+                    Style="{StaticResource InfoCaptionTextBlockStyle}"
+                    Margin="12,8,12,24"/>
+
+            </StackPanel>
+            
+        </ScrollViewer>
+    </Grid>
+</Page>

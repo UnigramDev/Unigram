@@ -332,6 +332,7 @@
       <DependentUpon>ProxyStatusControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\LottieView.cs" />
+    <Compile Include="Controls\QRCodeView.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -685,6 +686,7 @@
     <Compile Include="ViewModels\Wallet\WalletExportViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletImportViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletInfoViewModel.cs" />
+    <Compile Include="ViewModels\Wallet\WalletInvoiceViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletReceiveViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletSendViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletSettingsViewModel.cs" />
@@ -950,6 +952,9 @@
     </Compile>
     <Compile Include="Views\Wallet\WalletInfoPage.xaml.cs">
       <DependentUpon>WalletInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\WalletInvoicePage.xaml.cs">
+      <DependentUpon>WalletInvoicePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Wallet\WalletPage.xaml.cs">
       <DependentUpon>WalletPage.xaml</DependentUpon>
@@ -2503,6 +2508,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Wallet\WalletInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\WalletInvoicePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

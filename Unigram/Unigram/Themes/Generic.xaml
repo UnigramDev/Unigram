@@ -199,6 +199,16 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:QRCodeView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:QRCodeView">
+                    <xaml:CanvasControl x:Name="Canvas"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:TLContentDialog">
         <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{ThemeResource ContentDialogBackground}" />
