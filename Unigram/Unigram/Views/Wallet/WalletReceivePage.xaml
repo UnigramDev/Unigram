@@ -16,7 +16,52 @@
         </Grid.RowDefinitions>
 
         <controls:PageHeader
-            Text="{CustomResource WalletCreateInvoiceTitle}"/>
+            Text="{CustomResource WalletReceiveYourAddress}"/>
+
+        <controls:ContentPageHeader>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Text="{CustomResource WalletReceiveYourAddress}"
+                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    VerticalAlignment="Center"
+                    Margin="12,0"/>
+
+                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="1">
+                    <Button.Flyout>
+                        <MenuFlyout x:Name="MenuFlyout">
+                            <MenuFlyoutItem Text="{CustomResource WalletCopyAddress}"
+                                            Command="{x:Bind ViewModel.CopyCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8C8;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="{CustomResource WalletCreateInvoice}"
+                                            Command="{x:Bind ViewModel.InvoiceCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE723;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </controls:ContentPageHeader>
 
         <ScrollViewer
             VerticalScrollBarVisibility="Auto"
@@ -24,19 +69,29 @@
             Grid.Row="1">
 
             <StackPanel>
-                <xaml:CanvasControl
-                    x:Name="Canvas"
-                    CreateResources="OnCreateResources"
-                    Draw="OnDraw"
+                <TextBlock
+                    Text="{CustomResource WalletShareInvoiceUrlInfo}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Margin="12,16,12,0"/>
+
+                <controls:QRCodeView
+                    Text="{x:Bind ConvertUrl(ViewModel.Address)}"
                     Width="256"
                     Height="256"/>
-                
-                <controls:BadgeButton
-                    Command="{x:Bind ViewModel.CopyCommand}"
-                    Content="{CustomResource WalletCopyAddress}"/>
-                <controls:BadgeButton
+
+                <TextBlock
+                    Text="{x:Bind ConvertAddress(ViewModel.Address)}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    TextAlignment="Center"
+                    FontFamily="Consolas"
+                    Margin="12,0"/>
+
+                <Button
+                    Content="{CustomResource WalletShareAddress}"
                     Command="{x:Bind ViewModel.ShareCommand}"
-                    Content="{CustomResource WalletShareAddress}"/>
+                    CommandParameter="{x:Bind ConvertUrl(ViewModel.Address)}"
+                    Style="{StaticResource StartButtonStyle}"/>
+
             </StackPanel>
             
         </ScrollViewer>
