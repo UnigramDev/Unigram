@@ -577,7 +577,6 @@
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupEditDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWalletExportDelegate.cs" />
-    <Compile Include="ViewModels\Delegates\IWalletReceiveDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWalletTransactionDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWallpaperDelegate.cs" />
     <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
