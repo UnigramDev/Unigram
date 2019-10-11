@@ -11,6 +11,7 @@ using Unigram.Views;
 using Unigram.Views.Settings;
 using Unigram.Views.Wallet;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Security.Credentials;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -59,6 +60,20 @@ namespace Unigram.Common
             Type page;
             if (_protoService.Options.WalletPublicKey != null)
             {
+                try
+                {
+                    var vault = new PasswordVault();
+                    var credential = vault.Retrieve($"{_protoService.SessionId}", _protoService.Options.WalletPublicKey);
+                }
+                catch
+                {
+                    // Credentials for this account wallet don't exist anymore.
+                    _protoService.Options.WalletPublicKey = null;
+                }
+            }
+
+            if (_protoService.Options.WalletPublicKey != null)
+            { 
                 if (address == null)
                 {
                     page = typeof(WalletPage);
