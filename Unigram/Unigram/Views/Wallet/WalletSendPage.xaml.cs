@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.ViewModels.Wallet;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -38,9 +39,19 @@ namespace Unigram.Views.Wallet
 
         #region Binding
 
+        private string ConvertBalance(long value)
+        {
+            return string.Format(Strings.Resources.WalletSendBalance, BindConvert.Grams(value, true));
+        }
+
         private string ConvertAmount(long value)
         {
-            return (value / 1000000000d).ToString("0.000000000");
+            if (value > 0)
+            {
+                return BindConvert.Grams(value, false);
+            }
+
+            return string.Empty;
         }
 
         private void ConvertAmountBack(string value)

@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Ton.Tonlib.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
+using Unigram.Views.Wallet;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Wallet
@@ -25,6 +27,13 @@ namespace Unigram.ViewModels.Wallet
             set => Set(ref _address, value);
         }
 
+        private long _balance;
+        public long Balance
+        {
+            get => _balance;
+            set => Set(ref _balance, value);
+        }
+
         private long _amount;
         public long Amount
         {
@@ -39,44 +48,55 @@ namespace Unigram.ViewModels.Wallet
             set => Set(ref _comment, value);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             if (parameter is string url && TryParseUrl(url))
             {
-                return base.OnNavigatedToAsync(parameter, mode, state);
+                //return;
+            }
+            else
+            {
+                if (state.TryGet("address", out string address))
+                {
+                    Address = address;
+                }
+                if (state.TryGet("amount", out string amountValue) && long.TryParse(amountValue, out long amount))
+                {
+                    Amount = amount;
+                }
+                if (state.TryGet("text", out string comment))
+                {
+                    Comment = comment;
+                }
             }
 
-            if (state.TryGet("address", out string address))
+            if (state.TryGet("balance", out long balance))
             {
-                Address = address;
-            }
-            if (state.TryGet("amount", out string amountValue) && long.TryParse(amountValue, out long amount))
-            {
-                Amount = amount;
-            }
-            if (state.TryGet("text", out string comment))
-            {
-                Comment = comment;
+                Balance = balance;
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            var self = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(ProtoService.Options.WalletPublicKey))) as AccountAddress;
+            if (self == null)
+            {
+                return;
+            }
+
+            var response = await TonService.SendAsync(new GenericGetAccountState(self));
+            if (response is GenericAccountState accountState)
+            {
+                Balance = accountState.GetBalance();
+            }
+            else if (response is Error error)
+            {
+                await TLMessageDialog.ShowAsync(error.Message, error.Code.ToString(), Strings.Resources.OK);
+            }
         }
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            IList<byte> message;
-            if (string.IsNullOrEmpty(_comment))
-            {
-                message = new byte[0];
-            }
-            else
-            {
-                message = Encoding.UTF8.GetBytes(_comment.Substring(0, Math.Min(128, _comment.Length)));
-            }
-
             var publicKey = ProtoService.Options.WalletPublicKey;
-            
+
             var secret = await TonService.Encryption.DecryptAsync(publicKey);
             if (secret == null)
             {
@@ -84,13 +104,38 @@ namespace Unigram.ViewModels.Wallet
                 return;
             }
 
-            var localPassword = secret.Item2;
-            var privateKey = new InputKey(new Key(publicKey, secret.Item1), localPassword);
+            var parameters = new Dictionary<string, object>
+            {
+                { "public_key", publicKey },
+                { "secret", secret.Item1 },
+                { "local_password", secret.Item2 },
 
-            var self = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(publicKey))) as AccountAddress;
-            var address = _address.Replace("ton://", string.Empty);
+                { "address", _address },
+                { "amount", _amount },
+                { "comment", _comment }
+            };
 
-            var response = await TonService.SendAsync(new GenericSendGrams(privateKey, self, new AccountAddress(address), _amount, 0, false, message));
+            NavigationService.Navigate(typeof(WalletSendingPage), state: parameters);
+
+            //IList<byte> message;
+            //if (string.IsNullOrEmpty(_comment))
+            //{
+            //    message = new byte[0];
+            //}
+            //else
+            //{
+            //    message = Encoding.UTF8.GetBytes(_comment.Substring(0, Math.Min(128, _comment.Length)));
+            //}
+
+            
+
+            //var localPassword = secret.Item2;
+            //var privateKey = new InputKey(new Key(publicKey, secret.Item1), localPassword);
+
+            //var self = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(publicKey))) as AccountAddress;
+            //var address = _address.Replace("ton://", string.Empty);
+
+            //var response = await TonService.SendAsync(new GenericSendGrams(privateKey, self, new AccountAddress(address), _amount, 0, false, message));
         }
 
         public bool TryParseUrl(string text)

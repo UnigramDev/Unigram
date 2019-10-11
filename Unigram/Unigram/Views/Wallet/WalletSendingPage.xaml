@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Unigram.Views.Wallet.WalletInfoPage"
+    x:Class="Unigram.Views.Wallet.WalletSendingPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Wallet"
@@ -10,11 +10,9 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:WalkthroughControl
-            x:Name="Walkthrough"
-            HeaderSource="{x:Bind ConvertHeaderSource(ViewModel.State)}"
-            Title="{x:Bind ConvertTitle(ViewModel.State)}"
-            Text="{x:Bind ConvertText(ViewModel.State, ViewModel.Amount)}"
-            ButtonText="{x:Bind ConvertButtonText(ViewModel.State)}"
-            ButtonCommand="{x:Bind ViewModel.SendCommand}"/>
+            HeaderSource="ms-appx:///Assets/Animations/SendingGrams.tgs"
+            Title="{CustomResource WalletSendingGrams}"
+            Text="{CustomResource WalletSendingGramsInfo}"
+            ButtonVisibility="Collapsed"/>
     </Grid>
 </Page>

@@ -1732,6 +1732,7 @@
                                     <Button
                                         Content="{TemplateBinding ButtonText}"
                                         Command="{TemplateBinding ButtonCommand}"
+                                        Visibility="{TemplateBinding ButtonVisibility}"
                                         Style="{StaticResource StartButtonStyle}"
                                         Margin="0"/>
 

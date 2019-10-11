@@ -31,11 +31,23 @@ namespace Unigram.ViewModels.Wallet
             set => Set(ref _state, value);
         }
 
+        private long _amount;
+        public long Amount
+        {
+            get => _amount;
+            set => Set(ref _amount, value);
+        }
+
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             if (parameter is WalletInfoState infoState)
             {
                 State = infoState;
+            }
+
+            if (state.TryGet("amount", out long amount))
+            {
+                Amount = amount;
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
@@ -51,6 +63,7 @@ namespace Unigram.ViewModels.Wallet
                     //NavigationService.Navigate(typeof(WalletExportPage));
                     break;
                 case WalletInfoState.Ready:
+                case WalletInfoState.Sent:
                     NavigationService.Navigate(typeof(WalletPage));
                     break;
             }
@@ -60,7 +73,7 @@ namespace Unigram.ViewModels.Wallet
         {
             if (TonService.TryGetCreationState(out WalletCreationState state))
             {
-                var encrypt = await TonService.Encryption.EncryptAsync(state.Key.PublicKey, state.Key.Secret);
+                var encrypt = await TonService.Encryption.EncryptAsync(state.Key.PublicKey, state.Key.Secret, state.LocalPassword);
                 if (encrypt)
                 {
                     ProtoService.Options.WalletPublicKey = state.Key.PublicKey;
@@ -73,6 +86,7 @@ namespace Unigram.ViewModels.Wallet
     public enum WalletInfoState
     {
         Created,
-        Ready
+        Ready,
+        Sent
     }
 }

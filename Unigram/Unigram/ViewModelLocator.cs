@@ -273,6 +273,7 @@ namespace Unigram
                 builder.RegisterType<WalletReceiveViewModel>();
                 builder.RegisterType<WalletInvoiceViewModel>();
                 builder.RegisterType<WalletSendViewModel>();
+                builder.RegisterType<WalletSendingViewModel>();
                 builder.RegisterType<WalletTransactionViewModel>();
                 builder.RegisterType<WalletInfoViewModel>();
 

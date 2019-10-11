@@ -185,7 +185,12 @@ namespace Unigram.ViewModels.Wallet
         public RelayCommand SendCommand { get; }
         private void SendExecute()
         {
-            NavigationService.Navigate(typeof(WalletSendPage));
+            var parameters = new Dictionary<string, object>
+            {
+                { "balance", _balance }
+            };
+
+            NavigationService.Navigate(typeof(WalletSendPage), state: parameters);
         }
     }
 }

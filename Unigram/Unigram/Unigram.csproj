@@ -687,6 +687,7 @@
     <Compile Include="ViewModels\Wallet\WalletInfoViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletInvoiceViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletReceiveViewModel.cs" />
+    <Compile Include="ViewModels\Wallet\WalletSendingViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletSendViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletSettingsViewModel.cs" />
     <Compile Include="ViewModels\Wallet\WalletTestViewModel.cs" />
@@ -960,6 +961,9 @@
     </Compile>
     <Compile Include="Views\Wallet\WalletReceivePage.xaml.cs">
       <DependentUpon>WalletReceivePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\WalletSendingPage.xaml.cs">
+      <DependentUpon>WalletSendingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Wallet\WalletSendPage.xaml.cs">
       <DependentUpon>WalletSendPage.xaml</DependentUpon>
@@ -2519,6 +2523,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Wallet\WalletReceivePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\WalletSendingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

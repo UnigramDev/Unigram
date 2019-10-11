@@ -92,6 +92,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region ButtonVisibility
+
+        public Visibility ButtonVisibility
+        {
+            get { return (Visibility)GetValue(ButtonVisibilityProperty); }
+            set { SetValue(ButtonVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty ButtonVisibilityProperty =
+            DependencyProperty.Register("ButtonVisibility", typeof(Visibility), typeof(WalkthroughControl), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+
         #region Footer
 
         public UIElement Footer
