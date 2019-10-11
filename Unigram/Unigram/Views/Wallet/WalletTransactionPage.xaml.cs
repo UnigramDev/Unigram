@@ -62,8 +62,6 @@ namespace Unigram.Views.Wallet
 
             var date = BindConvert.Current.DateTime((int)item.Utime);
 
-            var brush = new SolidColorBrush(amount > 0 ? Windows.UI.Colors.Green : Windows.UI.Colors.Black);
-
             if (amount > 0)
             {
                 Amount.Text = ConvertAmount(amount);
@@ -75,7 +73,7 @@ namespace Unigram.Views.Wallet
             else
             {
                 Amount.Text = ConvertAmount(amount);
-                //Amount.Foreground = new SolidColorBrush(Windows.UI.Colors.Black);
+                Amount.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
 
                 if (item.OutMsgs.IsEmpty())
                 {
@@ -106,7 +104,7 @@ namespace Unigram.Views.Wallet
 
         private string ConvertAmount(long value)
         {
-            return string.Format("{0:0.000000000} \uD83D\uDC8E", value / 1000000000d);
+            return BindConvert.Grams(value, true);
         }
 
         private string ConvertAddress(string address)

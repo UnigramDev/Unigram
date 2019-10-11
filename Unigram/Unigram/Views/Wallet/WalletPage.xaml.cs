@@ -117,7 +117,7 @@ namespace Unigram.Views.Wallet
             }
             else
             {
-                headline.Inlines.Add(new Run { Text = ConvertAmount(amount), FontWeight = FontWeights.SemiBold });
+                headline.Inlines.Add(new Run { Text = ConvertAmount(amount), Foreground = new SolidColorBrush(Windows.UI.Colors.Red), FontWeight = FontWeights.SemiBold });
 
                 if (item.OutMsgs.IsEmpty())
                 {
