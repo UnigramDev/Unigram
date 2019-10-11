@@ -47,17 +47,11 @@ namespace Unigram.ViewModels.Wallet
             }
             else
             {
-                var publicKey = ProtoService.Options.WalletPublicKey;
-                
-                var secret = await TonService.Encryption.DecryptAsync(publicKey);
-                if (secret == null)
-                {
-                    // TODO:
-                    return;
-                }
+                state.TryGet("public_key", out string publicKey);
+                state.TryGet("secret", out IList<byte> secret);
+                state.TryGet("local_password", out IList<byte> localPassword);
 
-                var localPassword = secret.Item2;
-                var privateKey = new InputKey(new Key(publicKey, secret.Item1), localPassword);
+                var privateKey = new InputKey(new Key(publicKey, secret), localPassword);
 
                 var response = await TonService.SendAsync(new ExportKey(privateKey));
                 if (response is ExportedKey exportedKey)
@@ -66,7 +60,7 @@ namespace Unigram.ViewModels.Wallet
                 }
                 else if (response is Error error)
                 {
-
+                    await TLMessageDialog.ShowAsync(error.Message, error.Code.ToString(), Strings.Resources.OK);
                 }
             }
 

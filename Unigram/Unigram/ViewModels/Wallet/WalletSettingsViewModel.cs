@@ -22,16 +22,30 @@ namespace Unigram.ViewModels.Wallet
         }
 
         public RelayCommand ExportCommand { get; }
-        private void ExportExecute()
+        private async void ExportExecute()
         {
-            // TODO: make this secure
-            NavigationService.Navigate(typeof(WalletExportPage));
+            var publicKey = ProtoService.Options.WalletPublicKey;
+
+            var secret = await TonService.Encryption.DecryptAsync(publicKey);
+            if (secret == null)
+            {
+                // TODO:
+                return;
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "public_key", publicKey },
+                { "secret", secret.Item1 },
+                { "local_password", secret.Item2 },
+            };
+
+            NavigationService.Navigate(typeof(WalletExportPage), state: parameters);
         }
 
         public RelayCommand DeleteCommand { get; }
         private async void DeleteExecute()
         {
-            // TODO: make this secure
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.WalletDeleteText, Strings.Resources.WalletDeleteTitle, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
@@ -47,7 +61,13 @@ namespace Unigram.ViewModels.Wallet
                 return;
             }
 
-            var response = await TonService.SendAsync(new DeleteKey(new Key(publicKey, secret.Item1)));
+            var response = await TonService.SendAsync(
+#if DEBUG
+                new DeleteAllKeys()
+#else
+                new DeleteKey(new Key(publicKey, secret.Item1))
+#endif
+                );
             if (response is Ok)
             {
                 TonService.Encryption.Delete(publicKey);
