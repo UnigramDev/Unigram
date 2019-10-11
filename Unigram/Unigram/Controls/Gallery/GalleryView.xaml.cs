@@ -1262,5 +1262,10 @@ namespace Unigram.Controls.Gallery
         }
 
         #endregion
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+        }
     }
 }
