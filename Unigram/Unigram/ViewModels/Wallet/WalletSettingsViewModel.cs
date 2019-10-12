@@ -46,39 +46,14 @@ namespace Unigram.ViewModels.Wallet
         public RelayCommand DeleteCommand { get; }
         private async void DeleteExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.WalletDeleteText, Strings.Resources.WalletDeleteTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.WalletDeleteInfo, Strings.Resources.WalletDeleteTitle, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var publicKey = ProtoService.Options.WalletPublicKey;
-            
-            var secret = await TonService.Encryption.DecryptAsync(publicKey);
-            if (secret == null)
-            {
-                // TODO:
-                return;
-            }
-
-            var response = await TonService.SendAsync(
-#if DEBUG
-                new DeleteAllKeys()
-#else
-                new DeleteKey(new Key(publicKey, secret.Item1))
-#endif
-                );
-            if (response is Ok)
-            {
-                TonService.Encryption.Delete(publicKey);
-                ProtoService.Options.WalletPublicKey = null;
-
-                NavigationService.Navigate(typeof(WalletCreatePage));
-            }
-            else if (response is Error error)
-            {
-                await TLMessageDialog.ShowAsync(error.Message, error.Code.ToString(), Strings.Resources.OK);
-            }
+            TonService.CleanUp();
+            NavigationService.Navigate(typeof(WalletCreatePage));
         }
     }
 }

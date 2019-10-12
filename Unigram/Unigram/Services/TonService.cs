@@ -21,6 +21,8 @@ namespace Unigram.Services
         void Send(Function function, Action<BaseObject> handler);
         Task<BaseObject> SendAsync(Function function);
 
+        void CleanUp();
+
         void SetCreationState(WalletCreationState state);
         bool TryGetCreationState(out WalletCreationState state);
         WalletCreationState CreationState { get; }
@@ -168,6 +170,18 @@ namespace Unigram.Services
         {
             await _initializeTask.Task;
             return await _client.SendAsync(function);
+        }
+
+
+
+        public void CleanUp()
+        {
+            _encryptionService.Delete(_protoService.Options.WalletPublicKey);
+            _protoService.Options.WalletPublicKey = null;
+
+            _client.Send(new DeleteAllKeys());
+
+            _creationState = null;
         }
 
 
