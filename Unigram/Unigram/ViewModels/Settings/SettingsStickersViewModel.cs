@@ -29,6 +29,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsLoopingEnabled
+        {
+            get
+            {
+                return Settings.Stickers.IsLoopingEnabled;
+            }
+            set
+            {
+                Settings.Stickers.IsLoopingEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public RelayCommand SuggestCommand { get; }
         private async void SuggestExecute()
         {

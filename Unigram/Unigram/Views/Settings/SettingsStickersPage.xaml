@@ -32,6 +32,10 @@
                         Content="{CustomResource SuggestStickers}"
                         Command="{x:Bind ViewModel.SuggestCommand}"
                         Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsLoopingEnabled, Mode=TwoWay}"
+                        Header="{CustomResource LoopAnimatedStickers}"
+                        Style="{StaticResource CheckButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource FeaturedStickers}"
                         Click="FeaturedStickers_Click"

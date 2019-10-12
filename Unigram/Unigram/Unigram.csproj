@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>CE7E95812C4B2B0C8A7D5EA3DB7D201C2F459116</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -508,6 +508,7 @@
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\NotificationsService.cs" />
     <Compile Include="Services\Settings\AutoDownloadSettings.cs" />
+    <Compile Include="Services\Settings\DiagnosticsSettings.cs" />
     <Compile Include="Services\Settings\NotificationsSettings.cs" />
     <Compile Include="Services\OptionsService.cs" />
     <Compile Include="Services\Settings\PasscodeLockSettings.cs" />

@@ -42,6 +42,23 @@ namespace Unigram.Services.Settings
             }
         }
 
+        private bool? _isLoopingEnabled;
+        public bool IsLoopingEnabled
+        {
+            get
+            {
+                if (_isLoopingEnabled == null)
+                    _isLoopingEnabled = GetValueOrDefault("IsLoopingEnabled", true);
+
+                return _isLoopingEnabled ?? true;
+            }
+            set
+            {
+                _isLoopingEnabled = value;
+                AddOrUpdateValue("IsLoopingEnabled", value);
+            }
+        }
+
         private int? _selectedTab;
         public StickersTab SelectedTab
         {

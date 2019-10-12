@@ -33,6 +33,9 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            PlayStickers.IsOn = SettingsService.Current.Diagnostics.PlayStickers;
+            CacheStickers.IsOn = SettingsService.Current.Diagnostics.CacheStickers;
+
             Verbosity.Badge = Enum.GetName(typeof(VerbosityLevel), (VerbosityLevel)SettingsService.Current.VerbosityLevel);
 
             try
@@ -127,6 +130,16 @@ namespace Unigram.Views
         private void UseTestDC_Toggled(object sender, RoutedEventArgs e)
         {
             SettingsService.Current.UseTestDC = SettingsService.Current.UseTestDC;
+        }
+
+        private void PlayStickers_Toggled(object sender, RoutedEventArgs e)
+        {
+            SettingsService.Current.Diagnostics.PlayStickers = PlayStickers.IsOn;
+        }
+
+        private void CacheStickers_Toggled(object sender, RoutedEventArgs e)
+        {
+            SettingsService.Current.Diagnostics.CacheStickers = CacheStickers.IsOn;
         }
     }
 }

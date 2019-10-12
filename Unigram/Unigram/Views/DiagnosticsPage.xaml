@@ -33,6 +33,20 @@
                       Grid.Row="1">
             <StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="Experimental" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch
+                        x:Name="PlayStickers"
+                        Header="Play animated stickers"
+                        Toggled="PlayStickers_Toggled"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        x:Name="CacheStickers"
+                        Header="Cache animated stickers"
+                        Toggled="CacheStickers_Toggled"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="TDLib Logs" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
                         x:Name="Verbosity"
