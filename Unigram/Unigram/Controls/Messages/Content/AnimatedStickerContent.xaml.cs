@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -75,8 +76,18 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                LayoutRoot.Background = null;
-                Player.Source = new Uri("file:///" + file.Local.Path);
+                if (SettingsService.Current.Diagnostics.PlayStickers)
+                {
+                    LayoutRoot.Background = null;
+
+                    Player.IsCachingEnabled = SettingsService.Current.Diagnostics.CacheStickers;
+                    Player.IsLoopingEnabled = SettingsService.Current.Stickers.IsLoopingEnabled;
+                    Player.Source = new Uri("file:///" + file.Local.Path);
+                }
+                else
+                {
+                    Player.Source = null;
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

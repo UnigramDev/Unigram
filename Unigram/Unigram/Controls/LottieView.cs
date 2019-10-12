@@ -24,10 +24,10 @@ namespace Unigram.Controls
         private string CanvasPartName = "Canvas";
 
         private string _source;
-        private Animation _animation;
-        private CanvasBitmap[] _cache;
+        private IAnimation _animation;
 
         private bool _isLoopingEnabled = true;
+        private bool _isCachingEnabled = true;
 
         public LottieView()
         {
@@ -53,21 +53,12 @@ namespace Unigram.Controls
 
         public void Dispose()
         {
-            if (_cache == null)
+            if (_animation is IDisposable disposable)
             {
-                return;
+                disposable.Dispose();
             }
 
-            for (int i = 0; i < _cache.Length; i++)
-            {
-                if (_cache[i] != null)
-                {
-                    _cache[i].Dispose();
-                    _cache[i] = null;
-                }
-            }
-
-            _cache = null;
+            _animation = null;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -94,7 +85,7 @@ namespace Unigram.Controls
 
         private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
-            if (_animation == null || _cache == null || _animation.TotalFrame != _cache.Length)
+            if (_animation == null)
             {
                 return;
             }
@@ -108,13 +99,8 @@ namespace Unigram.Controls
                 Dispose();
             }
 
-            if (_cache[index] == null)
-            {
-                var bytes = _animation.RenderSync(index);
-                _cache[index] = CanvasBitmap.CreateFromBytes(sender, bytes, 512, 512, DirectXPixelFormat.B8G8R8A8UIntNormalized);
-            }
-
-            args.DrawingSession.DrawImage(_cache[index], new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+            var bitmap = _animation.RenderSync(sender, index, 256, 256);
+            args.DrawingSession.DrawImage(bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
         }
 
         private void OnSourceChanged(Uri newValue, Uri oldValue)
@@ -147,7 +133,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var animation = Animation.LoadFromFile(newValue);
+            var animation = LoadFromFile(newValue, _isLoopingEnabled && _isCachingEnabled);
             if (animation == null)
             {
                 // The app can't access the specified file
@@ -156,7 +142,12 @@ namespace Unigram.Controls
 
             _source = newValue;
             _animation = animation;
-            _cache = new CanvasBitmap[_animation.TotalFrame];
+
+            if (animation is CachedAnimation cached)
+            {
+                cached.RenderSync(0, 256, 256);
+                cached.CreateCache(256, 256);
+            }
 
             canvas.Paused = true;
             canvas.ResetElapsedTime();
@@ -167,6 +158,16 @@ namespace Unigram.Controls
                 canvas.Paused = false;
                 canvas.Invalidate();
             }
+        }
+
+        private IAnimation LoadFromFile(string path, bool cache)
+        {
+            if (cache)
+            {
+                return CachedAnimation.LoadFromFile(path, true);
+            }
+
+            return Animation.LoadFromFile(path);
         }
 
         private string UriToPath(Uri uri)
@@ -210,6 +211,24 @@ namespace Unigram.Controls
         private static void OnLoopingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d)._isLoopingEnabled = (bool)e.NewValue;
+        }
+
+        #endregion
+
+        #region IsCachingEnabled
+
+        public bool IsCachingEnabled
+        {
+            get { return (bool)GetValue(IsCachingEnabledProperty); }
+            set { SetValue(IsCachingEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsCachingEnabledProperty =
+            DependencyProperty.Register("IsCachingEnabled", typeof(bool), typeof(LottieView), new PropertyMetadata(true, OnCachingEnabledChanged));
+
+        private static void OnCachingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._isCachingEnabled = (bool)e.NewValue;
         }
 
         #endregion
