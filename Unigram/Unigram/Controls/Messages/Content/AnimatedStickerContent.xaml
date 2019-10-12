@@ -19,6 +19,7 @@
     <Grid x:Name="LayoutRoot">
         <controls:LottieView
             x:Name="Player"
+            AutoPlay="False"
             Width="200"
             Height="200"/>
     </Grid>

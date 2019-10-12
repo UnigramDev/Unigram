@@ -143,21 +143,52 @@ namespace Unigram.Controls
             _source = newValue;
             _animation = animation;
 
-            if (animation is CachedAnimation cached)
-            {
-                cached.RenderSync(0, 256, 256);
-                cached.CreateCache(256, 256);
-            }
-
             canvas.Paused = true;
             canvas.ResetElapsedTime();
             canvas.TargetElapsedTime = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
 
             if (AutoPlay)
             {
-                canvas.Paused = false;
-                canvas.Invalidate();
+                Play();
             }
+        }
+
+        public void Play()
+        {
+            var canvas = Canvas;
+            if (canvas == null)
+            {
+                //_source = newValue;
+                return;
+            }
+
+            var animation = _animation;
+            if (animation == null)
+            {
+                return;
+            }
+
+            if (animation is CachedAnimation cached && !cached.IsCached)
+            {
+                cached.RenderSync(0, 256, 256);
+                cached.CreateCache(256, 256);
+            }
+
+            canvas.Paused = false;
+            canvas.Invalidate();
+        }
+
+        public void Pause()
+        {
+            var canvas = Canvas;
+            if (canvas == null)
+            {
+                //_source = newValue;
+                return;
+            }
+
+            canvas.Paused = true;
+            canvas.ResetElapsedTime();
         }
 
         private IAnimation LoadFromFile(string path, bool cache)

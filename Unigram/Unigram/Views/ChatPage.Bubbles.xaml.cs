@@ -164,7 +164,21 @@ namespace Unigram.Views
                 }
             }
 
+            foreach (var item in _oldStickers.Values)
+            {
+                var presenter = item.Player;
+                if (presenter != null)
+                {
+                    try
+                    {
+                        presenter.Pause();
+                    }
+                    catch { }
+                }
+            }
+
             _old.Clear();
+            _oldStickers.Clear();
         }
 
         private void UpdateHeaderDate(bool intermediate)
@@ -251,7 +265,14 @@ namespace Unigram.Views
             public bool Clip { get; set; }
         }
 
+        class LottieViewItem
+        {
+            public File File { get; set; }
+            public LottieView Player { get; set; }
+        }
+
         private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
+        private Dictionary<long, LottieViewItem> _oldStickers = new Dictionary<long, LottieViewItem>();
 
         public async void PlayMessage(MessageViewModel message, FrameworkElement target)
         {
@@ -329,6 +350,8 @@ namespace Unigram.Views
 
         public void Play(IEnumerable<MessageViewModel> items, bool auto, bool audio)
         {
+            PlayStickers(items);
+
             var news = new Dictionary<long, MediaPlayerItem>();
 
             foreach (var message in items)
@@ -490,6 +513,77 @@ namespace Unigram.Views
             }
         }
 
+        public void PlayStickers(IEnumerable<MessageViewModel> items)
+        {
+            var news = new Dictionary<long, LottieViewItem>();
+
+            foreach (var message in items)
+            {
+                var container = Messages.ContainerFromItem(message) as ListViewItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var animation = message.GetAnimatedSticker();
+                if (animation == null)
+                {
+                    continue;
+                }
+
+                if (animation.Local.IsDownloadingCompleted)
+                {
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    if (root is MessageBubble == false)
+                    {
+                        root = root.FindName("Bubble") as FrameworkElement;
+                    }
+
+                    var target = message.Content as object;
+                    var media = root.FindName("Media") as Border;
+                    var panel = media.Child as FrameworkElement;
+
+                    if (target is MessageText messageText && messageText.WebPage != null)
+                    {
+                        media = panel?.FindName("Media") as Border;
+                        panel = media?.Child as FrameworkElement;
+                    }
+
+                    var lottie = panel?.FindName("Player") as LottieView;
+                    if (lottie != null)
+                    {
+                        lottie.Tag = message;
+                        news[message.Id] = new LottieViewItem { File = animation, Player = lottie };
+                    }
+                }
+            }
+
+            foreach (var item in _oldStickers.Keys.Except(news.Keys).ToList())
+            {
+                var presenter = _oldStickers[item].Player;
+                if (presenter != null)
+                {
+                    presenter.Pause();
+                }
+
+                _oldStickers.Remove(item);
+            }
+
+            foreach (var item in news.Keys.Except(_oldStickers.Keys).ToList())
+            {
+                if (_oldStickers.ContainsKey(item))
+                {
+                    continue;
+                }
+
+                if (news.TryGetValue(item, out LottieViewItem data) && data.Player != null)
+                {
+                    data.Player.Play();
+                }
+
+                _oldStickers[item] = news[item];
+            }
+        }
 
 
 
