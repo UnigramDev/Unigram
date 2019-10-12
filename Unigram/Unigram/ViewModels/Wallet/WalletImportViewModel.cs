@@ -30,6 +30,7 @@ namespace Unigram.ViewModels.Wallet
                 Items.Add(new WalletWordViewModel { Index = i + 13 });
             }
 
+            TooBadCommand = new RelayCommand(TooBadExecute);
             SendCommand = new RelayCommand(SendExecute);
         }
 
@@ -55,22 +56,34 @@ namespace Unigram.ViewModels.Wallet
             }
         }
 
+        public RelayCommand TooBadCommand { get; }
+        private void TooBadExecute()
+        {
+            NavigationService.Navigate(typeof(WalletInfoPage), WalletInfoState.TooBad);
+        }
+
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var localPassword = await TonService.Encryption.GenerateLocalPasswordAsync();
-            if (localPassword == null)
+            var response = await TonService.Encryption.GenerateLocalPasswordAsync();
+            if (response is ByteTuple localPassword)
             {
-                // TODO: ???
-                return;
+                await ContinueAsync(localPassword.Item1);
             }
+            else if (response is Error error)
+            {
+                await TLMessageDialog.ShowAsync(error.Message, error.Code.ToString(), Strings.Resources.OK);
+            }
+        }
 
+        private async Task ContinueAsync(IList<byte> localPassword)
+        {
             var words = Items.OrderBy(x => x.Index).Select(x => x.Text).ToArray();
 
-            var response = await TonService.SendAsync(new ImportKey(localPassword.Item1, new byte[0], new ExportedKey(words)));
+            var response = await TonService.SendAsync(new ImportKey(localPassword, new byte[0], new ExportedKey(words)));
             if (response is Key key)
             {
-                var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret, localPassword.Item1);
+                var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret, localPassword);
                 if (encrypt)
                 {
                     ProtoService.Options.WalletPublicKey = key.PublicKey;

@@ -23,22 +23,23 @@ namespace Unigram.ViewModels.Wallet
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var localPassword = await TonService.Encryption.GenerateLocalPasswordAsync();
-            if (localPassword == null)
+            var response = await TonService.Encryption.GenerateLocalPasswordAsync();
+            if (response is ByteTuple localPassword)
             {
-                // TODO: ???
-                return;
+                await ContinueAsync(localPassword.Item1, localPassword.Item2);
             }
+            else if (response is Error error)
+            {
+                await TLMessageDialog.ShowAsync(error.Message, error.Code.ToString(), Strings.Resources.OK);
+            }
+        }
 
-            var response = await TonService.SendAsync(new CreateNewKey(localPassword.Item1, new byte[0], localPassword.Item2));
+        private async Task ContinueAsync(IList<byte> localPassword, IList<byte> salt)
+        {
+            var response = await TonService.SendAsync(new CreateNewKey(localPassword, new byte[0], salt));
             if (response is Key key)
             {
-                await ContinueAsync(key, localPassword.Item1);
-                //var encrypt = await TonService.Encryption.EncryptAsync(key.PublicKey, key.Secret);
-                //if (encrypt)
-                //{
-                //    ProtoService.Options.WalletPublicKey = key.PublicKey;
-                //}
+                await ContinueAsync(key, localPassword);
             }
             else if (response is Error error)
             {

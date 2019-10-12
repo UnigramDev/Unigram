@@ -16,12 +16,12 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Wallet
 {
-    public class WalletInfoViewModel : TonViewModelBase
+    public class WalletInfoViewModel : WalletCreateViewModel
     {
         public WalletInfoViewModel(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute);
+            ContinueCommand = new RelayCommand(ContinueExecute);
         }
 
         private WalletInfoState _state;
@@ -53,8 +53,8 @@ namespace Unigram.ViewModels.Wallet
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public RelayCommand ContinueCommand { get; }
+        private async void ContinueExecute()
         {
             switch (_state)
             {
@@ -65,6 +65,9 @@ namespace Unigram.ViewModels.Wallet
                 case WalletInfoState.Ready:
                 case WalletInfoState.Sent:
                     NavigationService.Navigate(typeof(WalletPage));
+                    break;
+                case WalletInfoState.TooBad:
+                    NavigationService.GoBack();
                     break;
             }
         }
@@ -87,6 +90,7 @@ namespace Unigram.ViewModels.Wallet
     {
         Created,
         Ready,
-        Sent
+        Sent,
+        TooBad
     }
 }

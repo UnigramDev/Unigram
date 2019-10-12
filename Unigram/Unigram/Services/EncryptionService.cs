@@ -16,7 +16,7 @@ namespace Unigram.Services
 {
     public interface IEncryptionService
     {
-        Task<ByteTuple> GenerateLocalPasswordAsync();
+        Task<object> GenerateLocalPasswordAsync();
 
         Task<bool> EncryptAsync(string publicKey, IList<byte> data, IList<byte> localPassword);
         Task<ByteTuple> DecryptAsync(string publicKey);
@@ -45,7 +45,7 @@ namespace Unigram.Services
             _protoService = protoService;
         }
 
-        public async Task<ByteTuple> GenerateLocalPasswordAsync()
+        public async Task<object> GenerateLocalPasswordAsync()
         {
             var response = await _protoService.SendAsync(new GetTonWalletPasswordSalt());
             if (response is TonWalletPasswordSalt passwordSalt)
@@ -59,6 +59,10 @@ namespace Unigram.Services
                 System.Buffer.BlockCopy(passwordSalt.Salt.ToArray(), 0, password, 32, 32);
 
                 return new ByteTuple(password, salt);
+            }
+            else if (response is Error error)
+            {
+                return new Ton.Tonlib.Api.Error(error.Code, error.Message);
             }
 
             return null;

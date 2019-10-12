@@ -39,6 +39,8 @@ namespace Unigram.Views.Wallet
                 case WalletInfoState.Ready:
                 case WalletInfoState.Sent:
                     return new Uri("ms-appx:///Assets/Animations/WalletDone.tgs");
+                case WalletInfoState.TooBad:
+                    return new Uri("ms-appx:///Assets/Animations/WalletNotAvailable.tgs");
                 default:
                     return null;
             }
@@ -54,6 +56,8 @@ namespace Unigram.Views.Wallet
                     return Strings.Resources.WalletReady;
                 case WalletInfoState.Sent:
                     return Strings.Resources.WalletSendDone;
+                case WalletInfoState.TooBad:
+                    return Strings.Resources.WalletTooBad;
                 default:
                     return null;
             }
@@ -69,6 +73,8 @@ namespace Unigram.Views.Wallet
                     return Strings.Resources.WalletReadyInfo;
                 case WalletInfoState.Sent:
                     return string.Format(Strings.Resources.WalletSendDoneText, BindConvert.Grams(amount, false));
+                case WalletInfoState.TooBad:
+                    return Strings.Resources.WalletTooBadInfo;
                 default:
                     return null;
             }
@@ -83,9 +89,27 @@ namespace Unigram.Views.Wallet
                 case WalletInfoState.Ready:
                 case WalletInfoState.Sent:
                     return Strings.Resources.WalletView;
+                case WalletInfoState.TooBad:
+                    return Strings.Resources.WalletTooBadEnter;
                 default:
                     return null;
             }
+        }
+
+        private Visibility ConvertLinkVisibility(WalletInfoState state)
+        {
+            switch (state)
+            {
+                case WalletInfoState.TooBad:
+                    return Visibility.Visible;
+                default:
+                    return Visibility.Collapsed;
+            }
+        }
+
+        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        {
+            ViewModel.SendCommand.Execute();
         }
     }
 }

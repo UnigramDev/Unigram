@@ -15,6 +15,17 @@
             Title="{x:Bind ConvertTitle(ViewModel.State)}"
             Text="{x:Bind ConvertText(ViewModel.State, ViewModel.Amount)}"
             ButtonText="{x:Bind ConvertButtonText(ViewModel.State)}"
-            ButtonCommand="{x:Bind ViewModel.SendCommand}"/>
+            ButtonCommand="{x:Bind ViewModel.ContinueCommand}">
+            <controls:WalkthroughControl.Footer>
+                <TextBlock 
+                    Style="{StaticResource InfoCaptionTextBlockStyle}"
+                    TextAlignment="Center"
+                    Margin="0,8,0,0">
+                    <Hyperlink Click="Hyperlink_Click">
+                        <Run Text="{CustomResource WalletTooBadCreate}"/>
+                    </Hyperlink>
+                </TextBlock>
+            </controls:WalkthroughControl.Footer>
+        </controls:WalkthroughControl>
     </Grid>
 </Page>

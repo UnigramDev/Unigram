@@ -10,28 +10,27 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-
-        <!--<controls:PageHeader
-            Text="{CustomResource WalletSecretWordsTitle}"/>-->
-
         <controls:WalkthroughControl
             HeaderSource="ms-appx:///Assets/Animations/WalletWordList.tgs"
             Title="{CustomResource WalletSecretWords}"
             Text="{CustomResource WalletImportInfo}"
             ButtonText="{CustomResource WalletContinue}"
-            ButtonCommand="{x:Bind ViewModel.SendCommand}"
-            Grid.Row="1">
+            ButtonCommand="{x:Bind ViewModel.SendCommand}">
 
-            <Grid x:Name="WordListPanel" Margin="12,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-            </Grid>
+            <StackPanel>
+                <HyperlinkButton
+                    Content="{CustomResource WalletImportDontHave}"
+                    Command="{x:Bind ViewModel.TooBadCommand}"
+                    HorizontalAlignment="Center"
+                    Margin="12,0,12,24"/>
+
+                <Grid x:Name="WordListPanel" Margin="12,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </StackPanel>
         </controls:WalkthroughControl>
     </Grid>
 </Page>
