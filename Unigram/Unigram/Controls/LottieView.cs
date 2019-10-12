@@ -72,6 +72,7 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            _animation = null;
             Dispose();
 
             Canvas.Unloaded -= OnUnloaded;
@@ -126,14 +127,16 @@ namespace Unigram.Controls
             var canvas = Canvas;
             if (canvas == null)
             {
+                //_source = newValue;
                 return;
             }
 
             if (newValue == null)
             {
-                Canvas.Paused = true;
-                Canvas.ResetElapsedTime();
+                canvas.Paused = true;
+                canvas.ResetElapsedTime();
 
+                _animation = null;
                 Dispose();
                 return;
             }
@@ -144,8 +147,15 @@ namespace Unigram.Controls
                 return;
             }
 
+            var animation = Animation.LoadFromFile(newValue);
+            if (animation == null)
+            {
+                // The app can't access the specified file
+                return;
+            }
+
             _source = newValue;
-            _animation = Animation.LoadFromFile(newValue);
+            _animation = animation;
             _cache = new CanvasBitmap[_animation.TotalFrame];
 
             canvas.Paused = true;
