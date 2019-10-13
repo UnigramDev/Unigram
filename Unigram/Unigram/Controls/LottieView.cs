@@ -26,6 +26,10 @@ namespace Unigram.Controls
         private string _source;
         private IAnimation _animation;
 
+        private bool _shouldPlay;
+
+        private int _lastIndex;
+
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
 
@@ -63,7 +67,6 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            _animation = null;
             Dispose();
 
             Canvas.Unloaded -= OnUnloaded;
@@ -91,16 +94,16 @@ namespace Unigram.Controls
             }
 
             var index = (int)(args.Timing.UpdateCount % _animation.TotalFrame);
-            if (index == _animation.TotalFrame - 1 && !_isLoopingEnabled)
+            if (index < _lastIndex && !_isLoopingEnabled)
             {
                 sender.Paused = true;
                 sender.ResetElapsedTime();
-
-                Dispose();
             }
 
             var bitmap = _animation.RenderSync(sender, index, 256, 256);
             args.DrawingSession.DrawImage(bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+
+            _lastIndex = index;
         }
 
         private void OnSourceChanged(Uri newValue, Uri oldValue)
@@ -113,7 +116,6 @@ namespace Unigram.Controls
             var canvas = Canvas;
             if (canvas == null)
             {
-                //_source = newValue;
                 return;
             }
 
@@ -133,7 +135,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var animation = LoadFromFile(newValue, _isLoopingEnabled && _isCachingEnabled);
+            var animation = LoadFromFile(newValue, /*_isLoopingEnabled &&*/ _isCachingEnabled);
             if (animation == null)
             {
                 // The app can't access the specified file
@@ -147,7 +149,7 @@ namespace Unigram.Controls
             canvas.ResetElapsedTime();
             canvas.TargetElapsedTime = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
 
-            if (AutoPlay)
+            if (AutoPlay || _shouldPlay)
             {
                 Play();
             }
@@ -158,15 +160,18 @@ namespace Unigram.Controls
             var canvas = Canvas;
             if (canvas == null)
             {
-                //_source = newValue;
+                _shouldPlay = true;
                 return;
             }
 
             var animation = _animation;
             if (animation == null)
             {
+                _shouldPlay = true;
                 return;
             }
+
+            _shouldPlay = false;
 
             if (animation is CachedAnimation cached && !cached.IsCached)
             {
