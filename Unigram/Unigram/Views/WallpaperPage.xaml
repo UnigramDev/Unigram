@@ -759,12 +759,17 @@
 
             <!--<chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>-->
         </Border>
-        <controls:PageHeader Text="{CustomResource BackgroundPreview}"/>
+        <controls:ButtonPageHeader
+            x:Name="Header"
+            Text="{CustomResource BackgroundPreview}"
+            CommandToolTip="{CustomResource ShareFile}"
+            Command="{x:Bind ViewModel.ShareCommand}"
+            Glyph="&#xE72D;"/>
 
         <Grid x:Name="Preview" Grid.Row="1">
             <Border x:Name="BlurPanel" Background="Transparent" SizeChanged="BlurPanel_SizeChanged"/>
 
-            <StackPanel Padding="12,2" VerticalAlignment="Bottom">
+            <StackPanel Padding="0,2" VerticalAlignment="Bottom">
                 <messages:MessageBubble x:Name="Message1" HorizontalAlignment="Left"/>
                 <messages:MessageBubble x:Name="Message2" HorizontalAlignment="Right">
                     <FrameworkElement.Resources>
@@ -775,7 +780,7 @@
                         </ResourceDictionary>
                     </FrameworkElement.Resources>
                 </messages:MessageBubble>
-                <Grid HorizontalAlignment="Center">
+                <Grid HorizontalAlignment="Center" Margin="12,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>

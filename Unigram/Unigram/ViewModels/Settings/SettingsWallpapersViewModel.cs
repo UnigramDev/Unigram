@@ -95,7 +95,7 @@ namespace Unigram.ViewModels.Settings
                 var result = await ApplicationData.Current.LocalFolder.CreateFileAsync($"{SessionId}\\{Constants.WallpaperLocalFileName}", CreationCollisionOption.ReplaceExisting);
                 await file.CopyAndReplaceAsync(result);
 
-                NavigationService.Navigate(typeof(WallpaperPage), Constants.WallpaperLocalId);
+                NavigationService.Navigate(typeof(WallpaperPage), Constants.WallpaperLocalFileName);
             }
         }
     }

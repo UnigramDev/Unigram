@@ -161,7 +161,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (wallpaper.Id == Constants.WallpaperLocalId)
+            if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Name == Constants.WallpaperLocalFileName)
             {
                 var file = await ApplicationData.Current.LocalFolder.GetFileAsync($"{ViewModel.SessionId}\\{Constants.WallpaperLocalFileName}");
                 using (var stream = await file.OpenReadAsync())
@@ -212,6 +212,8 @@ namespace Unigram.Views
             {
                 return;
             }
+
+            Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
 
             if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Document != null)
             {

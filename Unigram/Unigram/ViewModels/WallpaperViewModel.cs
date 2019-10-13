@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Services.Updates;
@@ -25,6 +26,7 @@ namespace Unigram.ViewModels
         public WallpaperViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            ShareCommand = new RelayCommand(ShareExecute);
             DoneCommand = new RelayCommand(DoneExecute);
         }
 
@@ -35,7 +37,7 @@ namespace Unigram.ViewModels
                 if (name == Constants.WallpaperLocalFileName)
                 {
                     //Item = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0);
-                    Item = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperLocalFileName, null, null);
+                    Item = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperLocalFileName, null, new BackgroundTypeWallpaper(false, false));
                 }
                 else
                 {
@@ -79,6 +81,22 @@ namespace Unigram.ViewModels
 
 
 
+        public RelayCommand ShareCommand { get; }
+        private async void ShareExecute()
+        {
+            var background = _item;
+            if (background == null)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
+            if (response is HttpUrl url)
+            {
+                await ShareView.GetForCurrentView().ShowAsync(new Uri(url.Url), null);
+            }
+        }
+
         public RelayCommand DoneCommand { get; }
         private async void DoneExecute()
         {
@@ -89,12 +107,12 @@ namespace Unigram.ViewModels
                 {
                     StorageFile result = await ApplicationData.Current.LocalFolder.CreateFileAsync($"{SessionId}\\{Constants.WallpaperFileName}", CreationCollisionOption.ReplaceExisting);
                     StorageFile item;
+                    Task<BaseObject> task;
 
                     if (wallpaper.Id == Constants.WallpaperLocalId)
                     {
                         item = await ApplicationData.Current.LocalFolder.GetFileAsync($"{SessionId}\\{Constants.WallpaperLocalFileName}");
-
-                        ProtoService.Send(new SetBackground(new InputBackgroundLocal(new InputFileLocal(item.Path)), new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled), false));
+                        task = ProtoService.SendAsync(new SetBackground(new InputBackgroundLocal(new InputFileLocal(item.Path)), new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled), false));
                     }
                     else
                     {
@@ -105,8 +123,13 @@ namespace Unigram.ViewModels
                         }
 
                         item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                        task = ProtoService.SendAsync(new SetBackground(new InputBackgroundRemote(wallpaper.Id), new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled), false));
+                    }
 
-                        ProtoService.Send(new SetBackground(new InputBackgroundRemote(wallpaper.Id), new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled), false));
+                    var response = await task;
+                    if (response is Background background)
+                    {
+                        wallpaper = background;
                     }
 
                     if (_isBlurEnabled)
