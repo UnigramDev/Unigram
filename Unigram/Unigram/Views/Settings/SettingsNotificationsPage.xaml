@@ -40,17 +40,22 @@
                                     Click="{x:Bind SendExecute}"
                                     IsChecked="{x:Bind Alert, Mode=TwoWay}"
                                     Content="{CustomResource Alert}"
-                                    Margin="12,8,12,8"/>
+                                    Margin="12,6,12,0"/>
+                                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+                                
                                 <CheckBox
                                     x:Name="Preview"
                                     Click="{x:Bind SendExecute}"
                                     IsChecked="{x:Bind Preview, Mode=TwoWay}"
                                     Content="{CustomResource MessagePreview}"
                                     Margin="12,0,12,0"/>
+                                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+                                
                                 <controls:BadgeButton
                                     IsEnabled="False"
                                     Content="{CustomResource Sound}"
                                     Badge="{CustomResource SoundDefault}"/>
+                                
                                 <controls:BadgeButton
                                     Click="{x:Bind ExceptionsExecute}"
                                     Content="{CustomResource NotificationsExceptions}"
@@ -65,21 +70,27 @@
                     <CheckBox
                         IsChecked="{x:Bind ViewModel.InAppFlash, Mode=TwoWay}"
                         Content="Flash window when receiving a notification"
-                        Margin="12,8,12,8"/>
+                        Margin="12,6,12,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+                    
                     <CheckBox
                         IsChecked="{x:Bind ViewModel.InAppSounds, Mode=TwoWay}"
                         Content="{CustomResource InAppSounds}"
-                        Margin="12,8,12,8"/>
-                    <CheckBox
-                        IsChecked="{x:Bind ViewModel.InAppVibrate, Mode=TwoWay}"
-                        Visibility="{x:Bind (Visibility)ViewModel.IsVibrationAvailable}"
-                        Content="{CustomResource InAppVibrate}"
-                        Margin="12,0,12,8"/>
+                        Margin="12,0,12,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+
+                    <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsVibrationAvailable}">
+                        <CheckBox
+                            IsChecked="{x:Bind ViewModel.InAppVibrate, Mode=TwoWay}"
+                            Content="{CustomResource InAppVibrate}"
+                            Margin="12,0,12,0"/>
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+                    </StackPanel>
+
                     <CheckBox 
                         IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}"
                         Content="{CustomResource InAppPreview}"
                         Margin="12,0"/>
-
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
                 </controls:HeaderedControl>
 
