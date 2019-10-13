@@ -186,6 +186,12 @@ namespace Unigram.Views
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
+        private void Wallet_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.NavigateToWallet();
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
         private void Passport_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(PassportPage));

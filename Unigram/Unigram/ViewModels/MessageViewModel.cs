@@ -58,6 +58,7 @@ namespace Unigram.ViewModels
 
         public Photo GetPhoto() => _message.GetPhoto();
         public File GetAnimation() => _message.GetAnimation();
+        public File GetAnimatedSticker() => _message.GetAnimatedSticker();
         public File GetFile() => _message.GetFile();
 
         public bool IsService() => _message.IsService();

@@ -141,6 +141,11 @@
 
                 <StackPanel Visibility="{x:Bind ViewModel.HasPassportData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Margin="0,24,0,0">
+                    <!--<controls:BadgeButton Content="{CustomResource GramWallet}"
+                                          Glyph="&#x1F48E;"
+                                          Click="Wallet_Click"
+                                          Style="{StaticResource TextGlyphButtonStyle}"
+                                          FontFamily="Segoe UI Emoji"/>-->
                     <controls:BadgeButton Content="{CustomResource TelegramPassport}"
                                           Glyph="&#xE8C7;"
                                           Click="Passport_Click"

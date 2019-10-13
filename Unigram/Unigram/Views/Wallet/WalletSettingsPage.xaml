@@ -21,6 +21,9 @@
                 Command="{x:Bind ViewModel.ExportCommand}"
                 Content="{CustomResource WalletExport}"/>
             <controls:BadgeButton
+                Command="{x:Bind ViewModel.ChangePasscodeCommand}"
+                Content="{CustomResource WalletChangePasscode}"/>
+            <controls:BadgeButton
                 Command="{x:Bind ViewModel.DeleteCommand}"
                 Content="{CustomResource WalletDelete}"
                 Foreground="Red"/>

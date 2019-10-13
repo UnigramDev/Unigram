@@ -96,6 +96,11 @@ namespace Unigram.Common
             if (_walletLifetime == null)
             {
                 _walletLifetime = await OpenAsync(page, address);
+                _walletLifetime.Released += (s, args) =>
+                {
+                    _walletLifetime = null;
+                };
+
                 if (_walletLifetime.NavigationService is NavigationService service)
                 {
                     service.SerializationService = TLSerializationService.Current;

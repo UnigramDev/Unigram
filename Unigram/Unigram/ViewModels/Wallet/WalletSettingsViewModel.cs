@@ -18,6 +18,7 @@ namespace Unigram.ViewModels.Wallet
             : base(tonService, protoService, cacheService, settingsService, aggregator)
         {
             ExportCommand = new RelayCommand(ExportExecute);
+            ChangePasscodeCommand = new RelayCommand(ChangePasscodeExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
         }
 
@@ -41,6 +42,12 @@ namespace Unigram.ViewModels.Wallet
             };
 
             NavigationService.Navigate(typeof(WalletExportPage), state: parameters);
+        }
+
+        public RelayCommand ChangePasscodeCommand { get; }
+        private async void ChangePasscodeExecute()
+        {
+
         }
 
         public RelayCommand DeleteCommand { get; }
