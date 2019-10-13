@@ -9,18 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
-            <Setter Property="Padding" Value="0,8,0,8"/>
-        </Style>
-
-        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-            <Setter Property="Margin" Value="12,8,12,0"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -32,21 +20,21 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Margin="0,0,0,48">
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource ShowNotificationsFor}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+            <StackPanel Margin="0,0,0,24">
+                <controls:HeaderedControl
+                    Header="{CustomResource ShowNotificationsFor}"
+                    Footer="{CustomResource ShowNotificationsForInfo}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsAllAccountsNotifications, Mode=TwoWay}"
                         Header="{CustomResource AllAccounts}"
                         Style="{StaticResource CheckButtonStyle}"/>
-                    <TextBlock Text="{CustomResource ShowNotificationsForInfo}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
                 <ItemsControl ItemsSource="{x:Bind ViewModel.Scopes}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="settings:SettingsNotificationsScope">
-                            <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                <TextBlock Text="{x:Bind Title}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                            <controls:HeaderedControl
+                                Header="{x:Bind Title}">
                                 <CheckBox
                                     x:Name="Alert"
                                     Click="{x:Bind SendExecute}"
@@ -67,13 +55,13 @@
                                     Click="{x:Bind ExceptionsExecute}"
                                     Content="{CustomResource NotificationsExceptions}"
                                     Badge="{x:Bind ExceptionsCount}"/>
-                            </StackPanel>
+                            </controls:HeaderedControl>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource InAppNotifications}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource InAppNotifications}">
                     <CheckBox
                         IsChecked="{x:Bind ViewModel.InAppFlash, Mode=TwoWay}"
                         Content="Flash window when receiving a notification"
@@ -93,10 +81,10 @@
                         Margin="12,0"/>
 
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource Events}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource Events}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsContactEnabled, Mode=TwoWay}"
                         Header="{CustomResource ContactJoined}"
@@ -105,10 +93,10 @@
                         IsOn="{x:Bind ViewModel.IsPinnedEnabled, Mode=TwoWay}"
                         Header="{CustomResource PinnedMessages}"
                         Style="{StaticResource CheckButtonStyle}"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource BadgeNumber}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource BadgeNumber}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IncludeMutedChats, Mode=TwoWay}"
                         Header="{CustomResource BadgeNumberMutedChats}"
@@ -118,15 +106,15 @@
                         Header="{CustomResource BadgeNumberUnread}"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <!--<TextBlock Text="{x:Bind ConvertCountInfo(ViewModel.CountUnreadMessages),Mode=OneWay}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>-->
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel Margin="0,24,0,0">
+                <controls:HeaderedControl
+                    Footer="{CustomResource UndoAllCustom}">
                     <controls:BadgeButton
                         Content="{CustomResource ResetAllNotifications}"
                         Foreground="Red"
                         Command="{x:Bind ViewModel.ResetCommand}"/>
-                    <TextBlock Text="{CustomResource UndoAllCustom}" Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

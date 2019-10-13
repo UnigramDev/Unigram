@@ -9,18 +9,6 @@
     d:DesignHeight="2000"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
-            <Setter Property="Padding" Value="0,8,0,8"/>
-        </Style>
-
-        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-            <Setter Property="Margin" Value="12,8,12,0"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-    </Page.Resources>
-    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -32,8 +20,8 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Margin="0,0,0,48">
-                <StackPanel Padding="0,0,0,8" Style="{StaticResource SettingsGroupPanelStyle}">
+            <StackPanel Margin="0,0,0,24">
+                <controls:HeaderedControl Padding="0,0,0,8">
                     <controls:BadgeButton
                         Content="{CustomResource BlockedUsers}"
                         Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
@@ -55,11 +43,11 @@
                         Glyph="&#xE192;"
                         Click="Password_Click"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
-
-                </StackPanel>
+                </controls:HeaderedControl>
                 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource PrivacyTitle}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource PrivacyTitle}"
+                    Footer="{CustomResource GroupsAndChannelsHelp}">
                     <!--<controls:BadgeButton
                         Content="{CustomResource PrivacyPhone}"
                         Badge="{x:Bind ViewModel.ShowPhoneRules.Badge, Mode=OneWay}"
@@ -84,16 +72,11 @@
                         Content="{CustomResource GroupsAndChannels}"
                         Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"
                         Click="ChatInvite_Click"/>
+                </controls:HeaderedControl>
 
-                    <TextBlock
-                        Text="{CustomResource GroupsAndChannelsHelp}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
-
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource PrivacyAdvanced}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource PrivacyAdvanced}"
+                    Footer="{CustomResource DeleteAccountHelp}">
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyDeleteCloudDrafts}"
                         Command="{x:Bind ViewModel.ClearDraftsCommand}"/>
@@ -101,32 +84,22 @@
                         Content="{CustomResource DeleteAccountIfAwayFor2}"
                         Badge="{x:Bind ConvertTtl(ViewModel.AccountTTL), Mode=OneWay}"
                         Command="{x:Bind ViewModel.AccountTTLCommand}"/>
+                </controls:HeaderedControl>
 
-                    <TextBlock
-                        Text="{CustomResource DeleteAccountHelp}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
-
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource PrivacyBots}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource PrivacyBots}"
+                    Footer="{CustomResource PrivacyBotsInfo}">
                     <controls:BadgeButton
                         Command="{x:Bind ViewModel.ClearPaymentsCommand}"
                         Content="{CustomResource PrivacyPaymentsClear}"/>
                     <controls:BadgeButton
                         Click="WebSessions_Click"
                         Content="{CustomResource WebSessionsTitle}"/>
+                </controls:HeaderedControl>
 
-                    <TextBlock
-                        Text="{CustomResource PrivacyBotsInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
-
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource Contacts}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource Contacts}"
+                    Footer="{CustomResource SuggestContactsInfo}">
                     <controls:BadgeButton
                         Command="{x:Bind ViewModel.ClearContactsCommand}"
                         Content="{CustomResource SyncContactsDelete}"/>
@@ -138,27 +111,16 @@
                         IsOn="{x:Bind ViewModel.IsContactsSuggestEnabled, Mode=TwoWay}"
                         Header="{CustomResource SuggestContacts}"
                         Style="{StaticResource CheckButtonStyle}"/>
+                </controls:HeaderedControl>
 
-                    <TextBlock
-                        Text="{CustomResource SuggestContactsInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
-
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource SecretChat}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource SecretChat}"
+                    Footer="{CustomResource SecretWebPageInfo}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsSecretPreviewsEnabled, Mode=TwoWay}"
                         Header="{CustomResource SecretWebPage}"
                         Style="{StaticResource CheckButtonStyle}"/>
-
-                    <TextBlock
-                        Text="{CustomResource SecretWebPageInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

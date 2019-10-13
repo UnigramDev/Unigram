@@ -209,6 +209,48 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:HeaderedControl">
+        <!--<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>-->
+        <Setter Property="Padding" Value="0,16,0,8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:HeaderedControl">
+                    <Grid Padding="{TemplateBinding Padding}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Text="{TemplateBinding Header}"
+                            Margin="12,0,12,0"
+                            Style="{StaticResource SettingsGroupTextBlockStyle}"
+                            Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                            Grid.Column="1"/>
+
+                        <Border Grid.Column="1" Grid.Row="1">
+                            <ItemsPresenter/>
+                        </Border>
+
+                        <TextBlock
+                            Text="{TemplateBinding Footer}"
+                            Style="{StaticResource InfoCaptionTextBlockStyle}"
+                            Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                            Margin="12,8,12,0"
+                            Grid.Column="1"
+                            Grid.Row="2"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:TLContentDialog">
         <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{ThemeResource ContentDialogBackground}" />

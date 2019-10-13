@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader x:Uid="SettingsStickersPage_Header" Text="Stickers"/>
+        <controls:PageHeader Text="{CustomResource StickersName}"/>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="ListView_ItemClick"
@@ -28,43 +28,40 @@
                   Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <controls:BadgeButton
-                        Content="{CustomResource SuggestStickers}"
-                        Command="{x:Bind ViewModel.SuggestCommand}"
-                        Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"/>
-                    <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.IsLoopingEnabled, Mode=TwoWay}"
-                        Header="{CustomResource LoopAnimatedStickers}"
-                        Style="{StaticResource CheckButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource FeaturedStickers}"
-                        Click="FeaturedStickers_Click"
-                        Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
-                        BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock
-                        Text="{CustomResource FeaturedStickersInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,24"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource Masks}"
-                        Click="Masks_Click"/>
-                    <TextBlock
-                        Text="{CustomResource MasksInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,24"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource ArchivedStickers}"
-                        Click="ArchivedStickers_Click"
-                        Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock
-                        Text="{CustomResource ArchivedStickersInfo}"
-                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,24"/>
+                    <controls:HeaderedControl
+                        Footer="{CustomResource FeaturedStickersInfo}"
+                        Padding="0,0,0,8">
+                        <controls:BadgeButton
+                            Content="{CustomResource SuggestStickers}"
+                            Command="{x:Bind ViewModel.SuggestCommand}"
+                            Badge="{x:Bind ConvertSuggest(ViewModel.SuggestStickers), Mode=OneWay}"/>
+                        <ToggleSwitch
+                            IsOn="{x:Bind ViewModel.IsLoopingEnabled, Mode=TwoWay}"
+                            Header="{CustomResource LoopAnimatedStickers}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                        <controls:BadgeButton
+                            Content="{CustomResource FeaturedStickers}"
+                            Click="FeaturedStickers_Click"
+                            Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
+                            BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </controls:HeaderedControl>
+                    
+                    <controls:HeaderedControl
+                        Footer="{CustomResource MasksInfo}">
+                        <controls:BadgeButton
+                            Content="{CustomResource Masks}"
+                            Click="Masks_Click"/>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        Footer="{CustomResource ArchivedStickersInfo}"
+                        Padding="0,16,0,24">
+                        <controls:BadgeButton
+                            Content="{CustomResource ArchivedStickers}"
+                            Click="ArchivedStickers_Click"
+                            Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </controls:HeaderedControl>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>

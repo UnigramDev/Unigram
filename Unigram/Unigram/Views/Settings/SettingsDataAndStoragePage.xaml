@@ -10,16 +10,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
-            <Setter Property="Padding" Value="0,8,0,8"/>
-        </Style>
-
-        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-            <Setter Property="Margin" Value="12,8,12,0"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-
         <Style x:Key="SubtitleButtonStyle" TargetType="controls:BadgeButton">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
@@ -98,19 +88,19 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Margin="0,0,0,48">
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource DataUsage}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+            <StackPanel Margin="0,0,0,24">
+                <controls:HeaderedControl
+                    Header="{CustomResource DataUsage}">
                     <controls:BadgeButton
                         Content="{CustomResource StorageUsage}"
                         Click="Storage_Click"/>
                     <controls:BadgeButton
                         Content="{CustomResource NetworkUsage}"
                         Click="Stats_Click"/>
-                </StackPanel>
+                </controls:HeaderedControl>
                 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource AutomaticMediaDownload}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource AutomaticMediaDownload}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoDownloadMedia}"
@@ -184,10 +174,10 @@
                         Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
                         Content="{CustomResource ResetAutomaticMediaDownload}"
                         Foreground="Red"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource AutoplayMedia}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource AutoplayMedia}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsAutoPlayAnimationsEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoplayGIF}"
@@ -197,10 +187,10 @@
                         Header="{CustomResource AutoplayVideo}"
                         Style="{StaticResource CheckButtonStyle}"
                         IsEnabled="False"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource Streaming}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource Streaming}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsStreamingEnabled, Mode=TwoWay}"
                         Header="{CustomResource EnableStreaming}"
@@ -211,22 +201,22 @@
                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Margin="12,8,12,0"/>
-                </StackPanel>
+                </controls:HeaderedControl>
                 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource Calls}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource Calls}">
                     <controls:BadgeButton
                         Badge="{x:Bind ConvertUseLessData(ViewModel.UseLessData), Mode=OneWay}"
                         Command="{x:Bind ViewModel.UseLessDataCommand}"
                         Content="{CustomResource VoipUseLessData}"/>
-                </StackPanel>
+                </controls:HeaderedControl>
                 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource Proxy}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource Proxy}">
                     <controls:BadgeButton
                         Content="{CustomResource ProxySettings}"
                         Click="Proxy_Click"/>
-                </StackPanel>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>
