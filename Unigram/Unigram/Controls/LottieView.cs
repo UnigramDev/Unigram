@@ -28,7 +28,10 @@ namespace Unigram.Controls
 
         private bool _shouldPlay;
 
-        private int _lastIndex;
+        // Detect from hardware?
+        private bool _limitFps = true;
+
+        private int _index;
 
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
@@ -93,17 +96,32 @@ namespace Unigram.Controls
                 return;
             }
 
-            var index = (int)(args.Timing.UpdateCount % _animation.TotalFrame);
-            if (index < _lastIndex && !_isLoopingEnabled)
-            {
-                sender.Paused = true;
-                sender.ResetElapsedTime();
-            }
-
+            var index = _index;
             var bitmap = _animation.RenderSync(sender, index, 256, 256);
             args.DrawingSession.DrawImage(bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
 
-            _lastIndex = index;
+            if (_animation is CachedAnimation animation && !animation.IsCached)
+            {
+                animation.CreateCache(256, 256);
+            }
+
+            var framesPerUpdate = _limitFps ? _animation.FrameRate < 60 ? 1 : 2 : 1;
+            if (index + framesPerUpdate < _animation.TotalFrame)
+            {
+                _index += framesPerUpdate;
+            }
+            else
+            {
+                if (_isLoopingEnabled)
+                {
+                    _index = 0;
+                }
+                else
+                {
+                    sender.Paused = true;
+                    sender.ResetElapsedTime();
+                }
+            }
         }
 
         private void OnSourceChanged(Uri newValue, Uri oldValue)
@@ -145,9 +163,15 @@ namespace Unigram.Controls
             _source = newValue;
             _animation = animation;
 
+            var update = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
+            if (_limitFps && _animation.FrameRate >= 60)
+            {
+                update = TimeSpan.FromSeconds(update.TotalSeconds * 2);
+            }
+
             canvas.Paused = true;
             canvas.ResetElapsedTime();
-            canvas.TargetElapsedTime = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
+            canvas.TargetElapsedTime = update;
 
             if (AutoPlay || _shouldPlay)
             {
@@ -173,12 +197,6 @@ namespace Unigram.Controls
 
             _shouldPlay = false;
 
-            if (animation is CachedAnimation cached && !cached.IsCached)
-            {
-                cached.RenderSync(0, 256, 256);
-                cached.CreateCache(256, 256);
-            }
-
             canvas.Paused = false;
             canvas.Invalidate();
         }
@@ -200,7 +218,7 @@ namespace Unigram.Controls
         {
             if (cache)
             {
-                return CachedAnimation.LoadFromFile(path, true);
+                return CachedAnimation.LoadFromFile(path, true, _limitFps);
             }
 
             return Animation.LoadFromFile(path);
