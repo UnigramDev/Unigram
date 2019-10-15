@@ -225,7 +225,20 @@ namespace Unigram.Controls.Views
 
                 if (cover.UpdateFile(file))
                 {
-                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    if (stickerSet.IsAnimated)
+                    {
+                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
+                        if (bitmap == null)
+                        {
+                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        }
+
+                        content.Source = bitmap;
+                    }
+                    else
+                    {
+                        content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    }
                 }
             }
 
@@ -639,7 +652,20 @@ namespace Unigram.Controls.Views
                 var file = cover.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    if (sticker.IsAnimated)
+                    {
+                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
+                        if (bitmap == null)
+                        {
+                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        }
+
+                        content.Source = bitmap;
+                    }
+                    else
+                    {
+                        content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

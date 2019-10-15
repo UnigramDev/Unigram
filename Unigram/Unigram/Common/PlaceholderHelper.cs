@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -298,6 +299,21 @@ namespace Unigram.Common
 
                 return WebPImage.DecodeFromBuffer(buffer);
             }
+        }
+
+        public static ImageSource GetLottieFrame(string path, int frame, int width, int height)
+        {
+            var animation = RLottie.Animation.LoadFromFile(path);
+            if (animation == null)
+            {
+                return null;
+            }
+
+            var bytes = animation.RenderSync(frame, width, height);
+            var bitmap = new WriteableBitmap(width, height);
+            bitmap.PixelBuffer.AsStream().Write(bytes, 0, bytes.Length);
+
+            return bitmap;
         }
     }
 }

@@ -737,6 +737,7 @@ namespace Unigram.ViewModels.Dialogs
         //public IList<StickerEmojis> Emojis { get => _set?.Emojis; set => _set?.Emojis = value; }
         //public IList<Sticker> Stickers { get; set; }
         public bool IsViewed => _set?.IsViewed ?? _info.IsViewed;
+        public bool IsAnimated => _set?.IsAnimated ?? _info.IsAnimated;
         public bool IsMasks => _set?.IsMasks ?? _info.IsMasks;
         public bool IsOfficial => _set?.IsOfficial ?? _info.IsOfficial;
         public bool IsArchived => _set?.IsArchived ?? _info.IsArchived;
@@ -800,6 +801,7 @@ namespace Unigram.ViewModels.Dialogs
         public File StickerValue => _sticker?.StickerValue;
         public PhotoSize Thumbnail => _sticker?.Thumbnail;
         public MaskPosition MaskPosition => _sticker?.MaskPosition;
+        public bool IsAnimated => _sticker?.IsAnimated ?? false;
         public bool IsMask => _sticker?.IsMask ?? false;
         public string Emoji => _sticker?.Emoji;
         public int Height => _sticker?.Height ?? 0;
