@@ -100,7 +100,8 @@
                 </controls:HeaderedControl>
                 
                 <controls:HeaderedControl
-                    Header="{CustomResource AutomaticMediaDownload}">
+                    Header="{CustomResource AutomaticMediaDownload}"
+                    Footer="{CustomResource AutoDownloadAudioInfo}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoDownloadMedia}"
@@ -112,64 +113,38 @@
                          Style="{StaticResource HyperVerticalDetailButtonStyle}"/>-->
 
                     <controls:BadgeButton
+                        Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Photos, ViewModel.AutoDownload.Photos, 0), Mode=OneWay}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Content="{CustomResource LocalPhotoCache}">
+                        Content="{CustomResource AutoDownloadPhotos}"
+                        Style="{StaticResource HyperVerticalDetailButtonStyle}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
                         </Button.CommandParameter>
                     </controls:BadgeButton>
+
                     <controls:BadgeButton
+                        Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Videos, ViewModel.AutoDownload.Videos, ViewModel.AutoDownload.MaximumVideoSize), Mode=OneWay}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Content="{CustomResource LocalVideoCache}">
+                        Content="{CustomResource AutoDownloadVideos}"
+                        Style="{StaticResource HyperVerticalDetailButtonStyle}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
                         </Button.CommandParameter>
                     </controls:BadgeButton>
+
                     <controls:BadgeButton
+                        Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Documents, ViewModel.AutoDownload.Documents, ViewModel.AutoDownload.MaximumDocumentSize), Mode=OneWay}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Content="{CustomResource FilesDataUsage}">
+                        Content="{CustomResource AutoDownloadFiles}"
+                        Style="{StaticResource HyperVerticalDetailButtonStyle}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
                         </Button.CommandParameter>
                     </controls:BadgeButton>
-                    <!--<controls:HyperButton
-                         Tag="{CustomResource AttachMusic}"
-                         Style="{StaticResource HyperDetailButtonStyle}"/>-->
-                    <controls:BadgeButton
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Content="{CustomResource AudioAutodownload}">
-                        <Button.CommandParameter>
-                            <settings:AutoDownloadType>VoiceNotes</settings:AutoDownloadType>
-                        </Button.CommandParameter>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Content="{CustomResource VideoMessagesAutodownload}">
-                        <Button.CommandParameter>
-                            <settings:AutoDownloadType>VideoNotes</settings:AutoDownloadType>
-                        </Button.CommandParameter>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Content="{CustomResource LocalMusicCache}">
-                        <Button.CommandParameter>
-                            <settings:AutoDownloadType>Audios</settings:AutoDownloadType>
-                        </Button.CommandParameter>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton
-                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
-                        IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
-                        Content="{CustomResource LocalGifCache}">
-                        <Button.CommandParameter>
-                            <settings:AutoDownloadType>Animations</settings:AutoDownloadType>
-                        </Button.CommandParameter>
-                    </controls:BadgeButton>
+
                     <controls:BadgeButton
                         Command="{x:Bind ViewModel.ResetAutoDownloadCommand}"
                         Content="{CustomResource ResetAutomaticMediaDownload}"

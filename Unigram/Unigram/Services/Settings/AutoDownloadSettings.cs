@@ -38,10 +38,6 @@ namespace Unigram.Services.Settings
         Photos,
         Videos,
         Documents,
-        VoiceNotes,
-        VideoNotes,
-        Audios,
-        Animations
     }
 
     public enum AutoDownloadChat
@@ -63,14 +59,10 @@ namespace Unigram.Services.Settings
         {
             _disabled = container.GetBoolean("disabled", false);
             _photos = (AutoDownloadMode)container.GetInt32("photos", (int)AutoDownloadMode.All);
-            _videos = (AutoDownloadMode)container.GetInt32("videos", (int)AutoDownloadMode.None);
-            _maximumVideoSize = container.GetInt32("maxVideoSize", 10);
-            _documents = (AutoDownloadMode)container.GetInt32("documents", (int)AutoDownloadMode.None);
-            _maximumDocumentSize = container.GetInt32("maxDocumentSize", 10);
-            _voiceNotes = (AutoDownloadMode)container.GetInt32("voiceNotes", (int)AutoDownloadMode.All);
-            _videoNotes = (AutoDownloadMode)container.GetInt32("videoNotes", (int)AutoDownloadMode.All);
-            _audios = (AutoDownloadMode)container.GetInt32("audios", (int)AutoDownloadMode.None);
-            _animations = (AutoDownloadMode)container.GetInt32("animations", (int)AutoDownloadMode.All);
+            _videos = (AutoDownloadMode)container.GetInt32("videos", (int)AutoDownloadMode.All);
+            _maximumVideoSize = container.GetInt32("maxVideoSize", 10 * 1024 * 1024);
+            _documents = (AutoDownloadMode)container.GetInt32("documents", (int)AutoDownloadMode.All);
+            _maximumDocumentSize = container.GetInt32("maxDocumentSize", 3 * 1024 * 1024);
         }
 
         public void Save(ApplicationDataContainer container)
@@ -81,10 +73,6 @@ namespace Unigram.Services.Settings
             container.Values["maxVideoSize"] = _maximumVideoSize;
             container.Values["documents"] = (int)_documents;
             container.Values["maxDocumentSize"] = _maximumDocumentSize;
-            container.Values["voiceNotes"] = (int)_voiceNotes;
-            container.Values["videoNotes"] = (int)_videoNotes;
-            container.Values["audios"] = (int)_audios;
-            container.Values["animations"] = (int)_animations;
         }
 
         public static AutoDownloadSettings Default
@@ -93,44 +81,55 @@ namespace Unigram.Services.Settings
             {
                 var preferences = new AutoDownloadSettings();
                 preferences._photos = AutoDownloadMode.All;
-                preferences._videos = AutoDownloadMode.None;
-                preferences._maximumVideoSize = 10;
-                preferences._documents = AutoDownloadMode.None;
-                preferences._maximumDocumentSize = 10;
-                preferences._voiceNotes = AutoDownloadMode.All;
-                preferences._videoNotes = AutoDownloadMode.All;
-                preferences._audios = AutoDownloadMode.None;
-                preferences._animations = AutoDownloadMode.All;
+                preferences._videos = AutoDownloadMode.All;
+                preferences._maximumVideoSize = 10 * 1024 * 1024;
+                preferences._documents = AutoDownloadMode.All;
+                preferences._maximumDocumentSize = 3 * 1024 * 1024;
                 return preferences;
+            }
+        }
 
+        public static AutoDownloadSettings FromPreset(Telegram.Td.Api.AutoDownloadSettings preset)
+        {
+            var preferences = new AutoDownloadSettings();
+            preferences._disabled = !preset.IsAutoDownloadEnabled;
+            preferences._photos = AutoDownloadMode.All;
+            preferences._videos = AutoDownloadMode.All;
+            preferences._maximumVideoSize = preset.MaxVideoFileSize;
+            preferences._documents = AutoDownloadMode.All;
+            preferences._maximumDocumentSize = preset.MaxOtherFileSize;
+            return preferences;
+        }
+
+        public bool IsDefault
+        {
+            get
+            {
+                return _photos == AutoDownloadMode.All &&
+                    _videos == AutoDownloadMode.All &&
+                    _maximumVideoSize == 10 * 1024 * 1024 &&
+                    _documents == AutoDownloadMode.All &&
+                    _maximumDocumentSize == 3 * 1024 * 1024;
             }
         }
 
         private bool _disabled;
-
-        private AutoDownloadMode _photos;
-        private AutoDownloadMode _videos;
-        private int _maximumVideoSize;
-        private AutoDownloadMode _documents;
-        private int _maximumDocumentSize;
-        private AutoDownloadMode _voiceNotes;
-        private AutoDownloadMode _videoNotes;
-        private AutoDownloadMode _audios;
-        private AutoDownloadMode _animations;
-
-
-
         public bool Disabled => _disabled;
 
+        private AutoDownloadMode _photos;
         public AutoDownloadMode Photos => _photos;
+
+        private AutoDownloadMode _videos;
         public AutoDownloadMode Videos => _videos;
+
+        private int _maximumVideoSize;
         public int MaximumVideoSize => _maximumVideoSize;
+
+        private AutoDownloadMode _documents;
         public AutoDownloadMode Documents => _documents;
+
+        private int _maximumDocumentSize;
         public int MaximumDocumentSize => _maximumDocumentSize;
-        public AutoDownloadMode VoiceNotes => _voiceNotes;
-        public AutoDownloadMode VideoNotes => _videoNotes;
-        public AutoDownloadMode Audios => _audios;
-        public AutoDownloadMode Animations => _animations;
 
         public AutoDownloadSettings UpdateDisabled(bool disabled)
         {
@@ -141,10 +140,6 @@ namespace Unigram.Services.Settings
             preferences._maximumVideoSize = _maximumVideoSize;
             preferences._documents = _documents;
             preferences._maximumDocumentSize = _maximumDocumentSize;
-            preferences._voiceNotes = _voiceNotes;
-            preferences._videoNotes = _videoNotes;
-            preferences._audios = _audios;
-            preferences._animations = _animations;
             return preferences;
         }
 
@@ -156,10 +151,6 @@ namespace Unigram.Services.Settings
             preferences._maximumVideoSize = _maximumVideoSize;
             preferences._documents = _documents;
             preferences._maximumDocumentSize = _maximumDocumentSize;
-            preferences._voiceNotes = _voiceNotes;
-            preferences._videoNotes = _videoNotes;
-            preferences._audios = _audios;
-            preferences._animations = _animations;
             return preferences;
         }
 
@@ -171,10 +162,6 @@ namespace Unigram.Services.Settings
             preferences._maximumVideoSize = maximumSize;
             preferences._documents = _documents;
             preferences._maximumDocumentSize = _maximumDocumentSize;
-            preferences._voiceNotes = _voiceNotes;
-            preferences._videoNotes = _videoNotes;
-            preferences._audios = _audios;
-            preferences._animations = _animations;
             return preferences;
         }
 
@@ -186,78 +173,14 @@ namespace Unigram.Services.Settings
             preferences._maximumVideoSize = _maximumVideoSize;
             preferences._documents = mode;
             preferences._maximumDocumentSize = maximumSize;
-            preferences._voiceNotes = _voiceNotes;
-            preferences._videoNotes = _videoNotes;
-            preferences._audios = _audios;
-            preferences._animations = _animations;
-            return preferences;
-        }
-
-        public AutoDownloadSettings UpdateVoiceNotesMode(AutoDownloadMode mode)
-        {
-            var preferences = new AutoDownloadSettings();
-            preferences._photos = _photos;
-            preferences._videos = _videos;
-            preferences._maximumVideoSize = _maximumVideoSize;
-            preferences._documents = _documents;
-            preferences._maximumDocumentSize = _maximumDocumentSize;
-            preferences._voiceNotes = mode;
-            preferences._videoNotes = _videoNotes;
-            preferences._audios = _audios;
-            preferences._animations = _animations;
-            return preferences;
-        }
-
-        public AutoDownloadSettings UpdateVideoNotesMode(AutoDownloadMode mode)
-        {
-            var preferences = new AutoDownloadSettings();
-            preferences._photos = _photos;
-            preferences._videos = _videos;
-            preferences._maximumVideoSize = _maximumVideoSize;
-            preferences._documents = _documents;
-            preferences._maximumDocumentSize = _maximumDocumentSize;
-            preferences._voiceNotes = _voiceNotes;
-            preferences._videoNotes = mode;
-            preferences._audios = _audios;
-            preferences._animations = _animations;
-            return preferences;
-        }
-
-        public AutoDownloadSettings UpdateAnimationsMode(AutoDownloadMode mode)
-        {
-            var preferences = new AutoDownloadSettings();
-            preferences._photos = _photos;
-            preferences._videos = _videos;
-            preferences._maximumVideoSize = _maximumVideoSize;
-            preferences._documents = _documents;
-            preferences._maximumDocumentSize = _maximumDocumentSize;
-            preferences._voiceNotes = _voiceNotes;
-            preferences._videoNotes = _videoNotes;
-            preferences._animations = mode;
-            preferences._audios = _audios;
-            return preferences;
-        }
-
-        public AutoDownloadSettings UpdateAudiosMode(AutoDownloadMode mode)
-        {
-            var preferences = new AutoDownloadSettings();
-            preferences._photos = _photos;
-            preferences._videos = _videos;
-            preferences._maximumVideoSize = _maximumVideoSize;
-            preferences._documents = _documents;
-            preferences._maximumDocumentSize = _maximumDocumentSize;
-            preferences._voiceNotes = _voiceNotes;
-            preferences._videoNotes = _videoNotes;
-            preferences._animations = _animations;
-            preferences._audios = mode;
             return preferences;
         }
 
 
 
-        public bool ShouldDownload(AutoDownloadMode mode, AutoDownloadChat chat, NetworkType networkType)
+        public bool ShouldDownload(AutoDownloadMode mode, AutoDownloadChat chat, NetworkType networkType = null)
         {
-            bool isWiFi = networkType is NetworkTypeWiFi;
+            bool isWiFi = networkType is NetworkTypeWiFi || networkType == null;
             bool isCellular = !isWiFi && !(networkType is NetworkTypeNone);
 
             bool shouldDownload = false;
@@ -298,7 +221,7 @@ namespace Unigram.Services.Settings
             return shouldDownload;
         }
 
-        public bool ShouldDownloadPhoto(AutoDownloadChat chat, NetworkType networkType)
+        public bool ShouldDownloadPhoto(AutoDownloadChat chat, NetworkType networkType = null)
         {
             if (_disabled)
             {
@@ -308,14 +231,14 @@ namespace Unigram.Services.Settings
             return ShouldDownload(_photos, chat, networkType);
         }
 
-        public bool ShouldDownloadVideo(AutoDownloadChat chat, NetworkType networkType, int size)
+        public bool ShouldDownloadVideo(AutoDownloadChat chat, int size, NetworkType networkType = null)
         {
             if (_disabled)
             {
                 return false;
             }
 
-            if ((size / 1024f) / 1024f > _maximumVideoSize)
+            if (size > _maximumVideoSize)
             {
                 return false;
             }
@@ -323,59 +246,19 @@ namespace Unigram.Services.Settings
             return ShouldDownload(_videos, chat, networkType);
         }
 
-        public bool ShouldDownloadDocument(AutoDownloadChat chat, NetworkType networkType, int size)
+        public bool ShouldDownloadDocument(AutoDownloadChat chat, int size, NetworkType networkType = null)
         {
             if (_disabled)
             {
                 return false;
             }
 
-            if ((size / 1024f) / 1024f > _maximumDocumentSize)
+            if (size > _maximumDocumentSize)
             {
                 return false;
             }
 
             return ShouldDownload(_documents, chat, networkType);
-        }
-
-        public bool ShouldDownloadVoiceNote(AutoDownloadChat chat, NetworkType networkType)
-        {
-            if (_disabled)
-            {
-                return false;
-            }
-
-            return ShouldDownload(_voiceNotes, chat, networkType);
-        }
-
-        public bool ShouldDownloadVideoNote(AutoDownloadChat chat, NetworkType networkType)
-        {
-            if (_disabled)
-            {
-                return false;
-            }
-
-            return ShouldDownload(_videoNotes, chat, networkType);
-        }
-
-        public bool ShouldDownloadAnimation(AutoDownloadChat chat, NetworkType networkType)
-        {
-            if (_disabled)
-            {
-                return false;
-            }
-
-            return ShouldDownload(_animations, chat, networkType);
-        }
-
-        public bool ShouldDownloadAudio(AutoDownloadChat chat, NetworkType networkType)
-        {
-            if (_disabled)
-            {
-                return false;
-            }
-
-            return ShouldDownload(_audios, chat, networkType);
         }
     }
 }

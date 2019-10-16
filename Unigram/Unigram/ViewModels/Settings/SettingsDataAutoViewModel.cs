@@ -27,38 +27,33 @@ namespace Unigram.ViewModels.Settings
                 _type = type;
 
                 Title = type == AutoDownloadType.Photos
-                    ? Strings.Resources.LocalPhotoCache
+                    ? Strings.Resources.AutoDownloadPhotos
                     : type == AutoDownloadType.Videos
-                    ? Strings.Resources.LocalVideoCache
-                    : type == AutoDownloadType.Documents
-                    ? Strings.Resources.FilesDataUsage
-                    : type == AutoDownloadType.VideoNotes
-                    ? Strings.Resources.VideoMessagesAutodownload
-                    : type == AutoDownloadType.VoiceNotes
-                    ? Strings.Resources.AudioAutodownload
-                    : type == AutoDownloadType.Audios
-                    ? Strings.Resources.LocalMusicCache
-                    : Strings.Resources.LocalGifCache;
+                    ? Strings.Resources.AutoDownloadVideos
+                    : Strings.Resources.AutoDownloadFiles;
+                Header = type == AutoDownloadType.Photos
+                    ? Strings.Resources.AutoDownloadPhotosTitle
+                    : type == AutoDownloadType.Videos
+                    ? Strings.Resources.AutoDownloadVideosTitle
+                    : Strings.Resources.AutoDownloadFilesTitle;
 
                 var preferences = Settings.AutoDownload;
                 var mode = type == AutoDownloadType.Photos
                     ? preferences.Photos
                     : type == AutoDownloadType.Videos
                     ? preferences.Videos
-                    : type == AutoDownloadType.Documents
-                    ? preferences.Documents
-                    : type == AutoDownloadType.VideoNotes
-                    ? preferences.VideoNotes
-                    : type == AutoDownloadType.VoiceNotes
-                    ? preferences.VoiceNotes
-                    : type == AutoDownloadType.Audios
-                    ? preferences.Audios
-                    : preferences.Animations;
+                    : preferences.Documents;
+                var limit = type == AutoDownloadType.Photos
+                    ? 0
+                    : type == AutoDownloadType.Videos
+                    ? preferences.MaximumVideoSize
+                    : preferences.MaximumDocumentSize;
 
                 Contacts = mode.HasFlag(AutoDownloadMode.WifiContacts);
                 PrivateChats = mode.HasFlag(AutoDownloadMode.WifiPrivateChats);
                 Groups = mode.HasFlag(AutoDownloadMode.WifiGroups);
                 Channels = mode.HasFlag(AutoDownloadMode.WifiChannels);
+                Limit = limit;
             }
 
             return Task.CompletedTask;
@@ -67,67 +62,53 @@ namespace Unigram.ViewModels.Settings
         private string _title;
         public string Title
         {
-            get
-            {
-                return _title;
-            }
-            set
-            {
-                Set(ref _title, value);
-            }
+            get => _title;
+            set => Set(ref _title, value);
+        }
+
+        private string _header;
+        public string Header
+        {
+            get => _header;
+            set => Set(ref _header, value);
         }
 
         private bool _contacts;
         public bool Contacts
         {
-            get
-            {
-                return _contacts;
-            }
-            set
-            {
-                Set(ref _contacts, value);
-            }
+            get => _contacts;
+            set => Set(ref _contacts, value);
         }
 
         private bool _privateChats;
         public bool PrivateChats
         {
-            get
-            {
-                return _privateChats;
-            }
-            set
-            {
-                Set(ref _privateChats, value);
-            }
+            get => _privateChats;
+            set => Set(ref _privateChats, value);
         }
 
         private bool _groups;
         public bool Groups
         {
-            get
-            {
-                return _groups;
-            }
-            set
-            {
-                Set(ref _groups, value);
-            }
+            get => _groups;
+            set => Set(ref _groups, value);
         }
 
         private bool _channels;
         public bool Channels
         {
-            get
-            {
-                return _channels;
-            }
-            set
-            {
-                Set(ref _channels, value);
-            }
+            get => _channels;
+            set => Set(ref _channels, value);
         }
+
+        private int _limit;
+        public int Limit
+        {
+            get => _limit;
+            set => Set(ref _limit, value);
+        }
+
+        public bool IsLimitSupported => _type != AutoDownloadType.Photos;
 
         public RelayCommand SendCommand { get; }
         private void SendExecute()
@@ -158,27 +139,11 @@ namespace Unigram.ViewModels.Settings
             }
             else if (_type == AutoDownloadType.Videos)
             {
-                preferences = preferences.UpdateVideosMode(mode, 10);
+                preferences = preferences.UpdateVideosMode(mode, _limit);
             }
             else if (_type == AutoDownloadType.Documents)
             {
-                preferences = preferences.UpdateDocumentsMode(mode, 10);
-            }
-            else if (_type == AutoDownloadType.VoiceNotes)
-            {
-                preferences = preferences.UpdateVoiceNotesMode(mode);
-            }
-            else if (_type == AutoDownloadType.VideoNotes)
-            {
-                preferences = preferences.UpdateVideoNotesMode(mode);
-            }
-            else if (_type == AutoDownloadType.Audios)
-            {
-                preferences = preferences.UpdateAudiosMode(mode);
-            }
-            else if (_type == AutoDownloadType.Animations)
-            {
-                preferences = preferences.UpdateAnimationsMode(mode);
+                preferences = preferences.UpdateDocumentsMode(mode, _limit);
             }
 
             Settings.AutoDownload = preferences;

@@ -10,7 +10,7 @@ namespace Unigram.Converters
 {
     public class FileSizeConverter : IValueConverter
     {
-        public static string Convert(long bytesCount)
+        public static string Convert(long bytesCount, bool allowGb = false)
         {
             if (bytesCount < 1024L)
             {
@@ -20,15 +20,15 @@ namespace Unigram.Converters
             {
                 return string.Format("{0} KB", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
-            //if (bytesCount < 1073741824L)
+            if (bytesCount >= 1073741824L && allowGb)
             {
-                return string.Format("{0} MB", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+                return string.Format("{0} GB", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
 
-            return string.Format("{0} GB", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+            return string.Format("{0} MB", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
         }
 
-        public static string Convert(long bytesCount, long total)
+        public static string Convert(long bytesCount, long total, bool allowGb = false)
         {
             if (total < 1024L)
             {
@@ -38,12 +38,12 @@ namespace Unigram.Converters
             {
                 return string.Format("{0} ", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
-            //if (total < 1073741824L)
+            if (total >= 1073741824L && allowGb)
             {
-                return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+                return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
 
-            return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+            return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
         }
 
         public object Convert(object value, Type targetType, object parameter, string language)

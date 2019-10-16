@@ -16,18 +16,6 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Page.Resources>
-        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
-            <Setter Property="Padding" Value="0,8,0,8"/>
-        </Style>
-
-        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-            <Setter Property="Margin" Value="12,8,12,0"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -44,8 +32,8 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Margin="0,0,0,48">
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource WhenUsingMobileData}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{x:Bind ViewModel.Header, Mode=OneWay}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadContacts}"
@@ -62,8 +50,23 @@
                         IsOn="{x:Bind ViewModel.Channels, Mode=TwoWay}"
                         Header="{CustomResource AutodownloadChannels}"
                         Style="{StaticResource CheckButtonStyle}"/>
-                    <Slider Header="{CustomResource AutodownloadSizeLimit}" Visibility="Collapsed"/>
-                </StackPanel>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
+                    Header="{CustomResource AutoDownloadMaxFileSize}"
+                    Footer="{x:Bind ConvertUpTo(ViewModel.Limit), Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsLimitSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Slider 
+                        Value="{x:Bind ConvertLimit(ViewModel.Limit), Mode=TwoWay, BindBack=ConvertLimitBack}"
+                        Minimum="0"
+                        Maximum="1"
+                        SmallChange="0.01"
+                        LargeChange="0.1"
+                        StepFrequency="0.01"
+                        IsThumbToolTipEnabled="False"
+                        Margin="12,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

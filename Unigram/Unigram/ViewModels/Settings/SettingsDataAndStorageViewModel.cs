@@ -55,6 +55,8 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public Services.Settings.AutoDownloadSettings AutoDownload => Settings.AutoDownload;
+
         public bool AutoDownloadEnabled
         {
             get
@@ -224,8 +226,18 @@ namespace Unigram.ViewModels.Settings
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                Settings.AutoDownload = Unigram.Services.Settings.AutoDownloadSettings.Default;
+                var response = await ProtoService.SendAsync(new GetAutoDownloadSettingsPresets());
+                if (response is AutoDownloadSettingsPresets presets)
+                {
+                    Settings.AutoDownload = Services.Settings.AutoDownloadSettings.FromPreset(presets.High);
+                }
+                else
+                {
+                    Settings.AutoDownload = Services.Settings.AutoDownloadSettings.Default;
+                }
+
                 RaisePropertyChanged(() => AutoDownloadEnabled);
+                RaisePropertyChanged(() => AutoDownload);
             }
         }
     }

@@ -119,35 +119,35 @@ namespace Unigram.ViewModels
 
             if (content is Animation animation)
             {
-                return Settings.AutoDownload.ShouldDownloadAnimation(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), animation.AnimationValue.Size);
             }
             else if (content is Audio audio)
             {
-                return Settings.AutoDownload.ShouldDownloadAudio(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), audio.AudioValue.Size);
             }
             else if (content is Document document)
             {
-                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), new NetworkTypeWiFi(), document.DocumentValue.Size);
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), document.DocumentValue.Size);
             }
             else if (content is Photo photo)
             {
-                return Settings.AutoDownload.ShouldDownloadPhoto(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadPhoto(GetChatType(chat));
             }
             else if (content is Sticker sticker)
             {
-
+                // Stickers aren't part of the deal
             }
             else if (content is Video video)
             {
-                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), new NetworkTypeWiFi(), video.VideoValue.Size);
+                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), video.VideoValue.Size);
             }
             else if (content is VideoNote videoNote)
             {
-                return Settings.AutoDownload.ShouldDownloadVideoNote(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), videoNote.Video.Size);
             }
             else if (content is VoiceNote voiceNote)
             {
-                return Settings.AutoDownload.ShouldDownloadVoiceNote(GetChatType(chat), new NetworkTypeWiFi());
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), voiceNote.Voice.Size);
             }
 
             return false;
