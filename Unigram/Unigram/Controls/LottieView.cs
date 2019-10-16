@@ -97,15 +97,18 @@ namespace Unigram.Controls
             }
 
             var index = _index;
-            var bitmap = _animation.RenderSync(sender, index, 256, 256);
-            args.DrawingSession.DrawImage(bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+            var framesPerUpdate = _limitFps ? _animation.FrameRate < 60 ? 1 : 2 : 1;
+
+            using (var bitmap = _animation.RenderSync(sender, index, 256, 256))
+            {
+                args.DrawingSession.DrawImage(bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+            }
 
             if (_animation is CachedAnimation animation && !animation.IsCached)
             {
                 animation.CreateCache(256, 256);
             }
 
-            var framesPerUpdate = _limitFps ? _animation.FrameRate < 60 ? 1 : 2 : 1;
             if (index + framesPerUpdate < _animation.TotalFrame)
             {
                 _index += framesPerUpdate;
