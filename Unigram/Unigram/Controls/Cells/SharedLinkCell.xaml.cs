@@ -39,11 +39,13 @@ namespace Unigram.Controls.Cells
             _protoService = protoService;
             _navigationService = navigationService;
 
-            var text = message.Content as MessageText;
-            if (text == null)
+            var caption = message.GetCaption();
+            if (caption == null)
             {
                 return;
             }
+
+            var text = message.Content as MessageText;
 
             var links = new List<string>();
             var hasThumb = false;
@@ -54,7 +56,7 @@ namespace Unigram.Controls.Cells
             string webPageLink = null;
             bool webPageCached = false;
 
-            var webPage = text.WebPage;
+            var webPage = text?.WebPage;
             if (webPage != null)
             {
 
@@ -71,32 +73,32 @@ namespace Unigram.Controls.Cells
                 //hasThumb = webPage.HasPhoto && webPage.Photo is TLPhoto photo && photo.Thumb != null;
             }
 
-            if (text.Text.Entities.Count > 0)
+            if (caption.Entities.Count > 0)
             {
-                for (int a = 0; a < text.Text.Entities.Count; a++)
+                for (int a = 0; a < caption.Entities.Count; a++)
                 {
-                    var entity = text.Text.Entities[a];
-                    if (entity.Length <= 0 || entity.Offset < 0 || entity.Offset >= text.Text.Text.Length)
+                    var entity = caption.Entities[a];
+                    if (entity.Length <= 0 || entity.Offset < 0 || entity.Offset >= caption.Text.Length)
                     {
                         continue;
                     }
-                    else if (entity.Offset + entity.Length > text.Text.Text.Length)
+                    else if (entity.Offset + entity.Length > caption.Text.Length)
                     {
-                        entity.Length = text.Text.Text.Length - entity.Offset;
+                        entity.Length = caption.Text.Length - entity.Offset;
                     }
 
-                    if (a == 0 && webPageLink != null && !(entity.Offset == 0 && entity.Length == text.Text.Text.Length))
+                    if (a == 0 && webPageLink != null && !(entity.Offset == 0 && entity.Length == caption.Text.Length))
                     {
-                        if (text.Text.Entities.Count == 1)
+                        if (caption.Entities.Count == 1)
                         {
                             if (description == null)
                             {
-                                description2 = text.Text.Text;
+                                description2 = caption.Text;
                             }
                         }
                         else
                         {
-                            description2 = text.Text.Text;
+                            description2 = caption.Text;
                         }
                     }
 
@@ -107,7 +109,7 @@ namespace Unigram.Controls.Cells
                         {
                             if (entity.Type is TextEntityTypeUrl)
                             {
-                                link = text.Text.Text.Substring(entity.Offset, entity.Length);
+                                link = caption.Text.Substring(entity.Offset, entity.Length);
                             }
                             else if (entity.Type is TextEntityTypeTextUrl textUrl)
                             {
@@ -138,9 +140,9 @@ namespace Unigram.Controls.Cells
                                     }
                                     title = title.Substring(0, 1).ToUpper() + title.Substring(1);
                                 }
-                                if (entity.Offset != 0 || entity.Length != text.Text.Text.Length)
+                                if (entity.Offset != 0 || entity.Length != caption.Text.Length)
                                 {
-                                    description = text.Text.Text;
+                                    description = caption.Text;
                                 }
                             }
                         }
@@ -148,11 +150,11 @@ namespace Unigram.Controls.Cells
                         {
                             if (title == null || title.Length == 0)
                             {
-                                link = "mailto:" + text.Text.Text.Substring(entity.Offset, entity.Length);
-                                title = text.Text.Text.Substring(entity.Offset, entity.Length);
-                                if (entity.Offset != 0 || entity.Length != text.Text.Text.Length)
+                                link = "mailto:" + caption.Text.Substring(entity.Offset, entity.Length);
+                                title = caption.Text.Substring(entity.Offset, entity.Length);
+                                if (entity.Offset != 0 || entity.Length != caption.Text.Length)
                                 {
-                                    description = text.Text.Text;
+                                    description = caption.Text;
                                 }
                             }
                         }

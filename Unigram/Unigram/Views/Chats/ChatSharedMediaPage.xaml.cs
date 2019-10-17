@@ -216,20 +216,17 @@ namespace Unigram.Views.Chats
             }
 
             var message = args.Item as Message;
-            if (message.Content is MessagePhoto photoMessage)
+            if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton hyperlink)
             {
-                if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton content)
+                if (message.Content is MessagePhoto photoMessage)
                 {
                     var small = photoMessage.Photo.GetSmall();
-                    var photo = content.Content as Image;
+                    var photo = hyperlink.Content as Image;
                     photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 0, 0);
                 }
-            }
-            else if (message.Content is MessageVideo videoMessage && videoMessage.Video.Thumbnail != null)
-            {
-                if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton content)
+                else if (message.Content is MessageVideo videoMessage && videoMessage.Video.Thumbnail != null)
                 {
-                    var grid = content.Content as Grid;
+                    var grid = hyperlink.Content as Grid;
                     var photo = grid.Children[0] as Image;
                     photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.Photo, 0, 0);
 
@@ -371,6 +368,7 @@ namespace Unigram.Views.Chats
                 foreach (var message in messages)
                 {
                     message.UpdateFile(file);
+
                     var container = ScrollingVoice.ContainerFromItem(message) as ListViewItem;
                     if (container == null)
                     {

@@ -15,7 +15,7 @@ namespace Unigram.Selectors
         public DataTemplate PhotoTemplate { get; set; }
         public DataTemplate VideoTemplate { get; set; }
         public DataTemplate TextTemplate { get; set; }
-        public DataTemplate DocumentTemplate { get; set; }
+        public DataTemplate MessageTemplate { get; set; }
         public DataTemplate HeaderDateTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
@@ -25,15 +25,15 @@ namespace Unigram.Selectors
                 switch (message.Content)
                 {
                     case MessagePhoto photo:
-                        return PhotoTemplate;
+                        return MessageTemplate ?? PhotoTemplate;
                     case MessageVideo video:
-                        return VideoTemplate;
+                        return MessageTemplate ?? VideoTemplate;
                     case MessageText text:
-                        return TextTemplate;
+                        return MessageTemplate ?? TextTemplate;
                     case MessageHeaderDate headerDate:
                         return HeaderDateTemplate;
                     default:
-                        return DocumentTemplate;
+                        return MessageTemplate;
                 }
             }
             else if (item is MessageViewModel viewModel)
@@ -41,15 +41,15 @@ namespace Unigram.Selectors
                 switch (viewModel.Content)
                 {
                     case MessagePhoto photo:
-                        return PhotoTemplate;
+                        return MessageTemplate ?? PhotoTemplate;
                     case MessageVideo video:
-                        return VideoTemplate;
+                        return MessageTemplate ?? VideoTemplate;
                     case MessageText text:
-                        return TextTemplate;
+                        return MessageTemplate ?? TextTemplate;
                     case MessageHeaderDate headerDate:
                         return HeaderDateTemplate;
                     default:
-                        return DocumentTemplate;
+                        return MessageTemplate;
                 }
             }
 

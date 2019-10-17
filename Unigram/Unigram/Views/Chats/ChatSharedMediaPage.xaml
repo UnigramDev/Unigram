@@ -142,11 +142,11 @@
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
-                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.MessageTemplate>
                                     <DataTemplate>
                                         <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
                                     </DataTemplate>
-                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                </selectors:MessageContentTemplateSelector.MessageTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
                                         <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
@@ -185,11 +185,11 @@
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
-                                <selectors:MessageContentTemplateSelector.TextTemplate>
+                                <selectors:MessageContentTemplateSelector.MessageTemplate>
                                     <DataTemplate>
                                         <cells:SharedLinkCell ContextRequested="Message_ContextRequested"/>
                                     </DataTemplate>
-                                </selectors:MessageContentTemplateSelector.TextTemplate>
+                                </selectors:MessageContentTemplateSelector.MessageTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
                                         <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
@@ -228,11 +228,11 @@
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
-                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.MessageTemplate>
                                     <DataTemplate>
                                         <cells:SharedAudioCell ContextRequested="Message_ContextRequested" Margin="0,6"/>
                                     </DataTemplate>
-                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                </selectors:MessageContentTemplateSelector.MessageTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
                                         <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
@@ -271,11 +271,11 @@
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
-                                <selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                <selectors:MessageContentTemplateSelector.MessageTemplate>
                                     <DataTemplate>
                                         <cells:SharedVoiceCell ContextRequested="Message_ContextRequested" Margin="0,6"/>
                                     </DataTemplate>
-                                </selectors:MessageContentTemplateSelector.DocumentTemplate>
+                                </selectors:MessageContentTemplateSelector.MessageTemplate>
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
                                         <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
