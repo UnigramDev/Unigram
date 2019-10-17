@@ -62,7 +62,9 @@ namespace Unigram.Services
                 return new NetworkTypeMobile();
             }
 
-            return new NetworkTypeOther();
+            // This is most likely cable connection.
+            //return new NetworkTypeOther();
+            return new NetworkTypeWiFi();
         }
 
         private NetworkType _type = new NetworkTypeOther();

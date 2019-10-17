@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
@@ -14,6 +15,12 @@ namespace Unigram.Converters
         {
             switch (value)
             {
+                case FileTypeNotes notes:
+                    return Strings.Resources.LocalAudioCache;
+                case FileTypeOther other:
+                    return Strings.Resources.MessagesDataUsage;
+                case FileTypeTotal total:
+                    return Strings.Resources.TotalDataUsage;
                 case FileTypeAnimation animation:
                     return Strings.Resources.LocalGifCache;
                 case FileTypeAudio audio:

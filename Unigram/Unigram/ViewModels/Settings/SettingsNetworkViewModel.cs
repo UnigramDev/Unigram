@@ -18,7 +18,7 @@ namespace Unigram.ViewModels.Settings
         public SettingsNetworkViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<KeyedList<TdNetworkType, NetworkStatisticsEntry>>();
+            Items = new MvxObservableCollection<NetworkStatisticsList>();
 
             ResetCommand = new RelayCommand(ResetExecute);
         }
@@ -49,7 +49,54 @@ namespace Unigram.ViewModels.Settings
                             }
                         }
 
-                        Items.ReplaceWith(groups.Select(x => new KeyedList<TdNetworkType, NetworkStatisticsEntry>(x.Key, x.Value)));
+                        foreach (var group in groups.ToList())
+                        {
+                            var notes = new NetworkStatisticsEntryFile(new FileTypeNotes(), null, 0, 0);
+                            var other = new NetworkStatisticsEntryFile(new FileTypeOther(), null, 0, 0);
+                            var total = new NetworkStatisticsEntryFile(new FileTypeTotal(), null, 0, 0);
+
+                            var results = new List<NetworkStatisticsEntry>
+                            {
+                                notes,
+                                other,
+                                total
+                            };
+
+                            foreach (var entry in group.Value)
+                            {
+                                if (entry is NetworkStatisticsEntryFile file)
+                                {
+                                    if (IsSecondaryType(file.FileType))
+                                    {
+                                        other.SentBytes += file.SentBytes;
+                                        other.ReceivedBytes += file.ReceivedBytes;
+                                    }
+                                    else if (IsNotesType(file.FileType))
+                                    {
+                                        notes.SentBytes += file.SentBytes;
+                                        notes.ReceivedBytes += file.ReceivedBytes;
+                                    }
+                                    else
+                                    {
+                                        results.Add(entry);
+                                    }
+
+                                    total.SentBytes += file.SentBytes;
+                                    total.ReceivedBytes += file.ReceivedBytes;
+                                }
+                                else if (entry is NetworkStatisticsEntryCall call) 
+                                {
+                                    results.Add(entry);
+
+                                    total.SentBytes += call.SentBytes;
+                                    total.ReceivedBytes += call.ReceivedBytes;
+                                }
+                            }
+
+                            groups[group.Key] = results;
+                        }
+
+                        Items.ReplaceWith(groups.Select(x => new NetworkStatisticsList(x.Key, x.Value.OrderBy(y => y, new NetworkStatisticsComparer()))));
                         SelectedItem = Items.FirstOrDefault();
                     });
                 }
@@ -58,33 +105,48 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
+        private bool IsSecondaryType(FileType type)
+        {
+            switch (type)
+            {
+                case FileTypePhoto photo:
+                case FileTypeVideo video:
+                case FileTypeVideoNote videoNote:
+                case FileTypeVoiceNote voiceNote:
+                case FileTypeDocument document:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        private bool IsNotesType(FileType type)
+        {
+            switch (type)
+            {
+                case FileTypeVideoNote videoNote:
+                case FileTypeVoiceNote voiceNote:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         private DateTime _sinceDate;
         public DateTime SinceDate
         {
-            get
-            {
-                return _sinceDate;
-            }
-            set
-            {
-                Set(ref _sinceDate, value);
-            }
+            get => _sinceDate;
+            set => Set(ref _sinceDate, value);
         }
 
-        private KeyedList<TdNetworkType, NetworkStatisticsEntry> _selectedItem;
-        public KeyedList<TdNetworkType, NetworkStatisticsEntry> SelectedItem
+        private NetworkStatisticsList _selectedItem;
+        public NetworkStatisticsList SelectedItem
         {
-            get
-            {
-                return _selectedItem;
-            }
-            set
-            {
-                Set(ref _selectedItem, value);
-            }
+            get => _selectedItem;
+            set => Set(ref _selectedItem, value);
         }
 
-        public MvxObservableCollection<KeyedList<TdNetworkType, NetworkStatisticsEntry>> Items { get; private set; }
+        public MvxObservableCollection<NetworkStatisticsList> Items { get; private set; }
 
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
@@ -95,6 +157,92 @@ namespace Unigram.ViewModels.Settings
                 await ProtoService.SendAsync(new ResetNetworkStatistics());
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
             }
+        }
+    }
+
+    public class NetworkStatisticsList : KeyedList<TdNetworkType, NetworkStatisticsEntry>
+    {
+        public NetworkStatisticsList(TdNetworkType key, IEnumerable<NetworkStatisticsEntry> source)
+            : base(key, source)
+        {
+        }
+
+        public override string ToString()
+        {
+            switch (Key)
+            {
+                case TdNetworkType.Mobile:
+                    return Strings.Resources.NetworkUsageMobile;
+                case TdNetworkType.MobileRoaming:
+                    return Strings.Resources.NetworkUsageRoaming;
+                case TdNetworkType.WiFi:
+                    return Strings.Resources.NetworkUsageWiFi;
+                default:
+                    return Key.ToString();
+            }
+        }
+    }
+
+    public class NetworkStatisticsComparer : IComparer<NetworkStatisticsEntry>
+    {
+        public int Compare(NetworkStatisticsEntry x, NetworkStatisticsEntry y)
+        {
+            var xv = GetValue(x);
+            var yv = GetValue(y);
+
+            return xv.CompareTo(yv);
+        }
+
+        private int GetValue(NetworkStatisticsEntry x)
+        {
+            switch (x)
+            {
+                case NetworkStatisticsEntryCall call:
+                    return 4;
+                case NetworkStatisticsEntryFile file:
+                    switch (file.FileType)
+                    {
+                        case FileTypePhoto photo:
+                            return 0;
+                        case FileTypeVideo video:
+                            return 1;
+                        case FileTypeNotes notes:
+                            return 2;
+                        case FileTypeDocument document:
+                            return 3;
+                        case FileTypeOther other:
+                            return 5;
+                        case FileTypeTotal total:
+                            return 6;
+                    }
+                    break;
+            }
+
+            return int.MaxValue;
+        }
+    }
+
+    public class FileTypeNotes : FileType
+    {
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class FileTypeOther : FileType
+    {
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class FileTypeTotal : FileType
+    {
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -27,6 +27,14 @@ namespace Unigram.Views.Settings
             DataContext = TLContainer.Current.Resolve<SettingsNetworkViewModel>();
         }
 
+        private void Header_BackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
+        {
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+        }
+
         #region Binding
 
         private string ConvertSinceDate(DateTime sinceDate)
@@ -36,10 +44,9 @@ namespace Unigram.Views.Settings
                 return null;
             }
 
-            return string.Format(Strings.Resources.NetworkUsageSince, BindConvert.Current.ShortDate.Format(sinceDate) + " " + BindConvert.Current.ShortTime.Format(sinceDate));
+            return string.Format(Strings.Resources.NetworkUsageSince, string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(sinceDate), BindConvert.Current.ShortTime.Format(sinceDate)));
         }
 
         #endregion
-
     }
 }
