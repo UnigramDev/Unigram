@@ -19,30 +19,36 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{CustomResource ProxySettings}" />
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  ItemClick="List_ItemClick"
-                  IsItemClickEnabled="True"
-                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                  Grid.Row="1">
+        <controls:TableListView
+            ItemsSource="{x:Bind ViewModel.Items}"
+            ItemClick="List_ItemClick"
+            IsItemClickEnabled="True"
+            SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+            VerticalContentAlignment="Top"
+            Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <controls:BadgeButton
-                        Content="{CustomResource AddProxy}"
-                        Command="{x:Bind ViewModel.AddCommand}"
-                        Margin="0,0,0,16"/>
+                    <controls:HeaderedControl>
+                        <controls:BadgeButton
+                            Content="{CustomResource AddProxy}"
+                            Command="{x:Bind ViewModel.AddCommand}"/>
+                    </controls:HeaderedControl>
 
-                    <TextBlock Text="{CustomResource ProxyConnections}"
-                               Foreground="{ThemeResource TelegramForegroundAccentBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               FontWeight="SemiBold"
-                               Margin="12,0,12,0"/>
+                    <Border MaxWidth="640">
+                        <TextBlock
+                            Text="{CustomResource ProxyConnections}"
+                            Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            FontWeight="SemiBold"
+                            Margin="12,16,12,8"/>
+                    </Border>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplateSelector>
@@ -77,24 +83,23 @@
             </ListView.ItemTemplateSelector>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Footer>
-                <StackPanel>
+                <controls:HeaderedControl
+                    Footer="{CustomResource UseProxyForCallsInfo}"
+                    Margin="0,0,0,24">
                     <CheckBox
                         x:Name="FieldCalls"
                         Content="{CustomResource UseProxyForCalls}"
                         IsEnabled="False"
-                        Margin="12,12,12,4"/>
-                    <TextBlock
-                        Text="{CustomResource UseProxyForCallsInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,0,12,12"
-                        Grid.Row="6"/>
-                </StackPanel>
+                        Margin="12,6,12,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+                </controls:HeaderedControl>
             </ListView.Footer>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </Page>
