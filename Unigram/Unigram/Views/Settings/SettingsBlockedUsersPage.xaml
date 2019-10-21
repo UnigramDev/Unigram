@@ -16,7 +16,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -26,13 +26,14 @@
             Text="{CustomResource BlockedUsers}"
             Glyph="&#xE109;"/>
 
-        <ListView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Items}"
-                  ItemClick="ListView_ItemClick"
-                  IsItemClickEnabled="True"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  Grid.Row="1">
+        <controls:TableListView
+            x:Name="ScrollingHost"
+            ItemsSource="{x:Bind ViewModel.Items}"
+            ItemClick="ListView_ItemClick"
+            IsItemClickEnabled="True"
+            ContainerContentChanging="OnContainerContentChanging"
+            SelectionMode="None"
+            Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,6" Background="Transparent" ContextRequested="User_ContextRequested">
@@ -60,16 +61,23 @@
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Header>
+                <Border Height="16"/>
+            </ListView.Header>
             <ListView.Footer>
-                <TextBlock
-                    Text="{CustomResource UnblockText}"
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="12"/>
+                <Border MaxWidth="640">
+                    <TextBlock
+                        Text="{CustomResource UnblockText}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,36"/>
+                </Border>
             </ListView.Footer>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </Page>
