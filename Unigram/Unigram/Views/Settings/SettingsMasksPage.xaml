@@ -16,39 +16,46 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{CustomResource Masks}"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  ItemClick="ListView_ItemClick"
-                  IsItemClickEnabled="True"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  CanReorderItems="True"
-                  AllowDrop="True"
-                  Grid.Row="1">
+        <controls:TableListView
+            ItemsSource="{x:Bind ViewModel.Items}"
+            ItemClick="ListView_ItemClick"
+            IsItemClickEnabled="True"
+            ContainerContentChanging="OnContainerContentChanging"
+            SelectionMode="None"
+            CanReorderItems="True"
+            AllowDrop="True"
+            Grid.Row="1">
             <ListView.Header>
-                <StackPanel>
-                    <controls:BadgeButton
-                        Content="{CustomResource ArchivedMasks}"
-                        Click="ArchivedStickers_Click"
-                        Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock
-                        Text="{CustomResource ArchivedMasksInfo}"
-                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,24"/>
-                </StackPanel>
+                <Grid>
+                    <controls:HeaderedControl
+                        Header="{CustomResource ArchivedMasksInfo}"
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <controls:BadgeButton
+                            Content="{CustomResource ArchivedMasks}"
+                            Click="ArchivedStickers_Click"
+                            Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"/>
+                    </controls:HeaderedControl>
+                    
+                    <Border
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse}"
+                        Height="16"/>
+                </Grid>
             </ListView.Header>
+            <ListView.Footer>
+                <Border Height="32"/>
+            </ListView.Footer>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                     <Setter Property="Padding" Value="12,0,0,0"/>
                 </Style>
             </ListView.ItemContainerStyle>
@@ -71,6 +78,6 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </Page>

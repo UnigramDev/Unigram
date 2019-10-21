@@ -9,28 +9,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{CustomResource StickersName}"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  ItemClick="ListView_ItemClick"
-                  IsItemClickEnabled="True"
-                  DragItemsCompleted="ListView_DragItemsCompleted"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  CanReorderItems="True"
-                  CanDragItems="True"
-                  SelectionMode="None"
-                  AllowDrop="True"
-                  Grid.Row="1">
+        <controls:TableListView
+            ItemsSource="{x:Bind ViewModel.Items}"
+            ItemClick="ListView_ItemClick"
+            IsItemClickEnabled="True"
+            DragItemsCompleted="ListView_DragItemsCompleted"
+            ContainerContentChanging="OnContainerContentChanging"
+            CanReorderItems="True"
+            CanDragItems="True"
+            SelectionMode="None"
+            AllowDrop="True"
+            Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl
-                        Footer="{CustomResource FeaturedStickersInfo}"
-                        Padding="0,0,0,8">
+                        Footer="{CustomResource FeaturedStickersInfo}">
                         <controls:BadgeButton
                             Content="{CustomResource SuggestStickers}"
                             Command="{x:Bind ViewModel.SuggestCommand}"
@@ -64,9 +64,14 @@
                     </controls:HeaderedControl>
                 </StackPanel>
             </ListView.Header>
+            <ListView.Footer>
+                <Border Height="32"/>
+            </ListView.Footer>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                     <Setter Property="Padding" Value="12,0,0,0"/>
                 </Style>
             </ListView.ItemContainerStyle>
@@ -89,9 +94,6 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.Footer>
-                <TextBlock x:Uid="SettingsStickersPage_Footer" common:MessageHelper.Text="Artists are welcome to add their own sticker sets using our @stickers bot.&#10;&#10;Tap on a sticker to view and add the whole set." Margin="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-            </ListView.Footer>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </Page>
