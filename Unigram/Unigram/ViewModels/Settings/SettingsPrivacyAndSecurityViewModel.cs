@@ -76,6 +76,24 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
+            ProtoService.Send(new GetActiveSessions(), result =>
+            {
+                if (result is Sessions sessions)
+                {
+                    BeginOnUIThread(() => ActiveSessions = sessions.SessionsValue.Count);
+                }
+            });
+
+            ProtoService.Send(new GetPasswordState(), result =>
+            {
+                if (result is PasswordState passwordState)
+                {
+                    BeginOnUIThread(() => IsPasswordEnabled = passwordState.HasPassword);
+                }
+            });
+
+            IsPasscodeEnabled = _passcodeService.IsEnabled;
+
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
@@ -91,27 +109,36 @@ namespace Unigram.ViewModels.Settings
         private int _accountTTL;
         public int AccountTTL
         {
-            get
-            {
-                return _accountTTL;
-            }
-            set
-            {
-                Set(ref _accountTTL, value);
-            }
+            get => _accountTTL;
+            set => Set(ref _accountTTL, value);
         }
 
         private int _blockedUsers;
         public int BlockedUsers
         {
-            get
-            {
-                return _blockedUsers;
-            }
-            set
-            {
-                Set(ref _blockedUsers, value);
-            }
+            get => _blockedUsers;
+            set => Set(ref _blockedUsers, value);
+        }
+
+        private int _activeSessions;
+        public int ActiveSessions
+        {
+            get => _activeSessions;
+            set => Set(ref _activeSessions, value);
+        }
+
+        private bool _isPasswordEnabled;
+        public bool IsPasswordEnabled
+        {
+            get => _isPasswordEnabled;
+            set => Set(ref _isPasswordEnabled, value);
+        }
+
+        private bool _isPasscodeEnabled;
+        public bool IsPasscodeEnabled
+        {
+            get => _isPasscodeEnabled;
+            set => Set(ref _isPasscodeEnabled, value);
         }
 
         public bool IsContactsSyncEnabled
