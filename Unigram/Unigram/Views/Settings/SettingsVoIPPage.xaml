@@ -9,23 +9,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.Resources>
-        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
-            <Setter Property="Padding" Value="0,8,12,0"/>
-            <Setter Property="Margin" Value="12,0,0,0"/>
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-            <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
-        </Style>
-
-        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-            <Setter Property="Margin" Value="0,8,12,8"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-    </Page.Resources>
-    
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -36,44 +20,38 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="Speakers and headphones" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-
+                <controls:HeaderedControl
+                    Header="Speakers and headphones">
                     <ComboBox Header="Output device"
                               ItemsSource="{x:Bind ViewModel.Output}"
                               SelectedItem="{x:Bind ViewModel.SelectedOutput, Mode=TwoWay}"
-                              DisplayMemberPath="Name">
-                        
-                    </ComboBox>
+                              DisplayMemberPath="Name"
+                              Margin="12,0"/>
 
                     <Slider Header="{x:Bind ConvertVolumeLabel(ViewModel.OutputVolume, x:True), Mode=OneWay}"
                             Value="{x:Bind ConvertVolume(ViewModel.OutputVolume), BindBack=ConvertVolumeOutput, Mode=TwoWay}"
-                            Margin="0,16,0,8"/>
-                </StackPanel>
+                            Margin="12,16,12,8"/>
+                </controls:HeaderedControl>
                 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="Microphone" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-
+                <controls:HeaderedControl
+                    Header="Microphone">
                     <ComboBox Header="Input device"
                               ItemsSource="{x:Bind ViewModel.Input}"
                               SelectedItem="{x:Bind ViewModel.SelectedInput, Mode=TwoWay}"
-                              DisplayMemberPath="Name">
-
-                    </ComboBox>
+                              DisplayMemberPath="Name"
+                              Margin="12,0"/>
 
                     <Slider Header="{x:Bind ConvertVolumeLabel(ViewModel.InputVolume, x:False), Mode=OneWay}"
                             Value="{x:Bind ConvertVolume(ViewModel.InputVolume), BindBack=ConvertVolumeInput, Mode=TwoWay}"
-                            Margin="0,16,0,8"/>
-                </StackPanel>
+                            Margin="12,16,12,8"/>
+                </controls:HeaderedControl>
 
-                <StackPanel BorderThickness="0" Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="Other settings" Margin="0,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-
+                <controls:HeaderedControl
+                    Header="Other settings">
                     <controls:BadgeButton
                         Content="Open system sound preferences"
-                        Command="{x:Bind ViewModel.SystemCommand}"
-                        Margin="-12,0,-12,0"/>
-                </StackPanel>
+                        Command="{x:Bind ViewModel.SystemCommand}"/>
+                </controls:HeaderedControl>
 
             </StackPanel>
         </ScrollViewer>
