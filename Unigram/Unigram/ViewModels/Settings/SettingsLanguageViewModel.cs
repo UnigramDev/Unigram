@@ -20,14 +20,12 @@ namespace Unigram.ViewModels.Settings
     {
         private readonly ILocaleService _localeService;
 
-        private object _separator;
-
         public SettingsLanguageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocaleService localeService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _localeService = localeService;
 
-            Items = new MvxObservableCollection<object>();
+            Items = new MvxObservableCollection<List<LanguagePackInfo>>();
 
             ChangeCommand = new RelayCommand<LanguagePackInfo>(ChangeExecute);
             DeleteCommand = new RelayCommand<LanguagePackInfo>(DeleteExecute);
@@ -38,23 +36,29 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(new GetLocalizationTargetInfo(false));
             if (response is LocalizationTargetInfo pack)
             {
-                var results = new List<object>();
+                var customs = new List<LanguagePackInfo>();
+                var results = new List<LanguagePackInfo>();
 
-                results.AddRange(pack.LanguagePacks.Where(x => x.IsInstalled).OrderBy(k => k.Name));
-
-                if (results.Count > 0)
-                {
-                    results.Add(_separator = new object());
-                }
-
+                customs.AddRange(pack.LanguagePacks.Where(x => x.IsInstalled).OrderBy(k => k.Name));
                 results.AddRange(pack.LanguagePacks.Where(x => !x.IsInstalled).OrderBy(k => k.Name));
 
-                Items.ReplaceWith(results);
+                var items = new List<List<LanguagePackInfo>>();
+
+                if (customs.Count > 0)
+                {
+                    items.Add(customs);
+                }
+                if (results.Count > 0)
+                {
+                    items.Add(results);
+                }
+
+                Items.ReplaceWith(items);
                 SelectedItem = pack.LanguagePacks.FirstOrDefault(x => x.Id == SettingsService.Current.LanguagePackId);
             }
         }
 
-        public MvxObservableCollection<object> Items { get; private set; }
+        public MvxObservableCollection<List<LanguagePackInfo>> Items { get; private set; }
 
         private LanguagePackInfo _selectedItem;
         public LanguagePackInfo SelectedItem
@@ -114,13 +118,18 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            ProtoService.Send(new DeleteLanguagePack(info.Id));
-            Items.Remove(info);
-
-            var any = Items.OfType<LanguagePackInfo>().FirstOrDefault(x => x.IsInstalled);
-            if (any == null)
+            var list = info.IsInstalled ? Items.FirstOrDefault() : Items.LastOrDefault();
+            if (list == null)
             {
-                Items.Remove(_separator);
+                return;
+            }
+
+            ProtoService.Send(new DeleteLanguagePack(info.Id));
+            list.Remove(info);
+
+            if (list.IsEmpty())
+            {
+                Items.Remove(list);
             }
 
             if (info.Id != SettingsService.Current.LanguagePackId)

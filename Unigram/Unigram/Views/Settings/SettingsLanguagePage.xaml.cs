@@ -60,21 +60,36 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
-    }
 
-    public class SettingsLanguageSelector : DataTemplateSelector
-    {
-        public DataTemplate LanguageTemplate { get; set; }
-        public DataTemplate SeparatorTemplate { get; set; }
-
-        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (item is LanguagePackInfo)
+            if (args.InRecycleQueue)
             {
-                return LanguageTemplate;
+                return;
             }
 
-            return SeparatorTemplate;
+            // Table layout
+            var first = false;
+            var last = false;
+
+            if (args.Item is LanguagePackInfo info)
+            {
+                var list = info.IsInstalled ? ViewModel.Items.FirstOrDefault() : ViewModel.Items.LastOrDefault();
+                if (list == null)
+                {
+                    return;
+                }
+
+                var index = list.IndexOf(info);
+                first = index == 0;
+                last = index == list.Count - 1;
+            }
+
+            var presenter = VisualTreeHelper.GetChild(args.ItemContainer, 0) as ListViewItemPresenter;
+            if (presenter != null)
+            {
+                presenter.CornerRadius = new CornerRadius(first ? 8 : 0, first ? 8 : 0, last ? 8 : 0, last ? 8 : 0);
+            }
         }
     }
 }
