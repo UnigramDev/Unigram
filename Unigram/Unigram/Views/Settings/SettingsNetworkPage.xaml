@@ -86,7 +86,8 @@
                         </ItemsControl.ItemTemplateSelector>
                     </ItemsControl>
                     <controls:HeaderedControl
-                        Footer="{x:Bind ConvertSinceDate(ViewModel.SinceDate), Mode=OneWay}">
+                        Footer="{x:Bind ConvertSinceDate(ViewModel.SinceDate), Mode=OneWay}"
+                        Margin="0,0,0,24">
                         <controls:BadgeButton
                             Command="{x:Bind ViewModel.ResetCommand, Mode=OneWay}"
                             Content="{CustomResource ResetStatistics}"

@@ -28,7 +28,7 @@
             AllowDrop="True"
             Grid.Row="1">
             <ListView.Header>
-                <StackPanel>
+                <StackPanel Margin="0,0,0,16">
                     <controls:HeaderedControl
                         Footer="{CustomResource FeaturedStickersInfo}">
                         <controls:BadgeButton
@@ -55,12 +55,11 @@
 
                     <controls:HeaderedControl
                         Footer="{CustomResource ArchivedStickersInfo}"
-                        Padding="0,16,0,24">
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <controls:BadgeButton
                             Content="{CustomResource ArchivedStickers}"
                             Click="ArchivedStickers_Click"
-                            Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"/>
                     </controls:HeaderedControl>
                 </StackPanel>
             </ListView.Header>

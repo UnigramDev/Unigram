@@ -12,7 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <contract7Present:Grid.BackgroundTransition>
             <BrushTransition/>
         </contract7Present:Grid.BackgroundTransition>
@@ -59,56 +59,58 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Margin="0,0,0,48">
-                <TextBlock Text="{CustomResource TextSizeHeader}" Margin="12,12,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
-                        AutomationProperties.Name="{CustomResource TextSizeHeader}"
-                        Minimum="0"
-                        Maximum="6"
-                        SmallChange="1"
-                        LargeChange="1"
-                        TickFrequency="1"
-                        TickPlacement="Outside"
-                        IsThumbToolTipEnabled="False"
-                        Margin="12,0,12,12"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource TextSizeHeader}">
+                    <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                            AutomationProperties.Name="{CustomResource TextSizeHeader}"
+                            Minimum="0"
+                            Maximum="6"
+                            SmallChange="1"
+                            LargeChange="1"
+                            TickFrequency="1"
+                            TickPlacement="Outside"
+                            IsThumbToolTipEnabled="False"
+                            Margin="12,6,12,6"/>
 
-                <Grid x:Name="Preview">
-                    <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"/>
-                    <StackPanel Padding="0,10">
-                        <messages:MessageBubble x:Name="Message1" HorizontalAlignment="Left"/>
-                        <messages:MessageBubble x:Name="Message2" HorizontalAlignment="Right">
-                            <FrameworkElement.Resources>
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <ResourceDictionary Source="ms-appx:///Themes/OutgoingOverride.xaml"/>
-                                    </ResourceDictionary.MergedDictionaries>
-                                </ResourceDictionary>
-                            </FrameworkElement.Resources>
-                        </messages:MessageBubble>
-                    </StackPanel>
-                </Grid>
+                    <Grid x:Name="Preview">
+                        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"/>
+                        <StackPanel Padding="0,10">
+                            <messages:MessageBubble x:Name="Message1" HorizontalAlignment="Left"/>
+                            <messages:MessageBubble x:Name="Message2" HorizontalAlignment="Right">
+                                <FrameworkElement.Resources>
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <ResourceDictionary Source="ms-appx:///Themes/OutgoingOverride.xaml"/>
+                                        </ResourceDictionary.MergedDictionaries>
+                                    </ResourceDictionary>
+                                </FrameworkElement.Resources>
+                            </messages:MessageBubble>
+                        </StackPanel>
+                    </Grid>
 
-                <controls:BadgeButton
-                    Content="{CustomResource ChatBackground}"
-                    Click="Wallpaper_Click"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource ChatBackground}"
+                        Click="Wallpaper_Click"/>
 
-                <controls:BadgeButtonWithImage
-                    Content="Emoji Set"
-                    Badge="{x:Bind ViewModel.EmojiSet, Mode=OneWay}"
-                    Command="{x:Bind ViewModel.EmojiSetCommand}"
-                    Style="{StaticResource ImageSubbadgeBadgeButtonStyle}">
-                    <controls:BadgeButtonWithImage.ImageSource>
-                        <BitmapImage UriSource="{x:Bind ViewModel.EmojiSetId, Mode=OneWay}" DecodePixelWidth="40" DecodePixelHeight="40"/>
-                    </controls:BadgeButtonWithImage.ImageSource>
-                </controls:BadgeButtonWithImage>
+                    <controls:BadgeButtonWithImage
+                        Content="Emoji Set"
+                        Badge="{x:Bind ViewModel.EmojiSet, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.EmojiSetCommand}"
+                        Style="{StaticResource ImageSubbadgeBadgeButtonStyle}">
+                        <controls:BadgeButtonWithImage.ImageSource>
+                            <BitmapImage UriSource="{x:Bind ViewModel.EmojiSetId, Mode=OneWay}" DecodePixelWidth="40" DecodePixelHeight="40"/>
+                        </controls:BadgeButtonWithImage.ImageSource>
+                    </controls:BadgeButtonWithImage>
 
-                <controls:BadgeButton
-                    Content="{CustomResource AutoNightTheme}"
-                    Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.IsNightModeAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Click="NightMode_Click"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource AutoNightTheme}"
+                        Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsNightModeAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Click="NightMode_Click"/>
+                </controls:HeaderedControl>
 
-                <StackPanel Padding="0,12,0,12" Margin="0,18,0,0">
-                    <TextBlock Text="{CustomResource ColorTheme}" Margin="12,0,0,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="{CustomResource ColorTheme}">
                     <ListView ItemsSource="{x:Bind ViewModel.Items}"
                               SelectionMode="None"
                               ContainerContentChanging="OnContainerContentChanging"
@@ -116,7 +118,7 @@
                               ItemContainerTransitions="{x:Null}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="services:ThemeInfoBase">
-                                <StackPanel Margin="12,0,0,12">
+                                <StackPanel Margin="12,12,0,12">
                                     <RadioButton Click="Switch_Click" Tag="{x:Bind}" GroupName="Theme" ContextRequested="Theme_ContextRequested" Style="{StaticResource ThemeRadioButtonStyle}">
                                         <RadioButton.Background>
                                             <SolidColorBrush Color="{x:Bind ChatBackgroundColor}"/>
@@ -167,17 +169,16 @@
                         Content="{CustomResource ShowAllThemes}"
                         Visibility="{x:Bind ViewModel.AreCustomThemesAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Click="Themes_Click"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel>
-                    <TextBlock Text="{CustomResource ChatList}" Margin="12,18,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-
+                <controls:HeaderedControl
+                    Header="{CustomResource ChatList}">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                   HorizontalScrollMode="Auto"
                                   VerticalScrollBarVisibility="Disabled"
                                   VerticalScrollMode="Disabled">
                         <StackPanel Margin="12,0" Orientation="Horizontal">
-                            <StackPanel Margin="0,0,12,12">
+                            <StackPanel Margin="0,12,12,12">
                                 <RadioButton IsChecked="{x:Bind ViewModel.UseDefaultLayout, Mode=TwoWay}" GroupName="Layout" Style="{StaticResource ChatListRadioButtonStyle}">
                                     <StackPanel>
                                         <Grid>
@@ -211,7 +212,7 @@
                                 <TextBlock Text="{CustomResource ChatListDefault}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </StackPanel>
 
-                            <StackPanel Margin="0,0,0,12">
+                            <StackPanel Margin="0,12,0,12">
                                 <RadioButton IsChecked="{x:Bind ViewModel.UseThreeLinesLayout, Mode=TwoWay}" GroupName="Layout" Style="{StaticResource ChatListRadioButtonStyle}">
                                     <StackPanel>
                                         <Grid>
@@ -251,12 +252,11 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,12"/>
-                </StackPanel>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
+                </controls:HeaderedControl>
 
-                <StackPanel>
-                    <TextBlock Text="{CustomResource Settings}" Margin="12,18,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-
+                <controls:HeaderedControl
+                    Header="{CustomResource Settings}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.AreAnimationsEnabled, Mode=TwoWay}"
                         Header="{CustomResource EnableAnimations}"
@@ -271,7 +271,7 @@
                         IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                         Header="Replace Emojis"
                         Style="{StaticResource CheckButtonStyle}"/>
-                </StackPanel>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>
