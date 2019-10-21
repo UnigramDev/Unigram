@@ -16,7 +16,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -63,8 +63,10 @@
                         SmallChange="0.01"
                         LargeChange="0.1"
                         StepFrequency="0.01"
+                        TickFrequency="0.25"
+                        TickPlacement="Outside"
                         IsThumbToolTipEnabled="False"
-                        Margin="12,0"/>
+                        Margin="12,6,12,0"/>
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
                 </controls:HeaderedControl>
             </StackPanel>
