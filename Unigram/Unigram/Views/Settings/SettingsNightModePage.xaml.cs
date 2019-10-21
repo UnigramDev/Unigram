@@ -108,9 +108,9 @@ namespace Unigram.Views.Settings
             return BindConvert.Current.ShortTime.Format(new DateTime(1, 1, 1, time.Hours, time.Minutes, 0));
         }
 
-        private string ConvertSunDate(BasicGeoposition location)
+        private string ConvertSunDate(bool enabled, BasicGeoposition location)
         {
-            if (location.Latitude == 0 && location.Longitude == 0)
+            if (location.Latitude == 0 && location.Longitude == 0 || !enabled)
             {
                 return null;
             }
