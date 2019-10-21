@@ -9,7 +9,7 @@
     d:DesignHeight="2000"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -21,7 +21,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Margin="0,0,0,24">
-                <controls:HeaderedControl Padding="0,0,0,8">
+                <controls:HeaderedControl>
                     <controls:BadgeButton
                         Content="{CustomResource BlockedUsers}"
                         Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
@@ -30,16 +30,19 @@
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource SessionsTitle}"
+                        Badge="{x:Bind ViewModel.ActiveSessions, Mode=OneWay}"
                         Glyph="&#xE975;"
                         Click="Sessions_Click"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource Passcode}"
+                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasscodeEnabled), Mode=OneWay}"
                         Glyph="&#xE928;"
                         Command="{x:Bind ViewModel.PasscodeCommand}"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource TwoStepVerification}"
+                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasswordEnabled), Mode=OneWay}"
                         Glyph="&#xE192;"
                         Click="Password_Click"
                         Style="{StaticResource TextGlyphButtonStyle}"/>

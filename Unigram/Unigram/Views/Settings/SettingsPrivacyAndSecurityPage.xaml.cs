@@ -82,6 +82,11 @@ namespace Unigram.Views.Settings
 
         #region Binding
 
+        private string ConvertOnOff(bool value)
+        {
+            return value ? Strings.Resources.NotificationsOn : Strings.Resources.NotificationsOff;
+        }
+
         private string ConvertSync(bool sync)
         {
             return sync ? Strings.Resources.SyncContactsInfoOn : Strings.Resources.SyncContactsInfoOff;

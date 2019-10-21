@@ -18,7 +18,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -33,17 +33,19 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <Grid>
-                    <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"/>
-                    <Grid Padding="0,10">
-                        <messages:MessageBubble x:Name="MessagePreview" HorizontalAlignment="Left"/>
-                        <ToolTip x:Name="ToolTip"
-                                 Content="{x:Bind ConvertToolTip(ViewModel.SelectedItem), Mode=OneWay}"
-                                 HorizontalAlignment="Left"
-                                 VerticalAlignment="Bottom"
-                                 Margin="22,0,0,-6"/>
+                <controls:HeaderedControl>
+                    <Grid>
+                        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"/>
+                        <Grid Padding="0,10">
+                            <messages:MessageBubble x:Name="MessagePreview" HorizontalAlignment="Left"/>
+                            <ToolTip x:Name="ToolTip"
+                                     Content="{x:Bind ConvertToolTip(ViewModel.SelectedItem), Mode=OneWay}"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Bottom"
+                                     Margin="22,0,0,-6"/>
+                        </Grid>
                     </Grid>
-                </Grid>
+                </controls:HeaderedControl>
                 <controls:HeaderedControl
                     Header="{CustomResource PrivacyForwardsTitle}"
                     Footer="{CustomResource PrivacyForwardsInfo}">
