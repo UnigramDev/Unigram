@@ -17,38 +17,38 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{CustomResource WebSessionsTitle}"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  IsItemClickEnabled="True"
-                  SelectionMode="None"
-                  ItemClick="ListView_ItemClick"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  Grid.Row="1">
+        <controls:TableListView
+            ItemsSource="{x:Bind ViewModel.Items}"
+            IsItemClickEnabled="True"
+            SelectionMode="None"
+            ItemClick="ListView_ItemClick"
+            ContainerContentChanging="OnContainerContentChanging"
+            Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <StackPanel Margin="0,0,0,24">
+                    <controls:HeaderedControl
+                        Footer="{CustomResource ClearOtherWebSessionsHelp}">
                         <controls:BadgeButton
                             Content="{CustomResource TerminateAllWebSessions}"
                             Foreground="Red"
                             Click="TerminateOthers_Click"/>
-                        <TextBlock 
-                            Text="{CustomResource ClearOtherWebSessionsHelp}"
-                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Margin="12,8,12,0"/>
-                    </StackPanel>
+                    </controls:HeaderedControl>
 
-                    <TextBlock Text="{CustomResource OtherWebSessions}"
-                               Foreground="{ThemeResource TelegramForegroundAccentBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               FontWeight="SemiBold"
-                               Margin="12,0,12,0"/>
+                    <Border MaxWidth="640">
+                        <TextBlock 
+                            Text="{CustomResource OtherWebSessions}"
+                            Foreground="{ThemeResource TelegramForegroundAccentBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            FontWeight="SemiBold"
+                            Margin="12,16,12,8"/>
+                    </Border>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -58,16 +58,19 @@
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Footer>
-                <TextBlock
-                    Text="{CustomResource TerminateWebSessionInfo}"
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="12"/>
+                <Border MaxWidth="640">
+                    <TextBlock
+                        Text="{CustomResource TerminateWebSessionInfo}"
+                        Style="{StaticResource InfoCaptionTextBlockStyle}"
+                        Margin="12,8,12,32"/>
+                </Border>
             </ListView.Footer>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </Page>
