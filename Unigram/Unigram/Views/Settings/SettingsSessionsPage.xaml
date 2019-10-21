@@ -21,7 +21,7 @@
         <CollectionViewSource x:Name="ItemsSource" Source="{x:Bind ViewModel.Items}" IsSourceGrouped="True"/>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -41,6 +41,7 @@
                             <Setter Property="Margin" Value="0"/>
                             <Setter Property="Padding" Value="0"/>
                             <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="MaxWidth" Value="640"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListViewHeaderItem">
@@ -57,13 +58,13 @@
                                            Visibility="{Binding Key.Footer, Converter={StaticResource NullToVisibilityConverter}}"
                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                           Margin="12,0,12,0"/>
+                                           Margin="12,8,12,8"/>
 
                                 <TextBlock Text="{Binding Key.Title}"
                                            Foreground="{ThemeResource TelegramForegroundAccentBrush}"
                                            Style="{StaticResource CaptionTextBlockStyle}"
                                            FontWeight="SemiBold"
-                                           Margin="12,24,12,0"/>
+                                           Margin="12,16,12,8"/>
                             </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -71,13 +72,10 @@
             </ListView.GroupStyle>
             <ListView.Header>
                 <StackPanel>
-                    <StackPanel Margin="0,12,0,0">
-                        <TextBlock Text="{CustomResource CurrentSession}"
-                                   Foreground="{ThemeResource TelegramForegroundAccentBrush}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   FontWeight="SemiBold"
-                                   Margin="12,0,12,0"/>
-                        <Grid Margin="12,8,12,16" Visibility="{x:Bind ViewModel.Current, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                    <controls:HeaderedControl
+                        Header="{CustomResource CurrentSession}"
+                        Footer="{CustomResource ClearOtherSessionsHelp}">
+                        <Grid Margin="12,8,12,8" Visibility="{x:Bind ViewModel.Current, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -104,17 +102,13 @@
 
                             <TextBlock Text="{CustomResource Online}" Margin="12,0,0,0" VerticalAlignment="Bottom" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Column="1"/>
                         </Grid>
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
 
                         <controls:BadgeButton
                             Content="{CustomResource TerminateAllSessions}"
                             Foreground="Red"
                             Command="{x:Bind ViewModel.TerminateOthersCommand}"/>
-                        <TextBlock 
-                            Text="{CustomResource ClearOtherSessionsHelp}"
-                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Margin="12,8,12,0"/>
-                    </StackPanel>
+                    </controls:HeaderedControl>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -124,15 +118,18 @@
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Footer>
-                <TextBlock
-                    Text="{CustomResource TerminateSessionInfo}"
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="12,0,12,12"/>
+                <Border MaxWidth="640">
+                    <TextBlock
+                        Text="{CustomResource TerminateSessionInfo}"
+                        Style="{StaticResource InfoCaptionTextBlockStyle}"
+                        Margin="12,8,12,32"/>
+                </Border>
             </ListView.Footer>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
