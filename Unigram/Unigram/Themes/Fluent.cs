@@ -53,7 +53,7 @@ namespace Unigram.Themes
             else
             {
                 // We don't want any kind of fluent effect prior to Fall Creators Update (so fluent will affect PCs only)
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx://Microsoft.UI.Xaml.2.1/Microsoft.UI.Xaml/Themes/rs2_themeresources.xaml") });
+                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx://Microsoft.UI.Xaml.2.2/Microsoft.UI.Xaml/Themes/rs2_themeresources.xaml") });
                 this["NavigationViewTopPaneHeight"] = 48d;
             }
         }

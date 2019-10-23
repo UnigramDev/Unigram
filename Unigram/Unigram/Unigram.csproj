@@ -344,6 +344,7 @@
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
     <Compile Include="Controls\TLContentDialog.cs" />
@@ -2141,8 +2142,8 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\ChatStatisticsPage.xaml">
       <SubType>Designer</SubType>
@@ -2570,13 +2571,13 @@
       <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.1.190405004.1</Version>
+      <Version>2.2.190917002</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml.Core.Direct">
       <Version>2.0.180924001-prerelease</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.1</Version>
+      <Version>12.0.2</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>4.0.0</Version>
@@ -2632,12 +2633,12 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="RLottie">
-      <HintPath>..\Libraries\rlottie\$(Platform)\RLottie.winmd</HintPath>
+      <HintPath>$(SolutionDir)\Libraries\rlottie\$(Platform)\RLottie.winmd</HintPath>
       <Implementation>RLottie.dll</Implementation>
     </Reference>
-    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.dll" />
-    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="..\Libraries\rlottie\$(Platform)\zlib1.dll" />
+    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\RLottie.dll" />
+    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\RLottie.pri" />
+    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

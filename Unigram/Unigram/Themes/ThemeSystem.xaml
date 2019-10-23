@@ -16,6 +16,7 @@
 
             <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
             <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+            <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
 
             <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
 
@@ -1238,6 +1239,7 @@
 
             <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
             <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
 
             <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
 

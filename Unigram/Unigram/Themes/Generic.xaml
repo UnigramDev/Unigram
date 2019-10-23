@@ -216,35 +216,89 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:HeaderedControl">
-                    <Grid Padding="{TemplateBinding Padding}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock
-                            Text="{TemplateBinding Header}"
-                            Margin="12,0,12,0"
-                            Style="{StaticResource SettingsGroupTextBlockStyle}"
-                            Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                            Grid.Column="1"/>
+                    <!--<Grid x:Name="LayoutRoot" Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="NarrowState"/>
+                                <VisualState x:Name="WideState">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}"/>
+                                        <Setter Target="ContentPanel.Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                                        <Setter Target="ContentPanel.CornerRadius" Value="8"/>
+                                        <Setter Target="Presenter.Margin" Value="0,0,0,-1"/>
+                                        <Setter Target="ContentRoot.MaxWidth" Value="640"/>
+                                        <Setter Target="HeaderLabel.Margin" Value="12,0,12,8"/>
+                                        <Setter Target="FooterLabel.Margin" Value="12,8,12,0"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="ContentRoot">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                x:Name="HeaderLabel"
+                                Text="{TemplateBinding Header}"
+                                Margin="12,0,12,0"
+                                Style="{StaticResource SettingsGroupTextBlockStyle}"
+                                Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                Grid.Column="1"/>
 
-                        <Border Grid.Column="1" Grid.Row="1">
-                            <ItemsPresenter/>
-                        </Border>
+                            <Border x:Name="ContentPanel" Grid.Column="1" Grid.Row="1">
+                                <ItemsPresenter x:Name="Presenter"/>
+                            </Border>
 
-                        <TextBlock
-                            Text="{TemplateBinding Footer}"
-                            Style="{StaticResource InfoCaptionTextBlockStyle}"
-                            Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                            Margin="12,8,12,0"
-                            Grid.Column="1"
-                            Grid.Row="2"/>
+                            <TextBlock
+                                x:Name="FooterLabel"
+                                common:TextBlockHelper.Markdown="{TemplateBinding Footer}"
+                                Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                Margin="12,8,12,0"
+                                Grid.Column="1"
+                                Grid.Row="2"/>
+                        </Grid>
+                    </Grid>-->
+                    <Grid x:Name="LayoutRoot" Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="NarrowState"/>
+                                <VisualState x:Name="WideState">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPanel.CornerRadius" Value="8"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="ContentRoot" MaxWidth="640">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                x:Name="HeaderLabel"
+                                Text="{TemplateBinding Header}"
+                                Margin="12,0,12,8"
+                                Style="{StaticResource SettingsGroupTextBlockStyle}"
+                                Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                Grid.Column="1"/>
+
+                            <Border x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="1" Grid.Row="1">
+                                <ItemsPresenter x:Name="Presenter" Margin="0,0,0,-1"/>
+                            </Border>
+
+                            <TextBlock
+                                x:Name="FooterLabel"
+                                common:TextBlockHelper.Markdown="{TemplateBinding Footer}"
+                                Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                Margin="12,8,12,0"
+                                Grid.Column="1"
+                                Grid.Row="2"/>
+                        </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

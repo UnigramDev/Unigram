@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
@@ -41,5 +42,20 @@ namespace Unigram.Controls
             DependencyProperty.Register("Footer", typeof(string), typeof(HeaderedControl), new PropertyMetadata(null));
 
         #endregion
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var size = base.ArrangeOverride(finalSize);
+            if (size.Width > 640)
+            {
+                VisualStateManager.GoToState(this, "WideState", false);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "NarrowState", false);
+            }
+
+            return size;
+        }
     }
 }
