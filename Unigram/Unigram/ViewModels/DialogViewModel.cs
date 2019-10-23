@@ -146,7 +146,7 @@ namespace Unigram.ViewModels
             MuteCommand = new RelayCommand(() => ToggleMuteExecute(false));
             UnmuteCommand = new RelayCommand(() => ToggleMuteExecute(true));
             ToggleSilentCommand = new RelayCommand(ToggleSilentExecute);
-            HideReportSpamCommand = new RelayCommand(HideReportSpamExecute);
+            RemoveActionBarCommand = new RelayCommand(RemoveActionBarExecute);
             ReportSpamCommand = new RelayCommand(ReportSpamExecute);
             ReportCommand = new RelayCommand(ReportExecute);
             OpenStickersCommand = new RelayCommand(OpenStickersExecute);
@@ -417,19 +417,6 @@ namespace Unigram.ViewModels
             get
             {
                 return _chat?.UnreadCount ?? 0;
-            }
-        }
-
-        private bool _isReportSpam;
-        public bool IsReportSpam
-        {
-            get
-            {
-                return _isReportSpam;
-            }
-            set
-            {
-                Set(ref _isReportSpam, value);
             }
         }
 
@@ -1842,16 +1829,6 @@ namespace Unigram.ViewModels
             ShowPinnedMessage(chat);
             ShowSwitchInline(state);
 
-            ProtoService.Send(new GetChatReportSpamState(chat.Id), result =>
-            {
-                if (result is ChatReportSpamState spamState)
-                {
-                    BeginOnUIThread(() => IsReportSpam = spamState.CanReportSpam);
-                }
-            });
-
-
-
             if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
             {
                 await HandlePackageAsync(package);
@@ -2464,8 +2441,8 @@ namespace Unigram.ViewModels
 
         #region Report Spam
 
-        public RelayCommand HideReportSpamCommand { get; }
-        private void HideReportSpamExecute()
+        public RelayCommand RemoveActionBarCommand { get; }
+        private void RemoveActionBarExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -2473,8 +2450,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            IsReportSpam = false;
-            ProtoService.Send(new ChangeChatReportSpamState(chat.Id, false));
+            ProtoService.Send(new RemoveChatActionBar(chat.Id));
         }
 
         public RelayCommand ReportSpamCommand { get; }
@@ -2486,42 +2462,38 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (IsReportSpam)
+            var message = Strings.Resources.ReportSpamAlert;
+            if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                var message = Strings.Resources.ReportSpamAlert;
-                if (chat.Type is ChatTypeSupergroup supergroup)
-                {
-                    message = supergroup.IsChannel ? Strings.Resources.ReportSpamAlertChannel : Strings.Resources.ReportSpamAlertGroup;
-                }
-                else if (chat.Type is ChatTypeBasicGroup)
-                {
-                    message = Strings.Resources.ReportSpamAlertGroup;
-                }
-
-                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-                if (confirm != ContentDialogResult.Primary)
-                {
-                    return;
-                }
-
-                IsReportSpam = false;
-                ProtoService.Send(new ChangeChatReportSpamState(chat.Id, true));
-
-                if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
-                {
-                    ProtoService.Send(new LeaveChat(chat.Id));
-                }
-                else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
-                {
-                    var user = ProtoService.GetUser(chat);
-                    if (user != null)
-                    {
-                        ProtoService.Send(new BlockUser(user.Id));
-                    }
-                }
-
-                ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
+                message = supergroup.IsChannel ? Strings.Resources.ReportSpamAlertChannel : Strings.Resources.ReportSpamAlertGroup;
             }
+            else if (chat.Type is ChatTypeBasicGroup)
+            {
+                message = Strings.Resources.ReportSpamAlertGroup;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            ProtoService.Send(new ReportChat(chat.Id, new ChatReportReasonSpam(), new long[0]));
+
+            if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
+            {
+                ProtoService.Send(new LeaveChat(chat.Id));
+            }
+            else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                var user = ProtoService.GetUser(chat);
+                if (user != null)
+                {
+                    ProtoService.Send(new BlockUser(user.Id));
+                }
+            }
+
+            ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
         }
 
         #endregion
@@ -2773,13 +2745,21 @@ namespace Unigram.ViewModels
         #region Share my contact
 
         public RelayCommand ShareContactCommand { get; }
-        private async void ShareContactExecute()
+        private void ShareContactExecute()
         {
-            var response = await ProtoService.SendAsync(new GetMe());
-            if (response is User user)
+            var chat = _chat;
+            if (chat == null)
             {
-                await SendContactAsync(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id));
+                return;
             }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new SharePhoneNumber(user.Id));
         }
 
         #endregion
@@ -2795,18 +2775,25 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var user = ProtoService.GetUser(chat);
+            var user = CacheService.GetUser(chat);
             if (user == null)
             {
                 return;
             }
 
-            var dialog = new EditUserNameView(user.FirstName, user.LastName);
+            var fullInfo = CacheService.GetUserFull(chat);
+            if (fullInfo == null)
+            {
+                return;
+            }
+
+            var dialog = new EditUserNameView(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new ImportContacts(new[] { new Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id) }));
+                ProtoService.Send(new AddContact(new Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
+                    fullInfo.NeedPhoneNumberPrivacyException ? dialog.SharePhoneNumber : true));
             }
         }
 

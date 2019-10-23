@@ -168,7 +168,7 @@ namespace Unigram.ViewModels
                 {
                     return AutoDownloadChat.OtherPrivateChat;
                 }
-                else if (user.OutgoingLink is LinkStateIsContact)
+                else if (user.IsContact)
                 {
                     return AutoDownloadChat.Contact;
                 }

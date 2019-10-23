@@ -28,12 +28,15 @@ namespace Unigram.Controls.Views
             SecondaryButtonText = Strings.Resources.Cancel;
         }
 
-        public EditUserNameView(string firstName, string lastName)
+        public EditUserNameView(string firstName, string lastName, bool showShare = false)
         {
             InitializeComponent();
 
             FirstName = firstName;
             LastName = lastName;
+
+            SharePhoneCheck.Content = string.Format(Strings.Resources.SharePhoneNumberWith, firstName);
+            SharePhoneCheck.Visibility = showShare ? Visibility.Visible : Visibility.Collapsed;
 
             Title = Strings.Resources.EditName;
             PrimaryButtonText = Strings.Resources.OK;
@@ -74,10 +77,19 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public Task<ContentDialogResult> ShowAsync(string firstName, string lastName)
+        public bool SharePhoneNumber
+        {
+            get => SharePhoneCheck.IsChecked == true;
+            set => SharePhoneCheck.IsChecked = value;
+        }
+
+        public Task<ContentDialogResult> ShowAsync(string firstName, string lastName, bool showShare = false)
         {
             FirstName = firstName;
             LastName = lastName;
+
+            SharePhoneCheck.Content = string.Format(Strings.Resources.SharePhoneNumberWith, firstName);
+            SharePhoneCheck.Visibility = showShare ? Visibility.Visible : Visibility.Collapsed;
 
             return this.ShowQueuedAsync();
         }

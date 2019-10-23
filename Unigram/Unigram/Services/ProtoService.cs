@@ -917,6 +917,20 @@ namespace Unigram.Services
             {
 
             }
+            else if (update is UpdateChatActionBar updateChatActionBar)
+            {
+                if (_chats.TryGetValue(updateChatActionBar.ChatId, out Chat value))
+                {
+                    value.ActionBar = updateChatActionBar.ActionBar;
+                }
+            }
+            else if (update is UpdateChatChatList updateChatChatList)
+            {
+                if (_chats.TryGetValue(updateChatChatList.ChatId, out Chat value))
+                {
+                    value.ChatList = updateChatChatList.ChatList;
+                }
+            }
             else if (update is UpdateChatDefaultDisableNotification updateChatDefaultDisableNotification)
             {
                 if (_chats.TryGetValue(updateChatDefaultDisableNotification.ChatId, out Chat value))

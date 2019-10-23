@@ -1727,13 +1727,16 @@ namespace Unigram.Views
             }
             if (user != null && user.Id != ViewModel.CacheService.Options.MyId)
             {
-                if (user.OutgoingLink is LinkStateNone)
+                if (!user.IsContact)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ShareContactCommand, Strings.Resources.ShareMyContactInfo, new FontIcon { Glyph = Icons.Share });
-                }
-                else if (user.OutgoingLink is LinkStateKnowsPhoneNumber)
-                {
-                    flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts);
+                    if (!string.IsNullOrEmpty(user.PhoneNumber))
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts);
+                    }
+                    else
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.ShareContactCommand, Strings.Resources.ShareMyContactInfo, new FontIcon { Glyph = Icons.Share });
+                    }
                 }
             }
             if (secret)
@@ -2242,7 +2245,7 @@ namespace Unigram.Views
                     return false;
                 }
 
-                if (user.OutgoingLink is LinkStateIsContact)
+                if (user.IsContact)
                 {
                     return false;
                 }
@@ -3019,11 +3022,12 @@ namespace Unigram.Views
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
 
+            UpdateChatActionBar(chat);
+
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
             UpdateChatDefaultDisableNotification(chat, chat.DefaultDisableNotification);
 
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
-            ReportSpam.Text = chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret ? Strings.Resources.ReportSpam : Strings.Resources.ReportSpamAndLeave;
 
             ButtonTimer.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
@@ -3050,6 +3054,72 @@ namespace Unigram.Views
         public void UpdateChatPhoto(Chat chat)
         {
             Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width);
+        }
+
+        public void UpdateChatActionBar(Chat chat)
+        {
+            Button CreateButton(string text, ICommand command, int column = 0)
+            {
+                var label = new TextBlock();
+                label.Style = App.Current.Resources["CaptionTextBlockStyle"] as Style;
+                label.Foreground = App.Current.Resources["SystemControlHighlightAccentBrush"] as Brush;
+                label.Text = text;
+
+                var button = new Button();
+                button.Style = App.Current.Resources["EmptyButtonStyle"] as Style;
+                button.HorizontalContentAlignment = HorizontalAlignment.Center;
+                button.VerticalContentAlignment = VerticalAlignment.Center;
+                button.Content = label;
+                button.Command = command;
+
+                ActionBarRoot.ColumnDefinitions.Add(new ColumnDefinition());
+                Grid.SetColumn(button, column);
+
+                return button;
+            }
+
+            ActionBarRoot.ColumnDefinitions.Clear();
+            ActionBarRoot.Children.Clear();
+
+            if (chat.ActionBar is ChatActionBarAddContact)
+            {
+                var user = ViewModel.CacheService.GetUser(chat);
+                if (user != null)
+                {
+                    ActionBarRoot.Children.Add(CreateButton(string.Format(Strings.Resources.AddContactFullChat, user.FirstName.ToUpper()), ViewModel.AddContactCommand));
+                }
+                else
+                {
+                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand));
+                }
+            }
+            else if (chat.ActionBar is ChatActionBarReportAddBlock)
+            {
+                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand));
+                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand, 1));
+            }
+            else if (chat.ActionBar is ChatActionBarReportSpam)
+            {
+                var user = ViewModel.CacheService.GetUser(chat);
+                if (user != null)
+                {
+                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand));
+                }
+                else
+                {
+                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamAndLeave, ViewModel.ReportSpamCommand));
+                }
+            }
+            else if (chat.ActionBar is ChatActionBarReportUnrelatedLocation)
+            {
+                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamLocation, ViewModel.ReportSpamCommand));
+            }
+            else if (chat.ActionBar is ChatActionBarSharePhoneNumber)
+            {
+                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ShareMyPhone, ViewModel.ShareContactCommand));
+            }
+
+            ActionBar.Visibility = ActionBarRoot.Children.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification)

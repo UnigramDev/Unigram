@@ -1363,7 +1363,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (user.OutgoingLink is LinkStateIsContact)
+            if (user.IsContact)
             {
                 return;
             }

@@ -144,7 +144,7 @@ namespace Unigram.ViewModels
         public void Handle(UpdateUserStatus update)
         {
             var user = CacheService.GetUser(update.UserId);
-            if (user == null || user.Id == CacheService.Options.MyId || user.OutgoingLink is LinkStateIsContact == false)
+            if (user == null || user.Id == CacheService.Options.MyId || !user.IsContact)
             {
                 return;
             }

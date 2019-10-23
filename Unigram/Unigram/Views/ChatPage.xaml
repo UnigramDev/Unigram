@@ -585,19 +585,20 @@
                 <messages:MessageReference x:Name="CallbackQueryAnswer" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
             </Grid>
 
-            <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
-                    Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                    Grid.Row="2">
+            <Grid
+                x:Name="ActionBar"
+                Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="48"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Command="{x:Bind ViewModel.ReportSpamCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                    <TextBlock x:Name="ReportSpam" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </Button>
+                <Grid x:Name="ActionBarRoot">
+                    
+                </Grid>
 
-                <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
+                <controls:GlyphButton Command="{x:Bind ViewModel.RemoveActionBarCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
             </Grid>
 
             <StackPanel x:Name="DateHeaderRelative" Grid.Row="3">
