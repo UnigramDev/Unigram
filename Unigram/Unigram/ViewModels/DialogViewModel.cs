@@ -166,6 +166,7 @@ namespace Unigram.ViewModels
             SwitchCommand = new RelayCommand<string>(SwitchExecute);
             SetTimerCommand = new RelayCommand(SetTimerExecute);
             ActionCommand = new RelayCommand(ActionExecute);
+            DiscussCommand = new RelayCommand(DiscussExecute);
             OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
@@ -274,6 +275,13 @@ namespace Unigram.ViewModels
             {
                 Set(ref _migratedChat, value);
             }
+        }
+
+        private Chat _linkedChat;
+        public Chat LinkedChat
+        {
+            get => _linkedChat;
+            set => Set(ref _linkedChat, value);
         }
 
         private Chat _chat;
@@ -1627,14 +1635,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private long _chatId;
-
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            //Aggregator.Subscribe(this);
-
-            _chatId = (long)parameter;
-
             var chat = ProtoService.GetChat((long)parameter);
             if (chat == null)
             {
@@ -3109,6 +3111,31 @@ namespace Unigram.ViewModels
                         ChatDeleteExecute();
                     }
                 }
+            }
+        }
+
+        #endregion
+
+        #region Linked chat
+
+        public RelayCommand DiscussCommand { get; }
+        private void DiscussExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var full = CacheService.GetSupergroupFull(chat);
+            if (full == null)
+            {
+                return;
+            }
+
+            if (full.LinkedChatId != 0)
+            {
+                NavigationService.NavigateToChat(full.LinkedChatId);
             }
         }
 

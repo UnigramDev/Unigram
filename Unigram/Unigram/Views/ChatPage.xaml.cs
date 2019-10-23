@@ -3433,6 +3433,9 @@ namespace Unigram.Views
 
             TextField.PlaceholderText = Strings.Resources.TypeMessage;
             UpdateUserStatus(chat, user);
+
+            DiscussColumn.Width = new GridLength(0, GridUnitType.Auto);
+            DiscussButton.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
@@ -3488,6 +3491,9 @@ namespace Unigram.Views
             {
                 ShowAction(Strings.Resources.EncryptionRejected, false);
             }
+
+            DiscussColumn.Width = new GridLength(0, GridUnitType.Auto);
+            DiscussButton.Visibility = Visibility.Collapsed;
         }
 
 
@@ -3508,6 +3514,9 @@ namespace Unigram.Views
 
                 ViewModel.LastSeen = Locale.Declension("Members", group.MemberCount);
             }
+
+            DiscussColumn.Width = new GridLength(0, GridUnitType.Auto);
+            DiscussButton.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -3550,6 +3559,17 @@ namespace Unigram.Views
                 {
                     ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
                 }
+
+                if (group.HasLinkedChat)
+                {
+                    DiscussColumn.Width = new GridLength(1, GridUnitType.Star);
+                    DiscussButton.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    DiscussColumn.Width = new GridLength(0, GridUnitType.Auto);
+                    DiscussButton.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
@@ -3580,6 +3600,9 @@ namespace Unigram.Views
                 {
                     ShowArea();
                 }
+
+                DiscussColumn.Width = new GridLength(0, GridUnitType.Auto);
+                DiscussButton.Visibility = Visibility.Collapsed;
             }
 
             TextField.PlaceholderText = group.IsChannel
@@ -3621,6 +3644,25 @@ namespace Unigram.Views
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
             ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
+
+            if (group.IsChannel && fullInfo.LinkedChatId != 0)
+            {
+                var linkedChat = ViewModel.CacheService.GetChat(fullInfo.LinkedChatId);
+                if (linkedChat == null)
+                {
+                    return;
+                }
+
+                if (linkedChat.UnreadCount > 0)
+                {
+                    DiscussBadgeLabel.Text = $"{linkedChat.UnreadCount}";
+                    DiscussBadge.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    DiscussBadge.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
 
