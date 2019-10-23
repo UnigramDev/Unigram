@@ -71,14 +71,14 @@ namespace Unigram.Views.Supergroups
 
                 Header.CommandVisibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 DismissPanel.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
-                Footer.Visibility = canBeEdited ? Visibility.Collapsed : Visibility.Visible;
+                PermissionsRoot.Footer = canBeEdited ? Strings.Resources.EditAdminCantEdit : null;
                 PermissionsPanel.IsEnabled = canBeEdited;
             }
             else
             {
                 Header.CommandVisibility = Visibility.Visible;
                 DismissPanel.Visibility = Visibility.Collapsed;
-                Footer.Visibility = Visibility.Collapsed;
+                PermissionsRoot.Footer = null;
                 PermissionsPanel.IsEnabled = true;
             }
 

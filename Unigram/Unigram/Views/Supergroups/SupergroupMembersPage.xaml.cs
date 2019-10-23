@@ -259,7 +259,7 @@ namespace Unigram.Views.Supergroups
             Title.Text = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
 
             AddNew.Content = group.IsChannel ? Strings.Resources.AddSubscriber : Strings.Resources.AddMember;
-            AddNew.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
 
             Footer.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -269,7 +269,7 @@ namespace Unigram.Views.Supergroups
             Title.Text = Strings.Resources.ChannelMembers;
 
             AddNew.Content = Strings.Resources.AddMember;
-            AddNew.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
 
             Footer.Visibility = Visibility.Collapsed;
         }

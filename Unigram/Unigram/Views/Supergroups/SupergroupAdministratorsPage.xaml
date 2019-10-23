@@ -16,35 +16,39 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{CustomResource ChannelAdministrators}"/>
 
-        <ListView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Members}"
-                  ItemClick="ListView_ItemClick"
-                  IsItemClickEnabled="True"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  Grid.Row="1">
+        <controls:TableListView
+            x:Name="ScrollingHost"
+            ItemsSource="{x:Bind ViewModel.Members}"
+            ItemClick="ListView_ItemClick"
+            IsItemClickEnabled="True"
+            ContainerContentChanging="OnContainerContentChanging"
+            SelectionMode="None"
+            Grid.Row="1">
             <ListView.Header>
-                <StackPanel Margin="0,0,0,18">
-                    <controls:BadgeButton x:Name="EventLog"
-                                          Content="{CustomResource EventLog}"
-                                          Command="{x:Bind ViewModel.EventLogCommand}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE81C;"/>
+                <controls:HeaderedControl
+                    Margin="0,0,0,16">
+                    <controls:BadgeButton
+                        x:Name="EventLog"
+                        Content="{CustomResource EventLog}"
+                        Command="{x:Bind ViewModel.EventLogCommand}"
+                        Style="{StaticResource GlyphBadgeButtonStyle}"
+                        Glyph="&#xE81C;"/>
 
-                    <controls:BadgeButton x:Name="AddNew"
-                                          Visibility="Collapsed"
-                                          Content="{CustomResource ChannelAddAdmin}"
-                                          Command="{x:Bind ViewModel.AddCommand}"
-                                          Style="{StaticResource TextGlyphButtonStyle}"
-                                          Glyph="&#xE734;"/>
-                </StackPanel>
+                    <controls:BadgeButton
+                        x:Name="AddNew"
+                        Visibility="Collapsed"
+                        Content="{CustomResource ChannelAddAdmin}"
+                        Command="{x:Bind ViewModel.AddCommand}"
+                        Style="{StaticResource TextGlyphButtonStyle}"
+                        Glyph="&#xE734;"/>
+                </controls:HeaderedControl>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -73,16 +77,20 @@
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Footer>
-                <TextBlock
-                    x:Name="Footer"
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="12"/>
+                <Border MaxWidth="640">
+                    <TextBlock
+                        x:Name="Footer"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,32"/>
+                </Border>
             </ListView.Footer>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </Page>

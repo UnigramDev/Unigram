@@ -64,16 +64,29 @@ namespace Unigram.Views.Supergroups
             {
                 var photo = content.Children[0] as Image;
 
-                var cover = stickerSet.Covers.FirstOrDefault();
-                if (cover == null || cover.Thumbnail == null)
+                var cover = stickerSet.Thumbnail ?? stickerSet.Covers.FirstOrDefault()?.Thumbnail;
+                if (cover == null)
                 {
                     return;
                 }
 
-                var file = cover.Thumbnail.Photo;
+                var file = cover.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    if (stickerSet.IsAnimated)
+                    {
+                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
+                        if (bitmap == null)
+                        {
+                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        }
+
+                        photo.Source = bitmap;
+                    }
+                    else
+                    {
+                        photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -110,16 +123,29 @@ namespace Unigram.Views.Supergroups
             title.Text = stickerSet.Title;
             subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
 
-            var cover = stickerSet.Covers.FirstOrDefault();
-            if (cover == null || cover.Thumbnail == null)
+            var cover = stickerSet.Thumbnail ?? stickerSet.Covers.FirstOrDefault()?.Thumbnail;
+            if (cover == null)
             {
                 return;
             }
 
-            var file = cover.Thumbnail.Photo;
+            var file = cover.Photo;
             if (file.Local.IsDownloadingCompleted)
             {
-                photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                if (stickerSet.IsAnimated)
+                {
+                    var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
+                    if (bitmap == null)
+                    {
+                        bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    }
+
+                    photo.Source = bitmap;
+                }
+                else
+                {
+                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -129,5 +155,6 @@ namespace Unigram.Views.Supergroups
         }
 
         #endregion
+
     }
 }

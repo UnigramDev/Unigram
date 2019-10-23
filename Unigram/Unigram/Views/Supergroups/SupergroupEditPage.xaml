@@ -17,7 +17,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -112,8 +112,9 @@
                                           Style="{StaticResource SubtitleBadgeButtonStyle}"/>
                 </StackPanel>
 
-                <StackPanel x:Name="InviteLinkPanel" Margin="0,24,0,0">
-                    <TextBlock Text="{CustomResource ChannelInviteLinkTitle}" Margin="12,8,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    x:Name="InviteLinkPanel"
+                    Header="{CustomResource ChannelInviteLinkTitle}">
                     <TextBox
                         x:Name="InviteLink"
                         IsReadOnly="True"
@@ -123,21 +124,19 @@
                         x:Name="RevokeLink"
                         Content="{CustomResource RevokeLink}"
                         Command="{x:Bind ViewModel.RevokeCommand}"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel x:Name="ChannelSignMessagesPanel" Margin="0,24,0,0">
+                <controls:HeaderedControl
+                    x:Name="ChannelSignMessagesPanel"
+                    Footer="{CustomResource ChannelSignMessagesInfo}">
                     <ToggleSwitch
                         Header="{CustomResource ChannelSignMessages}"
                         IsOn="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
                         Style="{StaticResource CheckButtonStyle}"/>
-                    <TextBlock
-                        Text="{CustomResource ChannelSignMessagesInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
+                </controls:HeaderedControl>
                 
-                <StackPanel x:Name="GroupMembersPanel" Margin="0,24,0,0">
+                <controls:HeaderedControl
+                    x:Name="GroupMembersPanel">
                     <controls:BadgeButton x:Name="Permissions"
                                           Content="{CustomResource ChannelPermissions}"
                                           Command="{x:Bind ViewModel.KickedCommand}"
@@ -158,31 +157,24 @@
                                           Command="{x:Bind ViewModel.BannedCommand}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xF140;"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel x:Name="GroupStickersPanel" Margin="0,24,0,0">
+                <controls:HeaderedControl
+                    x:Name="GroupStickersPanel"
+                    Footer="{CustomResource GroupStickersInfo}">
                     <controls:BadgeButton
                         x:Name="GroupStickers"
                         Content="{CustomResource GroupStickers}"
                         Command="{x:Bind ViewModel.EditStickerSetCommand}"/>
-                    <TextBlock
-                        Text="{CustomResource GroupStickersInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel x:Name="DeletePanel" Margin="0,24">
+                <controls:HeaderedControl
+                    x:Name="DeletePanel">
                     <controls:BadgeButton
                         x:Name="Delete"
                         Foreground="Red"
                         Command="{x:Bind ViewModel.DeleteCommand}"/>
-                    <TextBlock
-                        x:Name="DeleteInfo"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -179,7 +179,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -189,57 +189,78 @@
             Text="{CustomResource GroupStickers}"
             Glyph="&#xE10B;"/>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  ItemTemplate="{StaticResource StickerSetItemTemplate}"
-                  SelectedItem="{x:Bind ViewModel.ListSelectedItem, Mode=TwoWay}"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="Single"
-                  Grid.Row="1">
+        <controls:TableListView
+            ItemsSource="{x:Bind ViewModel.Items}"
+            ItemTemplate="{StaticResource StickerSetItemTemplate}"
+            SelectedItem="{x:Bind ViewModel.ListSelectedItem, Mode=TwoWay}"
+            ContainerContentChanging="OnContainerContentChanging"
+            SelectionMode="Single"
+            Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <TextBox x:Name="ShortName"
-                             Header="t.me/addstickers/"
-                             PlaceholderText="{CustomResource ChooseStickerSetPlaceholder}"
-                             Text="{x:Bind ViewModel.ShortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource InlinePlaceholderTextBoxStyle}"
-                             Margin="12,8,12,2"/>
+                    <controls:HeaderedControl
+                        Footer="{CustomResource ChooseStickerSetMy}">
+                        <TextBox x:Name="ShortName"
+                                 Header="t.me/addstickers/"
+                                 PlaceholderText="{CustomResource ChooseStickerSetPlaceholder}"
+                                 Text="{x:Bind ViewModel.ShortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource InlinePlaceholderTextBoxStyle}"
+                                 Margin="12,8,12,2"/>
 
-                    <Grid>
-                        <Grid Margin="0,0,0,-6" Visibility="{x:Bind ViewModel.SelectedItem, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <ContentControl Content="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch"
-                                            Padding="12,0,0,0">
-                                <ContentControl.ContentTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="0,6" Background="Transparent" DataContextChanged="Grid_DataContextChanged">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid Visibility="{x:Bind ViewModel.SelectedItem, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ContentControl Content="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
+                                                HorizontalContentAlignment="Stretch"
+                                                VerticalContentAlignment="Stretch"
+                                                Padding="12,0,0,0">
+                                    <ContentControl.ContentTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,6" Background="Transparent" DataContextChanged="Grid_DataContextChanged">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
 
-                                            <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+                                                <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
-                                            <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
-                                            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ContentControl.ContentTemplate>
-                            </ContentControl>
+                                                <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                                <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ContentControl.ContentTemplate>
+                                </ContentControl>
 
 
-                            <controls:GlyphButton Command="{x:Bind ViewModel.CancelCommand}" Glyph="&#xE10A;" VerticalAlignment="Center" Width="40" Height="40" Margin="4" Radius="20" Grid.Column="1"/>
+                                <controls:GlyphButton Command="{x:Bind ViewModel.CancelCommand}" Glyph="&#xE10A;" VerticalAlignment="Center" Width="40" Height="40" Margin="4" Radius="20" Grid.Column="1"/>
+                            </Grid>
+
+                            <Grid Margin="12,6,0,0" Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="&#9785;" IsColorFontEnabled="False" Width="48" Height="48" FontSize="36" TextAlignment="Center" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+                                <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+
+                                <TextBlock Text="{CustomResource ChooseStickerSetNotFound}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                <TextBlock Text="{CustomResource ChooseStickerSetNotFoundInfo}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
+                            </Grid>
+                        
                         </Grid>
-
-                        <Grid Margin="12,6,0,0" Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Background="Transparent">
+                        <Grid Margin="12,6,0,6" Background="Transparent" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition />
@@ -249,43 +270,28 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="&#9785;" IsColorFontEnabled="False" Width="48" Height="48" FontSize="36" TextAlignment="Center" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
                             <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
                             <TextBlock Text="{CustomResource ChooseStickerSetNotFound}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
                             <TextBlock Text="{CustomResource ChooseStickerSetNotFoundInfo}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
                         </Grid>
-                        
-                    </Grid>
-                    <Grid Margin="12,6,0,6" Background="Transparent" Visibility="Collapsed">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
 
-                        <Image Width="48" Height="48" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+                        <Border BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}" Margin="12,6,0,0" BorderThickness="0,0,0,1" />
+                    </controls:HeaderedControl>
 
-                        <TextBlock Text="{CustomResource ChooseStickerSetNotFound}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
-                        <TextBlock Text="{CustomResource ChooseStickerSetNotFoundInfo}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" Grid.Row="1"/>
-                    </Grid>
-
-                    <Border BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}" Margin="12,6,0,0" BorderThickness="0,0,0,1" />
-
-                    <TextBlock common:MessageHelper.Text="{CustomResource ChooseStickerSetMy}" Margin="12,8,12,24" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-
-                    <TextBlock Text="{CustomResource ChooseFromYourStickers}" Margin="12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <Border MaxWidth="640">
+                        <TextBlock Text="{CustomResource ChooseFromYourStickers}" Margin="12,16,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    </Border>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                     <Setter Property="Padding" Value="12,0,0,0"/>
                 </Style>
             </ListView.ItemContainerStyle>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </Page>

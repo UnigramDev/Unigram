@@ -63,53 +63,59 @@
                 </Grid>
 
                 <UserControl x:Name="PermissionsPanel" Visibility="Collapsed" IsEnabled="False">
-                    <StackPanel>
-                        <ToggleSwitch x:Name="ChangeInfo"
-                                      IsOn="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
-                                      Header="{CustomResource EditAdminChangeGroupInfo}"
-                                      Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch x:Name="PostMessages"
-                                      IsOn="{x:Bind ViewModel.CanPostMessages, Mode=TwoWay}"
-                                      Header="{CustomResource EditAdminPostMessages}"
-                                      Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch x:Name="EditMessages"
-                                      IsOn="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
-                                      Header="{CustomResource EditAdminEditMessages}"
-                                      Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch x:Name="DeleteMessages"
-                                      IsOn="{x:Bind ViewModel.CanDeleteMessages, Mode=TwoWay}"
-                                      Header="{CustomResource EditAdminGroupDeleteMessages}"
-                                      Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch x:Name="BanUsers"
-                                      IsOn="{x:Bind ViewModel.CanRestrictMembers, Mode=TwoWay}"
-                                      Header="{CustomResource EditAdminBanUsers}"
-                                      Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch x:Name="AddUsers"
-                                      IsOn="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
-                                      Header="{CustomResource EditAdminAddUsers}"
-                                      Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch x:Name="PinMessages"
-                                      IsOn="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
-                                      Header="{CustomResource EditAdminPinMessages}"
-                                      Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch x:Name="AddAdmins"
-                                      IsOn="{x:Bind ViewModel.CanPromoteMembers, Mode=TwoWay}"
-                                      Header="{CustomResource EditAdminAddAdmins}"
-                                      Style="{StaticResource CheckButtonStyle}"/>
-                        <TextBlock
-                            x:Name="Footer"
-                            Text="{CustomResource EditAdminCantEdit}"
-                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Margin="12,8,12,0"/>
-                    </StackPanel>
+                    <controls:HeaderedControl
+                        x:Name="PermissionsRoot"
+                        Footer="{CustomResource EditAdminCantEdit}">
+                        <ToggleSwitch
+                            x:Name="ChangeInfo"
+                            IsOn="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminChangeGroupInfo}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                        <ToggleSwitch
+                            x:Name="PostMessages"
+                            IsOn="{x:Bind ViewModel.CanPostMessages, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminPostMessages}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                        <ToggleSwitch
+                            x:Name="EditMessages"
+                            IsOn="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminEditMessages}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                        <ToggleSwitch
+                            x:Name="DeleteMessages"
+                            IsOn="{x:Bind ViewModel.CanDeleteMessages, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminGroupDeleteMessages}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                        <ToggleSwitch
+                            x:Name="BanUsers"
+                            IsOn="{x:Bind ViewModel.CanRestrictMembers, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminBanUsers}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                        <ToggleSwitch
+                            x:Name="AddUsers"
+                            IsOn="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminAddUsers}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                        <ToggleSwitch
+                            x:Name="PinMessages"
+                            IsOn="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminPinMessages}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                        <ToggleSwitch
+                            x:Name="AddAdmins"
+                            IsOn="{x:Bind ViewModel.CanPromoteMembers, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminAddAdmins}"
+                            Style="{StaticResource CheckButtonStyle}"/>
+                    </controls:HeaderedControl>
                 </UserControl>
 
-                <StackPanel x:Name="DismissPanel" Visibility="Collapsed" Margin="0,24">
+                <controls:HeaderedControl
+                    x:Name="DismissPanel"
+                    Visibility="Collapsed">
                     <controls:BadgeButton
                         Command="{x:Bind ViewModel.DismissCommand}"
                         Content="{CustomResource EditAdminRemoveAdmin}"/>
-                </StackPanel>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
 

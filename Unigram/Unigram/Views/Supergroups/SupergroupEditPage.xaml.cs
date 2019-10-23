@@ -136,7 +136,7 @@ namespace Unigram.Views.Supergroups
             Title.PlaceholderText = group.IsChannel ? Strings.Resources.EnterChannelName : Strings.Resources.GroupName;
 
             Delete.Content = group.IsChannel ? Strings.Resources.ChannelDelete : Strings.Resources.DeleteMega;
-            DeleteInfo.Text = group.IsChannel ? Strings.Resources.ChannelDeleteInfo : Strings.Resources.MegaDeleteInfo;
+            DeletePanel.Footer = group.IsChannel ? Strings.Resources.ChannelDeleteInfo : Strings.Resources.MegaDeleteInfo;
 
             Members.Content = group.IsChannel ? Strings.Resources.ChannelSubscribers : Strings.Resources.ChannelMembers;
 
@@ -233,7 +233,7 @@ namespace Unigram.Views.Supergroups
             Title.PlaceholderText = Strings.Resources.GroupName;
 
             Delete.Content = Strings.Resources.DeleteMega;
-            DeleteInfo.Text = Strings.Resources.MegaDeleteInfo;
+            DeletePanel.Footer = Strings.Resources.MegaDeleteInfo;
 
             Members.Content = Strings.Resources.ChannelMembers;
 
