@@ -51,10 +51,10 @@
                 <controls:HeaderedControl
                     Header="{CustomResource PrivacyTitle}"
                     Footer="{CustomResource GroupsAndChannelsHelp}">
-                    <!--<controls:BadgeButton
+                    <controls:BadgeButton
                         Content="{CustomResource PrivacyPhone}"
                         Badge="{x:Bind ViewModel.ShowPhoneRules.Badge, Mode=OneWay}"
-                        Click="ShowPhone_Click"/>-->
+                        Click="ShowPhone_Click"/>
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyLastSeen}"
                         Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"

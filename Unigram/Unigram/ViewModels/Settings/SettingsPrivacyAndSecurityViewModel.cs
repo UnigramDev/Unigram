@@ -50,7 +50,7 @@ namespace Unigram.ViewModels.Settings
 
             Children.Add(_showForwardedRules);
             Children.Add(_showPhotoRules);
-            //Children.Add(_showPhoneRules);
+            Children.Add(_showPhoneRules);
             Children.Add(_showStatusRules);
             Children.Add(_allowCallsRules);
             Children.Add(_allowChatInvitesRules);
