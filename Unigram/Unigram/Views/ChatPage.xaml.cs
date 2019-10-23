@@ -2991,6 +2991,7 @@ namespace Unigram.Views
             LabelAction.Text = content;
             ButtonAction.IsEnabled = enabled;
             ButtonAction.Visibility = Visibility.Visible;
+            ChatFooter.Visibility = Visibility.Visible;
             TextArea.Visibility = Visibility.Collapsed;
 
             ButtonAction.Focus(FocusState.Programmatic);
@@ -3000,6 +3001,7 @@ namespace Unigram.Views
         {
             ButtonAction.IsEnabled = false;
             ButtonAction.Visibility = Visibility.Collapsed;
+            ChatFooter.Visibility = Visibility.Collapsed;
             TextArea.Visibility = Visibility.Visible;
 
             TextField.Focus(FocusState.Programmatic);
@@ -3649,6 +3651,12 @@ namespace Unigram.Views
             {
                 var linkedChat = ViewModel.CacheService.GetChat(fullInfo.LinkedChatId);
                 if (linkedChat == null)
+                {
+                    return;
+                }
+
+                var linkedSupergroup = ViewModel.CacheService.GetSupergroup(linkedChat);
+                if (linkedSupergroup == null || !linkedSupergroup.IsMember())
                 {
                     return;
                 }

@@ -1228,7 +1228,7 @@
             </Grid>
         </ContentControl>
 
-        <Grid Grid.Row="3">
+        <Grid x:Name="ChatFooter" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition x:Name="DiscussColumn"/>
