@@ -405,7 +405,7 @@ namespace Unigram.Controls.Views
                 if (first != null)
                 {
                     var header = Stickers.GroupHeaderContainerFromItemContainer(first) as GridViewHeaderItem;
-                    if (header != null && header != Toolbar.SelectedItem)
+                    if (header != null && header.Content != Toolbar.SelectedItem)
                     {
                         Toolbar.SelectedItem = header.Content;
                         Toolbar.ScrollIntoView(header.Content);

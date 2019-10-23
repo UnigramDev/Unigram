@@ -8,18 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
-            <Setter Property="Padding" Value="0,8,0,8"/>
-        </Style>
-
-        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-            <Setter Property="Margin" Value="12,8,12,0"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -45,11 +33,8 @@
                         Style="{StaticResource InfoCaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock
-                        x:Name="Recipient"
-                        Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-
+                <controls:HeaderedControl
+                    x:Name="Recipient">
                     <controls:BadgeButton>
                         <TextBlock
                             x:Name="Address"
@@ -63,18 +48,16 @@
                         Content="{CustomResource WalletTransactionSendGrams}"
                         Command="{x:Bind ViewModel.SendCommand}"/>
                     <!--WalletComment-->
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel x:Name="CommentPanel" Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock
-                        Text="{CustomResource WalletTransactionComment}"
-                        Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-
+                <controls:HeaderedControl
+                    x:Name="CommentPanel"
+                    Header="{CustomResource WalletTransactionComment}">
                     <controls:BadgeButton>
                         <TextBlock
                             x:Name="Comment"/>
                     </controls:BadgeButton>
-                </StackPanel>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

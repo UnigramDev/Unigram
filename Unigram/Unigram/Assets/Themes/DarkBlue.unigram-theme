@@ -5,6 +5,7 @@ parent: 12
 PageHeaderHighlightBrush: #FF59A8E2
 PageHeaderBackgroundBrush: #FF222E3C
 PageSubHeaderBackgroundBrush: #FF1C2733
+PageBackgroundDarkBrush: #FF1C2733
 SystemAccentColor: #FF59A8E2
 ApplicationPageBackgroundThemeBrush: #FF151D26
 TelegramSeparatorMediumBrush: #FF10171E

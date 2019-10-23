@@ -290,6 +290,7 @@
     <ClInclude Include="Streaming\UncompressedSampleProvider.h" />
     <ClInclude Include="Streaming\UncompressedVideoSampleProvider.h" />
     <ClInclude Include="Streaming\VideoFrame.h" />
+    <ClInclude Include="StringUtils.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="GIF\GIFByteStreamHandler.h" />
     <ClInclude Include="GIF\GIFMediaSource.h" />

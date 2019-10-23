@@ -136,6 +136,7 @@ namespace Unigram.ViewModels
             else if (content is Sticker sticker)
             {
                 // Stickers aren't part of the deal
+                return true;
             }
             else if (content is Video video)
             {
@@ -147,7 +148,8 @@ namespace Unigram.ViewModels
             }
             else if (content is VoiceNote voiceNote)
             {
-                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), voiceNote.Voice.Size);
+                // Voice notes aren't part of the deal
+                return true;
             }
 
             return false;
@@ -273,13 +275,16 @@ namespace Unigram.ViewModels
 
         public async void OpenLocation(Location location, string title)
         {
+            var options = new Windows.System.LauncherOptions();
+            options.FallbackUri = new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude));
+
             if (title != null)
             {
-                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}_{2}", location.Latitude, location.Longitude, WebUtility.UrlEncode(title))));
+                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}_{2}", location.Latitude, location.Longitude, WebUtility.UrlEncode(title))), options);
             }
             else
             {
-                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}", location.Latitude, location.Longitude)));
+                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}", location.Latitude, location.Longitude)), options);
             }
         }
 

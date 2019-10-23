@@ -67,7 +67,7 @@ namespace Unigram.Views.Wallet
                 Amount.Text = ConvertAmount(amount);
                 Amount.Foreground = new SolidColorBrush(Windows.UI.Colors.Green);
 
-                Recipient.Text = Strings.Resources.WalletTransactionSender;
+                Recipient.Header = Strings.Resources.WalletTransactionSender;
                 Address.Text = ConvertAddress(item.InMsg.Source);
             }
             else
@@ -80,7 +80,7 @@ namespace Unigram.Views.Wallet
                 }
                 else
                 {
-                    Recipient.Text = Strings.Resources.WalletTransactionRecipient;
+                    Recipient.Header = Strings.Resources.WalletTransactionRecipient;
                     Address.Text = ConvertAddress(item.OutMsgs[0].Destination);
                 }
             }

@@ -61,7 +61,17 @@ namespace Unigram.Views
 
             foreach (var prop in properties)
             {
-                Options.Items.Add($"{prop.Name}: {prop.GetValue(cache.Options)}");
+                if (string.Equals(prop.Name, "Values", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                Options.Items.Add(new BadgeButton { Content = prop.Name, Badge = prop.GetValue(cache.Options) });
+            }
+
+            foreach (var value in cache.Options.Values)
+            {
+                Options.Items.Add(new BadgeButton { Content = value.Key, Badge = value.Value });
             }
         }
 

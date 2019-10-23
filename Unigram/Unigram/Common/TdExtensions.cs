@@ -959,7 +959,7 @@ namespace Unigram.Common
                     case NetworkTypeNone none:
                         return TdNetworkType.None;
                     case NetworkTypeOther other:
-                        return TdNetworkType.Other;
+                        //return TdNetworkType.Other;
                     case NetworkTypeWiFi wifi:
                         return TdNetworkType.WiFi;
                 }
@@ -975,7 +975,7 @@ namespace Unigram.Common
                     case NetworkTypeNone none:
                         return TdNetworkType.None;
                     case NetworkTypeOther other:
-                        return TdNetworkType.Other;
+                        //return TdNetworkType.Other;
                     case NetworkTypeWiFi wifi:
                         return TdNetworkType.WiFi;
                 }

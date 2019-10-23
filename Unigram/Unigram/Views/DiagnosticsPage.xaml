@@ -9,19 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
-            <Setter Property="Padding" Value="0,8,0,8"/>
-        </Style>
-
-        <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
-            <Setter Property="Margin" Value="12,8,12,0"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-    </Page.Resources>
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -32,8 +20,8 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="Experimental" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="Experimental">
                     <ToggleSwitch
                         x:Name="PlayStickers"
                         Header="Play animated stickers"
@@ -44,10 +32,11 @@
                         Header="Cache animated stickers"
                         Toggled="CacheStickers_Toggled"
                         Style="{StaticResource CheckButtonStyle}"/>
-                </StackPanel>
+                </controls:HeaderedControl>
 
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="TDLib Logs" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl
+                    Header="TDLib Logs"
+                    Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
                     <controls:BadgeButton
                         x:Name="Verbosity"
                         Content="Verbosity Level"
@@ -63,31 +52,21 @@
                         Content="log.old"
                         Click="LogOld_Click"
                         Badge="{CustomResource SoundDefault}"/>
-                    <TextBlock
-                        common:TextBlockHelper.Markdown="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well."
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,24"/>
-                </StackPanel>
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="{CustomResource PrivacyAdvanced}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                </controls:HeaderedControl>
+                
+                <controls:HeaderedControl
+                    Header="{CustomResource PrivacyAdvanced}">
                     <ToggleSwitch
                         x:Name="UseTestDC"
                         Header="Use test data centers"
                         Toggled="UseTestDC_Toggled"
                         Style="{StaticResource CheckButtonStyle}"/>
-                </StackPanel>
-                
-                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="Options" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <ItemsControl x:Name="Options">
-                        <ItemsControl.ItemContainerStyle>
-                            <Style TargetType="ContentPresenter">
-                                <Setter Property="Padding" Value="12,8"/>
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                    </ItemsControl>
-                </StackPanel>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
+                    x:Name="Options"
+                    Header="Options">
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

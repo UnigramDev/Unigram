@@ -66,13 +66,15 @@ namespace Unigram.Services
 
             foreach (var protoService in TLContainer.Current.ResolveAll<IProtoService>())
             {
-                var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
-                if (test is LanguagePackStrings strings)
-                {
-                    saveRemoteLocaleStrings(info.Id, strings);
-                }
+#if DEBUG
+                //var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
+                //if (test is LanguagePackStrings strings)
+                //{
+                //    saveRemoteLocaleStrings(info.Id, strings);
+                //}
 
-                return new Error();
+                //return new Error();
+#endif
 
                 var response = await protoService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));
                 if (response is Ok && refresh)
@@ -394,7 +396,7 @@ namespace Unigram.Services
             });
         }
 
-        #region Handle
+#region Handle
 
         public void Handle(UpdateLanguagePackStrings update)
         {
@@ -422,7 +424,7 @@ namespace Unigram.Services
             }
         }
 
-        #endregion
+#endregion
 
         private Dictionary<string, string> GetLanguagePack(string key)
         {

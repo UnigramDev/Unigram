@@ -330,6 +330,7 @@
     <ClInclude Include="Streaming\VideoFrame.h">
       <Filter>Streaming</Filter>
     </ClInclude>
+    <ClInclude Include="StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
