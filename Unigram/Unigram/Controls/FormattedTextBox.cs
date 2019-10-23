@@ -65,6 +65,8 @@ namespace Unigram.Controls
 
                 CreateKeyboardAccelerator(VirtualKey.B);
                 CreateKeyboardAccelerator(VirtualKey.I);
+                CreateKeyboardAccelerator(VirtualKey.U);
+                CreateKeyboardAccelerator(VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
                 CreateKeyboardAccelerator(VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
                 CreateKeyboardAccelerator(VirtualKey.K);
                 CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
@@ -115,6 +117,8 @@ namespace Unigram.Controls
             var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
             CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.Bold }, VirtualKey.B);
             CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.Italic }, VirtualKey.I);
+            CreateFlyoutItem(formatting.Items, length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.Underline }, VirtualKey.U);
+            CreateFlyoutItem(formatting.Items, length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, null, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, null, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
@@ -157,6 +161,32 @@ namespace Unigram.Controls
             Document.BatchDisplayUpdates();
             ClearStyle(Document.Selection);
             Document.Selection.CharacterFormat.Italic = FormatEffect.On;
+            Document.ApplyDisplayUpdates();
+        }
+
+        private void ContextUnderline_Click()
+        {
+            if (Math.Abs(Document.Selection.Length) < 1)
+            {
+                return;
+            }
+
+            Document.BatchDisplayUpdates();
+            ClearStyle(Document.Selection);
+            Document.Selection.CharacterFormat.Underline = UnderlineType.Single;
+            Document.ApplyDisplayUpdates();
+        }
+
+        private void ContextStrikethrough_Click()
+        {
+            if (Math.Abs(Document.Selection.Length) < 1)
+            {
+                return;
+            }
+
+            Document.BatchDisplayUpdates();
+            ClearStyle(Document.Selection);
+            Document.Selection.CharacterFormat.Strikethrough = FormatEffect.On;
             Document.ApplyDisplayUpdates();
         }
 
@@ -439,6 +469,26 @@ namespace Unigram.Controls
                     start = -1;
                     entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeItalic() });
                 }
+                else if (range.Expand(TextRangeUnit.Underline) > 0)
+                {
+                    if (start > -1 && start < range.StartPosition)
+                    {
+                        ProcessSpan(Document.GetRange(start, range.StartPosition));
+                    }
+
+                    start = -1;
+                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeUnderline() });
+                }
+                else if (range.Expand(TextRangeUnit.Strikethrough) > 0)
+                {
+                    if (start > -1 && start < range.StartPosition)
+                    {
+                        ProcessSpan(Document.GetRange(start, range.StartPosition));
+                    }
+
+                    start = -1;
+                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeStrikethrough() });
+                }
                 else if (range.Expand(TextRangeUnit.Link) > 0)
                 {
                     if (start > -1 && start < range.StartPosition)
@@ -570,6 +620,14 @@ namespace Unigram.Controls
                         else if (entity.Type is TextEntityTypeItalic)
                         {
                             range.CharacterFormat.Italic = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeUnderline)
+                        {
+                            range.CharacterFormat.Underline = UnderlineType.Single;
+                        }
+                        else if (entity.Type is TextEntityTypeStrikethrough)
+                        {
+                            range.CharacterFormat.Strikethrough = FormatEffect.On;
                         }
                         else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
                         {

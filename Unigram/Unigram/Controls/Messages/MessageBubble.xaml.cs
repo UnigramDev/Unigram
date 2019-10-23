@@ -904,9 +904,11 @@ namespace Unigram.Controls.Messages
                 return false;
             }
 
+            var runs = TextStyleRun.GetRuns(text, entities);
+
             var previous = 0;
 
-            foreach (var entity in entities.OrderBy(x => x.Offset))
+            foreach (var entity in runs)
             {
                 if (entity.Offset > previous)
                 {
@@ -919,59 +921,77 @@ namespace Unigram.Controls.Messages
                     continue;
                 }
 
-                if (entity.Type is TextEntityTypeBold)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontWeight = FontWeights.SemiBold });
-                }
-                else if (entity.Type is TextEntityTypeItalic)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = FontStyle.Italic });
-                }
-                else if (entity.Type is TextEntityTypeCode)
+                if (entity.HasFlag(TextStyle.Monospace))
                 {
                     span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
                 }
-                else if (entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                else
                 {
-                    // TODO any additional
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
-                }
-                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
-                {
-                    var hyperlink = new Hyperlink();
-                    var data = text.Substring(entity.Offset, entity.Length);
+                    var local = span;
 
-                    hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
-                    hyperlink.Inlines.Add(new Run { Text = data });
-                    hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
-                    //hyperlink.Foreground = foreground;
-                    span.Inlines.Add(hyperlink);
+                    if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
+                    {
+                        if (entity.Entity.Type is TextEntityTypeMentionName || entity.Entity.Type is TextEntityTypeTextUrl)
+                        {
+                            var hyperlink = new Hyperlink();
+                            object data;
+                            if (entity.Entity.Type is TextEntityTypeTextUrl textUrl)
+                            {
+                                data = textUrl.Url;
+                                MessageHelper.SetEntity(hyperlink, textUrl.Url);
+                                ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+                            }
+                            else if (entity.Entity.Type is TextEntityTypeMentionName mentionName)
+                            {
+                                data = mentionName.UserId;
+                            }
 
-                    if (entity.Type is TextEntityTypeUrl)
-                    {
-                        MessageHelper.SetEntity(hyperlink, data);
-                    }
-                }
-                else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
-                {
-                    var hyperlink = new Hyperlink();
-                    object data;
-                    if (entity.Type is TextEntityTypeTextUrl textUrl)
-                    {
-                        data = textUrl.Url;
-                        MessageHelper.SetEntity(hyperlink, textUrl.Url);
-                        ToolTipService.SetToolTip(hyperlink, textUrl.Url);
-                    }
-                    else if (entity.Type is TextEntityTypeMentionName mentionName)
-                    {
-                        data = mentionName.UserId;
+                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Entity.Type, null);
+                            hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
+                            //hyperlink.Foreground = foreground;
+
+                            span.Inlines.Add(hyperlink);
+                            local = hyperlink;
+                        }
+                        else
+                        {
+                            var hyperlink = new Hyperlink();
+                            var data = text.Substring(entity.Offset, entity.Length);
+
+                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Entity.Type, data);
+                            hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
+                            //hyperlink.Foreground = foreground;
+
+                            if (entity.Entity.Type is TextEntityTypeUrl)
+                            {
+                                MessageHelper.SetEntity(hyperlink, data);
+                            }
+
+                            span.Inlines.Add(hyperlink);
+                            local = hyperlink;
+                        }
                     }
 
-                    hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
-                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
-                    //hyperlink.Foreground = foreground;
-                    span.Inlines.Add(hyperlink);
+                    var run = new Run { Text = text.Substring(entity.Offset, entity.Length) };
+
+                    if (entity.HasFlag(TextStyle.Bold))
+                    {
+                        run.FontWeight = FontWeights.SemiBold;
+                    }
+                    if (entity.HasFlag(TextStyle.Italic))
+                    {
+                        run.FontStyle |= FontStyle.Italic;
+                    }
+                    if (entity.HasFlag(TextStyle.Underline))
+                    {
+                        run.TextDecorations |= TextDecorations.Underline;
+                    }
+                    if (entity.HasFlag(TextStyle.Strikethrough))
+                    {
+                        run.TextDecorations |= TextDecorations.Strikethrough;
+                    }
+
+                    local.Inlines.Add(run);
                 }
 
                 previous = entity.Offset + entity.Length;
