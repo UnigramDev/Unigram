@@ -102,6 +102,10 @@ namespace Unigram.Controls.Messages
                             return UpdateInvitesToggled(message, invitesToggled, active);
                         case ChatEventIsAllHistoryAvailableToggled isAllHistoryAvailableToggled:
                             return UpdateIsAllHistoryAvailableToggled(message, isAllHistoryAvailableToggled, active);
+                        case ChatEventLinkedChatChanged linkedChatChanged:
+                            return UpdateLinkedChatChanged(message, linkedChatChanged, active);
+                        case ChatEventLocationChanged locationChanged:
+                            return UpdateLocationChanged(message, locationChanged, active);
                         case ChatEventMessageUnpinned messageUnpinned:
                             return UpdateMessageUnpinned(message, messageUnpinned, active);
                         case ChatEventMessageDeleted messageDeleted:
@@ -208,6 +212,62 @@ namespace Unigram.Controls.Messages
             else
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogToggledInvitesHistoryOff, "un1", fromUser, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateLinkedChatChanged(MessageViewModel message, ChatEventLinkedChatChanged linkedChatChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSenderUser();
+
+            if (message.IsChannelPost)
+            {
+                if (linkedChatChanged.NewLinkedChatId != 0)
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogChangedLinkedGroup, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un2", message.ProtoService.GetChat(linkedChatChanged.NewLinkedChatId), ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogRemovedLinkedGroup, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un2", message.ProtoService.GetChat(linkedChatChanged.OldLinkedChatId), ref entities);
+                }
+            }
+            else
+            {
+                if (linkedChatChanged.NewLinkedChatId != 0)
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogChangedLinkedChannel, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un2", message.ProtoService.GetChat(linkedChatChanged.NewLinkedChatId), ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogRemovedLinkedChannel, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un2", message.ProtoService.GetChat(linkedChatChanged.OldLinkedChatId), ref entities);
+                }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateLocationChanged(MessageViewModel message, ChatEventLocationChanged locationChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSenderUser();
+
+            if (locationChanged.NewLocation != null)
+            {
+                content = ReplaceWithLink(string.Format(Strings.Resources.EventLogChangedLocation, locationChanged.NewLocation.Address), "un1", fromUser, ref entities);
+            }
+            else
+            {
+                content = ReplaceWithLink(Strings.Resources.EventLogRemovedLocation, "un1", fromUser, ref entities);
             }
 
             return (content, entities);

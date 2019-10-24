@@ -237,6 +237,8 @@ namespace Unigram.ViewModels.Supergroups
                             case ChatEventInvitesToggled invitesToggled:
                             case ChatEventIsAllHistoryAvailableToggled isAllHistoryAvailableToggled:
                             case ChatEventMessageUnpinned messageUnpinned:
+                            case ChatEventLinkedChatChanged linkedChatChanged:
+                            case ChatEventLocationChanged locationChanged:
                                 message = GetMessage(_chatId, _channel, item);
                                 message.Content = new MessageChatEvent(item, false);
                                 break;
