@@ -78,14 +78,17 @@ namespace Unigram.Services
         Supergroup GetSupergroup(int id);
         Supergroup GetSupergroup(Chat chat);
 
+        bool TryGetSupergroup(int id, out Supergroup value);
+        bool TryGetSupergroup(Chat chat, out Supergroup value);
+
         SupergroupFullInfo GetSupergroupFull(int id);
         SupergroupFullInfo GetSupergroupFull(Chat chat);
 
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
 
-        UpdateUnreadChatCount UnreadChatCount { get; }
-        UpdateUnreadMessageCount UnreadMessageCount { get; }
+        ChatListUnreadCount GetUnreadCount(ChatList chatList);
+        void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null);
 
         int GetNotificationSettingsMuteFor(Chat chat);
         ScopeNotificationSettings GetScopeNotificationSettings(Chat chat);
@@ -118,6 +121,8 @@ namespace Unigram.Services
         private readonly Dictionary<int, SupergroupFullInfo> _supergroupsFull = new Dictionary<int, SupergroupFullInfo>();
 
         private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new Dictionary<Type, ScopeNotificationSettings>();
+
+        private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
 
         private readonly SimpleFileContext<long> _chatsMap = new SimpleFileContext<long>();
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
@@ -289,7 +294,7 @@ namespace Unigram.Services
 
         private void InitializeReady()
         {
-            Send(new GetChats(long.MaxValue, 0, 20));
+            Send(new GetChats(new ChatListMain(), long.MaxValue, 0, 20));
 
             UpdateWallet();
             UpdateVersion();
@@ -431,8 +436,53 @@ namespace Unigram.Services
 
         #region Cache
         
-        public UpdateUnreadChatCount UnreadChatCount { get; private set; } = new UpdateUnreadChatCount();
-        public UpdateUnreadMessageCount UnreadMessageCount { get; private set; } = new UpdateUnreadMessageCount();
+        public ChatListUnreadCount GetUnreadCount(ChatList chatList)
+        {
+            var id = GetIdFromChatList(chatList);
+            if (_unreadCounts.TryGetValue(id, out ChatListUnreadCount value))
+            {
+                return value;
+            }
+
+            return _unreadCounts[id] = new ChatListUnreadCount
+            {
+                ChatList = chatList ?? new ChatListMain(),
+                UnreadChatCount = new UpdateUnreadChatCount(),
+                UnreadMessageCount = new UpdateUnreadMessageCount()
+            };
+        }
+
+        public void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null)
+        {
+            var id = GetIdFromChatList(chatList);
+            if (_unreadCounts.TryGetValue(id, out ChatListUnreadCount value))
+            {
+                value.UnreadChatCount = chatCount ?? value.UnreadChatCount;
+                value.UnreadMessageCount = messageCount ?? value.UnreadMessageCount;
+            }
+
+            _unreadCounts[id] = new ChatListUnreadCount
+            {
+                ChatList = chatList ?? new ChatListMain(),
+                UnreadChatCount = chatCount ?? new UpdateUnreadChatCount(),
+                UnreadMessageCount = messageCount ?? new UpdateUnreadMessageCount()
+            };
+        }
+
+        private int GetIdFromChatList(ChatList chatList)
+        {
+            if (chatList is ChatListMain || chatList == null)
+            {
+                return 0;
+            }
+
+            if (chatList is ChatListArchive)
+            {
+                return 1;
+            }
+
+            return -1;
+        }
 
         private bool TryGetChatForFileId(int fileId, out Chat chat)
         {
@@ -781,6 +831,22 @@ namespace Unigram.Services
             }
 
             return null;
+        }
+
+        public bool TryGetSupergroup(int id, out Supergroup value)
+        {
+            return _supergroups.TryGetValue(id, out value);
+        }
+
+        public bool TryGetSupergroup(Chat chat, out Supergroup value)
+        {
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                return TryGetSupergroup(supergroup.SupergroupId, out value);
+            }
+
+            value = null;
+            return false;
         }
 
 
@@ -1222,11 +1288,11 @@ namespace Unigram.Services
             }
             else if (update is UpdateUnreadChatCount updateUnreadChatCount)
             {
-                UnreadChatCount = updateUnreadChatCount;
+                SetUnreadCount(updateUnreadChatCount.ChatList, chatCount: updateUnreadChatCount);
             }
             else if (update is UpdateUnreadMessageCount updateUnreadMessageCount)
             {
-                UnreadMessageCount = updateUnreadMessageCount;
+                SetUnreadCount(updateUnreadMessageCount.ChatList, messageCount: updateUnreadMessageCount);
             }
             else if (update is UpdateUser updateUser)
             {
@@ -1275,6 +1341,14 @@ namespace Unigram.Services
 
             _aggregator.Publish(update);
         }
+    }
+
+    public class ChatListUnreadCount
+    {
+        public ChatList ChatList { get; set; }
+
+        public UpdateUnreadChatCount UnreadChatCount { get; set; }
+        public UpdateUnreadMessageCount UnreadMessageCount { get; set; }
     }
 
     public class FileContext<T> : Dictionary<int, List<T>>

@@ -188,8 +188,10 @@ namespace Unigram.ViewModels.Settings
             {
                 Settings.Notifications.IncludeMutedChats = value;
                 RaisePropertyChanged();
-                Aggregator.Publish(CacheService.UnreadChatCount);
-                Aggregator.Publish(CacheService.UnreadMessageCount);
+
+                var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
+                Aggregator.Publish(unreadCount.UnreadChatCount);
+                Aggregator.Publish(unreadCount.UnreadMessageCount);
             }
         }
 
@@ -203,8 +205,10 @@ namespace Unigram.ViewModels.Settings
             {
                 Settings.Notifications.CountUnreadMessages = value;
                 RaisePropertyChanged();
-                Aggregator.Publish(CacheService.UnreadChatCount);
-                Aggregator.Publish(CacheService.UnreadMessageCount);
+
+                var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
+                Aggregator.Publish(unreadCount.UnreadChatCount);
+                Aggregator.Publish(unreadCount.UnreadMessageCount);
             }
         }
 

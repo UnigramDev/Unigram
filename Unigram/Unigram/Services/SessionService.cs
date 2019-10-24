@@ -42,8 +42,10 @@ namespace Unigram.Services
             aggregator.Subscribe(this);
 
             IsActive = selected;
-            Handle(cacheService.UnreadChatCount);
-            Handle(cacheService.UnreadMessageCount);
+
+            var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
+            Handle(unreadCount.UnreadChatCount);
+            Handle(unreadCount.UnreadMessageCount);
         }
 
         public int Id => _id;
@@ -87,6 +89,11 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadMessageCount update)
         {
+            if (update.ChatList is ChatListArchive)
+            {
+                return;
+            }
+
             if (!Settings.Notifications.CountUnreadMessages)
             {
                 return;
@@ -104,6 +111,11 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadChatCount update)
         {
+            if (update.ChatList is ChatListArchive)
+            {
+                return;
+            }
+
             if (Settings.Notifications.CountUnreadMessages)
             {
                 return;
