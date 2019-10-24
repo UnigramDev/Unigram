@@ -15,6 +15,7 @@ using Windows.Globalization;
 using Unigram.Common;
 using Telegram.Td.Api;
 using Unigram.Native;
+using Unigram.Services;
 
 namespace Unigram.Converters
 {
@@ -94,6 +95,68 @@ namespace Unigram.Converters
             }
 
             return string.Format("{0:0.000000000}", value / 1000000000d);
+        }
+
+        public static string Distance(float distance)
+        {
+            var useImperialSystemType = false;
+
+            switch (SettingsService.Current.DistanceUnits)
+            {
+                case DistanceUnits.Automatic:
+                    var culture = NativeUtils.GetCurrentCulture();
+                    var info = new RegionInfo(culture);
+                    useImperialSystemType = !info.IsMetric;
+                    break;
+                case DistanceUnits.Kilometers:
+                    useImperialSystemType = false;
+                    break;
+                case DistanceUnits.Miles:
+                    useImperialSystemType = true;
+                    break;
+            }
+
+            if (useImperialSystemType)
+            {
+                distance *= 3.28084f;
+                if (distance < 1000)
+                {
+                    return string.Format(Strings.Resources.FootsAway, string.Format("{0}", (int)Math.Max(1, distance)));
+                }
+                else
+                {
+                    String arg;
+                    if (distance % 5280 == 0)
+                    {
+                        arg = string.Format("{0}", (int)(distance / 5280));
+                    }
+                    else
+                    {
+                        arg = string.Format("{0:0.00}", distance / 5280.0f);
+                    }
+                    return string.Format(Strings.Resources.MilesAway, arg);
+                }
+            }
+            else
+            {
+                if (distance < 1000)
+                {
+                    return string.Format(Strings.Resources.MetersAway2, string.Format("{0}", (int)Math.Max(1, distance)));
+                }
+                else
+                {
+                    String arg;
+                    if (distance % 1000 == 0)
+                    {
+                        arg = string.Format("{0}", (int)(distance / 1000));
+                    }
+                    else
+                    {
+                        arg = string.Format("{0:0.00}", distance / 1000.0f);
+                    }
+                    return string.Format(Strings.Resources.KMetersAway2, arg);
+                }
+            }
         }
 
         public string PhoneNumber(string number)

@@ -271,6 +271,11 @@
                         IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                         Header="Replace Emojis"
                         Style="{StaticResource CheckButtonStyle}"/>
+
+                    <controls:BadgeButton
+                        Content="{CustomResource DistanceUnits}"
+                        Command="{x:Bind ViewModel.DistanceUnitsCommand}"
+                        Badge="{x:Bind ConvertDistanceUnits(ViewModel.DistanceUnits), Mode=OneWay}"/>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

@@ -2054,6 +2054,11 @@ namespace Unigram.Views
             }
         }
 
+        private void ChatsNearby_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(ChatsNearbyPage));
+        }
+
         private void LogOut_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(LogOutPage));

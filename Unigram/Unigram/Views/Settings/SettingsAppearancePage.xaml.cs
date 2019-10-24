@@ -79,6 +79,21 @@ namespace Unigram.Views.Settings
                 : Strings.Resources.AutoNightDisabled;
         }
 
+        private string ConvertDistanceUnits(DistanceUnits units)
+        {
+            switch (units)
+            {
+                case DistanceUnits.Automatic:
+                    return Strings.Resources.DistanceUnitsAutomatic;
+                case DistanceUnits.Kilometers:
+                    return Strings.Resources.DistanceUnitsKilometers;
+                case DistanceUnits.Miles:
+                    return Strings.Resources.DistanceUnitsMiles;
+            }
+
+            return null;
+        }
+
         private Visibility ConvertNightModeVisibility(NightMode mode)
         {
             return mode == NightMode.Disabled ? Visibility.Collapsed : Visibility.Visible;
