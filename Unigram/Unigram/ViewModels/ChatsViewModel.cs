@@ -26,19 +26,24 @@ namespace Unigram.ViewModels
         private readonly INotificationsService _notificationsService;
 
         private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
-
         private readonly Dictionary<long, bool> _deletedChats = new Dictionary<long, bool>();
+
+        private ChatList _chatList;
+        public ChatList ChatList => _chatList;
 
         public IChatsDelegate Delegate { get; set; }
 
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IChatFilter filter = null)
+        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList, IChatFilter filter = null)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _notificationsService = notificationsService;
 
-            Items = new ItemsCollection(protoService, aggregator, this, filter);
+            _chatList = chatList;
+
+            Items = new ItemsCollection(protoService, aggregator, this, chatList, filter);
 
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
+            ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
             ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
             ChatNotifyCommand = new RelayCommand<Chat>(ChatNotifyExecute);
             ChatDeleteCommand = new RelayCommand<Chat>(ChatDeleteExecute);
@@ -175,6 +180,23 @@ namespace Unigram.ViewModels
         private void ChatPinExecute(Chat chat)
         {
             ProtoService.Send(new ToggleChatIsPinned(chat.Id, !chat.IsPinned));
+        }
+
+        #endregion
+
+        #region Archive
+
+        public RelayCommand<Chat> ChatArchiveCommand { get; }
+        private void ChatArchiveExecute(Chat chat)
+        {
+            if (chat.ChatList is ChatListArchive)
+            {
+                ProtoService.Send(new SetChatChatList(chat.Id, new ChatListMain()));
+            }
+            else
+            {
+                ProtoService.Send(new SetChatChatList(chat.Id, new ChatListArchive()));
+            }
         }
 
         #endregion
@@ -543,7 +565,7 @@ namespace Unigram.ViewModels
             var items = Items;
 
             var chat = GetChat(chatId);
-            if (chat != null)
+            if (chat != null && _chatList.ListEquals(chat.ChatList))
             {
                 if (items.Filter != null && !items.Filter.Intersects(chat))
                 {
@@ -615,7 +637,7 @@ namespace Unigram.ViewModels
 
         public void SetFilter(IChatFilter filter)
         {
-            Items = new ItemsCollection(ProtoService, Aggregator, this, filter);
+            Items = new ItemsCollection(ProtoService, Aggregator, this, _chatList, filter);
             RaisePropertyChanged(() => Items);
         }
 
@@ -634,6 +656,7 @@ namespace Unigram.ViewModels
 
             private readonly ChatsViewModel _viewModel;
 
+            private readonly ChatList _chatList;
             private readonly IChatFilter _filter;
 
             private bool _hasMoreItems = true;
@@ -651,7 +674,7 @@ namespace Unigram.ViewModels
 
             public IChatFilter Filter => _filter;
 
-            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, IChatFilter filter = null)
+            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList, IChatFilter filter = null)
                 : base(new ChatComparer(), true)
             {
                 _protoService = protoService;
@@ -659,6 +682,7 @@ namespace Unigram.ViewModels
 
                 _viewModel = viewModel;
 
+                _chatList = chatList;
                 _filter = filter;
 
 #if MOCKUP
@@ -674,7 +698,7 @@ namespace Unigram.ViewModels
                 {
                     using (await _loadMoreLock.WaitAsync())
                     {
-                        var response = await _protoService.SendAsync(new GetChats(_internalOrder, _internalChatId, 20));
+                        var response = await _protoService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
                         if (response is Telegram.Td.Api.Chats chats)
                         {
                             foreach (var id in chats.ChatIds)

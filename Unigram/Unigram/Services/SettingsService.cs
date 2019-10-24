@@ -34,6 +34,7 @@ namespace Unigram.Services
         bool UseTestDC { get; set; }
 
         bool UseThreeLinesLayout { get; set; }
+        bool CollapseArchivedChats { get; set; }
         bool IsAdaptiveWideEnabled { get; set; }
         bool IsTrayVisible { get; set; }
         bool IsLaunchMinimized { get; set; }
@@ -477,6 +478,23 @@ namespace Unigram.Services
             {
                 _useThreeLinesLayout = value;
                 AddOrUpdateValue(_local, "UseThreeLinesLayout", value);
+            }
+        }
+
+        private static bool? _collapseArchivedChats;
+        public bool CollapseArchivedChats
+        {
+            get
+            {
+                if (_collapseArchivedChats == null)
+                    _collapseArchivedChats = GetValueOrDefault(_local, "CollapseArchivedChats", false);
+
+                return _collapseArchivedChats ?? false;
+            }
+            set
+            {
+                _collapseArchivedChats = value;
+                AddOrUpdateValue(_local, "CollapseArchivedChats", value);
             }
         }
 

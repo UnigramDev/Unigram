@@ -49,12 +49,14 @@ namespace Unigram.ViewModels
             _emojiSetService = emojiSetService;
             _playbackService = playbackService;
 
-            Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService);
+            Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
+            ArchivedChats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListArchive());
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
             Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService, settingsSearchService);
 
             Children.Add(Chats);
+            Children.Add(ArchivedChats);
             Children.Add(Contacts);
             Children.Add(Calls);
             Children.Add(Settings);
@@ -66,6 +68,8 @@ namespace Unigram.ViewModels
             StopLiveLocationCommand = new RelayCommand(StopLiveLocationExecute);
 
             ReturnToCallCommand = new RelayCommand(ReturnToCallExecute);
+
+            ToggleArchiveCommand = new RelayCommand(ToggleArchiveExecute);
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
@@ -88,6 +92,25 @@ namespace Unigram.ViewModels
             _liveLocationService.StopTracking();
         }
 
+        public RelayCommand ToggleArchiveCommand { get; }
+        private void ToggleArchiveExecute()
+        {
+            CollapseArchivedChats = !CollapseArchivedChats;
+        }
+
+        public bool CollapseArchivedChats
+        {
+            get
+            {
+                return base.Settings.CollapseArchivedChats;
+            }
+            set
+            {
+                base.Settings.CollapseArchivedChats = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private int _unreadCount;
         public int UnreadCount
         {
@@ -98,27 +121,15 @@ namespace Unigram.ViewModels
         private int _unreadMutedCount;
         public int UnreadMutedCount
         {
-            get
-            {
-                return _unreadMutedCount;
-            }
-            set
-            {
-                Set(ref _unreadMutedCount, value);
-            }
+            get => _unreadMutedCount;
+            set => Set(ref _unreadMutedCount, value);
         }
 
         private int _unreadUnmutedCount;
         public int UnreadUnmutedCount
         {
-            get
-            {
-                return _unreadUnmutedCount;
-            }
-            set
-            {
-                Set(ref _unreadUnmutedCount, value);
-            }
+            get => _unreadUnmutedCount;
+            set => Set(ref _unreadUnmutedCount, value);
         }
 
         public RelayCommand ReturnToCallCommand { get; }
@@ -134,6 +145,11 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateUnreadMessageCount update)
         {
+            if (update.ChatList is ChatListArchive)
+            {
+                return;
+            }
+
             BeginOnUIThread(() =>
             {
                 UnreadCount = update.UnreadCount;
@@ -157,22 +173,33 @@ namespace Unigram.ViewModels
             //Dispatch(() => Contacts.getTLContacts());
             //Dispatch(() => Contacts.GetSelfAsync());
 
-            UnreadCount = CacheService.UnreadMessageCount.UnreadCount;
-            UnreadMutedCount = CacheService.UnreadMessageCount.UnreadCount - CacheService.UnreadMessageCount.UnreadUnmutedCount;
+            var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
+            UnreadCount = unreadCount.UnreadMessageCount.UnreadCount;
+            UnreadMutedCount = unreadCount.UnreadMessageCount.UnreadCount - unreadCount.UnreadMessageCount.UnreadUnmutedCount;
 
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public ChatsViewModel Chats { get; private set; }
+        public ChatsViewModel ArchivedChats { get; private set; }
         public ContactsViewModel Contacts { get; private set; }
         public CallsViewModel Calls { get; private set; }
         public SettingsViewModel Settings { get; private set; }
 
         public ChatsViewModel Folder { get; private set; }
 
-        public void SetFolder(IChatFilter filter)
+        public void SetFolder(ChatList chatList)
         {
-            Folder = new ChatsViewModel(ProtoService, CacheService, base.Settings, Aggregator, _pushService, filter);
+            if (chatList is ChatListMain || chatList == null)
+            {
+                return;
+            }
+
+            Folder = ArchivedChats;
+            RaisePropertyChanged(() => Folder);
+            return;
+
+            Folder = new ChatsViewModel(ProtoService, CacheService, base.Settings, Aggregator, _pushService, chatList);
             Folder.Dispatcher = Dispatcher;
             Folder.NavigationService = NavigationService;
             RaisePropertyChanged(() => Folder);

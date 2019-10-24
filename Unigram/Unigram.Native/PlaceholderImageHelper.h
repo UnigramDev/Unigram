@@ -26,6 +26,7 @@ namespace Unigram
 			static PlaceholderImageHelper^ GetForCurrentView();
 
 			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
+			void DrawGlyph(_In_ String^ glyph, _In_ Color clear, IRandomAccessStream^ randomAccessStream);
 			void DrawSavedMessages(_In_ Color clear, IRandomAccessStream^ randomAccessStream);
 			void DrawProfilePlaceholder(_In_ Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
@@ -35,6 +36,7 @@ namespace Unigram
 
 		private:
 			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
+			HRESULT InternalDrawGlyph(String^ glyph, Color clear, IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawSavedMessages(Color clear, IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawProfilePlaceholder(Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
@@ -57,6 +59,7 @@ namespace Unigram
 			ComPtr<IDWriteFontCollectionLoader> m_customLoader;
 			ComPtr<IDWriteFontCollection> m_fontCollection;
 			ComPtr<IDWriteTextFormat> m_symbolFormat;
+			ComPtr<IDWriteTextFormat> m_mdl2Format;
 			ComPtr<IDWriteTextFormat> m_textFormat;
 			ComPtr<ID2D1SolidColorBrush> m_textBrush;
 			std::vector<ComPtr<ID2D1SolidColorBrush>> m_identiconBrushes;

@@ -184,6 +184,23 @@ namespace Unigram.Common
             return bitmap;
         }
 
+        public static ImageSource GetGlyph(string glyph, int id, int side)
+        {
+            var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    PlaceholderImageHelper.GetForCurrentView().DrawGlyph(glyph, _colors[Math.Abs(id % _colors.Length)], stream);
+
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
+        }
+
         public static ImageSource GetChat(IProtoService protoService, Chat chat, int side)
         {
             if (chat.Type is ChatTypePrivate privata && protoService != null && protoService.IsSavedMessages(chat))

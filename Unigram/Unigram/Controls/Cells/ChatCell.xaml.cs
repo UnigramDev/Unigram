@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
@@ -101,6 +102,64 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat, message, true, false);
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
+        }
+
+        public async void UpdateChatList(IProtoService protoService, IChatListDelegate delegato, ChatList chatList)
+        {
+            _protoService = protoService;
+            _delegate = delegato;
+
+            TitleLabel.Text = Strings.Resources.ArchivedChats;
+            Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 48);
+            TypeIcon.Text = string.Empty;
+            TypeIcon.Visibility = Visibility.Collapsed;
+            VerifiedIcon.Visibility = Visibility.Collapsed;
+            UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+            PinnedIcon.Visibility = Visibility.Collapsed;
+
+            DraftLabel.Text = string.Empty;
+            TimeLabel.Text = string.Empty;
+            StateIcon.Glyph = string.Empty;
+            FailedBadge.Visibility = Visibility.Collapsed;
+
+            MutedIcon.Visibility = Visibility.Collapsed;
+
+            VisualStateManager.GoToState(LayoutRoot, "Muted", false);
+
+            UpdateTicks(null);
+
+            var unreadCount = protoService.GetUnreadCount(chatList);
+            UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            UnreadLabel.Text = $"{unreadCount.UnreadChatCount.UnreadCount}";
+
+            var response = await protoService.SendAsync(new GetChats(chatList, long.MaxValue, 0, 20));
+            if (response is Telegram.Td.Api.Chats chats)
+            {
+                Visibility = chats.ChatIds.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+                BriefInfo.Inlines.Clear();
+
+                foreach (var id in chats.ChatIds)
+                {
+                    var chat = protoService.GetChat(id);
+                    if (chat == null)
+                    {
+                        continue;
+                    }
+
+                    if (BriefInfo.Inlines.Count > 0)
+                    {
+                        BriefInfo.Inlines.Add(new Run { Text = ", " });
+                    }
+
+                    var run = new Run { Text = chat.Title };
+                    if (chat.IsUnread())
+                    {
+                        run.Foreground = App.Current.Resources["ListViewItemForegroundSelected"] as Brush;
+                    }
+
+                    BriefInfo.Inlines.Add(run);
+                }
+            }
         }
 
         public string GetAutomationName()
@@ -383,9 +442,18 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private Visibility UpdateIsPinned(bool isPinned, int unreadCount)
+        public void UpdateViewState(ChatList chatList, bool selected, bool compact, bool threeLines)
         {
-            return isPinned && unreadCount == 0 ? Visibility.Visible : Visibility.Collapsed;
+            VisualStateManager.GoToState(LayoutRoot, selected ? "Selected" : "Normal", false);
+            VisualStateManager.GoToState(LayoutRoot, compact ? "Compact" : "Expanded", false);
+            VisualStateManager.GoToState(LayoutRoot, threeLines ? "ThreeLines" : "Default", false);
+
+            if (threeLines != _expanded && _protoService != null)
+            {
+                _expanded = threeLines;
+
+                UpdateChatList(_protoService, _delegate, chatList);
+            }
         }
 
         private string UpdateBriefLabel(Chat chat)

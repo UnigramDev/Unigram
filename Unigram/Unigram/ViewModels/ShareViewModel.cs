@@ -66,7 +66,7 @@ namespace Unigram.ViewModels
             //    _dialogs = null;
             //}
 
-            var response = await ProtoService.SendAsync(new GetChats(long.MaxValue, 0, int.MaxValue));
+            var response = await ProtoService.SendAsync(new GetChats(new ChatListMain(), long.MaxValue, 0, int.MaxValue));
             if (response is Telegram.Td.Api.Chats chats)
             {
                 var list = ProtoService.GetChats(chats.ChatIds);

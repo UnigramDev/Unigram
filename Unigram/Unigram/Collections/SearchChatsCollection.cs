@@ -18,6 +18,7 @@ namespace Unigram.Collections
     {
         private readonly IProtoService _protoService;
         private readonly string _query;
+        private readonly ChatList _chatList;
         private readonly SearchChatsType _type;
 
         private readonly List<long> _chats = new List<long>();
@@ -31,10 +32,11 @@ namespace Unigram.Collections
         public KeyedList<string, object> Remote => _remote;
         public KeyedList<string, object> Messages => _messages;
 
-        public SearchChatsCollection(IProtoService protoService, string query, SearchChatsType type = SearchChatsType.All)
+        public SearchChatsCollection(IProtoService protoService, string query, ChatList chatList = null, SearchChatsType type = SearchChatsType.All)
         {
             _protoService = protoService;
             _query = query;
+            _chatList = chatList;
             _type = type;
 
             _local = new KeyedList<string, object>(null as string);
@@ -187,7 +189,7 @@ namespace Unigram.Collections
                 }
                 else if (phase == 4)
                 {
-                    var response = await _protoService.SendAsync(new SearchMessages(_query, int.MaxValue, 0, 0, 100));
+                    var response = await _protoService.SendAsync(new SearchMessages(_chatList, _query, int.MaxValue, 0, 0, 100));
                     if (response is Messages messages)
                     {
                         foreach (var message in messages.MessagesValue)

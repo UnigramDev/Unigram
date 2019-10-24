@@ -484,7 +484,7 @@ namespace Unigram.Controls.Views
                     ViewModel.TopChats = null;
                 }
 
-                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.SearchType);
+                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, null, ViewModel.SearchType);
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
             }

@@ -99,6 +99,11 @@ void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, int side, IRand
 	ThrowIfFailed(InternalDrawIdenticon(hash, side, randomAccessStream));
 }
 
+void PlaceholderImageHelper::DrawGlyph(String^ text, Color clear, IRandomAccessStream^ randomAccessStream)
+{
+	ThrowIfFailed(InternalDrawGlyph(text, clear, randomAccessStream));
+}
+
 void PlaceholderImageHelper::DrawSavedMessages(Color clear, IRandomAccessStream^ randomAccessStream)
 {
 	ThrowIfFailed(InternalDrawSavedMessages(clear, randomAccessStream));
@@ -167,6 +172,32 @@ HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, int 
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
 		return InternalDrawIdenticon(hash, side, randomAccessStream);
+	}
+
+	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
+}
+
+HRESULT PlaceholderImageHelper::InternalDrawGlyph(String^ glyph, Color clear, IRandomAccessStream^ randomAccessStream)
+{
+	auto lock = m_criticalSection.Lock();
+	auto text = glyph->Data();
+
+	HRESULT result;
+	DWRITE_TEXT_METRICS textMetrics;
+	ReturnIfFailed(result, MeasureText(text, m_mdl2Format.Get(), &textMetrics));
+
+	m_d2dContext->SetTarget(m_targetBitmap.Get());
+	m_d2dContext->BeginDraw();
+	//m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+	m_d2dContext->Clear(D2D1::ColorF(clear.R / 255.0f, clear.G / 255.0f, clear.B / 255.0f, clear.A / 255.0f));
+
+	D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (192.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
+	m_d2dContext->DrawText(text, 1, m_mdl2Format.Get(), &layoutRect, m_textBrush.Get());
+
+	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+	{
+		ReturnIfFailed(result, CreateDeviceResources());
+		return InternalDrawSavedMessages(clear, randomAccessStream);
 	}
 
 	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
@@ -327,7 +358,18 @@ HRESULT PlaceholderImageHelper::CreateDeviceIndependentResources()
 	ReturnIfFailed(result, m_symbolFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
 	ReturnIfFailed(result, m_symbolFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
 
-
+	ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
+		L"Segoe MDL2 Assets",					// font family name
+		nullptr,								// system font collection
+		DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+		DWRITE_FONT_STYLE_NORMAL,				// font style
+		DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+		82.0f,									// font size
+		L"",									// locale name
+		&m_mdl2Format
+	));
+	ReturnIfFailed(result, m_mdl2Format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+	ReturnIfFailed(result, m_mdl2Format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
 
 	ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
 		L"Segoe UI",							// font family name

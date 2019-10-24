@@ -267,6 +267,20 @@ namespace Unigram.Common
 
         #endregion
 
+        public static bool ListEquals(this ChatList x, ChatList y, bool allowNull = true)
+        {
+            if ((x is ChatListMain || x == null) && (y is ChatListMain || (y == null && allowNull)))
+            {
+                return true;
+            }
+            if (x is ChatListArchive && y is ChatListArchive)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static Endpoint ToEndpoint(this CallConnection connection)
         {
             return new Endpoint
