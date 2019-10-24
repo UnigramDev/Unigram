@@ -38,6 +38,7 @@ namespace Unigram.ViewModels.Settings
             UseDefaultLayout = !Settings.UseThreeLinesLayout;
             UseThreeLinesLayout = Settings.UseThreeLinesLayout;
 
+            DistanceUnitsCommand = new RelayCommand(DistanceUnitsExecute);
             EmojiSetCommand = new RelayCommand(EmojiSetExecute);
         }
 
@@ -164,7 +165,50 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public DistanceUnits DistanceUnits
+        {
+            get
+            {
+                return Settings.DistanceUnits;
+            }
+            set
+            {
+                Settings.DistanceUnits = value;
+                RaisePropertyChanged();
+            }
+        }
 
+        public RelayCommand DistanceUnitsCommand { get; }
+        private async void DistanceUnitsExecute()
+        {
+            var dialog = new TLContentDialog();
+            var stack = new StackPanel();
+            stack.Margin = new Thickness(12, 16, 12, 0);
+            stack.Children.Add(new RadioButton { Tag = DistanceUnits.Automatic, Content = Strings.Resources.DistanceUnitsAutomatic, IsChecked = DistanceUnits == DistanceUnits.Automatic });
+            stack.Children.Add(new RadioButton { Tag = DistanceUnits.Kilometers, Content = Strings.Resources.DistanceUnitsKilometers, IsChecked = DistanceUnits == DistanceUnits.Kilometers });
+            stack.Children.Add(new RadioButton { Tag = DistanceUnits.Miles, Content = Strings.Resources.DistanceUnitsMiles, IsChecked = DistanceUnits == DistanceUnits.Miles });
+
+            dialog.Title = Strings.Resources.DistanceUnitsTitle;
+            dialog.Content = stack;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var mode = DistanceUnits.Automatic;
+                foreach (RadioButton current in stack.Children)
+                {
+                    if (current.IsChecked == true)
+                    {
+                        mode = (DistanceUnits)current.Tag;
+                        break;
+                    }
+                }
+
+                DistanceUnits = mode;
+            }
+        }
 
         public RelayCommand EmojiSetCommand { get; }
         private async void EmojiSetExecute()

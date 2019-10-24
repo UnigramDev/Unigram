@@ -263,6 +263,7 @@ namespace Unigram
                 builder.RegisterType<PassportDocumentViewModelBase>();
                 builder.RegisterType<PassportAddressViewModel>();
                 builder.RegisterType<InviteViewModel>();
+                builder.RegisterType<ChatsNearbyViewModel>();
 
                 builder.RegisterType<WalletViewModel>();
                 builder.RegisterType<WalletSettingsViewModel>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
@@ -43,9 +44,9 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var geopoint = new Geopoint(new BasicGeoposition { Latitude = location.Point.Position.Latitude, Longitude = location.Point.Position.Longitude });
+            var geopoint = new Geopoint(new BasicGeoposition { Latitude = location.Latitude, Longitude = location.Longitude });
 
-            Location = new BasicGeoposition { Latitude = location.Point.Position.Latitude, Longitude = location.Point.Position.Longitude };
+            Location = location;
             UpdateTheme();
 
             var result = await MapLocationFinder.FindLocationsAtAsync(geopoint, MapLocationDesiredAccuracy.Low);
@@ -95,7 +96,7 @@ namespace Unigram.ViewModels.Settings
                         IsLocationBased = false;
                         From = new TimeSpan(22, 0, 0);
                         To = new TimeSpan(9, 0, 0);
-                        Location = new BasicGeoposition();
+                        Location = new Location();
                         Town = null;
                     }
 
@@ -123,7 +124,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         From = new TimeSpan(22, 0, 0);
                         To = new TimeSpan(9, 0, 0);
-                        Location = new BasicGeoposition();
+                        Location = new Location();
                         Town = null;
                     }
 
@@ -165,7 +166,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public BasicGeoposition Location
+        public Location Location
         {
             get
             {

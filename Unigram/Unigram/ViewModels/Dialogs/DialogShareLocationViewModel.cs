@@ -38,14 +38,14 @@ namespace Unigram.ViewModels.Dialogs
 
             Location = location;
 
-            var venues = await _locationService.GetVenuesAsync(0, location.Point.Position.Latitude, location.Point.Position.Longitude);
+            var venues = await _locationService.GetVenuesAsync(0, location.Latitude, location.Longitude);
             Items.ReplaceWith(venues);
         }
 
         public MvxObservableCollection<Venue> Items { get; private set; }
 
-        private Geocoordinate _location;
-        public Geocoordinate Location
+        private Location _location;
+        public Location Location
         {
             get
             {
@@ -67,7 +67,7 @@ namespace Unigram.ViewModels.Dialogs
                 return;
             }
 
-            var venues = await _locationService.GetVenuesAsync(0, location.Point.Position.Latitude, location.Point.Position.Longitude, query);
+            var venues = await _locationService.GetVenuesAsync(0, location.Latitude, location.Longitude, query);
             Search = new MvxObservableCollection<Venue>(venues);
         }
 

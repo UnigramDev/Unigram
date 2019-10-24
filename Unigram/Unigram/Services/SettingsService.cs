@@ -49,6 +49,8 @@ namespace Unigram.Services
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
 
+        DistanceUnits DistanceUnits { get; set; }
+
         bool AreAnimationsEnabled { get; set; }
 
         bool IsStreamingEnabled { get; set; }
@@ -69,6 +71,13 @@ namespace Unigram.Services
         long GetChatPinnedMessage(long chatId);
 
         void Clear();
+    }
+
+    public enum DistanceUnits
+    {
+        Automatic,
+        Kilometers,
+        Miles
     }
 
     public class SettingsServiceBase
@@ -366,6 +375,23 @@ namespace Unigram.Services
                 _userId = value;
                 AddOrUpdateValue(_local, $"User{value}", Session);
                 AddOrUpdateValue(_own, "UserId", value);
+            }
+        }
+
+        private static int? _distanceUnits;
+        public DistanceUnits DistanceUnits
+        {
+            get
+            {
+                if (_distanceUnits == null)
+                    _distanceUnits = GetValueOrDefault("DistanceUnits", 0);
+
+                return (DistanceUnits)(_distanceUnits ?? 0);
+            }
+            set
+            {
+                _distanceUnits = (int)value;
+                AddOrUpdateValue("DistanceUnits", (int)value);
             }
         }
 

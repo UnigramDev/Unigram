@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services.Settings;
@@ -108,9 +109,9 @@ namespace Unigram.Views.Settings
             return BindConvert.Current.ShortTime.Format(new DateTime(1, 1, 1, time.Hours, time.Minutes, 0));
         }
 
-        private string ConvertSunDate(bool enabled, BasicGeoposition location)
+        private string ConvertSunDate(bool enabled, Location location)
         {
-            if (location.Latitude == 0 && location.Longitude == 0 || !enabled)
+            if (location == null || (location.Latitude == 0 && location.Longitude == 0) || !enabled)
             {
                 return null;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Windows.Devices.Geolocation;
@@ -299,15 +300,15 @@ namespace Unigram.Services.Settings
             }
         }
 
-        private BasicGeoposition? _location;
-        public BasicGeoposition Location
+        private Location _location;
+        public Location Location
         {
             get
             {
                 if (_location == null)
-                    _location = new BasicGeoposition { Latitude = GetValueOrDefault("Latitude", 0d), Longitude = GetValueOrDefault("Longitude", 0d) };
+                    _location = new Location { Latitude = GetValueOrDefault("Latitude", 0d), Longitude = GetValueOrDefault("Longitude", 0d) };
 
-                return _location ?? new BasicGeoposition();
+                return _location ?? new Location();
             }
             set
             {

@@ -564,6 +564,7 @@
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep3ViewModel.cs" />
+    <Compile Include="ViewModels\ChatsNearbyViewModel.cs" />
     <Compile Include="ViewModels\ChatsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
@@ -793,6 +794,9 @@
     </Compile>
     <Compile Include="Views\Payments\PaymentReceiptPage.xaml.cs">
       <DependentUpon>PaymentReceiptPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatsNearbyPage.xaml.cs">
+      <DependentUpon>ChatsNearbyPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlaygroundPage.xaml.cs">
       <DependentUpon>PlaygroundPage.xaml</DependentUpon>
@@ -2238,6 +2242,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Payments\PaymentReceiptPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChatsNearbyPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

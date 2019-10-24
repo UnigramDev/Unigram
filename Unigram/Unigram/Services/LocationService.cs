@@ -18,7 +18,7 @@ namespace Unigram.Services
         Task<Geolocator> StartTrackingAsync();
         void StopTracking();
 
-        Task<Geocoordinate> GetPositionAsync();
+        Task<Location> GetPositionAsync();
 
         Task<List<Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null);
     }
@@ -85,7 +85,7 @@ namespace Unigram.Services
             StopTracking();
         }
 
-        public async Task<Geocoordinate> GetPositionAsync()
+        public async Task<Location> GetPositionAsync()
         {
             try
             {
@@ -95,7 +95,7 @@ namespace Unigram.Services
                     var geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
                     var location = await geolocator.GetGeopositionAsync();
 
-                    return location.Coordinate;
+                    return new Location(location.Coordinate.Point.Position.Latitude, location.Coordinate.Point.Position.Longitude);
                 }
             } catch { }
 
