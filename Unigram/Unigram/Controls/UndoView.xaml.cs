@@ -58,13 +58,13 @@ namespace Unigram.Controls
             }
         }
 
-        public void Show(IList<Chat> chats, UndoType type, Action<IList<Chat>> action, Action<IList<Chat>> undo)
+        public void Show(IList<Chat> chats, UndoType type, Action<IList<Chat>> undo, Action<IList<Chat>> action = null)
         {
             _timeout.Stop();
             _storyboard?.Stop();
 
             _remaining = 5;
-            _queue.Enqueue(new UndoOp(chats, action, undo));
+            _queue.Enqueue(new UndoOp(chats, undo, action));
 
             _timeout.Start();
 
@@ -148,7 +148,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    current.Delete.Invoke(current.Chats);
+                    current.Action.Invoke(current.Chats);
                 }
             }
 
@@ -166,14 +166,14 @@ namespace Unigram.Controls
         private class UndoOp
         {
             public IList<Chat> Chats { get; private set; }
-            public Action<IList<Chat>> Delete { get; private set; }
             public Action<IList<Chat>> Undo { get; private set; }
+            public Action<IList<Chat>> Action { get; private set; }
 
-            public UndoOp(IList<Chat> chats, Action<IList<Chat>> delete, Action<IList<Chat>> undo)
+            public UndoOp(IList<Chat> chats, Action<IList<Chat>> undo, Action<IList<Chat>> action)
             {
                 Chats = chats;
-                Delete = delete;
                 Undo = undo;
+                Action = action;
             }
         }
     }

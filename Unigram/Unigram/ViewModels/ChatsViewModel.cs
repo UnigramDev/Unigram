@@ -189,7 +189,8 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> ChatArchiveCommand { get; }
         private void ChatArchiveExecute(Chat chat)
         {
-            if (chat.ChatList is ChatListArchive)
+            var chatList = chat.ChatList;
+            if (chatList is ChatListArchive)
             {
                 ProtoService.Send(new SetChatChatList(chat.Id, new ChatListMain()));
             }
@@ -197,6 +198,17 @@ namespace Unigram.ViewModels
             {
                 ProtoService.Send(new SetChatChatList(chat.Id, new ChatListArchive()));
             }
+
+            Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Archive, items =>
+            {
+                var undo = items.FirstOrDefault();
+                if (undo == null)
+                {
+                    return;
+                }
+
+                ProtoService.Send(new SetChatChatList(chat.Id, chatList));
+            });
         }
 
         #endregion
@@ -309,7 +321,17 @@ namespace Unigram.ViewModels
                 _deletedChats[chat.Id] = true;
                 Handle(chat.Id, 0);
 
-                Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Delete, async items =>
+                Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Delete, items =>
+                {
+                    var undo = items.FirstOrDefault();
+                    if (undo == null)
+                    {
+                        return;
+                    }
+
+                    _deletedChats.Remove(undo.Id);
+                    Handle(undo.Id, undo.Order);
+                }, async items =>
                 {
                     var delete = items.FirstOrDefault();
                     if (delete == null)
@@ -340,16 +362,6 @@ namespace Unigram.ViewModels
 
                         ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
                     }
-                }, items =>
-                {
-                    var undo = items.FirstOrDefault();
-                    if (undo == null)
-                    {
-                        return;
-                    }
-
-                    _deletedChats.Remove(undo.Id);
-                    Handle(undo.Id, undo.Order);
                 });
             }
         }
@@ -372,7 +384,14 @@ namespace Unigram.ViewModels
                     Handle(chat.Id, 0);
                 }
 
-                Delegate?.ShowChatsUndo(chats, UndoType.Delete, async items =>
+                Delegate?.ShowChatsUndo(chats, UndoType.Delete, items =>
+                {
+                    foreach (var undo in items)
+                    {
+                        _deletedChats.Remove(undo.Id);
+                        Handle(undo.Id, undo.Order);
+                    }
+                }, async items =>
                 {
                     foreach (var delete in items)
                     {
@@ -386,13 +405,6 @@ namespace Unigram.ViewModels
                         }
 
                         ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
-                    }
-                }, items =>
-                {
-                    foreach (var undo in items)
-                    {
-                        _deletedChats.Remove(undo.Id);
-                        Handle(undo.Id, undo.Order);
                     }
                 });
             }
@@ -413,13 +425,7 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Clear , items =>
-                {
-                    foreach (var delete in items)
-                    {
-                        ProtoService.Send(new DeleteChatHistory(delete.Id, false, dialog.IsChecked));
-                    }
-                }, items =>
+                Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Clear, items =>
                 {
                     var undo = items.FirstOrDefault();
                     if (undo == null)
@@ -429,6 +435,12 @@ namespace Unigram.ViewModels
 
                     _deletedChats.Remove(undo.Id);
                     Handle(undo.Id, undo.Order);
+                }, items =>
+                {
+                    foreach (var delete in items)
+                    {
+                        ProtoService.Send(new DeleteChatHistory(delete.Id, false, dialog.IsChecked));
+                    }
                 });
             }
         }
@@ -447,6 +459,13 @@ namespace Unigram.ViewModels
             {
                 Delegate?.ShowChatsUndo(chats, UndoType.Clear, items =>
                 {
+                    foreach (var undo in items)
+                    {
+                        _deletedChats.Remove(undo.Id);
+                        Handle(undo.Id, undo.Order);
+                    }
+                }, items =>
+                {
                     var clear = items.FirstOrDefault();
                     if (clear == null)
                     {
@@ -454,13 +473,6 @@ namespace Unigram.ViewModels
                     }
 
                     ProtoService.Send(new DeleteChatHistory(clear.Id, false, false));
-                }, items =>
-                {
-                    foreach (var undo in items)
-                    {
-                        _deletedChats.Remove(undo.Id);
-                        Handle(undo.Id, undo.Order);
-                    }
                 });
             }
 

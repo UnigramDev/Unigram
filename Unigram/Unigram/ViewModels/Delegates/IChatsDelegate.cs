@@ -11,7 +11,7 @@ namespace Unigram.ViewModels.Delegates
 {
     public interface IChatsDelegate : IViewModelDelegate
     {
-        void ShowChatsUndo(IList<Chat> chats, UndoType type, Action<IList<Chat>> action, Action<IList<Chat>> undo);
+        void ShowChatsUndo(IList<Chat> chats, UndoType type, Action<IList<Chat>> undo, Action<IList<Chat>> action = null);
 
         void SetSelectionMode(bool enabled);
 
