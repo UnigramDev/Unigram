@@ -967,6 +967,39 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
+                else if (inline.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
+                {
+                    var response = await ProtoService.SendAsync(new GetLoginUrlInfo(chat.Id, message.Id, loginUrl.Id));
+                    if (response is LoginUrlInfoOpen infoOpen)
+                    {
+                        OpenUrl(infoOpen.Url, !infoOpen.SkipConfirm);
+                    }
+                    else if (response is LoginUrlInfoRequestConfirmation requestConfirmation)
+                    {
+                        var dialog = new LoginUrlInfoView(CacheService, requestConfirmation);
+                        var confirm = await dialog.ShowQueuedAsync();
+                        if (confirm != ContentDialogResult.Primary || !dialog.HasAccepted)
+                        {
+                            return;
+                        }
+
+                        response = await ProtoService.SendAsync(new GetLoginUrl(chat.Id, message.Id, loginUrl.Id, dialog.HasWriteAccess));
+                        if (response is HttpUrl httpUrl)
+                        {
+                            if (MessageHelper.TryCreateUri(httpUrl.Url, out Uri uri))
+                            {
+                                await Launcher.LaunchUriAsync(uri);
+                            }
+                        }
+                        else if (response is Error)
+                        {
+                            if (MessageHelper.TryCreateUri(loginUrl.Url, out Uri uri))
+                            {
+                                await Launcher.LaunchUriAsync(uri);
+                            }
+                        }
+                    }
+                }
                 else if (inline.Type is InlineKeyboardButtonTypeSwitchInline switchInline)
                 {
                     var bot = GetBot(message);

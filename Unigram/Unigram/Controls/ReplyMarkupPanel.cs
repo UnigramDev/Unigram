@@ -153,6 +153,10 @@ namespace Unigram.Controls
                                 button.Glyph = "\uE143";
                                 ToolTipService.SetToolTip(button, typeUrl.Url);
                             }
+                            else if (inlineButton.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
+                            {
+                                button.Glyph = "\uE143";
+                            }
                             else if (inlineButton.Type is InlineKeyboardButtonTypeSwitchInline)
                             {
                                 button.Glyph = "\uEE35";

@@ -131,6 +131,7 @@
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
     <Compile Include="Common\SunDate.cs" />
+    <Compile Include="Common\TextStyleRun.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
@@ -386,6 +387,9 @@
     </Compile>
     <Compile Include="Controls\Views\LiveLocationsView.xaml.cs">
       <DependentUpon>LiveLocationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\LoginUrlInfoView.xaml.cs">
+      <DependentUpon>LoginUrlInfoView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\MessageTtlView.xaml.cs">
       <DependentUpon>MessageTtlView.xaml</DependentUpon>
@@ -1974,6 +1978,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\LiveLocationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\LoginUrlInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
