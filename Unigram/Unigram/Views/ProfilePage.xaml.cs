@@ -167,6 +167,8 @@ namespace Unigram.Views
             }
 
             // Unused:
+            Location.Visibility = Visibility.Collapsed;
+
             GroupLeave.Visibility = Visibility.Collapsed;
             GroupInvite.Visibility = Visibility.Collapsed;
 
@@ -250,6 +252,7 @@ namespace Unigram.Views
 
             Verified.Visibility = Visibility.Collapsed;
             UserPhone.Visibility = Visibility.Collapsed;
+            Location.Visibility = Visibility.Collapsed;
             Username.Visibility = Visibility.Collapsed;
 
             DescriptionPanel.Visibility = Visibility.Collapsed;
@@ -299,6 +302,8 @@ namespace Unigram.Views
             Username.Badge = $"{group.Username}";
             Username.Visibility = string.IsNullOrEmpty(group.Username) ? Visibility.Collapsed : Visibility.Visible;
 
+            Location.Visibility = group.HasLocation ? Visibility.Visible : Visibility.Collapsed;
+
             if (group.IsChannel && !(group.Status is ChatMemberStatusCreator) && !(group.Status is ChatMemberStatusLeft) && !(group.Status is ChatMemberStatusBanned))
             {
                 MiscPanel.Visibility = Visibility.Visible;
@@ -336,6 +341,9 @@ namespace Unigram.Views
         {
             GetEntities(fullInfo.Description);
             DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
+
+            Location.Visibility = fullInfo.Location != null ? Visibility.Visible : Visibility.Collapsed;
+            Location.Badge = fullInfo.Location?.Address;
 
             Admins.Badge = fullInfo.AdministratorCount;
             //Admins.Visibility = fullInfo.AdministratorCount > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -463,7 +471,7 @@ namespace Unigram.Views
                     //{
                     //    callItem = menu.addItem(call_item, R.drawable.ic_call_white_24dp);
                     //}
-                    if (user.OutgoingLink is LinkStateIsContact)
+                    if (user.IsContact)
                     {
                         flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
                         flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
@@ -481,10 +489,13 @@ namespace Unigram.Views
 
                             flyout.CreateFlyoutItem(null, Strings.Resources.BotShare, new FontIcon { Glyph = Icons.Share });
                         }
-
-                        if (user.PhoneNumber != null && user.PhoneNumber.Length > 0)
+                        else
                         {
                             flyout.CreateFlyoutItem(ViewModel.AddCommand, Strings.Resources.AddContact, new FontIcon { Glyph = Icons.AddUser });
+                        }
+
+                        if (user.PhoneNumber.Length > 0)
+                        {
                             flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
                             flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
                         }

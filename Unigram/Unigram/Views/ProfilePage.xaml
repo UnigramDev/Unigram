@@ -635,6 +635,23 @@
                                 </Button.ContextFlyout>
                             </controls:BadgeButton>
 
+                            <controls:BadgeButton
+                                x:Name="Location"
+                                Visibility="Collapsed"
+                                Content="{CustomResource AttachLocation}"
+                                Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                                Glyph="&#xE1C4;">
+                                <Button.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8C8;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </Button.ContextFlyout>
+                            </controls:BadgeButton>
+
                             <Grid x:Name="NotificationsPanel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="48"/>
