@@ -166,28 +166,28 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid x:Name="Header"
-              Background="{ThemeResource PageHeaderBackgroundBrush}"
-              Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <controls:ProfilePicture x:Name="Photo" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+        <controls:ContentPageHeader>    
+            <Grid x:Name="Header">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePicture x:Name="Photo" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
-                <TextBlock x:Name="Title"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           TextTrimming="CharacterEllipsis"
-                           TextWrapping="NoWrap"
-                           MaxLines="1"/>
-                <TextBlock x:Name="Subtitle"
-                           Text="{x:Bind ConvertSubtitle(ViewModel.Filters, ViewModel.UserIds), Mode=OneWay}"
-                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"/>
-            </StackPanel>
-        </Grid>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
+                    <TextBlock x:Name="Title"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               MaxLines="1"/>
+                    <TextBlock x:Name="Subtitle"
+                               Text="{x:Bind ConvertSubtitle(ViewModel.Filters, ViewModel.UserIds), Mode=OneWay}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </Grid>
+        </controls:ContentPageHeader>
 
         <controls:PaddedListView
             x:Name="Messages"

@@ -93,19 +93,19 @@ namespace Unigram.Views.Supergroups
 
         #region Delegate
 
+        private bool _isChannel;
+
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             Header.Text = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
-            Subheader.Text = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
+            Subheader.Header = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
+            Subheader.Footer = group.Username.Length > 0 ? group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo : group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
 
             Public.Content = group.IsChannel ? Strings.Resources.ChannelPublic : Strings.Resources.MegaPublic;
-            PublicInfo.Text = group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo;
-
             Private.Content = group.IsChannel ? Strings.Resources.ChannelPrivate : Strings.Resources.MegaPrivate;
-            PrivateInfo.Text = group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
 
-            UsernameHelp.Text = group.IsChannel ? Strings.Resources.ChannelUsernameHelp : Strings.Resources.MegaUsernameHelp;
-            PrivateLinkHelp.Text = group.IsChannel ? Strings.Resources.ChannelPrivateLinkHelp : Strings.Resources.MegaPrivateLinkHelp;
+            UsernameHelp.Footer = group.IsChannel ? Strings.Resources.ChannelUsernameHelp : Strings.Resources.MegaUsernameHelp;
+            PrivateLinkHelp.Footer = group.IsChannel ? Strings.Resources.ChannelPrivateLinkHelp : Strings.Resources.MegaPrivateLinkHelp;
 
 
 
@@ -126,16 +126,14 @@ namespace Unigram.Views.Supergroups
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
             Header.Text = Strings.Resources.GroupSettingsTitle;
-            Subheader.Text = Strings.Resources.GroupTypeHeader;
+            Subheader.Header = Strings.Resources.GroupTypeHeader;
+            Subheader.Footer = Strings.Resources.MegaPrivateInfo;
 
             Public.Content = Strings.Resources.MegaPublic;
-            PublicInfo.Text = Strings.Resources.MegaPublicInfo;
-
             Private.Content = Strings.Resources.MegaPrivate;
-            PrivateInfo.Text = Strings.Resources.MegaPrivateInfo;
 
-            UsernameHelp.Text = Strings.Resources.MegaUsernameHelp;
-            PrivateLinkHelp.Text = Strings.Resources.MegaPrivateLinkHelp;
+            UsernameHelp.Footer = Strings.Resources.MegaUsernameHelp;
+            PrivateLinkHelp.Footer = Strings.Resources.MegaPrivateLinkHelp;
 
 
 
@@ -158,5 +156,20 @@ namespace Unigram.Views.Supergroups
         public void UpdateChatPhoto(Chat chat) { }
 
         #endregion
+
+        #region Binding
+
+        private string ConvertFooter(bool pubblico)
+        {
+            if (ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            {
+                return pubblico ? Strings.Resources.ChannelPublicInfo : Strings.Resources.ChannelPrivateInfo;
+            }
+
+            return pubblico ? Strings.Resources.MegaPublicInfo : Strings.Resources.MegaPrivateInfo;
+        }
+
+        #endregion
+
     }
 }

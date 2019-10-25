@@ -44,7 +44,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -80,16 +80,19 @@
             </Grid>
         </controls:ContentPageHeader>
 
-        <ListView ItemsSource="{x:Bind SearchResults.View, Mode=OneWay}"
-                  ItemTemplate="{StaticResource MemberTemplate}"
-                  ItemClick="ListView_ItemClick"
-                  IsItemClickEnabled="True"
-                  ContainerContentChanging="Search_ContainerContentChanging"
-                  SelectionMode="None"
-                  Grid.Row="1">
+        <controls:TableListView
+            ItemsSource="{x:Bind SearchResults.View, Mode=OneWay}"
+            ItemTemplate="{StaticResource MemberTemplate}"
+            ItemClick="ListView_ItemClick"
+            IsItemClickEnabled="True"
+            ContainerContentChanging="Search_ContainerContentChanging"
+            SelectionMode="None"
+            Grid.Row="1">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.GroupStyle>
@@ -135,23 +138,38 @@
                     </GroupStyle.HeaderContainerStyle>
                 </GroupStyle>
             </ListView.GroupStyle>
-        </ListView>
+            <ListView.Header>
+                <Border Height="16"/>
+            </ListView.Header>
+            <ListView.Footer>
+                <Border Height="32"/>
+            </ListView.Footer>
+        </controls:TableListView>
 
-        <Grid x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1">
-            <ListView x:Name="ScrollingHost"
-                      ItemsSource="{x:Bind ViewModel.Members}"
-                      ItemTemplate="{StaticResource MemberTemplate}"
-                      ItemClick="ListView_ItemClick"
-                      IsItemClickEnabled="True"
-                      ContainerContentChanging="OnContainerContentChanging"
-                      SelectionMode="None"
-                      Grid.Row="1">
+        <Grid x:Name="ContentPanel" Background="{ThemeResource PageBackgroundDarkBrush}" Grid.Row="1">
+            <controls:TableListView
+                x:Name="ScrollingHost"
+                ItemsSource="{x:Bind ViewModel.Members}"
+                ItemTemplate="{StaticResource MemberTemplate}"
+                ItemClick="ListView_ItemClick"
+                IsItemClickEnabled="True"
+                ContainerContentChanging="OnContainerContentChanging"
+                SelectionMode="None"
+                Grid.Row="1">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="MaxWidth" Value="640"/>
                     </Style>
                 </ListView.ItemContainerStyle>
-            </ListView>
+                <ListView.Header>
+                    <Border Height="16"/>
+                </ListView.Header>
+                <ListView.Footer>
+                    <Border Height="32"/>
+                </ListView.Footer>
+            </controls:TableListView>
         </Grid>
     </Grid>
 </Page>
