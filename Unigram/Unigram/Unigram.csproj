@@ -675,6 +675,7 @@
     <Compile Include="ViewModels\Supergroups\SupergroupAdministratorsViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupBannedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditAdministratorViewModel.cs" />
+    <Compile Include="ViewModels\Supergroups\SupergroupEditLinkedChatViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditRestrictedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditStickerSetViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditTypeViewModel.cs" />
@@ -925,6 +926,9 @@
     <Compile Include="Views\Supergroups\SupergroupEditAdministratorPage.xaml.cs">
       <DependentUpon>SupergroupEditAdministratorPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Supergroups\SupergroupEditLinkedChatPage.xaml.cs">
+      <DependentUpon>SupergroupEditLinkedChatPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditPage.xaml.cs">
       <DependentUpon>SupergroupEditPage.xaml</DependentUpon>
     </Compile>
@@ -948,6 +952,9 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TestPage.xaml.cs">
+      <DependentUpon>TestPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
@@ -2477,6 +2484,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Supergroups\SupergroupEditLinkedChatPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Supergroups\SupergroupEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2504,6 +2515,10 @@
     <Page Include="Views\Supergroups\SupergroupPermissionsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TestPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -161,11 +161,21 @@ namespace Unigram.Views.Supergroups
             ChannelSignMessagesPanel.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
+            ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
+            ChatLinked.Content = group.IsChannel ? Strings.Resources.Discussion : Strings.Resources.LinkedChannel;
+            ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.Resources.DiscussionInfo;
+
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             Blacklist.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
+
+            ChatBasicPanel.Visibility = ChatType.Visibility == Visibility.Visible
+                || ChatHistory.Visibility == Visibility.Visible
+                || ChatLinked.Visibility == Visibility.Visible
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -179,6 +189,15 @@ namespace Unigram.Views.Supergroups
             ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
             ChatHistory.Badge = fullInfo.IsAllHistoryAvailable ? Strings.Resources.ChatHistoryVisible : Strings.Resources.ChatHistoryHidden;
 
+            var linkedChat = ViewModel.CacheService.GetChat(fullInfo.LinkedChatId);
+            if (linkedChat != null)
+            {
+                ChatLinked.Badge = linkedChat.Title;
+            }
+            else
+            {
+                ChatLinked.Badge = Strings.Resources.DiscussionInfo;
+            }
 
             Admins.Badge = fullInfo.AdministratorCount;
             Members.Badge = fullInfo.MemberCount;
@@ -208,6 +227,12 @@ namespace Unigram.Views.Supergroups
             {
                 InviteLinkPanel.Visibility = Visibility.Collapsed;
             }
+
+            ChatBasicPanel.Visibility = ChatType.Visibility == Visibility.Visible
+                || ChatHistory.Visibility == Visibility.Visible
+                || ChatLinked.Visibility == Visibility.Visible
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
 
             if (fullInfo.StickerSetId == 0 || !fullInfo.CanSetStickerSet)
             {
@@ -254,6 +279,7 @@ namespace Unigram.Views.Supergroups
             ChatHistory.Visibility = Visibility.Visible;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            ChatLinked.Visibility = Visibility.Collapsed;
             ChannelSignMessagesPanel.Visibility = Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
@@ -262,6 +288,12 @@ namespace Unigram.Views.Supergroups
             Blacklist.Visibility = Visibility.Collapsed;
 
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
+
+            ChatBasicPanel.Visibility = ChatType.Visibility == Visibility.Visible
+                || ChatHistory.Visibility == Visibility.Visible
+                || ChatLinked.Visibility == Visibility.Visible
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -296,6 +328,12 @@ namespace Unigram.Views.Supergroups
             {
                 InviteLinkPanel.Visibility = Visibility.Collapsed;
             }
+
+            ChatBasicPanel.Visibility = ChatType.Visibility == Visibility.Visible
+                || ChatHistory.Visibility == Visibility.Visible
+                || ChatLinked.Visibility == Visibility.Visible
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
         }
 
         #endregion

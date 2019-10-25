@@ -37,80 +37,94 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel Padding="0,0,0,48">
-                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo"
-                                             Click="Photo_Click"
-                                             AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                             Height="64"
-                                             Width="64"
-                                             Margin="12,6"
-                                             Grid.RowSpan="2">
-                        <FlyoutBase.AttachedFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Click="EditCamera_Click"
-                                                Text="{CustomResource FromCamera}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE722;"/>
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem Click="EditPhoto_Click"
-                                                Text="{CustomResource FromGalley}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xEB9F;"/>
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem Command="{x:Bind ViewModel.DeletePhotoCommand}"
-                                                Text="{CustomResource Delete}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE74D;"/>
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                            </MenuFlyout>
-                        </FlyoutBase.AttachedFlyout>
-                    </controls:ProfilePicture>
+                <controls:HeaderedControl>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture
+                            x:Name="Photo"
+                            Click="Photo_Click"
+                            AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                            Height="64"
+                            Width="64"
+                            Margin="12,8"
+                            Grid.RowSpan="2">
+                            <FlyoutBase.AttachedFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Click="EditCamera_Click"
+                                                    Text="{CustomResource FromCamera}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE722;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="EditPhoto_Click"
+                                                    Text="{CustomResource FromGalley}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xEB9F;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem Command="{x:Bind ViewModel.DeletePhotoCommand}"
+                                                    Text="{CustomResource Delete}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE74D;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                </MenuFlyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </controls:ProfilePicture>
 
-                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                        <TextBox
-                            x:Name="Title"
-                            Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                            MaxLength="{StaticResource ChannelTitleMaxLength}"/>
-                    </Border>
-                </Grid>
+                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
+                            <TextBox
+                                x:Name="Title"
+                                Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                MaxLength="{StaticResource ChannelTitleMaxLength}"/>
+                        </Border>
+                    </Grid>
 
-                <StackPanel>
-                    <TextBox
-                        x:Name="About"
-                        Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                        MaxLength="{StaticResource ChannelAboutMaxLength}"
-                        PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
-                        TextWrapping="Wrap"
-                        AcceptsReturn="True"
-                        Margin="12,8,12,8"/>
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
-                </StackPanel>
 
-                <StackPanel>
-                    <controls:BadgeButton x:Name="ChatType"
-                                          Content="{CustomResource GroupType}"
-                                          Command="{x:Bind ViewModel.EditTypeCommand}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+                    <StackPanel>
+                        <TextBox
+                            x:Name="About"
+                            Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            MaxLength="{StaticResource ChannelAboutMaxLength}"
+                            PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            Margin="12,8,12,8"/>
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
+                    </StackPanel>
+                </controls:HeaderedControl>
 
-                    <controls:BadgeButton x:Name="ChatHistory"
-                                          Content="{CustomResource ChatHistory}"
-                                          Badge="{x:Bind ConvertHistory(ViewModel.IsAllHistoryAvailable), Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.EditHistoryCommand}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}"/>
-                </StackPanel>
+                <controls:HeaderedControl
+                    x:Name="ChatBasicPanel">
+                    <controls:BadgeButton
+                        x:Name="ChatType"
+                        Content="{CustomResource GroupType}"
+                        Command="{x:Bind ViewModel.EditTypeCommand}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+
+                    <controls:BadgeButton
+                        x:Name="ChatHistory"
+                        Content="{CustomResource ChatHistory}"
+                        Badge="{x:Bind ConvertHistory(ViewModel.IsAllHistoryAvailable), Mode=OneWay}"
+                        Command="{x:Bind ViewModel.EditHistoryCommand}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+
+                    <controls:BadgeButton
+                        x:Name="ChatLinked"
+                        Content="{CustomResource Discussion}"
+                        Command="{x:Bind ViewModel.EditLinkedChatCommand}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+                </controls:HeaderedControl>
 
                 <controls:HeaderedControl
                     x:Name="InviteLinkPanel"
@@ -118,8 +132,11 @@
                     <TextBox
                         x:Name="InviteLink"
                         IsReadOnly="True"
-                        Margin="12,8,12,0"
+                        Margin="12,8,12,8"
                         Grid.Row="1"/>
+
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
+
                     <controls:BadgeButton
                         x:Name="RevokeLink"
                         Content="{CustomResource RevokeLink}"

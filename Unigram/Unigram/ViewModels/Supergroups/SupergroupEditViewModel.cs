@@ -35,6 +35,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             EditTypeCommand = new RelayCommand(EditTypeExecute);
             EditHistoryCommand = new RelayCommand(EditHistoryExecute);
+            EditLinkedChatCommand = new RelayCommand(EditLinkedChatExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
             DeletePhotoCommand = new RelayCommand(DeletePhotoExecute);
@@ -300,7 +301,7 @@ namespace Unigram.ViewModels.Supergroups
                 }
             }
 
-            if (fullInfo !=  null && _isAllHistoryAvailable != fullInfo.IsAllHistoryAvailable)
+            if (fullInfo != null && _isAllHistoryAvailable != fullInfo.IsAllHistoryAvailable)
             {
                 var response = await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(supergroup.Id, _isAllHistoryAvailable));
                 if (response is Error)
@@ -406,6 +407,24 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             NavigationService.Navigate(typeof(SupergroupEditStickerSetPage), chat.Id);
+        }
+
+        public RelayCommand EditLinkedChatCommand { get; }
+        private void EditLinkedChatExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(SupergroupEditLinkedChatPage), chat.Id);
         }
 
         public RelayCommand RevokeCommand { get; }

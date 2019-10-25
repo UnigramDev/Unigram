@@ -193,6 +193,7 @@ namespace Unigram
                 builder.RegisterType<SupergroupEditStickerSetViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupEditAdministratorViewModel>();
                 builder.RegisterType<SupergroupEditRestrictedViewModel>();
+                builder.RegisterType<SupergroupEditLinkedChatViewModel>();
                 builder.RegisterType<SupergroupAddAdministratorViewModel>();
                 builder.RegisterType<SupergroupAddRestrictedViewModel>();
                 builder.RegisterType<LiveLocationViewModel>();
