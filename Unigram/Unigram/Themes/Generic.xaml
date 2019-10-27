@@ -16,7 +16,7 @@
                     <Grid>
                         <Grid Width="{StaticResource PaneToggleButtonSize}"
                               Visibility="{TemplateBinding PaneToggleButtonVisibility}"
-                              Margin="0,0,0,8"
+                              Margin="0,0,0,0"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top"
                               Canvas.ZIndex="100">
@@ -28,7 +28,9 @@
                             <local:GlyphButton x:Name="TogglePaneButton"
                                                Grid.Row="1"
                                                Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                               Width="{ThemeResource AppBarThemeCompactHeight}"
                                                Height="{ThemeResource AppBarThemeCompactHeight}"
+                                               FontSize="{StaticResource GlyphButtonFontSize}"
                                                AutomationProperties.LandmarkType="Navigation"
                                                AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
                                                ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"

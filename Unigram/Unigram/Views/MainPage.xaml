@@ -133,11 +133,11 @@
                         <TextBlock x:Name="DefaultHeader"
                                    Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}"
                                    VerticalAlignment="Center"
-                                   Margin="54,0,0,0"
+                                   Margin="46,0,0,0"
                                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                    Style="{StaticResource BaseTextBlockStyle}"/>
 
-                        <Button x:Name="ChatsFilters" Content="All chats" Margin="13,0,0,0">
+                        <Button x:Name="ChatsFilters" Content="All chats" Margin="5,0,0,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Grid x:Name="LayoutRoot" Background="Transparent">
