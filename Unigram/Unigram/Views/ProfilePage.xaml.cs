@@ -916,6 +916,8 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            return;
+
             var scrollViewer = ScrollingHost.GetScrollViewer();
             if (scrollViewer == null)
             {
