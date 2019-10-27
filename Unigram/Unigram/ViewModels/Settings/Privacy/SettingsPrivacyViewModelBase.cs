@@ -75,8 +75,12 @@ namespace Unigram.ViewModels.Settings
             _rules = rules;
             var badge = string.Empty;
             PrivacyValue? primary = null;
-            UserPrivacySettingRuleRestrictUsers disallowed = null;
-            UserPrivacySettingRuleAllowUsers allowed = null;
+            var restricted = 0;
+            var allowed = 0;
+            UserPrivacySettingRuleAllowUsers allowedUsers = null;
+            UserPrivacySettingRuleAllowChatMembers allowedChatMembers = null;
+            UserPrivacySettingRuleRestrictUsers restrictedUsers = null;
+            UserPrivacySettingRuleRestrictChatMembers restrictedChatMembers = null;
             foreach (var current in rules.Rules)
             {
                 if (current is UserPrivacySettingRuleAllowAll)
@@ -96,11 +100,57 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (current is UserPrivacySettingRuleRestrictUsers disallowUsers)
                 {
-                    disallowed = disallowUsers;
+                    restrictedUsers = disallowUsers;
+                    restricted += disallowUsers.UserIds.Count;
                 }
                 else if (current is UserPrivacySettingRuleAllowUsers allowUsers)
                 {
-                    allowed = allowUsers;
+                    allowedUsers = allowUsers;
+                    allowed += allowUsers.UserIds.Count;
+                }
+                else if (current is UserPrivacySettingRuleRestrictChatMembers restrictChatMembers)
+                {
+                    restrictedChatMembers = restrictChatMembers;
+
+                    foreach (var chatId in restrictChatMembers.ChatIds)
+                    {
+                        var chat = CacheService.GetChat(chatId);
+                        if (chat == null)
+                        {
+                            continue;
+                        }
+
+                        if (CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                        {
+                            restricted += basicGroup.MemberCount;
+                        }
+                        else if (CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                        {
+                            restricted += supergroup.MemberCount;
+                        }
+                    }
+                }
+                else if (current is UserPrivacySettingRuleAllowChatMembers allowChatMembers)
+                {
+                    allowedChatMembers = allowChatMembers;
+
+                    foreach (var chatId in allowChatMembers.ChatIds)
+                    {
+                        var chat = CacheService.GetChat(chatId);
+                        if (chat == null)
+                        {
+                            continue;
+                        }
+
+                        if (CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                        {
+                            allowed += basicGroup.MemberCount;
+                        }
+                        else if (CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                        {
+                            allowed += supergroup.MemberCount;
+                        }
+                    }
                 }
             }
 
@@ -111,13 +161,13 @@ namespace Unigram.ViewModels.Settings
             }
 
             var list = new List<string>();
-            if (disallowed != null)
+            if (restricted > 0)
             {
-                list.Add("-" + disallowed.UserIds.Count);
+                list.Add("-" + restricted);
             }
-            if (allowed != null)
+            if (allowed > 0)
             {
-                list.Add("+" + allowed.UserIds.Count);
+                list.Add("+" + allowed);
             }
 
             if (list.Count > 0)
@@ -125,13 +175,19 @@ namespace Unigram.ViewModels.Settings
                 badge = string.Format("{0} ({1})", badge, string.Join(", ", list));
             }
 
+            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers(new int[0]);
+            _restrictedChatMembers = restrictedChatMembers ?? new UserPrivacySettingRuleRestrictChatMembers(new long[0]);
+
+            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers(new int[0]);
+            _allowedChatMembers = allowedChatMembers ?? new UserPrivacySettingRuleAllowChatMembers(new long[0]);
+
             BeginOnUIThread(() =>
             {
-                Badge = badge;
-
                 SelectedItem = primary ?? PrivacyValue.DisallowAll;
-                Allowed = allowed ?? new UserPrivacySettingRuleAllowUsers(new int[0]);
-                Disallowed = disallowed ?? new UserPrivacySettingRuleRestrictUsers(new int[0]);
+
+                Badge = badge;
+                AllowedBadge = allowed > 0 ? Locale.Declension("Users", allowed) : Strings.Resources.EmpryUsersPlaceholder;
+                RestrictedBadge = restricted > 0 ? Locale.Declension("Users", restricted) : Strings.Resources.EmpryUsersPlaceholder;
             });
 
         }
@@ -162,31 +218,27 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private UserPrivacySettingRuleAllowUsers _allowed;
-        public UserPrivacySettingRuleAllowUsers Allowed
+        private string _allowedBadge;
+        public string AllowedBadge
         {
-            get
-            {
-                return _allowed;
-            }
-            set
-            {
-                Set(ref _allowed, value);
-            }
+            get => _allowedBadge;
+            set => Set(ref _allowedBadge, value);
         }
 
-        private UserPrivacySettingRuleRestrictUsers _disallowed;
-        public UserPrivacySettingRuleRestrictUsers Disallowed
+        private UserPrivacySettingRuleAllowUsers _allowedUsers;
+        private UserPrivacySettingRuleAllowChatMembers _allowedChatMembers;
+
+
+
+        private string _restrictedBadge;
+        public string RestrictedBadge
         {
-            get
-            {
-                return _disallowed;
-            }
-            set
-            {
-                Set(ref _disallowed, value);
-            }
+            get => _restrictedBadge;
+            set => Set(ref _restrictedBadge, value);
         }
+
+        private UserPrivacySettingRuleRestrictUsers _restrictedUsers;
+        private UserPrivacySettingRuleRestrictChatMembers _restrictedChatMembers;
 
         public RelayCommand AlwaysCommand { get; }
         public async void AlwaysExecute()
@@ -203,7 +255,8 @@ namespace Unigram.ViewModels.Settings
             var result = viewModel.Rule;
             if (result != null)
             {
-                Allowed = result;
+                _allowedUsers = result;
+                AllowedBadge = GetBadge(_allowedUsers.UserIds, _allowedChatMembers.ChatIds);
             }
         }
 
@@ -222,7 +275,8 @@ namespace Unigram.ViewModels.Settings
             var result = viewModel.Rule;
             if (result != null)
             {
-                Disallowed = result;
+                _restrictedUsers = result;
+                RestrictedBadge = GetBadge(_restrictedUsers.UserIds, _restrictedChatMembers.ChatIds);
             }
         }
 
@@ -231,14 +285,22 @@ namespace Unigram.ViewModels.Settings
         {
             var rules = new List<UserPrivacySettingRule>();
 
-            if (_disallowed != null && _disallowed.UserIds.Count > 0 && _selectedItem != PrivacyValue.DisallowAll)
+            if (_restrictedUsers != null && _restrictedUsers.UserIds.Count > 0 && _selectedItem != PrivacyValue.DisallowAll)
             {
-                rules.Add(_disallowed);
+                rules.Add(_restrictedUsers);
+            }
+            if (_restrictedChatMembers != null && _restrictedChatMembers.ChatIds.Count > 0 && _selectedItem != PrivacyValue.DisallowAll)
+            {
+                rules.Add(_restrictedChatMembers);
             }
 
-            if (_allowed != null && _allowed.UserIds.Count > 0 && _selectedItem != PrivacyValue.AllowAll)
+            if (_allowedUsers != null && _allowedUsers.UserIds.Count > 0 && _selectedItem != PrivacyValue.AllowAll)
             {
-                rules.Add(_allowed);
+                rules.Add(_allowedUsers);
+            }
+            if (_allowedChatMembers != null && _allowedChatMembers.ChatIds.Count > 0 && _selectedItem != PrivacyValue.AllowAll)
+            {
+                rules.Add(_allowedChatMembers);
             }
 
             switch (_selectedItem)
@@ -263,6 +325,31 @@ namespace Unigram.ViewModels.Settings
             {
 
             }
+        }
+
+        private string GetBadge(IList<int> userIds, IList<long> chatIds)
+        {
+            var count = userIds.Count;
+
+            foreach (var chatId in chatIds)
+            {
+                var chat = CacheService.GetChat(chatId);
+                if (chat == null)
+                {
+                    continue;
+                }
+
+                if (CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                {
+                    count += basicGroup.MemberCount;
+                }
+                else if (CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    count += supergroup.MemberCount;
+                }
+            }
+
+            return count > 0 ? Locale.Declension("Users", count) : Strings.Resources.EmpryUsersPlaceholder;
         }
     }
 

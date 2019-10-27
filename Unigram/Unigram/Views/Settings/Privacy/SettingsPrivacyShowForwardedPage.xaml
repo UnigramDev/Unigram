@@ -78,13 +78,13 @@
                         Content="{CustomResource AlwaysAllow}"
                         Command="{x:Bind ViewModel.AlwaysCommand}"
                         Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
-                        Badge="{x:Bind ViewModel.Allowed.UserIds.Count, Mode=OneWay, Converter={StaticResource PrivacyRuleToUsersConverter}}"/>
+                        Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"/>
                     
                     <controls:BadgeButton
                         Content="{CustomResource NeverAllow}"
                         Command="{x:Bind ViewModel.NeverCommand}"
                         Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
-                        Badge="{x:Bind ViewModel.Disallowed.UserIds.Count, Mode=OneWay, Converter={StaticResource PrivacyRuleToUsersConverter}}"/>
+                        Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"/>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

@@ -468,7 +468,6 @@
     <Compile Include="Converters\GeoLivePeriodConverter.cs" />
     <Compile Include="Converters\MessageTtlConverter.cs" />
     <Compile Include="Converters\MeUrlPrefixConverter.cs" />
-    <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
