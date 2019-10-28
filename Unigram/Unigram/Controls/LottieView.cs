@@ -115,11 +115,9 @@ namespace Unigram.Controls
             }
             else
             {
-                if (_isLoopingEnabled)
-                {
-                    _index = 0;
-                }
-                else
+                _index = 0;
+
+                if (!_isLoopingEnabled)
                 {
                     sender.Paused = true;
                     sender.ResetElapsedTime();
