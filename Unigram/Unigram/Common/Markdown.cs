@@ -14,6 +14,7 @@ namespace Unigram.Common
             None = 0,
             Bold = 1,
             Italic = 2,
+            Strikethrough = 5,
             Code = 3,
             Pre = 4
         }
@@ -22,6 +23,7 @@ namespace Unigram.Common
         {
             { Mode.Bold, "**" },
             { Mode.Italic, "__" },
+            { Mode.Strikethrough, "~~" },
             { Mode.Code, "`" },
             { Mode.Pre, "```" },
         };
@@ -139,6 +141,9 @@ namespace Unigram.Common
                                         break;
                                     case Mode.Italic:
                                         result.Add(new TextEntity(offset, i - offset, new TextEntityTypeItalic()));
+                                        break;
+                                    case Mode.Strikethrough:
+                                        result.Add(new TextEntity(offset, i - offset, new TextEntityTypeStrikethrough()));
                                         break;
                                     case Mode.Code:
                                         result.Add(new TextEntity(offset, i - offset, new TextEntityTypeCode()));
