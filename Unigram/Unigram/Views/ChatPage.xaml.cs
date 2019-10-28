@@ -3783,30 +3783,31 @@ namespace Unigram.Views
                         continue;
                     }
 
-                    var content = container.ContentTemplateRoot as FrameworkElement;
-                    if (content is MessageBubble == false)
+                    var element = container.ContentTemplateRoot as FrameworkElement;
+                    if (element is MessageBubble == false)
                     {
-                        content = content.FindName("Bubble") as FrameworkElement;
+                        element = element.FindName("Bubble") as FrameworkElement;
                     }
 
-                    if (content is MessageBubble bubble)
+                    if (element is MessageBubble bubble)
                     {
                         bubble.UpdateFile(message, file);
                     }
 
-                    if (message.Content is MessageAnimation animation && animation.Animation.AnimationValue.Id == file.Id && file.Local.IsDownloadingCompleted)
+                    var content = message.GeneratedContent ?? message.Content;
+                    if (content is MessageAnimation animation && animation.Animation.AnimationValue.Id == file.Id && file.Local.IsDownloadingCompleted)
                     {
                         ViewVisibleMessages(false);
                     }
-                    else if (message.Content is MessageVideoNote videoNote && videoNote.VideoNote.Video.Id == file.Id && file.Local.IsDownloadingCompleted)
+                    else if (content is MessageVideoNote videoNote && videoNote.VideoNote.Video.Id == file.Id && file.Local.IsDownloadingCompleted)
                     {
                         ViewVisibleMessages(false);
                     }
-                    else if (message.Content is MessageSticker sticker && sticker.Sticker.IsAnimated && sticker.Sticker.StickerValue.Id == file.Id && file.Local.IsDownloadingCompleted)
+                    else if (content is MessageSticker sticker && sticker.Sticker.IsAnimated && sticker.Sticker.StickerValue.Id == file.Id && file.Local.IsDownloadingCompleted)
                     {
                         ViewVisibleMessages(false);
                     }
-                    else if (message.Content is MessageText text && text.WebPage != null && file.Local.IsDownloadingCompleted)
+                    else if (content is MessageText text && text.WebPage != null && file.Local.IsDownloadingCompleted)
                     {
                         if (text.WebPage.Animation?.AnimationValue.Id == file.Id || text.WebPage.VideoNote?.Video.Id == file.Id)
                         {

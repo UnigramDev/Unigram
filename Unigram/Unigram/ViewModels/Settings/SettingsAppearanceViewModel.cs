@@ -152,6 +152,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsLargeEmojiEnabled
+        {
+            get
+            {
+                return Settings.IsLargeEmojiEnabled;
+            }
+            set
+            {
+                Settings.IsLargeEmojiEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool IsReplaceEmojiEnabled
         {
             get

@@ -7,6 +7,7 @@ using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
 using Unigram.Selectors;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
@@ -75,9 +76,10 @@ namespace Unigram.Controls.Messages
         public string UpdateAutomation(MessageViewModel message)
         {
             var chat = message.GetChat();
+            var content = message.GeneratedContent ?? message.Content;
 
-            var sticker = message.Content is MessageSticker;
-            var light = sticker || message.Content is MessageVideoNote;
+            var sticker = content is MessageSticker;
+            var light = sticker || content is MessageVideoNote;
 
             var title = string.Empty;
 
@@ -207,9 +209,10 @@ namespace Unigram.Controls.Messages
                 }
             }
 
+            var content = message.GeneratedContent ?? message.Content;
             if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
             {
-                if (message.Content is MessageSticker || message.Content is MessageVideoNote || _knockout)
+                if (content is MessageSticker || content is MessageVideoNote || _knockout)
                 {
                     ContentPanel.CornerRadius = new CornerRadius();
                 }
@@ -220,7 +223,7 @@ namespace Unigram.Controls.Messages
 
                 Markup.CornerRadius = new CornerRadius(4, 4, bottomRight, bottomLeft);
             }
-            else if (message.Content is MessageSticker || message.Content is MessageVideoNote || _knockout)
+            else if (content is MessageSticker || content is MessageVideoNote || _knockout)
             {
                 ContentPanel.CornerRadius = new CornerRadius();
             }
@@ -297,9 +300,10 @@ namespace Unigram.Controls.Messages
             }
 
             var chat = message.GetChat();
+            var content = message.GeneratedContent ?? message.Content;
 
-            var sticker = message.Content is MessageSticker;
-            var light = sticker || message.Content is MessageVideoNote;
+            var sticker = content is MessageSticker;
+            var light = content is MessageVideoNote;
             var shown = false;
 
             if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
@@ -551,7 +555,8 @@ namespace Unigram.Controls.Messages
             string display = null;
 
             //if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
-            if (message.Content is MessageText text && text.WebPage == null)
+            var content = message.GeneratedContent ?? message.Content;
+            if (content is MessageText text && text.WebPage == null)
             {
                 display = text.Text.Text;
 
@@ -561,14 +566,14 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, 2);
                 Grid.SetRow(Message, 2);
             }
-            else if (IsFullMedia(message.Content))
+            else if (IsFullMedia(content))
             {
                 var left = -10;
                 var top = -4;
                 var right = -10;
                 var bottom = -6;
 
-                if (!(message.Content is MessageVenue))
+                if (!(content is MessageVenue))
                 {
                     var chat = message.GetChat();
                     if (message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
@@ -585,13 +590,13 @@ namespace Unigram.Controls.Messages
                     }
                 }
 
-                var caption = message.Content is MessageVenue || message.Content.HasCaption();
+                var caption = content is MessageVenue || content.HasCaption();
                 if (caption)
                 {
                     FooterToNormal();
                     bottom = 4;
                 }
-                else if (message.Content is MessageCall || (message.Content is MessageLocation location && location.LivePeriod > 0 && BindConvert.Current.DateTime(message.Date + location.LivePeriod) > DateTime.Now))
+                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && BindConvert.Current.DateTime(message.Date + location.LivePeriod) > DateTime.Now))
                 {
                     FooterToHidden();
                 }
@@ -605,7 +610,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, caption ? 4 : 3);
                 Grid.SetRow(Message, caption ? 4 : 2);
             }
-            else if (message.Content is MessageSticker || message.Content is MessageVideoNote)
+            else if (content is MessageSticker || content is MessageVideoNote)
             {
                 Media.Margin = new Thickness(-10, -4, -10, -6);
                 Placeholder.Visibility = Visibility.Collapsed;
@@ -613,7 +618,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
             }
-            else if ((message.Content is MessageText webPage && webPage.WebPage != null) || message.Content is MessageGame || (message.Content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
+            else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || (content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
             {
                 Media.Margin = new Thickness(0);
                 Placeholder.Visibility = Visibility.Collapsed;
@@ -621,7 +626,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
             }
-            else if (message.Content is MessagePoll)
+            else if (content is MessagePoll)
             {
                 Media.Margin = new Thickness(0);
                 Placeholder.Visibility = Visibility.Collapsed;
@@ -629,7 +634,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
             }
-            else if (message.Content is MessageInvoice invoice)
+            else if (content is MessageInvoice invoice)
             {
                 var caption = invoice.Photo == null;
 
@@ -641,14 +646,14 @@ namespace Unigram.Controls.Messages
             }
             else /*if (IsInlineMedia(message.Media))*/
             {
-                var caption = message.Content.HasCaption();
+                var caption = content.HasCaption();
                 //if (message.Media is ITLMessageMediaCaption captionMedia)
                 //{
                 //    display = captionMedia.Caption;
                 //    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                 //}
 
-                if (message.Content is MessageCall)
+                if (content is MessageCall)
                 {
                     FooterToHidden();
                 }
@@ -685,13 +690,13 @@ namespace Unigram.Controls.Messages
 
             UpdateMessageText(message);
 
-            if (Media.Child is IContent content && content.IsValid(message.Content, true))
+            if (Media.Child is IContent media && media.IsValid(content, true))
             {
-                content.UpdateMessage(message);
+                media.UpdateMessage(message);
             }
             else
             {
-                if (message.Content is MessageText textMessage && textMessage.WebPage != null)
+                if (content is MessageText textMessage && textMessage.WebPage != null)
                 {
                     if (textMessage.WebPage.IsSmallPhoto())
                     {
@@ -702,35 +707,35 @@ namespace Unigram.Controls.Messages
                         Media.Child = new WebPageContent(message);
                     }
                 }
-                else if (message.Content is MessageAlbum)
+                else if (content is MessageAlbum)
                 {
                     Media.Child = new AlbumContent(message);
                 }
-                else if (message.Content is MessageAnimation)
+                else if (content is MessageAnimation)
                 {
                     Media.Child = new AnimationContent(message);
                 }
-                else if (message.Content is MessageAudio)
+                else if (content is MessageAudio)
                 {
                     Media.Child = new AudioContent(message);
                 }
-                else if (message.Content is MessageCall)
+                else if (content is MessageCall)
                 {
                     Media.Child = new CallContent(message);
                 }
-                else if (message.Content is MessageContact)
+                else if (content is MessageContact)
                 {
                     Media.Child = new ContactContent(message);
                 }
-                else if (message.Content is MessageDocument)
+                else if (content is MessageDocument)
                 {
                     Media.Child = new DocumentContent(message);
                 }
-                else if (message.Content is MessageGame)
+                else if (content is MessageGame)
                 {
                     Media.Child = new GameContent(message);
                 }
-                else if (message.Content is MessageInvoice invoice)
+                else if (content is MessageInvoice invoice)
                 {
                     if (invoice.Photo == null)
                     {
@@ -741,19 +746,19 @@ namespace Unigram.Controls.Messages
                         Media.Child = new InvoicePhotoContent(message);
                     }
                 }
-                else if (message.Content is MessageLocation)
+                else if (content is MessageLocation)
                 {
                     Media.Child = new LocationContent(message);
                 }
-                else if (message.Content is MessagePhoto)
+                else if (content is MessagePhoto)
                 {
                     Media.Child = new PhotoContent(message);
                 }
-                else if (message.Content is MessagePoll)
+                else if (content is MessagePoll)
                 {
                     Media.Child = new PollContent(message);
                 }
-                else if (message.Content is MessageSticker sticker)
+                else if (content is MessageSticker sticker)
                 {
                     if (sticker.Sticker.IsAnimated)
                     {
@@ -764,19 +769,19 @@ namespace Unigram.Controls.Messages
                         Media.Child = new StickerContent(message);
                     }
                 }
-                else if (message.Content is MessageVenue)
+                else if (content is MessageVenue)
                 {
                     Media.Child = new VenueContent(message);
                 }
-                else if (message.Content is MessageVideo)
+                else if (content is MessageVideo)
                 {
                     Media.Child = new VideoContent(message);
                 }
-                else if (message.Content is MessageVideoNote)
+                else if (content is MessageVideoNote)
                 {
                     Media.Child = new VideoNoteContent(message);
                 }
-                else if (message.Content is MessageVoiceNote)
+                else if (content is MessageVoiceNote)
                 {
                     Media.Child = new VoiceNoteContent(message);
                 }
@@ -807,43 +812,44 @@ namespace Unigram.Controls.Messages
             var result = false;
             var adjust = false;
 
-            if (message.Content is MessageText text)
+            var content = message.GeneratedContent ?? message.Content;
+            if (content is MessageText text)
             {
                 result = ReplaceEntities(message, Span, text.Text, out adjust);
             }
-            else if (message.Content is MessageAlbum album)
+            else if (content is MessageAlbum album)
             {
                 result = ReplaceEntities(message, Span, album.Caption, out adjust);
             }
-            else if (message.Content is MessageAnimation animation)
+            else if (content is MessageAnimation animation)
             {
                 result = ReplaceEntities(message, Span, animation.Caption, out adjust);
             }
-            else if (message.Content is MessageAudio audio)
+            else if (content is MessageAudio audio)
             {
                 result = ReplaceEntities(message, Span, audio.Caption, out adjust);
             }
-            else if (message.Content is MessageDocument document)
+            else if (content is MessageDocument document)
             {
                 result = ReplaceEntities(message, Span, document.Caption, out adjust);
             }
-            else if (message.Content is MessagePhoto photo)
+            else if (content is MessagePhoto photo)
             {
                 result = ReplaceEntities(message, Span, photo.Caption, out adjust);
             }
-            else if (message.Content is MessageVideo video)
+            else if (content is MessageVideo video)
             {
                 result = ReplaceEntities(message, Span, video.Caption, out adjust);
             }
-            else if (message.Content is MessageVoiceNote voiceNote)
+            else if (content is MessageVoiceNote voiceNote)
             {
                 result = ReplaceEntities(message, Span, voiceNote.Caption, out adjust);
             }
-            else if (message.Content is MessageUnsupported unsupported)
+            else if (content is MessageUnsupported unsupported)
             {
                 result = GetEntities(message, Span, Strings.Resources.UnsupportedMedia, out adjust);
             }
-            else if (message.Content is MessageVenue venue)
+            else if (content is MessageVenue venue)
             {
                 Span.Inlines.Add(new Run { Text = venue.Venue.Title, FontWeight = FontWeights.SemiBold });
                 Span.Inlines.Add(new LineBreak());
@@ -1033,7 +1039,7 @@ namespace Unigram.Controls.Messages
 
         private bool AdjustEmojis(Span span, string text)
         {
-            if (Emoji.TryCountEmojis(text, out int count, 3))
+            if (SettingsService.Current.IsLargeEmojiEnabled && Emoji.TryCountEmojis(text, out int count, 3))
             {
                 switch (count)
                 {
@@ -1498,7 +1504,7 @@ namespace Unigram.Controls.Messages
             if (constraint is MessageViewModel viewModel)
             {
                 ttl = viewModel.Ttl > 0;
-                constraint = viewModel.Content;
+                constraint = viewModel.GeneratedContent ?? viewModel.Content;
             }
             else if (constraint is Message message)
             {

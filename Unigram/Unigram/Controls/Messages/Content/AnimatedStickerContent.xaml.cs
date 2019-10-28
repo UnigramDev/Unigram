@@ -36,7 +36,7 @@ namespace Unigram.Controls.Messages.Content
         {
             _message = message;
 
-            var sticker = GetContent(message.Content);
+            var sticker = GetContent(message);
             if (sticker == null)
             {
                 return;
@@ -58,7 +58,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            var sticker = GetContent(message.Content);
+            var sticker = GetContent(message);
             if (sticker == null)
             {
                 return;
@@ -81,7 +81,7 @@ namespace Unigram.Controls.Messages.Content
                     LayoutRoot.Background = null;
 
                     Player.IsCachingEnabled = SettingsService.Current.Diagnostics.CacheStickers;
-                    Player.IsLoopingEnabled = SettingsService.Current.Stickers.IsLoopingEnabled;
+                    Player.IsLoopingEnabled = message.GeneratedContent == null && SettingsService.Current.Stickers.IsLoopingEnabled;
                     Player.Source = new Uri("file:///" + file.Local.Path);
                 }
                 else
@@ -124,8 +124,9 @@ namespace Unigram.Controls.Messages.Content
             return false;
         }
 
-        private Sticker GetContent(MessageContent content)
+        private Sticker GetContent(MessageViewModel message)
         {
+            var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker sticker)
             {
                 return sticker.Sticker;
@@ -140,13 +141,20 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var sticker = GetContent(_message.Content);
+            var sticker = GetContent(_message);
             if (sticker == null)
             {
                 return;
             }
 
-            _message.Delegate.OpenSticker(sticker);
+            if (_message.GeneratedContent != null)
+            {
+                Player.Play();
+            }
+            else
+            {
+                _message.Delegate.OpenSticker(sticker);
+            }
         }
     }
 }

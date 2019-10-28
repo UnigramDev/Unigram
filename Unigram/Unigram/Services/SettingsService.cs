@@ -40,6 +40,7 @@ namespace Unigram.Services
         bool IsLaunchMinimized { get; set; }
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
+        bool IsLargeEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSyncRequested { get; set; }
         bool IsContactsSortedByEpoch { get; set; }
@@ -580,6 +581,23 @@ namespace Unigram.Services
             {
                 _isReplaceEmojiEnabled = value;
                 AddOrUpdateValue("IsReplaceEmojiEnabled", value);
+            }
+        }
+
+        private static bool? _isLargeEmojiEnabled;
+        public bool IsLargeEmojiEnabled
+        {
+            get
+            {
+                if (_isLargeEmojiEnabled == null)
+                    _isLargeEmojiEnabled = GetValueOrDefault(_local, "IsLargeEmojiEnabled", true);
+
+                return _isLargeEmojiEnabled ?? true;
+            }
+            set
+            {
+                _isLargeEmojiEnabled = value;
+                AddOrUpdateValue(_local, "IsLargeEmojiEnabled", value);
             }
         }
 

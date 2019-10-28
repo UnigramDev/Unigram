@@ -1225,6 +1225,18 @@ namespace Unigram.ViewModels
 
         private async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
         {
+            if (Settings.IsLargeEmojiEnabled)
+            {
+                await ProcessEmojiAsync(chat, messages);
+            }
+
+            ProcessAlbums(chat, messages);
+            ProcessFiles(chat, messages);
+            ProcessReplies(chat, messages);
+        }
+
+        private async Task ProcessEmojiAsync(Chat chat, IList<MessageViewModel> messages)
+        {
             StickerSet set = null;
 
             foreach (var message in messages)
@@ -1247,17 +1259,14 @@ namespace Unigram.ViewModels
                         {
                             if (string.Equals(sticker.Emoji, text.Text.Text, StringComparison.OrdinalIgnoreCase))
                             {
-                                message.Content = new MessageSticker(sticker);
+                                //message.Content = new MessageSticker(sticker);
+                                message.GeneratedContent = new MessageSticker(sticker);
                                 continue;
                             }
                         }
                     }
                 }
             }
-
-            ProcessAlbums(chat, messages);
-            ProcessFiles(chat, messages);
-            ProcessReplies(chat, messages);
         }
 
         private void ProcessFiles(Chat chat, IList<MessageViewModel> messages, MessageViewModel parent = null)
@@ -1265,7 +1274,7 @@ namespace Unigram.ViewModels
             foreach (var message in messages)
             {
                 var target = parent ?? message;
-                var content = message.Content as object;
+                var content = message.GeneratedContent ?? message.Content as object;
                 if (content is MessageAlbum albumMessage)
                 {
                     ProcessFiles(chat, albumMessage.Layout.Messages, message);
