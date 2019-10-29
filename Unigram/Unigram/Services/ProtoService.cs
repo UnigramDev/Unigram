@@ -71,13 +71,14 @@ namespace Unigram.Services
 
         BasicGroup GetBasicGroup(int id);
         BasicGroup GetBasicGroup(Chat chat);
+        bool TryGetBasicGroup(int id, out BasicGroup value);
+        bool TryGetBasicGroup(Chat chat, out BasicGroup value);
 
         BasicGroupFullInfo GetBasicGroupFull(int id);
         BasicGroupFullInfo GetBasicGroupFull(Chat chat);
 
         Supergroup GetSupergroup(int id);
         Supergroup GetSupergroup(Chat chat);
-
         bool TryGetSupergroup(int id, out Supergroup value);
         bool TryGetSupergroup(Chat chat, out Supergroup value);
 
@@ -787,6 +788,22 @@ namespace Unigram.Services
             }
 
             return null;
+        }
+
+        public bool TryGetBasicGroup(int id, out BasicGroup value)
+        {
+            return _basicGroups.TryGetValue(id, out value);
+        }
+
+        public bool TryGetBasicGroup(Chat chat, out BasicGroup value)
+        {
+            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                return TryGetBasicGroup(basicGroup.BasicGroupId, out value);
+            }
+
+            value = null;
+            return false;
         }
 
 

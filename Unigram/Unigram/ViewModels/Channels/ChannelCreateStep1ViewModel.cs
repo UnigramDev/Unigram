@@ -65,7 +65,7 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ProtoService.SendAsync(new CreateNewSupergroupChat(_title, true, _about ?? string.Empty));
+            var response = await ProtoService.SendAsync(new CreateNewSupergroupChat(_title, true, _about ?? string.Empty, null));
             if (response is Chat chat)
             {
                 // TODO: photo

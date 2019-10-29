@@ -614,6 +614,20 @@ namespace Unigram.Common
             }
         }
 
+        public static File GetAnimatedSticker(this MessageViewModel message)
+        {
+            var content = message.GeneratedContent ?? message.Content;
+            switch (content)
+            {
+                case MessageSticker sticker:
+                    return sticker.Sticker.IsAnimated ? sticker.Sticker.StickerValue : null;
+                case MessageText text:
+                    return text.WebPage?.Sticker?.IsAnimated ?? false ? text.WebPage?.Sticker?.StickerValue : null;
+                default:
+                    return null;
+            }
+        }
+
         public static File GetAnimatedSticker(this Message message)
         {
             switch (message.Content)
