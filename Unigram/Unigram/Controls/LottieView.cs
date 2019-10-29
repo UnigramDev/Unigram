@@ -246,7 +246,7 @@ namespace Unigram.Controls
                     }
                     break;
                 case "file":
-                    return uri.AbsolutePath.Replace('/', '\\');
+                    return uri.LocalPath;
             }
 
             return null;
