@@ -568,6 +568,10 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
+            else if (FolderPanel.Visibility == Visibility.Visible)
+            {
+                SetFolder(new ChatListMain());
+            }
             else if (ResetFilters.Visibility == Visibility.Visible)
             {
                 ResetFilters_Click(null, null);
@@ -2195,7 +2199,7 @@ namespace Unigram.Views
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            SetFolder(new ChatListMain());
+            BootStrapper.Current.RaiseBackRequested();
         }
 
         #region Selection
