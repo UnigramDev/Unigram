@@ -170,7 +170,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:ContentPageHeader IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
-            <Grid>
+            <Grid Margin="-28,0,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -180,7 +180,7 @@
 
                 <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}"
                            VerticalAlignment="Center"
-                           Margin="12,0,0,0"
+                           Margin="40,0,0,0"
                            Foreground="{ThemeResource PageHeaderForegroundBrush}"
                            Style="{StaticResource BaseTextBlockStyle}"/>
 
