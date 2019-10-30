@@ -55,11 +55,14 @@ namespace Unigram.ViewModels
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
             Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService, settingsSearchService);
 
+            // This must represent pivot tabs
             Children.Add(Chats);
-            Children.Add(ArchivedChats);
             Children.Add(Contacts);
             Children.Add(Calls);
             Children.Add(Settings);
+
+            // Any additional child
+            Children.Add(ArchivedChats);
             Children.Add(_voipService as TLViewModelBase);
 
             aggregator.Subscribe(this);
