@@ -165,45 +165,24 @@ namespace Unigram.ViewModels
 
         public bool VerifyRights(Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary, out string label)
         {
-
-            if (chat.Type is ChatTypeSupergroup super)
+            if (ProtoService.TryGetSupergroup(chat, out var supergroup) && supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
             {
-                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
-                if (supergroup == null)
+                if (restricted.IsForever())
                 {
-                    label = null;
-                    return false;
+                    label = forever;
+                }
+                else
+                {
+                    label = string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
                 }
 
-                if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
-                {
-                    if (restricted.IsForever())
-                    {
-                        label = forever;
-                    }
-                    else
-                    {
-                        label = string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
-                    }
-
-                    return true;
-                }
-                else if (supergroup.Status is ChatMemberStatusMember)
-                {
-                    if (!permission(chat.Permissions))
-                    {
-                        label = global;
-                        return true;
-                    }
-                }
+                return true;
             }
-            else
+
+            if (!permission(chat.Permissions))
             {
-                if (!permission(chat.Permissions))
-                {
-                    label = global;
-                    return true;
-                }
+                label = global;
+                return true;
             }
 
             label = null;

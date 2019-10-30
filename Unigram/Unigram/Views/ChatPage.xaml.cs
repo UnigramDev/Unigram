@@ -3649,15 +3649,22 @@ namespace Unigram.Views
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
                 }
-                else if (group.Status is ChatMemberStatusRestricted restrictedSend && !restrictedSend.Permissions.CanSendMessages)
+                else if (group.Status is ChatMemberStatusRestricted restrictedSend)
                 {
-                    if (restrictedSend.IsForever())
+                    if (!restrictedSend.IsMember && group.Username.Length > 0)
                     {
-                        ShowAction(Strings.Resources.SendMessageRestrictedForever, false);
+                        ShowAction(Strings.Resources.ChannelJoin, true);
                     }
-                    else
+                    else if (!restrictedSend.Permissions.CanSendMessages)
                     {
-                        ShowAction(string.Format(Strings.Resources.SendMessageRestricted, BindConvert.Current.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
+                        if (restrictedSend.IsForever())
+                        {
+                            ShowAction(Strings.Resources.SendMessageRestrictedForever, false);
+                        }
+                        else
+                        {
+                            ShowAction(string.Format(Strings.Resources.SendMessageRestricted, BindConvert.Current.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
+                        }
                     }
                 }
                 else if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
