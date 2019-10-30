@@ -952,9 +952,6 @@
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TestPage.xaml.cs">
-      <DependentUpon>TestPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
     </Compile>
@@ -2515,10 +2512,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\TestPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2623,10 +2616,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
-      <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
-      <Name>libtgvoip</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Unigram.Infrastructure\Unigram.Infrastructure.csproj">
       <Project>{ac3e4f10-6615-4e16-bb0f-104760c92b95}</Project>
       <Name>Unigram.Infrastructure</Name>
@@ -2670,7 +2659,14 @@
     <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="libtgvoip">
+      <HintPath>$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.winmd</HintPath>
+      <Implementation>libtgvoip.dll</Implementation>
+    </Reference>
+    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.dll" />
+    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.pri" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
