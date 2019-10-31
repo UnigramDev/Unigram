@@ -16,6 +16,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Media.Playback;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -50,6 +51,8 @@ namespace Unigram.Controls
             _navigationService = navigationService;
             _aggregator = aggregator;
 
+            _playbackService.MediaFailed -= OnMediaFailed;
+            _playbackService.MediaFailed += OnMediaFailed;
             _playbackService.PropertyChanged -= OnCurrentItemChanged;
             _playbackService.PropertyChanged += OnCurrentItemChanged;
             _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
@@ -60,6 +63,25 @@ namespace Unigram.Controls
             _playbackService.PlaylistChanged += OnPlaylistChanged;
             UpdateGlyph();
             UpdateRate();
+        }
+
+        private void OnMediaFailed(MediaPlaybackSession sender, MediaPlayerFailedEventArgs args)
+        {
+            if (args.Error != MediaPlayerError.SourceNotSupported)
+            {
+                return;
+            }
+
+            this.BeginOnUIThread(async () =>
+            {
+                var confirm = await TLMessageDialog.ShowAsync("In order to play voice messages you must install Web Media Extensions from the Microsoft Store.", Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=Microsoft.WebMediaExtensions_8wekyb3d8bbwe"));
+            });
         }
 
         private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

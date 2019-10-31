@@ -57,6 +57,7 @@ namespace Unigram.Services
 
 
 
+        event TypedEventHandler<MediaPlaybackSession, MediaPlayerFailedEventArgs> MediaFailed;
         event TypedEventHandler<MediaPlaybackSession, object> PlaybackStateChanged;
         event TypedEventHandler<MediaPlaybackSession, object> PositionChanged;
         event EventHandler PlaylistChanged;
@@ -80,6 +81,7 @@ namespace Unigram.Services
         private List<PlaybackItem> _items;
         private Queue<Message> _queue;
 
+        public event TypedEventHandler<MediaPlaybackSession, MediaPlayerFailedEventArgs> MediaFailed;
         public event TypedEventHandler<MediaPlaybackSession, object> PlaybackStateChanged;
         public event TypedEventHandler<MediaPlaybackSession, object> PositionChanged;
         public event EventHandler PlaylistChanged;
@@ -94,6 +96,7 @@ namespace Unigram.Services
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
             _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
+            _mediaPlayer.MediaFailed += OnMediaFailed;
             _mediaPlayer.MediaEnded += OnMediaEnded;
             _mediaPlayer.SourceChanged += OnSourceChanged;
             _mediaPlayer.CommandManager.IsEnabled = false;
@@ -197,6 +200,12 @@ namespace Unigram.Services
                     }
                 }
             }
+        }
+
+        private void OnMediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        {
+            Clear();
+            MediaFailed?.Invoke(sender.PlaybackSession, args);
         }
 
         private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
