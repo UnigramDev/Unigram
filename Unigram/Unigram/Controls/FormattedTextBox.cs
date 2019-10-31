@@ -399,6 +399,14 @@ namespace Unigram.Controls
             {
                 ContextItalic_Click();
             }
+            else if (sender.Key == VirtualKey.U && sender.Modifiers == VirtualKeyModifiers.Control && length && format.Underline == UnderlineType.None)
+            {
+                ContextUnderline_Click();
+            }
+            else if (sender.Key == VirtualKey.X && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.Strikethrough == FormatEffect.Off)
+            {
+                ContextStrikethrough_Click();
+            }
             else if (sender.Key == VirtualKey.M && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && format.Name != "Consolas")
             {
                 ContextMonospace_Click();
