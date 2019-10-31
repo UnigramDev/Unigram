@@ -58,7 +58,6 @@ namespace Unigram.ViewModels
 
         public Photo GetPhoto() => _message.GetPhoto();
         public File GetAnimation() => _message.GetAnimation();
-        public File GetFile() => _message.GetFile();
 
         public bool IsService() => _message.IsService();
         public bool IsSaved() => _message.IsSaved(_protoService.Options.MyId);

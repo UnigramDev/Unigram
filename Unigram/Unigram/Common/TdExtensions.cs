@@ -541,6 +541,62 @@ namespace Unigram.Common
             return (null, null);
         }
 
+        public static File GetFile(this MessageViewModel message)
+        {
+            var content = message.GeneratedContent ?? message.Content;
+            switch (content)
+            {
+                case MessageAnimation animation:
+                    return animation.Animation.AnimationValue;
+                case MessageAudio audio:
+                    return audio.Audio.AudioValue;
+                case MessageDocument document:
+                    return document.Document.DocumentValue;
+                case MessageGame game:
+                    return game.Game.Animation?.AnimationValue;
+                case MessageSticker sticker:
+                    return sticker.Sticker.StickerValue;
+                case MessageText text:
+                    if (text.WebPage != null && text.WebPage.Animation != null)
+                    {
+                        return text.WebPage.Animation.AnimationValue;
+                    }
+                    else if (text.WebPage != null && text.WebPage.Audio != null)
+                    {
+                        return text.WebPage.Audio.AudioValue;
+                    }
+                    else if (text.WebPage != null && text.WebPage.Document != null)
+                    {
+                        return text.WebPage.Document.DocumentValue;
+                    }
+                    else if (text.WebPage != null && text.WebPage.Sticker != null)
+                    {
+                        return text.WebPage.Sticker.StickerValue;
+                    }
+                    else if (text.WebPage != null && text.WebPage.Video != null)
+                    {
+                        return text.WebPage.Video.VideoValue;
+                    }
+                    else if (text.WebPage != null && text.WebPage.VideoNote != null)
+                    {
+                        return text.WebPage.VideoNote.Video;
+                    }
+                    else if (text.WebPage != null && text.WebPage.VoiceNote != null)
+                    {
+                        return text.WebPage.VoiceNote.Voice;
+                    }
+                    break;
+                case MessageVideo video:
+                    return video.Video.VideoValue;
+                case MessageVideoNote videoNote:
+                    return videoNote.VideoNote.Video;
+                case MessageVoiceNote voiceNote:
+                    return voiceNote.VoiceNote.Voice;
+            }
+
+            return null;
+        }
+
         public static File GetFile(this Message message)
         {
             switch (message.Content)

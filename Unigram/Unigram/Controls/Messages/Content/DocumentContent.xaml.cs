@@ -202,7 +202,7 @@ namespace Unigram.Controls.Messages.Content
             var file = document.DocumentValue;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ProtoService.Send(new CancelDownloadFile(file.Id, false));
+                _message.ProtoService.CancelDownloadFile(file.Id);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {

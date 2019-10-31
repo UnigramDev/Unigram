@@ -111,6 +111,12 @@ namespace Unigram.ViewModels
                 content = voiceNoteMessage.VoiceNote;
             }
 
+            var file = message.GetFile();
+            if (file != null && ProtoService.IsDownloadFileCanceled(file.Id))
+            {
+                return false;
+            }
+
             var chat = _chat;
             if (chat == null)
             {
@@ -131,6 +137,12 @@ namespace Unigram.ViewModels
             }
             else if (content is Photo photo)
             {
+                var big = photo.GetBig();
+                if (big != null && ProtoService.IsDownloadFileCanceled(big.Photo.Id))
+                {
+                    return false;
+                }
+
                 return Settings.AutoDownload.ShouldDownloadPhoto(GetChatType(chat));
             }
             else if (content is Sticker sticker)

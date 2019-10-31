@@ -25,6 +25,8 @@ namespace Unigram.Services
         Task<BaseObject> SendAsync(Function function);
 
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
+        void CancelDownloadFile(int fileId, bool onlyIfPending = false);
+        bool IsDownloadFileCanceled(int fileId);
 
         int SessionId { get; }
 
@@ -411,11 +413,23 @@ namespace Unigram.Services
 
 
 
+        private ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
+
         public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
         {
             _client.Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
         }
 
+        public void CancelDownloadFile(int fileId, bool onlyIfPending = false)
+        {
+            _canceledDownloads.Add(fileId);
+            _client.Send(new CancelDownloadFile(fileId, onlyIfPending));
+        }
+
+        public bool IsDownloadFileCanceled(int fileId)
+        {
+            return _canceledDownloads.Contains(fileId);
+        }
 
 
         public int SessionId => _session;
