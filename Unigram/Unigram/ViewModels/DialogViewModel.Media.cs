@@ -165,18 +165,26 @@ namespace Unigram.ViewModels
 
         public bool VerifyRights(Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary, out string label)
         {
-            if (ProtoService.TryGetSupergroup(chat, out var supergroup) && supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
+            if (ProtoService.TryGetSupergroup(chat, out var supergroup))
             {
-                if (restricted.IsForever())
+                if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
                 {
-                    label = forever;
-                }
-                else
-                {
-                    label = string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
-                }
+                    if (restricted.IsForever())
+                    {
+                        label = forever;
+                    }
+                    else
+                    {
+                        label = string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
+                    }
 
-                return true;
+                    return true;
+                }
+                else if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator)
+                {
+                    label = null;
+                    return false;
+                }
             }
 
             if (!permission(chat.Permissions))
