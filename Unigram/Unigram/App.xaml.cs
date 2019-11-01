@@ -1,5 +1,4 @@
-﻿using Microsoft.HockeyApp;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,6 +31,11 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Resources;
+#if !DEBUG
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+#endif
 
 namespace Unigram
 {
@@ -100,14 +104,7 @@ namespace Unigram
             };
 
 #if !DEBUG
-            HockeyClient.Current.Configure(Constants.HockeyAppId,
-                new TelemetryConfiguration()
-                {
-                    EnableDiagnostics = true,
-                    Collectors = WindowsCollectors.Metadata |
-                                 WindowsCollectors.Session |
-                                 WindowsCollectors.UnhandledException
-                });
+            AppCenter.Start(Constants.AppCenterId, typeof(Analytics), typeof(Crashes));
 
             string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
             ulong version = ulong.Parse(deviceFamilyVersion);
@@ -115,8 +112,8 @@ namespace Unigram
             ulong minor = (version & 0x0000FFFF00000000L) >> 32;
             ulong build = (version & 0x00000000FFFF0000L) >> 16;
 
-            HockeyClient.Current.TrackEvent($"{major}.{minor}.{build}");
-            HockeyClient.Current.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
+            Analytics.TrackEvent($"{major}.{minor}.{build}");
+            Analytics.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
 #endif
         }
 

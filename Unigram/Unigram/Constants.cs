@@ -22,7 +22,7 @@ namespace Unigram
         public const string WallpaperLocalFileName = "wallpaper.local.jpg";
         public const int WallpaperLocalId = -1;
 
-        public const string HockeyAppId = "7d36a4260af54125bbf6db407911ed3b"; // "e5a0f6f85ab944ebbc1650fa22b8ac44"; // "7d36a4260af54125bbf6db407911ed3b";
+        public const string AppCenterId = "7d36a426-0af5-4125-bbf6-db407911ed3b"; // "e5a0f6f85ab944ebbc1650fa22b8ac44"; // "7d36a4260af54125bbf6db407911ed3b";
 
         public static readonly string[] TelegramHosts = new string[]
         {
