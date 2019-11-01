@@ -147,7 +147,7 @@ namespace Unigram.Common
                     return;
                 }
 
-                if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username))
+                if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username) && !supergroup.HasLocation)
                 {
                     await TLMessageDialog.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
