@@ -44,7 +44,7 @@
                         Content="{CustomResource TwoStepVerification}"
                         Badge="{x:Bind ConvertOnOff(ViewModel.IsPasswordEnabled), Mode=OneWay}"
                         Glyph="&#xE192;"
-                        Click="Password_Click"
+                        Command="{x:Bind ViewModel.PasswordCommand}"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                 </controls:HeaderedControl>
                 

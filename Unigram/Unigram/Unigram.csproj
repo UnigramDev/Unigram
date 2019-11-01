@@ -624,6 +624,12 @@
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\SecretChats\SecretChatCreateViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordConfirmViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordCreateViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordDoneViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordEmailViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneSentCodeViewModel.cs" />
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneViewModel.cs" />
@@ -810,6 +816,24 @@
     </Compile>
     <Compile Include="Views\SecretChats\SecretChatCreatePage.xaml.cs">
       <DependentUpon>SecretChatCreatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordConfirmPage.xaml.cs">
+      <DependentUpon>SettingsPasswordConfirmPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordCreatePage.xaml.cs">
+      <DependentUpon>SettingsPasswordCreatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordEmailPage.xaml.cs">
+      <DependentUpon>SettingsPasswordEmailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordHintPage.xaml.cs">
+      <DependentUpon>SettingsPasswordHintPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordIntroPage.xaml.cs">
+      <DependentUpon>SettingsPasswordIntroPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordDonePage.xaml.cs">
+      <DependentUpon>SettingsPasswordDonePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Phone\SettingsPhoneIntroPage.xaml.cs">
       <DependentUpon>SettingsPhoneIntroPage.xaml</DependentUpon>
@@ -1509,6 +1533,14 @@
     <Content Include="Assets\Animations\WalletWordList.tgs" />
     <Content Include="Assets\Animations\WalletDone.tgs" />
     <Content Include="Assets\Animations\WalletNotAvailable.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupDone.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupHint.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupIntro.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupMail.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupMonkeyClose.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupMonkeyIdle.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupMonkeyPeek.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupMonkeyTracking.tgs" />
     <None Include="Assets\Fonts\Telegram.json" />
     <PRIResource Include="Strings\uk\Additional.resw">
       <SubType>Designer</SubType>
@@ -2269,6 +2301,30 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SecretChats\SecretChatCreatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordConfirmPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordCreatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordEmailPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordHintPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordIntroPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordDonePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1788,7 +1788,7 @@
                             VerticalScrollBarVisibility="Auto"
                             VerticalScrollMode="Auto">
                             
-                            <Grid>
+                            <Grid MaxWidth="360">
                                 <Grid.RowDefinitions>
                                     <RowDefinition x:Name="FitRow"/>
                                     <RowDefinition Height="Auto"/>
@@ -1813,7 +1813,7 @@
                                         common:TextBlockHelper.Markdown="{TemplateBinding Text}"
                                         Style="{StaticResource BodyTextBlockStyle}"
                                         TextAlignment="Center"
-                                        Margin="12,0"/>
+                                        Margin="12,4,12,0"/>
                                 </StackPanel>
 
                                 <ContentPresenter

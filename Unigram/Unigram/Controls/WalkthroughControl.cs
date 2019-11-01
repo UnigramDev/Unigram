@@ -10,6 +10,8 @@ namespace Unigram.Controls
 {
     public class WalkthroughControl : ContentPageHeader
     {
+        public LottieView Header { get; private set; }
+
         public WalkthroughControl()
         {
             DefaultStyleKey = typeof(WalkthroughControl);
@@ -17,6 +19,8 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
+            Header = GetTemplateChild("Header") as LottieView;
+
             base.OnApplyTemplate();
             VisualStateManager.GoToState(this, Content != null ? "ContentVisible" : "NoContent", false);
         }

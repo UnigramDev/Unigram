@@ -10,6 +10,7 @@ using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.ViewModels.Settings.Privacy;
 using Unigram.Views.Settings;
+using Unigram.Views.Settings.Password;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -205,7 +206,7 @@ namespace Unigram.ViewModels.Settings
         }
 
         public RelayCommand PasscodeCommand { get; }
-        private async void PasscodeExecute()
+        private void PasscodeExecute()
         {
             NavigationService.NavigateToPasscode();
         }
@@ -213,22 +214,28 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand PasswordCommand { get; }
         private async void PasswordExecute()
         {
-            //var response = await LegacyService.GetPasswordAsync();
-            //if (response.IsSucceeded)
-            //{
-            //    if (response.Result is TLAccountPassword)
-            //    {
-            //        NavigationService.Navigate(typeof(SettingsSecurityEnterPasswordPage), response.Result);
-            //    }
-            //    else
-            //    {
+            var response = await ProtoService.SendAsync(new GetPasswordState());
+            if (response is PasswordState passwordState)
+            {
+                if (passwordState.HasPassword)
+                {
+                    NavigationService.Navigate(typeof(SettingsPasswordPage));
+                }
+                else if (passwordState.RecoveryEmailAddressCodeInfo != null)
+                {
+                    var state = new Dictionary<string, object>
+                    {
+                        { "pattern", passwordState.RecoveryEmailAddressCodeInfo.EmailAddressPattern },
+                        { "length", passwordState.RecoveryEmailAddressCodeInfo.Length }
+                    };
 
-            //    }
-            //}
-            //else
-            //{
-            //    // TODO
-            //}
+                    NavigationService.Navigate(typeof(SettingsPasswordConfirmPage), state: state);
+                }
+                else
+                {
+                    NavigationService.Navigate(typeof(SettingsPasswordIntroPage));
+                }
+            }
         }
 
         public RelayCommand ClearDraftsCommand { get; }
