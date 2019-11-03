@@ -146,7 +146,7 @@ namespace Unigram.Controls
                 {
                     current.Undo.Invoke(current.Chats);
                 }
-                else
+                else if (current.Action != null)
                 {
                     current.Action.Invoke(current.Chats);
                 }

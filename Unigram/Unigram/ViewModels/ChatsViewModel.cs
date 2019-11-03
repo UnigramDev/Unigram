@@ -193,6 +193,7 @@ namespace Unigram.ViewModels
             if (chatList is ChatListArchive)
             {
                 ProtoService.Send(new SetChatChatList(chat.Id, new ChatListMain()));
+                return;
             }
             else
             {
