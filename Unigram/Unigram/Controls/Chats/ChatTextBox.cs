@@ -159,7 +159,7 @@ namespace Unigram.Controls.Chats
                 var media = new ObservableCollection<StorageMedia>();
                 var files = new List<StorageFile>(items.Count);
 
-                foreach (StorageFile file in items)
+                foreach (var file in items.OfType<StorageFile>())
                 {
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
