@@ -95,6 +95,8 @@ namespace Unigram.Services
 
         int GetNotificationSettingsMuteFor(Chat chat);
         ScopeNotificationSettings GetScopeNotificationSettings(Chat chat);
+
+        Task<StickerSet> GetAnimatedEmojiAsync();
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -129,6 +131,9 @@ namespace Unigram.Services
 
         private readonly SimpleFileContext<long> _chatsMap = new SimpleFileContext<long>();
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
+
+        private StickerSet _animatedEmoji;
+        private TaskCompletionSource<StickerSet> _animatedEmojiTask;
 
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
@@ -979,7 +984,45 @@ namespace Unigram.Services
             return false;
         }
 
-#endregion
+        public async Task<StickerSet> GetAnimatedEmojiAsync()
+        {
+            var set = _animatedEmoji;
+            if (set != null)
+            {
+                return set;
+            }
+
+            var tsc = _animatedEmojiTask;
+            if (tsc != null)
+            {
+                return await tsc.Task;
+            }
+
+            tsc = _animatedEmojiTask = new TaskCompletionSource<StickerSet>();
+
+            var task = GetAnimatedEmojiAsyncInternal();
+            var result = await Task.WhenAny(task, Task.Delay(2000));
+
+            set = result == task ? task.Result as StickerSet : null;
+            tsc.SetResult(set);
+
+            return set;
+        }
+
+        private async Task<StickerSet> GetAnimatedEmojiAsyncInternal()
+        {
+            var response = await SendAsync(new SearchStickerSet("AnimatedEmojies"));
+            if (response is StickerSet set)
+            {
+                _animatedEmoji = set;
+                _animatedEmojiTask.TrySetResult(set);
+                return set;
+            }
+
+            return null;
+        }
+
+        #endregion
 
 
 

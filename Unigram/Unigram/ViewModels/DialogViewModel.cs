@@ -1238,7 +1238,6 @@ namespace Unigram.ViewModels
         private async Task ProcessEmojiAsync(Chat chat, IList<MessageViewModel> messages)
         {
             StickerSet set = null;
-
             foreach (var message in messages)
             {
                 if (message.Content is MessageText text)
@@ -1247,7 +1246,7 @@ namespace Unigram.ViewModels
                     {
                         if (set == null)
                         {
-                            set = await ProtoService.SendAsync(new SearchStickerSet("AnimatedEmojies")) as StickerSet;
+                            set = await ProtoService.GetAnimatedEmojiAsync();
                         }
 
                         if (set == null)
