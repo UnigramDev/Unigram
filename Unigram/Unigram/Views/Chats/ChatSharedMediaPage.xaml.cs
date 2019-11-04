@@ -264,7 +264,13 @@ namespace Unigram.Views.Chats
 
         public void UpdateFile(Telegram.Td.Api.File file)
         {
-            if (ViewModel.Media.TryGetMessagesForFileId(file.Id, out IList<Message> messages))
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            if (viewModel.Media != null && viewModel.Media.TryGetMessagesForFileId(file.Id, out IList<Message> messages))
             {
                 foreach (var message in messages)
                 {
@@ -309,7 +315,7 @@ namespace Unigram.Views.Chats
                 }
             }
 
-            if (ViewModel.Files.TryGetMessagesForFileId(file.Id, out messages))
+            if (viewModel.Files != null && viewModel.Files.TryGetMessagesForFileId(file.Id, out messages))
             {
                 foreach (var message in messages)
                 {
@@ -324,7 +330,7 @@ namespace Unigram.Views.Chats
                     var document = message.GetFile();
                     var content = container.ContentTemplateRoot as SharedFileCell;
 
-                    if (document == null)
+                    if (document == null || content == null)
                     {
                         continue;
                     }
@@ -336,7 +342,7 @@ namespace Unigram.Views.Chats
                 }
             }
 
-            if (ViewModel.Music.TryGetMessagesForFileId(file.Id, out messages))
+            if (viewModel.Music != null && viewModel.Music.TryGetMessagesForFileId(file.Id, out messages))
             {
                 foreach (var message in messages)
                 {
@@ -351,7 +357,7 @@ namespace Unigram.Views.Chats
                     var document = message.GetFile();
                     var content = container.ContentTemplateRoot as SharedFileCell;
 
-                    if (document == null)
+                    if (document == null || content == null)
                     {
                         continue;
                     }
@@ -363,7 +369,7 @@ namespace Unigram.Views.Chats
                 }
             }
 
-            if (ViewModel.Voice.TryGetMessagesForFileId(file.Id, out messages))
+            if (viewModel.Voice != null && viewModel.Voice.TryGetMessagesForFileId(file.Id, out messages))
             {
                 foreach (var message in messages)
                 {
@@ -378,7 +384,7 @@ namespace Unigram.Views.Chats
                     var document = message.GetFile();
                     var content = container.ContentTemplateRoot as SharedFileCell;
 
-                    if (document == null)
+                    if (document == null || content == null)
                     {
                         continue;
                     }

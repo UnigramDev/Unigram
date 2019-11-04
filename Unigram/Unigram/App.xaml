@@ -57,6 +57,8 @@
                     <StaticResource x:Key="NavigationViewItemBorderBrushSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
 
+                    <Thickness x:Key="NavigationViewItemBorderThickness">0</Thickness>
+
                     <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FF232323" />
                     <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
                     <SolidColorBrush x:Key="ContentSpacerBrush" Color="#FF1F1F1F" />
@@ -118,6 +120,8 @@
                     <StaticResource x:Key="NavigationViewItemBorderBrushSelectedPressed" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewItemBorderBrushSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
                     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
+
+                    <Thickness x:Key="NavigationViewItemBorderThickness">0</Thickness>
 
                     <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
                     <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FFFFFFFF" />
@@ -195,7 +199,6 @@
             <converters:CompressionToGlyphConverter x:Key="CompressionToGlyphConverter"/>
             <converters:ChatTtlConverter x:Key="ChatTtlConverter"/>
             <converters:MessageTtlConverter x:Key="MessageTtlConverter"/>
-            <converters:PrivacyRuleToUsersConverter x:Key="PrivacyRuleToUsersConverter"/>
             <converters:StickerToEmojiConverter x:Key="StickerToEmojiConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

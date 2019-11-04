@@ -18,20 +18,21 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:PageHeader Text="{CustomResource GroupsInCommonTitle}"/>
 
-        <ListView x:Name="List"
-                  ItemsSource="{x:Bind ViewModel.Items}"
-                  ItemClick="ListView_ItemClick"
-                  IsItemClickEnabled="True"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  Grid.Row="1">
+        <controls:TableListView
+            x:Name="List"
+            ItemsSource="{x:Bind ViewModel.Items}"
+            ItemClick="ListView_ItemClick"
+            IsItemClickEnabled="True"
+            ContainerContentChanging="OnContainerContentChanging"
+            SelectionMode="None"
+            Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="12,6">
@@ -47,10 +48,18 @@
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="Padding" Value="0,0,0,0"/>
+                    <Setter Property="MaxWidth" Value="640"/>
+                    <Setter Property="Padding" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
-        </ListView>
+            <ListView.Header>
+                <Border Height="16"/>
+            </ListView.Header>
+            <ListView.Footer>
+                <Border Height="32"/>
+            </ListView.Footer>
+        </controls:TableListView>
     </Grid>
 </Page>

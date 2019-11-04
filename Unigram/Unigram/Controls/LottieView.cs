@@ -32,6 +32,7 @@ namespace Unigram.Controls
         private bool _limitFps = true;
 
         private int _index;
+        private bool _backward;
 
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
@@ -66,6 +67,7 @@ namespace Unigram.Controls
             }
 
             _animation = null;
+            _source = null;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -109,8 +111,33 @@ namespace Unigram.Controls
                 animation.CreateCache(256, 256);
             }
 
+            IndexChanged?.Invoke(this, index);
+
+            if (_backward)
+            {
+                if (index - framesPerUpdate > 0)
+                {
+                    _index -= framesPerUpdate;
+                }
+                else
+                {
+                    _index = 0;
+                    _backward = false;
+
+                    if (!_isLoopingEnabled)
+                    {
+                        sender.Paused = true;
+                        sender.ResetElapsedTime();
+                    }
+                }
+
+                return;
+            }
+
             if (index + framesPerUpdate < _animation.TotalFrame)
             {
+                PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animation.TotalFrame)));
+
                 _index += framesPerUpdate;
             }
             else
@@ -122,8 +149,29 @@ namespace Unigram.Controls
                     sender.Paused = true;
                     sender.ResetElapsedTime();
                 }
+
+                PositionChanged?.Invoke(this, 1);
             }
         }
+
+        public void SetPosition(double position)
+        {
+            if (position < 0 || position > 1)
+            {
+                return;
+            }
+
+            var animation = _animation;
+            if (animation == null)
+            {
+                return;
+            }
+
+            _index = (int)Math.Ceiling(_animation.TotalFrame * position);
+        }
+
+        public int Ciccio => _animation.TotalFrame;
+        public int Index => _index == int.MaxValue ? 0 : _index;
 
         private void OnSourceChanged(Uri newValue, Uri oldValue)
         {
@@ -163,6 +211,7 @@ namespace Unigram.Controls
 
             _source = newValue;
             _animation = animation;
+            _index = 0;
 
             var update = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
             if (_limitFps && _animation.FrameRate >= 60)
@@ -176,11 +225,15 @@ namespace Unigram.Controls
 
             if (AutoPlay || _shouldPlay)
             {
-                Play();
+                _shouldPlay = false;
+                canvas.Paused = false;
             }
+
+            // Invalidate to render the first frame
+            canvas.Invalidate();
         }
 
-        public void Play()
+        public void Play(bool backward = false)
         {
             var canvas = Canvas;
             if (canvas == null)
@@ -197,6 +250,7 @@ namespace Unigram.Controls
             }
 
             _shouldPlay = false;
+            _backward = backward;
 
             canvas.Paused = false;
             canvas.Invalidate();
@@ -213,6 +267,17 @@ namespace Unigram.Controls
 
             canvas.Paused = true;
             canvas.ResetElapsedTime();
+        }
+
+        public void Invalidate()
+        {
+            var canvas = Canvas;
+            if (canvas == null)
+            {
+                return;
+            }
+
+            canvas.Invalidate();
         }
 
         private IAnimation LoadFromFile(string path, bool cache)
@@ -318,5 +383,8 @@ namespace Unigram.Controls
         }
 
         #endregion
+
+        public event EventHandler<double> PositionChanged;
+        public event EventHandler<int> IndexChanged;
     }
 }
