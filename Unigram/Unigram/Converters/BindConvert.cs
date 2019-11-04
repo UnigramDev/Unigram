@@ -91,6 +91,13 @@ namespace Unigram.Converters
         {
             if (gem)
             {
+                var culture = NativeUtils.GetCurrentCulture();
+                var info = new CultureInfo(culture);
+                if (info.NumberFormat.CurrencyPositivePattern == 0 || info.NumberFormat.CurrencyPositivePattern == 2)
+                {
+                    return string.Format("\uD83D\uDC8E {0:0.000000000}", value / 1000000000d);
+                }
+
                 return string.Format("{0:0.000000000} \uD83D\uDC8E", value / 1000000000d);
             }
 
