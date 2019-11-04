@@ -47,25 +47,33 @@ namespace Unigram.Services
 
         public async Task<object> GenerateLocalPasswordAsync()
         {
-            var response = await _protoService.SendAsync(new GetTonWalletPasswordSalt());
-            if (response is TonWalletPasswordSalt passwordSalt)
-            {
-                var passwordBuffer = CryptographicBuffer.GenerateRandom(64);
-                var saltBuffer = CryptographicBuffer.GenerateRandom(32);
+            //var response = await _protoService.SendAsync(new GetTonWalletPasswordSalt());
+            //if (response is TonWalletPasswordSalt passwordSalt)
+            //{
+            //    var passwordBuffer = CryptographicBuffer.GenerateRandom(64);
+            //    var saltBuffer = CryptographicBuffer.GenerateRandom(32);
 
-                CryptographicBuffer.CopyToByteArray(passwordBuffer, out byte[] password);
-                CryptographicBuffer.CopyToByteArray(saltBuffer, out byte[] salt);
+            //    CryptographicBuffer.CopyToByteArray(passwordBuffer, out byte[] password);
+            //    CryptographicBuffer.CopyToByteArray(saltBuffer, out byte[] salt);
 
-                System.Buffer.BlockCopy(passwordSalt.Salt.ToArray(), 0, password, 32, 32);
+            //    System.Buffer.BlockCopy(passwordSalt.Salt.ToArray(), 0, password, 32, 32);
 
-                return new ByteTuple(password, salt);
-            }
-            else if (response is Error error)
-            {
-                return new Ton.Tonlib.Api.Error(error.Code, error.Message);
-            }
+            //    return new ByteTuple(password, salt);
+            //}
+            //else if (response is Error error)
+            //{
+            //    return new Ton.Tonlib.Api.Error(error.Code, error.Message);
+            //}
 
-            return null;
+            //return null;
+
+            var passwordBuffer = CryptographicBuffer.GenerateRandom(64);
+            var saltBuffer = CryptographicBuffer.GenerateRandom(32);
+
+            CryptographicBuffer.CopyToByteArray(passwordBuffer, out byte[] password);
+            CryptographicBuffer.CopyToByteArray(saltBuffer, out byte[] salt);
+
+            return new ByteTuple(password, salt);
         }
 
         public async Task<bool> EncryptAsync(string publicKey, IList<byte> dataArray, IList<byte> localPassword)

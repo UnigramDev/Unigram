@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Wallet
 {
-    public class WalletViewModel : TonViewModelBase, ISupportIncrementalLoading
+    public class WalletViewModel : TonViewModelBase, IHandle<UpdateSyncState>, ISupportIncrementalLoading
     {
         private TaskCompletionSource<bool> _navigationTask;
 
@@ -38,6 +38,13 @@ namespace Unigram.ViewModels.Wallet
             SettingsCommand = new RelayCommand(SettingsExecute);
             ReceiveCommand = new RelayCommand(ReceiveExecute);
             SendCommand = new RelayCommand(SendExecute);
+        }
+
+        private SyncState _syncState;
+        public SyncState SyncState
+        {
+            get => _syncState;
+            set => Set(ref _syncState, value);
         }
 
         private string _address;
@@ -65,12 +72,15 @@ namespace Unigram.ViewModels.Wallet
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Aggregator.Subscribe(this);
+
             var address = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(ProtoService.Options.WalletPublicKey))) as AccountAddress;
             if (address == null)
             {
                 return;
             }
 
+            SyncState = TonService.GetSyncState();
             Address = address.AccountAddressValue;
 
             IsLoading = true;
@@ -110,6 +120,17 @@ namespace Unigram.ViewModels.Wallet
             }
 
             _navigationTask.TrySetResult(true);
+        }
+
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            Aggregator.Unsubscribe(this);
+            return base.OnNavigatedFromAsync(pageState, suspending);
+        }
+
+        public void Handle(UpdateSyncState update)
+        {
+            BeginOnUIThread(() => SyncState = update.SyncState);
         }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)

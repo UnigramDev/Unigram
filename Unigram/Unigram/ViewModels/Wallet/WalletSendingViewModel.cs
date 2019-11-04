@@ -42,7 +42,7 @@ namespace Unigram.ViewModels.Wallet
             var sender = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(publicKey))) as AccountAddress;
             var recipient = new AccountAddress(address);
 
-            var privateKey = new InputKey(new Key(publicKey, secret), localPassword);
+            var privateKey = new InputKeyRegular(new Key(publicKey, secret), localPassword);
 
             var response = await TonService.SendAsync(new GenericSendGrams(privateKey, sender, recipient, amount, 0, true, message));
             if (response is SendGramsResult result)

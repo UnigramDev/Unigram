@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Ton.Tonlib;
 using Ton.Tonlib.Api;
@@ -22,6 +23,8 @@ namespace Unigram.Services
         Task<BaseObject> SendAsync(Function function);
 
         void CleanUp();
+
+        SyncState GetSyncState();
 
         void SetCreationState(WalletCreationState state);
         bool TryGetCreationState(out WalletCreationState state);
@@ -43,6 +46,7 @@ namespace Unigram.Services
 
         private TaskCompletionSource<bool> _initializeTask;
 
+        private SyncState _syncState;
         private WalletCreationState _creationState;
 
         public TonService(int session, IProtoService protoService, IEncryptionService encryptionService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -111,29 +115,11 @@ namespace Unigram.Services
 #if TEST_TON
             if (name == null)
             {
-                name = "test";
-                config = @"{
-  ""liteservers"": [
-    {
-      ""ip"": 1137658550,
-      ""port"": 4924,
-      ""id"": {
-        ""@type"": ""pub.ed25519"",
-        ""key"": ""peJTw/arlRfssgTuf9BMypJzqOi7SXEqSPSWiEw2U1M=""
-      }
-}
-  ],
-  ""validator"": {
-    ""@type"": ""validator.config.global"",
-    ""zero_state"": {
-      ""workchain"": -1,
-      ""shard"": -9223372036854775808,
-      ""seqno"": 0,
-      ""root_hash"": ""VCSXxDHhTALFxReyTZRd8E4Ya3ySOmpOWAS4rBX9XBY="",
-      ""file_hash"": ""eh9yveSz1qMdJ7mOsO+I+H77jkLr9NpAuEkoJuseXBo=""
-    }
-  }
-}";
+                using (var client = new HttpClient())
+                {
+                    config = await client.GetStringAsync("https://test.ton.org/config.json");
+                    name = "testnet";
+                }
             }
 #endif
 
@@ -188,7 +174,11 @@ namespace Unigram.Services
 
         public void OnResult(BaseObject update)
         {
-            if (update is UpdateSendLiteServerQuery updateSendLiteServerQuery)
+            if (update is UpdateSyncState updateSyncState)
+            {
+                _syncState = updateSyncState.SyncState;
+            }
+            else if (update is UpdateSendLiteServerQuery updateSendLiteServerQuery)
             {
                 Handle(updateSendLiteServerQuery);
             }
@@ -210,6 +200,11 @@ namespace Unigram.Services
         }
 
 
+
+        public SyncState GetSyncState()
+        {
+            return _syncState;
+        }
 
         public void SetCreationState(WalletCreationState state)
         {

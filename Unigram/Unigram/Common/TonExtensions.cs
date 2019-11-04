@@ -30,6 +30,9 @@ namespace Ton.Tonlib.Api
                 case GenericAccountStateWallet stateWallet:
                     value = stateWallet.AccountState.Balance;
                     break;
+                case GenericAccountStateWalletV3 stateWalletV3:
+                    value = stateWalletV3.AccountState.Balance;
+                    break;
             }
 
             if (value >= 0)
@@ -54,6 +57,8 @@ namespace Ton.Tonlib.Api
                     return stateUninited.AccountState.LastTransactionId;
                 case GenericAccountStateWallet stateWallet:
                     return stateWallet.AccountState.LastTransactionId;
+                case GenericAccountStateWalletV3 stateWalletV3:
+                    return stateWalletV3.AccountState.LastTransactionId;
             }
 
             return null;

@@ -49,7 +49,7 @@ namespace Unigram.ViewModels.Wallet
 
         private async Task ContinueAsync(Key key, IList<byte> localPassword)
         {
-            var response = await TonService.SendAsync(new ExportKey(new InputKey(key, localPassword)));
+            var response = await TonService.SendAsync(new ExportKey(new InputKeyRegular(key, localPassword)));
             if (response is ExportedKey exportedKey)
             {
                 var indices = new List<int>();

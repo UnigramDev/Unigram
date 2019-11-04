@@ -51,7 +51,7 @@ namespace Unigram.ViewModels.Wallet
                 state.TryGet("secret", out IList<byte> secret);
                 state.TryGet("local_password", out IList<byte> localPassword);
 
-                var privateKey = new InputKey(new Key(publicKey, secret), localPassword);
+                var privateKey = new InputKeyRegular(new Key(publicKey, secret), localPassword);
 
                 var response = await TonService.SendAsync(new ExportKey(privateKey));
                 if (response is ExportedKey exportedKey)
