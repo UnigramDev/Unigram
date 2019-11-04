@@ -1986,6 +1986,9 @@ If you're not interested, we suggest creating a private channel instead.</value>
   <data name="ChannelTooMuch" xml:space="preserve">
     <value>Sorry, you are a member of too many groups and channels. Please leave some before creating a new one.</value>
   </data>
+  <data name="ChannelTooMuchJoin" xml:space="preserve">
+    <value>Sorry, you are a member of too many groups and channels. Please leave some before joining a new one.</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Channel Type</value>
   </data>
@@ -2038,7 +2041,7 @@ Minimum length is 5 characters.</value>
     <value>MMMM d</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
-    <value>Chat deleted.</value>
+    <value>Chat deleted</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>File</value>
@@ -2267,6 +2270,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ChooseTakePhoto" xml:space="preserve">
     <value>Take photo</value>
+  </data>
+  <data name="ChooseTheme" xml:space="preserve">
+    <value>Choose theme</value>
   </data>
   <data name="ChooseYourLanguage" xml:space="preserve">
     <value>Choose your language</value>
@@ -2498,6 +2504,9 @@ To go over the limit and get additional features, upgrade to a supergroup:
   </data>
   <data name="CountSent" xml:space="preserve">
     <value>Sent</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
   </data>
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>An error occurred.</value>
@@ -3060,6 +3069,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="EditName" xml:space="preserve">
     <value>Edit name</value>
   </data>
+  <data name="EditThemeTitle" xml:space="preserve">
+    <value>Edit Theme</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Email copied to clipboard</value>
   </data>
@@ -3377,7 +3389,7 @@ have been found.</value>
     <value>Leaving members</value>
   </data>
   <data name="EventLogFilterNewAdmins" xml:space="preserve">
-    <value>New admins</value>
+    <value>Admin rights</value>
   </data>
   <data name="EventLogFilterNewMembers" xml:space="preserve">
     <value>New members</value>
@@ -3609,6 +3621,9 @@ Duration: {1}</value>
   <data name="ExceptionZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ExportTheme" xml:space="preserve">
+    <value>Export</value>
+  </data>
   <data name="Exposure" xml:space="preserve">
     <value>Exposure</value>
   </data>
@@ -3702,8 +3717,14 @@ Duration: {1}</value>
   <data name="FormatDateAtTime" xml:space="preserve">
     <value>{0} at {1}</value>
   </data>
+  <data name="FormatDateSchedule" xml:space="preserve">
+    <value>MMM d</value>
+  </data>
   <data name="FormatDateScheduleDay" xml:space="preserve">
     <value>EEE MMM d</value>
+  </data>
+  <data name="FormatDateScheduleYear" xml:space="preserve">
+    <value>MMM d yyyy</value>
   </data>
   <data name="FormatterBannedUntil12H" xml:space="preserve">
     <value>MMM dd yyyy, h:mm a</value>
@@ -4897,6 +4918,30 @@ Minimum length is 5 characters.</value>
   <data name="MessagePreview" xml:space="preserve">
     <value>Message Preview</value>
   </data>
+  <data name="MessageScheduledBotAction" xml:space="preserve">
+    <value>This action will become available after the message is published.</value>
+  </data>
+  <data name="MessageScheduledLimitReached" xml:space="preserve">
+    <value>Sorry, you can not schedule more than 100 messages.</value>
+  </data>
+  <data name="MessageScheduledOn" xml:space="preserve">
+    <value>Scheduled for {0}</value>
+  </data>
+  <data name="MessageScheduledReminderNotification" xml:space="preserve">
+    <value>📅 Reminder</value>
+  </data>
+  <data name="MessageScheduledVote" xml:space="preserve">
+    <value>Voting will become available after the message is published.</value>
+  </data>
+  <data name="MessageScheduleEditTime" xml:space="preserve">
+    <value>Reschedule</value>
+  </data>
+  <data name="MessageScheduleSend" xml:space="preserve">
+    <value>Send Now</value>
+  </data>
+  <data name="MessageScheduleToday" xml:space="preserve">
+    <value>Today</value>
+  </data>
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>Messages and other data</value>
   </data>
@@ -5122,6 +5167,21 @@ Minimum length is 5 characters.</value>
   <data name="NewTheme" xml:space="preserve">
     <value>New color theme</value>
   </data>
+  <data name="NewThemePreviewLine1" xml:space="preserve">
+    <value>Do you know what time it is?</value>
+  </data>
+  <data name="NewThemePreviewLine2" xml:space="preserve">
+    <value>It's morning in Tokyo 😎</value>
+  </data>
+  <data name="NewThemePreviewName" xml:space="preserve">
+    <value>Bob Harris</value>
+  </data>
+  <data name="NewThemePreviewReply" xml:space="preserve">
+    <value>Good morning! 👋</value>
+  </data>
+  <data name="NewThemeTitle" xml:space="preserve">
+    <value>New Theme</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>Next</value>
   </data>
@@ -5237,6 +5297,9 @@ You can customize notifications for a chat by opening its profile and choosing '
   </data>
   <data name="NoResult" xml:space="preserve">
     <value>No results</value>
+  </data>
+  <data name="NoScheduledMessages" xml:space="preserve">
+    <value>No scheduled messages here yet...</value>
   </data>
   <data name="NoSharedAudio" xml:space="preserve">
     <value>Share music in this chat and access it on any of your devices.</value>
@@ -5553,6 +5616,12 @@ You can customize notifications for a chat by opening its profile and choosing '
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>{0} sent you a video message</value>
   </data>
+  <data name="NotificationMessageScheduled" xml:space="preserve">
+    <value>📅 You: {0}</value>
+  </data>
+  <data name="NotificationMessageScheduledName" xml:space="preserve">
+    <value>📅 You</value>
+  </data>
   <data name="NotificationMessageSDPhoto" xml:space="preserve">
     <value>{0} sent you a self-destructing photo</value>
   </data>
@@ -5806,6 +5875,9 @@ The Telegram Team</value>
   </data>
   <data name="OpenMessage" xml:space="preserve">
     <value>VIEW MESSAGE</value>
+  </data>
+  <data name="OpenTheme" xml:space="preserve">
+    <value>VIEW THEME</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Open URL {0}?</value>
@@ -7062,13 +7134,19 @@ Please turn on location services to enable this feature.</value>
     <value>Phone Number</value>
   </data>
   <data name="PrivacyPhoneInfo" xml:space="preserve">
-    <value>Users who already have your number saved in their contacts will see it on Telegram.</value>
+    <value>Users who have your number saved in their contacts will also see it on Telegram.</value>
   </data>
   <data name="PrivacyPhoneInfo2" xml:space="preserve">
     <value>You can add users or entire groups as exceptions that will override the settings above.</value>
   </data>
+  <data name="PrivacyPhoneInfo3" xml:space="preserve">
+    <value>Users who add your number to their contacts will see it on Telegram only if they are your contacts.</value>
+  </data>
   <data name="PrivacyPhoneTitle" xml:space="preserve">
     <value>Who can see my phone number?</value>
+  </data>
+  <data name="PrivacyPhoneTitle2" xml:space="preserve">
+    <value>Who can find me by my number?</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Privacy Policy</value>
@@ -7228,6 +7306,18 @@ Please turn on location services to enable this feature.</value>
   </data>
   <data name="Regular" xml:space="preserve">
     <value>Regular</value>
+  </data>
+  <data name="RemindDayAt" xml:space="preserve">
+    <value>'Remind on' MMM d 'at' HH:mm</value>
+  </data>
+  <data name="RemindDayYearAt" xml:space="preserve">
+    <value>'Remind on' MMM d yyyy 'at' HH:mm</value>
+  </data>
+  <data name="Reminders" xml:space="preserve">
+    <value>Reminders</value>
+  </data>
+  <data name="RemindTodayAt" xml:space="preserve">
+    <value>'Remind today at' HH:mm</value>
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>Sticker was removed from Favorites</value>
@@ -7508,6 +7598,15 @@ The channel "**{1}**" will become private.</value>
   <data name="ScamMessage" xml:space="preserve">
     <value>SCAM</value>
   </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="ScheduledMessages" xml:space="preserve">
+    <value>Scheduled messages</value>
+  </data>
+  <data name="ScheduleMessage" xml:space="preserve">
+    <value>Schedule message</value>
+  </data>
   <data name="ScreenCapture" xml:space="preserve">
     <value>Show App Content in Task Switcher</value>
   </data>
@@ -7675,6 +7774,12 @@ You may need to restart the app for this to take effect.</value>
   <data name="SendContactToGroup" xml:space="preserve">
     <value>Send contact to {0}?</value>
   </data>
+  <data name="SendDayAt" xml:space="preserve">
+    <value>'Send on' MMM d 'at' HH:mm</value>
+  </data>
+  <data name="SendDayYearAt" xml:space="preserve">
+    <value>'Send on' MMM d yyyy 'at' HH:mm</value>
+  </data>
   <data name="SendGameTo" xml:space="preserve">
     <value>Share game to {0}?</value>
   </data>
@@ -7752,6 +7857,9 @@ You may need to restart the app for this to take effect.</value>
   </data>
   <data name="SendStickerPreview" xml:space="preserve">
     <value>Send Sticker</value>
+  </data>
+  <data name="SendTodayAt" xml:space="preserve">
+    <value>'Send today at' HH:mm</value>
   </data>
   <data name="SendWithoutCompression" xml:space="preserve">
     <value>Send without compression</value>
@@ -7836,6 +7944,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="SetRecoveryEmail" xml:space="preserve">
     <value>Set Recovery Email</value>
   </data>
+  <data name="SetReminder" xml:space="preserve">
+    <value>Set a reminder</value>
+  </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Set self-destruct timer</value>
   </data>
@@ -7859,6 +7970,30 @@ Don't accept the call, Telegram will process everything automatically.</value>
   </data>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>FAQ</value>
+  </data>
+  <data name="SetUrlAvailable" xml:space="preserve">
+    <value>{0} is available.</value>
+  </data>
+  <data name="SetUrlChecking" xml:space="preserve">
+    <value>Checking link...</value>
+  </data>
+  <data name="SetUrlInUse" xml:space="preserve">
+    <value>Sorry, this link is already taken.</value>
+  </data>
+  <data name="SetUrlInvalid" xml:space="preserve">
+    <value>Sorry, this link is invalid.</value>
+  </data>
+  <data name="SetUrlInvalidLong" xml:space="preserve">
+    <value>The link must not exceed 64 characters.</value>
+  </data>
+  <data name="SetUrlInvalidShort" xml:space="preserve">
+    <value>A link must have at least 5 characters.</value>
+  </data>
+  <data name="SetUrlInvalidStartNumber" xml:space="preserve">
+    <value>Sorry, the link can't start with a number.</value>
+  </data>
+  <data name="SetUrlPlaceholder" xml:space="preserve">
+    <value>Link</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Shadows</value>
@@ -8361,6 +8496,16 @@ you agree to the *Terms of Service*.</value>
   <data name="ThemeBlue" xml:space="preserve">
     <value>Mono</value>
   </data>
+  <data name="ThemeCreateHelp" xml:space="preserve">
+    <value>Anyone can install your theme using this link. When you change the theme, it will be updated for all users who installed it.
+
+The theme will be based on your currently selected theme and wallpaper.</value>
+  </data>
+  <data name="ThemeCreateHelp2" xml:space="preserve">
+    <value>You can change the link of your theme.
+
+Theme links must be longer than 5 characters and can use a-z, 0-9 and underscores.</value>
+  </data>
   <data name="ThemeDark" xml:space="preserve">
     <value>Dark</value>
   </data>
@@ -8370,11 +8515,127 @@ you agree to the *Terms of Service*.</value>
   <data name="ThemeGraphite" xml:space="preserve">
     <value>Graphite</value>
   </data>
+  <data name="ThemeHelpLink" xml:space="preserve">
+    <value>Your theme will be updated for all users each time you change it. Anyone can install it using this link:
+{0}</value>
+  </data>
   <data name="ThemeInfo" xml:space="preserve">
     <value>Choose custom color schemes</value>
   </data>
+  <data name="ThemeInstallCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeInstallCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeInstallCountOne" xml:space="preserve">
+    <value>{0} person is using this theme</value>
+  </data>
+  <data name="ThemeInstallCountOther" xml:space="preserve">
+    <value>{0} people are using this theme</value>
+  </data>
+  <data name="ThemeInstallCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeInstallCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeNameInvalid" xml:space="preserve">
+    <value>Sorry, theme name is invalid.</value>
+  </data>
+  <data name="ThemeNamePlaceholder" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ThemeNotFound" xml:space="preserve">
+    <value>Theme not found</value>
+  </data>
+  <data name="ThemeNotSupported" xml:space="preserve">
+    <value>Sorry, this color theme doesn’t support your device yet.</value>
+  </data>
   <data name="ThemePreview" xml:space="preserve">
     <value>Theme Preview</value>
+  </data>
+  <data name="ThemePreviewDialog1" xml:space="preserve">
+    <value>Eva Summer</value>
+  </data>
+  <data name="ThemePreviewDialog2" xml:space="preserve">
+    <value>Your inner Competition</value>
+  </data>
+  <data name="ThemePreviewDialog3" xml:space="preserve">
+    <value>Mike Apple</value>
+  </data>
+  <data name="ThemePreviewDialog4" xml:space="preserve">
+    <value>Paul Newman</value>
+  </data>
+  <data name="ThemePreviewDialog5" xml:space="preserve">
+    <value>Old Pirates</value>
+  </data>
+  <data name="ThemePreviewDialog6" xml:space="preserve">
+    <value>Kate Bright</value>
+  </data>
+  <data name="ThemePreviewDialog7" xml:space="preserve">
+    <value>Nick K</value>
+  </data>
+  <data name="ThemePreviewDialog8" xml:space="preserve">
+    <value>Adler Toberg</value>
+  </data>
+  <data name="ThemePreviewDialogMessage1" xml:space="preserve">
+    <value>Reminds me of a Chinese prove...</value>
+  </data>
+  <data name="ThemePreviewDialogMessage2" xml:space="preserve">
+    <value>hey, I've updated the source code.</value>
+  </data>
+  <data name="ThemePreviewDialogMessage3" xml:space="preserve">
+    <value>🤷‍♂️ Sticker</value>
+  </data>
+  <data name="ThemePreviewDialogMessage4" xml:space="preserve">
+    <value>Any ideas?</value>
+  </data>
+  <data name="ThemePreviewDialogMessage5" xml:space="preserve">
+    <value>Yo-ho-ho!</value>
+  </data>
+  <data name="ThemePreviewDialogMessage6" xml:space="preserve">
+    <value>Hola!</value>
+  </data>
+  <data name="ThemePreviewDialogMessage7" xml:space="preserve">
+    <value>These are not the droids you are looking for.</value>
+  </data>
+  <data name="ThemePreviewDialogMessage8" xml:space="preserve">
+    <value>Did someone say peanut butter?</value>
+  </data>
+  <data name="ThemePreviewLine1" xml:space="preserve">
+    <value>Reinhardt, we need to find you some new tunes 🎶.</value>
+  </data>
+  <data name="ThemePreviewLine2" xml:space="preserve">
+    <value>I can't even take you seriously right now.</value>
+  </data>
+  <data name="ThemePreviewLine3" xml:space="preserve">
+    <value>Ah, you kids today with techno music! You should enjoy the classics, like Hasselhoff!</value>
+  </data>
+  <data name="ThemePreviewLine3Reply" xml:space="preserve">
+    <value>Lucio</value>
+  </data>
+  <data name="ThemePreviewLine4" xml:space="preserve">
+    <value>Bring it on! I LIVE for this!</value>
+  </data>
+  <data name="ThemePreviewSongPerformer" xml:space="preserve">
+    <value>David Hasselhoff</value>
+  </data>
+  <data name="ThemePreviewSongTitle" xml:space="preserve">
+    <value>True Survivor</value>
+  </data>
+  <data name="ThemePreviewTitle" xml:space="preserve">
+    <value>Reinhardt</value>
+  </data>
+  <data name="ThemeSetUrl" xml:space="preserve">
+    <value>Set link</value>
+  </data>
+  <data name="ThemeSetUrlHelp" xml:space="preserve">
+    <value>You can use a-z, 0-9 and underscores.
+Minimum length is 5 characters.</value>
+  </data>
+  <data name="ThemeUrl" xml:space="preserve">
+    <value>Theme Link</value>
   </data>
   <data name="TimesFew" xml:space="preserve">
     <value/>
@@ -8477,6 +8738,9 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   </data>
   <data name="TypePublicGroup" xml:space="preserve">
     <value>Public</value>
+  </data>
+  <data name="TypeScheduleMessage" xml:space="preserve">
+    <value>Schedule message</value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>typing...</value>
@@ -8603,6 +8867,12 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   </data>
   <data name="UsbActive" xml:space="preserve">
     <value>USB transfer active</value>
+  </data>
+  <data name="UseDifferentTheme" xml:space="preserve">
+    <value>Use a different theme</value>
+  </data>
+  <data name="UseDifferentThemeInfo" xml:space="preserve">
+    <value>You can also use an existing custom theme as a foundation for your theme.</value>
   </data>
   <data name="UseLessDataAlways" xml:space="preserve">
     <value>Always</value>
@@ -9239,51 +9509,29 @@ If you forget your password, you will lose access to your Telegram account. Ther
   <data name="YouWereKicked" xml:space="preserve">
     <value>you were removed from the group</value>
   </data>
+  <data name="Wallet" xml:space="preserve">
+    <value>Wallet</value>
+  </data>
+  <data name="WalletScanCode" xml:space="preserve">
+    <value>Scan QR Code</value>
+  </data>
+  <data name="WalletQRCode" xml:space="preserve">
+    <value>QR Code</value>
+  </data>
+  <data name="WalletScanImageNotFound" xml:space="preserve">
+    <value>No wallet address found in the selected image.</value>
+  </data>
+  <data name="WalletScanCodeNotFound" xml:space="preserve">
+    <value>No wallet address found</value>
+  </data>
   <data name="GramWallet" xml:space="preserve">
     <value>Gram Wallet</value>
-  </data>
-  <data name="GramWalletInfo" xml:space="preserve">
-    <value>The gram wallet allows you to make fast and secure blockchain-based payments without intermediaries.</value>
   </data>
   <data name="CreateMyWallet" xml:space="preserve">
     <value>Create My Wallet</value>
   </data>
-  <data name="CreateMyWalletTerms" xml:space="preserve">
-    <value>By creating a wallet you accept the
-*Terms and Conditions*.</value>
-  </data>
   <data name="ImportExistingWallet" xml:space="preserve">
     <value>Import existing wallet</value>
-  </data>
-  <data name="Wallet" xml:space="preserve">
-    <value>Wallet</value>
-  </data>
-  <data name="WalletAddressCopy" xml:space="preserve">
-    <value>Copy the 48-letter wallet address of the recipient here or ask them to send you a ton:// link.</value>
-  </data>
-  <data name="WalletAddressIncorrect" xml:space="preserve">
-    <value>You have entered an incorrect wallet address.</value>
-  </data>
-  <data name="WalletAmount" xml:space="preserve">
-    <value>Amount</value>
-  </data>
-  <data name="WalletBiometricTooManyAttempts" xml:space="preserve">
-    <value>Too many attempts. Please try again later.</value>
-  </data>
-  <data name="WalletChangePasscode" xml:space="preserve">
-    <value>Change Passcode</value>
-  </data>
-  <data name="WalletComment" xml:space="preserve">
-    <value>Comment (optional)</value>
-  </data>
-  <data name="WalletConfirm" xml:space="preserve">
-    <value>Confirm</value>
-  </data>
-  <data name="WalletConfirmation" xml:space="preserve">
-    <value>Confirmation</value>
-  </data>
-  <data name="WalletConfirmationText" xml:space="preserve">
-    <value>Do you want to send **{0} Grams** to:</value>
   </data>
   <data name="WalletCongratulations" xml:space="preserve">
     <value>Congratulations</value>
@@ -9296,76 +9544,87 @@ To be able to always have access to it, please write down secret words and set u
   <data name="WalletContinue" xml:space="preserve">
     <value>Continue</value>
   </data>
-  <data name="WalletCopyAddress" xml:space="preserve">
-    <value>Copy wallet address</value>
+  <data name="WalletClose" xml:space="preserve">
+    <value>CLOSE</value>
   </data>
-  <data name="WalletCreateInvoice" xml:space="preserve">
-    <value>Create invoice</value>
+  <data name="WalletSecretWords" xml:space="preserve">
+    <value>24 Secret Words</value>
   </data>
-  <data name="WalletCreateInvoiceTitle" xml:space="preserve">
-    <value>Create Invoice</value>
+  <data name="WalletSecretWordsTitle" xml:space="preserve">
+    <value>Secret Words</value>
   </data>
-  <data name="WalletCreated" xml:space="preserve">
-    <value>Wallet Created</value>
-  </data>
-  <data name="WalletDelete" xml:space="preserve">
-    <value>Delete Wallet</value>
-  </data>
-  <data name="WalletDeleteInfo" xml:space="preserve">
-    <value>This will disconnect the wallet from this app. You will be able to restore your wallet using 24 secret words – or import another wallet.
-    
-Wallets are located in the TON Blockchain, which is not controlled by Telegram. If you want a wallet to be deleted, simply transfer all the grams from it and leave it empty.</value>
-  </data>
-  <data name="WalletDeleteText" xml:space="preserve">
-    <value>Are you sure you want to delete this wallet?</value>
-  </data>
-  <data name="WalletDeleteTitle" xml:space="preserve">
-    <value>Delete wallet</value>
+  <data name="WalletSecretWordsInfo" xml:space="preserve">
+    <value>Write down these 24 words in the correct order and store them in a secret place.
+
+Use these secret words to restore access to your wallet if you lose your passcode or Telegram account.</value>
   </data>
   <data name="WalletDone" xml:space="preserve">
     <value>Done</value>
   </data>
-  <data name="WalletEnterPasscode" xml:space="preserve">
-    <value>Enter passcode</value>
+  <data name="WalletSecretWordsAlertTitle" xml:space="preserve">
+    <value>Sure done?</value>
   </data>
-  <data name="WalletEnterWalletAddress" xml:space="preserve">
-    <value>Enter wallet address</value>
+  <data name="WalletSecretWordsAlertText" xml:space="preserve">
+    <value>You didn’t have enough time to write these words down.</value>
   </data>
-  <data name="WalletExport" xml:space="preserve">
-    <value>Export Wallet</value>
+  <data name="WalletSecretWordsAlertButton" xml:space="preserve">
+    <value>OK, SORRY</value>
   </data>
-  <data name="WalletExportConfirmCredentials" xml:space="preserve">
-    <value>Please confirm your credentials to export your wallet.</value>
+  <data name="WalletTestTime" xml:space="preserve">
+    <value>Test time!</value>
   </data>
-  <data name="WalletFrom" xml:space="preserve">
-    <value>from:</value>
+  <data name="WalletTestTimeTitle" xml:space="preserve">
+    <value>Test Time!</value>
   </data>
-  <data name="WalletGramsToReceive" xml:space="preserve">
-    <value>Number of Grams you expect to receive...</value>
+  <data name="WalletTestTimeInfo" xml:space="preserve">
+    <value>Now let’s check that you wrote your secret words correctly.
+
+Please enter the words **{0}**, **{1}** and **{2}** below:</value>
   </data>
-  <data name="WalletGramsToSend" xml:space="preserve">
-    <value>Grams to send...</value>
-  </data>
-  <data name="WalletImportAlertText" xml:space="preserve">
-    <value>Sorry, you have entered incorrect secret words. Please double check and try again.</value>
-  </data>
-  <data name="WalletImportAlertTitle" xml:space="preserve">
+  <data name="WalletTestTimeAlertTitle" xml:space="preserve">
     <value>Incorrect words</value>
   </data>
-  <data name="WalletImportDontHave" xml:space="preserve">
-    <value>I don’t have them</value>
+  <data name="WalletTestTimeAlertText" xml:space="preserve">
+    <value>The secret words you have entered do not match the ones in the list.</value>
+  </data>
+  <data name="WalletTestTimeAlertButtonSee" xml:space="preserve">
+    <value>See words</value>
+  </data>
+  <data name="WalletTestTimeAlertButtonTry" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="WalletReady" xml:space="preserve">
+    <value>Ready to go!</value>
+  </data>
+  <data name="WalletReadyInfo" xml:space="preserve">
+    <value>You are all set. Now you have a wallet that only you control — directly, without middlemen or bankers.</value>
+  </data>
+  <data name="WalletView" xml:space="preserve">
+    <value>View My Wallet</value>
   </data>
   <data name="WalletImportInfo" xml:space="preserve">
     <value>You can restore access to your wallet by entering the 24 words you wrote down when creating the wallet.</value>
   </data>
-  <data name="WalletInvoiceInfo" xml:space="preserve">
-    <value>You can specify the amount and purpose of the payment to save the sender some time.</value>
+  <data name="WalletImportDontHave" xml:space="preserve">
+    <value>I don’t have them</value>
   </data>
-  <data name="WalletKeystoreInvalidated" xml:space="preserve">
-    <value>Unfortunately, your wallet is no longer available because your of a change in your device's lockscreen parameters. Please use your secret words to restore the wallet.</value>
+  <data name="WalletImportAlertTitle" xml:space="preserve">
+    <value>Incorrect words</value>
   </data>
-  <data name="WalletPasscodeLength" xml:space="preserve">
-    <value>Your passcode contains {0}.</value>
+  <data name="WalletImportAlertText" xml:space="preserve">
+    <value>Sorry, you have entered incorrect secret words. Please double check and try again.</value>
+  </data>
+  <data name="WalletTooBad" xml:space="preserve">
+    <value>Too Bad!</value>
+  </data>
+  <data name="WalletTooBadInfo" xml:space="preserve">
+    <value>Without the secret words you can’t restore access to the wallet.</value>
+  </data>
+  <data name="WalletTooBadEnter" xml:space="preserve">
+    <value>Enter 24 secret words</value>
+  </data>
+  <data name="WalletTooBadCreate" xml:space="preserve">
+    <value>Create a new empty wallet instead</value>
   </data>
   <data name="WalletPerfect" xml:space="preserve">
     <value>Perfect!</value>
@@ -9376,58 +9635,203 @@ Wallets are located in the TON Blockchain, which is not controlled by Telegram. 
   <data name="WalletPerfectSetPasscode" xml:space="preserve">
     <value>Set a Passcode</value>
   </data>
-  <data name="WalletPermissionNoCamera" xml:space="preserve">
-    <value>Telegram needs access to your camera so that you can scan QR codes.</value>
+  <data name="WalletSetPasscode" xml:space="preserve">
+    <value>Set a Passcode</value>
   </data>
-  <data name="WalletProcessingFee" xml:space="preserve">
-    <value>Processing fee</value>
+  <data name="WalletSetPasscodeRepeat" xml:space="preserve">
+    <value>Repeat the Passcode</value>
   </data>
-  <data name="WalletQRCode" xml:space="preserve">
-    <value>QR Code</value>
+  <data name="WalletSetPasscodeOptions" xml:space="preserve">
+    <value>Passcode options</value>
   </data>
-  <data name="WalletReady" xml:space="preserve">
-    <value>Ready to go!</value>
+  <data name="WalletSetPasscodeEnterCode" xml:space="preserve">
+    <value>Enter code</value>
   </data>
-  <data name="WalletReadyInfo" xml:space="preserve">
-    <value>You are all set. Now you have a wallet that only you control — directly, without middlemen or bankers.</value>
+  <data name="WalletSetPasscodeChooseType" xml:space="preserve">
+    <value>Choose code type</value>
+  </data>
+  <data name="WalletSetPasscode4Digit" xml:space="preserve">
+    <value>4-Digit code</value>
+  </data>
+  <data name="WalletSetPasscode6Digit" xml:space="preserve">
+    <value>6-Digit code</value>
+  </data>
+  <data name="WalletSetPasscodeCustom" xml:space="preserve">
+    <value>Custom numeric code</value>
+  </data>
+  <data name="WalletSetPasscodeError" xml:space="preserve">
+    <value>Passcodes do not match</value>
+  </data>
+  <data name="WalletSetPasscodeMinLength" xml:space="preserve">
+    <value>Minimum passcode length is 4</value>
+  </data>
+  <data name="WalletSendDone" xml:space="preserve">
+    <value>Done!</value>
+  </data>
+  <data name="WalletSendDoneText" xml:space="preserve">
+    <value>{0} Grams have been sent to</value>
+  </data>
+  <data name="WalletYourBalance" xml:space="preserve">
+    <value>Your balance</value>
   </data>
   <data name="WalletReceive" xml:space="preserve">
     <value>Receive</value>
   </data>
+  <data name="WalletSend" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="WalletCreated" xml:space="preserve">
+    <value>Wallet Created</value>
+  </data>
+  <data name="WalletYourAddress" xml:space="preserve">
+    <value>Your wallet address</value>
+  </data>
+  <data name="WalletFrom" xml:space="preserve">
+    <value>from:</value>
+  </data>
+  <data name="WalletTo" xml:space="preserve">
+    <value>to:</value>
+  </data>
   <data name="WalletReceiveYourAddress" xml:space="preserve">
     <value>Your Wallet Address</value>
+  </data>
+  <data name="WalletCopyAddress" xml:space="preserve">
+    <value>Copy wallet address</value>
+  </data>
+  <data name="WalletCreateInvoice" xml:space="preserve">
+    <value>Create invoice</value>
+  </data>
+  <data name="WalletShareAddress" xml:space="preserve">
+    <value>Share Wallet Address</value>
+  </data>
+  <data name="WalletUpdatedFewSecondsAgo" xml:space="preserve">
+    <value>updated a few seconds ago</value>
+  </data>
+  <data name="WalletUpdatedTimeAgo" xml:space="preserve">
+    <value>updated {0} ago</value>
+  </data>
+  <data name="WalletSwipeToRefresh" xml:space="preserve">
+    <value>Swipe down to refresh</value>
   </data>
   <data name="WalletReleaseToRefresh" xml:space="preserve">
     <value>Release to refresh</value>
   </data>
-  <data name="WalletScanCode" xml:space="preserve">
-    <value>Scan QR Code</value>
+  <data name="WalletUpdating" xml:space="preserve">
+    <value>updating</value>
   </data>
-  <data name="WalletScanCodeNotFound" xml:space="preserve">
-    <value>No wallet address found</value>
+  <data name="WalletUpdatingProgress" xml:space="preserve">
+    <value>updating {0}%</value>
   </data>
-  <data name="WalletScanImageNotFound" xml:space="preserve">
-    <value>No wallet address found in the selected image.</value>
+  <data name="WalletSendGrams" xml:space="preserve">
+    <value>Send Grams</value>
   </data>
-  <data name="WalletSecretWords" xml:space="preserve">
-    <value>24 Secret Words</value>
+  <data name="WalletSendRecipient" xml:space="preserve">
+    <value>Recipient wallet address</value>
   </data>
-  <data name="WalletSecretWordsAlertButton" xml:space="preserve">
-    <value>OK, SORRY</value>
+  <data name="WalletEnterWalletAddress" xml:space="preserve">
+    <value>Enter wallet address</value>
   </data>
-  <data name="WalletSecretWordsAlertText" xml:space="preserve">
-    <value>You didn’t have enough time to write these words down.</value>
+  <data name="WalletAddressCopy" xml:space="preserve">
+    <value>Copy the 48-letter wallet address of the recipient here or ask them to send you a ton:// link.</value>
   </data>
-  <data name="WalletSecretWordsAlertTitle" xml:space="preserve">
-    <value>Sure done?</value>
+  <data name="WalletAmount" xml:space="preserve">
+    <value>Amount</value>
   </data>
-  <data name="WalletSecretWordsInfo" xml:space="preserve">
-    <value>Write down these 24 words in the correct order and store them in a secret place.
-    
-Use these secret words to restore access to your wallet if you lose your passcode or Telegram account.</value>
+  <data name="WalletComment" xml:space="preserve">
+    <value>Comment (optional)</value>
   </data>
-  <data name="WalletSecretWordsTitle" xml:space="preserve">
-    <value>Secret Words</value>
+  <data name="WalletInvoiceInfo" xml:space="preserve">
+    <value>You can specify the amount and purpose of the payment to save the sender some time:</value>
+  </data>
+  <data name="WalletShareInvoiceUrl" xml:space="preserve">
+    <value>Share Invoice URL</value>
+  </data>
+  <data name="WalletShareInfo" xml:space="preserve">
+    <value>Share this address with other Gram
+wallet owners to receive Grams from them.</value>
+  </data>
+  <data name="WalletTestShareInfo" xml:space="preserve">
+    <value>Share this link to receive Test Grams.
+Note: this link won't work for real Grams.</value>
+  </data>
+  <data name="WalletShareInvoiceUrlInfo" xml:space="preserve">
+    <value>Share this link with other Gram wallet owners to receive **{0} Grams** from them.</value>
+  </data>
+  <data name="WalletTestShareInvoiceUrlInfo" xml:space="preserve">
+    <value>Share this link to receive **{0} Test Grams**.
+Note: this link won't work for real Grams.</value>
+  </data>
+  <data name="WalletCreateInvoiceTitle" xml:space="preserve">
+    <value>Create Invoice</value>
+  </data>
+  <data name="WalletYourInvoice" xml:space="preserve">
+    <value>Your Invoice</value>
+  </data>
+  <data name="WalletConfirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="WalletConfirmationText" xml:space="preserve">
+    <value>Do you want to send **{0} Grams** to:</value>
+  </data>
+  <data name="WalletConfirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="WalletEnterPasscode" xml:space="preserve">
+    <value>Enter passcode</value>
+  </data>
+  <data name="WalletPasscodeLength" xml:space="preserve">
+    <value>Your passcode contains {0}.</value>
+  </data>
+  <data name="WalletSendingGrams" xml:space="preserve">
+    <value>Sending Grams</value>
+  </data>
+  <data name="WalletSendingGramsInfo" xml:space="preserve">
+    <value>Please wait a few seconds for your transaction to be processed...</value>
+  </data>
+  <data name="WalletSendConfirmCredentials" xml:space="preserve">
+    <value>Please confirm your credentials to send Grams.</value>
+  </data>
+  <data name="WalletExportConfirmContinue" xml:space="preserve">
+    <value>Please confirm your credentials to continue.</value>
+  </data>
+  <data name="WalletExportConfirmCredentials" xml:space="preserve">
+    <value>Please confirm your credentials to export your wallet.</value>
+  </data>
+  <data name="WalletExport" xml:space="preserve">
+    <value>Export Wallet</value>
+  </data>
+  <data name="WalletDelete" xml:space="preserve">
+    <value>Delete Wallet</value>
+  </data>
+  <data name="WalletSettings" xml:space="preserve">
+    <value>Wallet Settings</value>
+  </data>
+  <data name="WalletServerSettings" xml:space="preserve">
+    <value>Server Settings</value>
+  </data>
+  <data name="WalletChangePasscode" xml:space="preserve">
+    <value>Change Passcode</value>
+  </data>
+  <data name="WalletDeleteTitle" xml:space="preserve">
+    <value>Delete wallet</value>
+  </data>
+  <data name="WalletKeystoreInvalidated" xml:space="preserve">
+    <value>Unfortunately, your wallet is no longer available because of a change in your device's lockscreen parameters. Please use your secret words to restore the wallet.</value>
+  </data>
+  <data name="WalletPermissionNoCamera" xml:space="preserve">
+    <value>Telegram needs access to your camera so that you can scan QR codes.</value>
+  </data>
+  <data name="WalletSecurityAlertTitle" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="WalletSecurityAlertTextBiometric" xml:space="preserve">
+    <value>For better security, we recommend you to set up lockscreen biometric authentication.</value>
+  </data>
+  <data name="WalletSecurityAlertTextLockscreenBiometric" xml:space="preserve">
+    <value>For better security, we recommend you to set up a lockscreen password and biometric authentication.</value>
+  </data>
+  <data name="WalletSecurityAlertTextLockscreen" xml:space="preserve">
+    <value>For better security, we recommend you to set up a lockscreen password or pin.</value>
   </data>
   <data name="WalletSecurityAlertCreateContinue" xml:space="preserve">
     <value>Create anyway</value>
@@ -9438,190 +9842,160 @@ Use these secret words to restore access to your wallet if you lose your passcod
   <data name="WalletSecurityAlertSetup" xml:space="preserve">
     <value>Setup</value>
   </data>
-  <data name="WalletSecurityAlertTextBiometric" xml:space="preserve">
-    <value>For better security, we recommend you to set up lockscreen biometric authentication.</value>
-  </data>
-  <data name="WalletSecurityAlertTextLockscreen" xml:space="preserve">
-    <value>For better security, we recommend you to set up a lockscreen password or pin.</value>
-  </data>
-  <data name="WalletSecurityAlertTextLockscreenBiometric" xml:space="preserve">
-    <value>For better security, we recommend you to set up a lockscreen password and biometric authentication.</value>
-  </data>
-  <data name="WalletSecurityAlertTitle" xml:space="preserve">
-    <value>Security</value>
-  </data>
-  <data name="WalletSend" xml:space="preserve">
-    <value>Send</value>
-  </data>
-  <data name="WalletSendBalance" xml:space="preserve">
-    <value>Balance: {0}</value>
-  </data>
-  <data name="WalletSendConfirmCredentials" xml:space="preserve">
-    <value>Please confirm your credentials to send Grams.</value>
-  </data>
-  <data name="WalletSendDone" xml:space="preserve">
-    <value>Done!</value>
-  </data>
-  <data name="WalletSendDoneText" xml:space="preserve">
-    <value>{0} Grams have been sent to</value>
-  </data>
-  <data name="WalletSendGrams" xml:space="preserve">
-    <value>Send Grams</value>
-  </data>
-  <data name="WalletSendRecipient" xml:space="preserve">
-    <value>Recipient wallet address</value>
-  </data>
-  <data name="WalletSendWarningSendAnyway" xml:space="preserve">
-    <value>Send anyway</value>
-  </data>
-  <data name="WalletSendWarningText" xml:space="preserve">
-    <value>This address belongs to an empty wallet. Are you sure you want to transfer grams to it?</value>
-  </data>
-  <data name="WalletSendWarningTitle" xml:space="preserve">
-    <value>Warning</value>
-  </data>
-  <data name="WalletSendingGrams" xml:space="preserve">
-    <value>Sending Grams</value>
-  </data>
-  <data name="WalletSendingGramsInfo" xml:space="preserve">
-    <value>Please wait a few seconds for your transaction to be processed...</value>
-  </data>
-  <data name="WalletSetPasscode" xml:space="preserve">
-    <value>Set a Passcode</value>
-  </data>
-  <data name="WalletSetPasscode4Digit" xml:space="preserve">
-    <value>4-Digit code</value>
-  </data>
-  <data name="WalletSetPasscode6Digit" xml:space="preserve">
-    <value>6-Digit code</value>
-  </data>
-  <data name="WalletSetPasscodeChooseType" xml:space="preserve">
-    <value>Choose code type</value>
-  </data>
-  <data name="WalletSetPasscodeCustom" xml:space="preserve">
-    <value>Custom numeric code</value>
-  </data>
-  <data name="WalletSetPasscodeEnterCode" xml:space="preserve">
-    <value>Enter code</value>
-  </data>
-  <data name="WalletSetPasscodeError" xml:space="preserve">
-    <value>Passcodes do not match</value>
-  </data>
-  <data name="WalletSetPasscodeMinLength" xml:space="preserve">
-    <value>Minimum passcode length is 4</value>
-  </data>
-  <data name="WalletSetPasscodeOptions" xml:space="preserve">
-    <value>Passcode options</value>
-  </data>
-  <data name="WalletSetPasscodeRepeat" xml:space="preserve">
-    <value>Repeat the Passcode</value>
-  </data>
-  <data name="WalletSettings" xml:space="preserve">
-    <value>Wallet Settings</value>
-  </data>
-  <data name="WalletShareAddress" xml:space="preserve">
-    <value>Share Wallet Address</value>
-  </data>
-  <data name="WalletShareInfo" xml:space="preserve">
-    <value>Share this address with other Gram
-wallet owners to receive Grams from them.</value>
-  </data>
-  <data name="WalletShareInvoiceUrl" xml:space="preserve">
-    <value>Share Invoice URL</value>
-  </data>
-  <data name="WalletShareInvoiceUrlInfo" xml:space="preserve">
-    <value>Share this address with other Gram wallet owners to receive Grams from them.</value>
-  </data>
-  <data name="WalletShareQr" xml:space="preserve">
-    <value>Share QR</value>
-  </data>
-  <data name="WalletSwipeToRefresh" xml:space="preserve">
-    <value>Swipe down to refresh</value>
-  </data>
-  <data name="WalletTestTime" xml:space="preserve">
-    <value>Test time!</value>
-  </data>
-  <data name="WalletTestTimeAlertButtonSee" xml:space="preserve">
-    <value>See words</value>
-  </data>
-  <data name="WalletTestTimeAlertButtonTry" xml:space="preserve">
-    <value>Try again</value>
-  </data>
-  <data name="WalletTestTimeAlertText" xml:space="preserve">
-    <value>The secret words you have entered do not match the ones in the list.</value>
-  </data>
-  <data name="WalletTestTimeAlertTitle" xml:space="preserve">
-    <value>Incorrect words</value>
-  </data>
-  <data name="WalletTestTimeInfo" xml:space="preserve">
-    <value>Now let’s check that you wrote your secret words correctly.
-    
-Please enter words **{0}**, **{1}** and **{2}** below:</value>
-  </data>
-  <data name="WalletTestTimeTitle" xml:space="preserve">
-    <value>Test Time!</value>
-  </data>
-  <data name="WalletTo" xml:space="preserve">
-    <value>to:</value>
-  </data>
-  <data name="WalletTooBad" xml:space="preserve">
-    <value>Too Bad!</value>
-  </data>
-  <data name="WalletTooBadCreate" xml:space="preserve">
-    <value>Create a new empty wallet instead</value>
-  </data>
-  <data name="WalletTooBadEnter" xml:space="preserve">
-    <value>Enter 24 secret words</value>
-  </data>
-  <data name="WalletTooBadInfo" xml:space="preserve">
-    <value>Without the secret words you can’t restore access to the wallet.</value>
-  </data>
-  <data name="WalletTosUrl" xml:space="preserve">
-    <value>https://telegram.org/tos/wallet</value>
-  </data>
   <data name="WalletTouchFingerprint" xml:space="preserve">
     <value>Touch the fingerprint sensor</value>
   </data>
   <data name="WalletTouchFingerprintNotRecognized" xml:space="preserve">
     <value>Fingerprint not recognized. Try again.</value>
   </data>
+  <data name="WalletBiometricTooManyAttempts" xml:space="preserve">
+    <value>Too many attempts. Please try again later.</value>
+  </data>
+  <data name="WalletSendWarningTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="WalletSendWarningText" xml:space="preserve">
+    <value>This address belongs to an empty wallet. Are you sure you want to transfer grams to it?</value>
+  </data>
+  <data name="WalletSendWarningSendAnyway" xml:space="preserve">
+    <value>Send anyway</value>
+  </data>
+  <data name="WalletSendBalance" xml:space="preserve">
+    <value>Balance: {0}</value>
+  </data>
+  <data name="WalletShareQr" xml:space="preserve">
+    <value>Share QR</value>
+  </data>
   <data name="WalletTransaction" xml:space="preserve">
     <value>Transaction</value>
-  </data>
-  <data name="WalletTransactionAddressCopied" xml:space="preserve">
-    <value>Address copied to clipboard</value>
   </data>
   <data name="WalletTransactionComment" xml:space="preserve">
     <value>Comment</value>
   </data>
-  <data name="WalletTransactionCopyAddress" xml:space="preserve">
-    <value>Copy Wallet Address</value>
-  </data>
   <data name="WalletTransactionRecipient" xml:space="preserve">
     <value>Recipient</value>
-  </data>
-  <data name="WalletTransactionSendGrams" xml:space="preserve">
-    <value>Send Grams</value>
   </data>
   <data name="WalletTransactionSender" xml:space="preserve">
     <value>Sender</value>
   </data>
-  <data name="WalletUpdatedFewSecondsAgo" xml:space="preserve">
-    <value>updated a few seconds ago</value>
+  <data name="WalletTransactionSendGrams" xml:space="preserve">
+    <value>Send Grams to this Address</value>
   </data>
-  <data name="WalletUpdatedTimeAgo" xml:space="preserve">
-    <value>updated {0} ago</value>
+  <data name="WalletTransactionAddressCopied" xml:space="preserve">
+    <value>Address copied to clipboard</value>
   </data>
-  <data name="WalletUpdating" xml:space="preserve">
-    <value>updating</value>
+  <data name="WalletStorageFee" xml:space="preserve">
+    <value>{0} storage fee</value>
   </data>
-  <data name="WalletView" xml:space="preserve">
-    <value>View My Wallet</value>
+  <data name="WalletTransactionFee" xml:space="preserve">
+    <value>{0} transaction fee</value>
   </data>
-  <data name="WalletYourAddress" xml:space="preserve">
-    <value>Your wallet address</value>
+  <data name="WalletBlockchainFees" xml:space="preserve">
+    <value>{0} blockchain fees</value>
   </data>
-  <data name="WalletYourBalance" xml:space="preserve">
-    <value>Your balance</value>
+  <data name="WalletInsufficientGramsTitle" xml:space="preserve">
+    <value>Insufficient Grams</value>
+  </data>
+  <data name="WalletInsufficientGramsText" xml:space="preserve">
+    <value>Unfortunately, your transfer couldn't be completed. You don't have enough grams.</value>
+  </data>
+  <data name="WalletSendSameWalletText" xml:space="preserve">
+    <value>Sending Grams from a wallet to the same wallet doesn't make sense, you will simply waste a portion of the value on blockchain fees.</value>
+  </data>
+  <data name="WalletSendSameWalletProceed" xml:space="preserve">
+    <value>Proceed</value>
+  </data>
+  <data name="WalletTonLinkNoWalletText" xml:space="preserve">
+    <value>This link can be used to send money on the TON Blockchain. To do this, you need to set up a Gram wallet first.</value>
+  </data>
+  <data name="WalletTonLinkNoWalletCreateWallet" xml:space="preserve">
+    <value>Create Wallet</value>
+  </data>
+  <data name="WalletTelegramLogout" xml:space="preserve">
+    <value>Are you sure you want to log out?
+
+Logging out will cancel all your **secret chats** and **unlink your Gram wallet** from the app.
+
+You will be able to restore your wallet using 24 secret words – or import another wallet.</value>
+  </data>
+  <data name="WalletPendingTransactions" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="WalletDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="WalletFee" xml:space="preserve">
+    <value>Blockchain fee: ~{0} Grams</value>
+  </data>
+  <data name="WalletPendingWait" xml:space="preserve">
+    <value>Please wait until the current transaction is completed.</value>
+  </data>
+  <data name="WalletBlockchainName" xml:space="preserve">
+    <value>Blockchain ID</value>
+  </data>
+  <data name="WalletConfigType" xml:space="preserve">
+    <value>Config source</value>
+  </data>
+  <data name="WalletConfigTypeInfo" xml:space="preserve">
+    <value>Using a different configuration allows you to change Lite Server addresses.</value>
+  </data>
+  <data name="WalletConfigTypeUrl" xml:space="preserve">
+    <value>Url</value>
+  </data>
+  <data name="WalletConfigTypeJson" xml:space="preserve">
+    <value>Json</value>
+  </data>
+  <data name="WalletConfigTypeJsonHeader" xml:space="preserve">
+    <value>Config json</value>
+  </data>
+  <data name="WalletConfigTypeUrlHeader" xml:space="preserve">
+    <value>Config url</value>
+  </data>
+  <data name="WalletConfigTypeJsonHint" xml:space="preserve">
+    <value>Enter config json</value>
+  </data>
+  <data name="WalletConfigTypeUrlHint" xml:space="preserve">
+    <value>Enter config url</value>
+  </data>
+  <data name="WalletBlockchainNameHint" xml:space="preserve">
+    <value>Enter blockchain ID</value>
+  </data>
+  <data name="WalletBlockchainNameInfo" xml:space="preserve">
+    <value>This setting is for developers. Change it only if you are working on creating your own TON network.</value>
+  </data>
+  <data name="WalletBlockchainNameWarning" xml:space="preserve">
+    <value>Are you sure you want to change the blockchain ID? You don't need this unless you're testing your own TON network.
+
+If you proceed, you will need to reconnect your wallet using 24 secret words.</value>
+  </data>
+  <data name="WalletError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="WalletBlockchainConfigLoadError" xml:space="preserve">
+    <value>App was unable to load blockchain config from the given url. Please make sure that url is corrent and you have an active Internet connection.</value>
+  </data>
+  <data name="WalletBlockchainConfigInvalid" xml:space="preserve">
+    <value>Sorry, this config is invalid.</value>
+  </data>
+  <data name="WalletCreateBlockchainConfigLoadError" xml:space="preserve">
+    <value>App was unable to load blockchain config. Please make sure that you have an active Internet connection.</value>
+  </data>
+  <data name="WalletSendSyncInProgress" xml:space="preserve">
+    <value>Please wait while the wallet finishes syncing with the TON Blockchain.</value>
+  </data>
+  <data name="GramWalletInfo" xml:space="preserve">
+    <value>The gram wallet allows you to make fast and secure blockchain-based payments without intermediaries.</value>
+  </data>
+  <data name="WalletDeleteInfo" xml:space="preserve">
+    <value>This will disconnect the wallet from this app. You will be able to restore your wallet using 24 secret words – or import another wallet.
+
+Wallets are located in the TON Blockchain, which is not controlled by Telegram. If you want a wallet to be deleted, simply transfer all the grams from it and leave it empty.</value>
+  </data>
+  <data name="WalletTosUrl" xml:space="preserve">
+    <value>https://telegram.org/tos/wallet</value>
+  </data>
+  <data name="CreateMyWalletTerms" xml:space="preserve">
+    <value>By creating a wallet you accept the
+*Terms and Conditions*.</value>
   </data>
 </root>

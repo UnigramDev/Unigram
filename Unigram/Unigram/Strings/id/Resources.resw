@@ -1976,6 +1976,9 @@ Jika Anda tidak tertarik, kami sarankan untuk membuat channel privat.</value>
   <data name="ChannelTooMuch" xml:space="preserve">
     <value>Maaf, Anda sudah terlalu banyak bergabung ke grup dan channel. Mohon untuk keluar dahulu sebelum membuat yang baru.</value>
   </data>
+  <data name="ChannelTooMuchJoin" xml:space="preserve">
+    <value>Maaf, Anda sudah terlalu banyak bergabung ke grup dan channel. Mohon untuk keluar dahulu sebelum bergabung yang baru.</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Tipe Channel</value>
   </data>
@@ -2258,6 +2261,9 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="ChooseTakePhoto" xml:space="preserve">
     <value>Ambil Foto</value>
   </data>
+  <data name="ChooseTheme" xml:space="preserve">
+    <value>Pilih Tema</value>
+  </data>
   <data name="ChooseYourLanguage" xml:space="preserve">
     <value>Ganti bahasa Anda</value>
   </data>
@@ -2488,6 +2494,9 @@ Untuk menambah dan mendapat fitur tambahan, tingkatkan ke supergrup:
   </data>
   <data name="CountSent" xml:space="preserve">
     <value>Terkirim</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Buat</value>
   </data>
   <data name="CreateEncryptedChatError" xml:space="preserve">
     <value>Terdapat error.</value>
@@ -3050,6 +3059,9 @@ Pelanggan dari channel akan dapat melihat semua pesan di grup ini.</value>
   <data name="EditName" xml:space="preserve">
     <value>Edit nama</value>
   </data>
+  <data name="EditThemeTitle" xml:space="preserve">
+    <value>Edit Tema</value>
+  </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Surel disalin ke papan klip</value>
   </data>
@@ -3354,7 +3366,7 @@ perintah Anda ditemukan.</value>
     <value>Anggota yang keluar</value>
   </data>
   <data name="EventLogFilterNewAdmins" xml:space="preserve">
-    <value>Admin baru</value>
+    <value>Hak Admin</value>
   </data>
   <data name="EventLogFilterNewMembers" xml:space="preserve">
     <value>Anggota baru</value>
@@ -3547,6 +3559,9 @@ Durasi: {1}</value>
   <data name="ExceptionZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ExportTheme" xml:space="preserve">
+    <value>Export</value>
+  </data>
   <data name="Exposure" xml:space="preserve">
     <value>Eksposur</value>
   </data>
@@ -3640,8 +3655,14 @@ Durasi: {1}</value>
   <data name="FormatDateAtTime" xml:space="preserve">
     <value>{0} pada {1}</value>
   </data>
+  <data name="FormatDateSchedule" xml:space="preserve">
+    <value>d MMM</value>
+  </data>
   <data name="FormatDateScheduleDay" xml:space="preserve">
     <value>EEE MMM d</value>
+  </data>
+  <data name="FormatDateScheduleYear" xml:space="preserve">
+    <value>d MMM yyyy</value>
   </data>
   <data name="FormatterBannedUntil12H" xml:space="preserve">
     <value>MMM dd yyyy, h:mm a</value>
@@ -4832,6 +4853,30 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="MessagePreview" xml:space="preserve">
     <value>Pratinjau Pesan</value>
   </data>
+  <data name="MessageScheduledBotAction" xml:space="preserve">
+    <value>Tindakan ini akan tersedia setelah pesan dipublikasikan.</value>
+  </data>
+  <data name="MessageScheduledLimitReached" xml:space="preserve">
+    <value>Maaf, Anda tidak dapat menjadwalkan lebih dari 100 pesan. </value>
+  </data>
+  <data name="MessageScheduledOn" xml:space="preserve">
+    <value>Dijadwalkan untuk  {0}</value>
+  </data>
+  <data name="MessageScheduledReminderNotification" xml:space="preserve">
+    <value>📅 Pengingat</value>
+  </data>
+  <data name="MessageScheduledVote" xml:space="preserve">
+    <value>Pemilihan akan tersedia setelah pesan dipublikasikan.</value>
+  </data>
+  <data name="MessageScheduleEditTime" xml:space="preserve">
+    <value>Jadwal Ulang</value>
+  </data>
+  <data name="MessageScheduleSend" xml:space="preserve">
+    <value>Kirim sekarang</value>
+  </data>
+  <data name="MessageScheduleToday" xml:space="preserve">
+    <value>Hari ini</value>
+  </data>
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>Pesan dan Data Lain</value>
   </data>
@@ -5057,6 +5102,21 @@ Panjang minimum adalah 5 karakter.</value>
   <data name="NewTheme" xml:space="preserve">
     <value>Warna Tema Baru</value>
   </data>
+  <data name="NewThemePreviewLine1" xml:space="preserve">
+    <value>Apakah kamu tahu jam berapa sekarang?</value>
+  </data>
+  <data name="NewThemePreviewLine2" xml:space="preserve">
+    <value>Saat ini pagi di Jakarta 😎</value>
+  </data>
+  <data name="NewThemePreviewName" xml:space="preserve">
+    <value>Ervan</value>
+  </data>
+  <data name="NewThemePreviewReply" xml:space="preserve">
+    <value>Selamat Pagi</value>
+  </data>
+  <data name="NewThemeTitle" xml:space="preserve">
+    <value>Tema Baru</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>Lanjut</value>
   </data>
@@ -5172,6 +5232,9 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
   </data>
   <data name="NoResult" xml:space="preserve">
     <value>Tidak ada hasil</value>
+  </data>
+  <data name="NoScheduledMessages" xml:space="preserve">
+    <value>Belum ada pesan terjadwal di sini... </value>
   </data>
   <data name="NoSharedAudio" xml:space="preserve">
     <value>Bagikan musik di obrolan ini dan mengaksesnya pada setiap perangkat Anda.</value>
@@ -5488,6 +5551,12 @@ Anda dapat menyesuaikan notifikasi untuk obrolan dengan membuka profil dan memil
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>{0} mengirim pesan video untuk Anda</value>
   </data>
+  <data name="NotificationMessageScheduled" xml:space="preserve">
+    <value>📅 Anda: {0}</value>
+  </data>
+  <data name="NotificationMessageScheduledName" xml:space="preserve">
+    <value>📅 Anda</value>
+  </data>
   <data name="NotificationMessageSDPhoto" xml:space="preserve">
     <value>{0} mengirim foto hancur otomatis untuk Anda</value>
   </data>
@@ -5741,6 +5810,9 @@ Tim Telegram</value>
   </data>
   <data name="OpenMessage" xml:space="preserve">
     <value>BUKA PESAN</value>
+  </data>
+  <data name="OpenTheme" xml:space="preserve">
+    <value>LIHAT TEMA</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>Buka URL  {0}?</value>
@@ -6747,7 +6819,7 @@ untuk menggunakan fitur ini.</value>
     <value>Ponsel</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
-    <value>Semua kontak Telegram Anda akan mendapatkan nomor baru Anda ditambahkan ke buku alamat mereka, asalkan mereka memiliki nomor lama Anda dan Anda tidak diblokir Telegram.</value>
+    <value>Pengguna akan melihat nomor baru Anda jika mereka memilikinya di kontak mereka atau pengaturan privasi Anda memungkinkan mereka untuk melihatnya. Anda dapat memodifikasi ini di Pengaturan > Privasi dan Keamanan > Nomor telepon.</value>
   </data>
   <data name="PhoneNumberChange" xml:space="preserve">
     <value>GANTI NOMOR</value>
@@ -7007,8 +7079,14 @@ untuk menggunakan fitur ini.</value>
     <value>
 Anda dapat menambahkan pengguna atau seluruh grup sebagai pengecualian yang akan menimpa pengaturan di atas.</value>
   </data>
+  <data name="PrivacyPhoneInfo3" xml:space="preserve">
+    <value>Para pengguna yang menambahkan nomor Anda ke kontak mereka dapat melihatnya di Telegram hanya jika mereka adalah kontak Anda.</value>
+  </data>
   <data name="PrivacyPhoneTitle" xml:space="preserve">
     <value>Siapa yang dapat melihat nomor telepon saya?</value>
+  </data>
+  <data name="PrivacyPhoneTitle2" xml:space="preserve">
+    <value>Siapa yang dapat menemukan saya via nomor? </value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Kebijakan Privasi</value>
@@ -7168,6 +7246,18 @@ Anda dapat menambahkan pengguna atau seluruh grup sebagai pengecualian yang akan
   </data>
   <data name="Regular" xml:space="preserve">
     <value>Reguler</value>
+  </data>
+  <data name="RemindDayAt" xml:space="preserve">
+    <value>'Ingatkan pada' d MMM 'pukul' HH:mm</value>
+  </data>
+  <data name="RemindDayYearAt" xml:space="preserve">
+    <value>'Ingatkan pada' d MMM yyyy 'pukul' HH:mm</value>
+  </data>
+  <data name="Reminders" xml:space="preserve">
+    <value>Pengingat</value>
+  </data>
+  <data name="RemindTodayAt" xml:space="preserve">
+    <value>'Ingatkan hari ini pada' HH:mm</value>
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>Stiker telah dihapus dari Favorit</value>
@@ -7448,6 +7538,15 @@ Channel "**{1}**" akan menjadi privat.</value>
   <data name="ScamMessage" xml:space="preserve">
     <value>PENIPUAN</value>
   </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Jadwal</value>
+  </data>
+  <data name="ScheduledMessages" xml:space="preserve">
+    <value>Pesan Terjadwal</value>
+  </data>
+  <data name="ScheduleMessage" xml:space="preserve">
+    <value>Jadwal Pesan</value>
+  </data>
   <data name="ScreenCapture" xml:space="preserve">
     <value>Tampilkan Konten di Pengalih Aplikasi</value>
   </data>
@@ -7615,6 +7714,12 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   <data name="SendContactToGroup" xml:space="preserve">
     <value>Kirim kontak ke {0}?</value>
   </data>
+  <data name="SendDayAt" xml:space="preserve">
+    <value>'Kirim saat' d MMM 'pukul' HH:mm</value>
+  </data>
+  <data name="SendDayYearAt" xml:space="preserve">
+    <value>'Kirim pada' d MMM yyyy 'pada' HH:mm</value>
+  </data>
   <data name="SendGameTo" xml:space="preserve">
     <value>Bagikan game ke {0}?</value>
   </data>
@@ -7692,6 +7797,9 @@ Anda mungkin perlu memulai ulang aplikasi agar ini berlaku.</value>
   </data>
   <data name="SendStickerPreview" xml:space="preserve">
     <value>Kirim Stiker</value>
+  </data>
+  <data name="SendTodayAt" xml:space="preserve">
+    <value>'Kirim Hari ini' pada HH:mm</value>
   </data>
   <data name="SendWithoutCompression" xml:space="preserve">
     <value>Kirim tanpa kompresi</value>
@@ -7776,6 +7884,9 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   <data name="SetRecoveryEmail" xml:space="preserve">
     <value>Pasang Surel Pemulihan</value>
   </data>
+  <data name="SetReminder" xml:space="preserve">
+    <value>Pasang pengingat </value>
+  </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Atur waktu penghancur otomatis</value>
   </data>
@@ -7799,6 +7910,30 @@ INGAT! Jangan diangkat, Telegram akan memproses secara otomatis.</value>
   </data>
   <data name="SettingsSearchFaq" xml:space="preserve">
     <value>FAQ</value>
+  </data>
+  <data name="SetUrlAvailable" xml:space="preserve">
+    <value>{0} tersedia</value>
+  </data>
+  <data name="SetUrlChecking" xml:space="preserve">
+    <value>Mengecek tautan...</value>
+  </data>
+  <data name="SetUrlInUse" xml:space="preserve">
+    <value>Maaf, tautan ini sudah digunakan. </value>
+  </data>
+  <data name="SetUrlInvalid" xml:space="preserve">
+    <value>Maaf, tautan tidak dapat digunakan. </value>
+  </data>
+  <data name="SetUrlInvalidLong" xml:space="preserve">
+    <value>Tautan tidak boleh lebih dari 64 karakter.</value>
+  </data>
+  <data name="SetUrlInvalidShort" xml:space="preserve">
+    <value>Tautan harus memiliki setidaknya 5 karakter.</value>
+  </data>
+  <data name="SetUrlInvalidStartNumber" xml:space="preserve">
+    <value>Maaf, tautan tidak dapat dimulai dengan angka.</value>
+  </data>
+  <data name="SetUrlPlaceholder" xml:space="preserve">
+    <value>Tautan</value>
   </data>
   <data name="Shadows" xml:space="preserve">
     <value>Bayangan</value>
@@ -8298,7 +8433,17 @@ Anda setuju dengan *Syarat dan Ketentuan*. </value>
     <value>Biru Arktik</value>
   </data>
   <data name="ThemeBlue" xml:space="preserve">
-    <value>Biru</value>
+    <value>Mono</value>
+  </data>
+  <data name="ThemeCreateHelp" xml:space="preserve">
+    <value>Pengguna dapat memasang tema Anda dengan tautan ini. Ketika Anda mengubah tema, ini akan diperbarui bagi semua pengguna yang memasang tema. 
+
+Tema berdasarkan dengan warna dan latar gambar saat ini. </value>
+  </data>
+  <data name="ThemeCreateHelp2" xml:space="preserve">
+    <value>Anda dapat mengganti tautan tema Anda. 
+
+Tautan tema setidaknya lebih dari 5 karakter dan dapag menggunakan a-z, 0-9 dan garis bawah. </value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
     <value>Gelap</value>
@@ -8309,11 +8454,127 @@ Anda setuju dengan *Syarat dan Ketentuan*. </value>
   <data name="ThemeGraphite" xml:space="preserve">
     <value>Grafit</value>
   </data>
+  <data name="ThemeHelpLink" xml:space="preserve">
+    <value>Tema Anda akan diperbarui untuk seluruh pengguna setiap Anda mengubah setelan. Pengguna dapat memasang dengan tautan: 
+{0}</value>
+  </data>
   <data name="ThemeInfo" xml:space="preserve">
     <value>Pilih skema kustomisasi warna</value>
   </data>
+  <data name="ThemeInstallCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeInstallCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeInstallCountOne" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeInstallCountOther" xml:space="preserve">
+    <value> {0} pengguna memasang tema ini. </value>
+  </data>
+  <data name="ThemeInstallCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeInstallCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ThemeNameInvalid" xml:space="preserve">
+    <value>Maaf, Nama tema salah. </value>
+  </data>
+  <data name="ThemeNamePlaceholder" xml:space="preserve">
+    <value>Nama</value>
+  </data>
+  <data name="ThemeNotFound" xml:space="preserve">
+    <value>Tema tidak ditemukan</value>
+  </data>
+  <data name="ThemeNotSupported" xml:space="preserve">
+    <value>Maaf, warna tema ini belum mendukung perangkat Anda.</value>
+  </data>
   <data name="ThemePreview" xml:space="preserve">
     <value>Tinjauan Tema</value>
+  </data>
+  <data name="ThemePreviewDialog1" xml:space="preserve">
+    <value>Eva Summer</value>
+  </data>
+  <data name="ThemePreviewDialog2" xml:space="preserve">
+    <value>Your inner Competition</value>
+  </data>
+  <data name="ThemePreviewDialog3" xml:space="preserve">
+    <value>Mike Apple</value>
+  </data>
+  <data name="ThemePreviewDialog4" xml:space="preserve">
+    <value>Paul Newman</value>
+  </data>
+  <data name="ThemePreviewDialog5" xml:space="preserve">
+    <value>Old Pirates</value>
+  </data>
+  <data name="ThemePreviewDialog6" xml:space="preserve">
+    <value>Kate Bright</value>
+  </data>
+  <data name="ThemePreviewDialog7" xml:space="preserve">
+    <value>Nick K</value>
+  </data>
+  <data name="ThemePreviewDialog8" xml:space="preserve">
+    <value>Adler Toberg</value>
+  </data>
+  <data name="ThemePreviewDialogMessage1" xml:space="preserve">
+    <value>Jadi ingat tentang puisi yang kubaca...</value>
+  </data>
+  <data name="ThemePreviewDialogMessage2" xml:space="preserve">
+    <value>Eh, materinya sudah diperbarui, ya.</value>
+  </data>
+  <data name="ThemePreviewDialogMessage3" xml:space="preserve">
+    <value>🤷‍♂️ Stiker</value>
+  </data>
+  <data name="ThemePreviewDialogMessage4" xml:space="preserve">
+    <value>Ada ide baru? </value>
+  </data>
+  <data name="ThemePreviewDialogMessage5" xml:space="preserve">
+    <value>Yo-ho-ho!</value>
+  </data>
+  <data name="ThemePreviewDialogMessage6" xml:space="preserve">
+    <value>Halo!!</value>
+  </data>
+  <data name="ThemePreviewDialogMessage7" xml:space="preserve">
+    <value>Ini bukan hal yang kalian cari. </value>
+  </data>
+  <data name="ThemePreviewDialogMessage8" xml:space="preserve">
+    <value>Ada yang mau jastip selai kacang? </value>
+  </data>
+  <data name="ThemePreviewLine1" xml:space="preserve">
+    <value>Kita harus mencarikanmu musik baru 🎶.</value>
+  </data>
+  <data name="ThemePreviewLine2" xml:space="preserve">
+    <value>Aku tidak bisa mendengar ini sekarang.</value>
+  </data>
+  <data name="ThemePreviewLine3" xml:space="preserve">
+    <value>Ah! Anak sekarang mendengarkan lagu pop! Coba dengar lagu koplo lokal. </value>
+  </data>
+  <data name="ThemePreviewLine3Reply" xml:space="preserve">
+    <value>Lucio</value>
+  </data>
+  <data name="ThemePreviewLine4" xml:space="preserve">
+    <value>Ayo! Saya hidup  untuk ini! </value>
+  </data>
+  <data name="ThemePreviewSongPerformer" xml:space="preserve">
+    <value>Nella</value>
+  </data>
+  <data name="ThemePreviewSongTitle" xml:space="preserve">
+    <value>Konco Mesra</value>
+  </data>
+  <data name="ThemePreviewTitle" xml:space="preserve">
+    <value>Reinhardt</value>
+  </data>
+  <data name="ThemeSetUrl" xml:space="preserve">
+    <value>Pasang tautan</value>
+  </data>
+  <data name="ThemeSetUrlHelp" xml:space="preserve">
+    <value>Anda dapat menggunakan a-z, 0-9 dan garis bawah.
+Minimum 5 karakter.</value>
+  </data>
+  <data name="ThemeUrl" xml:space="preserve">
+    <value>Tautan Tema</value>
   </data>
   <data name="TimesFew" xml:space="preserve">
     <value/>
@@ -8417,6 +8678,9 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
   </data>
   <data name="TypePublicGroup" xml:space="preserve">
     <value>Publik</value>
+  </data>
+  <data name="TypeScheduleMessage" xml:space="preserve">
+    <value>Pesan Jadwal</value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>mengetik...</value>
@@ -8543,6 +8807,12 @@ Tetapi jika Anda tidak cocok dengan penyesuaian Telegram, Anda tidak dapat mengg
   </data>
   <data name="UsbActive" xml:space="preserve">
     <value>Transfer USB aktif</value>
+  </data>
+  <data name="UseDifferentTheme" xml:space="preserve">
+    <value>Gunakan tema berbeda</value>
+  </data>
+  <data name="UseDifferentThemeInfo" xml:space="preserve">
+    <value>Anda juga dapat menggunakan tema khusus yang sebagai dasar tema Anda. </value>
   </data>
   <data name="UseLessDataAlways" xml:space="preserve">
     <value>Selalu</value>
