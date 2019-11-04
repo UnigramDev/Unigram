@@ -299,29 +299,22 @@ namespace Unigram.Services
                 }
                 catch
                 {
+                    _transport.DisplayUpdater.ClearAll();
                     _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
-                    _transport.DisplayUpdater.MusicProperties.Title = item.Title;
-                    _transport.DisplayUpdater.MusicProperties.Artist = item.Artist;
+                    _transport.DisplayUpdater.MusicProperties.Title = item.Title ?? string.Empty;
+                    _transport.DisplayUpdater.MusicProperties.Artist = item.Artist ?? string.Empty;
                 }
             }
             else
             {
+                _transport.DisplayUpdater.ClearAll();
                 _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
-                _transport.DisplayUpdater.MusicProperties.Title = item.Title;
-                _transport.DisplayUpdater.MusicProperties.Artist = item.Artist;
+                _transport.DisplayUpdater.MusicProperties.Title = item.Title ?? string.Empty;
+                _transport.DisplayUpdater.MusicProperties.Artist = item.Artist ?? string.Empty;
             }
 
             _transport.DisplayUpdater.Update();
         }
-
-        //private void OnMediaEnded(MediaPlayer sender, object args)
-        //{
-        //    Debug.WriteLine("PlaybackService: OnMediaEnded");
-
-        //    //Execute.BeginOnUIThread(() => CurrentItem = null);
-        //    CurrentItem = null;
-        //    Dispose();
-        //}
 
         public IReadOnlyList<PlaybackItem> Items => _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
 
@@ -615,8 +608,19 @@ namespace Unigram.Services
 
             if (message.Content is MessageAudio audio)
             {
-                item.Title = string.IsNullOrEmpty(audio.Audio.Title) ? Strings.Resources.AudioUnknownTitle : audio.Audio.Title;
-                item.Artist = string.IsNullOrEmpty(audio.Audio.Performer) ? Strings.Resources.AudioUnknownArtist : audio.Audio.Performer;
+                var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
+                var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
+
+                if (performer == null && title == null)
+                {
+                    item.Title = audio.Audio.FileName;
+                    item.Artist = string.Empty;
+                }
+                else
+                {
+                    item.Title = string.IsNullOrEmpty(audio.Audio.Title) ? Strings.Resources.AudioUnknownTitle : audio.Audio.Title;
+                    item.Artist = string.IsNullOrEmpty(audio.Audio.Performer) ? Strings.Resources.AudioUnknownArtist : audio.Audio.Performer;
+                }
             }
 
             _mapping[token] = item;
