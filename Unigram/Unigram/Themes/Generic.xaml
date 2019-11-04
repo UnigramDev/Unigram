@@ -41,7 +41,7 @@
                                 <Grid x:Name="PaneContentGrid">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
-                                        <RowDefinition x:Name="PaneContentGridToggleButtonRow" Height="56" />
+                                        <RowDefinition x:Name="PaneContentGridToggleButtonRow" Height="40" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />

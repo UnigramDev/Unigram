@@ -22,7 +22,8 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{CustomResource Wallet}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                <!--<TextBlock Text="{CustomResource Wallet}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>-->
+                <TextBlock Text="{x:Bind ConvertSyncState(ViewModel.SyncState), Mode=OneWay}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
 
                 <controls:GlyphButton
                     Glyph="&#xE72C;"
@@ -78,6 +79,7 @@
                             </Grid.ColumnDefinitions>
                             <Button
                                 Command="{x:Bind ViewModel.ReceiveCommand}"
+                                Style="{StaticResource AccentButtonStyle}"
                                 HorizontalAlignment="Stretch"
                                 Margin="0,0,4,0">
                                 <StackPanel Orientation="Horizontal">
@@ -88,6 +90,7 @@
                             <Button
                                 Command="{x:Bind ViewModel.SendCommand}"
                                 Visibility="{x:Bind ConvertSendVisibility(ViewModel.Balance), Mode=OneWay}"
+                                Style="{StaticResource AccentButtonStyle}"
                                 HorizontalAlignment="Stretch"
                                 Margin="4,0,0,0"
                                 Grid.Column="1">
@@ -108,8 +111,8 @@
                         Grid.Row="1">
 
                         <StackPanel VerticalAlignment="Center">
-                            <ProgressRing
-                                IsActive="True"
+                            <controls:LottieView
+                                Source="ms-appx:///Assets/Animations/WalletInitializing.tgs"
                                 Margin="0,-24,0,12"
                                 Width="160"
                                 Height="160"/>

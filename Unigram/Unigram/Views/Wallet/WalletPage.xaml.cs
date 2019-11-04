@@ -121,7 +121,7 @@ namespace Unigram.Views.Wallet
 
                 if (item.OutMsgs.IsEmpty())
                 {
-                    address.Text = Strings.Resources.WalletProcessingFee;
+                    address.Text = Strings.Resources.WalletTransactionFee;
                 }
                 else
                 {
@@ -144,6 +144,21 @@ namespace Unigram.Views.Wallet
         }
 
         #region Binding
+
+        private string ConvertSyncState(SyncState state)
+        {
+            if (state is SyncStateDone done)
+            {
+                return $"100%";
+            }
+            else if (state is SyncStateInProgress progress)
+            {
+                var value = (int)((progress.CurrentSeqno - progress.FromSeqno) / (double)(progress.ToSeqno - progress.FromSeqno) * 100);
+                return $"{value}%";
+            }
+
+            return null;
+        }
 
         private string ConvertAmount(long value)
         {
