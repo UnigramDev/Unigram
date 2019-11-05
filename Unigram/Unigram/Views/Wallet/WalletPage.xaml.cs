@@ -154,7 +154,7 @@ namespace Unigram.Views.Wallet
             else if (state is SyncStateInProgress progress)
             {
                 var value = (int)((progress.CurrentSeqno - progress.FromSeqno) / (double)(progress.ToSeqno - progress.FromSeqno) * 100);
-                return $"{value}%";
+                return string.Format(Strings.Resources.WalletUpdatingProgress, value);
             }
 
             return null;
