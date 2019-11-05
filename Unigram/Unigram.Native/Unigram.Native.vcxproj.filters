@@ -28,6 +28,9 @@
     <Filter Include="Streaming">
       <UniqueIdentifier>{b87b8581-6f96-4bfa-bff1-3af9ba077378}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Qr">
+      <UniqueIdentifier>{554d0aa9-cb6c-4e0c-9761-3424c8d861cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -148,6 +151,15 @@
     </ClCompile>
     <ClCompile Include="Streaming\UncompressedVideoSampleProvider.cpp">
       <Filter>Streaming</Filter>
+    </ClCompile>
+    <ClCompile Include="QR\BitBuffer.cpp">
+      <Filter>Qr</Filter>
+    </ClCompile>
+    <ClCompile Include="QR\QrCode.cpp">
+      <Filter>Qr</Filter>
+    </ClCompile>
+    <ClCompile Include="QR\QrSegment.cpp">
+      <Filter>Qr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +343,15 @@
       <Filter>Streaming</Filter>
     </ClInclude>
     <ClInclude Include="StringUtils.h" />
+    <ClInclude Include="QR\BitBuffer.hpp">
+      <Filter>Qr</Filter>
+    </ClInclude>
+    <ClInclude Include="QR\QrCode.hpp">
+      <Filter>Qr</Filter>
+    </ClInclude>
+    <ClInclude Include="QR\QrSegment.hpp">
+      <Filter>Qr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

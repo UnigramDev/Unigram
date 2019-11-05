@@ -263,6 +263,9 @@
     <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="Proxies\TelegramGameProxy.h" />
     <ClInclude Include="Proxies\TelegramPaymentProxy.h" />
+    <ClInclude Include="QR\BitBuffer.hpp" />
+    <ClInclude Include="QR\QrCode.hpp" />
+    <ClInclude Include="QR\QrSegment.hpp" />
     <ClInclude Include="Streaming\AudioFilter.h" />
     <ClInclude Include="Streaming\AvEffectDefinition.h" />
     <ClInclude Include="Streaming\CompressedSampleProvider.h" />
@@ -343,6 +346,15 @@
     <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="Proxies\TelegramGameProxy.cpp" />
     <ClCompile Include="Proxies\TelegramPaymentProxy.cpp" />
+    <ClCompile Include="QR\BitBuffer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="QR\QrCode.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="QR\QrSegment.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Streaming\CompressedSampleProvider.cpp" />
     <ClCompile Include="Streaming\FFmpegInteropLogging.cpp" />
     <ClCompile Include="Streaming\FFmpegInteropMSS.cpp" />
