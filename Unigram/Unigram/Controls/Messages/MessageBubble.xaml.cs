@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Telegram.Td.Api;
@@ -998,6 +999,42 @@ namespace Unigram.Controls.Messages
                     }
 
                     local.Inlines.Add(run);
+
+                    if (entity.Entity.Type is TextEntityTypeHashtag)
+                    {
+                        var data = text.Substring(entity.Offset, entity.Length);
+                        var hex = data.TrimStart('#');
+
+                        if ((hex.Length == 6 || hex.Length == 8) && int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int rgba))
+                        {
+                            byte r, g, b, a;
+                            if (hex.Length == 8)
+                            {
+                                r = (byte)((rgba & 0xff000000) >> 24);
+                                g = (byte)((rgba & 0x00ff0000) >> 16);
+                                b = (byte)((rgba & 0x0000ff00) >> 8);
+                                a = (byte)(rgba & 0x000000ff);
+                            }
+                            else
+                            {
+                                r = (byte)((rgba & 0xff0000) >> 16);
+                                g = (byte)((rgba & 0x00ff00) >> 8);
+                                b = (byte)(rgba & 0x0000ff);
+                                a = 0xFF;
+                            }
+
+                            var color = Color.FromArgb(a, r, g, b);
+                            var border = new Border
+                            {
+                                Width = 12,
+                                Height = 12,
+                                Margin = new Thickness(4, 4, 0, -2),
+                                Background = new SolidColorBrush(color)
+                            };
+
+                            span.Inlines.Add(new InlineUIContainer { Child = border });
+                        }
+                    }
                 }
 
                 previous = entity.Offset + entity.Length;
