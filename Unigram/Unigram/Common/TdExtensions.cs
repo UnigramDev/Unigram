@@ -267,6 +267,53 @@ namespace Unigram.Common
 
         #endregion
 
+        #region Json
+
+        public static bool GetNamedBoolean(this JsonValueObject json, string key, bool defaultValue)
+        {
+            var member = json.GetNamedValue(key);
+            if (member?.Value is JsonValueBoolean value)
+            {
+                return value.Value;
+            }
+
+            return defaultValue;
+        }
+
+        public static double GetNamedNumber(this JsonValueObject json, string key, double defaultValue)
+        {
+            var member = json.GetNamedValue(key);
+            if (member?.Value is JsonValueNumber value)
+            {
+                return value.Value;
+            }
+
+            return defaultValue;
+        }
+
+        public static string GetNamedString(this JsonValueObject json, string key, string defaultValue)
+        {
+            var member = json.GetNamedValue(key);
+            if (member?.Value is JsonValueString value)
+            {
+                return value.Value;
+            }
+
+            return defaultValue;
+        }
+
+        public static JsonObjectMember GetNamedValue(this JsonValueObject json, string key)
+        {
+            if (json == null)
+            {
+                return null;
+            }
+
+            return json.Members.FirstOrDefault(x => string.Equals(key, x.Key, StringComparison.OrdinalIgnoreCase));
+        }
+
+        #endregion
+
         public static bool ListEquals(this ChatList x, ChatList y, bool allowNull = true)
         {
             if ((x is ChatListMain || x == null) && (y is ChatListMain || (y == null && allowNull)))

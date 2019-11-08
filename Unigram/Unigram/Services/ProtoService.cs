@@ -38,6 +38,7 @@ namespace Unigram.Services
         int UserId { get; }
 
         IOptionsService Options { get; }
+        JsonValueObject Config { get; }
 
         Background SelectedBackground { get; }
 
@@ -141,6 +142,8 @@ namespace Unigram.Services
 
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
+
+        private JsonValueObject _config;
 
         private Background _selectedBackground;
 
@@ -296,6 +299,7 @@ namespace Unigram.Services
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
+                _client.Send(new GetApplicationConfig(), result => UpdateConfig(result));
                 _client.Run();
             });
         }
@@ -311,6 +315,14 @@ namespace Unigram.Services
         private async void UpdateWallet()
         {
 
+        }
+
+        private void UpdateConfig(BaseObject value)
+        {
+            if (value is JsonValueObject obj)
+            {
+                _config = obj;
+            }
         }
 
         private async void UpdateVersion()
@@ -543,6 +555,11 @@ namespace Unigram.Services
         public IOptionsService Options
         {
             get { return _options; }
+        }
+
+        public JsonValueObject Config
+        {
+            get { return _config; }
         }
 
         public Background SelectedBackground
@@ -1004,7 +1021,7 @@ namespace Unigram.Services
             var result = await Task.WhenAny(task, Task.Delay(2000));
 
             set = result == task ? task.Result as StickerSet : null;
-            tsc.SetResult(set);
+            tsc.TrySetResult(set);
 
             return set;
         }

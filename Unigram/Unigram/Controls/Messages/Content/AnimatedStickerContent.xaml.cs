@@ -45,6 +45,16 @@ namespace Unigram.Controls.Messages.Content
             //Background = null;
             //Texture.Source = null;
             //Texture.Constraint = message;
+            if (message.GeneratedContent != null)
+            {
+                Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
+                Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
+            }
+            else
+            {
+                Width = Player.Width = 200;
+                Height = Player.Height = 200;
+            }
 
             if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
