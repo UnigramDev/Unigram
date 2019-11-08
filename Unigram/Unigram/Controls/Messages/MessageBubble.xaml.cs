@@ -1000,7 +1000,7 @@ namespace Unigram.Controls.Messages
 
                     local.Inlines.Add(run);
 
-                    if (entity.Entity.Type is TextEntityTypeHashtag)
+                    if (entity.Entity?.Type is TextEntityTypeHashtag)
                     {
                         var data = text.Substring(entity.Offset, entity.Length);
                         var hex = data.TrimStart('#');
