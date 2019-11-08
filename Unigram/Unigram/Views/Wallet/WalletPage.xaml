@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ContentPageHeader IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}" BackVisibility="Collapsed">
+        <controls:ContentPageHeader IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}" BackVisibility="Collapsed" RequestedTheme="Dark">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -23,7 +23,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <!--<TextBlock Text="{CustomResource Wallet}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>-->
-                <TextBlock Text="{x:Bind ConvertSyncState(ViewModel.SyncState), Mode=OneWay}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                <TextBlock Text="{x:Bind ConvertSyncState(ViewModel.SyncState, ViewModel.SyncUtime), Mode=OneWay}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
 
                 <controls:GlyphButton
                     Glyph="&#xE72C;"
@@ -61,18 +61,22 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Margin="12,12,12,0">
+                    <StackPanel
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        RequestedTheme="Dark"
+                        Padding="12,24,12,0">
                         <!--<Button Content="Button" VerticalAlignment="Top" Click="Button_Click"/>-->
 
                         <TextBlock
-                            Text="{x:Bind ConvertAmount(ViewModel.Balance), Mode=OneWay}"
-                            Style="{StaticResource TitleTextBlockStyle}"/>
+                            Style="{StaticResource TitleTextBlockStyle}">
+                            <Run Text="{x:Bind ConvertAmount(ViewModel.Balance, x:True), Mode=OneWay}"/><Run Text="{x:Bind ConvertAmount(ViewModel.Balance, x:False), Mode=OneWay}" FontWeight="SemiBold" FontSize="14"/>
+                        </TextBlock>
                         <TextBlock
                             Text="{CustomResource WalletYourBalance}"
                             Style="{StaticResource InfoCaptionTextBlockStyle}"/>
 
                         <Grid
-                            Margin="0,12,0,12">
+                            Margin="0,24,0,24">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition x:Name="SendColumn"/>
@@ -180,6 +184,7 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
@@ -193,7 +198,10 @@
                                     <TextBlock
                                         Grid.ColumnSpan="2"
                                         Grid.Row="2"/>
-
+                                    <TextBlock
+                                        Style="{StaticResource InfoBodyTextBlockStyle}"
+                                        Grid.ColumnSpan="2"
+                                        Grid.Row="3"/>
                                     <TextBlock
                                         Style="{StaticResource InfoCaptionTextBlockStyle}"
                                         Grid.Column="1"/>

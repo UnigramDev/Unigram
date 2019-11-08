@@ -89,19 +89,26 @@ namespace Unigram.Converters
 
         public static string Grams(long value, bool gem)
         {
+            var sign = value < 0 ? "-" : string.Empty;
+            var builder = new StringBuilder(string.Format("{0}{1}.{2:000000000}", sign, Math.Abs(value / 1000000000L), Math.Abs(value % 1000000000)));
+            while (builder.Length > 1 && builder[builder.Length - 1] == '0' && builder[builder.Length - 2] != '.')
+            {
+                builder.Remove(builder.Length - 1, 1);
+            }
+
             if (gem)
             {
                 var culture = NativeUtils.GetCurrentCulture();
                 var info = new CultureInfo(culture);
                 if (info.NumberFormat.CurrencyPositivePattern == 0 || info.NumberFormat.CurrencyPositivePattern == 2)
                 {
-                    return string.Format("\uD83D\uDC8E {0:0.000000000}", value / 1000000000d);
+                    return string.Format("\uD83D\uDC8E {0}", builder);
                 }
 
-                return string.Format("{0:0.000000000} \uD83D\uDC8E", value / 1000000000d);
+                return string.Format("{0} \uD83D\uDC8E", builder);
             }
 
-            return string.Format("{0:0.000000000}", value / 1000000000d);
+            return builder.ToString();
         }
 
         public static string Distance(float distance)

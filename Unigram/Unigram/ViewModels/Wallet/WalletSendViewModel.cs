@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Wallet
                 Balance = balance;
             }
 
-            var self = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(ProtoService.Options.WalletPublicKey))) as AccountAddress;
+            var self = TonService.GetAccountAddress(ProtoService.Options.WalletPublicKey);
             if (self == null)
             {
                 return;
