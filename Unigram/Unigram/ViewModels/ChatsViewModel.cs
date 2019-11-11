@@ -52,6 +52,7 @@ namespace Unigram.ViewModels
 
             ChatsMarkCommand = new RelayCommand(ChatsMarkExecute);
             ChatsNotifyCommand = new RelayCommand(ChatsNotifyExecute);
+            ChatsArchiveCommand = new RelayCommand(ChatsArchiveExecute);
             ChatsDeleteCommand = new RelayCommand(ChatsDeleteExecute);
             ChatsClearCommand = new RelayCommand(ChatsClearExecute);
 
@@ -210,6 +211,32 @@ namespace Unigram.ViewModels
 
                 ProtoService.Send(new SetChatChatList(chat.Id, chatList));
             });
+        }
+
+        #endregion
+
+        #region Multiple Archive
+
+        public RelayCommand ChatsArchiveCommand { get; }
+        private void ChatsArchiveExecute()
+        {
+            var chats = SelectedItems.ToList();
+
+            foreach (var chat in chats)
+            {
+                ProtoService.Send(new SetChatChatList(chat.Id, new ChatListArchive()));
+            }
+
+            Delegate?.ShowChatsUndo(chats, UndoType.Archive, items =>
+            {
+                foreach (var undo in items)
+                {
+                    ProtoService.Send(new SetChatChatList(undo.Id, new ChatListMain()));
+                }
+            });
+
+            Delegate?.SetSelectionMode(false);
+            SelectedItems.Clear();
         }
 
         #endregion
