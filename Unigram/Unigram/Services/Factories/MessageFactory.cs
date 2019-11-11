@@ -196,7 +196,7 @@ namespace Unigram.Services.Factories
             else if (file.FileType.Equals(".mp3", StringComparison.OrdinalIgnoreCase))
             {
                 var props = await file.Properties.GetMusicPropertiesAsync();
-                return new InputMessageFactory { InputFile = generated, Type = new FileTypeAudio(), Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, (int)props.Duration.TotalSeconds, props.Title, props.Artist, caption) };
+                return new InputMessageFactory { InputFile = generated, Type = new FileTypeAudio(), Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, (int)props.Duration.TotalSeconds, props.Title, props.AlbumArtist, caption) };
             }
 
             return new InputMessageFactory { InputFile = generated, Type = new FileTypeDocument(), Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption) };
