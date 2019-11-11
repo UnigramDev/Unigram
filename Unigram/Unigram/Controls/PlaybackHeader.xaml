@@ -375,6 +375,21 @@
             IsOneWay="False"
             IsThreeState="True"
             Style="{StaticResource ThreeStateToggleStyle}"/>
+        <controls:GlyphToggleButton
+            x:Name="ShuffleButton"
+            Click="Shuffle_Click"
+            UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+            CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+            UncheckedGlyph="&#xE8CB;"
+            CheckedGlyph="&#xE8CB;"
+            FontSize="16"
+            Width="40"
+            Height="40"
+            Grid.Column="5"
+            IsOneWay="False"
+            AutomationProperties.Name="{CustomResource Shuffle}"
+            ToolTipService.ToolTip="{CustomResource Shuffle}"/>
+
         <!--<controls:GlyphToggleButton
             x:Name="ShuffleButton"
             Click="Shuffle_Click"
@@ -388,7 +403,6 @@
             Grid.Column="5"
             AutomationProperties.Name="{CustomResource Shuffle}"
             ToolTipService.ToolTip="{CustomResource Shuffle}"/>-->
-        
         <controls:GlyphButton
             Click="Clear_Click"
             Glyph="&#xE10A;"
