@@ -140,6 +140,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void NavigateToInstant(this INavigationService service, string url)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToInstant(url);
+            }
+        }
+
         public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
         {
             if (service is TLNavigationService serviceEx)

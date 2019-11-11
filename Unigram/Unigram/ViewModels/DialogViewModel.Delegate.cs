@@ -266,7 +266,7 @@ namespace Unigram.ViewModels
                 //    return;
                 //}
 
-                NavigationService.Navigate(typeof(InstantPage), webPage.Url);
+                NavigationService.NavigateToInstant(webPage.Url);
             }
             else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri) &&
                     (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||

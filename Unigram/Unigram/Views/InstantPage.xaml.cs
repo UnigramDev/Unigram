@@ -1618,7 +1618,7 @@ namespace Unigram.Views
                 if (response is WebPageInstantView instantView)
                 {
                     ViewModel.IsLoading = false;
-                    ViewModel.NavigationService.Navigate(typeof(InstantPage), urlText.Url);
+                    ViewModel.NavigationService.NavigateToInstant(urlText.Url);
                 }
                 else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
                 {
