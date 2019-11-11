@@ -16,6 +16,7 @@ using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
+using Unigram.Controls.Gallery;
 using Unigram.Controls.Messages;
 using Unigram.Controls.Views;
 using Unigram.Converters;
@@ -25,6 +26,7 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Users;
 using Unigram.Views.Chats;
 using Unigram.Views.Dialogs;
 using Windows.ApplicationModel;
@@ -665,6 +667,37 @@ namespace Unigram.Views
             else
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
+            }
+        }
+
+        private async void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                var user = ViewModel.ProtoService.GetUser(chat);
+                if (user == null || user.ProfilePhoto == null)
+                {
+                    return;
+                }
+
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user);
+                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
+            }
+            else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
+            {
+                if (chat.Photo == null)
+                {
+                    return;
+                }
+
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat);
+                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
 
@@ -1613,7 +1646,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().TryShow();
         }
 
-        private async void Photo_Click(object sender, RoutedEventArgs e)
+        private async void Participant_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
 
@@ -3062,7 +3095,7 @@ namespace Unigram.Views
 
         public void UpdateChatActionBar(Chat chat)
         {
-            Button CreateButton(string text, ICommand command, int column = 0)
+            Button CreateButton(string text, ICommand command, object commandParameter = null, int column = 0)
             {
                 var label = new TextBlock();
                 label.Style = App.Current.Resources["CaptionTextBlockStyle"] as Style;
@@ -3075,6 +3108,7 @@ namespace Unigram.Views
                 button.VerticalContentAlignment = VerticalAlignment.Center;
                 button.Content = label;
                 button.Command = command;
+                button.CommandParameter = commandParameter;
 
                 ActionBarRoot.ColumnDefinitions.Add(new ColumnDefinition());
                 Grid.SetColumn(button, column);
@@ -3100,7 +3134,7 @@ namespace Unigram.Views
             else if (chat.ActionBar is ChatActionBarReportAddBlock)
             {
                 ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand));
-                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand, 1));
+                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand, column: 1));
             }
             else if (chat.ActionBar is ChatActionBarReportSpam)
             {
@@ -3111,12 +3145,12 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamAndLeave, ViewModel.ReportSpamCommand));
+                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamAndLeave, ViewModel.ReportSpamCommand, new ChatReportReasonSpam()));
                 }
             }
             else if (chat.ActionBar is ChatActionBarReportUnrelatedLocation)
             {
-                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamLocation, ViewModel.ReportSpamCommand));
+                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamLocation, ViewModel.ReportSpamCommand, new ChatReportReasonUnrelatedLocation()));
             }
             else if (chat.ActionBar is ChatActionBarSharePhoneNumber)
             {

@@ -295,7 +295,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
-                                         Click="Photo_Click"
+                                         Click="Participant_Click"
                                          IsTabStop="False"
                                          HorizontalAlignment="Left"
                                          VerticalAlignment="Bottom"
@@ -419,7 +419,13 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture x:Name="Photo" Width="{ThemeResource ChatPhotoSize}" Height="{ThemeResource ChatPhotoSize}" Margin="0,0,12,0" IsEnabled="False"/>
+                                <controls:ProfilePicture
+                                    x:Name="Photo"
+                                    Click="Photo_Click"
+                                    AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                    Width="{ThemeResource ChatPhotoSize}"
+                                    Height="{ThemeResource ChatPhotoSize}"
+                                    Margin="0,0,12,0"/>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
                                     <TextBlock x:Name="Title"

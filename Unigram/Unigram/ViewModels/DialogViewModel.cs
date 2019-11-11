@@ -93,9 +93,6 @@ namespace Unigram.ViewModels
 
         private readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
-        private static readonly ConcurrentDictionary<long, long> _scrollingIndex = new ConcurrentDictionary<long, long>();
-        private static readonly ConcurrentDictionary<long, double> _scrollingPixel = new ConcurrentDictionary<long, double>();
-
         private static readonly ConcurrentDictionary<long, IList<int>> _admins = new ConcurrentDictionary<long, IList<int>>();
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
@@ -147,7 +144,7 @@ namespace Unigram.ViewModels
             UnmuteCommand = new RelayCommand(() => ToggleMuteExecute(true));
             ToggleSilentCommand = new RelayCommand(ToggleSilentExecute);
             RemoveActionBarCommand = new RelayCommand(RemoveActionBarExecute);
-            ReportSpamCommand = new RelayCommand(ReportSpamExecute);
+            ReportSpamCommand = new RelayCommand<ChatReportReason>(ReportSpamExecute);
             ReportCommand = new RelayCommand(ReportExecute);
             OpenStickersCommand = new RelayCommand(OpenStickersExecute);
             ChatDeleteCommand = new RelayCommand(ChatDeleteExecute);
@@ -1675,9 +1672,9 @@ namespace Unigram.ViewModels
             }
             else
             {
-                if (_scrollingIndex.TryRemove(chat.Id, out long start) && start < chat.LastReadInboxMessageId)
+                if (Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out long start) && start < chat.LastReadInboxMessageId)
                 {
-                    if (_scrollingPixel.TryRemove(chat.Id, out double pixel))
+                    if (Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel))
                     {
                         Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from specific pixel", chat.Id));
 
@@ -1883,8 +1880,8 @@ namespace Unigram.ViewModels
                 var field = ListField;
                 if (field == null)
                 {
-                    _scrollingIndex.TryRemove(chat.Id, out long index);
-                    _scrollingPixel.TryRemove(chat.Id, out double pixel);
+                    Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out long index);
+                    Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel);
 
                     Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
 
@@ -1903,15 +1900,15 @@ namespace Unigram.ViewModels
                             var transform = container.TransformToVisual(field);
                             var position = transform.TransformPoint(new Point());
 
-                            _scrollingIndex[chat.Id] = start;
-                            _scrollingPixel[chat.Id] = field.ActualHeight - (position.Y + container.ActualHeight);
+                            Settings.Chats[chat.Id, ChatSetting.Index] = start;
+                            Settings.Chats[chat.Id, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
 
                             Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, Items[panel.LastVisibleIndex].Id, field.ActualHeight - (position.Y + container.ActualHeight)));
                         }
                         else
                         {
-                            _scrollingIndex[chat.Id] = start;
-                            _scrollingPixel.TryRemove(chat.Id, out double pixel);
+                            Settings.Chats[chat.Id, ChatSetting.Index] = start;
+                            Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel);
 
                             Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, Items[panel.LastVisibleIndex].Id));
                         }
@@ -1919,24 +1916,24 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        _scrollingIndex.TryRemove(chat.Id, out long index);
-                        _scrollingPixel.TryRemove(chat.Id, out double pixel);
+                        Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out long index);
+                        Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel);
 
                         Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, as last item is chat.LastMessage", chat.Id));
                     }
                 }
                 else
                 {
-                    _scrollingIndex.TryRemove(chat.Id, out long index);
-                    _scrollingPixel.TryRemove(chat.Id, out double pixel);
+                    Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out long index);
+                    Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel);
 
                     Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
                 }
             }
             catch
             {
-                _scrollingIndex.TryRemove(chat.Id, out long index);
-                _scrollingPixel.TryRemove(chat.Id, out double pixel);
+                Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out long index);
+                Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel);
 
                 Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, exception", chat.Id));
             }
@@ -2467,8 +2464,8 @@ namespace Unigram.ViewModels
             ProtoService.Send(new RemoveChatActionBar(chat.Id));
         }
 
-        public RelayCommand ReportSpamCommand { get; }
-        private async void ReportSpamExecute()
+        public RelayCommand<ChatReportReason> ReportSpamCommand { get; }
+        private async void ReportSpamExecute(ChatReportReason reason)
         {
             var chat = _chat;
             if (chat == null)
@@ -2476,23 +2473,42 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var title = Strings.Resources.AppName;
             var message = Strings.Resources.ReportSpamAlert;
-            if (chat.Type is ChatTypeSupergroup supergroup)
+
+            if (reason is ChatReportReasonUnrelatedLocation)
             {
-                message = supergroup.IsChannel ? Strings.Resources.ReportSpamAlertChannel : Strings.Resources.ReportSpamAlertGroup;
+                title = Strings.Resources.ReportUnrelatedGroup;
+
+                var fullInfo = CacheService.GetSupergroupFull(chat);
+                if (fullInfo != null && fullInfo.Location.Address.Length > 0)
+                {
+                    message = string.Format(Strings.Resources.ReportUnrelatedGroupText, fullInfo.Location.Address);
+                }
+                else
+                {
+                    message = Strings.Resources.ReportUnrelatedGroupTextNoAddress;
+                }
             }
-            else if (chat.Type is ChatTypeBasicGroup)
+            else if (reason is ChatReportReasonSpam)
             {
-                message = Strings.Resources.ReportSpamAlertGroup;
+                if (chat.Type is ChatTypeSupergroup supergroup)
+                {
+                    message = supergroup.IsChannel ? Strings.Resources.ReportSpamAlertChannel : Strings.Resources.ReportSpamAlertGroup;
+                }
+                else if (chat.Type is ChatTypeBasicGroup)
+                {
+                    message = Strings.Resources.ReportSpamAlertGroup;
+                }
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(message, title, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            ProtoService.Send(new ReportChat(chat.Id, new ChatReportReasonSpam(), new long[0]));
+            ProtoService.Send(new ReportChat(chat.Id, reason, new long[0]));
 
             if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
             {
