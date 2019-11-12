@@ -34,7 +34,7 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
         }
 
-        public void UpdateMessage(Message message, IProtoService protoService, INavigationService navigationService)
+        public void UpdateMessage(IProtoService protoService, INavigationService navigationService, Message message)
         {
             _protoService = protoService;
             _navigationService = navigationService;
@@ -278,7 +278,7 @@ namespace Unigram.Controls.Cells
 
         private void InstantView_Click(Hyperlink sender, string link)
         {
-            _navigationService.Navigate(typeof(InstantPage), link);
+            _navigationService.NavigateToInstant(link);
         }
 
         private async void Hyperlink_Click(Hyperlink sender, Uri uri)

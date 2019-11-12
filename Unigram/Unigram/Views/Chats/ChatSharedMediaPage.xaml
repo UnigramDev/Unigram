@@ -55,6 +55,7 @@
                         ItemsSource="{x:Bind ViewModel.Media, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
+                        ChoosingItemContainer="OnChoosingItemContainer"
                         ContainerContentChanging="OnContainerContentChanging"
                         Padding="8,0,8,8"
                         common:FluidGridView.OrientationOnly="False">
@@ -118,23 +119,29 @@
                 <PivotItem>
                     <controls:SelectListView
                         x:Name="ScrollingFiles"
+                        Background="{ThemeResource PageBackgroundDarkBrush}"
                         ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
+                        ChoosingItemContainer="OnChoosingItemContainer"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="MaxWidth" Value="640"/>
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox
-                                x:Name="SearchFiles"
-                                PlaceholderText="{CustomResource Search}"
-                                Style="{StaticResource QueryTextBoxStyle}"
-                                Margin="12,8"
-                                InputScope="Search"/>
+                            <controls:HeaderedControl>
+                                <controls:SearchTextBox
+                                    x:Name="SearchFiles"
+                                    PlaceholderText="{CustomResource Search}"
+                                    Style="{StaticResource QueryTextBoxStyle}"
+                                    Margin="12,8"
+                                    InputScope="Search"/>
+                            </controls:HeaderedControl>
                         </ListView.Header>
                         <ListView.Footer>
                             <!--<Border Height="8"/>-->
@@ -150,7 +157,7 @@
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
                                         <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                            <TextBlock Margin="12,24,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
                                 </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
@@ -161,23 +168,29 @@
                 <PivotItem>
                     <controls:SelectListView
                         x:Name="ScrollingLinks"
+                        Background="{ThemeResource PageBackgroundDarkBrush}"
                         ItemsSource="{x:Bind ViewModel.Links, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
+                        ChoosingItemContainer="OnChoosingItemContainer"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="MaxWidth" Value="640"/>
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox
-                                x:Name="SearchLinks"
-                                PlaceholderText="{CustomResource Search}"
-                                Style="{StaticResource QueryTextBoxStyle}"
-                                Margin="12,8"
-                                InputScope="Search"/>
+                            <controls:HeaderedControl>
+                                <controls:SearchTextBox
+                                    x:Name="SearchLinks"
+                                    PlaceholderText="{CustomResource Search}"
+                                    Style="{StaticResource QueryTextBoxStyle}"
+                                    Margin="12,8"
+                                    InputScope="Search"/>
+                            </controls:HeaderedControl>
                         </ListView.Header>
                         <ListView.Footer>
                             <!--<Border Height="8"/>-->
@@ -193,7 +206,7 @@
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
                                         <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                            <TextBlock Margin="12,24,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
                                 </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
@@ -204,23 +217,29 @@
                 <PivotItem>
                     <controls:SelectListView
                         x:Name="ScrollingMusic"
+                        Background="{ThemeResource PageBackgroundDarkBrush}"
                         ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
+                        ChoosingItemContainer="OnChoosingItemContainer"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="MaxWidth" Value="640"/>
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox
-                                x:Name="SearchMusic"
-                                PlaceholderText="{CustomResource Search}"
-                                Style="{StaticResource QueryTextBoxStyle}"
-                                Margin="12,8"
-                                InputScope="Search"/>
+                            <controls:HeaderedControl>
+                                <controls:SearchTextBox
+                                    x:Name="SearchMusic"
+                                    PlaceholderText="{CustomResource Search}"
+                                    Style="{StaticResource QueryTextBoxStyle}"
+                                    Margin="12,8"
+                                    InputScope="Search"/>
+                            </controls:HeaderedControl>
                         </ListView.Header>
                         <ListView.Footer>
                             <!--<Border Height="8"/>-->
@@ -236,7 +255,7 @@
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
                                         <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                            <TextBlock Margin="12,24,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
                                 </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
@@ -247,23 +266,29 @@
                 <PivotItem>
                     <controls:SelectListView
                         x:Name="ScrollingVoice"
+                        Background="{ThemeResource PageBackgroundDarkBrush}"
                         ItemsSource="{x:Bind ViewModel.Voice, Mode=OneWay}"
                         SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                         SelectionChanged="List_SelectionChanged"
+                        ChoosingItemContainer="OnChoosingItemContainer"
                         ContainerContentChanging="OnContainerContentChanging">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="MaxWidth" Value="640"/>
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.Header>
-                            <controls:SearchTextBox
-                                x:Name="SearchVoice"
-                                PlaceholderText="{CustomResource Search}"
-                                Style="{StaticResource QueryTextBoxStyle}"
-                                Margin="12,8"
-                                InputScope="Search"/>
+                            <controls:HeaderedControl>
+                                <controls:SearchTextBox
+                                    x:Name="SearchVoice"
+                                    PlaceholderText="{CustomResource Search}"
+                                    Style="{StaticResource QueryTextBoxStyle}"
+                                    Margin="12,8"
+                                    InputScope="Search"/>
+                            </controls:HeaderedControl>
                         </ListView.Header>
                         <ListView.Footer>
                             <!--<Border Height="8"/>-->
@@ -279,7 +304,7 @@
                                 <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                                     <DataTemplate>
                                         <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                            <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                            <TextBlock Margin="12,24,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         </Border>
                                     </DataTemplate>
                                 </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
