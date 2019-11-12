@@ -235,6 +235,11 @@
                                             <viewModels:ChatTypeFilterMode>Unmuted</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
                                     </ToggleMenuFlyoutItem>
+                                    <ToggleMenuFlyoutItem x:Name="FilterUnreadAndUnmuted" Text="Unread &amp; Unmuted chats" Click="ChatsFilter_Click">
+                                        <MenuFlyoutItem.CommandParameter>
+                                            <viewModels:ChatTypeFilterMode>UnreadAndUnmuted</viewModels:ChatTypeFilterMode>
+                                        </MenuFlyoutItem.CommandParameter>
+                                    </ToggleMenuFlyoutItem>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
