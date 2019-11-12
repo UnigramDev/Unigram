@@ -83,17 +83,17 @@ namespace Unigram.ViewModels.Settings
             UserPrivacySettingRuleRestrictChatMembers restrictedChatMembers = null;
             foreach (var current in rules.Rules)
             {
-                if (current is UserPrivacySettingRuleAllowAll)
+                if (current is UserPrivacySettingRuleAllowAll && primary == null)
                 {
                     primary = PrivacyValue.AllowAll;
                     badge = Strings.Resources.LastSeenEverybody;
                 }
-                else if (current is UserPrivacySettingRuleAllowContacts)
+                else if (current is UserPrivacySettingRuleAllowContacts && primary == null)
                 {
                     primary = PrivacyValue.AllowContacts;
                     badge = Strings.Resources.LastSeenContacts;
                 }
-                else if (current is UserPrivacySettingRuleRestrictAll)
+                else if (current is UserPrivacySettingRuleRestrictAll && primary == null)
                 {
                     primary = PrivacyValue.DisallowAll;
                     badge = Strings.Resources.LastSeenNobody;
