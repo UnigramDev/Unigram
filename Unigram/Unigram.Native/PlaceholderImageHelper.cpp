@@ -117,6 +117,11 @@ void PlaceholderImageHelper::DrawSavedMessages(Color clear, IRandomAccessStream^
 	ThrowIfFailed(InternalDrawSavedMessages(clear, randomAccessStream));
 }
 
+void PlaceholderImageHelper::DrawDeletedUser(Color clear, IRandomAccessStream^ randomAccessStream)
+{
+	ThrowIfFailed(InternalDrawDeletedUser(clear, randomAccessStream));
+}
+
 void PlaceholderImageHelper::DrawProfilePlaceholder(Color clear, Platform::String^ text, IRandomAccessStream^ randomAccessStream)
 {
 	ThrowIfFailed(InternalDrawProfilePlaceholder(clear, text, randomAccessStream));
@@ -436,6 +441,32 @@ HRESULT PlaceholderImageHelper::InternalDrawSavedMessages(Color clear, IRandomAc
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
 		return InternalDrawSavedMessages(clear, randomAccessStream);
+	}
+
+	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
+}
+
+HRESULT PlaceholderImageHelper::InternalDrawDeletedUser(Color clear, IRandomAccessStream^ randomAccessStream)
+{
+	auto lock = m_criticalSection.Lock();
+	auto text = L"\uE91A";
+
+	HRESULT result;
+	DWRITE_TEXT_METRICS textMetrics;
+	ReturnIfFailed(result, MeasureText(text, m_symbolFormat.Get(), &textMetrics));
+
+	m_d2dContext->SetTarget(m_targetBitmap.Get());
+	m_d2dContext->BeginDraw();
+	//m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+	m_d2dContext->Clear(D2D1::ColorF(clear.R / 255.0f, clear.G / 255.0f, clear.B / 255.0f, clear.A / 255.0f));
+
+	D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (184.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
+	m_d2dContext->DrawText(text, 1, m_symbolFormat.Get(), &layoutRect, m_textBrush.Get());
+
+	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+	{
+		ReturnIfFailed(result, CreateDeviceResources());
+		return InternalDrawDeletedUser(clear, randomAccessStream);
 	}
 
 	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);

@@ -33,6 +33,7 @@ namespace Unigram
 			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawGlyph(_In_ String^ glyph, _In_ Color clear, IRandomAccessStream^ randomAccessStream);
 			void DrawSavedMessages(_In_ Color clear, IRandomAccessStream^ randomAccessStream);
+			void DrawDeletedUser(_In_ Color clear, IRandomAccessStream^ randomAccessStream);
 			void DrawProfilePlaceholder(_In_ Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 
@@ -44,6 +45,7 @@ namespace Unigram
 			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawGlyph(String^ glyph, Color clear, IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawSavedMessages(Color clear, IRandomAccessStream^ randomAccessStream);
+			HRESULT InternalDrawDeletedUser(Color clear, IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawProfilePlaceholder(Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
