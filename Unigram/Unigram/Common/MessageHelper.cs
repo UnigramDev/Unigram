@@ -1059,14 +1059,17 @@ namespace Unigram.Common
                         return;
                     }
 
-                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
-
-                    open.Click += LinkOpen_Click;
-                    copy.Click += LinkCopy_Click;
-
                     var flyout = new MenuFlyout();
-                    flyout.Items.Add(open);
+
+                    if (!link.Contains('@'))
+                    {
+                        var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                        open.Click += LinkOpen_Click;
+                        flyout.Items.Add(open);
+                    }
+
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
+                    copy.Click += LinkCopy_Click;
                     flyout.Items.Add(copy);
 
                     if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))

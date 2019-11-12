@@ -938,22 +938,22 @@ namespace Unigram.Controls.Messages
 
                     if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
                     {
-                        if (entity.Entity.Type is TextEntityTypeMentionName || entity.Entity.Type is TextEntityTypeTextUrl)
+                        if (entity.Type is TextEntityTypeMentionName || entity.Type is TextEntityTypeTextUrl)
                         {
                             var hyperlink = new Hyperlink();
                             object data;
-                            if (entity.Entity.Type is TextEntityTypeTextUrl textUrl)
+                            if (entity.Type is TextEntityTypeTextUrl textUrl)
                             {
                                 data = textUrl.Url;
                                 MessageHelper.SetEntity(hyperlink, textUrl.Url);
                                 ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                             }
-                            else if (entity.Entity.Type is TextEntityTypeMentionName mentionName)
+                            else if (entity.Type is TextEntityTypeMentionName mentionName)
                             {
                                 data = mentionName.UserId;
                             }
 
-                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Entity.Type, null);
+                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
                             hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
                             //hyperlink.Foreground = foreground;
 
@@ -965,11 +965,11 @@ namespace Unigram.Controls.Messages
                             var hyperlink = new Hyperlink();
                             var data = text.Substring(entity.Offset, entity.Length);
 
-                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Entity.Type, data);
+                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                             hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
                             //hyperlink.Foreground = foreground;
 
-                            if (entity.Entity.Type is TextEntityTypeUrl)
+                            if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress)
                             {
                                 MessageHelper.SetEntity(hyperlink, data);
                             }
@@ -1000,7 +1000,7 @@ namespace Unigram.Controls.Messages
 
                     local.Inlines.Add(run);
 
-                    if (entity.Entity?.Type is TextEntityTypeHashtag)
+                    if (entity.Type is TextEntityTypeHashtag)
                     {
                         var data = text.Substring(entity.Offset, entity.Length);
                         var hex = data.TrimStart('#');
