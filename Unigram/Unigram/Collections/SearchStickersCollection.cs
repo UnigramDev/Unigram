@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
-using Unigram.Common;
+using Unigram.Controls.Chats;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Collections
 {
-    public class SearchStickersCollection : MvxObservableCollection<Sticker>, ISupportIncrementalLoading
+    public class SearchStickersCollection : MvxObservableCollection<Sticker>, IAutocompleteCollection, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
         private readonly ISettingsService _settings;
@@ -69,5 +65,7 @@ namespace Unigram.Collections
         }
 
         public bool HasMoreItems => _hasMore;
+
+        public Orientation Orientation => Orientation.Horizontal;
     }
 }

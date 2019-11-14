@@ -868,35 +868,19 @@
                     Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
                     ItemClick="InlineBotResults_ItemClick"
                     VerticalAlignment="Bottom"/>
-                <controls:ZoomableGridView
-                    x:Name="StickerPack"
-                    ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                <controls:OrientableListView
+                    x:Name="ListAutocomplete"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
+                    Orientation="{x:Bind ViewModel.Autocomplete.Orientation, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                    ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                    ContainerContentChanging="Autocomplete_ContainerContentChanging"
                     AllowFocusOnInteraction="False"
                     IsItemClickEnabled="True"
-                    ItemClick="Stickers_ItemClick"
-                    SelectionMode="None"
-                    ContainerContentChanging="StickerPack_ContainerContentChanging"
-                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                    ScrollViewer.VerticalScrollMode="Disabled"
-                    ScrollViewer.IsVerticalRailEnabled="False"
-                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                    ScrollViewer.HorizontalScrollMode="Auto"
-                    ScrollViewer.IsHorizontalRailEnabled="True"
+                    ItemClick="Autocomplete_ItemClick"
                     VerticalAlignment="Bottom"
-                    Padding="8,0"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     Style="{StaticResource ZoomableListViewStyle}">
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <Image Margin="4,8" Width="60" Height="60"/>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
                             <Setter Property="MinWidth" Value="0"/>
@@ -906,21 +890,7 @@
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection/>
                     </GridView.ItemContainerTransitions>
-                </controls:ZoomableGridView>
-                <ListView x:Name="ListAutocomplete"
-                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                          ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
-                          Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                          ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
-                          ContainerContentChanging="Autocomplete_ContainerContentChanging"
-                          AllowFocusOnInteraction="False"
-                          IsItemClickEnabled="True"
-                          ItemClick="Autocomplete_ItemClick"
-                          VerticalAlignment="Bottom">
-                    <ListView.ItemContainerTransitions>
-                        <TransitionCollection/>
-                    </ListView.ItemContainerTransitions>
-                </ListView>
+                </controls:OrientableListView>
             </Grid>
         </Grid>
 

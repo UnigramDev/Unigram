@@ -271,7 +271,7 @@ namespace Unigram.Controls.Chats
         }
 
         public ListView Messages { get; set; }
-        public ListView Autocomplete { get; set; }
+        public OrientableListView Autocomplete { get; set; }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
@@ -335,12 +335,12 @@ namespace Unigram.Controls.Chats
                     }
                 }
             }
-            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null)
+            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null && !(ViewModel.Autocomplete is SearchStickersCollection))
             {
-                var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as ListViewItem;
+                var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as GridViewItem;
                 if (container != null)
                 {
-                    var peer = new ListViewItemAutomationPeer(container);
+                    var peer = new GridViewItemAutomationPeer(container);
                     var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
                     provider.Invoke();
                 }
@@ -420,7 +420,6 @@ namespace Unigram.Controls.Chats
             if (SearchInlineBotResults(text, out string inlineQuery))
             {
                 ViewModel.Autocomplete = null;
-                ViewModel.StickerPack = null;
 
                 ViewModel.GetInlineBotResults(inlineQuery);
                 return;
@@ -428,19 +427,7 @@ namespace Unigram.Controls.Chats
 
             if (string.IsNullOrEmpty(text) || Document.Selection.Length != 0)
             {
-                ViewModel.StickerPack = null;
                 ViewModel.Autocomplete = null;
-                return;
-            }
-
-            if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
-            {
-                ViewModel.Autocomplete = null;
-                ViewModel.CurrentInlineBot = null;
-                ViewModel.InlineBotResults = null;
-                InlinePlaceholderText = string.Empty;
-
-                ViewModel.StickerPack = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
                 return;
             }
 
@@ -448,7 +435,6 @@ namespace Unigram.Controls.Chats
 
             if (TryGetAutocomplete(text, query, out var autocomplete))
             {
-                ViewModel.StickerPack = null;
                 ViewModel.CurrentInlineBot = null;
                 ViewModel.InlineBotResults = null;
                 InlinePlaceholderText = string.Empty;
@@ -457,14 +443,12 @@ namespace Unigram.Controls.Chats
             }
             else
             {
-                ViewModel.StickerPack = null;
                 ViewModel.Autocomplete = null;
 
                 if (SearchByInlineBot(query, out string username, out int index) && await ViewModel.ResolveInlineBotAsync(username))
                 {
                     if (SearchInlineBotResults(text, out query))
                     {
-                        ViewModel.StickerPack = null;
                         ViewModel.Autocomplete = null;
 
                         ViewModel.GetInlineBotResults(query);
@@ -472,16 +456,20 @@ namespace Unigram.Controls.Chats
                     }
                 }
 
-                ViewModel.StickerPack = null;
                 ViewModel.CurrentInlineBot = null;
                 ViewModel.InlineBotResults = null;
                 InlinePlaceholderText = string.Empty;
             }
         }
 
-        private bool TryGetAutocomplete(string text, string query, out ICollection autocomplete)
+        private bool TryGetAutocomplete(string text, string query, out IAutocompleteCollection autocomplete)
         {
-            if (SearchByUsername(query, out string username, out int index))
+            if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
+            {
+                autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
+                return true;
+            }
+            else if (SearchByUsername(query, out string username, out int index))
             {
                 var chat = ViewModel.Chat;
                 if (chat == null)
@@ -519,12 +507,12 @@ namespace Unigram.Controls.Chats
             return false;
         }
 
-        private List<UserCommand> GetCommands(string command)
+        private AutocompleteList<UserCommand> GetCommands(string command)
         {
             var all = ViewModel.BotCommands;
             if (all != null)
             {
-                var results = all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)).ToList();
+                var results = new AutocompleteList<UserCommand>(all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)));
                 if (results.Count > 0)
                 {
                     return results;
@@ -534,7 +522,7 @@ namespace Unigram.Controls.Chats
             return null;
         }
 
-        public class UsernameCollection : MvxObservableCollection<Telegram.Td.Api.User>, ISupportIncrementalLoading
+        public class UsernameCollection : MvxObservableCollection<Telegram.Td.Api.User>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly long _chatId;
@@ -601,9 +589,11 @@ namespace Unigram.Controls.Chats
             }
 
             public bool HasMoreItems => _hasMore;
+
+            public Orientation Orientation => Orientation.Vertical;
         }
 
-        public class EmojiCollection : MvxObservableCollection<EmojiData>, ISupportIncrementalLoading
+        public class EmojiCollection : MvxObservableCollection<EmojiData>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
@@ -638,6 +628,8 @@ namespace Unigram.Controls.Chats
             }
 
             public bool HasMoreItems => _hasMore;
+
+            public Orientation Orientation => Orientation.Horizontal;
         }
 
         public class EmojiGroupCollection : MvxObservableCollection<List<EmojiGroup>>, ISupportIncrementalLoading
@@ -670,7 +662,7 @@ namespace Unigram.Controls.Chats
             public bool HasMoreItems => _hasMore;
         }
 
-        public class SearchHashtagsCollection : MvxObservableCollection<string>, ISupportIncrementalLoading
+        public class SearchHashtagsCollection : MvxObservableCollection<string>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
@@ -705,6 +697,8 @@ namespace Unigram.Controls.Chats
             }
 
             public bool HasMoreItems => _hasMore;
+
+            public Orientation Orientation => Orientation.Vertical;
         }
 
         private void UpdateText()
@@ -1149,5 +1143,21 @@ namespace Unigram.Controls.Chats
         }
 
         #endregion
+    }
+
+    public interface IAutocompleteCollection : ICollection
+    {
+        public Orientation Orientation { get; }
+    }
+
+    public class AutocompleteList<T> : List<T>, IAutocompleteCollection
+    {
+        public Orientation Orientation { get; set; } = Orientation.Vertical;
+
+        public AutocompleteList(IEnumerable<T> collection)
+            : base(collection)
+        {
+
+        }
     }
 }

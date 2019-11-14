@@ -2316,7 +2316,7 @@ namespace Unigram.Views
         public async void Stickers_ItemClick(Sticker sticker)
         {
             ViewModel.StickerSendCommand.Execute(sticker);
-            ViewModel.StickerPack = null;
+            ViewModel.Autocomplete = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
@@ -2327,7 +2327,7 @@ namespace Unigram.Views
         public async void Animations_ItemClick(Animation animation)
         {
             ViewModel.AnimationSendCommand.Execute(animation);
-            ViewModel.StickerPack = null;
+            ViewModel.Autocomplete = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
@@ -2660,6 +2660,10 @@ namespace Unigram.Views
                 //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
             }
+            else if (e.ClickedItem is Sticker sticker)
+            {
+                Stickers_ItemClick(sticker);
+            }
 
             ViewModel.Autocomplete = null;
         }
@@ -2936,17 +2940,17 @@ namespace Unigram.Views
             ViewModel.MessageServiceCommand.Execute(message);
         }
 
-        private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private async void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
             if (args.Item is UserCommand userCommand)
             {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
                 var photo = content.Children[0] as ProfilePicture;
                 var title = content.Children[1] as TextBlock;
 
@@ -2966,6 +2970,8 @@ namespace Unigram.Views
             }
             else if (args.Item is User user)
             {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
                 var photo = content.Children[0] as ProfilePicture;
                 var title = content.Children[1] as TextBlock;
 
@@ -2977,53 +2983,43 @@ namespace Unigram.Views
 
                 photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
-        }
-
-        private async void StickerPack_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            var content = args.ItemContainer.ContentTemplateRoot as Image;
-
-            if (args.InRecycleQueue)
+            else if (args.Item is Sticker sticker)
             {
-                content.Source = null;
-                return;
-            }
+                var content = args.ItemContainer.ContentTemplateRoot as Image;
 
-            var sticker = args.Item as Sticker;
+                if (sticker == null || sticker.Thumbnail == null)
+                {
+                    content.Source = null;
+                    return;
+                }
 
-            if (sticker == null || sticker.Thumbnail == null)
-            {
-                content.Source = null;
-                return;
-            }
+                args.ItemContainer.Tag = content.Tag = new ViewModels.Dialogs.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
 
-            args.ItemContainer.Tag = content.Tag = new ViewModels.Dialogs.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
-
-            //if (args.Phase < 2)
-            //{
-            //    content.Source = null;
-            //    args.RegisterUpdateCallback(Stickers_ContainerContentChanging);
-            //}
-            //else
-            if (args.Phase == 0)
-            {
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    if (sticker.IsAnimated)
+                    {
+                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
+                        if (bitmap == null)
+                        {
+                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        }
+
+                        content.Source = bitmap;
+                    }
+                    else
+                    {
+                        content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     //DownloadFile(file.Id, sticker);
+                    content.Source = null;
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
-            else
-            {
-                throw new System.Exception("We should be in phase 0, but we are not.");
-            }
-
-            args.Handled = true;
         }
 
         private void ShowAction(string content, bool enabled)
@@ -3980,6 +3976,25 @@ namespace Unigram.Views
                         photo.Source = PlaceholderHelper.GetUser(null, user, 36);
                     }
                 }
+                else if (item is Sticker sticker)
+                {
+                    if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
+                    {
+                        var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
+                        if (container == null)
+                        {
+                            continue;
+                        }
+
+                        var photo = container.ContentTemplateRoot as Image;
+                        if (photo == null)
+                        {
+                            continue;
+                        }
+
+                        photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    }
+                }
             }
 
             var header = ViewModel.ComposerHeader;
@@ -3987,31 +4002,6 @@ namespace Unigram.Views
             {
                 var size = Math.Max(file.Size, file.ExpectedSize);
                 ComposerHeaderUpload.Value = (double)file.Remote.UploadedSize / size;
-            }
-
-            if (!file.Local.IsDownloadingCompleted)
-            {
-                return;
-            }
-
-            foreach (Sticker sticker in StickerPack.Items.ToArray())
-            {
-                if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
-                {
-                    var container = StickerPack.ContainerFromItem(sticker) as SelectorItem;
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    var photo = container.ContentTemplateRoot as Image;
-                    if (photo == null)
-                    {
-                        continue;
-                    }
-
-                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
-                }
             }
         }
 

@@ -117,6 +117,11 @@ namespace Unigram.Controls.Views
 
         #endregion
 
+        private Orientation ConvertOrientation(bool horizontal)
+        {
+            return horizontal ? Orientation.Horizontal : Orientation.Vertical;
+        }
+
         public void UpdateFile(File file)
         {
             if (!file.Local.IsDownloadingCompleted)
