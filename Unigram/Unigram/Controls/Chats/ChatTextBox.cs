@@ -506,7 +506,7 @@ namespace Unigram.Controls.Chats
             }
             else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
             {
-                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower());
+                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement);
                 return true;
             }
             else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
@@ -951,6 +951,12 @@ namespace Unigram.Controls.Chats
                 }
 
                 searchText = text.Substring(index).TrimStart(c);
+            }
+
+            if (searchText.Length == 1 && searchText == searchText.ToUpper())
+            {
+                searchText = string.Empty;
+                flag = false;
             }
 
             return flag;
