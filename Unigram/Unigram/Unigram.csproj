@@ -200,8 +200,8 @@
     <Compile Include="Controls\Chats\ChatListView.cs" />
     <Compile Include="Controls\Chats\ChatListViewItem.cs" />
     <Compile Include="Controls\Chats\ChatRecordButton.cs" />
-    <Compile Include="Controls\Chats\ChatSearchMask.xaml.cs">
-      <DependentUpon>ChatSearchMask.xaml</DependentUpon>
+    <Compile Include="Controls\Chats\ChatSearchBar.xaml.cs">
+      <DependentUpon>ChatSearchBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Chats\ChatSearchTextBox.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
@@ -1811,7 +1811,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Chats\ChatSearchMask.xaml">
+    <Page Include="Controls\Chats\ChatSearchBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

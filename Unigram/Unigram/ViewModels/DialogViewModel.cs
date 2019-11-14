@@ -2047,21 +2047,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private IList<Sticker> _stickerPack;
-        public IList<Sticker> StickerPack
-        {
-            get
-            {
-                return _stickerPack;
-            }
-            set
-            {
-                Set(ref _stickerPack, value);
-            }
-        }
-
-        private ICollection _autocomplete;
-        public ICollection Autocomplete
+        private IAutocompleteCollection _autocomplete;
+        public IAutocompleteCollection Autocomplete
         {
             get
             {

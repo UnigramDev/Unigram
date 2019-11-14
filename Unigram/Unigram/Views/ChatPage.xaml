@@ -1248,7 +1248,7 @@
             </chats:ChatBottomButton>
         </Grid>
 
-        <chats:ChatSearchMask
+        <chats:ChatSearchBar
             x:Name="SearchMask"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
             Grid.RowSpan="4"

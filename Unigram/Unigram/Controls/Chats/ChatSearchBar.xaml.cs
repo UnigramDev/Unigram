@@ -18,11 +18,11 @@ using static Unigram.Controls.Chats.ChatTextBox;
 
 namespace Unigram.Controls.Chats
 {
-    public sealed partial class ChatSearchMask : UserControl
+    public sealed partial class ChatSearchBar : UserControl
     {
         public ChatSearchViewModel ViewModel => DataContext as ChatSearchViewModel;
 
-        public ChatSearchMask()
+        public ChatSearchBar()
         {
             InitializeComponent();
 
