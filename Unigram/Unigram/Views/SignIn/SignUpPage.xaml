@@ -13,14 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader
-            x:Name="Header"
-            Command="{x:Bind ViewModel.SendCommand}"
-            CommandToolTip="{CustomResource Next}"
-            Text="{CustomResource YourName}"
-            Glyph="&#xE10B;"/>
-
-        <Grid x:Name="ContentPanel" Padding="12,20" MaxWidth="360" Grid.Row="1">
+        <Grid x:Name="ContentPanel" VerticalAlignment="Center" Padding="12,20" MaxWidth="360" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -32,7 +25,6 @@
             </Grid.RowDefinitions>
             <TextBlock
                 x:Name="TitleLabel"
-                Visibility="Collapsed"
                 Text="{CustomResource YourName}"
                 Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock
@@ -67,29 +59,7 @@
                     Foreground="White"
                     HorizontalAlignment="Stretch"
                     Margin="0,4,0,0"
-                    Grid.Row="6"
-                    Visibility="Collapsed"/>
+                    Grid.Row="6"/>
         </Grid>
-
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="DisplayModeStates">
-                <VisualState x:Name="Wide">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="600" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentPanel.VerticalAlignment" Value="Center" />
-                        <Setter Target="Header.Visibility" Value="Collapsed"/>
-                        <Setter Target="NextButton.Visibility" Value="Visible"/>
-                        <Setter Target="TitleLabel.Visibility" Value="Visible"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="Compact">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

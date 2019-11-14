@@ -19,6 +19,7 @@ using Windows.Web.Http;
 using Unigram.Common;
 using Unigram.Entities;
 using System.Text;
+using Windows.ApplicationModel;
 
 namespace Unigram.Views.SignIn
 {
@@ -33,7 +34,17 @@ namespace Unigram.Views.SignIn
 
             Transitions = ApiInfo.CreateSlideTransition();
 
+            Diagnostics.Text = $"Unigram " + GetVersion();
+
             ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private string GetVersion()
+        {
+            Package package = Package.Current;
+            PackageId packageId = package.Id;
+            PackageVersion version = packageId.Version;
+            return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -99,5 +110,18 @@ namespace Unigram.Views.SignIn
 
         #endregion
 
+        private int _advanced;
+
+        private void Diagnostics_Click(object sender, RoutedEventArgs e)
+        {
+            _advanced++;
+
+            if (_advanced >= 10)
+            {
+                _advanced = 0;
+
+                Frame.Navigate(typeof(DiagnosticsPage));
+            }
+        }
     }
 }
