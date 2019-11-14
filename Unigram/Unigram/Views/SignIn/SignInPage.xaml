@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
-    xmlns:cv="using:Unigram.Converters"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:models="using:Unigram.Entities"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,7 +13,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition common:TitleBar.IsAttached="True"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid x:Name="ContentPanel" VerticalAlignment="Center" Padding="12,20" MaxWidth="360" Grid.Row="1">
@@ -59,22 +59,23 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <TextBox x:Name="PhoneCode"
-                         Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,0,8,0"
-                         Width="30"
-                         InputScope="TelephoneNumber"
-                         PlaceholderText="+"
-                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:PhoneTextBox x:Name="PrimaryInput"
-                                       Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
-                                       MinWidth="200"
-                                       InputScope="TelephoneNumber"
-                                       IsTextPredictionEnabled="False"
-                                       KeyDown="PhoneNumber_KeyDown"
-                                       Grid.Column="1"/>
-
+                <TextBox
+                    x:Name="PhoneCode"
+                    Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Margin="0,0,8,0"
+                    Width="30"
+                    InputScope="TelephoneNumber"
+                    PlaceholderText="+"
+                    Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
+                <controls:PhoneTextBox
+                    x:Name="PrimaryInput"
+                    Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
+                    MinWidth="200"
+                    InputScope="TelephoneNumber"
+                    IsTextPredictionEnabled="False"
+                    KeyDown="PhoneNumber_KeyDown"
+                    Grid.Column="1"/>
             </Grid>
 
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
@@ -82,8 +83,7 @@
             <Button x:Name="NextButton"
                     Content="{CustomResource OK}"
                     Command="{x:Bind ViewModel.SendCommand}"
-                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                    Foreground="White"
+                    Style="{StaticResource AccentButtonStyle}"
                     HorizontalAlignment="Stretch"
                     Margin="0,4,0,8"
                     Grid.Row="5"/>
@@ -103,5 +103,7 @@
                 Margin="12,8,12,12"/>
             <Button Click="Diagnostics_Click" Opacity="0" Style="{StaticResource EmptyButtonStyle}"/>
         </Grid>
+
+        <controls:BackButton Grid.Row="1"/>
     </Grid>
 </Page>

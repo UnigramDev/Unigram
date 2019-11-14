@@ -12,7 +12,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition common:TitleBar.IsAttached="True"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid x:Name="ContentPanel" VerticalAlignment="Center" Padding="12,20" MaxWidth="360" Grid.Row="1">
@@ -49,8 +49,7 @@
             <Button x:Name="NextButton"
                     Content="{CustomResource OK}"
                     Command="{x:Bind ViewModel.SendCommand}"
-                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                    Foreground="White"
+                    Style="{StaticResource AccentButtonStyle}"
                     HorizontalAlignment="Stretch"
                     Margin="0,4,0,8"
                     Grid.Row="5"/>
@@ -60,5 +59,7 @@
                              Content="{CustomResource DidNotGetTheCode}"
                              Grid.Row="6"/>
         </Grid>
+
+        <controls:BackButton Grid.Row="1"/>
     </Grid>
 </Page>
