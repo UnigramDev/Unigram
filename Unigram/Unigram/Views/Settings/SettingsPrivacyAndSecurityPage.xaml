@@ -24,26 +24,22 @@
                 <controls:HeaderedControl>
                     <controls:BadgeButton
                         Content="{CustomResource BlockedUsers}"
-                        Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
-                        Glyph="&#xF140;"
+                        Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"                       
                         Click="BlockedUsers_Click"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource SessionsTitle}"
-                        Badge="{x:Bind ViewModel.ActiveSessions, Mode=OneWay}"
-                        Glyph="&#xE975;"
+                        Badge="{x:Bind ViewModel.ActiveSessions, Mode=OneWay}"                        
                         Click="Sessions_Click"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource Passcode}"
-                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasscodeEnabled), Mode=OneWay}"
-                        Glyph="&#xE928;"
+                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasscodeEnabled), Mode=OneWay}"                       
                         Command="{x:Bind ViewModel.PasscodeCommand}"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource TwoStepVerification}"
-                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasswordEnabled), Mode=OneWay}"
-                        Glyph="&#xE192;"
+                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasswordEnabled), Mode=OneWay}"                       
                         Command="{x:Bind ViewModel.PasswordCommand}"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                 </controls:HeaderedControl>
