@@ -51,7 +51,7 @@
                         x:Name="Biometrics"
                         Visibility="Collapsed"
                         IsOn="{x:Bind ViewModel.IsBiometricsEnabled, Mode=TwoWay}"
-                        Header="{CustomResource UnlockFingerprint}"
+                        Header="Windows Hello"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource AutoLock}"
