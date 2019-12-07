@@ -527,7 +527,38 @@ namespace Unigram.ViewModels
                 return false;
             }
 
-            return _admins.TryGetValue(chat.Id, out IList<int> value) && value.Contains(userId);
+            if (_admins.TryGetValue(chat.Id, out IList<ChatAdministrator> value))
+            {
+                var admin = value.FirstOrDefault(x => x.UserId == userId);
+                return admin != null;
+            }
+
+            return false;
+        }
+
+        public string GetAdminTitle(int userId)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return null;
+            }
+
+            if (_admins.TryGetValue(chat.Id, out IList<ChatAdministrator> value))
+            {
+                var admin = value.FirstOrDefault(x => x.UserId == userId);
+                if (admin != null)
+                {
+                    if (string.IsNullOrEmpty(admin.CustomTitle))
+                    {
+                        return Strings.Resources.ChannelAdmin;
+                    }
+
+                    return admin.CustomTitle;
+                }
+            }
+
+            return null;
         }
     }
 }

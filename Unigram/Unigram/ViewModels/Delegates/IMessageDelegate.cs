@@ -37,5 +37,6 @@ namespace Unigram.ViewModels.Delegates
         void SendBotCommand(string command);
 
         bool IsAdmin(int userId);
+        string GetAdminTitle(int userId);
     }
 }

@@ -56,13 +56,12 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                        <TextBlock ToolTipService.ToolTip="{CustomResource ChannelAdmin}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
-                            <Run />
-                            <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
-                        </TextBlock>
+                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+
                         <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                    VerticalAlignment="Top"
@@ -70,6 +69,15 @@
                                    TextWrapping="NoWrap"
                                    Grid.Column="1"
                                    Grid.Row="1"
+                                   MaxLines="1"/>
+
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Grid.Column="2"
+                                   Grid.RowSpan="2"
                                    MaxLines="1"/>
                     </Grid>
                 </DataTemplate>
@@ -84,13 +92,12 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                        <TextBlock ToolTipService.ToolTip="{CustomResource ChannelCreator}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0">
-                            <Run />
-                            <Run Text="&#xE00A;" FontSize="12" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
-                        </TextBlock>
+                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+
                         <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                    VerticalAlignment="Top"
@@ -98,6 +105,15 @@
                                    TextWrapping="NoWrap"
                                    Grid.Column="1"
                                    Grid.Row="1"
+                                   MaxLines="1"/>
+                        
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Grid.Column="2"
+                                   Grid.RowSpan="2"
                                    MaxLines="1"/>
                     </Grid>
                 </DataTemplate>

@@ -93,7 +93,7 @@ namespace Unigram.ViewModels
 
         private readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
-        private static readonly ConcurrentDictionary<long, IList<int>> _admins = new ConcurrentDictionary<long, IList<int>>();
+        private static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly DisposableMutex _insertLock = new DisposableMutex();
@@ -1803,9 +1803,9 @@ namespace Unigram.ViewModels
 
                 ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
                 {
-                    if (result is Telegram.Td.Api.Users users)
+                    if (result is Telegram.Td.Api.ChatAdministrators users)
                     {
-                        _admins[chat.Id] = users.UserIds;
+                        _admins[chat.Id] = users.Administrators;
                     }
                 });
             }
@@ -1828,9 +1828,9 @@ namespace Unigram.ViewModels
 
                 ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
                 {
-                    if (result is Telegram.Td.Api.Users users)
+                    if (result is Telegram.Td.Api.ChatAdministrators users)
                     {
-                        _admins[chat.Id] = users.UserIds;
+                        _admins[chat.Id] = users.Administrators;
                     }
                 });
             }

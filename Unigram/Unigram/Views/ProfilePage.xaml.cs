@@ -737,20 +737,23 @@ namespace Unigram.Views
                 photo.Source = null;
 
                 var title = content.Children[1] as TextBlock;
-                if (title.Inlines.Count > 0)
-                {
-                    var label = title.Inlines[0] as Run;
-                    label.Text = user.GetFullName();
-                }
-                else
-                {
-                    title.Text = user.GetFullName();
-                }
+                title.Text = user.GetFullName();
             }
             else if (args.Phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
                 subtitle.Text = LastSeenConverter.GetLabel(user, false);
+
+                if (member.Status is ChatMemberStatusAdministrator administrator)
+                {
+                    var label = content.Children[3] as TextBlock;
+                    label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
+                }
+                else if (member.Status is ChatMemberStatusCreator creator)
+                {
+                    var label = content.Children[3] as TextBlock;
+                    label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
+                }
             }
             else if (args.Phase == 2)
             {
