@@ -283,6 +283,19 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         public async void SendExecute()
         {
+            var response = await SendAsync();
+            if (response is Ok)
+            {
+                NavigationService.GoBack();
+            }
+            else if (response is Error error)
+            {
+
+            }
+        }
+
+        public Task<BaseObject> SendAsync()
+        {
             var rules = new List<UserPrivacySettingRule>();
 
             if (_restrictedUsers != null && _restrictedUsers.UserIds.Count > 0 && _selectedItem != PrivacyValue.DisallowAll)
@@ -316,15 +329,7 @@ namespace Unigram.ViewModels.Settings
                     break;
             }
 
-            var response = await ProtoService.SendAsync(new SetUserPrivacySettingRules(_inputKey, new UserPrivacySettingRules(rules)));
-            if (response is Ok)
-            {
-                NavigationService.GoBack();
-            }
-            else if (response is Error error)
-            {
-
-            }
+            return ProtoService.SendAsync(new SetUserPrivacySettingRules(_inputKey, new UserPrivacySettingRules(rules)));
         }
 
         private string GetBadge(IList<int> userIds, IList<long> chatIds)

@@ -649,9 +649,11 @@
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowChatInvitesViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowFindingByPhoneNumberViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowP2PCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowForwardedViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhotoViewModel.cs" />
