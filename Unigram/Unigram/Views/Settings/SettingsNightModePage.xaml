@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
     xmlns:settings="using:Unigram.Services.Settings"
+    xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -105,7 +106,7 @@
                         <FontIcon Glyph="&#xEC8A;"/>
                         <FontIcon Glyph="&#xE706;" Grid.Column="2"/>
 
-                        <ProgressBar x:Name="Lux" Grid.Column="1"/>
+                        <microsoft:ProgressBar x:Name="Lux" Grid.Column="1"/>
                         <Slider Background="Transparent" Foreground="Transparent" Grid.Column="1"/>
                     </Grid>
 

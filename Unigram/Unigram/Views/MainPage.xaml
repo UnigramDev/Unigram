@@ -11,6 +11,7 @@
     xmlns:chats="using:Unigram.Controls.Chats"
     xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:triggers="using:Unigram.Triggers"
@@ -89,7 +90,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
+                <microsoft:ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
                 <TextBlock x:Name="StatusLabel"
                            VerticalAlignment="Center"
                            TextLineBounds="TrimToCapHeight"

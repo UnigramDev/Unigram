@@ -75,7 +75,7 @@
                         </GridView.Header>
                         <GridView.Footer>
                             <!--<Border Height="8"/>-->
-                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Media.IsLoading, Mode=OneWay}"/>
+                            <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Media.IsLoading, Mode=OneWay}"/>
                         </GridView.Footer>
                         <GridView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
@@ -145,7 +145,7 @@
                         </ListView.Header>
                         <ListView.Footer>
                             <!--<Border Height="8"/>-->
-                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Files.IsLoading, Mode=OneWay}"/>
+                            <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Files.IsLoading, Mode=OneWay}"/>
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
@@ -194,7 +194,7 @@
                         </ListView.Header>
                         <ListView.Footer>
                             <!--<Border Height="8"/>-->
-                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Links.IsLoading, Mode=OneWay}"/>
+                            <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Links.IsLoading, Mode=OneWay}"/>
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
@@ -243,7 +243,7 @@
                         </ListView.Header>
                         <ListView.Footer>
                             <!--<Border Height="8"/>-->
-                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Music.IsLoading, Mode=OneWay}"/>
+                            <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Music.IsLoading, Mode=OneWay}"/>
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
@@ -292,7 +292,7 @@
                         </ListView.Header>
                         <ListView.Footer>
                             <!--<Border Height="8"/>-->
-                            <ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Voice.IsLoading, Mode=OneWay}"/>
+                            <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Voice.IsLoading, Mode=OneWay}"/>
                         </ListView.Footer>
                         <ListView.ItemTemplateSelector>
                             <selectors:MessageContentTemplateSelector>
