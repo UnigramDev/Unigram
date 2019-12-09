@@ -120,6 +120,8 @@ namespace Unigram.Controls.Messages
                             return UpdateUsernameChanged(message, usernameChanged, active);
                         case ChatEventPollStopped pollStopped:
                             return UpdatePollStopped(message, pollStopped, active);
+                        case ChatEventSlowModeDelayChanged slowModeDelayChanged:
+                            return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
                         default:
                             return (null, null);
                     }
@@ -149,6 +151,36 @@ namespace Unigram.Controls.Messages
         #endregion
 
         #region Event log
+
+        private static (string Text, IList<TextEntity> Entities) UpdateSlowModeDelayChanged(MessageViewModel message, ChatEventSlowModeDelayChanged slowModeDelayChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSenderUser();
+
+            if (slowModeDelayChanged.NewSlowModeDelay > 0)
+            {
+                if (slowModeDelayChanged.NewSlowModeDelay < 60)
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.EventLogToggledSlowmodeOn, string.Format(Strings.Resources.SlowmodeSeconds, slowModeDelayChanged.NewSlowModeDelay)), "un1", fromUser, ref entities);
+                }
+                else if (slowModeDelayChanged.NewSlowModeDelay < 60 * 60)
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.EventLogToggledSlowmodeOn, string.Format(Strings.Resources.SlowmodeMinutes, slowModeDelayChanged.NewSlowModeDelay / 60)), "un1", fromUser, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.EventLogToggledSlowmodeOn, string.Format(Strings.Resources.SlowmodeHours, slowModeDelayChanged.NewSlowModeDelay / 60 / 60)), "un1", fromUser, ref entities);
+                }
+            }
+            else
+            {
+                content = ReplaceWithLink(Strings.Resources.EventLogToggledSlowmodeOff, "un1", fromUser, ref entities);
+            }
+
+            return (content, entities);
+        }
 
         private static (string Text, IList<TextEntity> Entities) UpdateSignMessagesToggled(MessageViewModel message, ChatEventSignMessagesToggled signMessagesToggled, bool active)
         {
