@@ -33,6 +33,7 @@ using Unigram.ViewModels.Chats;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Gallery;
 using Unigram.Converters;
+using Unigram.Controls.Chats;
 
 namespace Unigram.Views.Chats
 {
@@ -214,11 +215,11 @@ namespace Unigram.Views.Chats
             {
                 if (sender is ListView)
                 {
-                    args.ItemContainer = new ChatsListViewItem();
+                    args.ItemContainer = new AccessibleChatListViewItem(ViewModel.ProtoService);
                 }
                 else
                 {
-                    args.ItemContainer = new ChatsGridViewItem();
+                    args.ItemContainer = new ChatGridViewItem(ViewModel.ProtoService);
                 }
 
                 args.ItemContainer.Style = sender.ItemContainerStyle;
