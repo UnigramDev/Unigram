@@ -194,6 +194,13 @@ namespace Unigram.ViewModels.Supergroups
 
         #endregion
 
+        private int _slowModeDelay;
+        public int SlowModeDelay
+        {
+            get => _slowModeDelay;
+            set => Set(ref _slowModeDelay, value);
+        }
+
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
@@ -218,13 +225,26 @@ namespace Unigram.ViewModels.Supergroups
             var response = await ProtoService.SendAsync(new SetChatPermissions(chat.Id, permissions));
             if (response is Error error)
             {
+                return;
+            }
 
-            }
-            else
+            var fullInfo = CacheService.GetSupergroupFull(chat);
+            if (fullInfo == null)
             {
-                NavigationService.GoBack();
-                NavigationService.Frame.ForwardStack.Clear();
+                return;
             }
+
+            if (fullInfo.SlowModeDelay != _slowModeDelay)
+            {
+                var slowMode = await ProtoService.SendAsync(new SetChatSlowModeDelay(chat.Id, _slowModeDelay));
+                if (slowMode is Error)
+                {
+                    return;
+                }
+            }
+
+            NavigationService.GoBack();
+            NavigationService.Frame.ForwardStack.Clear();
         }
 
         public RelayCommand AddCommand { get; }
