@@ -411,6 +411,9 @@
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\ScheduleMessageView.xaml.cs">
+      <DependentUpon>ScheduleMessageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SettingsEmojiSetView.xaml.cs">
       <DependentUpon>SettingsEmojiSetView.xaml</DependentUpon>
     </Compile>
@@ -590,6 +593,7 @@
     <Compile Include="ViewModels\Delegates\IWalletExportDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWalletTransactionDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWallpaperDelegate.cs" />
+    <Compile Include="ViewModels\DialogScheduledViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />
@@ -818,6 +822,7 @@
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatScheduledPage.cs" />
     <Compile Include="Views\SecretChats\SecretChatCreatePage.xaml.cs">
       <DependentUpon>SecretChatCreatePage.xaml</DependentUpon>
     </Compile>
@@ -2038,6 +2043,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageReference.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\ScheduleMessageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

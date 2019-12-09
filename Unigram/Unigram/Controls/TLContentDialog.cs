@@ -8,6 +8,8 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Shapes;
@@ -70,6 +72,38 @@ namespace Unigram.Controls
             {
                 Hide();
             }
+        }
+
+        public void Hide(ContentDialogResult result)
+        {
+            if (result == ContentDialogResult.Primary)
+            {
+                var button = GetTemplateChild("PrimaryButton") as Button;
+                if (button != null)
+                {
+                    var invoke = new ButtonAutomationPeer(button) as IInvokeProvider;
+                    if (invoke != null)
+                    {
+                        invoke.Invoke();
+                        return;
+                    }
+                }
+            }
+            else if (result == ContentDialogResult.Secondary)
+            {
+                var button = GetTemplateChild("SecondaryButton") as Button;
+                if (button != null)
+                {
+                    var invoke = new ButtonAutomationPeer(button) as IInvokeProvider;
+                    if (invoke != null)
+                    {
+                        invoke.Invoke();
+                        return;
+                    }
+                }
+            }
+
+            Hide();
         }
     }
 }

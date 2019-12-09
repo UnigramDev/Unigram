@@ -97,7 +97,7 @@ namespace Unigram.Common
             }
 
             if (_protoService.Options.WalletPublicKey != null)
-            { 
+            {
                 if (address == null)
                 {
                     page = typeof(WalletPage);
@@ -169,7 +169,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
+        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
         {
             if (chat == null)
             {
@@ -213,7 +213,7 @@ namespace Unigram.Common
                 }
             }
 
-            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam))
+            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && !scheduled)
             {
                 if (message != null)
                 {
@@ -268,16 +268,16 @@ namespace Unigram.Common
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift && !ctrl)
                 {
-                    await OpenAsync(typeof(ChatPage), chat.Id);
+                    await OpenAsync(scheduled ? typeof(ScheduledChatPage) : typeof(ChatPage), chat.Id);
                 }
                 else
                 {
-                    await NavigateAsync(typeof(ChatPage), chat.Id, state);
+                    await NavigateAsync(scheduled ? typeof(ScheduledChatPage) : typeof(ChatPage), chat.Id, state);
                 }
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
+        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
@@ -294,7 +294,7 @@ namespace Unigram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, accessToken, state);
+            NavigateToChat(chat, message, accessToken, state, scheduled);
         }
 
         public async void NavigateToPasscode()

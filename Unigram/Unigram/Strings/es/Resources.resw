@@ -58,9 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Abort" xml:space="preserve">
-    <value>Cancelar</value>
-  </data>
   <data name="AbortEmail" xml:space="preserve">
     <value>Cancelar la configuración del correo de recuperación</value>
   </data>
@@ -664,12 +661,6 @@
   <data name="AddToTheGroup" xml:space="preserve">
     <value>¿Añadir a {0} al grupo?</value>
   </data>
-  <data name="AddToTheGroupAlertText" xml:space="preserve">
-    <value>¿Quieres añadir a **{0}** al grupo **{1}**?</value>
-  </data>
-  <data name="AddToTheGroupAlertTitle" xml:space="preserve">
-    <value>Añadir bot</value>
-  </data>
   <data name="AddToTheGroupForwardCount" xml:space="preserve">
     <value>Cantidad de últimos mensajes para reenviar:</value>
   </data>
@@ -913,25 +904,22 @@ chats archivados en la parte superior.</value>
     <value>¿Quieres bloquear a **{0}**?</value>
   </data>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
-    <value>¿Quieres eliminar todos los borradores en la nube?</value>
-  </data>
-  <data name="AreYouSureClearDraftsTitle" xml:space="preserve">
-    <value>Eliminar borradores</value>
+    <value>¿Quieres eliminar todos los borradores de la nube?</value>
   </data>
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>¿Quieres eliminar todos los mensajes en este chat?</value>
   </data>
   <data name="AreYouSureClearHistoryCacheFewChats" xml:space="preserve">
-    <value>¿Borrar todo el texto y la multimedia en caché de los chats seleccionados?</value>
+    <value>¿Eliminar de la caché todo el texto y la multimedia de los chats seleccionados?</value>
   </data>
   <data name="AreYouSureClearHistoryChannel" xml:space="preserve">
-    <value>¿Borrar todo el texto y la multimedia en caché de este canal?</value>
+    <value>¿Eliminar de la caché todo el texto y la multimedia de este canal?</value>
   </data>
   <data name="AreYouSureClearHistoryFewChats" xml:space="preserve">
-    <value>¿Quieres eliminar el historial en los chats seleccionados?</value>
+    <value>¿Quieres vaciar el historial en los chats seleccionados?</value>
   </data>
   <data name="AreYouSureClearHistoryGroup" xml:space="preserve">
-    <value>¿Borrar todo el texto y la multimedia en caché de este grupo?</value>
+    <value>¿Eliminar de la caché todo el texto y la multimedia de este grupo?</value>
   </data>
   <data name="AreYouSureClearHistorySavedMessages" xml:space="preserve">
     <value>¿Quieres eliminar el historial de **Mensajes guardados**?</value>
@@ -966,17 +954,11 @@ chats archivados en la parte superior.</value>
   <data name="AreYouSureDeleteGIF" xml:space="preserve">
     <value>¿Quieres eliminar este GIF?</value>
   </data>
-  <data name="AreYouSureDeleteGIFTitle" xml:space="preserve">
-    <value>Eliminar GIF</value>
-  </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>¿Quieres eliminar {0}?</value>
   </data>
   <data name="AreYouSureDeletePhoto" xml:space="preserve">
     <value>¿Quieres eliminar esta foto?</value>
-  </data>
-  <data name="AreYouSureDeletePhotoTitle" xml:space="preserve">
-    <value>Eliminar foto</value>
   </data>
   <data name="AreYouSureDeleteSingleMessage" xml:space="preserve">
     <value>¿Quieres eliminar este mensaje?</value>
@@ -1002,9 +984,6 @@ chats archivados en la parte superior.</value>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>¿Quieres eliminar este video?</value>
   </data>
-  <data name="AreYouSureDeleteVideoTitle" xml:space="preserve">
-    <value>Eliminar video</value>
-  </data>
   <data name="AreYouSureLogout" xml:space="preserve">
     <value>¿Quieres cerrar sesión?
 
@@ -1023,12 +1002,6 @@ Recuerda, cerrar sesión desactiva los chats secretos.</value>
   </data>
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>¿Quieres terminar todas las otras sesiones?</value>
-  </data>
-  <data name="AreYouSureSessionsTitle" xml:space="preserve">
-    <value>Cerrar sesiones</value>
-  </data>
-  <data name="AreYouSureSessionTitle" xml:space="preserve">
-    <value>Cerrar sesión</value>
   </data>
   <data name="AreYouSureShareMyContactInfo" xml:space="preserve">
     <value>¿Quieres compartir tu número de teléfono?</value>
@@ -1240,7 +1213,7 @@ Por favor, mira las <![CDATA[<a href="https://telegram.org/faq/es#general">Pregu
     <value>Fotos</value>
   </data>
   <data name="AutoDownloadPhotosTitle" xml:space="preserve">
-    <value>Autodescarga de fotos</value>
+    <value>Autodescargar fotos</value>
   </data>
   <data name="AutoDownloadPm" xml:space="preserve">
     <value>MP</value>
@@ -1444,7 +1417,7 @@ Amanecer: {1}</value>
     <value>Negro</value>
   </data>
   <data name="BlockContact" xml:space="preserve">
-    <value>Bloquear</value>
+    <value>Bloquear usuario</value>
   </data>
   <data name="BlockedEmpty" xml:space="preserve">
     <value>Ninguno</value>
@@ -1561,7 +1534,7 @@ Amanecer: {1}</value>
     <value>Bytes enviados</value>
   </data>
   <data name="CacheClear" xml:space="preserve">
-    <value>Borrar</value>
+    <value>Eliminar</value>
   </data>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Vacía</value>
@@ -1651,9 +1624,6 @@ Si no fuiste tú, por favor, inserta el código que enviamos por SMS a tu númer
   </data>
   <data name="CancelEmailQuestion" xml:space="preserve">
     <value>¿Quieres cancelar la configuración del correo de recuperación?</value>
-  </data>
-  <data name="CancelEmailQuestionTitle" xml:space="preserve">
-    <value>Cancelar configuración</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>El enlace no es válido o expiró.</value>
@@ -1968,9 +1938,6 @@ Nota: Si olvidas el código, tendrás que eliminar y reinstalar la app. Perderá
 
 Si no te interesa, te sugerimos crear un canal privado.</value>
   </data>
-  <data name="ChannelPublicEmptyUsernameTitle" xml:space="preserve">
-    <value>Elige un enlace</value>
-  </data>
   <data name="ChannelPublicInfo" xml:space="preserve">
     <value>Cualquiera puede unirse a los canales públicos, tras encontrarlos en la búsqueda.</value>
   </data>
@@ -2031,9 +1998,6 @@ Si no te interesa, te sugerimos crear un canal privado.</value>
   <data name="ChannelTooMuchJoin" xml:space="preserve">
     <value>Lo sentimos, eres miembro de demasiados grupos y canales. Por favor, sal de algunos antes de unirte.</value>
   </data>
-  <data name="ChannelTooMuchTitle" xml:space="preserve">
-    <value>Demasiadas comunidades</value>
-  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Tipo de canal</value>
   </data>
@@ -2086,7 +2050,7 @@ La longitud mínima es de 5 caracteres.</value>
     <value>d 'de' MMMM</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
-    <value>Chat eliminado</value>
+    <value>Chat eliminado.</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>Archivo</value>
@@ -2332,13 +2296,13 @@ La longitud mínima es de 5 caracteres.</value>
     <value>Abrir enlaces externos en la app</value>
   </data>
   <data name="ClearButton" xml:space="preserve">
-    <value>Borrar</value>
+    <value>Eliminar</value>
   </data>
   <data name="ClearCache" xml:space="preserve">
-    <value>Borrar la caché</value>
+    <value>Eliminar la caché</value>
   </data>
   <data name="ClearCacheFewChatsTitle" xml:space="preserve">
-    <value>Vaciar la caché para {0}</value>
+    <value>Caché vacía para {0}</value>
   </data>
   <data name="ClearCacheInfo" xml:space="preserve">
     <value>Libera espacio en tu dispositivo; tu multimedia permanecerá en la nube.</value>
@@ -2350,13 +2314,13 @@ La longitud mínima es de 5 caracteres.</value>
     <value>Vaciar chat</value>
   </data>
   <data name="ClearHistoryCache" xml:space="preserve">
-    <value>Borrar de la caché</value>
+    <value>Eliminar de la caché</value>
   </data>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>Vaciar también para {0}</value>
   </data>
   <data name="ClearMediaCache" xml:space="preserve">
-    <value>Borrar caché</value>
+    <value>Eliminar caché</value>
   </data>
   <data name="ClearOtherSessionsHelp" xml:space="preserve">
     <value>Salir de todos los dispositivos, excepto este.</value>
@@ -2365,13 +2329,13 @@ La longitud mínima es de 5 caracteres.</value>
     <value>Puedes iniciar sesión en sitios web que permitan registrarse con Telegram.</value>
   </data>
   <data name="ClearRecentEmoji" xml:space="preserve">
-    <value>¿Borrar los emojis recientes?</value>
+    <value>¿Eliminar los emojis recientes?</value>
   </data>
   <data name="ClearSearch" xml:space="preserve">
-    <value>¿Quieres borrar el historial de búsqueda?</value>
+    <value>¿Quieres eliminar el historial de búsqueda?</value>
   </data>
   <data name="ClearSearchAlert" xml:space="preserve">
-    <value>¿Quieres borrar tu historial de búsqueda?</value>
+    <value>¿Quieres eliminar tu historial de búsqueda?</value>
   </data>
   <data name="ClearSearchAlertTitle" xml:space="preserve">
     <value>Historial de búsqueda</value>
@@ -2473,9 +2437,6 @@ Cuando {1} actualice Telegram, las fotos con autodestrucción de 1 minuto o meno
   </data>
   <data name="ContactNotRegistered" xml:space="preserve">
     <value>{0} aún no está en Telegram. ¿Quieres enviarle una invitación?</value>
-  </data>
-  <data name="ContactNotRegisteredTitle" xml:space="preserve">
-    <value>Invitar a Telegram</value>
   </data>
   <data name="Contacts" xml:space="preserve">
     <value>Contactos</value>
@@ -2697,7 +2658,7 @@ Siempre puedes volver al tema por defecto de Telegram aquí.</value>
     <value>Ajustes de llamadas</value>
   </data>
   <data name="DebugMenuClearMediaCache" xml:space="preserve">
-    <value>Borrar caché de multimedia enviada</value>
+    <value>Eliminar caché de multimedia enviada</value>
   </data>
   <data name="DebugMenuDisableCamera" xml:space="preserve">
     <value>Desactivar cámara interna</value>
@@ -2777,24 +2738,6 @@ Siempre puedes volver al tema por defecto de Telegram aquí.</value>
   <data name="DeleteAndStop" xml:space="preserve">
     <value>Eliminar y detener</value>
   </data>
-  <data name="DeleteBackgroundFew" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteBackgroundMany" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteBackgroundOne" xml:space="preserve">
-    <value>Eliminar fondo</value>
-  </data>
-  <data name="DeleteBackgroundOther" xml:space="preserve">
-    <value>Eliminar {0} fondos</value>
-  </data>
-  <data name="DeleteBackgroundTwo" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteBackgroundZero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="DeleteBanUser" xml:space="preserve">
     <value>Suspender usuario</value>
   </data>
@@ -2827,12 +2770,6 @@ Siempre puedes volver al tema por defecto de Telegram aquí.</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>¿Eliminar traducción?</value>
-  </data>
-  <data name="DeleteLocalizationText" xml:space="preserve">
-    <value>¿Quieres eliminar el pack de idioma **{0}**?</value>
-  </data>
-  <data name="DeleteLocalizationTitle" xml:space="preserve">
-    <value>Eliminar pack de idioma</value>
   </data>
   <data name="DeleteMega" xml:space="preserve">
     <value>Eliminar grupo</value>
@@ -2873,9 +2810,6 @@ Siempre puedes volver al tema por defecto de Telegram aquí.</value>
   <data name="DeleteThemeAlert" xml:space="preserve">
     <value>¿Quieres eliminar este tema?</value>
   </data>
-  <data name="DeleteThemeTitle" xml:space="preserve">
-    <value>Eliminar tema</value>
-  </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>Eliminar este chat</value>
   </data>
@@ -2903,9 +2837,6 @@ Siempre puedes volver al tema por defecto de Telegram aquí.</value>
   <data name="DirectShareInfo" xml:space="preserve">
     <value>Ver chats recientes al compartir en Android</value>
   </data>
-  <data name="Disable" xml:space="preserve">
-    <value>Desactivar</value>
-  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>GIF secreto</value>
   </data>
@@ -2932,9 +2863,6 @@ Siempre puedes volver al tema por defecto de Telegram aquí.</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>Descartar mensaje de voz</value>
-  </data>
-  <data name="Disconnect" xml:space="preserve">
-    <value>Desconectar</value>
   </data>
   <data name="DiscussChannel" xml:space="preserve">
     <value>canal</value>
@@ -4140,12 +4068,6 @@ sobre Telegram?</value>
   <data name="GpsDisabledAlert" xml:space="preserve">
     <value>Tu GPS parece estar desactivado. Por favor, actívalo para acceder a las características de ubicación.</value>
   </data>
-  <data name="GpsDisabledAlertText" xml:space="preserve">
-    <value>Por favor, activa tu GPS para acceder a las características de ubicación.</value>
-  </data>
-  <data name="GpsDisabledAlertTitle" xml:space="preserve">
-    <value>Activar GPS</value>
-  </data>
   <data name="Grain" xml:space="preserve">
     <value>Grano</value>
   </data>
@@ -4267,9 +4189,6 @@ Ten en cuenta que se puede unir al grupo con un enlace de invitación si no est�
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>Cuenta eliminada</value>
-  </data>
-  <data name="HideAboveTheList" xml:space="preserve">
-    <value>Ocultar encima de la lista</value>
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Ocultar</value>
@@ -4724,18 +4643,12 @@ Este enlace sólo funcionará para miembros de este chat.</value>
     <value>Base de datos local</value>
   </data>
   <data name="LocalDatabaseClear" xml:space="preserve">
-    <value>¿Borrar los mensajes de texto en caché?</value>
-  </data>
-  <data name="LocalDatabaseClearText" xml:space="preserve">
-    <value>¿Quieres borrar los mensajes de texto en caché?</value>
-  </data>
-  <data name="LocalDatabaseClearTextTitle" xml:space="preserve">
-    <value>Borrar base de datos local</value>
+    <value>¿Eliminar de la caché los mensajes de texto?</value>
   </data>
   <data name="LocalDatabaseInfo" xml:space="preserve">
-    <value>Vaciar la base de datos borrará los mensajes en caché y comprimirá la base de datos para liberar espacio de almacenamiento. Telegram requiere algunos datos para funcionar, así que la base de datos nunca podrá llegar a cero.
+    <value>Al eliminar la base de datos se eliminarán los mensajes en la caché y se comprimirá la base de datos para liberar espacio de almacenamiento. Telegram requiere algunos datos para funcionar, así que la base de datos nunca podrá llegar a cero.
 
-Esta operación puede tomar unos minutos.</value>
+Esto puede tomar unos minutos.</value>
   </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Archivos</value>
@@ -4836,17 +4749,11 @@ Esta operación puede tomar unos minutos.</value>
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>Telegram</value>
   </data>
-  <data name="MapPreviewProviderTitle" xml:space="preserve">
-    <value>Proveedor de vista previa de mapas</value>
-  </data>
   <data name="MapPreviewProviderYandex" xml:space="preserve">
     <value>Yandex</value>
   </data>
   <data name="March" xml:space="preserve">
     <value>Marzo</value>
-  </data>
-  <data name="MarkAllAsRead" xml:space="preserve">
-    <value>Marcar todo como leído</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>Marcar como leído</value>
@@ -5288,18 +5195,6 @@ La longitud mínima es de 5 caracteres.</value>
   </data>
   <data name="NoAudio" xml:space="preserve">
     <value>Por favor, añade archivos a la carpeta de música en tu dispositivo para verlos aquí.</value>
-  </data>
-  <data name="NoAudioFiles" xml:space="preserve">
-    <value>Sin archivos de audio</value>
-  </data>
-  <data name="NoAudioFilesInfo" xml:space="preserve">
-    <value>Tu carpeta de música está vacía.</value>
-  </data>
-  <data name="NoAudioFound" xml:space="preserve">
-    <value>No se encontraron resultados</value>
-  </data>
-  <data name="NoAudioFoundInfo" xml:space="preserve">
-    <value>No hay coincidencias con **{0}** en tu carpeta de música.</value>
   </data>
   <data name="NoBlocked" xml:space="preserve">
     <value>No hay usuarios bloqueados</value>
@@ -7063,9 +6958,6 @@ Por favor, activa los servicios de ubicación para usar esta característica.</v
   <data name="Ping" xml:space="preserve">
     <value>Ping: {0} ms</value>
   </data>
-  <data name="PinInTheList" xml:space="preserve">
-    <value>Anclar en la lista</value>
-  </data>
   <data name="Pink" xml:space="preserve">
     <value>Rosa</value>
   </data>
@@ -7242,12 +7134,6 @@ Por favor, activa los servicios de ubicación para usar esta característica.</v
   </data>
   <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
     <value>¿Quieres eliminar tu información de envío y forzar a todos los proveedores de pago a eliminar tus tarjetas de crédito guardadas? Telegram nunca almacena tus datos de tarjetas de crédito.</value>
-  </data>
-  <data name="PrivacyPaymentsClearAlertText" xml:space="preserve">
-    <value>¿Quieres eliminar tu información de pago y envío?</value>
-  </data>
-  <data name="PrivacyPaymentsClearAlertTitle" xml:space="preserve">
-    <value>Eliminar información de pago</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>Puedes eliminar tu información de envío y forzar a todos los proveedores de pago a eliminar tus tarjetas de crédito guardadas. Telegram nunca almacena tus datos de tarjetas de crédito.</value>
@@ -7613,10 +7499,7 @@ Puedes cancelar el proceso en cualquier momento.</value>
 Si restableces tu cuenta, todos tus mensajes y chats se eliminarán.</value>
   </data>
   <data name="ResetNotificationsAlert" xml:space="preserve">
-    <value>¿Quieres restablecer todos los ajustes de notificaciones a los valores por defecto?</value>
-  </data>
-  <data name="ResetNotificationsAlertTitle" xml:space="preserve">
-    <value>Restablecer todas las notificaciones</value>
+    <value>¿Quieres restablecer todos los ajustes de notificaciones?</value>
   </data>
   <data name="ResetNotificationsText" xml:space="preserve">
     <value>Todos los ajustes de notificaciones fueron restablecidos a los valores por defecto</value>
@@ -7637,9 +7520,6 @@ Si restableces tu cuenta, todos tus mensajes y chats se eliminarán.</value>
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
     <value>Por favor, revisa tu correo y pon el código de 6 dígitos que te enviamos.</value>
-  </data>
-  <data name="RestoreEmailSentTitle" xml:space="preserve">
-    <value>Código de recuperación</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>¿Tienes problemas para acceder a tu correo {0}?</value>
@@ -7902,12 +7782,6 @@ Tendrás que reiniciar la app para que esto surta efecto.</value>
   <data name="SendContactToGroup" xml:space="preserve">
     <value>¿Enviar contacto a {0}?</value>
   </data>
-  <data name="SendContactToGroupText" xml:space="preserve">
-    <value>¿Quieres enviar este contacto a **{0}**?</value>
-  </data>
-  <data name="SendContactToText" xml:space="preserve">
-    <value>¿Quieres enviar este contacto a **{0}**?</value>
-  </data>
   <data name="SendDayAt" xml:space="preserve">
     <value>'Enviar el' d 'de' MMM 'a las' HH:mm</value>
   </data>
@@ -7919,12 +7793,6 @@ Tendrás que reiniciar la app para que esto surta efecto.</value>
   </data>
   <data name="SendGameToGroup" xml:space="preserve">
     <value>¿Compartir el juego en {0}?</value>
-  </data>
-  <data name="SendGameToGroupText" xml:space="preserve">
-    <value>¿Quieres compartir este juego en **{0}**?</value>
-  </data>
-  <data name="SendGameToText" xml:space="preserve">
-    <value>¿Quieres compartir este juego con **{0}**?</value>
   </data>
   <data name="SendGifPreview" xml:space="preserve">
     <value>Enviar GIF</value>
@@ -7985,15 +7853,6 @@ Tendrás que reiniciar la app para que esto surta efecto.</value>
   </data>
   <data name="SendMessagesToGroup" xml:space="preserve">
     <value>¿Enviar mensajes a {0}?</value>
-  </data>
-  <data name="SendMessagesToGroupText" xml:space="preserve">
-    <value>¿Quieres enviar este mensaje a **{0}**?</value>
-  </data>
-  <data name="SendMessagesToText" xml:space="preserve">
-    <value>¿Quieres enviar este mensaje a **{0}**?</value>
-  </data>
-  <data name="SendMessageTitle" xml:space="preserve">
-    <value>Enviar mensaje</value>
   </data>
   <data name="SendMessageTo" xml:space="preserve">
     <value>Añadir personas...</value>
@@ -8429,23 +8288,11 @@ El modo lento está activado. No puedes enviar más de un mensaje a la vez.</val
   <data name="StopLiveLocationAlertAll" xml:space="preserve">
     <value>¿Quieres dejar de enviar tu ubicación en tiempo real?</value>
   </data>
-  <data name="StopLiveLocationAlertAllText" xml:space="preserve">
-    <value>¿Quieres dejar de compartir tu ubicación en tiempo real?</value>
-  </data>
   <data name="StopLiveLocationAlertToGroup" xml:space="preserve">
     <value>¿Quieres dejar de enviar la ubicación en tiempo real a {0}?</value>
   </data>
-  <data name="StopLiveLocationAlertToGroupText" xml:space="preserve">
-    <value>¿Quieres dejar de compartir tu ubicación en tiempo real con **{0}**?</value>
-  </data>
-  <data name="StopLiveLocationAlertToTitle" xml:space="preserve">
-    <value>Dejar de compartir ubicación</value>
-  </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>¿Quieres dejar de enviar la ubicación en tiempo real a {0}?</value>
-  </data>
-  <data name="StopLiveLocationAlertToUserText" xml:space="preserve">
-    <value>¿Quieres dejar de compartir tu ubicación en tiempo real con **{0}**?</value>
   </data>
   <data name="StopLoading" xml:space="preserve">
     <value>¿Detener la carga?</value>
@@ -8498,9 +8345,6 @@ El modo lento está activado. No puedes enviar más de un mensaje a la vez.</val
   <data name="SuggestContactsInfo" xml:space="preserve">
     <value>Muestra a las personas con las que te comunicas frecuentemente en la parte de arriba de la sección de búsqueda para un acceso rápido.</value>
   </data>
-  <data name="SuggestContactsTitle" xml:space="preserve">
-    <value>Desactivar sugerencias</value>
-  </data>
   <data name="SuggestStickers" xml:space="preserve">
     <value>Sugerir stickers por emoji</value>
   </data>
@@ -8530,14 +8374,6 @@ El modo lento está activado. No puedes enviar más de un mensaje a la vez.</val
   </data>
   <data name="SyncContactsDeleteInfo" xml:space="preserve">
     <value>Esto eliminará tus contactos de los servidores de Telegram. Si “Sincronizar contactos” está activado, los contactos se volverán a sincronizar.</value>
-  </data>
-  <data name="SyncContactsDeleteText" xml:space="preserve">
-    <value>Esto eliminará tus contactos de los servidores de Telegram.
-
-Si “**Sincronizar contactos**” está activado, los contactos se sincronizarán otra vez.</value>
-  </data>
-  <data name="SyncContactsDeleteTitle" xml:space="preserve">
-    <value>Eliminar contactos</value>
   </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
     <value>Activa esta opción para sincronizar continuamente los contactos de este dispositivo con tu cuenta.</value>
@@ -8613,14 +8449,8 @@ Esta contraseña también será requerida cuando inicies sesión en Telegram en 
   <data name="TelegramPassportDeleteAlert" xml:space="preserve">
     <value>¿Quieres eliminar tu Telegram Passport?</value>
   </data>
-  <data name="TelegramPassportDeleteTitle" xml:space="preserve">
-    <value>Eliminar Telegram Passport</value>
-  </data>
   <data name="TelegramVersion" xml:space="preserve">
     <value>Telegram para Android {0}</value>
-  </data>
-  <data name="Terminate" xml:space="preserve">
-    <value>Cerrar</value>
   </data>
   <data name="TerminateAllSessions" xml:space="preserve">
     <value>Cerrar todas las otras sesiones</value>
@@ -8634,26 +8464,14 @@ Esta contraseña también será requerida cuando inicies sesión en Telegram en 
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>¿Cerrar esta sesión?</value>
   </data>
-  <data name="TerminateSessionText" xml:space="preserve">
-    <value>¿Quieres cerrar esta sesión?</value>
-  </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
     <value>Toca para desconectar de tu cuenta de Telegram.</value>
   </data>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>¿Desconectar {0}?</value>
   </data>
-  <data name="TerminateWebSessionsTitle" xml:space="preserve">
-    <value>Desconectar sitios web</value>
-  </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Bloquear {0}</value>
-  </data>
-  <data name="TerminateWebSessionText" xml:space="preserve">
-    <value>¿Quieres desconectar {0}?</value>
-  </data>
-  <data name="TerminateWebSessionTitle" xml:space="preserve">
-    <value>Desconectar sitio web</value>
   </data>
   <data name="TermsOfService" xml:space="preserve">
     <value>Términos de servicio</value>
@@ -8902,9 +8720,6 @@ Pero si no estás de acuerdo con las modestas necesidades de Telegram, no podrem
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>¿Quieres desactivar tu contraseña?</value>
   </data>
-  <data name="TurnPasswordOffQuestionTitle" xml:space="preserve">
-    <value>Desactivar contraseña</value>
-  </data>
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Verificación en dos pasos</value>
   </data>
@@ -8963,7 +8778,7 @@ Pero si no estás de acuerdo con las modestas necesidades de Telegram, no podrem
     <value>ANULAR</value>
   </data>
   <data name="UndoAllCustom" xml:space="preserve">
-    <value>Deshace todos los ajustes personalizados de notificaciones para todos tus contactos, grupos y canales.</value>
+    <value>Deshace todos los ajustes de notificaciones personalizadas para todos tus contactos, grupos y canales.</value>
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Anclar</value>

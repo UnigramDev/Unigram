@@ -284,13 +284,13 @@ namespace Unigram.Services.Factories
             {
                 if (copyChunk.Count > 1 && copyAlbumId != 0)
                 {
-                    await _protoService.SendAsync(new SendMessageAlbum(chatId, 0, false, false, copyChunk));
+                    await _protoService.SendAsync(new SendMessageAlbum(chatId, 0, new SendMessageOptions(false, false, null), copyChunk));
                 }
                 else if (copyChunk.Count > 0)
                 {
                     foreach (var input in copyChunk)
                     {
-                        await _protoService.SendAsync(new SendMessage(chatId, 0, false, false, null, input));
+                        await _protoService.SendAsync(new SendMessage(chatId, 0, new SendMessageOptions(false, false, null), null, input));
                     }
                 }
 
@@ -302,7 +302,7 @@ namespace Unigram.Services.Factories
             {
                 if (chunk.Count > 0)
                 {
-                    await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk, false, false, albumId != 0, false, false));
+                    await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk, new SendMessageOptions(false, false, null), albumId != 0, false, false));
                 }
 
                 albumId = 0L;

@@ -56,7 +56,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatPage : Page, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
+    public partial class ChatPage : Page, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -97,7 +97,7 @@ namespace Unigram.Views
             {
                 _viewModel = ViewModel;
             };
-            DataContext = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
+            DataContext = GetViewModel();
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             NavigationCacheMode = NavigationCacheMode.Required;
@@ -253,6 +253,11 @@ namespace Unigram.Views
                     }
                 };
             }
+        }
+
+        protected virtual DialogViewModel GetViewModel()
+        {
+            return TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
         }
 
         private void InitializeAutomation()
@@ -465,7 +470,9 @@ namespace Unigram.Views
             _stickersPanel.Clip.StartAnimation("TopInset", clip);
         }
 
+#pragma warning disable CA1063 // Implement IDisposable Correctly
         public void Dispose()
+#pragma warning restore CA1063 // Implement IDisposable Correctly
         {
             if (ViewModel != null)
             {
@@ -478,7 +485,7 @@ namespace Unigram.Views
                 ViewModel.Dispose();
             }
 
-            DataContext = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
+            DataContext = GetViewModel();
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -1145,27 +1152,34 @@ namespace Unigram.Views
 
             if (editing && editing != _oldEditing || empty != _oldEmpty)
             {
+                var scheduled = ElementCompositionPreview.GetElementVisual(btnScheduled);
                 var commands = ElementCompositionPreview.GetElementVisual(btnCommands);
                 var markup = ElementCompositionPreview.GetElementVisual(btnMarkup);
 
+                scheduled.CenterPoint = new Vector3(24);
                 commands.CenterPoint = new Vector3(24);
                 markup.CenterPoint = new Vector3(24);
 
                 var show = empty && !editing;
                 if (show)
                 {
+                    btnScheduled.Visibility = Visibility.Visible;
                     btnCommands.Visibility = Visibility.Visible;
                     btnMarkup.Visibility = Visibility.Visible;
 
                     batch = commands.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
+                        btnScheduled.Visibility = Visibility.Visible;
                         btnCommands.Visibility = Visibility.Visible;
                         btnMarkup.Visibility = Visibility.Visible;
 
-                        commands.Scale = markup.Scale = new Vector3(1);
-                        commands.Opacity = markup.Opacity = 1;
+                        scheduled.Scale = commands.Scale = markup.Scale = new Vector3(1);
+                        scheduled.Opacity = commands.Opacity = markup.Opacity = 1;
                     };
+
+                    scheduled.StartAnimation("Scale", show1);
+                    scheduled.StartAnimation("Opacity", show2);
 
                     commands.StartAnimation("Scale", show1);
                     commands.StartAnimation("Opacity", show2);
@@ -1180,12 +1194,16 @@ namespace Unigram.Views
                     batch = commands.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
+                        btnScheduled.Visibility = Visibility.Collapsed;
                         btnCommands.Visibility = Visibility.Collapsed;
                         btnMarkup.Visibility = Visibility.Collapsed;
 
-                        commands.Scale = markup.Scale = new Vector3(1);
-                        commands.Opacity = markup.Opacity = 1;
+                        scheduled.Scale = commands.Scale = markup.Scale = new Vector3(1);
+                        scheduled.Opacity = commands.Opacity = markup.Opacity = 1;
                     };
+
+                    scheduled.StartAnimation("Scale", hide1);
+                    scheduled.StartAnimation("Opacity", hide2);
 
                     commands.StartAnimation("Scale", hide1);
                     commands.StartAnimation("Opacity", hide2);
@@ -1194,45 +1212,6 @@ namespace Unigram.Views
                     markup.StartAnimation("Opacity", hide2);
 
                     batch.End();
-                }
-            }
-
-            _oldEmpty = empty;
-            _oldEditing = editing;
-
-            return;
-
-            if (editing != _oldEditing)
-            {
-                var target = _oldEmpty ? ButtonRecord : (FrameworkElement)btnSendMessage;
-                var targetVisual = ElementCompositionPreview.GetElementVisual(target);
-                var editVisual = ElementCompositionPreview.GetElementVisual(btnEdit);
-
-                visualHide = editing ? targetVisual : editVisual;
-                visualShow = editing ? editVisual : targetVisual;
-            }
-            else
-            {
-                if (empty && empty != _oldEmpty || editing && editing != _oldEditing)
-                {
-                    btnSendMessage.Visibility = empty || editing ? Visibility.Collapsed : Visibility.Visible;
-                    btnEdit.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
-                    btnCommands.Visibility = Visibility.Visible;
-                    btnMarkup.Visibility = Visibility.Visible;
-                    btnVoiceMessage.Visibility = Visibility.Visible;
-
-                    if (ViewModel != null)
-                    {
-                        ViewModel.DisableWebPagePreview = false;
-                    }
-                }
-                else
-                {
-                    btnSendMessage.Visibility = Visibility.Visible;
-                    btnEdit.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
-                    btnCommands.Visibility = Visibility.Collapsed;
-                    btnMarkup.Visibility = Visibility.Collapsed;
-                    btnVoiceMessage.Visibility = Visibility.Collapsed;
                 }
             }
 
@@ -1835,8 +1814,22 @@ namespace Unigram.Views
 
         private void Send_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ViewModel.IsSchedule)
+            {
+                return;
+            }
+
+            var self = ViewModel.CacheService.IsSavedMessages(chat);
+
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
+            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.ScheduleAsync()), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
             {
@@ -1931,6 +1924,10 @@ namespace Unigram.Views
             }
             else
             {
+                // Scheduled
+                flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.MessageSendNowCommand, message, Strings.Resources.MessageScheduleSend, new FontIcon { Glyph = Icons.Send, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
+                flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.MessageRescheduleCommand, message, Strings.Resources.MessageScheduleEditTime, new FontIcon { Glyph = Icons.Schedule });
+                
                 // Generic
                 flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });
                 flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
@@ -2002,16 +1999,22 @@ namespace Unigram.Views
             args.ShowAt(flyout, sender as FrameworkElement);
         }
 
+        private bool MessageSendNow_Loaded(MessageViewModel message)
+        {
+            return message.SchedulingState != null;
+        }
+
+        private bool MessageReschedule_Loaded(MessageViewModel message)
+        {
+            return message.SchedulingState != null;
+        }
+
         private bool MessageReply_Loaded(MessageViewModel message)
         {
-            //var channel = ViewModel.With as TLChannel;
-            //if (channel != null && channel.MigratedFromChatId != null)
-            //{
-            //    if (messageCommon.ToId is TLPeerChat)
-            //    {
-            //        element.Visibility = messageCommon.ToId.Id == channel.MigratedFromChatId ? Visibility.Collapsed : Visibility.Visible;
-            //    }
-            //}
+            if (message.SchedulingState != null)
+            {
+                return false;
+            }
 
             var chat = message.GetChat();
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
@@ -2032,7 +2035,7 @@ namespace Unigram.Views
 
         private bool MessagePin_Loaded(MessageViewModel message)
         {
-            if (message.IsService())
+            if (message.SchedulingState != null && message.IsService())
             {
                 return false;
             }
@@ -3062,6 +3065,7 @@ namespace Unigram.Views
 
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
 
+            ButtonScheduled.Visibility = chat.HasScheduledMessages && !ViewModel.IsSchedule ? Visibility.Visible : Visibility.Collapsed;
             ButtonTimer.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.IsChecked = chat.DefaultDisableNotification;
@@ -3081,12 +3085,24 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ViewModel.CacheService.GetTitle(chat);
+            if (ViewModel.IsSchedule)
+            {
+                Title.Text = ViewModel.CacheService.IsSavedMessages(chat) ? Strings.Resources.Reminders : Strings.Resources.ScheduledMessages;
+            }
+            else
+            {
+                Title.Text = ViewModel.CacheService.GetTitle(chat);
+            }
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
             Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width);
+        }
+
+        public void UpdateChatHasScheduledMessages(Chat chat)
+        {
+            ButtonScheduled.Visibility = chat.HasScheduledMessages && !ViewModel.IsSchedule ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateChatActionBar(Chat chat)
@@ -3572,6 +3588,10 @@ namespace Unigram.Views
         public void UpdateUserStatus(Chat chat, User user)
         {
             if (ViewModel.CacheService.IsSavedMessages(user))
+            {
+                ViewModel.LastSeen = null;
+            }
+            else if (ViewModel.IsSchedule)
             {
                 ViewModel.LastSeen = null;
             }

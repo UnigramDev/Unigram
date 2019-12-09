@@ -1988,7 +1988,7 @@
     <value>채널 종류</value>
   </data>
   <data name="ChannelUnmute" xml:space="preserve">
-    <value>음소거 해제</value>
+    <value>음소거 취소</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
     <value>죄송합니다. 처음 200명까지만 채널에 추가하실 수 있습니다. 채널 링크로는 사람들을 무한정 들이실 수 있는 점 알아두세요.</value>
@@ -6141,7 +6141,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>이메일 주소를 입력하세요</value>
   </data>
   <data name="PassportEmailUploadInfo" xml:space="preserve">
-    <value>참고: 입력하신 이메일 주소로 인증 코드를 보내 드립니다.</value>
+    <value>참고: 제공하신 이메일 주소로 인증 코드를 보내 드립니다.</value>
   </data>
   <data name="PassportEmailVerifyInfo" xml:space="preserve">
     <value>방금 {0}(으)로 받은 인증 코드를 입력해 주세요.</value>

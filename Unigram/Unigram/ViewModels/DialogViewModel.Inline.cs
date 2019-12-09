@@ -172,6 +172,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var options = await PickSendMessageOptionsAsync();
+            if (options == null)
+            {
+                return;
+            }
+
             //var channel = With as TLChannel;
             //if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGames && result.Type.Equals("game", StringComparison.OrdinalIgnoreCase))
             //{
@@ -194,7 +200,7 @@ namespace Unigram.ViewModels
 
             var reply = GetReply(true);
 
-            var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, reply, false, false, queryId, queryResult.GetId(), false));
+            var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, reply, options, queryId, queryResult.GetId(), false));
         }
 
         private User GetBot(MessageViewModel message)

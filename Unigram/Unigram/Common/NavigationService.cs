@@ -148,111 +148,20 @@ namespace Unigram.Common
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
+        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chat, message, accessToken, state);
+                serviceEx.NavigateToChat(chat, message, accessToken, state, scheduled);
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
+        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chatId, message, accessToken, state);
+                serviceEx.NavigateToChat(chatId, message, accessToken, state, scheduled);
             }
-
-            //if (with == null)
-            //{
-            //    return;
-            //}
-
-            //if (with is TLUser user && user.IsRestricted)
-            //{
-            //    var reason = user.ExtractRestrictionReason();
-            //    if (reason != null)
-            //    {
-            //        await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
-            //        return;
-            //    }
-            //}
-
-            //if (with is TLChannel channel)
-            //{
-            //    if (channel.IsRestricted)
-            //    {
-            //        var reason = channel.ExtractRestrictionReason();
-            //        if (reason != null)
-            //        {
-            //            await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
-            //            return;
-            //        }
-            //    }
-            //    else if ((channel.IsLeft) && !channel.HasUsername)
-            //    {
-            //        return;
-            //    }
-            //}
-
-            //var peer = with.ToPeer();
-            //if (service.CurrentPageType == typeof(DialogPage) && peer.Equals(service.CurrentPageParam))
-            //{
-            //    if (service.Frame.Content is DialogPage page && page.ViewModel != null)
-            //    {
-            //        if (message.HasValue)
-            //        {
-            //            await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
-            //        }
-
-            //        if (accessToken != null)
-            //        {
-            //            page.ViewModel.AccessToken = accessToken;
-            //        }
-
-            //        if (App.InMemoryState.ForwardMessages != null)
-            //        {
-            //            //page.ViewModel.Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
-            //        }
-
-            //        if (App.InMemoryState.SwitchInline != null)
-            //        {
-            //            var switchInlineButton = App.InMemoryState.SwitchInline;
-            //            var bot = App.InMemoryState.SwitchInlineBot;
-
-            //            page.ViewModel.SetText(string.Format("@{0} {1}", bot.Username, switchInlineButton.Query), focus: true);
-            //            page.ViewModel.ResolveInlineBot(bot.Username, switchInlineButton.Query);
-
-            //            App.InMemoryState.SwitchInline = null;
-            //            App.InMemoryState.SwitchInlineBot = null;
-            //        }
-            //        else if (App.InMemoryState.SendMessage != null)
-            //        {
-            //            var text = App.InMemoryState.SendMessage;
-            //            var hasUrl = App.InMemoryState.SendMessageUrl;
-
-            //            page.ViewModel.SetText(text);
-
-            //            if (hasUrl)
-            //            {
-            //                page.ViewModel.SetSelection(text.IndexOf('\n') + 1);
-            //            }
-
-            //            App.InMemoryState.SendMessage = null;
-            //            App.InMemoryState.SendMessageUrl = false;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        service.Refresh(TLSerializationService.Current.Serialize(peer));
-            //    }
-            //}
-            //else
-            //{
-            //    App.InMemoryState.NavigateToMessage = message;
-            //    App.InMemoryState.NavigateToAccessToken = accessToken;
-            //    service.Navigate(typeof(DialogPage), peer);
-            //}
         }
 
         public static void NavigateToMain(this INavigationService service, string parameter)

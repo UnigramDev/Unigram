@@ -165,6 +165,7 @@ namespace Unigram.ViewModels
             ActionCommand = new RelayCommand(ActionExecute);
             DiscussCommand = new RelayCommand(DiscussExecute);
             OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
+            ScheduledCommand = new RelayCommand(ScheduledExecute);
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
@@ -198,6 +199,8 @@ namespace Unigram.ViewModels
             MessageServiceCommand = new RelayCommand<MessageViewModel>(MessageServiceExecute);
             MessageUnvotePollCommand = new RelayCommand<MessageViewModel>(MessageUnvotePollExecute);
             MessageStopPollCommand = new RelayCommand<MessageViewModel>(MessageStopPollExecute);
+            MessageSendNowCommand = new RelayCommand<MessageViewModel>(MessageSendNowExecute);
+            MessageRescheduleCommand = new RelayCommand<MessageViewModel>(MessageRescheduleExecute);
 
             SendDocumentCommand = new RelayCommand(SendDocumentExecute);
             SendMediaCommand = new RelayCommand(SendMediaExecute);
@@ -293,6 +296,15 @@ namespace Unigram.ViewModels
                 Set(ref _chat, value);
             }
         }
+
+        //private bool _isSchedule;
+        //public bool IsSchedule
+        //{
+        //    get => _isSchedule;
+        //    set => Set(ref _isSchedule, value);
+        //}
+        private bool _isSchedule => IsSchedule;
+        public virtual bool IsSchedule => false;
 
         private string _lastSeen;
         public string LastSeen
@@ -624,7 +636,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_isSchedule || _isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
@@ -727,7 +739,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
+                if (_isSchedule || _isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
                 {
                     return;
                 }
@@ -845,14 +857,14 @@ namespace Unigram.ViewModels
                 var message = $"{Strings.Resources.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
                 var text = new FormattedText(message, entities);
 
-                Items.Insert(0, _messageFactory.Create(this, new Message(0, user.Id, chat.Id, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(text, null), null)));
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, user.Id, chat.Id, null, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(text, null), null)));
                 return;
             }
 
         AddDate:
             if (previous != null)
             {
-                Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null)));
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageHeaderDate(), null)));
             }
         }
 
@@ -1129,7 +1141,7 @@ namespace Unigram.ViewModels
                         {
                             if (index != -1)
                             {
-                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.ChatId, null, target.IsOutgoing, false, false, true, false, target.IsChannelPost, false, target.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderUnread(), null)));
+                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.ChatId, null, null, target.IsOutgoing, false, false, true, false, target.IsChannelPost, false, target.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageHeaderUnread(), null)));
                             }
                             else if (maxId == chat.LastReadInboxMessageId)
                             {
@@ -1178,6 +1190,62 @@ namespace Unigram.ViewModels
             }
 
             await LoadMessageSliceAsync(null, maxId, alignment, pixel, direction, disableAnimation, true);
+        }
+
+
+        public async Task LoadScheduledSliceAsync()
+        {
+            using (await _loadMoreLock.WaitAsync())
+            {
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice)
+                {
+                    return;
+                }
+
+                _isLoadingNextSlice = true;
+                _isLoadingPreviousSlice = true;
+                IsLastSliceLoaded = null;
+                IsFirstSliceLoaded = null;
+                IsLoading = true;
+
+                Debug.WriteLine("DialogViewModel: LoadScheduledSliceAsync");
+
+                var response = await ProtoService.SendAsync(new GetChatScheduledMessages(chat.Id));
+                if (response is Messages messages)
+                {
+                    _groupedMessages.Clear();
+
+                    if (messages.MessagesValue.Count > 0)
+                    {
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
+                    }
+
+                    var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => _messageFactory.Create(this, x)).ToList();
+                    await ProcessMessagesAsync(chat, replied);
+
+                    var target = replied.FirstOrDefault();
+                    if (target != null)
+                    {
+                        replied.Insert(0, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, true, false, target.IsChannelPost, false, target.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageHeaderDate(), null)));
+                    }
+
+                    Items.ReplaceWith(replied);
+
+                    IsLastSliceLoaded = true;
+                    IsFirstSliceLoaded = true;
+                }
+
+                _isLoadingNextSlice = false;
+                _isLoadingPreviousSlice = false;
+                IsLoading = false;
+            }
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -1663,7 +1731,13 @@ namespace Unigram.ViewModels
             }
 
 #pragma warning disable CS4014
-            if (state.TryGet("message_id", out long navigation))
+            if (_isSchedule)
+            {
+                Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loadings scheduled messages", chat.Id));
+
+                LoadScheduledSliceAsync();
+            }
+            else if (state.TryGet("message_id", out long navigation))
             {
                 Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from specific id", chat.Id));
 
@@ -2254,12 +2328,12 @@ namespace Unigram.ViewModels
             await SendMessageAsync(args);
         }
 
-        public Task SendMessageAsync(FormattedText formattedText, bool disableNotification = false)
+        public Task SendMessageAsync(FormattedText formattedText, SendMessageOptions options = null)
         {
-            return SendMessageAsync(formattedText.Text, formattedText.Entities, disableNotification);
+            return SendMessageAsync(formattedText.Text, formattedText.Entities, options);
         }
 
-        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, bool disableNotification = false)
+        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, SendMessageOptions options = null)
         {
             text = text.Replace('\v', '\n').Replace('\r', '\n');
 
@@ -2277,6 +2351,16 @@ namespace Unigram.ViewModels
             else
             {
                 formattedText = new FormattedText(text, entities);
+            }
+
+            if (options == null)
+            {
+                options = await PickSendMessageOptionsAsync();
+            }
+
+            if (options == null)
+            {
+                return;
             }
 
             var disablePreview = DisableWebPagePreview;
@@ -2353,13 +2437,13 @@ namespace Unigram.ViewModels
                     foreach (var split in formattedText.Split(CacheService.Options.MessageTextLengthMax))
                     {
                         var input = new InputMessageText(split, disablePreview, true);
-                        await SendMessageAsync(reply, input, disableNotification);
+                        await SendMessageAsync(reply, input, options);
                     }
                 }
                 else if (text.Length > 0)
                 {
                     var input = new InputMessageText(formattedText, disablePreview, true);
-                    await SendMessageAsync(reply, input, disableNotification);
+                    await SendMessageAsync(reply, input, options);
                 }
                 else
                 {
@@ -3057,6 +3141,22 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Scheduled messages
+
+        public RelayCommand ScheduledCommand { get; }
+        private void ScheduledExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.NavigateToChat(chat, scheduled: true);
+        }
+
+        #endregion
+
         #region Action
 
         public RelayCommand ActionCommand { get; }
@@ -3254,11 +3354,11 @@ namespace Unigram.ViewModels
         {
             if (item != null && previous != null)
             {
-                var itemDate = Utils.UnixTimestampToDateTime(item.Date);
-                var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
+                var itemDate = Utils.UnixTimestampToDateTime(GetMessageDate(item));
+                var previousDate = Utils.UnixTimestampToDateTime(GetMessageDate(previous));
                 if (previousDate.Date != itemDate.Date)
                 {
-                    var service = new MessageViewModel(previous.ProtoService, previous.PlaybackService, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageHeaderDate(), null));
+                    var service = new MessageViewModel(previous.ProtoService, previous.PlaybackService, previous.Delegate, new Message(0, previous.SenderUserId, previous.ChatId, null, previous.SchedulingState, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageHeaderDate(), null));
                     return service;
                 }
             }
@@ -3288,8 +3388,8 @@ namespace Unigram.ViewModels
         {
             if (next != null && next.Content is MessageHeaderDate && previous != null)
             {
-                var itemDate = Utils.UnixTimestampToDateTime(next.Date);
-                var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
+                var itemDate = Utils.UnixTimestampToDateTime(GetMessageDate(next));
+                var previousDate = Utils.UnixTimestampToDateTime(GetMessageDate(previous));
                 if (previousDate.Date != itemDate.Date)
                 {
                     //base.RemoveItem(index - 1);
@@ -3336,6 +3436,20 @@ namespace Unigram.ViewModels
             return hash;
         }
 
+        private static int GetMessageDate(MessageViewModel item)
+        {
+            if (item.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
+            {
+                return sendAtDate.SendDate;
+            }
+            else if (item.SchedulingState is MessageSchedulingStateSendWhenOnline)
+            {
+                return int.MinValue;
+            }
+
+            return item.Date;
+        }
+
         private static void UpdateAttach(MessageViewModel item, MessageViewModel previous, int index)
         {
             if (item == null)
@@ -3364,7 +3478,7 @@ namespace Unigram.ViewModels
                          //!(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
                          !(previous.IsService()) &&
                          AreTogether(item, previous) &&
-                         item.Date - previous.Date < 900;
+                         GetMessageDate(item) - GetMessageDate(previous) < 900;
             }
 
             item.IsFirst = !attach;

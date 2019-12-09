@@ -65,7 +65,18 @@ namespace Unigram.Controls.Messages
 
         public void ConvertDate(MessageViewModel message)
         {
-            DateLabel.Text = BindConvert.Current.Date(message.Date);
+            if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
+            {
+                DateLabel.Text = BindConvert.Current.Date(sendAtDate.SendDate);
+            }
+            else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
+            {
+                DateLabel.Text = string.Empty;
+            }
+            else
+            {
+                DateLabel.Text = BindConvert.Current.Date(message.Date);
+            }
         }
 
         public void Mockup(bool outgoing, DateTime date)
@@ -180,11 +191,27 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var dateTime = BindConvert.Current.DateTime(message.Date);
-            var date = BindConvert.Current.LongDate.Format(dateTime);
-            var time = BindConvert.Current.LongTime.Format(dateTime);
+            string text;
+            if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtTime)
+            {
+                var dateTime = BindConvert.Current.DateTime(sendAtTime.SendDate);
+                var date = BindConvert.Current.LongDate.Format(dateTime);
+                var time = BindConvert.Current.LongTime.Format(dateTime);
 
-            var text = $"{date} {time}";
+                text = $"{date} {time}";
+            }
+            else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
+            {
+                text = Strings.Resources.MessageScheduledUntilOnline;
+            }
+            else
+            {
+                var dateTime = BindConvert.Current.DateTime(message.Date);
+                var date = BindConvert.Current.LongDate.Format(dateTime);
+                var time = BindConvert.Current.LongTime.Format(dateTime);
+
+                text = $"{date} {time}";
+            }
 
             var bot = false;
             var user = message.GetSenderUser();

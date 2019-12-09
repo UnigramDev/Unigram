@@ -622,7 +622,7 @@ namespace Unigram.Services
                     var entities = Markdown.Parse(ref messageText);
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
-                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, false, true, null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
+                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, new SendMessageOptions(false, true, null), null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
                 {

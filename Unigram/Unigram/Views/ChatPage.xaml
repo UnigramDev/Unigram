@@ -1090,23 +1090,34 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Button to access scheduled messages -->
+                        <Border x:Name="btnScheduled">
+                            <controls:GlyphButton
+                                x:Name="ButtonScheduled"
+                                Glyph="&#xE81C;"
+                                Command="{x:Bind ViewModel.ScheduledCommand}"
+                                VerticalAlignment="Bottom"/>
+                        </Border>
+
                         <!-- Button to toggle silent mode, channels only -->
                         <controls:AnimatedGlyphToggleButton
                             x:Name="ButtonSilent"
                             UncheckedGlyph="&#xEA8F;"
                             CheckedGlyph="&#xE7ED;"
                             Command="{x:Bind ViewModel.ToggleSilentCommand}"
-                            VerticalAlignment="Bottom"/>
-                        
+                            VerticalAlignment="Bottom"
+                            Grid.Column="1"/>
+
                         <!-- Button to change self-destructing timer, secret chats only -->
                         <controls:GlyphButton
                             x:Name="ButtonTimer"
                             Glyph="&#xE916;"
                             Command="{x:Bind ViewModel.SetTimerCommand}"
-                            VerticalAlignment="Bottom"/>
+                            VerticalAlignment="Bottom"
+                            Grid.Column="1"/>
 
                         <!-- Button to use bot commands, bots/groups only -->
-                        <Border x:Name="btnCommands" Grid.Column="1">
+                        <Border x:Name="btnCommands" Grid.Column="2">
                             <controls:GlyphButton
                                 x:Name="ButtonCommands"
                                 Click="Commands_Click"
@@ -1121,7 +1132,7 @@
                         </Border>
 
                         <!-- Button to use bot keyboard, bots/groups only -->
-                        <Border x:Name="btnMarkup" Grid.Column="1">
+                        <Border x:Name="btnMarkup" Grid.Column="2">
                             <controls:AnimatedGlyphButton
                                 x:Name="ButtonMarkup"
                                 Click="Markup_Click"

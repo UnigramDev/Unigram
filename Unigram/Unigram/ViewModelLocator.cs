@@ -185,6 +185,7 @@ namespace Unigram
                 builder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
                 builder.RegisterType<ChatsViewModel>();//.SingleInstance();
                 builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
+                builder.RegisterType<DialogScheduledViewModel>();
                 builder.RegisterType<ProfileViewModel>();
                 builder.RegisterType<UserCommonChatsViewModel>();
                 builder.RegisterType<UserCreateViewModel>();

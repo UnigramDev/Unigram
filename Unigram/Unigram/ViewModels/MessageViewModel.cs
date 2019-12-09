@@ -51,6 +51,7 @@ namespace Unigram.ViewModels
         public bool CanBeForwarded => _message.CanBeForwarded;
         public bool CanBeEdited => _message.CanBeEdited;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
+        public MessageSchedulingState SchedulingState => _message.SchedulingState;
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;
         public int SenderUserId => _message.SenderUserId;

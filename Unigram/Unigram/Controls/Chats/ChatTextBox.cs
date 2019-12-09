@@ -743,7 +743,22 @@ namespace Unigram.Controls.Chats
 
         public async Task SendAsync(bool disableNotification = false)
         {
-            await ViewModel.SendMessageAsync(GetFormattedText(true), disableNotification);
+            var options = new SendMessageOptions(disableNotification, false, null);
+
+            var text = GetFormattedText(true);
+            await ViewModel.SendMessageAsync(text, options);
+        }
+
+        public async Task ScheduleAsync()
+        {
+            var options = await ViewModel.PickSendMessageOptionsAsync(true);
+            if (options == null)
+            {
+                return;
+            }
+
+            var text = GetFormattedText(true);
+            await ViewModel.SendMessageAsync(text, options);
         }
 
         protected override void OnGettingFormattedText()

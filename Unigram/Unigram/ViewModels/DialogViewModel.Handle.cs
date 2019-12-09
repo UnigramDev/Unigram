@@ -25,6 +25,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatDefaultDisableNotification>,
         IHandle<UpdateChatPinnedMessage>,
         IHandle<UpdateChatActionBar>,
+        IHandle<UpdateChatHasScheduledMessages>,
 
         IHandle<UpdateUserChatAction>,
 
@@ -245,6 +246,14 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(UpdateChatHasScheduledMessages update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatHasScheduledMessages(_chat));
+            }
+        }
+
         public async void Handle(UpdateChatReplyMarkup update)
         {
             if (update.ChatId == _chat?.Id)
@@ -371,9 +380,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool CheckSchedulingState(Message message)
+        {
+            if (_isSchedule)
+            {
+                return message.SchedulingState != null;
+            }
+            
+            return message.SchedulingState == null;
+        }
+
         public void Handle(UpdateNewMessage update)
         {
-            if (update.Message.ChatId == _chat?.Id)
+            if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
                 var endReached = IsEndReached();
                 BeginOnUIThread(() => InsertMessage(update.Message, endReached));
@@ -832,7 +851,7 @@ namespace Unigram.ViewModels
 
                 //if (IsEndReached())
                 //if (endReached || IsEndReached())
-                if (IsFirstSliceLoaded == true)
+                if (IsFirstSliceLoaded == true || IsSchedule)
                 {
                     var messageCommon = _messageFactory.Create(this, message);
                     var result = new List<MessageViewModel> { messageCommon };

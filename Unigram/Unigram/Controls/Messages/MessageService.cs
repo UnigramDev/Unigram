@@ -134,6 +134,15 @@ namespace Unigram.Controls.Messages
 
         private static (string Text, IList<TextEntity> Entities) UpdateHeaderDate(MessageViewModel message, MessageHeaderDate headerDate, bool active)
         {
+            if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
+            {
+                return (string.Format(Strings.Resources.MessageScheduledOn, DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate))), null);
+            }
+            else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
+            {
+                return (Strings.Resources.MessageScheduledUntilOnline, null);
+            }
+
             return (DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date)), null);
         }
 

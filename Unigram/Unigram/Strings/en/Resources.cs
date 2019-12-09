@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/04/2019 17:40:30
+// 	Generated: 12/09/2019 11:41:07
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -7148,7 +7148,9 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, this user decided to leave this channel, so you cannot add them back here."
+        /// Localized resource similar to "Sorry, if a person is no longer part of a channel, you need to be in their Telegram contacts in order to add them back.
+        ///
+        ///Note that they could still join via the channel's invite link as long as they are not in the Removed users list."
         /// </summary>
         public static string ChannelUserLeftError
         {
@@ -7217,7 +7219,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Change Chat Background"
+        /// Localized resource similar to "Chat Background"
         /// </summary>
         public static string ChatBackground
         {
@@ -27339,7 +27341,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Scheduled messages"
+        /// Localized resource similar to "Scheduled Messages"
         /// </summary>
         public static string ScheduledMessages
         {
@@ -34244,13 +34246,35 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "you were removed from the group"
+        /// Localized resource similar to "you were removed"
         /// </summary>
         public static string YouWereKicked
         {
             get
             {
                 return resourceLoader.GetString("YouWereKicked");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scheduled until online"
+        /// </summary>
+        public static string MessageScheduledUntilOnline
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageScheduledUntilOnline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send when {0} comes online"
+        /// </summary>
+        public static string ScheduleWhenOnline
+        {
+            get
+            {
+                return resourceLoader.GetString("ScheduleWhenOnline");
             }
         }
         
