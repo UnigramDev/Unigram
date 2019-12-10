@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Converters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -34,8 +35,8 @@ namespace Unigram.Controls.Views
             Date.Language = Native.NativeUtils.GetCurrentCulture();
             Time.Language = Native.NativeUtils.GetCurrentCulture();
 
-            Date.MinYear = DateTime.Today;
-            Date.MaxYear = DateTime.Today.AddYears(1);
+            Date.MinDate = DateTime.Today;
+            Date.MaxDate = DateTime.Today.AddYears(1);
 
             Title = reminder ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage;
             PrimaryButtonText = Strings.Resources.OK;
@@ -58,7 +59,12 @@ namespace Unigram.Controls.Views
         {
             get
             {
-                return Date.Date.Add(Time.Time).UtcDateTime;
+                if (Date.Date is DateTimeOffset date)
+                {
+                    return date.Add(Time.Time).UtcDateTime;
+                }
+
+                return DateTime.MinValue;
             }
         }
 
@@ -66,6 +72,11 @@ namespace Unigram.Controls.Views
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (Date.Date == null)
+            {
+                VisualUtilities.ShakeView(Date);
+                args.Cancel = true;
+            }
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
