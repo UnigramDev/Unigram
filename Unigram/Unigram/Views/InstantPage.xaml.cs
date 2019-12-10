@@ -1787,6 +1787,11 @@ namespace Unigram.Views
             throw new NotImplementedException();
         }
 
+        public string GetAdminTitle(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

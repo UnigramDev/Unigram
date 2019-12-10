@@ -465,6 +465,11 @@ namespace Unigram.ViewModels.Chats
             throw new NotImplementedException();
         }
 
+        public string GetAdminTitle(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

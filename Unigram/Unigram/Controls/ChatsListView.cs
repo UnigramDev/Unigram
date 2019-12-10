@@ -257,38 +257,4 @@ namespace Unigram.Controls
             return base.GetNameCore();
         }
     }
-
-    public class ChatsGridViewItem : GridViewItem
-    {
-        public ChatsGridViewItem()
-        {
-
-        }
-
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new ChatsGridViewItemAutomationPeer(this);
-        }
-    }
-
-    public class ChatsGridViewItemAutomationPeer : GridViewItemAutomationPeer
-    {
-        private ChatsGridViewItem _owner;
-
-        public ChatsGridViewItemAutomationPeer(ChatsGridViewItem owner)
-            : base(owner)
-        {
-            _owner = owner;
-        }
-
-        protected override string GetNameCore()
-        {
-            if (_owner.ContentTemplateRoot is ChatCell cell)
-            {
-                return cell.GetAutomationName() ?? base.GetNameCore();
-            }
-
-            return base.GetNameCore();
-        }
-    }
 }

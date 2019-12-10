@@ -387,9 +387,10 @@ namespace Unigram.Controls.Messages
 
             if (shown)
             {
-                if (admin != null && !message.IsOutgoing && message.Delegate != null && message.Delegate.IsAdmin(message.SenderUserId))
+                var title = message.Delegate.GetAdminTitle(message.SenderUserId);
+                if (admin != null && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
                 {
-                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Resources.ChatAdmin, Foreground = null });
+                    paragraph.Inlines.Add(new Run { Text = " " + title, Foreground = null });
                 }
             }
 
@@ -454,9 +455,11 @@ namespace Unigram.Controls.Messages
 
             if (paragraph.Inlines.Count > 0)
             {
-                if (admin != null && shown && !message.IsOutgoing && message.Delegate != null && message.Delegate.IsAdmin(message.SenderUserId))
+                var title = message.Delegate.GetAdminTitle(message.SenderUserId);
+                if (admin != null && shown && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
                 {
                     admin.Visibility = Visibility.Visible;
+                    admin.Text = title;
                 }
                 else if (admin != null)
                 {

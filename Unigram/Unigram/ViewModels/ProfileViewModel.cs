@@ -910,21 +910,25 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            var user = CacheService.GetUser(chat);
+            if (user == null)
             {
-                var user = ProtoService.GetUser(chat);
-                if (user == null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                var dialog = new EditUserNameView(user.FirstName, user.LastName);
+            var fullInfo = CacheService.GetUserFull(chat);
+            if (fullInfo == null)
+            {
+                return;
+            }
 
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id) }));
-                }
+            var dialog = new EditUserNameView(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ProtoService.Send(new AddContact(new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
+                    fullInfo.NeedPhoneNumberPrivacyException ? dialog.SharePhoneNumber : true));
             }
         }
 

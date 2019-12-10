@@ -212,6 +212,7 @@
       <DependentUpon>ChatSearchBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Chats\ChatSearchTextBox.cs" />
+    <Compile Include="Controls\Chats\ChatSendButton.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\FileButton.cs" />
@@ -422,6 +423,9 @@
     </Compile>
     <Compile Include="Controls\Views\SettingsEmojiSetView.xaml.cs">
       <DependentUpon>SettingsEmojiSetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SettingsPasswordView.xaml.cs">
+      <DependentUpon>SettingsPasswordView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\ThemePreviewView.xaml.cs">
       <DependentUpon>ThemePreviewView.xaml</DependentUpon>
@@ -2059,6 +2063,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SettingsEmojiSetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SettingsPasswordView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

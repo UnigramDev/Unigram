@@ -802,6 +802,8 @@ namespace Unigram.ViewModels
                     return _cacheService.GetNotificationSettingsMuteFor(chat) > 0 ? false : true;
                 case ChatTypeFilterMode.Unread:
                     return chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread;
+                case ChatTypeFilterMode.UnreadAndUnmuted:
+                    return (_cacheService.GetNotificationSettingsMuteFor(chat) > 0 ? false : true) && (chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread);
                 case ChatTypeFilterMode.Users:
                     var user = _cacheService.GetUser(chat);
                     if (user != null)
@@ -840,6 +842,7 @@ namespace Unigram.ViewModels
 
         Unread,
         Unmuted,
+        UnreadAndUnmuted
     }
 
     public class SearchResult

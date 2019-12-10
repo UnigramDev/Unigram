@@ -93,8 +93,6 @@ namespace Unigram.Views.Supergroups
 
         #region Delegate
 
-        private bool _isChannel;
-
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             Header.Text = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
