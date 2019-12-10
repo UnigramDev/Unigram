@@ -98,10 +98,10 @@ namespace Unigram.Common
                 {
                     newRun.Flags = TextStyle.Underline;
                 }
-                else if (entity.Type is TextEntityTypeBlockQuote)
-                {
-                    newRun.Flags = TextStyle.BlockQuote;
-                }
+                //else if (entity.Type is TextEntityTypeBlockQuote)
+                //{
+                //    newRun.Flags = TextStyle.BlockQuote;
+                //}
                 else if (entity.Type is TextEntityTypeBold)
                 {
                     newRun.Flags = TextStyle.Bold;
