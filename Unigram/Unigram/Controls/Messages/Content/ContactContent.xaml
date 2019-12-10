@@ -9,8 +9,7 @@
     mc:Ignorable="d"
     MinWidth="220"
     d:DesignHeight="300"
-    d:DesignWidth="400"
-    Margin="0,4,0,6">
+    d:DesignWidth="400">
 
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -27,7 +26,7 @@
         <TextBlock x:Name="Subtitle" Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
     </StackPanel>
 
-    <Button x:Name="Button" Click="Button_Click" Style="{StaticResource InstantViewButtonStyle}" Grid.Row="1" Grid.ColumnSpan="2">
+    <Button x:Name="Button" Click="Button_Click" Margin="0,0,0,6" Style="{StaticResource InstantViewButtonStyle}" Grid.Row="1" Grid.ColumnSpan="2">
         <TextBlock Text="{CustomResource ViewDetails}" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
     </Button>
 </Grid>
