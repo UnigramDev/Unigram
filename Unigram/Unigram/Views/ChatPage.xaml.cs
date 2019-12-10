@@ -71,6 +71,8 @@ namespace Unigram.Views
 
         private bool _selectionFromItemClick;
 
+        private DispatcherTimer _slowModeTimer;
+
         private DispatcherTimer _stickersTimer;
         private Visual _stickersPanel;
         private StickersPanelMode _stickersOpen = StickersPanelMode.None;
@@ -175,6 +177,27 @@ namespace Unigram.Views
             _elapsedTimer.Tick += (s, args) =>
             {
                 ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
+            };
+
+            _slowModeTimer = new DispatcherTimer();
+            _slowModeTimer.Interval = TimeSpan.FromSeconds(1);
+            _slowModeTimer.Tick += (s, args) =>
+            {
+                var fullInfo = ViewModel.CacheService.GetSupergroupFull(ViewModel.Chat);
+                if (fullInfo == null)
+                {
+                    _slowModeTimer.Stop();
+                    return;
+                }
+
+                var expiresIn = fullInfo.SlowModeDelayExpiresIn = Math.Max(fullInfo.SlowModeDelayExpiresIn - 1, 0);
+                if (expiresIn == 0)
+                {
+                    _slowModeTimer.Stop();
+                }
+
+                btnSendMessage.SlowModeDelay = fullInfo.SlowModeDelay;
+                btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
             };
 
             var visual = DropShadowEx.Attach(ArrowShadow, 2, 0.25f, null);
@@ -3548,6 +3571,9 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
+            btnSendMessage.SlowModeDelay = 0;
+            btnSendMessage.SlowModeDelayExpiresIn = 0;
+
             if (!secret)
             {
                 ShowArea();
@@ -3648,6 +3674,9 @@ namespace Unigram.Views
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             ViewModel.LastSeen = Locale.Declension("Members", fullInfo.Members.Count);
+
+            btnSendMessage.SlowModeDelay = 0;
+            btnSendMessage.SlowModeDelayExpiresIn = 0;
 
             var commands = new List<UserCommand>();
 
@@ -3777,6 +3806,19 @@ namespace Unigram.Views
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
             ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
+
+            btnSendMessage.SlowModeDelay = fullInfo.SlowModeDelay;
+            btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
+
+            if (fullInfo.SlowModeDelayExpiresIn > 0)
+            {
+                _slowModeTimer.Stop();
+                _slowModeTimer.Start();
+            }
+            else
+            {
+                _slowModeTimer.Stop();
+            }
 
             if (group.IsChannel && fullInfo.LinkedChatId != 0)
             {

@@ -1170,16 +1170,13 @@
                             ManipulationMode="TranslateX,TranslateY"/>
                     </Grid>
 
-                    <controls:GlyphButton
+                    <chats:ChatSendButton
                         x:Name="btnSendMessage"
                         ContextRequested="Send_ContextRequested"
                         VerticalAlignment="Bottom"
                         Click="btnSendMessage_Click"
                         Glyph="&#xE919;"
                         AllowFocusOnInteraction="False"
-                        FontFamily="{StaticResource TelegramThemeFontFamily}"
-                        Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                        Padding="4,0,0,0"
                         Grid.Column="2"
                         Canvas.ZIndex="1001"
                         AutomationProperties.Name="{CustomResource Send}"
