@@ -16,7 +16,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -38,29 +38,31 @@
             VerticalScrollMode="Auto"
             Grid.Row="1">
             <StackPanel Margin="0,0,0,24">
-                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture x:Name="Photo" Command="{x:Bind ViewModel.ProfileCommand}" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
-
-                    <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                <controls:HeaderedControl>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
-                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
+                        <controls:ProfilePicture x:Name="Photo" Command="{x:Bind ViewModel.ProfileCommand}" Height="64" Width="64" Margin="12,8" Grid.RowSpan="2"/>
+
+                        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
+                                <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
+                            </Grid>
                         </Grid>
+                        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource PageHeaderDisabledBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                     </Grid>
-                    <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource PageHeaderDisabledBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
-                </Grid>
+                </controls:HeaderedControl>
 
                 <UserControl x:Name="PermissionsPanel" Visibility="Collapsed" IsEnabled="False">
                     <controls:HeaderedControl
@@ -109,6 +111,27 @@
                     </controls:HeaderedControl>
                 </UserControl>
 
+                <controls:HeaderedControl
+                    x:Name="Yolo"
+                    x:Load="False"
+                    Visibility="{x:Bind ViewModel.CanTransferOwnership, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:BadgeButton
+                        x:Name="TransferOwnership"
+                        Command="{x:Bind ViewModel.TransferCommand}"
+                        Content="{CustomResource EditAdminGroupTransfer}"/>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
+                    x:Name="EditRankPanel"
+                    Header="{CustomResource EditAdminRank}"
+                    Footer="{CustomResource EditAdminRankInfo}">
+                    <TextBox
+                        x:Name="EditRankField"
+                        Text="{x:Bind ViewModel.CustomTitle, Mode=TwoWay}"
+                        PlaceholderText="{CustomResource ChannelCreator}"
+                        Margin="12,8"/>
+                </controls:HeaderedControl>
+                
                 <controls:HeaderedControl
                     x:Name="DismissPanel"
                     Visibility="Collapsed">

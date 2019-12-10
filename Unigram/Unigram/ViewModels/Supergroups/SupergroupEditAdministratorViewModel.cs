@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
+using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.UI.Xaml.Navigation;
@@ -25,6 +27,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             ProfileCommand = new RelayCommand(ProfileExecute);
             SendCommand = new RelayCommand(SendExecute);
+            TransferCommand = new RelayCommand(TransferExecute);
             DismissCommand = new RelayCommand(DismissExecute);
         }
 
@@ -102,6 +105,8 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = administrator.CanPostMessages;
                     CanPromoteMembers = administrator.CanPromoteMembers;
                     CanRestrictMembers = administrator.CanRestrictMembers;
+
+                    CustomTitle = administrator.CustomTitle;
                 }
                 else
                 {
@@ -113,6 +118,11 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = true;
                     CanPromoteMembers = member.Status is ChatMemberStatusCreator;
                     CanRestrictMembers = true;
+
+                    if (member.Status is ChatMemberStatusCreator creator)
+                    {
+                        CustomTitle = creator.CustomTitle;
+                    }
                 }
             }
         }
@@ -130,6 +140,33 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
+        public bool CanTransferOwnership
+        {
+            get
+            {
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return false;
+                }
+
+                var supergroup = CacheService.GetSupergroup(chat);
+                if (supergroup == null)
+                {
+                    return false;
+                }
+
+                return _canChangeInfo &&
+                    _canDeleteMessages &&
+                    _canInviteUsers &&
+                    _canPromoteMembers &&
+                    (supergroup.IsChannel ? _canEditMessages : true) &&
+                    (supergroup.IsChannel ? true : _canPinMessages) &&
+                    (supergroup.IsChannel ? _canPostMessages : true) &&
+                    (supergroup.IsChannel ? true :_canRestrictMembers);
+            }
+        }
+
         #region Flags
 
         private bool _canChangeInfo;
@@ -142,6 +179,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canChangeInfo, value);
+                RaisePropertyChanged(() => CanTransferOwnership);
             }
         }
 
@@ -155,6 +193,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPostMessages, value);
+                RaisePropertyChanged(() => CanTransferOwnership);
             }
         }
 
@@ -168,6 +207,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canEditMessages, value);
+                RaisePropertyChanged(() => CanTransferOwnership);
             }
         }
 
@@ -181,6 +221,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canDeleteMessages, value);
+                RaisePropertyChanged(() => CanTransferOwnership);
             }
         }
 
@@ -194,6 +235,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canRestrictMembers, value);
+                RaisePropertyChanged(() => CanTransferOwnership);
             }
         }
 
@@ -207,6 +249,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canInviteUsers, value);
+                RaisePropertyChanged(() => CanTransferOwnership);
             }
         }
 
@@ -220,6 +263,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPinMessages, value);
+                RaisePropertyChanged(() => CanTransferOwnership);
             }
         }
 
@@ -233,10 +277,18 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPromoteMembers, value);
+                RaisePropertyChanged(() => CanTransferOwnership);
             }
         }
 
         #endregion
+
+        private string _customTitle;
+        public string CustomTitle
+        {
+            get => _customTitle;
+            set => Set(ref _customTitle, value);
+        }
 
         public RelayCommand ProfileCommand { get; }
         private async void ProfileExecute()
@@ -275,17 +327,26 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var status = new ChatMemberStatusAdministrator
+            ChatMemberStatus status;
+            if (member.Status is ChatMemberStatusCreator creator)
             {
-                CanChangeInfo = _canChangeInfo,
-                CanDeleteMessages = _canDeleteMessages,
-                CanEditMessages = supergroup.IsChannel ? _canEditMessages : false,
-                CanInviteUsers = _canInviteUsers,
-                CanPinMessages = supergroup.IsChannel ? false : _canPinMessages,
-                CanPostMessages = supergroup.IsChannel ? _canPostMessages : false,
-                CanPromoteMembers = _canPromoteMembers,
-                CanRestrictMembers = supergroup.IsChannel ? false : _canRestrictMembers,
-            };
+                status = new ChatMemberStatusCreator(_customTitle, creator.IsMember);
+            }
+            else
+            {
+                status = new ChatMemberStatusAdministrator
+                {
+                    CanChangeInfo = _canChangeInfo,
+                    CanDeleteMessages = _canDeleteMessages,
+                    CanEditMessages = supergroup.IsChannel ? _canEditMessages : false,
+                    CanInviteUsers = _canInviteUsers,
+                    CanPinMessages = supergroup.IsChannel ? false : _canPinMessages,
+                    CanPostMessages = supergroup.IsChannel ? _canPostMessages : false,
+                    CanPromoteMembers = _canPromoteMembers,
+                    CanRestrictMembers = supergroup.IsChannel ? false : _canRestrictMembers,
+                    CustomTitle = _customTitle
+                };
+            }
 
             var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.UserId, status));
             if (response is Ok)
@@ -297,6 +358,89 @@ namespace Unigram.ViewModels.Supergroups
             else
             {
                 // TODO: ...
+            }
+        }
+
+        public RelayCommand TransferCommand { get; }
+        private async void TransferExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var supergroup = CacheService.GetSupergroup(chat);
+            if (supergroup == null)
+            {
+                return;
+            }
+
+            var member = _member;
+            if (member == null)
+            {
+                return;
+            }
+
+            var user = CacheService.GetUser(member.UserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            var canTransfer = await ProtoService.SendAsync(new CanTransferOwnership());
+            if (canTransfer is CanTransferOwnershipResultPasswordNeeded || canTransfer is CanTransferOwnershipResultPasswordTooFresh || canTransfer is CanTransferOwnershipResultSessionTooFresh)
+            {
+                var primary = Strings.Resources.OK;
+
+                var builder = new StringBuilder();
+                builder.AppendFormat(supergroup.IsChannel ? Strings.Resources.EditChannelAdminTransferAlertText : Strings.Resources.EditAdminTransferAlertText, user.FirstName);
+                builder.AppendLine();
+                builder.AppendLine($"• {Strings.Resources.EditAdminTransferAlertText1}");
+                builder.AppendLine($"• {Strings.Resources.EditAdminTransferAlertText2}");
+
+                if (canTransfer is CanTransferOwnershipResultPasswordNeeded)
+                {
+                    primary = Strings.Resources.EditAdminTransferSetPassword;
+                }
+                else
+                {
+                    builder.AppendLine();
+                    builder.AppendLine(Strings.Resources.EditAdminTransferAlertText3);
+                }
+
+                var confirm = await TLMessageDialog.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
+                if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
+                {
+                    NavigationService.Navigate(typeof(SettingsPasswordPage));
+                }
+            }
+            else if (canTransfer is CanTransferOwnershipResultOk)
+            {
+                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.EditAdminTransferReadyAlertText, supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                var input = new InputDialog();
+                input.Title = "YOLO";
+                input.Header = "Yolo";
+                input.PlaceholderText = "Yolo";
+                input.PrimaryButtonText = Strings.Resources.OK;
+                input.SecondaryButtonText = Strings.Resources.Cancel;
+
+                var result = await input.ShowQueuedAsync();
+                if (result != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                var response = await ProtoService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, input.Text));
+                if (response is Ok)
+                {
+
+                }
             }
         }
 
