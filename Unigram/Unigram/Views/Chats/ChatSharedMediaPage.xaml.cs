@@ -33,6 +33,7 @@ using Unigram.ViewModels.Chats;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Gallery;
 using Unigram.Converters;
+using Unigram.Controls.Chats;
 
 namespace Unigram.Views.Chats
 {
@@ -208,6 +209,27 @@ namespace Unigram.Views.Chats
 
         #endregion
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                if (sender is ListView)
+                {
+                    args.ItemContainer = new AccessibleChatListViewItem(ViewModel.ProtoService);
+                }
+                else
+                {
+                    args.ItemContainer = new ChatGridViewItem(ViewModel.ProtoService);
+                }
+
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+            }
+
+            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -241,7 +263,7 @@ namespace Unigram.Views.Chats
             }
             else if (args.ItemContainer.ContentTemplateRoot is SharedLinkCell linkCell)
             {
-                linkCell.UpdateMessage(message, ViewModel.ProtoService, ViewModel.NavigationService);
+                linkCell.UpdateMessage(ViewModel.ProtoService, ViewModel.NavigationService, message);
             }
             else if (args.ItemContainer.ContentTemplateRoot is SharedAudioCell audioCell)
             {

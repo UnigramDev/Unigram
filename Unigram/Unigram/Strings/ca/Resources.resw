@@ -58,9 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Abort" xml:space="preserve">
-    <value>Interromp</value>
-  </data>
   <data name="AbortEmail" xml:space="preserve">
     <value>Interromp la configuració del correu de recuperació</value>
   </data>
@@ -664,9 +661,6 @@
   </data>
   <data name="AddToTheGroup" xml:space="preserve">
     <value>Voleu afegir {0} al grup?</value>
-  </data>
-  <data name="AddToTheGroupAlertText" xml:space="preserve">
-    <value>Voleu afegir **{0}** al grup **{1}**? </value>
   </data>
   <data name="AddToTheGroupForwardCount" xml:space="preserve">
     <value>Nombre d'últims missatges a reenviar:</value>
@@ -1938,9 +1932,6 @@ Nota: Si oblideu el codi d'accés haureu d'eliminar i reinstal·lar l'aplicació
 
 Si no us interessa, us suggerim que creeu un canal privat.</value>
   </data>
-  <data name="ChannelPublicEmptyUsernameTitle" xml:space="preserve">
-    <value>Trieu un enllaç</value>
-  </data>
   <data name="ChannelPublicInfo" xml:space="preserve">
     <value>Els canals públics es poden trobar a la cerca i qualsevol s'hi pot unir.</value>
   </data>
@@ -2001,9 +1992,6 @@ Si no us interessa, us suggerim que creeu un canal privat.</value>
   <data name="ChannelTooMuchJoin" xml:space="preserve">
     <value>Sou membre de massa grups i canals. Sortiu d'algun abans d'unir-vos a un altre.</value>
   </data>
-  <data name="ChannelTooMuchTitle" xml:space="preserve">
-    <value>Massa comunitats</value>
-  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Tipus de canal</value>
   </data>
@@ -2056,7 +2044,7 @@ Longitud mínima: 5 caràcters.</value>
     <value>d MMMM</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
-    <value>S'ha eliminat el xat</value>
+    <value>S'ha eliminat el xat.</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>Fitxer</value>
@@ -2744,24 +2732,6 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   <data name="DeleteAndStop" xml:space="preserve">
     <value>Elimina i atura</value>
   </data>
-  <data name="DeleteBackgroundFew" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteBackgroundMany" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteBackgroundOne" xml:space="preserve">
-    <value>Elimina el fons</value>
-  </data>
-  <data name="DeleteBackgroundOther" xml:space="preserve">
-    <value>Elimina {0} fons</value>
-  </data>
-  <data name="DeleteBackgroundTwo" xml:space="preserve">
-    <value/>
-  </data>
-  <data name="DeleteBackgroundZero" xml:space="preserve">
-    <value/>
-  </data>
   <data name="DeleteBanUser" xml:space="preserve">
     <value>Bandeja l'usuari</value>
   </data>
@@ -2794,9 +2764,6 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>Voleu eliminar el paquet de llengua?</value>
-  </data>
-  <data name="DeleteLocalizationText" xml:space="preserve">
-    <value>Segur que voleu eliminar el paquet de llengua **{0}**? </value>
   </data>
   <data name="DeleteMega" xml:space="preserve">
     <value>Elimina el grup</value>
@@ -2837,9 +2804,6 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   <data name="DeleteThemeAlert" xml:space="preserve">
     <value>Segur que voleu eliminar aquest tema?</value>
   </data>
-  <data name="DeleteThemeTitle" xml:space="preserve">
-    <value>Elimina el tema</value>
-  </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>Elimina aquest xat</value>
   </data>
@@ -2867,9 +2831,6 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   <data name="DirectShareInfo" xml:space="preserve">
     <value>Mostra els xats recents al menú Compartir</value>
   </data>
-  <data name="Disable" xml:space="preserve">
-    <value>Desactiva</value>
-  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>GIF efímer</value>
   </data>
@@ -2896,9 +2857,6 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>Descarta el missatge de veu</value>
-  </data>
-  <data name="Disconnect" xml:space="preserve">
-    <value>Desconnecta</value>
   </data>
   <data name="DiscussChannel" xml:space="preserve">
     <value>canal</value>
@@ -4051,9 +4009,6 @@ amb el Telegram?</value>
   <data name="GpsDisabledAlert" xml:space="preserve">
     <value>Sembla que teniu el GPS desactivat. Activeu-lo per a accedir a les característiques de geolocalització.</value>
   </data>
-  <data name="GpsDisabledAlertText" xml:space="preserve">
-    <value>Activeu el GPS per a accedir a les funcions basades en la ubicació.</value>
-  </data>
   <data name="Grain" xml:space="preserve">
     <value>Gra</value>
   </data>
@@ -4175,9 +4130,6 @@ Teniu present que encara s'hi pot unir amb l'enllaç d'invitació, sempre que no
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>Compte eliminat</value>
-  </data>
-  <data name="HideAboveTheList" xml:space="preserve">
-    <value>Amaga per sobre la llista</value>
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Amaga</value>
@@ -4631,9 +4583,6 @@ Aquest enllaç només funcionarà per als membres del xat.</value>
   <data name="LocalDatabaseClear" xml:space="preserve">
     <value>Voleu eliminar els missatges de text de la memòria cau?</value>
   </data>
-  <data name="LocalDatabaseClearText" xml:space="preserve">
-    <value>Segur que voleu esborrar els missatges de text de la memòria cau?</value>
-  </data>
   <data name="LocalDatabaseInfo" xml:space="preserve">
     <value>En buidar la base de dades local, s'eliminaran els missatges a la memòria cau i aquesta es comprimirà per estalviar espai intern. El Telegram necessita certes dades per funcionar, així que la mida de la base de dades no arribarà a zero.
 
@@ -4743,9 +4692,6 @@ Això pot trigar uns minuts.</value>
   </data>
   <data name="March" xml:space="preserve">
     <value>Març</value>
-  </data>
-  <data name="MarkAllAsRead" xml:space="preserve">
-    <value>Marca-ho tot com a llegit</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>Marca-ho com a llegit</value>
@@ -6946,9 +6892,6 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
   <data name="Ping" xml:space="preserve">
     <value>Ping: {0} ms</value>
   </data>
-  <data name="PinInTheList" xml:space="preserve">
-    <value>Fixa a la llista</value>
-  </data>
   <data name="Pink" xml:space="preserve">
     <value>Rosa</value>
   </data>
@@ -7125,9 +7068,6 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
   </data>
   <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
     <value>Voleu eliminar la informació d'enviament i ordenar als proveïdors del pagament que eliminin les dades de les vostres targetes? Teniu present que Telegram mai no emmagatzema les dades de les targetes.</value>
-  </data>
-  <data name="PrivacyPaymentsClearAlertText" xml:space="preserve">
-    <value>Segur que voleu esborrar la vostra informació de pagament i enviament?</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>Podeu eliminar la informació d'enviament i ordenar als proveïdors del pagament que eliminin les dades de les vostres targetes. Telegram mai no les emmagatzema.</value>
@@ -7776,12 +7716,6 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   <data name="SendContactToGroup" xml:space="preserve">
     <value>Voleu enviar el contacte a {0}?</value>
   </data>
-  <data name="SendContactToGroupText" xml:space="preserve">
-    <value>Voleu enviar aquest contacte a **{0}**?</value>
-  </data>
-  <data name="SendContactToText" xml:space="preserve">
-    <value>Voleu enviar aquest contacte a **{0}**? </value>
-  </data>
   <data name="SendDayAt" xml:space="preserve">
     <value>'Envia-ho el' d MMM 'a les' HH:mm</value>
   </data>
@@ -7793,12 +7727,6 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   </data>
   <data name="SendGameToGroup" xml:space="preserve">
     <value>Voleu compartir el joc amb {0}?</value>
-  </data>
-  <data name="SendGameToGroupText" xml:space="preserve">
-    <value>Voleu compartir aquest joc amb **{0}**?</value>
-  </data>
-  <data name="SendGameToText" xml:space="preserve">
-    <value>Voleu compartir aquest joc amb **{0}**? </value>
   </data>
   <data name="SendGifPreview" xml:space="preserve">
     <value>Envia el GIF</value>
@@ -7859,12 +7787,6 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   </data>
   <data name="SendMessagesToGroup" xml:space="preserve">
     <value>Voleu enviar els missatges a {0}?</value>
-  </data>
-  <data name="SendMessagesToGroupText" xml:space="preserve">
-    <value>Voleu enviar aquest missatge a **{0}**?</value>
-  </data>
-  <data name="SendMessagesToText" xml:space="preserve">
-    <value>Voleu enviar aquest missatge a **{0}**? </value>
   </data>
   <data name="SendMessageTo" xml:space="preserve">
     <value>Afegeix-hi persones...</value>
@@ -8300,20 +8222,11 @@ El mode lent està activat. No podeu enviar més d'un missatge alhora.</value>
   <data name="StopLiveLocationAlertAll" xml:space="preserve">
     <value>Segur que voleu deixar de compartir la vostra ubicació en directe?</value>
   </data>
-  <data name="StopLiveLocationAlertAllText" xml:space="preserve">
-    <value>Voleu deixar de compatir la ubicació en directe?</value>
-  </data>
   <data name="StopLiveLocationAlertToGroup" xml:space="preserve">
     <value>Segur que voleu deixar de compartir la vostra ubicació en directe amb {0}?</value>
   </data>
-  <data name="StopLiveLocationAlertToGroupText" xml:space="preserve">
-    <value>Voleu deixar de compatir la ubicació en directe amb **{0}**? </value>
-  </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Segur que voleu deixar de compartir la ubicació en directe amb {0}?</value>
-  </data>
-  <data name="StopLiveLocationAlertToUserText" xml:space="preserve">
-    <value>Voleu deixar de compatir la ubicació en directe amb **{0}**?</value>
   </data>
   <data name="StopLoading" xml:space="preserve">
     <value>Voleu aturar la pujada?</value>
@@ -8396,11 +8309,6 @@ El mode lent està activat. No podeu enviar més d'un missatge alhora.</value>
   <data name="SyncContactsDeleteInfo" xml:space="preserve">
     <value>Això suprimirà els contactes en dels servidors del Telegram. Si teniu habilitada l'opció «Sincronitza els contactes» es tornaran a sincronitzar.</value>
   </data>
-  <data name="SyncContactsDeleteText" xml:space="preserve">
-    <value>S'eliminaran els vostres contactes dels servidors de Telegram.
-
-Si «**Sincronitza els contactes**» està activat, es tornaran a sincronitzar.</value>
-  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
     <value>Activeu-ho per a sincronitzar els contactes d'aquest dispositiu amb el vostre compte automàticament.</value>
   </data>
@@ -8478,9 +8386,6 @@ Aquesta contrasenya també se us demanarà cada vegada que inicieu sessió a Tel
   <data name="TelegramVersion" xml:space="preserve">
     <value>Telegram per a l'Android {0}</value>
   </data>
-  <data name="Terminate" xml:space="preserve">
-    <value>Tanca</value>
-  </data>
   <data name="TerminateAllSessions" xml:space="preserve">
     <value>Tanca les altres sessions</value>
   </data>
@@ -8493,9 +8398,6 @@ Aquesta contrasenya també se us demanarà cada vegada que inicieu sessió a Tel
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>Voleu tancar aquesta sessió?</value>
   </data>
-  <data name="TerminateSessionText" xml:space="preserve">
-    <value>Segur que voleu tancar aquesta sessió?</value>
-  </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
     <value>Toqueu per a desconnectar-vos del compte Telegram.</value>
   </data>
@@ -8504,9 +8406,6 @@ Aquesta contrasenya també se us demanarà cada vegada que inicieu sessió a Tel
   </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Bloca {0}</value>
-  </data>
-  <data name="TerminateWebSessionText" xml:space="preserve">
-    <value>Segur que voleu desconnectar {0}?</value>
   </data>
   <data name="TermsOfService" xml:space="preserve">
     <value>Condicions del servei</value>

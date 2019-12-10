@@ -904,12 +904,44 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Send now
+
+        public RelayCommand<MessageViewModel> MessageSendNowCommand { get; }
+        private void MessageSendNowExecute(MessageViewModel message)
+        {
+            ProtoService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, null));
+        }
+
+        #endregion
+
+        #region Reschedule
+
+        public RelayCommand<MessageViewModel> MessageRescheduleCommand { get; }
+        private async void MessageRescheduleExecute(MessageViewModel message)
+        {
+            var options = await PickSendMessageOptionsAsync(true);
+            if (options?.SchedulingState == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, options.SchedulingState)); 
+        }
+
+        #endregion
+
         #region Keyboard button
 
         public async void KeyboardButtonExecute(MessageViewModel message, object button)
         {
             if (button is InlineKeyboardButton inline)
             {
+                if (message.SchedulingState != null)
+                {
+                    await TLMessageDialog.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
+                    return;
+                }
+
                 var chat = message.GetChat();
                 if (chat == null)
                 {
@@ -1043,7 +1075,7 @@ namespace Unigram.ViewModels
                     var bot = GetBot(message);
                     if (bot != null)
                     {
-                        InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
+                        InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
                     }
 
                     var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
@@ -1064,7 +1096,7 @@ namespace Unigram.ViewModels
                                     return;
                                 }
 
-                                InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
+                                InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
                             }
                         }
                         else if (!string.IsNullOrEmpty(answer.Url))
@@ -1147,7 +1179,7 @@ namespace Unigram.ViewModels
                         var confirm = await TLMessageDialog.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
-                            await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id));
+                            await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
                         }
                     }
                 }
@@ -1159,7 +1191,7 @@ namespace Unigram.ViewModels
                         var location = await _locationService.GetPositionAsync();
                         if (location != null)
                         {
-                            await SendMessageAsync(0, new InputMessageLocation(location, 0));
+                            await SendMessageAsync(0, new InputMessageLocation(location, 0), null);
                         }
                     }
                 }
@@ -1390,23 +1422,30 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var user = ProtoService.GetUser(contact.Contact.UserId);
+            var user = CacheService.GetUser(contact.Contact.UserId);
             if (user == null)
             {
                 return;
             }
 
-            if (user.IsContact)
+            var fullInfo = CacheService.GetUserFull(contact.Contact.UserId);
+            if (fullInfo == null)
+            {
+                fullInfo = await ProtoService.SendAsync(new GetUserFullInfo(contact.Contact.UserId)) as UserFullInfo;
+            }
+
+            if (fullInfo == null)
             {
                 return;
             }
 
-            var dialog = new EditUserNameView(user.FirstName, user.LastName);
+            var dialog = new EditUserNameView(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new ImportContacts(new[] { new Contact(contact.Contact.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, contact.Contact.UserId) }));
+                ProtoService.Send(new AddContact(new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
+                    fullInfo.NeedPhoneNumberPrivacyException ? dialog.SharePhoneNumber : true));
             }
         }
 

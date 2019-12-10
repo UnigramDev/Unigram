@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Template10.Common;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
 using Unigram.Controls;
@@ -11,13 +12,16 @@ using Unigram.Views;
 using Unigram.Views.Settings;
 using Unigram.Views.Wallet;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation.Metadata;
 using Windows.Security.Credentials;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Common
 {
@@ -26,8 +30,10 @@ namespace Unigram.Common
         private readonly IProtoService _protoService;
         private readonly IPasscodeService _passcodeService;
 
-        private ViewLifetimeControl _instantLifetime;
         private ViewLifetimeControl _walletLifetime;
+
+        private Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
+        private AppWindow _walletWindow;
 
         public TLNavigationService(IProtoService protoService, Frame frame, int session, string id)
             : base(frame, session, id)
@@ -41,17 +47,35 @@ namespace Unigram.Common
 
         public async void NavigateToInstant(string url)
         {
-            if (_instantLifetime == null)
+            //if (ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow"))
+            //{
+            //    _instantWindows.TryGetValue(url, out AppWindow window);
+            //    if (window == null)
+            //    {
+            //        var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, 0, "0", false);
+            //        var frame = BootStrapper.Current.CreateRootElement(nav);
+            //        nav.Navigate(typeof(InstantPage), url);
+
+            //        window = await AppWindow.TryCreateAsync();
+            //        window.PersistedStateId = "InstantView";
+            //        window.TitleBar.ExtendsContentIntoTitleBar = true;
+            //        window.Closed += (s, args) =>
+            //        {
+            //            _instantWindows.Remove(url);
+            //            frame = null;
+            //            window = null;
+            //        };
+
+            //        _instantWindows[url] = window;
+            //        ElementCompositionPreview.SetAppWindowContent(window, frame);
+            //    }
+
+            //    await window.TryShowAsync();
+            //    window.RequestMoveAdjacentToCurrentView();
+            //}
+            //else
             {
-                _instantLifetime = await OpenAsync(typeof(InstantPage), url);
-            }
-            else
-            {
-                await _instantLifetime.CoreDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    _instantLifetime.NavigationService.Navigate(typeof(InstantPage), url);
-                });
-                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(_instantLifetime.Id, ViewSizePreference.Default, ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), ViewSizePreference.UseHalf);
+                Navigate(typeof(InstantPage), url);
             }
         }
 
@@ -73,7 +97,7 @@ namespace Unigram.Common
             }
 
             if (_protoService.Options.WalletPublicKey != null)
-            { 
+            {
                 if (address == null)
                 {
                     page = typeof(WalletPage);
@@ -90,7 +114,35 @@ namespace Unigram.Common
 
             //page = typeof(WalletCreatePage);
 
-            //Navigate(page, address);
+            //if (ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow"))
+            //{
+            //    var window = _walletWindow;
+            //    if (window == null)
+            //    {
+            //        var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, 0, "0", false);
+            //        var frame = BootStrapper.Current.CreateRootElement(nav);
+            //        nav.Navigate(page, address);
+
+            //        window = await AppWindow.TryCreateAsync();
+            //        window.PersistedStateId = "Wallet";
+            //        window.TitleBar.ExtendsContentIntoTitleBar = true;
+            //        window.Closed += (s, args) =>
+            //        {
+            //            _walletWindow = null;
+            //            frame = null;
+            //            window = null;
+            //        };
+
+            //        _walletWindow = window;
+            //        ElementCompositionPreview.SetAppWindowContent(window, frame);
+            //    }
+
+            //    window.RequestSize(new Windows.Foundation.Size(360, 640));
+            //    await window.TryShowAsync();
+            //    window.RequestSize(new Windows.Foundation.Size(360, 640));
+            //    window.RequestMoveAdjacentToCurrentView();
+            //}
+
             //return;
 
             if (_walletLifetime == null)
@@ -117,7 +169,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
+        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
         {
             if (chat == null)
             {
@@ -161,7 +213,7 @@ namespace Unigram.Common
                 }
             }
 
-            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam))
+            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && !scheduled)
             {
                 if (message != null)
                 {
@@ -216,16 +268,16 @@ namespace Unigram.Common
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift && !ctrl)
                 {
-                    await OpenAsync(typeof(ChatPage), chat.Id);
+                    await OpenAsync(scheduled ? typeof(ScheduledChatPage) : typeof(ChatPage), chat.Id);
                 }
                 else
                 {
-                    await NavigateAsync(typeof(ChatPage), chat.Id, state);
+                    await NavigateAsync(scheduled ? typeof(ScheduledChatPage) : typeof(ChatPage), chat.Id, state);
                 }
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null)
+        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
@@ -242,7 +294,7 @@ namespace Unigram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, accessToken, state);
+            NavigateToChat(chat, message, accessToken, state, scheduled);
         }
 
         public async void NavigateToPasscode()

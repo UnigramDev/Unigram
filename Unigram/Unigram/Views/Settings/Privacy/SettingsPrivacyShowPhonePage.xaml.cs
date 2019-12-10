@@ -19,12 +19,12 @@ namespace Unigram.Views.Settings.Privacy
 {
     public sealed partial class SettingsPrivacyShowPhonePage : Page
     {
-        public SettingsPrivacyShowPhoneViewModel ViewModel => DataContext as SettingsPrivacyShowPhoneViewModel;
+        public SettingsPrivacyPhoneViewModel ViewModel => DataContext as SettingsPrivacyPhoneViewModel;
 
         public SettingsPrivacyShowPhonePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsPrivacyShowPhoneViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsPrivacyPhoneViewModel>();
         }
 
         #region Binding
@@ -37,6 +37,21 @@ namespace Unigram.Views.Settings.Privacy
         private Visibility ConvertAlways(PrivacyValue value)
         {
             return value == PrivacyValue.AllowContacts || value == PrivacyValue.DisallowAll ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private Visibility ConvertFinding(PrivacyValue value)
+        {
+            return value == PrivacyValue.DisallowAll ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private string ConvertFooter(PrivacyValue value)
+        {
+            if (value == PrivacyValue.AllowAll)
+            {
+                return Strings.Resources.PrivacyPhoneInfo2;
+            }
+
+            return Strings.Resources.PrivacyPhoneInfo3;
         }
 
         #endregion

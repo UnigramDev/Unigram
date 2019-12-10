@@ -446,7 +446,7 @@ namespace Unigram.Common
                 var url = uri.ToString();
                 if (url.Contains("telegra.ph"))
                 {
-                    navigation.Navigate(typeof(InstantPage), url);
+                    navigation.NavigateToInstant(url);
                 }
                 else if (url.Contains("joinchat"))
                 {
@@ -503,7 +503,7 @@ namespace Unigram.Common
                             }
                             else if (username.Equals("iv", StringComparison.OrdinalIgnoreCase))
                             {
-                                navigation.Navigate(typeof(InstantPage), url);
+                                navigation.NavigateToInstant(url);
                             }
                             else if (username.Equals("proxy", StringComparison.OrdinalIgnoreCase) || username.Equals("socks", StringComparison.OrdinalIgnoreCase))
                             {
@@ -967,6 +967,47 @@ namespace Unigram.Common
             return (symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z') || (symbol >= '0' && symbol <= '9') || symbol == '_';
         }
 
+        public static async void OpenUrl(IProtoService protoService, INavigationService navigationService, string url, bool untrust)
+        {
+            if (TryCreateUri(url, out Uri uri))
+            {
+                if (IsTelegramUrl(uri))
+                {
+                    OpenTelegramUrl(protoService, navigationService, uri);
+                }
+                else
+                {
+                    //if (message?.Media is TLMessageMediaWebPage webpageMedia)
+                    //{
+                    //    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
+                    //    {
+                    //        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                    //        if (service != null)
+                    //        {
+                    //            service.Navigate(typeof(InstantPage), webpageMedia);
+                    //            return;
+                    //        }
+                    //    }
+                    //}
+
+                    if (untrust)
+                    {
+                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.OpenUrlTitle, Strings.Resources.Open, Strings.Resources.Cancel);
+                        if (confirm != ContentDialogResult.Primary)
+                        {
+                            return;
+                        }
+                    }
+
+                    try
+                    {
+                        await Windows.System.Launcher.LaunchUriAsync(uri);
+                    }
+                    catch { }
+                }
+            }
+        }
+
         #region Entity
 
         public static void Hyperlink_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -1018,14 +1059,17 @@ namespace Unigram.Common
                         return;
                     }
 
-                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
-
-                    open.Click += LinkOpen_Click;
-                    copy.Click += LinkCopy_Click;
-
                     var flyout = new MenuFlyout();
-                    flyout.Items.Add(open);
+
+                    if (!link.Contains('@'))
+                    {
+                        var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                        open.Click += LinkOpen_Click;
+                        flyout.Items.Add(open);
+                    }
+
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
+                    copy.Click += LinkCopy_Click;
                     flyout.Items.Add(copy);
 
                     if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))

@@ -18,19 +18,19 @@ namespace Unigram.Common
         public int End { get; set; }
         public int Length => End - Start;
 
-        public TextEntity Entity { get; set; }
+        public TextEntityType Type { get; set; }
 
         public TextStyleRun()
         {
 
         }
 
-        public TextStyleRun(TextStyleRun run)
+        private TextStyleRun(TextStyleRun run)
         {
             Flags = run.Flags;
             Start = run.Start;
             End = run.End;
-            Entity = run.Entity;
+            Type = run.Type;
         }
 
         public bool HasFlag(TextStyle flag)
@@ -41,16 +41,16 @@ namespace Unigram.Common
         private void Merge(TextStyleRun run)
         {
             Flags |= run.Flags;
-            if (Entity == null && run.Entity != null)
+            if (Type == null && run.Type != null)
             {
-                Entity = run.Entity;
+                Type = run.Type;
             }
         }
 
         private void Replace(TextStyleRun run)
         {
             Flags = run.Flags;
-            Entity = run.Entity;
+            Type = run.Type;
         }
 
         public static IList<TextStyleRun> GetRuns(FormattedText formatted)
@@ -98,10 +98,10 @@ namespace Unigram.Common
                 {
                     newRun.Flags = TextStyle.Underline;
                 }
-                else if (entity.Type is TextEntityTypeBlockQuote)
-                {
-                    newRun.Flags = TextStyle.BlockQuote;
-                }
+                //else if (entity.Type is TextEntityTypeBlockQuote)
+                //{
+                //    newRun.Flags = TextStyle.BlockQuote;
+                //}
                 else if (entity.Type is TextEntityTypeBold)
                 {
                     newRun.Flags = TextStyle.Bold;
@@ -117,12 +117,12 @@ namespace Unigram.Common
                 else if (entity.Type is TextEntityTypeMentionName)
                 {
                     newRun.Flags = TextStyle.Mention;
-                    newRun.Entity = entity;
+                    newRun.Type = entity.Type;
                 }
                 else
                 {
                     newRun.Flags = TextStyle.Url;
-                    newRun.Entity = entity;
+                    newRun.Type = entity.Type;
                 }
 
                 for (int b = 0, N2 = runs.Count; b < N2; b++)

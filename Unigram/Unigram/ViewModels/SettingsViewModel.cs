@@ -199,7 +199,7 @@ namespace Unigram.ViewModels
                 }
                 else if (page.Page == typeof(InstantPage))
                 {
-                    NavigationService.Navigate(typeof(InstantPage), Strings.Resources.TelegramFaqUrl);
+                    NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
                 }
                 else if (page.Page == typeof(WalletPage))
                 {
@@ -212,7 +212,7 @@ namespace Unigram.ViewModels
             }
             else if (entry is SettingsSearchFaq faq)
             {
-                NavigationService.Navigate(typeof(InstantPage), faq.Url);
+                NavigationService.NavigateToInstant(faq.Url);
             }
             else if (entry is SettingsSearchAction action)
             {

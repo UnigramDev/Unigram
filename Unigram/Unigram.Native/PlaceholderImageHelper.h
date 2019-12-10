@@ -19,15 +19,21 @@ namespace Unigram
 {
 	namespace Native
 	{
+		struct QrData {
+			int size = 0;
+			std::vector<bool> values; // size x size
+		};
 
 		public ref class PlaceholderImageHelper sealed
 		{
 		public:
 			static PlaceholderImageHelper^ GetForCurrentView();
 
+			void DrawQR(_In_ String^ data, IRandomAccessStream^ randomAccessStream);
 			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawGlyph(_In_ String^ glyph, _In_ Color clear, IRandomAccessStream^ randomAccessStream);
 			void DrawSavedMessages(_In_ Color clear, IRandomAccessStream^ randomAccessStream);
+			void DrawDeletedUser(_In_ Color clear, IRandomAccessStream^ randomAccessStream);
 			void DrawProfilePlaceholder(_In_ Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 
@@ -35,9 +41,11 @@ namespace Unigram
 			PlaceholderImageHelper();
 
 		private:
+			HRESULT InternalDrawQR(_In_ String^ data, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawGlyph(String^ glyph, Color clear, IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawSavedMessages(Color clear, IRandomAccessStream^ randomAccessStream);
+			HRESULT InternalDrawDeletedUser(Color clear, IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawProfilePlaceholder(Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
@@ -62,6 +70,8 @@ namespace Unigram
 			ComPtr<IDWriteTextFormat> m_mdl2Format;
 			ComPtr<IDWriteTextFormat> m_textFormat;
 			ComPtr<ID2D1SolidColorBrush> m_textBrush;
+			ComPtr<ID2D1SolidColorBrush> m_black;
+			ComPtr<ID2D1SolidColorBrush> m_transparent;
 			std::vector<ComPtr<ID2D1SolidColorBrush>> m_identiconBrushes;
 			ComPtr<ID2D1Effect> m_gaussianBlurEffect;
 			ComPtr<ID2D1Bitmap1> m_targetBitmap;

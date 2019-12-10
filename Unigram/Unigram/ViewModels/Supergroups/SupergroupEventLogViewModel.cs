@@ -191,7 +191,7 @@ namespace Unigram.ViewModels.Supergroups
 
             private Message newMessage(long chatId, bool isChannel, ChatEvent chatEvent)
             {
-                return new Message(chatEvent.Id, chatEvent.UserId, chatId, null, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, 0, 0, 0.0d, 0, string.Empty, 0, 0, null, null);
+                return new Message(chatEvent.Id, chatEvent.UserId, chatId, null, null, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, 0, 0, 0.0d, 0, string.Empty, 0, 0, string.Empty, null, null);
             }
 
             private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent)
@@ -225,6 +225,7 @@ namespace Unigram.ViewModels.Supergroups
                                 message = GetMessage(_chatId, _channel, item);
                                 message.Content = new MessageChatAddMembers(new[] { memberInvited.UserId });
                                 break;
+                            case ChatEventSlowModeDelayChanged slowModeDelayChanged:
                             case ChatEventPermissionsChanged permissionsChanged:
                             case ChatEventMemberRestricted memberRestricted:
                             case ChatEventMemberPromoted memberPromoted:
@@ -938,6 +939,11 @@ namespace Unigram.ViewModels.Supergroups
         public void VotePoll(MessageViewModel message, PollOption option)
         {
             throw new NotImplementedException();
+        }
+
+        public string GetAdminTitle(int userId)
+        {
+            return null;
         }
 
         #endregion

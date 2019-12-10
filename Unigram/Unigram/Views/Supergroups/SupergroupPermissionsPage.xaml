@@ -155,6 +155,32 @@
                                           Style="{StaticResource CheckButtonStyle}"/>
                         </controls:HeaderedControl>
 
+                        <controls:HeaderedControl
+                            x:Name="SlowmodePanel"
+                            Header="{CustomResource Slowmode}"
+                            Footer="{x:Bind ConvertSlowModeFooter(ViewModel.SlowModeDelay), Mode=OneWay}">
+                            <Grid x:Name="SlowmodeTicks" Padding="12,6,12,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <Slider
+                                    x:Name="Slowmode"
+                                    Value="{x:Bind ConvertSlowMode(ViewModel.SlowModeDelay), Mode=TwoWay, BindBack=ConvertSlowModeBack}"
+                                    Maximum="6"
+                                    Minimum="0"
+                                    SmallChange="1"
+                                    LargeChange="1"
+                                    StepFrequency="1"
+                                    TickFrequency="1"
+                                    TickPlacement="Outside"
+                                    IsThumbToolTipEnabled="False"
+                                    Grid.Row="1"/>
+                            </Grid>
+                            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+                        </controls:HeaderedControl>
+                        
                         <controls:HeaderedControl>
                             <controls:BadgeButton
                                 x:Name="Blacklist"

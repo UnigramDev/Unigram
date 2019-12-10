@@ -156,38 +156,6 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             return Task.CompletedTask;
-
-            //Item = null;
-            //Full = null;
-            //SelectedItem = null;
-
-            //var channel = parameter as TLChannel;
-            //var peer = parameter as TLPeerChannel;
-            //if (peer != null)
-            //{
-            //    channel = CacheService.GetChat(peer.ChannelId) as TLChannel;
-            //}
-
-            //if (channel != null)
-            //{
-            //    Item = channel;
-
-            //    var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
-            //    if (full == null)
-            //    {
-            //        var response = await LegacyService.GetFullChannelAsync(channel.ToInputChannel());
-            //        if (response.IsSucceeded)
-            //        {
-            //            full = response.Result.FullChat as TLChannelFull;
-            //        }
-            //    }
-
-            //    if (full != null)
-            //    {
-            //        Full = full;
-            //        SelectedItem = _stickersService.GetGroupStickerSetById(full.StickerSet);
-            //    }
-            //}
         }
 
         public void Handle(UpdateSupergroupFullInfo update)

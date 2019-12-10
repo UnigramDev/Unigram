@@ -1,6 +1,8 @@
 #include "pch.h"
 #include <ShCore.h>
 #include "PlaceholderImageHelper.h"
+#include "Qr/QrCode.hpp"
+#include "StringUtils.h"
 
 using namespace D2D1;
 using namespace Platform;
@@ -10,6 +12,7 @@ using namespace Windows::UI::ViewManagement;
 using namespace Windows::UI::Xaml;
 using namespace Windows::Storage;
 using namespace Unigram::Native;
+using namespace qrcodegen;
 
 std::map<int, WeakReference> PlaceholderImageHelper::s_windowContext;
 
@@ -94,6 +97,11 @@ PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 	return instance;
 }
 
+void PlaceholderImageHelper::DrawQR(String^ data, IRandomAccessStream^ randomAccessStream)
+{
+	ThrowIfFailed(InternalDrawQR(data, randomAccessStream));
+}
+
 void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, int side, IRandomAccessStream^ randomAccessStream)
 {
 	ThrowIfFailed(InternalDrawIdenticon(hash, side, randomAccessStream));
@@ -109,6 +117,11 @@ void PlaceholderImageHelper::DrawSavedMessages(Color clear, IRandomAccessStream^
 	ThrowIfFailed(InternalDrawSavedMessages(clear, randomAccessStream));
 }
 
+void PlaceholderImageHelper::DrawDeletedUser(Color clear, IRandomAccessStream^ randomAccessStream)
+{
+	ThrowIfFailed(InternalDrawDeletedUser(clear, randomAccessStream));
+}
+
 void PlaceholderImageHelper::DrawProfilePlaceholder(Color clear, Platform::String^ text, IRandomAccessStream^ randomAccessStream)
 {
 	ThrowIfFailed(InternalDrawProfilePlaceholder(clear, text, randomAccessStream));
@@ -117,6 +130,210 @@ void PlaceholderImageHelper::DrawProfilePlaceholder(Color clear, Platform::Strin
 void PlaceholderImageHelper::DrawThumbnailPlaceholder(Platform::String^ fileName, float blurAmount, IRandomAccessStream^ randomAccessStream)
 {
 	ThrowIfFailed(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
+}
+
+constexpr auto kShareQrSize = 768;
+constexpr auto kShareQrPadding = 16;
+
+inline int ReplaceElements(const QrData& data) {
+	const auto elements = (data.size / 4);
+	const auto shift = (data.size - elements) % 2;
+	return (elements - shift);
+}
+
+inline int ReplaceSize(const QrData& data, int pixel) {
+	return ReplaceElements(data) * pixel;
+}
+
+HRESULT PlaceholderImageHelper::InternalDrawQR(String^ text, IRandomAccessStream^ randomAccessStream)
+{
+	auto lock = m_criticalSection.Lock();
+
+	HRESULT result;
+
+	ComPtr<ID2D1Bitmap1> targetBitmap;
+	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+	ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ 768, 768 }, nullptr, 0, &properties, &targetBitmap));
+
+
+	m_d2dContext->SetTarget(targetBitmap.Get());
+	m_d2dContext->BeginDraw();
+
+	auto data = QrData();
+	const auto utf8 = string_to_unmanaged(text);
+	const auto qr = QrCode::encodeText(utf8.c_str(), QrCode::Ecc::MEDIUM);
+	data.size = qr.getSize();
+
+	data.values.reserve(data.size * data.size);
+	for (auto row = 0; row != data.size; ++row) {
+		for (auto column = 0; column != data.size; ++column) {
+			data.values.push_back(qr.getModule(row, column));
+		}
+	}
+
+	const auto size = (kShareQrSize - 2 * kShareQrPadding);
+	const auto pixel = size / data.size;
+
+	const auto replaceElements = ReplaceElements(data);
+	const auto replaceFrom = (data.size - replaceElements) / 2;
+	const auto replaceTill = (data.size - replaceFrom);
+	//const auto black = GenerateSingle(pixel, Qt::transparent, Qt::black);
+	//const auto white = GenerateSingle(pixel, Qt::black, Qt::transparent);
+	const auto value = [&](int row, int column) {
+		return (row >= 0)
+			&& (row < data.size)
+			&& (column >= 0)
+			&& (column < data.size)
+			&& (row < replaceFrom
+				|| row >= replaceTill
+				|| column < replaceFrom
+				|| column >= replaceTill)
+			&& data.values[row * data.size + column];
+	};
+	const auto blackFull = [&](int row, int column) {
+		return (value(row - 1, column) && value(row + 1, column))
+			|| (value(row, column - 1) && value(row, column + 1));
+	};
+	const auto whiteCorner = [&](int row, int column, int dx, int dy) {
+		return !value(row + dy, column)
+			|| !value(row, column + dx)
+			|| !value(row + dy, column + dx);
+	};
+	const auto whiteFull = [&](int row, int column) {
+		return whiteCorner(row, column, -1, -1)
+			&& whiteCorner(row, column, 1, -1)
+			&& whiteCorner(row, column, 1, 1)
+			&& whiteCorner(row, column, -1, 1);
+	};
+	//auto result = QImage(
+	//	data.size * pixel,
+	//	data.size * pixel,
+	//	QImage::Format_ARGB32_Premultiplied);
+	//result.fill(Qt::transparent);
+	{
+		//auto p = QPainter(&result);
+		//p.setCompositionMode(QPainter::CompositionMode_Source);
+		auto context = m_d2dContext;
+		auto blackBrush = m_black;
+		auto whiteBrush = m_transparent;
+		const auto skip = pixel - pixel / 2;
+		const auto brect = [&](float x, float y, float width, float height) {
+			context->FillRectangle(D2D1_RECT_F{ x, y, x + width, y + height }, blackBrush.Get());
+		};
+		const auto wrect = [&](float x, float y, float width, float height) {
+			context->FillRectangle(D2D1_RECT_F{ x, y, x + width, y + height }, whiteBrush.Get());
+		};
+		const auto large = [&](float x, float y) {
+			context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
+				x,
+				y,
+				x + pixel * 7,
+				y + pixel * 7 }, pixel * 2.0f, pixel * 2.0f }, blackBrush.Get());
+			context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
+				x + pixel,
+				y + pixel,
+				x + pixel + pixel * 5,
+				y + pixel + pixel * 5 }, pixel * 1.5f, pixel * 1.5f }, whiteBrush.Get());
+			context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{
+				x + pixel * 2,
+				y + pixel * 2,
+				x + pixel * 2 + pixel * 3,
+				y + pixel * 2 + pixel * 3 }, (float)pixel, (float)pixel }, blackBrush.Get());
+		};
+		const auto white = [&](float x, float y) {
+			context->FillRectangle(D2D1_RECT_F{ x, y, x + pixel, y + pixel }, blackBrush.Get());
+			context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{ x, y, x + pixel, y + pixel }, pixel / 2.0f, pixel / 2.0f }, whiteBrush.Get());
+		};
+		const auto black = [&](float x, float y) {
+			context->FillRectangle(D2D1_RECT_F{ x, y, x + pixel, y + pixel }, whiteBrush.Get());
+			context->FillRoundedRectangle(D2D1_ROUNDED_RECT{ D2D1_RECT_F{ x, y, x + pixel, y + pixel }, pixel / 2.0f, pixel / 2.0f }, blackBrush.Get());
+		};
+		for (auto row = 0; row != data.size; ++row) {
+			for (auto column = 0; column != data.size; ++column) {
+				if ((row < 7 && (column < 7 || column >= data.size - 7))
+					|| (column < 7 && (row < 7 || row >= data.size - 7))) {
+					continue;
+				}
+				const auto x = column * pixel;
+				const auto y = row * pixel;
+				const auto index = row * data.size + column;
+				if (value(row, column)) {
+					if (blackFull(row, column)) {
+						brect(x, y, pixel, pixel);
+					}
+					else {
+						black(x, y);
+						if (value(row - 1, column)) {
+							brect(x, y, pixel, pixel / 2);
+						}
+						else if (value(row + 1, column)) {
+							brect(x, y + skip, pixel, pixel / 2);
+						}
+						if (value(row, column - 1)) {
+							brect(x, y, pixel / 2, pixel);
+						}
+						else if (value(row, column + 1)) {
+							brect(x + skip, y, pixel / 2, pixel);
+						}
+					}
+				}
+				else if (whiteFull(row, column)) {
+					wrect(x, y, pixel, pixel);
+				}
+				else {
+					white(x, y);
+					if (whiteCorner(row, column, -1, -1)
+						&& whiteCorner(row, column, 1, -1)) {
+						wrect(x, y, pixel, pixel / 2);
+					}
+					else if (whiteCorner(row, column, -1, 1)
+						&& whiteCorner(row, column, 1, 1)) {
+						wrect(x, y + skip, pixel, pixel / 2);
+					}
+					if (whiteCorner(row, column, -1, -1)
+						&& whiteCorner(row, column, -1, 1)) {
+						wrect(x, y, pixel / 2, pixel);
+					}
+					else if (whiteCorner(row, column, 1, -1)
+						&& whiteCorner(row, column, 1, 1)) {
+						wrect(x + skip, y, pixel / 2, pixel);
+					}
+					if (whiteCorner(row, column, -1, -1)) {
+						wrect(x, y, pixel / 2, pixel / 2);
+					}
+					if (whiteCorner(row, column, 1, -1)) {
+						wrect(x + skip, y, pixel / 2, pixel / 2);
+					}
+					if (whiteCorner(row, column, 1, 1)) {
+						wrect(x + skip, y + skip, pixel / 2, pixel / 2);
+					}
+					if (whiteCorner(row, column, -1, 1)) {
+						wrect(x, y + skip, pixel / 2, pixel / 2);
+					}
+				}
+			}
+		}
+
+		//PrepareForRound(p);
+		large(0, 0);
+		large((data.size - 7) * pixel, 0);
+		large(0, (data.size - 7) * pixel);
+	}
+
+	float diamond = ReplaceSize(data, pixel);
+	float x1 = (size - diamond) / 2;
+	x1 -= kShareQrPadding;
+	ComPtr<ID2D1SolidColorBrush> red;
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &red));
+	m_d2dContext->FillRectangle(D2D1_RECT_F{ x1, x1, x1 + diamond, x1 + diamond }, red.Get());
+
+	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+	{
+		ReturnIfFailed(result, CreateDeviceResources());
+		return InternalDrawQR(text, randomAccessStream);
+	}
+
+	return SaveImageToStream(targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
 }
 
 HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, int side, IRandomAccessStream^ randomAccessStream)
@@ -224,6 +441,32 @@ HRESULT PlaceholderImageHelper::InternalDrawSavedMessages(Color clear, IRandomAc
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
 		return InternalDrawSavedMessages(clear, randomAccessStream);
+	}
+
+	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
+}
+
+HRESULT PlaceholderImageHelper::InternalDrawDeletedUser(Color clear, IRandomAccessStream^ randomAccessStream)
+{
+	auto lock = m_criticalSection.Lock();
+	auto text = L"\uE91A";
+
+	HRESULT result;
+	DWRITE_TEXT_METRICS textMetrics;
+	ReturnIfFailed(result, MeasureText(text, m_symbolFormat.Get(), &textMetrics));
+
+	m_d2dContext->SetTarget(m_targetBitmap.Get());
+	m_d2dContext->BeginDraw();
+	//m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+	m_d2dContext->Clear(D2D1::ColorF(clear.R / 255.0f, clear.G / 255.0f, clear.B / 255.0f, clear.A / 255.0f));
+
+	D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (184.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
+	m_d2dContext->DrawText(text, 1, m_symbolFormat.Get(), &layoutRect, m_textBrush.Get());
+
+	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+	{
+		ReturnIfFailed(result, CreateDeviceResources());
+		return InternalDrawDeletedUser(clear, randomAccessStream);
 	}
 
 	return SaveImageToStream(m_targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
@@ -424,6 +667,8 @@ HRESULT PlaceholderImageHelper::CreateDeviceResources()
 	ReturnIfFailed(result, d2dContext.As(&m_d2dContext));
 
 	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_textBrush));
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &m_black));
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_transparent));
 	ReturnIfFailed(result, m_d2dContext->CreateEffect(CLSID_D2D1GaussianBlur, &m_gaussianBlurEffect));
 	ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD));
 

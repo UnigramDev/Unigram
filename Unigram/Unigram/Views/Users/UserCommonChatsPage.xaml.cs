@@ -40,6 +40,19 @@ namespace Unigram.Views.Users
             }
         }
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer.Style = List.ItemContainerStyle;
+            }
+
+            args.ItemContainer.ContentTemplate = List.ItemTemplate;
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)

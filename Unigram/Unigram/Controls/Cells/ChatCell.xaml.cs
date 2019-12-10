@@ -110,7 +110,8 @@ namespace Unigram.Controls.Cells
             _delegate = delegato;
 
             TitleLabel.Text = Strings.Resources.ArchivedChats;
-            Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 48);
+            Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
+
             TypeIcon.Text = string.Empty;
             TypeIcon.Visibility = Visibility.Collapsed;
             VerifiedIcon.Visibility = Visibility.Collapsed;
@@ -330,7 +331,7 @@ namespace Unigram.Controls.Cells
         {
             if (chat.Type is ChatTypePrivate privata && privata.UserId == _protoService.Options.MyId)
             {
-                Photo.Source = PlaceholderHelper.GetSavedMessages(privata.UserId, 48);
+                Photo.Source = PlaceholderHelper.GetSavedMessages(privata.UserId, 96);
             }
             else
             {

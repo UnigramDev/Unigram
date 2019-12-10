@@ -17,6 +17,7 @@ namespace Unigram.Services
 
         void UpdateVersion();
 
+        ChatSettingsBase Chats { get; }
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
         WalletSettings Wallet { get; }
@@ -178,6 +179,8 @@ namespace Unigram.Services
             _own = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
         }
 
+        public ApplicationDataContainer Container => _container;
+
         #region App version
 
         public const ulong CurrentVersion = (3UL << 48) | (12UL << 32) | (2605UL << 16);
@@ -209,6 +212,15 @@ namespace Unigram.Services
         }
 
         #endregion
+
+        private ChatSettingsBase _chats;
+        public ChatSettingsBase Chats
+        {
+            get
+            {
+                return _chats = _chats ?? new ChatSettingsBase(_own);
+            }
+        }
 
         private NotificationsSettings _notifications;
         public NotificationsSettings Notifications
@@ -949,5 +961,43 @@ namespace Unigram.Services
                 _local.Values.Remove($"User{UserId}");
             }
         }
+    }
+
+    public class ChatSettingsBase : SettingsServiceBase
+    {
+        public ChatSettingsBase(ApplicationDataContainer container = null)
+            : base(container)
+        {
+        }
+
+        public object this[long chatId, ChatSetting key]
+        {
+            //get => GetValueOrDefault<object>(chatId + key, null);
+            set => AddOrUpdateValue(ConvertToKey(chatId, key), value);
+        }
+
+        public bool TryRemove<T>(long chatId, ChatSetting key, out T value)
+        {
+            if (_container.Values.ContainsKey(ConvertToKey(chatId, key)))
+            {
+                value = (T)_container.Values[ConvertToKey(chatId, key)];
+                _container.Values.Remove(ConvertToKey(chatId, key));
+                return true;
+            }
+
+            value = default(T);
+            return false;
+        }
+
+        private string ConvertToKey(long chatId, ChatSetting setting)
+        {
+            return $"{chatId}{setting}";
+        }
+    }
+
+    public enum ChatSetting
+    {
+        Index,
+        Pixel
     }
 }

@@ -214,7 +214,19 @@ namespace Unigram.Views
                     if (point.Y + container.ActualHeight >= 0)
                     {
                         minItem = false;
-                        DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+
+                        if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
+                        {
+                            DateHeaderLabel.Text = string.Format(Strings.Resources.MessageScheduledOn, DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate)));
+                        }
+                        else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
+                        {
+                            DateHeaderLabel.Text = Strings.Resources.MessageScheduledUntilOnline;
+                        }
+                        else
+                        {
+                            DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                        }
                     }
                 }
 

@@ -119,7 +119,7 @@
                         HorizontalAlignment="Stretch"/>
                 <controls:OrientableListView x:Name="Items"
                                              ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
-                                             IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"
+                                             Orientation="{x:Bind ConvertOrientation(ViewModel.InlineBotResults.IsGallery), Mode=OneWay}"
                                              ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
                                              ContainerContentChanging="OnContainerContentChanging"
                                              ItemClick="ListView_ItemClick"

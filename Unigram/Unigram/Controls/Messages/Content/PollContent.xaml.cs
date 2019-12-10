@@ -86,8 +86,14 @@ namespace Unigram.Controls.Messages.Content
             return content is MessagePoll;
         }
 
-        private void Option_Click(object sender, RoutedEventArgs e)
+        private async void Option_Click(object sender, RoutedEventArgs e)
         {
+            if (_message?.SchedulingState != null)
+            {
+                await TLMessageDialog.ShowAsync(Strings.Resources.MessageScheduledVote, Strings.Resources.AppName, Strings.Resources.OK);
+                return;
+            }
+
             var button = sender as PollOptionControl;
             if (button.IsChecked == true)
             {

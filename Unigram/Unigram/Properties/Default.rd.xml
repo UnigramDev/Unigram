@@ -25,7 +25,8 @@
     
     
     <!-- Add your application specific runtime directives here. -->
-
+    <Type Name="System.Collections.Generic.KeyValuePair{System.UInt32, System.UInt32}" MarshalObject="Required All" />
+    <Type Name="System.Collections.Generic.IReadOnlyDictionary{System.UInt32, System.UInt32}" MarshalObject="Required All" />
 
   </Application>
 </Directives>

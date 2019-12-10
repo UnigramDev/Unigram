@@ -184,6 +184,23 @@ namespace Unigram.Common
             return bitmap;
         }
 
+        public static ImageSource GetDeletedUser(User user, int side)
+        {
+            var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    PlaceholderImageHelper.GetForCurrentView().DrawDeletedUser(_colors[Math.Abs(user.Id % _colors.Length)], stream);
+
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
+        }
+
         public static ImageSource GetGlyph(string glyph, int id, int side)
         {
             var bitmap = new BitmapImage { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
@@ -220,8 +237,13 @@ namespace Unigram.Common
                     protoService?.DownloadFile(file.Id, 1);
                 }
             }
+            else if (protoService.TryGetUser(chat, out User user) && user.Type is UserTypeDeleted)
+            {
+                return GetDeletedUser(user, side);
+            }
             else
             {
+
                 return GetChat(chat, side);
             }
 
@@ -263,6 +285,10 @@ namespace Unigram.Common
                 {
                     protoService?.DownloadFile(file.Id, 1);
                 }
+            }
+            else if (user.Type is UserTypeDeleted)
+            {
+                return GetDeletedUser(user, side);
             }
             else
             {

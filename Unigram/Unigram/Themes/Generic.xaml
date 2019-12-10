@@ -6,7 +6,8 @@
     xmlns:gallery="using:Unigram.Controls.Gallery"
     xmlns:local="using:Unigram.Controls"
     xmlns:common="using:Unigram.Common"
-    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml">
+    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    xmlns:microsoft="using:Microsoft.UI.Xaml.Controls">
 
     <Style TargetType="local:NavigationView">
         <Setter Property="IsTabStop" Value="False"/>
@@ -1859,6 +1860,77 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:BackButton">
+        <Setter Property="Glyph" Value="&#xE72B;"/>
+        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="AutomationProperties.Name" Value="{CustomResource AccDescrGoBack}"/>
+        <Setter Property="ToolTipService.ToolTip" Value="{CustomResource AccDescrGoBack}"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:GlyphButton">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <TextBlock
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Text="{TemplateBinding Glyph}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="local:ButtonPageHeader">
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
@@ -1886,7 +1958,7 @@
                                                AutomationProperties.Name="{TemplateBinding CommandToolTip}"
                                                ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
                                                Grid.Column="2"/>
-                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
+                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -1919,7 +1991,7 @@
                             </Grid.ColumnDefinitions>
                             <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
-                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -1952,7 +2024,7 @@
                             </Grid.ColumnDefinitions>
                             <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
-                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -2701,6 +2773,90 @@
         </Setter>
     </Style>
 
+    <Style TargetType="chats:ChatSendButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="4,0,0,0" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource TelegramThemeFontFamily}" />
+        <Setter Property="Glyph" Value="&#xE919;" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Width" Value="48" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="chats:ChatSendButton">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SlowModeDelayStates">
+                                <VisualState x:Name="Expired"/>
+                                <VisualState x:Name="ExpiresIn">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Visibility" Value="Collapsed"/>
+                                        <Setter Target="ExpiresInLabel.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <TextBlock
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Text="{TemplateBinding Glyph}"/>
+
+                        <TextBlock
+                            x:Name="ExpiresInLabel"
+                            TextAlignment="Center"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource InfoCaptionTextBlockStyle}"
+                            Visibility="Collapsed"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="chats:ChatRecordButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -2980,7 +3136,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style TargetType="local:GlyphHyperlinkButton">
         <Setter Property="Background" Value="Transparent" />

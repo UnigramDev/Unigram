@@ -37,6 +37,8 @@ namespace Unigram.Views.Supergroups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(this);
 
+            InitializeTicks();
+
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
@@ -49,6 +51,28 @@ namespace Unigram.Views.Supergroups
                     ViewModel.Find(SearchField.Text);
                 }
             });
+        }
+
+        private void InitializeTicks()
+        {
+            int j = 0;
+            for (int i = 0; i < 7; i++)
+            {
+                var label = new TextBlock { Text = ConvertSlowModeTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
+                Grid.SetColumn(label, j);
+
+                SlowmodeTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+
+                if (i < 6)
+                {
+                    SlowmodeTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                }
+
+                SlowmodeTicks.Children.Add(label);
+                j += 2;
+            }
+
+            Grid.SetColumnSpan(Slowmode, SlowmodeTicks.ColumnDefinitions.Count);
         }
 
         public void OnBackRequested(HandledRoutedEventArgs args)
@@ -97,11 +121,140 @@ namespace Unigram.Views.Supergroups
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
             Blacklist.Badge = fullInfo.BannedCount;
+            ViewModel.SlowModeDelay = fullInfo.SlowModeDelay;
+
+            SlowmodePanel.Footer = fullInfo.SlowModeDelay > 0
+                ? string.Format(Strings.Resources.SlowmodeInfoSelected, fullInfo.SlowModeDelay)
+                : Strings.Resources.SlowmodeInfoOff;
         }
 
         public void UpdateChat(Chat chat) { }
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
+
+
+
+        private int ConvertSlowMode(int value)
+        {
+            switch (Math.Max(0, Math.Min(60 * 60, value)))
+            {
+                case 0:
+                default:
+                    return 0;
+                case 10:
+                    return 1;
+                case 30:
+                    return 2;
+                case 60:
+                    return 3;
+                case 5 * 60:
+                    return 4;
+                case 15 * 60:
+                    return 5;
+                case 60 * 60:
+                    return 6;
+            }
+        }
+
+        private void ConvertSlowModeBack(double value)
+        {
+            switch (value)
+            {
+                case 0:
+                    ViewModel.SlowModeDelay = 0;
+                    break;
+                case 1:
+                    ViewModel.SlowModeDelay = 10;
+                    break;
+                case 2:
+                    ViewModel.SlowModeDelay = 30;
+                    break;
+                case 3:
+                    ViewModel.SlowModeDelay = 60;
+                    break;
+                case 4:
+                    ViewModel.SlowModeDelay = 5 * 60;
+                    break;
+                case 5:
+                    ViewModel.SlowModeDelay = 15 * 60;
+                    break;
+                case 6:
+                    ViewModel.SlowModeDelay = 60 * 60;
+                    break;
+            }
+        }
+
+        private string ConvertSlowModeTick(double value)
+        {
+            var seconds = 0;
+            switch (value)
+            {
+                case 0:
+                    seconds = 0;
+                    break;
+                case 1:
+                    seconds = 10;
+                    break;
+                case 2:
+                    seconds = 30;
+                    break;
+                case 3:
+                    seconds = 60;
+                    break;
+                case 4:
+                    seconds = 5 * 60;
+                    break;
+                case 5:
+                    seconds = 15 * 60;
+                    break;
+                case 6:
+                    seconds = 60 * 60;
+                    break;
+            }
+
+            if (seconds == 0)
+            {
+                return Strings.Resources.SlowmodeOff;
+            }
+            else
+            {
+                if (seconds < 60)
+                {
+                    return string.Format(Strings.Resources.SlowmodeSeconds, seconds);
+                }
+                else if (seconds < 60 * 60)
+                {
+                    return string.Format(Strings.Resources.SlowmodeMinutes, seconds / 60);
+                }
+                else
+                {
+                    return string.Format(Strings.Resources.SlowmodeHours, seconds / 60 / 60);
+                }
+            }
+        }
+
+        private string ConvertSlowModeFooter(int value)
+        {
+            if (value == 0)
+            {
+                return Strings.Resources.SlowmodeInfoOff;
+            }
+            else
+            {
+                if (value < 60)
+                {
+                    return string.Format(Strings.Resources.SlowmodeInfoSelected, Locale.Declension("Seconds", value));
+                }
+                else if (value < 60 * 60)
+                {
+                    return string.Format(Strings.Resources.SlowmodeInfoSelected, Locale.Declension("Minutes", value / 60));
+                }
+                else
+                {
+                    return string.Format(Strings.Resources.SlowmodeInfoSelected, Locale.Declension("Hours", value / 60 / 60));
+                }
+            }
+        }
 
         #endregion
 

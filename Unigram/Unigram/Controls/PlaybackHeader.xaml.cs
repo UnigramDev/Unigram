@@ -248,6 +248,7 @@ namespace Unigram.Controls
 
         private void UpdateRepeat()
         {
+            RepeatButton.IsChecked = _playbackService.IsRepeatEnabled == null;
             Automation.SetToolTip(RepeatButton, _playbackService.IsRepeatEnabled == null
                 ? Strings.Resources.AccDescrRepeatOne
                 : _playbackService.IsRepeatEnabled == true
@@ -299,6 +300,7 @@ namespace Unigram.Controls
         private void Shuffle_Click(object sender, RoutedEventArgs e)
         {
             //_playbackService.IsShuffleEnabled = ShuffleButton.IsChecked == true;
+            _playbackService.IsReversed = ShuffleButton.IsChecked == true;
         }
 
         private void Rate_Click(object sender, RoutedEventArgs e)

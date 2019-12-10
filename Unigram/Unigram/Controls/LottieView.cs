@@ -284,7 +284,7 @@ namespace Unigram.Controls
         {
             if (cache)
             {
-                return CachedAnimation.LoadFromFile(path, true, _limitFps);
+                return CachedAnimation.LoadFromFile(path, true, _limitFps, ColorReplacements);
             }
 
             return Animation.LoadFromFile(path);
@@ -386,5 +386,7 @@ namespace Unigram.Controls
 
         public event EventHandler<double> PositionChanged;
         public event EventHandler<int> IndexChanged;
+
+        public IReadOnlyDictionary<uint, uint> ColorReplacements { get; set; }
     }
 }

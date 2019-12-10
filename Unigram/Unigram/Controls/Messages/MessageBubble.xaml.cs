@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Telegram.Td.Api;
@@ -386,9 +387,10 @@ namespace Unigram.Controls.Messages
 
             if (shown)
             {
-                if (admin != null && !message.IsOutgoing && message.Delegate != null && message.Delegate.IsAdmin(message.SenderUserId))
+                var title = message.Delegate.GetAdminTitle(message.SenderUserId);
+                if (admin != null && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
                 {
-                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Resources.ChatAdmin, Foreground = null });
+                    paragraph.Inlines.Add(new Run { Text = " " + title, Foreground = null });
                 }
             }
 
@@ -453,9 +455,11 @@ namespace Unigram.Controls.Messages
 
             if (paragraph.Inlines.Count > 0)
             {
-                if (admin != null && shown && !message.IsOutgoing && message.Delegate != null && message.Delegate.IsAdmin(message.SenderUserId))
+                var title = message.Delegate.GetAdminTitle(message.SenderUserId);
+                if (admin != null && shown && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
                 {
                     admin.Visibility = Visibility.Visible;
+                    admin.Text = title;
                 }
                 else if (admin != null)
                 {
@@ -937,22 +941,22 @@ namespace Unigram.Controls.Messages
 
                     if (entity.HasFlag(TextStyle.Mention) || entity.HasFlag(TextStyle.Url))
                     {
-                        if (entity.Entity.Type is TextEntityTypeMentionName || entity.Entity.Type is TextEntityTypeTextUrl)
+                        if (entity.Type is TextEntityTypeMentionName || entity.Type is TextEntityTypeTextUrl)
                         {
                             var hyperlink = new Hyperlink();
                             object data;
-                            if (entity.Entity.Type is TextEntityTypeTextUrl textUrl)
+                            if (entity.Type is TextEntityTypeTextUrl textUrl)
                             {
                                 data = textUrl.Url;
                                 MessageHelper.SetEntity(hyperlink, textUrl.Url);
                                 ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                             }
-                            else if (entity.Entity.Type is TextEntityTypeMentionName mentionName)
+                            else if (entity.Type is TextEntityTypeMentionName mentionName)
                             {
                                 data = mentionName.UserId;
                             }
 
-                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Entity.Type, null);
+                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
                             hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
                             //hyperlink.Foreground = foreground;
 
@@ -964,11 +968,11 @@ namespace Unigram.Controls.Messages
                             var hyperlink = new Hyperlink();
                             var data = text.Substring(entity.Offset, entity.Length);
 
-                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Entity.Type, data);
+                            hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                             hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
                             //hyperlink.Foreground = foreground;
 
-                            if (entity.Entity.Type is TextEntityTypeUrl)
+                            if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress)
                             {
                                 MessageHelper.SetEntity(hyperlink, data);
                             }
@@ -998,6 +1002,42 @@ namespace Unigram.Controls.Messages
                     }
 
                     local.Inlines.Add(run);
+
+                    if (entity.Type is TextEntityTypeHashtag)
+                    {
+                        var data = text.Substring(entity.Offset, entity.Length);
+                        var hex = data.TrimStart('#');
+
+                        if ((hex.Length == 6 || hex.Length == 8) && int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int rgba))
+                        {
+                            byte r, g, b, a;
+                            if (hex.Length == 8)
+                            {
+                                r = (byte)((rgba & 0xff000000) >> 24);
+                                g = (byte)((rgba & 0x00ff0000) >> 16);
+                                b = (byte)((rgba & 0x0000ff00) >> 8);
+                                a = (byte)(rgba & 0x000000ff);
+                            }
+                            else
+                            {
+                                r = (byte)((rgba & 0xff0000) >> 16);
+                                g = (byte)((rgba & 0x00ff00) >> 8);
+                                b = (byte)(rgba & 0x0000ff);
+                                a = 0xFF;
+                            }
+
+                            var color = Color.FromArgb(a, r, g, b);
+                            var border = new Border
+                            {
+                                Width = 12,
+                                Height = 12,
+                                Margin = new Thickness(4, 4, 0, -2),
+                                Background = new SolidColorBrush(color)
+                            };
+
+                            span.Inlines.Add(new InlineUIContainer { Child = border });
+                        }
+                    }
                 }
 
                 previous = entity.Offset + entity.Length;

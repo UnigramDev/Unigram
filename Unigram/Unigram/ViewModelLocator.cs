@@ -185,6 +185,7 @@ namespace Unigram
                 builder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
                 builder.RegisterType<ChatsViewModel>();//.SingleInstance();
                 builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
+                builder.RegisterType<DialogScheduledViewModel>();
                 builder.RegisterType<ProfileViewModel>();
                 builder.RegisterType<UserCommonChatsViewModel>();
                 builder.RegisterType<UserCreateViewModel>();
@@ -236,7 +237,9 @@ namespace Unigram
                 builder.RegisterType<SettingsPrivacyAllowP2PCallsViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyAllowChatInvitesViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowForwardedViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsPrivacyPhoneViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowPhoneViewModel>(); //.SingleInstance();
+                builder.RegisterType<SettingsPrivacyAllowFindingByPhoneNumberViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowPhotoViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPrivacyShowStatusViewModel>(); //.SingleInstance();
                 builder.RegisterType<SettingsPasswordViewModel>(); //.SingleInstance();

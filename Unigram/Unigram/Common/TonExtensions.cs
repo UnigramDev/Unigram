@@ -63,6 +63,27 @@ namespace Ton.Tonlib.Api
 
             return null;
         }
+
+        public static long GetSyncUtime(this GenericAccountState accountState)
+        {
+            switch (accountState)
+            {
+                case GenericAccountStateRaw stateRaw:
+                    return stateRaw.AccountState.SyncUtime;
+                case GenericAccountStateTestGiver stateTestGiver:
+                    return stateTestGiver.AccountState.SyncUtime;
+                case GenericAccountStateTestWallet stateTestWallet:
+                    return stateTestWallet.AccountState.SyncUtime;
+                case GenericAccountStateUninited stateUninited:
+                    return stateUninited.AccountState.SyncUtime;
+                case GenericAccountStateWallet stateWallet:
+                    return stateWallet.AccountState.SyncUtime;
+                case GenericAccountStateWalletV3 stateWalletV3:
+                    return stateWalletV3.AccountState.SyncUtime;
+            }
+
+            return 0;
+        }
     }
 }
 

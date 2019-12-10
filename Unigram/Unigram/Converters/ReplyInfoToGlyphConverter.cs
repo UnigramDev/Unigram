@@ -59,6 +59,7 @@ namespace Unigram.Converters
         public const string Timer = "\uE916";
         public const string Report = "\uE730";
         public const string Clear = "\uEA99";
+        public const string Schedule = "\uE81C";
 
         public const string Mute = "\uE7ED";
         public const string Unmute = "\uEA8F";

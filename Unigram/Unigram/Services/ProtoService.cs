@@ -38,6 +38,7 @@ namespace Unigram.Services
         int UserId { get; }
 
         IOptionsService Options { get; }
+        JsonValueObject Config { get; }
 
         Background SelectedBackground { get; }
 
@@ -67,6 +68,9 @@ namespace Unigram.Services
 
         User GetUser(Chat chat);
         User GetUser(int id);
+        bool TryGetUser(int id, out User value);
+        bool TryGetUser(Chat chat, out User value);
+
         UserFullInfo GetUserFull(int id);
         UserFullInfo GetUserFull(Chat chat);
         IList<User> GetUsers(IList<int> ids);
@@ -141,6 +145,8 @@ namespace Unigram.Services
 
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
+
+        private JsonValueObject _config;
 
         private Background _selectedBackground;
 
@@ -296,6 +302,7 @@ namespace Unigram.Services
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
+                _client.Send(new GetApplicationConfig(), result => UpdateConfig(result));
                 _client.Run();
             });
         }
@@ -311,6 +318,14 @@ namespace Unigram.Services
         private async void UpdateWallet()
         {
 
+        }
+
+        private void UpdateConfig(BaseObject value)
+        {
+            if (value is JsonValueObject obj)
+            {
+                _config = obj;
+            }
         }
 
         private async void UpdateVersion()
@@ -545,6 +560,11 @@ namespace Unigram.Services
             get { return _options; }
         }
 
+        public JsonValueObject Config
+        {
+            get { return _config; }
+        }
+
         public Background SelectedBackground
         {
             get { return _selectedBackground; }
@@ -762,6 +782,28 @@ namespace Unigram.Services
 
             return null;
         }
+
+        public bool TryGetUser(int id, out User value)
+        {
+            return _users.TryGetValue(id, out value);
+        }
+
+        public bool TryGetUser(Chat chat, out User value)
+        {
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                return TryGetUser(privata.UserId, out value);
+            }
+            else if (chat.Type is ChatTypeSecret secret)
+            {
+                return TryGetUser(secret.UserId, out value);
+            }
+
+            value = null;
+            return false;
+        }
+
+
 
         public UserFullInfo GetUserFull(int id)
         {
@@ -1004,7 +1046,7 @@ namespace Unigram.Services
             var result = await Task.WhenAny(task, Task.Delay(2000));
 
             set = result == task ? task.Result as StickerSet : null;
-            tsc.SetResult(set);
+            tsc.TrySetResult(set);
 
             return set;
         }
@@ -1084,6 +1126,13 @@ namespace Unigram.Services
                 {
                     value.Order = updateChatDraftMessage.Order;
                     value.DraftMessage = updateChatDraftMessage.DraftMessage;
+                }
+            }
+            else if (update is UpdateChatHasScheduledMessages updateChatHasScheduledMessages)
+            {
+                if (_chats.TryGetValue(updateChatHasScheduledMessages.ChatId, out Chat value))
+                {
+                    value.HasScheduledMessages = updateChatHasScheduledMessages.HasScheduledMessages;
                 }
             }
             else if (update is UpdateChatIsMarkedAsUnread updateChatIsMarkedAsUnread)

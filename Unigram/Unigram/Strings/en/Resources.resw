@@ -2011,7 +2011,9 @@ If you're not interested, we suggest creating a private channel instead.</value>
     <value>Sorry, too many bots in this channel.</value>
   </data>
   <data name="ChannelUserLeftError" xml:space="preserve">
-    <value>Sorry, this user decided to leave this channel, so you cannot add them back here.</value>
+    <value>Sorry, if a person is no longer part of a channel, you need to be in their Telegram contacts in order to add them back.
+
+Note that they could still join via the channel's invite link as long as they are not in the Removed users list.</value>
   </data>
   <data name="ChannelUsernameHelp" xml:space="preserve">
     <value>If you set a permanent link, other people will be able to find and join your channel.
@@ -2032,7 +2034,7 @@ Minimum length is 5 characters.</value>
     <value>Hide the archive by swiping left on it.</value>
   </data>
   <data name="ChatBackground" xml:space="preserve">
-    <value>Change Chat Background</value>
+    <value>Chat Background</value>
   </data>
   <data name="ChatCamera" xml:space="preserve">
     <value>Camera</value>
@@ -7602,7 +7604,7 @@ The channel "**{1}**" will become private.</value>
     <value>Schedule</value>
   </data>
   <data name="ScheduledMessages" xml:space="preserve">
-    <value>Scheduled messages</value>
+    <value>Scheduled Messages</value>
   </data>
   <data name="ScheduleMessage" xml:space="preserve">
     <value>Schedule message</value>
@@ -9507,7 +9509,13 @@ If you forget your password, you will lose access to your Telegram account. Ther
     <value>Your Phone</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
-    <value>you were removed from the group</value>
+    <value>you were removed</value>
+  </data>
+  <data name="MessageScheduledUntilOnline" xml:space="preserve">
+    <value>Scheduled until online</value>
+  </data>
+  <data name="ScheduleWhenOnline" xml:space="preserve">
+    <value>Send when {0} comes online</value>
   </data>
   <data name="Wallet" xml:space="preserve">
     <value>Wallet</value>

@@ -80,21 +80,17 @@ namespace Unigram.Views.Wallet
             var headline = content.Children[0] as TextBlock;
             var address = content.Children[1] as TextBlock;
             var message = content.Children[2] as TextBlock;
-            var timestamp = content.Children[3] as TextBlock;
+            var fees = content.Children[3] as TextBlock;
+            var timestamp = content.Children[4] as TextBlock;
 
             headline.Inlines.Clear();
 
-            long amount;
-            IList<byte> comment;
+            long amount = 0;
+            IList<byte> comment = null;
             if (item.InMsg != null)
             {
                 amount = item.InMsg.Value;
                 comment = item.InMsg.Message;
-            }
-            else
-            {
-                amount = 0;
-                comment = null;
             }
 
             foreach (var msg in item.OutMsgs)
@@ -140,21 +136,73 @@ namespace Unigram.Views.Wallet
                 message.Visibility = Visibility.Collapsed;
             }
 
+            if (item.StorageFee != 0 || item.OtherFee != 0)
+            {
+                fees.Text = string.Format(Strings.Resources.WalletBlockchainFees, BindConvert.Grams(-item.StorageFee - item.OtherFee, false));
+                fees.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                fees.Visibility = Visibility.Collapsed;
+            }
+
             timestamp.Text = BindConvert.Current.Date((int)item.Utime);
         }
 
         #region Binding
 
-        private string ConvertSyncState(SyncState state)
+        private string ConvertSyncState(SyncState state, long ciccio)
         {
-            if (state is SyncStateDone done)
+            //if (state is SyncStateDone done)
+            //{
+            //    return $"100%";
+            //}
+            //else if (state is SyncStateInProgress progress)
+            //{
+            //    var value = (int)((progress.CurrentSeqno - progress.FromSeqno) / (double)(progress.ToSeqno - progress.FromSeqno) * 100);
+            //    return string.Format(Strings.Resources.WalletUpdatingProgress, value);
+            //}
+
+            var last = Utils.UnixTimestampToDateTime(ciccio);
+
+            if (state is SyncStateInProgress inProgress)
             {
-                return $"100%";
+                int progress = (int)((inProgress.CurrentSeqno - inProgress.FromSeqno) / (double)(inProgress.ToSeqno - inProgress.FromSeqno) * 100);
+                if (progress != 0 && progress != 100)
+                {
+                    return string.Format(Strings.Resources.WalletUpdatingProgress, progress);
+                }
+                else
+                {
+                    return Strings.Resources.WalletUpdating;
+                }
             }
-            else if (state is SyncStateInProgress progress)
+            else
             {
-                var value = (int)((progress.CurrentSeqno - progress.FromSeqno) / (double)(progress.ToSeqno - progress.FromSeqno) * 100);
-                return $"{value}%";
+                var newTime = DateTime.Now;
+                var dt = newTime - last;
+                if (dt.TotalSeconds < 60)
+                {
+                    return Strings.Resources.WalletUpdatedFewSecondsAgo;
+                }
+                else
+                {
+                    String time;
+                    if (dt.TotalSeconds < 60 * 60)
+                    {
+                        time = Locale.Declension("Minutes", (int)(dt.TotalSeconds / 60));
+                    }
+                    else if (dt.TotalSeconds < 60 * 60 * 24)
+                    {
+                        time = Locale.Declension("Hours", (int)(dt.TotalSeconds / 60 / 60));
+                    }
+                    else
+                    {
+                        time = Locale.Declension("Days", (int)(dt.TotalSeconds / 60 / 60 / 24));
+                    }
+
+                    return string.Format(Strings.Resources.WalletUpdatedTimeAgo, time);
+                }
             }
 
             return null;
@@ -163,6 +211,32 @@ namespace Unigram.Views.Wallet
         private string ConvertAmount(long value)
         {
             return BindConvert.Grams(value, true);
+        }
+
+        private string ConvertAmount(long value, bool integer)
+        {
+            var grams = BindConvert.Grams(value, true);
+            var split = grams.Split(' ');
+            var gem = split[0] == "\uD83D\uDC8E";
+
+            var amount = split[gem ? 1 : 0].Split('.');
+
+            if (integer)
+            {
+                if (gem)
+                {
+                    return $"\uD83D\uDC8E {amount[0]}";
+                }
+
+                return amount[0];
+            }
+
+            if (!gem)
+            {
+                return $".{amount[1]} \uD83D\uDC8E";
+            }
+
+            return $".{amount[1]}";
         }
 
         private string ConvertAddress(string address)

@@ -28,7 +28,9 @@
 
             <Grid x:Name="WordListPanel" Margin="12,0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
             </Grid>

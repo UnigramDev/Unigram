@@ -47,6 +47,13 @@ namespace Unigram.ViewModels.Wallet
             set => Set(ref _syncState, value);
         }
 
+        private long _syncUtime;
+        public long SyncUtime
+        {
+            get => _syncUtime;
+            set => Set(ref _syncUtime, value);
+        }
+
         private string _address;
         public string Address
         {
@@ -74,7 +81,7 @@ namespace Unigram.ViewModels.Wallet
         {
             Aggregator.Subscribe(this);
 
-            var address = TonService.Execute(new WalletGetAccountAddress(new WalletInitialAccountState(ProtoService.Options.WalletPublicKey))) as AccountAddress;
+            var address = TonService.GetAccountAddress(ProtoService.Options.WalletPublicKey);
             if (address == null)
             {
                 return;
@@ -89,6 +96,7 @@ namespace Unigram.ViewModels.Wallet
             if (response is GenericAccountState accountState)
             {
                 IsLoading = false;
+                SyncUtime = accountState.GetSyncUtime();
                 Balance = accountState.GetBalance();
 
                 var lastTransactionId = accountState.GetLastTransactionId();

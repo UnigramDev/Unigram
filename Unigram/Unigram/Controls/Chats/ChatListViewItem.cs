@@ -375,14 +375,42 @@ namespace Unigram.Controls.Chats
         }
     }
 
+    public class AccessibleChatListViewItem : ListViewItem
+    {
+        private readonly IProtoService _protoService;
+
+        public AccessibleChatListViewItem()
+        {
+
+        }
+
+        public AccessibleChatListViewItem(IProtoService protoService)
+        {
+            _protoService = protoService;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ChatListViewAutomationPeer(this, _protoService);
+        }
+    }
+
     public class ChatListViewAutomationPeer : ListViewItemAutomationPeer
     {
-        private ChatListViewItem _owner;
+        private readonly ListViewItem _owner;
+        private readonly IProtoService _protoService;
 
-        public ChatListViewAutomationPeer(ChatListViewItem owner)
+        public ChatListViewAutomationPeer(ListViewItem owner)
             : base(owner)
         {
             _owner = owner;
+        }
+
+        public ChatListViewAutomationPeer(ListViewItem owner, IProtoService protoService)
+            : base(owner)
+        {
+            _owner = owner;
+            _protoService = protoService;
         }
 
         protected override string GetNameCore()
@@ -398,6 +426,71 @@ namespace Unigram.Controls.Chats
             else if (_owner.ContentTemplateRoot is MessageBubble child)
             {
                 return child.GetAutomationName() ?? base.GetNameCore();
+            }
+            else if (_owner.Content is Message message && _protoService != null)
+            {
+                return Automation.GetDescription(_protoService, message);
+            }
+
+            return base.GetNameCore();
+        }
+    }
+
+    public class ChatGridViewItem : GridViewItem
+    {
+        private readonly IProtoService _protoService;
+
+        public ChatGridViewItem()
+        {
+
+        }
+
+        public ChatGridViewItem(IProtoService protoService)
+        {
+            _protoService = protoService;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ChatGridViewAutomationPeer(this, _protoService);
+        }
+    }
+
+    public class ChatGridViewAutomationPeer : GridViewItemAutomationPeer
+    {
+        private readonly ChatGridViewItem _owner;
+        private readonly IProtoService _protoService;
+
+        public ChatGridViewAutomationPeer(ChatGridViewItem owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        public ChatGridViewAutomationPeer(ChatGridViewItem owner, IProtoService protoService)
+            : base(owner)
+        {
+            _owner = owner;
+            _protoService = protoService;
+        }
+
+        protected override string GetNameCore()
+        {
+            if (_owner.ContentTemplateRoot is FrameworkElement content && content is MessageBubble == false)
+            {
+                var bubble = content.FindName("Bubble") as MessageBubble;
+                if (bubble != null)
+                {
+                    return bubble.GetAutomationName() ?? base.GetNameCore();
+                }
+            }
+            else if (_owner.ContentTemplateRoot is MessageBubble child)
+            {
+                return child.GetAutomationName() ?? base.GetNameCore();
+            }
+            else if (_owner.Content is Message message && _protoService != null)
+            {
+                return Automation.GetDescription(_protoService, message);
             }
 
             return base.GetNameCore();

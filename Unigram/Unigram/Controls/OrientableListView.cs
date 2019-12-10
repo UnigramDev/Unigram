@@ -34,43 +34,44 @@ namespace Unigram.Controls
                 var root = ItemsPanelRoot as ItemsStackPanel;
                 if (root != null)
                 {
-                    root.Orientation = IsHorizontal ? Orientation.Horizontal : Orientation.Vertical;
+                    root.Orientation = Orientation;
                     _needUpdate = false;
                 }
             }
         }
 
-        #region IsHorizontal
+        #region Orientation
 
-        public bool IsHorizontal
+        public Orientation Orientation
         {
-            get { return (bool)GetValue(IsHorizontalProperty); }
-            set { SetValue(IsHorizontalProperty, value); }
+            get { return (Orientation)GetValue(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
         }
 
-        public static readonly DependencyProperty IsHorizontalProperty =
-            DependencyProperty.Register("IsHorizontal", typeof(bool), typeof(OrientableListView), new PropertyMetadata(false, OnIsHorizontalChanged));
+        public static readonly DependencyProperty OrientationProperty =
+            DependencyProperty.Register("Orientation", typeof(Orientation), typeof(OrientableListView), new PropertyMetadata(Orientation.Vertical, OnOrientationChanged));
 
-        private static void OnIsHorizontalChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((OrientableListView)d).OnIsHorizontalChanged((bool)e.NewValue, (bool)e.OldValue);
+            ((OrientableListView)d).OnOrientationChanged((Orientation)e.NewValue, (Orientation)e.OldValue);
         }
 
         #endregion
 
-        private void OnIsHorizontalChanged(bool newValue, bool oldValue)
+        private void OnOrientationChanged(Orientation newValue, Orientation oldValue)
         {
-            ScrollViewer.SetVerticalScrollBarVisibility(this, newValue ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Auto);
-            ScrollViewer.SetVerticalScrollMode(this, newValue ? ScrollMode.Disabled : ScrollMode.Auto);
-            ScrollViewer.SetIsVerticalRailEnabled(this, newValue ? false : true);
-            ScrollViewer.SetHorizontalScrollBarVisibility(this, newValue ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled);
-            ScrollViewer.SetHorizontalScrollMode(this, newValue ? ScrollMode.Auto : ScrollMode.Disabled);
-            ScrollViewer.SetIsHorizontalRailEnabled(this, newValue ? true : false);
+            var horizontal = newValue == Orientation.Horizontal;
+            ScrollViewer.SetVerticalScrollBarVisibility(this, horizontal ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Auto);
+            ScrollViewer.SetVerticalScrollMode(this, horizontal ? ScrollMode.Disabled : ScrollMode.Auto);
+            ScrollViewer.SetIsVerticalRailEnabled(this, horizontal ? false : true);
+            ScrollViewer.SetHorizontalScrollBarVisibility(this, horizontal ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled);
+            ScrollViewer.SetHorizontalScrollMode(this, horizontal ? ScrollMode.Auto : ScrollMode.Disabled);
+            ScrollViewer.SetIsHorizontalRailEnabled(this, horizontal ? true : false);
 
             var root = ItemsPanelRoot as ItemsStackPanel;
             if (root != null)
             {
-                root.Orientation = newValue ? Orientation.Horizontal : Orientation.Vertical;
+                root.Orientation = newValue;
             }
             else
             {

@@ -661,12 +661,6 @@
   <data name="AddToTheGroup" xml:space="preserve">
     <value>إضافة ⁨{0}⁩ للمجموعة؟</value>
   </data>
-  <data name="AddToTheGroupAlertText" xml:space="preserve">
-    <value>هل ترغب في إضافة **⁨{0}⁩** لمجموعة **⁨{1}⁩**؟</value>
-  </data>
-  <data name="AddToTheGroupAlertTitle" xml:space="preserve">
-    <value>إضافة البوت</value>
-  </data>
   <data name="AddToTheGroupForwardCount" xml:space="preserve">
     <value>عدد الرسائل اﻷخيرة المراد تحويلها:</value>
   </data>
@@ -909,9 +903,6 @@
   <data name="AreYouSureClearDrafts" xml:space="preserve">
     <value>هل ترغب حقًا في حذف جميع المسودات السحابية؟</value>
   </data>
-  <data name="AreYouSureClearDraftsTitle" xml:space="preserve">
-    <value>حذف المسودات السحابية</value>
-  </data>
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>هل ترغب حقًا في حذف جميع الرسائل في هذه المحادثة؟</value>
   </data>
@@ -960,17 +951,11 @@
   <data name="AreYouSureDeleteGIF" xml:space="preserve">
     <value>هل ترغب حقًا في حذف هذه الصورة المتحركة؟</value>
   </data>
-  <data name="AreYouSureDeleteGIFTitle" xml:space="preserve">
-    <value>حذف الصورة المتحركة</value>
-  </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>هل ترغب حقًا في حذف ⁨{0}⁩؟</value>
   </data>
   <data name="AreYouSureDeletePhoto" xml:space="preserve">
     <value>هل ترغب حقًا في حذف هذه الصورة؟</value>
-  </data>
-  <data name="AreYouSureDeletePhotoTitle" xml:space="preserve">
-    <value>حذف الصورة</value>
   </data>
   <data name="AreYouSureDeleteSingleMessage" xml:space="preserve">
     <value>هل ترغب حقًا في حذف هذه الرسالة؟</value>
@@ -996,9 +981,6 @@
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>هل ترغب حقًا في حذف هذا المقطع المرئي؟</value>
   </data>
-  <data name="AreYouSureDeleteVideoTitle" xml:space="preserve">
-    <value>حذف المفطع المرئي</value>
-  </data>
   <data name="AreYouSureLogout" xml:space="preserve">
     <value>هل ترغب حقًا في تسجيل الخروج؟
 
@@ -1017,12 +999,6 @@
   </data>
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>هل ترغب حقًا في إنهاء جميع الجلسات الأخرى؟</value>
-  </data>
-  <data name="AreYouSureSessionsTitle" xml:space="preserve">
-    <value>إنهاء الجلسات</value>
-  </data>
-  <data name="AreYouSureSessionTitle" xml:space="preserve">
-    <value>إنهاء الجلسة</value>
   </data>
   <data name="AreYouSureShareMyContactInfo" xml:space="preserve">
     <value>هل ترغب حقًا في مشاركة رقم هاتفك؟</value>
@@ -1762,7 +1738,7 @@
     <value>إنشاء قناة</value>
   </data>
   <data name="ChannelAlertCreate2" xml:space="preserve">
-    <value>إنشاء قناة</value>
+    <value>إنشاء مجموعة</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
     <value>القنوات هي أداة جديدة لإيصال رسائلك لجمهور غير محدود.</value>
@@ -2074,7 +2050,7 @@
     <value>d MMMM</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
-    <value>تم حذف المحادثة</value>
+    <value>تم حذف المحادثة.</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>ملف</value>
@@ -2462,9 +2438,6 @@
   <data name="ContactNotRegistered" xml:space="preserve">
     <value>لم يقم ⁨{0}⁩ بالتسجيل في تيليجرام بعد. هل ترغب في دعوتهم؟</value>
   </data>
-  <data name="ContactNotRegisteredTitle" xml:space="preserve">
-    <value>دعوة إلى تيليجرام</value>
-  </data>
   <data name="Contacts" xml:space="preserve">
     <value>جهات الاتصال</value>
   </data>
@@ -2796,13 +2769,7 @@
     <value>هل ترغب بحذف الصورة المتحركة؟</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
-    <value>حذف حزمة اللغة؟</value>
-  </data>
-  <data name="DeleteLocalizationText" xml:space="preserve">
-    <value>هل ترغب حقًا في حذف حزمة اللغة **⁨{0}⁩**؟</value>
-  </data>
-  <data name="DeleteLocalizationTitle" xml:space="preserve">
-    <value>حذف حزمة اللغة</value>
+    <value>حذف التعريب؟</value>
   </data>
   <data name="DeleteMega" xml:space="preserve">
     <value>حذف المجموعة</value>
@@ -2843,9 +2810,6 @@
   <data name="DeleteThemeAlert" xml:space="preserve">
     <value>هل ترغب حقًا في حذف هذا النمط؟</value>
   </data>
-  <data name="DeleteThemeTitle" xml:space="preserve">
-    <value>حذف النمط</value>
-  </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>حذف هذه المحادثة</value>
   </data>
@@ -2873,9 +2837,6 @@
   <data name="DirectShareInfo" xml:space="preserve">
     <value>إظهار آخر المحادثات في قائمة المشاركة</value>
   </data>
-  <data name="Disable" xml:space="preserve">
-    <value>تعطيل</value>
-  </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>صورة متحركة سرية</value>
   </data>
@@ -2902,9 +2863,6 @@
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>تجاهل الرسالة الصوتية</value>
-  </data>
-  <data name="Disconnect" xml:space="preserve">
-    <value>فك الارتباط</value>
   </data>
   <data name="DiscussChannel" xml:space="preserve">
     <value>قناة</value>
@@ -4108,13 +4066,7 @@
 حول تيليجرام؟</value>
   </data>
   <data name="GpsDisabledAlert" xml:space="preserve">
-    <value>يبدو أن خدمات الموقع معطَّلة لديك، يرجى تفعيلها لاستخدام ميزات تيليجرام التي تحتاجها.</value>
-  </data>
-  <data name="GpsDisabledAlertText" xml:space="preserve">
-    <value>يرجى تفعيل خدمات الموقع لاستخدام ميزات تيليجرام التي تحتاجها.</value>
-  </data>
-  <data name="GpsDisabledAlertTitle" xml:space="preserve">
-    <value>تفعيل خدمات الموقع</value>
+    <value>يبدو أن تحديد المواقع معطَّل لديك، يرجى تفعيله لاستخدام ميزات تيليجرام التي تحتاجه.</value>
   </data>
   <data name="Grain" xml:space="preserve">
     <value>حبوب</value>
@@ -4237,9 +4189,6 @@
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>حساب محذوف</value>
-  </data>
-  <data name="HideAboveTheList" xml:space="preserve">
-    <value>إخفاء فوق القائمة</value>
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>إخفاء</value>
@@ -4696,12 +4645,6 @@
   <data name="LocalDatabaseClear" xml:space="preserve">
     <value>هل ترغب في مسح الرسائل النصية من الذاكرة المؤقتة؟</value>
   </data>
-  <data name="LocalDatabaseClearText" xml:space="preserve">
-    <value>هل ترغب حقًا في مسح الرسائل النصية من الذاكرة المؤقتة؟</value>
-  </data>
-  <data name="LocalDatabaseClearTextTitle" xml:space="preserve">
-    <value>مسح قاعدة البيانات المحلية</value>
-  </data>
   <data name="LocalDatabaseInfo" xml:space="preserve">
     <value>مسح قاعدة البيانات المحلية سيؤدي لحذف الرسائل التي تم تنزيلها وضغط قاعدة البيانات لتوفير مساحة على جهازك. يحتاج تيليجرام لبعض البيانات ليعمل، لذا لن يصل حجم قاعدة البيانات إلى الصفر.
 
@@ -4806,17 +4749,11 @@
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>تيليجرام</value>
   </data>
-  <data name="MapPreviewProviderTitle" xml:space="preserve">
-    <value>مزود معاينة الخرائط</value>
-  </data>
   <data name="MapPreviewProviderYandex" xml:space="preserve">
     <value>ياندكس</value>
   </data>
   <data name="March" xml:space="preserve">
     <value>مارس</value>
-  </data>
-  <data name="MarkAllAsRead" xml:space="preserve">
-    <value>تعليم الكل كمقروءة</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>تعليم كمقروءة</value>
@@ -5259,18 +5196,6 @@
   </data>
   <data name="NoAudio" xml:space="preserve">
     <value>فضلًا قم بإضافة ملفات لمكتبتك الصوتية على جهازك لتتمكن من مشاهدتها هنا.</value>
-  </data>
-  <data name="NoAudioFiles" xml:space="preserve">
-    <value>ما من ملفات صوتية</value>
-  </data>
-  <data name="NoAudioFilesInfo" xml:space="preserve">
-    <value>مكتبتك الصوتية فارغة.</value>
-  </data>
-  <data name="NoAudioFound" xml:space="preserve">
-    <value>لم يتم العثور على نتائج</value>
-  </data>
-  <data name="NoAudioFoundInfo" xml:space="preserve">
-    <value>لم يتم العثور على **⁨{0}⁩** في مكتبتك الصوتية.</value>
   </data>
   <data name="NoBlocked" xml:space="preserve">
     <value>لا يوجد مستخدمون محظورون بعد</value>
@@ -7034,9 +6959,6 @@
   <data name="Ping" xml:space="preserve">
     <value>التماس: ⁨{0}⁩ ج.ث</value>
   </data>
-  <data name="PinInTheList" xml:space="preserve">
-    <value>تثبيت في القائمة</value>
-  </data>
   <data name="Pink" xml:space="preserve">
     <value>الزهري</value>
   </data>
@@ -7213,12 +7135,6 @@
   </data>
   <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
     <value>حذفُ معلومات الشحن الخاصة بك، ومطالبةُ موفِّري خدمات الدفع بحذف بطاقاتك الائتمانية المحفوظة؟ اعلم أن تيليجرام لا يحفظ بيانات بطاقتك الائتمانية أبدًا.</value>
-  </data>
-  <data name="PrivacyPaymentsClearAlertText" xml:space="preserve">
-    <value>هل ترغب حقًا في مسح معلومات الدفع والشحن خاصتك؟</value>
-  </data>
-  <data name="PrivacyPaymentsClearAlertTitle" xml:space="preserve">
-    <value>مسح معلومات الدفع</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>يمكنك حذف معلومات الشحن والطلب الخاصة بك والطلب من موردي خدمات الدفع حذف بطاقتك الائتمانية المحفوظة. اعلم أن تيليجرام لا يحفظ بيانات بطاقتك الائتمانية أبدًا.</value>
@@ -7586,9 +7502,6 @@
   <data name="ResetNotificationsAlert" xml:space="preserve">
     <value>هل ترغب حقًا في إعادة تعيين جميع إعدادات الإشعارات إلى الوضع الافتراضي؟</value>
   </data>
-  <data name="ResetNotificationsAlertTitle" xml:space="preserve">
-    <value>إعادة تعيين كافة الإشعارات</value>
-  </data>
   <data name="ResetNotificationsText" xml:space="preserve">
     <value>تم تعيين كل الإشعارات إلى الوضع الافتراضي</value>
   </data>
@@ -7608,9 +7521,6 @@
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
     <value>يرجى تفقُّدُ بريدك وإدخال الرمز المرسَل إليك والمكون من 6 أرقام.</value>
-  </data>
-  <data name="RestoreEmailSentTitle" xml:space="preserve">
-    <value>رمز الاسترداد</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>هل تواجه صعوبة في الوصول إلى بريدك ⁨{0}⁩؟</value>
@@ -7873,12 +7783,6 @@
   <data name="SendContactToGroup" xml:space="preserve">
     <value>إرسال جهة الاتصال إلى ⁨{0}⁩؟</value>
   </data>
-  <data name="SendContactToGroupText" xml:space="preserve">
-    <value>هل ترغب في إرسال جهة الاتصال هذه إلى **⁨{0}⁩**؟</value>
-  </data>
-  <data name="SendContactToText" xml:space="preserve">
-    <value>هل ترغب في إرسال جهة الاتصال هذه إلى **⁨{0}⁩**؟</value>
-  </data>
   <data name="SendDayAt" xml:space="preserve">
     <value>'إرسال بتاريخ' d MMM 'عند' HH:mm</value>
   </data>
@@ -7890,12 +7794,6 @@
   </data>
   <data name="SendGameToGroup" xml:space="preserve">
     <value>هل ترغب في مشاركة اللعبة مع ⁨{0}⁩؟</value>
-  </data>
-  <data name="SendGameToGroupText" xml:space="preserve">
-    <value>هل ترغب في مشاركة هذه اللعبة مع **⁨{0}⁩**؟</value>
-  </data>
-  <data name="SendGameToText" xml:space="preserve">
-    <value>هل ترغب في إرسال هذه اللعبة إلى **⁨{0}⁩**؟</value>
   </data>
   <data name="SendGifPreview" xml:space="preserve">
     <value>إرسال الصورة المتحركة</value>
@@ -7956,12 +7854,6 @@
   </data>
   <data name="SendMessagesToGroup" xml:space="preserve">
     <value>إرسال الرسائل إلى ⁨{0}⁩؟</value>
-  </data>
-  <data name="SendMessagesToGroupText" xml:space="preserve">
-    <value>هل ترغب في إرسال هذه الرسالة إلى **⁨{0}⁩**؟</value>
-  </data>
-  <data name="SendMessagesToText" xml:space="preserve">
-    <value>هل ترغب في إرسال هذه الرسالة إلى **⁨{0}⁩**؟</value>
   </data>
   <data name="SendMessageTo" xml:space="preserve">
     <value>إضافة أشخاص...</value>
@@ -8397,23 +8289,11 @@
   <data name="StopLiveLocationAlertAll" xml:space="preserve">
     <value>هل ترغب حقًا في إيقاف مشاركة موقعك الحي؟</value>
   </data>
-  <data name="StopLiveLocationAlertAllText" xml:space="preserve">
-    <value>هل ترغب في التوقف عن مشاركة موقعك الحي؟</value>
-  </data>
   <data name="StopLiveLocationAlertToGroup" xml:space="preserve">
     <value>هل ترغب حقًا في إيقاف مشاركة موقعك الحي مع ⁨{0}⁩؟</value>
   </data>
-  <data name="StopLiveLocationAlertToGroupText" xml:space="preserve">
-    <value>هل ترغب في التوقف عن مشاركة موقعك الحي مع **⁨{0}⁩**؟</value>
-  </data>
-  <data name="StopLiveLocationAlertToTitle" xml:space="preserve">
-    <value>إيقاف مشاركة الموقع</value>
-  </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>هل ترغب حقًا في إيقاف مشاركة موقعك الحي مع ⁨{0}⁩؟</value>
-  </data>
-  <data name="StopLiveLocationAlertToUserText" xml:space="preserve">
-    <value>هل ترغب في التوقف عن مشاركة موقعك الحي مع **⁨{0}⁩**؟</value>
   </data>
   <data name="StopLoading" xml:space="preserve">
     <value>إيقاف التحميل؟</value>
@@ -8466,9 +8346,6 @@
   <data name="SuggestContactsInfo" xml:space="preserve">
     <value>عرضُ الأشخاص الذين تراسلهم باستمرار في أعلى خانة البحث للوصول إليهم بشكل أسرع.</value>
   </data>
-  <data name="SuggestContactsTitle" xml:space="preserve">
-    <value>تعطيل الاقتراحات</value>
-  </data>
   <data name="SuggestStickers" xml:space="preserve">
     <value>اقتراح ملصقات عبر الرموز</value>
   </data>
@@ -8498,14 +8375,6 @@
   </data>
   <data name="SyncContactsDeleteInfo" xml:space="preserve">
     <value>سيؤدي هذا إلى حذف جهات اتصالك من خوادم تيليجرام، إذا كان خيار «مزامنة جهات الاتصال» مفعَّلا فستتم إعادة مزامنتها تلقائيًا.</value>
-  </data>
-  <data name="SyncContactsDeleteText" xml:space="preserve">
-    <value>سيؤدي هذا إلى حذف جهات اتصالك من خوادم تيليجرام.
-
-إذا كان خيار **«مزامنة جهات الاتصال»** مفعَّلا فستتم إعادة مزامنتها تلقائيًا.</value>
-  </data>
-  <data name="SyncContactsDeleteTitle" xml:space="preserve">
-    <value>حذف جهات الاتصال</value>
   </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
     <value>قم بالتفعيل لمزامنة جهات اتصال هذا الجهاز مع حسابك باستمرار.</value>
@@ -8581,14 +8450,8 @@
   <data name="TelegramPassportDeleteAlert" xml:space="preserve">
     <value>هل ترغب حقًا في حذف جواز تيليجرام الخاص بك؟</value>
   </data>
-  <data name="TelegramPassportDeleteTitle" xml:space="preserve">
-    <value>حذف جواز تيليجرام</value>
-  </data>
   <data name="TelegramVersion" xml:space="preserve">
     <value>تيليجرام للأندرويد ⁨{0}⁩</value>
-  </data>
-  <data name="Terminate" xml:space="preserve">
-    <value>إنهاء</value>
   </data>
   <data name="TerminateAllSessions" xml:space="preserve">
     <value>إنهاء جميع الجلسات الأخرى</value>
@@ -8602,26 +8465,14 @@
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>إنهاء هذه الجلسة؟</value>
   </data>
-  <data name="TerminateSessionText" xml:space="preserve">
-    <value>هل ترغب حقًا في إنهاء هذه الجلسة؟</value>
-  </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
     <value>اضغط لفك الارتباط من حسابك في تيليجرام.</value>
   </data>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>فك الارتباط مع ⁨{0}⁩؟</value>
   </data>
-  <data name="TerminateWebSessionsTitle" xml:space="preserve">
-    <value>فك الارتباط مع المواقع</value>
-  </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>حظر ⁨{0}⁩</value>
-  </data>
-  <data name="TerminateWebSessionText" xml:space="preserve">
-    <value>هل ترغب حقًا في فك الارتباط مع ⁨{0}⁩؟</value>
-  </data>
-  <data name="TerminateWebSessionTitle" xml:space="preserve">
-    <value>فك الارتباط مع الموقع</value>
   </data>
   <data name="TermsOfService" xml:space="preserve">
     <value>شروط الخدمة</value>
@@ -8869,9 +8720,6 @@
   </data>
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>هل ترغب حقًا في تعطيل كلمة مرورك؟</value>
-  </data>
-  <data name="TurnPasswordOffQuestionTitle" xml:space="preserve">
-    <value>تعطيل كلمة المرور</value>
   </data>
   <data name="TwoStepVerification" xml:space="preserve">
     <value>التحقق بخطوتين</value>

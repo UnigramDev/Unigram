@@ -50,7 +50,7 @@ namespace Unigram.Services
 
         bool? IsRepeatEnabled { get; set; }
         bool IsShuffleEnabled { get; set; }
-
+        bool IsReversed { get; set; }
 
 
         bool IsSupportedPlaybackRateRange(double min, double max);
@@ -181,11 +181,11 @@ namespace Unigram.Services
                 else
                 {
                     var index = _items.IndexOf(item);
-                    if (index == -1 || index == _items.Count - 1)
+                    if (index == -1 || index == (_isReversed ? 0 : _items.Count - 1))
                     {
                         if (item.Message.Content is MessageAudio && _isRepeatEnabled == true)
                         {
-                            _mediaPlayer.Source = _items[0].Source;
+                            _mediaPlayer.Source = _items[_isReversed ? _items.Count - 1 : 0].Source;
                             _mediaPlayer.Play();
                         }
                         else
@@ -195,7 +195,7 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        _mediaPlayer.Source = _items[index + 1].Source;
+                        _mediaPlayer.Source = _items[_isReversed ? index - 1 : index + 1].Source;
                         _mediaPlayer.Play();
                     }
                 }
@@ -288,7 +288,7 @@ namespace Unigram.Services
             _transport.IsPlayEnabled = true;
             _transport.IsPauseEnabled = true;
             _transport.IsPreviousEnabled = true;
-            _transport.IsNextEnabled = _items.Count > 1;
+            _transport.IsNextEnabled = items.Count > 1;
 
             if (item.File.Local.IsDownloadingCompleted)
             {
@@ -316,7 +316,13 @@ namespace Unigram.Services
             _transport.DisplayUpdater.Update();
         }
 
-        public IReadOnlyList<PlaybackItem> Items => _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
+        public IReadOnlyList<PlaybackItem> Items
+        {
+            get
+            {
+                return _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
+            }
+        }
 
         private PlaybackItem _currentPlayback;
         public PlaybackItem CurrentPlayback
@@ -404,6 +410,13 @@ namespace Unigram.Services
             }
         }
 
+        private bool _isReversed = false;
+        public bool IsReversed
+        {
+            get { return _isReversed; }
+            set { _isReversed = value; }
+        }
+
         private bool _isShuffleEnabled;
         public bool IsShuffleEnabled
         {
@@ -473,13 +486,13 @@ namespace Unigram.Services
             }
 
             var index = items.IndexOf(CurrentPlayback);
-            if (index == items.Count - 1)
+            if (index == (_isReversed ? 0 : items.Count - 1))
             {
-                _mediaPlayer.Source = items[0].Source;
+                _mediaPlayer.Source = items[_isReversed ? items.Count - 1 : 0].Source;
             }
             else
             {
-                _mediaPlayer.Source = items[index + 1].Source;
+                _mediaPlayer.Source = items[_isReversed ? index - 1 : index + 1].Source;
             }
 
             _mediaPlayer.Play();
@@ -494,13 +507,13 @@ namespace Unigram.Services
             }
 
             var index = items.IndexOf(CurrentPlayback);
-            if (index == 0)
+            if (index == (_isReversed ? items.Count - 1 : 0))
             {
-                _mediaPlayer.Source = items[items.Count - 1].Source;
+                _mediaPlayer.Source = items[_isReversed ? 0 : items.Count - 1].Source;
             }
             else
             {
-                _mediaPlayer.Source = items[index - 1].Source;
+                _mediaPlayer.Source = items[_isReversed ? index + 1 : index - 1].Source;
             }
 
             _mediaPlayer.Play();

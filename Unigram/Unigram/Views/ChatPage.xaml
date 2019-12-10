@@ -295,7 +295,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
-                                         Click="Photo_Click"
+                                         Click="Participant_Click"
                                          IsTabStop="False"
                                          HorizontalAlignment="Left"
                                          VerticalAlignment="Bottom"
@@ -419,7 +419,13 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePicture x:Name="Photo" Width="{ThemeResource ChatPhotoSize}" Height="{ThemeResource ChatPhotoSize}" Margin="0,0,12,0" IsEnabled="False"/>
+                                <controls:ProfilePicture
+                                    x:Name="Photo"
+                                    Click="Photo_Click"
+                                    AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                    Width="{ThemeResource ChatPhotoSize}"
+                                    Height="{ThemeResource ChatPhotoSize}"
+                                    Margin="0,0,12,0"/>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
                                     <TextBlock x:Name="Title"
@@ -862,35 +868,19 @@
                     Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
                     ItemClick="InlineBotResults_ItemClick"
                     VerticalAlignment="Bottom"/>
-                <controls:ZoomableGridView
-                    x:Name="StickerPack"
-                    ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                <controls:OrientableListView
+                    x:Name="ListAutocomplete"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
+                    Orientation="{x:Bind ViewModel.Autocomplete.Orientation, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                    ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                    ContainerContentChanging="Autocomplete_ContainerContentChanging"
                     AllowFocusOnInteraction="False"
                     IsItemClickEnabled="True"
-                    ItemClick="Stickers_ItemClick"
-                    SelectionMode="None"
-                    ContainerContentChanging="StickerPack_ContainerContentChanging"
-                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                    ScrollViewer.VerticalScrollMode="Disabled"
-                    ScrollViewer.IsVerticalRailEnabled="False"
-                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                    ScrollViewer.HorizontalScrollMode="Auto"
-                    ScrollViewer.IsHorizontalRailEnabled="True"
+                    ItemClick="Autocomplete_ItemClick"
                     VerticalAlignment="Bottom"
-                    Padding="8,0"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     Style="{StaticResource ZoomableListViewStyle}">
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <Image Margin="4,8" Width="60" Height="60"/>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
                             <Setter Property="MinWidth" Value="0"/>
@@ -900,21 +890,7 @@
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection/>
                     </GridView.ItemContainerTransitions>
-                </controls:ZoomableGridView>
-                <ListView x:Name="ListAutocomplete"
-                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                          ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
-                          Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                          ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
-                          ContainerContentChanging="Autocomplete_ContainerContentChanging"
-                          AllowFocusOnInteraction="False"
-                          IsItemClickEnabled="True"
-                          ItemClick="Autocomplete_ItemClick"
-                          VerticalAlignment="Bottom">
-                    <ListView.ItemContainerTransitions>
-                        <TransitionCollection/>
-                    </ListView.ItemContainerTransitions>
-                </ListView>
+                </controls:OrientableListView>
             </Grid>
         </Grid>
 
@@ -1114,23 +1090,34 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Button to access scheduled messages -->
+                        <Border x:Name="btnScheduled">
+                            <controls:GlyphButton
+                                x:Name="ButtonScheduled"
+                                Glyph="&#xE81C;"
+                                Command="{x:Bind ViewModel.ScheduledCommand}"
+                                VerticalAlignment="Bottom"/>
+                        </Border>
+
                         <!-- Button to toggle silent mode, channels only -->
                         <controls:AnimatedGlyphToggleButton
                             x:Name="ButtonSilent"
                             UncheckedGlyph="&#xEA8F;"
                             CheckedGlyph="&#xE7ED;"
                             Command="{x:Bind ViewModel.ToggleSilentCommand}"
-                            VerticalAlignment="Bottom"/>
-                        
+                            VerticalAlignment="Bottom"
+                            Grid.Column="1"/>
+
                         <!-- Button to change self-destructing timer, secret chats only -->
                         <controls:GlyphButton
                             x:Name="ButtonTimer"
                             Glyph="&#xE916;"
                             Command="{x:Bind ViewModel.SetTimerCommand}"
-                            VerticalAlignment="Bottom"/>
+                            VerticalAlignment="Bottom"
+                            Grid.Column="1"/>
 
                         <!-- Button to use bot commands, bots/groups only -->
-                        <Border x:Name="btnCommands" Grid.Column="1">
+                        <Border x:Name="btnCommands" Grid.Column="2">
                             <controls:GlyphButton
                                 x:Name="ButtonCommands"
                                 Click="Commands_Click"
@@ -1145,7 +1132,7 @@
                         </Border>
 
                         <!-- Button to use bot keyboard, bots/groups only -->
-                        <Border x:Name="btnMarkup" Grid.Column="1">
+                        <Border x:Name="btnMarkup" Grid.Column="2">
                             <controls:AnimatedGlyphButton
                                 x:Name="ButtonMarkup"
                                 Click="Markup_Click"
@@ -1183,16 +1170,13 @@
                             ManipulationMode="TranslateX,TranslateY"/>
                     </Grid>
 
-                    <controls:GlyphButton
+                    <chats:ChatSendButton
                         x:Name="btnSendMessage"
                         ContextRequested="Send_ContextRequested"
                         VerticalAlignment="Bottom"
                         Click="btnSendMessage_Click"
                         Glyph="&#xE919;"
                         AllowFocusOnInteraction="False"
-                        FontFamily="{StaticResource TelegramThemeFontFamily}"
-                        Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                        Padding="4,0,0,0"
                         Grid.Column="2"
                         Canvas.ZIndex="1001"
                         AutomationProperties.Name="{CustomResource Send}"
@@ -1272,7 +1256,7 @@
             </chats:ChatBottomButton>
         </Grid>
 
-        <chats:ChatSearchMask
+        <chats:ChatSearchBar
             x:Name="SearchMask"
             Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
             Grid.RowSpan="4"

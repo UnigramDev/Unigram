@@ -200,7 +200,7 @@ namespace Unigram.Views
 
         private void Questions_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(InstantPage), "https://telegram.org/faq");
+            MasterDetail.NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 

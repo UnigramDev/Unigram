@@ -77,9 +77,14 @@
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.CommandTemplate>
+        <selectors:AutocompleteTemplateSelector.StickerTemplate>
+            <DataTemplate>
+                <Image Margin="4,8" Width="60" Height="60"/>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.StickerTemplate>
         <selectors:AutocompleteTemplateSelector.EmojiTemplate>
             <DataTemplate x:DataType="common:EmojiData">
-                <Grid>
+                <!--<Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -88,7 +93,10 @@
                         <TextBlock Text="{x:Bind Value}" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <TextBlock Text="{x:Bind Value}" VerticalAlignment="Center" Grid.Column="1"/>
-                </Grid>
+                </Grid>-->
+                <Border Width="48" Height="48">
+                    <TextBlock Text="{x:Bind Value}" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.EmojiTemplate>
         <!--<selectors:AutocompleteTemplateSelector.ItemTemplate>

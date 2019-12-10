@@ -16,6 +16,7 @@ using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
+using Unigram.Controls.Gallery;
 using Unigram.Controls.Messages;
 using Unigram.Controls.Views;
 using Unigram.Converters;
@@ -25,6 +26,7 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Users;
 using Unigram.Views.Chats;
 using Unigram.Views.Dialogs;
 using Windows.ApplicationModel;
@@ -54,7 +56,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatPage : Page, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
+    public partial class ChatPage : Page, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -68,6 +70,8 @@ namespace Unigram.Views
         private bool _myPeople;
 
         private bool _selectionFromItemClick;
+
+        private DispatcherTimer _slowModeTimer;
 
         private DispatcherTimer _stickersTimer;
         private Visual _stickersPanel;
@@ -95,7 +99,7 @@ namespace Unigram.Views
             {
                 _viewModel = ViewModel;
             };
-            DataContext = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
+            DataContext = GetViewModel();
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             NavigationCacheMode = NavigationCacheMode.Required;
@@ -175,6 +179,27 @@ namespace Unigram.Views
                 ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
             };
 
+            _slowModeTimer = new DispatcherTimer();
+            _slowModeTimer.Interval = TimeSpan.FromSeconds(1);
+            _slowModeTimer.Tick += (s, args) =>
+            {
+                var fullInfo = ViewModel.CacheService.GetSupergroupFull(ViewModel.Chat);
+                if (fullInfo == null)
+                {
+                    _slowModeTimer.Stop();
+                    return;
+                }
+
+                var expiresIn = fullInfo.SlowModeDelayExpiresIn = Math.Max(fullInfo.SlowModeDelayExpiresIn - 1, 0);
+                if (expiresIn == 0)
+                {
+                    _slowModeTimer.Stop();
+                }
+
+                btnSendMessage.SlowModeDelay = fullInfo.SlowModeDelay;
+                btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
+            };
+
             var visual = DropShadowEx.Attach(ArrowShadow, 2, 0.25f, null);
             visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
@@ -251,6 +276,11 @@ namespace Unigram.Views
                     }
                 };
             }
+        }
+
+        protected virtual DialogViewModel GetViewModel()
+        {
+            return TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
         }
 
         private void InitializeAutomation()
@@ -463,7 +493,9 @@ namespace Unigram.Views
             _stickersPanel.Clip.StartAnimation("TopInset", clip);
         }
 
+#pragma warning disable CA1063 // Implement IDisposable Correctly
         public void Dispose()
+#pragma warning restore CA1063 // Implement IDisposable Correctly
         {
             if (ViewModel != null)
             {
@@ -476,7 +508,7 @@ namespace Unigram.Views
                 ViewModel.Dispose();
             }
 
-            DataContext = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
+            DataContext = GetViewModel();
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -665,6 +697,37 @@ namespace Unigram.Views
             else
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
+            }
+        }
+
+        private async void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                var user = ViewModel.ProtoService.GetUser(chat);
+                if (user == null || user.ProfilePhoto == null)
+                {
+                    return;
+                }
+
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user);
+                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
+            }
+            else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
+            {
+                if (chat.Photo == null)
+                {
+                    return;
+                }
+
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat);
+                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
 
@@ -1112,27 +1175,34 @@ namespace Unigram.Views
 
             if (editing && editing != _oldEditing || empty != _oldEmpty)
             {
+                var scheduled = ElementCompositionPreview.GetElementVisual(btnScheduled);
                 var commands = ElementCompositionPreview.GetElementVisual(btnCommands);
                 var markup = ElementCompositionPreview.GetElementVisual(btnMarkup);
 
+                scheduled.CenterPoint = new Vector3(24);
                 commands.CenterPoint = new Vector3(24);
                 markup.CenterPoint = new Vector3(24);
 
                 var show = empty && !editing;
                 if (show)
                 {
+                    btnScheduled.Visibility = Visibility.Visible;
                     btnCommands.Visibility = Visibility.Visible;
                     btnMarkup.Visibility = Visibility.Visible;
 
                     batch = commands.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
+                        btnScheduled.Visibility = Visibility.Visible;
                         btnCommands.Visibility = Visibility.Visible;
                         btnMarkup.Visibility = Visibility.Visible;
 
-                        commands.Scale = markup.Scale = new Vector3(1);
-                        commands.Opacity = markup.Opacity = 1;
+                        scheduled.Scale = commands.Scale = markup.Scale = new Vector3(1);
+                        scheduled.Opacity = commands.Opacity = markup.Opacity = 1;
                     };
+
+                    scheduled.StartAnimation("Scale", show1);
+                    scheduled.StartAnimation("Opacity", show2);
 
                     commands.StartAnimation("Scale", show1);
                     commands.StartAnimation("Opacity", show2);
@@ -1147,12 +1217,16 @@ namespace Unigram.Views
                     batch = commands.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
+                        btnScheduled.Visibility = Visibility.Collapsed;
                         btnCommands.Visibility = Visibility.Collapsed;
                         btnMarkup.Visibility = Visibility.Collapsed;
 
-                        commands.Scale = markup.Scale = new Vector3(1);
-                        commands.Opacity = markup.Opacity = 1;
+                        scheduled.Scale = commands.Scale = markup.Scale = new Vector3(1);
+                        scheduled.Opacity = commands.Opacity = markup.Opacity = 1;
                     };
+
+                    scheduled.StartAnimation("Scale", hide1);
+                    scheduled.StartAnimation("Opacity", hide2);
 
                     commands.StartAnimation("Scale", hide1);
                     commands.StartAnimation("Opacity", hide2);
@@ -1161,45 +1235,6 @@ namespace Unigram.Views
                     markup.StartAnimation("Opacity", hide2);
 
                     batch.End();
-                }
-            }
-
-            _oldEmpty = empty;
-            _oldEditing = editing;
-
-            return;
-
-            if (editing != _oldEditing)
-            {
-                var target = _oldEmpty ? ButtonRecord : (FrameworkElement)btnSendMessage;
-                var targetVisual = ElementCompositionPreview.GetElementVisual(target);
-                var editVisual = ElementCompositionPreview.GetElementVisual(btnEdit);
-
-                visualHide = editing ? targetVisual : editVisual;
-                visualShow = editing ? editVisual : targetVisual;
-            }
-            else
-            {
-                if (empty && empty != _oldEmpty || editing && editing != _oldEditing)
-                {
-                    btnSendMessage.Visibility = empty || editing ? Visibility.Collapsed : Visibility.Visible;
-                    btnEdit.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
-                    btnCommands.Visibility = Visibility.Visible;
-                    btnMarkup.Visibility = Visibility.Visible;
-                    btnVoiceMessage.Visibility = Visibility.Visible;
-
-                    if (ViewModel != null)
-                    {
-                        ViewModel.DisableWebPagePreview = false;
-                    }
-                }
-                else
-                {
-                    btnSendMessage.Visibility = Visibility.Visible;
-                    btnEdit.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
-                    btnCommands.Visibility = Visibility.Collapsed;
-                    btnMarkup.Visibility = Visibility.Collapsed;
-                    btnVoiceMessage.Visibility = Visibility.Collapsed;
                 }
             }
 
@@ -1613,7 +1648,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().TryShow();
         }
 
-        private async void Photo_Click(object sender, RoutedEventArgs e)
+        private async void Participant_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
 
@@ -1802,8 +1837,22 @@ namespace Unigram.Views
 
         private void Send_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ViewModel.IsSchedule)
+            {
+                return;
+            }
+
+            var self = ViewModel.CacheService.IsSavedMessages(chat);
+
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
+            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.ScheduleAsync()), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
             {
@@ -1898,6 +1947,10 @@ namespace Unigram.Views
             }
             else
             {
+                // Scheduled
+                flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.MessageSendNowCommand, message, Strings.Resources.MessageScheduleSend, new FontIcon { Glyph = Icons.Send, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
+                flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.MessageRescheduleCommand, message, Strings.Resources.MessageScheduleEditTime, new FontIcon { Glyph = Icons.Schedule });
+                
                 // Generic
                 flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });
                 flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
@@ -1969,16 +2022,22 @@ namespace Unigram.Views
             args.ShowAt(flyout, sender as FrameworkElement);
         }
 
+        private bool MessageSendNow_Loaded(MessageViewModel message)
+        {
+            return message.SchedulingState != null;
+        }
+
+        private bool MessageReschedule_Loaded(MessageViewModel message)
+        {
+            return message.SchedulingState != null;
+        }
+
         private bool MessageReply_Loaded(MessageViewModel message)
         {
-            //var channel = ViewModel.With as TLChannel;
-            //if (channel != null && channel.MigratedFromChatId != null)
-            //{
-            //    if (messageCommon.ToId is TLPeerChat)
-            //    {
-            //        element.Visibility = messageCommon.ToId.Id == channel.MigratedFromChatId ? Visibility.Collapsed : Visibility.Visible;
-            //    }
-            //}
+            if (message.SchedulingState != null)
+            {
+                return false;
+            }
 
             var chat = message.GetChat();
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
@@ -1999,7 +2058,7 @@ namespace Unigram.Views
 
         private bool MessagePin_Loaded(MessageViewModel message)
         {
-            if (message.IsService())
+            if (message.SchedulingState != null && message.IsService())
             {
                 return false;
             }
@@ -2283,7 +2342,7 @@ namespace Unigram.Views
         public async void Stickers_ItemClick(Sticker sticker)
         {
             ViewModel.StickerSendCommand.Execute(sticker);
-            ViewModel.StickerPack = null;
+            ViewModel.Autocomplete = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
@@ -2294,7 +2353,7 @@ namespace Unigram.Views
         public async void Animations_ItemClick(Animation animation)
         {
             ViewModel.AnimationSendCommand.Execute(animation);
-            ViewModel.StickerPack = null;
+            ViewModel.Autocomplete = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
@@ -2627,6 +2686,10 @@ namespace Unigram.Views
                 //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
             }
+            else if (e.ClickedItem is Sticker sticker)
+            {
+                Stickers_ItemClick(sticker);
+            }
 
             ViewModel.Autocomplete = null;
         }
@@ -2903,17 +2966,17 @@ namespace Unigram.Views
             ViewModel.MessageServiceCommand.Execute(message);
         }
 
-        private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private async void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
             if (args.Item is UserCommand userCommand)
             {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
                 var photo = content.Children[0] as ProfilePicture;
                 var title = content.Children[1] as TextBlock;
 
@@ -2933,6 +2996,8 @@ namespace Unigram.Views
             }
             else if (args.Item is User user)
             {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
                 var photo = content.Children[0] as ProfilePicture;
                 var title = content.Children[1] as TextBlock;
 
@@ -2944,53 +3009,43 @@ namespace Unigram.Views
 
                 photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
-        }
-
-        private async void StickerPack_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            var content = args.ItemContainer.ContentTemplateRoot as Image;
-
-            if (args.InRecycleQueue)
+            else if (args.Item is Sticker sticker)
             {
-                content.Source = null;
-                return;
-            }
+                var content = args.ItemContainer.ContentTemplateRoot as Image;
 
-            var sticker = args.Item as Sticker;
+                if (sticker == null || sticker.Thumbnail == null)
+                {
+                    content.Source = null;
+                    return;
+                }
 
-            if (sticker == null || sticker.Thumbnail == null)
-            {
-                content.Source = null;
-                return;
-            }
+                args.ItemContainer.Tag = content.Tag = new ViewModels.Dialogs.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
 
-            args.ItemContainer.Tag = content.Tag = new ViewModels.Dialogs.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
-
-            //if (args.Phase < 2)
-            //{
-            //    content.Source = null;
-            //    args.RegisterUpdateCallback(Stickers_ContainerContentChanging);
-            //}
-            //else
-            if (args.Phase == 0)
-            {
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    if (sticker.IsAnimated)
+                    {
+                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
+                        if (bitmap == null)
+                        {
+                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        }
+
+                        content.Source = bitmap;
+                    }
+                    else
+                    {
+                        content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     //DownloadFile(file.Id, sticker);
+                    content.Source = null;
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
-            else
-            {
-                throw new System.Exception("We should be in phase 0, but we are not.");
-            }
-
-            args.Handled = true;
         }
 
         private void ShowAction(string content, bool enabled)
@@ -3033,6 +3088,7 @@ namespace Unigram.Views
 
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
 
+            ButtonScheduled.Visibility = chat.HasScheduledMessages && !ViewModel.IsSchedule ? Visibility.Visible : Visibility.Collapsed;
             ButtonTimer.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.IsChecked = chat.DefaultDisableNotification;
@@ -3052,7 +3108,14 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            Title.Text = ViewModel.CacheService.GetTitle(chat);
+            if (ViewModel.IsSchedule)
+            {
+                Title.Text = ViewModel.CacheService.IsSavedMessages(chat) ? Strings.Resources.Reminders : Strings.Resources.ScheduledMessages;
+            }
+            else
+            {
+                Title.Text = ViewModel.CacheService.GetTitle(chat);
+            }
         }
 
         public void UpdateChatPhoto(Chat chat)
@@ -3060,9 +3123,14 @@ namespace Unigram.Views
             Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width);
         }
 
+        public void UpdateChatHasScheduledMessages(Chat chat)
+        {
+            ButtonScheduled.Visibility = chat.HasScheduledMessages && !ViewModel.IsSchedule ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         public void UpdateChatActionBar(Chat chat)
         {
-            Button CreateButton(string text, ICommand command, int column = 0)
+            Button CreateButton(string text, ICommand command, object commandParameter = null, int column = 0)
             {
                 var label = new TextBlock();
                 label.Style = App.Current.Resources["CaptionTextBlockStyle"] as Style;
@@ -3075,6 +3143,7 @@ namespace Unigram.Views
                 button.VerticalContentAlignment = VerticalAlignment.Center;
                 button.Content = label;
                 button.Command = command;
+                button.CommandParameter = commandParameter;
 
                 ActionBarRoot.ColumnDefinitions.Add(new ColumnDefinition());
                 Grid.SetColumn(button, column);
@@ -3100,7 +3169,7 @@ namespace Unigram.Views
             else if (chat.ActionBar is ChatActionBarReportAddBlock)
             {
                 ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamUser, ViewModel.ReportSpamCommand));
-                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand, 1));
+                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.AddContactChat, ViewModel.AddContactCommand, column: 1));
             }
             else if (chat.ActionBar is ChatActionBarReportSpam)
             {
@@ -3111,12 +3180,12 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamAndLeave, ViewModel.ReportSpamCommand));
+                    ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamAndLeave, ViewModel.ReportSpamCommand, new ChatReportReasonSpam()));
                 }
             }
             else if (chat.ActionBar is ChatActionBarReportUnrelatedLocation)
             {
-                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamLocation, ViewModel.ReportSpamCommand));
+                ActionBarRoot.Children.Add(CreateButton(Strings.Resources.ReportSpamLocation, ViewModel.ReportSpamCommand, new ChatReportReasonUnrelatedLocation()));
             }
             else if (chat.ActionBar is ChatActionBarSharePhoneNumber)
             {
@@ -3502,6 +3571,9 @@ namespace Unigram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
+            btnSendMessage.SlowModeDelay = 0;
+            btnSendMessage.SlowModeDelayExpiresIn = 0;
+
             if (!secret)
             {
                 ShowArea();
@@ -3542,6 +3614,10 @@ namespace Unigram.Views
         public void UpdateUserStatus(Chat chat, User user)
         {
             if (ViewModel.CacheService.IsSavedMessages(user))
+            {
+                ViewModel.LastSeen = null;
+            }
+            else if (ViewModel.IsSchedule)
             {
                 ViewModel.LastSeen = null;
             }
@@ -3598,6 +3674,9 @@ namespace Unigram.Views
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             ViewModel.LastSeen = Locale.Declension("Members", fullInfo.Members.Count);
+
+            btnSendMessage.SlowModeDelay = 0;
+            btnSendMessage.SlowModeDelayExpiresIn = 0;
 
             var commands = new List<UserCommand>();
 
@@ -3727,6 +3806,19 @@ namespace Unigram.Views
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
             ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
+
+            btnSendMessage.SlowModeDelay = fullInfo.SlowModeDelay;
+            btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
+
+            if (fullInfo.SlowModeDelayExpiresIn > 0)
+            {
+                _slowModeTimer.Stop();
+                _slowModeTimer.Start();
+            }
+            else
+            {
+                _slowModeTimer.Stop();
+            }
 
             if (group.IsChannel && fullInfo.LinkedChatId != 0)
             {
@@ -3946,6 +4038,25 @@ namespace Unigram.Views
                         photo.Source = PlaceholderHelper.GetUser(null, user, 36);
                     }
                 }
+                else if (item is Sticker sticker)
+                {
+                    if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
+                    {
+                        var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
+                        if (container == null)
+                        {
+                            continue;
+                        }
+
+                        var photo = container.ContentTemplateRoot as Image;
+                        if (photo == null)
+                        {
+                            continue;
+                        }
+
+                        photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    }
+                }
             }
 
             var header = ViewModel.ComposerHeader;
@@ -3953,31 +4064,6 @@ namespace Unigram.Views
             {
                 var size = Math.Max(file.Size, file.ExpectedSize);
                 ComposerHeaderUpload.Value = (double)file.Remote.UploadedSize / size;
-            }
-
-            if (!file.Local.IsDownloadingCompleted)
-            {
-                return;
-            }
-
-            foreach (Sticker sticker in StickerPack.Items.ToArray())
-            {
-                if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
-                {
-                    var container = StickerPack.ContainerFromItem(sticker) as SelectorItem;
-                    if (container == null)
-                    {
-                        continue;
-                    }
-
-                    var photo = container.ContentTemplateRoot as Image;
-                    if (photo == null)
-                    {
-                        continue;
-                    }
-
-                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
-                }
             }
         }
 

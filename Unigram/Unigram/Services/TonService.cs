@@ -30,7 +30,11 @@ namespace Unigram.Services
         bool TryGetCreationState(out WalletCreationState state);
         WalletCreationState CreationState { get; }
 
+        AccountAddress GetAccountAddress(string publicKey, long? walletId = null);
+
         bool IsCreating { get; }
+
+        long DefaultWalletId { get; }
     }
 
     public class TonService : ITonService, ClientResultHandler
@@ -45,6 +49,8 @@ namespace Unigram.Services
         private readonly IEventAggregator _aggregator;
 
         private TaskCompletionSource<bool> _initializeTask;
+
+        private long _defaultWalletId;
 
         private SyncState _syncState;
         private WalletCreationState _creationState;
@@ -63,6 +69,8 @@ namespace Unigram.Services
             Initialize();
         }
 
+        public long DefaultWalletId => _defaultWalletId;
+
         private async void Initialize()
         {
             _client = Client.Create(this);
@@ -73,6 +81,14 @@ namespace Unigram.Services
             {
                 return;
             }
+
+            var info = Client.Execute(new OptionsValidateConfig(config)) as OptionsConfigInfo;
+            if (info == null)
+            {
+                return;
+            }
+
+            _defaultWalletId = info.DefaultWalletId;
 
             await Task.Run(() =>
             {
@@ -224,6 +240,13 @@ namespace Unigram.Services
 
         public WalletCreationState CreationState => _creationState;
         public bool IsCreating => _creationState != null;
+
+        
+
+        public AccountAddress GetAccountAddress(string publicKey, long? walletId)
+        {
+            return Execute(new WalletV3GetAccountAddress(new WalletV3InitialAccountState(publicKey, walletId ?? _defaultWalletId))) as AccountAddress;
+        }
     }
 
     public class WalletCreationState

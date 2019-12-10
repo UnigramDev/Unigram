@@ -17,6 +17,7 @@ namespace Unigram.Selectors
         public DataTemplate MentionTemplate { get; set; }
         public DataTemplate CommandTemplate { get; set; }
         public DataTemplate HashtagTemplate { get; set; }
+        public DataTemplate StickerTemplate { get; set; }
         public DataTemplate EmojiTemplate { get; set; }
         public DataTemplate ItemTemplate { get; set; }
 
@@ -29,6 +30,10 @@ namespace Unigram.Selectors
             else if (item is UserCommand)
             {
                 return CommandTemplate;
+            }
+            else if (item is Sticker || item is ViewModels.Dialogs.StickerViewModel)
+            {
+                return StickerTemplate;
             }
             else if (item is EmojiData)
             {

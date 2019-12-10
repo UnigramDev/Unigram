@@ -71,8 +71,10 @@ namespace Unigram.Views.Supergroups
 
                 Header.CommandVisibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 DismissPanel.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
-                PermissionsRoot.Footer = canBeEdited ? Strings.Resources.EditAdminCantEdit : null;
+                PermissionsRoot.Footer = canBeEdited ? null : Strings.Resources.EditAdminCantEdit;
                 PermissionsPanel.IsEnabled = canBeEdited;
+                EditRankField.PlaceholderText = member.Status is ChatMemberStatusCreator ? Strings.Resources.ChannelCreator : Strings.Resources.ChannelAdmin;
+                EditRankPanel.Footer = string.Format(Strings.Resources.EditAdminRankInfo, member.Status is ChatMemberStatusCreator ? Strings.Resources.ChannelCreator : Strings.Resources.ChannelAdmin);
             }
             else
             {
@@ -80,6 +82,8 @@ namespace Unigram.Views.Supergroups
                 DismissPanel.Visibility = Visibility.Collapsed;
                 PermissionsRoot.Footer = null;
                 PermissionsPanel.IsEnabled = true;
+                EditRankField.PlaceholderText = Strings.Resources.ChannelAdmin;
+                EditRankPanel.Footer = string.Format(Strings.Resources.EditAdminRankInfo, Strings.Resources.ChannelAdmin);
             }
 
             PermissionsPanel.Visibility = Visibility.Visible;
@@ -91,6 +95,8 @@ namespace Unigram.Views.Supergroups
             BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
             AddUsers.Header = chat.Permissions.CanInviteUsers ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
+
+            //TransferOwnership.Content = group.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer;
         }
     }
 }

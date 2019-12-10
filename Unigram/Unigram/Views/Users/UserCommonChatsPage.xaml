@@ -30,6 +30,7 @@
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="ListView_ItemClick"
             IsItemClickEnabled="True"
+            ChoosingItemContainer="OnChoosingItemContainer"
             ContainerContentChanging="OnContainerContentChanging"
             SelectionMode="None"
             Grid.Row="1">

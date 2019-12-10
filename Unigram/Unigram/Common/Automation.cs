@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
+using Unigram.Converters;
 using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -243,6 +244,96 @@ namespace Unigram.Common
             }
 
             return null;
+        }
+
+        public static string GetDescription(IProtoService cacheService, Message message)
+        {
+            var chat = cacheService.GetChat(message.ChatId);
+            var content = message.Content;
+
+            var sticker = content is MessageSticker;
+            var light = sticker || content is MessageVideoNote;
+
+            var title = string.Empty;
+
+            if (!light && /*message.IsFirst &&*/ !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
+            {
+                var sender = cacheService.GetUser(message.SenderUserId);
+                title = sender?.GetFullName();
+            }
+            else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup)
+            {
+                title = cacheService.GetTitle(chat);
+            }
+            else if (!light && /*message.IsFirst &&*/ message.IsSaved(cacheService.Options.MyId))
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                {
+                    title = cacheService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                {
+                    title = cacheService.GetTitle(cacheService.GetChat(post.ChatId));
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                {
+                    title = fromHiddenUser.SenderName;
+                }
+            }
+
+            var builder = new StringBuilder();
+            if (title?.Length > 0)
+            {
+                builder.AppendLine($"{title}. ");
+            }
+
+            //if (message.ReplyToMessage != null)
+            //{
+            //    var user = message.ProtoService.GetUser(message.ReplyToMessage.SenderUserId);
+            //    if (user != null)
+            //    {
+            //        builder.AppendLine($"{Strings.Resources.AccDescrReplying} {user.GetFullName()}. ");
+            //    }
+            //}
+
+            builder.Append(Automation.GetSummary(cacheService, message));
+
+            var date = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            if (message.IsOutgoing)
+            {
+                builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
+            }
+            else
+            {
+                builder.Append(string.Format(Strings.Resources.AccDescrReceivedDate, date));
+            }
+
+            builder.Append(". ");
+
+            var maxId = 0L;
+            if (chat != null)
+            {
+                maxId = chat.LastReadOutboxMessageId;
+            }
+
+            if (message.SendingState is MessageSendingStateFailed)
+            {
+            }
+            else if (message.SendingState is MessageSendingStatePending)
+            {
+            }
+            else if (message.Id <= maxId)
+            {
+                builder.Append(Strings.Resources.AccDescrMsgRead);
+            }
+            else
+            {
+                builder.Append(Strings.Resources.AccDescrMsgUnread);
+            }
+
+            builder.Append(".");
+
+            return builder.ToString();
         }
     }
 }

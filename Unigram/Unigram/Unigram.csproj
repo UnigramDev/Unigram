@@ -20,8 +20,9 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>CE7E95812C4B2B0C8A7D5EA3DB7D201C2F459116</PackageCertificateThumbprint>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>
+    </PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
@@ -29,6 +30,7 @@
     <LangVersion>7.3</LangVersion>
     <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <CodeAnalysisRuleSet />
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -53,6 +56,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <CodeAnalysisRuleSet />
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -65,6 +69,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <CodeAnalysisRuleSet />
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -78,6 +83,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
     <CodeAnalysisRuleSet />
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
@@ -91,6 +97,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
     <CodeAnalysisRuleSet />
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -104,6 +111,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
     <CodeAnalysisRuleSet />
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
@@ -132,6 +140,7 @@
     <Compile Include="Common\MenuFlyoutHelper.cs" />
     <Compile Include="Common\SunDate.cs" />
     <Compile Include="Common\TextStyleRun.cs" />
+    <Compile Include="Common\TitleBar.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
@@ -158,6 +167,7 @@
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
+    <Compile Include="Controls\BackButton.cs" />
     <Compile Include="Controls\Brushes\TiledBrush.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
@@ -198,10 +208,11 @@
     <Compile Include="Controls\Chats\ChatListView.cs" />
     <Compile Include="Controls\Chats\ChatListViewItem.cs" />
     <Compile Include="Controls\Chats\ChatRecordButton.cs" />
-    <Compile Include="Controls\Chats\ChatSearchMask.xaml.cs">
-      <DependentUpon>ChatSearchMask.xaml</DependentUpon>
+    <Compile Include="Controls\Chats\ChatSearchBar.xaml.cs">
+      <DependentUpon>ChatSearchBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Chats\ChatSearchTextBox.cs" />
+    <Compile Include="Controls\Chats\ChatSendButton.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\FileButton.cs" />
@@ -407,8 +418,14 @@
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\ScheduleMessageView.xaml.cs">
+      <DependentUpon>ScheduleMessageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SettingsEmojiSetView.xaml.cs">
       <DependentUpon>SettingsEmojiSetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SettingsPasswordView.xaml.cs">
+      <DependentUpon>SettingsPasswordView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\ThemePreviewView.xaml.cs">
       <DependentUpon>ThemePreviewView.xaml</DependentUpon>
@@ -586,6 +603,7 @@
     <Compile Include="ViewModels\Delegates\IWalletExportDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWalletTransactionDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWallpaperDelegate.cs" />
+    <Compile Include="ViewModels\DialogScheduledViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogShareLocationViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />
@@ -635,9 +653,11 @@
     <Compile Include="ViewModels\Settings\Phone\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowChatInvitesViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowFindingByPhoneNumberViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowP2PCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowForwardedViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhotoViewModel.cs" />
@@ -814,6 +834,7 @@
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatScheduledPage.cs" />
     <Compile Include="Views\SecretChats\SecretChatCreatePage.xaml.cs">
       <DependentUpon>SecretChatCreatePage.xaml</DependentUpon>
     </Compile>
@@ -1809,7 +1830,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Chats\ChatSearchMask.xaml">
+    <Page Include="Controls\Chats\ChatSearchBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2037,7 +2058,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\ScheduleMessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\SettingsEmojiSetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SettingsPasswordView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2646,7 +2675,7 @@
       <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.2.190917002</Version>
+      <Version>2.3.191129002</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml.Core.Direct">
       <Version>2.0.180924001-prerelease</Version>

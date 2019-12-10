@@ -90,7 +90,7 @@ namespace Unigram.Common
                     var key = split[0].Trim();
                     var value = split[1].Trim();
 
-                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
+                    if (value.StartsWith("#") && int.TryParse(value.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
                     {
                         byte a = (byte)((hexValue & 0xff000000) >> 24);
                         byte r = (byte)((hexValue & 0x00ff0000) >> 16);

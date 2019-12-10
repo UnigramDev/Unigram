@@ -1618,7 +1618,7 @@ namespace Unigram.Views
                 if (response is WebPageInstantView instantView)
                 {
                     ViewModel.IsLoading = false;
-                    ViewModel.NavigationService.Navigate(typeof(InstantPage), urlText.Url);
+                    ViewModel.NavigationService.NavigateToInstant(urlText.Url);
                 }
                 else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
                 {
@@ -1783,6 +1783,11 @@ namespace Unigram.Views
         }
 
         public bool IsMessageSelected(long messageId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetAdminTitle(int userId)
         {
             throw new NotImplementedException();
         }

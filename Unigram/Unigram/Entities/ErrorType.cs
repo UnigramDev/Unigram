@@ -40,6 +40,9 @@ namespace Telegram.Td.Api
         MESSAGE_NOT_MODIFIED,   // 400
         MESSAGE_EDIT_TIME_EXPIRED, // 400
 
+        USER_BANNED_IN_CHANNEL,
+        SCHEDULE_TOO_MUCH,
+
         PASSWORD_HASH_INVALID,  // 400
         NEW_PASSWORD_BAD,       // 400
         NEW_SALT_INVALID,       // 400

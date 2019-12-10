@@ -214,6 +214,7 @@ namespace Unigram.Views
                 FilterChannels.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F5, IsEnabled = false });
                 FilterUnread.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F6, IsEnabled = false });
                 FilterUnmuted.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F7, IsEnabled = false });
+                FilterUnreadAndUnmuted.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = Windows.System.VirtualKey.F8, IsEnabled = false });
             }
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedLeft"))
@@ -744,7 +745,7 @@ namespace Unigram.Views
             {
                 Lock_Click(null, null);
             }
-            else if (args.VirtualKey >= Windows.System.VirtualKey.F1 && args.VirtualKey <= Windows.System.VirtualKey.F7 && !ctrl && !alt && !shift)
+            else if (args.VirtualKey >= Windows.System.VirtualKey.F1 && args.VirtualKey <= Windows.System.VirtualKey.F8 && !ctrl && !alt && !shift)
             {
                 switch (args.VirtualKey)
                 {
@@ -768,6 +769,9 @@ namespace Unigram.Views
                         break;
                     case Windows.System.VirtualKey.F7:
                         SetFilter(ChatTypeFilterMode.Unmuted, "Unmuted chats");
+                        break;
+                    case Windows.System.VirtualKey.F8:
+                        SetFilter(ChatTypeFilterMode.UnreadAndUnmuted, "Unread & Unmuted chats");
                         break;
                 }
             }
@@ -1225,6 +1229,12 @@ namespace Unigram.Views
             {
                 ViewModel.Chats.SelectedItem = chat.Id;
 
+                var folder = ViewModel.Folder;
+                if (folder != null)
+                {
+                    folder.SelectedItem = chat.Id;
+                }
+
                 MasterDetail.NavigationService.NavigateToChat(chat);
                 MasterDetail.NavigationService.GoBackAt(0, false);
             }
@@ -1371,6 +1381,8 @@ namespace Unigram.Views
                     Root?.SetSelectedIndex(RootDestination.Settings);
                     break;
             }
+
+            BackButton.Visibility = rpMasterTitlebar.SelectedIndex != 0 ? Visibility.Visible : Visibility.Collapsed;
 
             UpdateHeader();
 
@@ -2199,7 +2211,18 @@ namespace Unigram.Views
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            BootStrapper.Current.RaiseBackRequested();
+            if (rpMasterTitlebar.SelectedIndex > 0)
+            {
+                rpMasterTitlebar.SelectedIndex = 0;
+            }
+            else if (FolderPanel.Visibility == Visibility.Visible)
+            {
+                SetFolder(new ChatListMain());
+            }
+            else if (ResetFilters.Visibility == Visibility.Visible)
+            {
+                ResetFilters_Click(null, null);
+            }
         }
 
         #region Selection
