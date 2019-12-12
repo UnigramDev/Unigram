@@ -142,30 +142,10 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Routing == null)
-            {
-                return;
-            }
-
-            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
-            {
-                Routing.Visibility = Visibility.Visible;
-                AudioRoutingManager.GetDefault().AudioEndpointChanged += AudioEndpointChanged;
-            }
-            else
-            {
-                Routing.Visibility = Visibility.Collapsed;
-            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("Unloaded");
-
-            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
-            {
-                AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
-            }
         }
 
         public void Dispose()
@@ -179,11 +159,6 @@ namespace Unigram.Views
                 //_controller.CallStateChanged -= OnCallStateChanged;
                 //_controller.SignalBarsChanged -= OnSignalBarsChanged;
                 _controller = null;
-            }
-
-            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
-            {
-                AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
             }
         }
 
@@ -576,30 +551,6 @@ namespace Unigram.Views
             _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, relay));
         }
 
-        private void Routing_Click(object sender, RoutedEventArgs e)
-        {
-            var routingManager = AudioRoutingManager.GetDefault();
-
-            var toggle = sender as ToggleButton;
-            toggle.IsChecked = !toggle.IsChecked;
-
-            if (toggle.IsChecked.Value)
-            {
-                routingManager.SetAudioEndpoint(AudioRoutingEndpoint.Speakerphone);
-            }
-            else
-            {
-                if (routingManager.AvailableAudioEndpoints.HasFlag(AvailableAudioRoutingEndpoints.Bluetooth))
-                {
-                    routingManager.SetAudioEndpoint(AudioRoutingEndpoint.Bluetooth);
-                }
-                else if (routingManager.AvailableAudioEndpoints.HasFlag(AvailableAudioRoutingEndpoints.Earpiece))
-                {
-                    routingManager.SetAudioEndpoint(AudioRoutingEndpoint.Earpiece);
-                }
-            }
-        }
-
         private bool _isMuted;
         public bool IsMuted
         {
@@ -616,20 +567,6 @@ namespace Unigram.Views
                     _controller.SetMicMute(value);
                 }
             }
-        }
-
-        private async void AudioEndpointChanged(AudioRoutingManager sender, object args)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                var routingManager = AudioRoutingManager.GetDefault();
-                Routing.IsChecked = routingManager.GetAudioEndpoint() == AudioRoutingEndpoint.Speakerphone;
-            });
         }
 
         private void DebugString_Tapped(object sender, TappedRoutedEventArgs e)

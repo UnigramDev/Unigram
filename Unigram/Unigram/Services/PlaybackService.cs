@@ -267,7 +267,7 @@ namespace Unigram.Services
 
         private void OnReadingChanged(ProximitySensor sender, ProximitySensorReadingChangedEventArgs args)
         {
-            AudioRoutingManager.GetDefault().SetAudioEndpoint(args.Reading.IsDetected ? AudioRoutingEndpoint.Earpiece : AudioRoutingEndpoint.Speakerphone);
+            //AudioRoutingManager.GetDefault().SetAudioEndpoint(args.Reading.IsDetected ? AudioRoutingEndpoint.Earpiece : AudioRoutingEndpoint.Speakerphone);
         }
 
         #endregion

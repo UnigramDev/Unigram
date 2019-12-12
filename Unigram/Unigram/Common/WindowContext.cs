@@ -168,18 +168,6 @@ namespace Unigram.Common
             // Buttons feedback
             titleBar.ButtonPressedBackgroundColor = buttonPressed;
             titleBar.ButtonHoverBackgroundColor = buttonHover;
-
-            // Mobile Status Bar
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
-                var foregroundBrush = Application.Current.Resources["PageHeaderForegroundBrush"] as SolidColorBrush;
-
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = backgroundBrush.Color;
-                statusBar.ForegroundColor = foregroundBrush.Color;
-                statusBar.BackgroundOpacity = 1;
-            }
         }
 
         #endregion
@@ -544,26 +532,14 @@ namespace Unigram.Common
             });
         }
 
-        private async void ShowStatus(string text)
+        private void ShowStatus(string text)
         {
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().Title = text;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                StatusBar.GetForCurrentView().ProgressIndicator.Text = text;
-                await StatusBar.GetForCurrentView().ProgressIndicator.ShowAsync();
-            }
         }
 
-        private async void HideStatus()
+        private void HideStatus()
         {
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().Title = string.Empty;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                StatusBar.GetForCurrentView().ProgressIndicator.Text = string.Empty;
-                await StatusBar.GetForCurrentView().ProgressIndicator.HideAsync();
-            }
         }
 
 

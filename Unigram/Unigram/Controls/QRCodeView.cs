@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using Windows.Graphics.DirectX;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using ZXing;
-using ZXing.QrCode.Internal;
 
 namespace Unigram.Controls
 {
@@ -70,23 +68,23 @@ namespace Unigram.Controls
                 return;
             }
 
-            var writer = new BarcodeWriterPixelData();
-            writer.Options.Hints[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.H;
-            writer.Options.Width = 768;
-            writer.Options.Height = 768;
-            writer.Format = BarcodeFormat.QR_CODE;
+            //var writer = new BarcodeWriterPixelData();
+            //writer.Options.Hints[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.H;
+            //writer.Options.Width = 768;
+            //writer.Options.Height = 768;
+            //writer.Format = BarcodeFormat.QR_CODE;
 
-            var data = writer.Write(_text);
-            var bitmap = CanvasBitmap.CreateFromBytes(sender, data.Pixels, data.Width, data.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+            //var data = writer.Write(_text);
+            //var bitmap = CanvasBitmap.CreateFromBytes(sender, data.Pixels, data.Width, data.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
 
-            args.DrawingSession.Transform = System.Numerics.Matrix3x2.CreateScale(256f / 768f);
+            //args.DrawingSession.Transform = System.Numerics.Matrix3x2.CreateScale(256f / 768f);B
 
-            args.DrawingSession.DrawImage(bitmap);
+            //args.DrawingSession.DrawImage(bitmap);
 
-            if (_overlay != null)
-            {
-                args.DrawingSession.DrawImage(_overlay, new System.Numerics.Vector2((data.Width - _overlay.SizeInPixels.Width) / 2f, (data.Height - _overlay.SizeInPixels.Height) / 2f));
-            }
+            //if (_overlay != null)
+            //{
+            //    args.DrawingSession.DrawImage(_overlay, new System.Numerics.Vector2((data.Width - _overlay.SizeInPixels.Width) / 2f, (data.Height - _overlay.SizeInPixels.Height) / 2f));
+            //}
         }
 
         private void OnTextChanged(string newValue, string oldValue)

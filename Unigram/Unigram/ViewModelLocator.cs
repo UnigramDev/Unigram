@@ -157,12 +157,12 @@ namespace Unigram
                 //    container.ContainerBuilder.RegisterType<VibrationService>().As<IVibrationService>().SingleInstance();
                 //}
                 //else
-                if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
-                {
-                    // To keep vibration compatibility with Anniversary Update
-                    builder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
-                }
-                else
+                //if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
+                //{
+                //    // To keep vibration compatibility with Anniversary Update
+                //    builder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
+                //}
+                //else
                 {
                     builder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
                 }

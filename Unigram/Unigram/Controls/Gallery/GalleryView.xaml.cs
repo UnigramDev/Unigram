@@ -338,13 +338,6 @@ namespace Unigram.Controls.Gallery
             titlebar.ForegroundColor = Colors.White;
             //titlebar.ButtonBackgroundColor = Colors.Black;
             titlebar.ButtonForegroundColor = Colors.White;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = Colors.Black;
-                statusBar.ForegroundColor = Colors.White;
-            }
         }
 
         public void OnBackRequesting(HandledRoutedEventArgs e)
