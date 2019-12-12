@@ -553,7 +553,7 @@ namespace Unigram.ViewModels
                     await SendGroupedAsync(group, options);
                 }
             }
-            else if (items.Count > 1)
+            else if (items.Count > 0)
             {
                 var options = await PickSendMessageOptionsAsync();
                 if (options == null)
