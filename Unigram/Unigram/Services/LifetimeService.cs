@@ -23,7 +23,7 @@ namespace Unigram.Services
     {
         void Update();
 
-        ISessionService Create();
+        ISessionService Create(bool update = true, bool test = false);
         ISessionService Remove(ISessionService item);
         ISessionService Remove(ISessionService item, ISessionService active);
 
@@ -113,26 +113,16 @@ namespace Unigram.Services
             }
         }
 
-        public ISessionService Create()
+        public ISessionService Create(bool update = true, bool test = false)
         {
             var app = App.Current as App;
             var sessions = TLContainer.Current.GetSessions().ToList();
             var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
+
+            var settings = ApplicationData.Current.LocalSettings.CreateContainer($"{id}", ApplicationDataCreateDisposition.Always);
+            settings.Values["UseTestDC"] = test;
+
             var container = app.Locator.Configure(id);
-
-            var session = container.Resolve<ISessionService>();
-            Update(session);
-
-            return session;
-        }
-
-        public ISessionService Create(bool update)
-        {
-            var app = App.Current as App;
-            var sessions = TLContainer.Current.GetSessions().ToList();
-            var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
-            var container = app.Locator.Configure(id);
-
             var session = container.Resolve<ISessionService>();
             if (update)
             {

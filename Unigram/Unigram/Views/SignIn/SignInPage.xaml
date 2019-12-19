@@ -15,88 +15,240 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition common:TitleBar.IsAttached="True"/>
+            <RowDefinition Height="{ThemeResource AppBarThemeCompactHeight}"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="ContentPanel" VerticalAlignment="Center" Padding="12,20" MaxWidth="360" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <TextBlock
-                x:Name="TitleLabel"
-                Text="{CustomResource YourPhone}"
-                Style="{StaticResource TitleTextBlockStyle}"/>
-            <TextBlock
-                Text="{CustomResource StartText}"
-                Style="{StaticResource BodyTextBlockStyle}"
-                Padding="0,8,0,16"
-                Grid.Row="1"/>
+        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"/>
 
-            <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
-                      SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
-                      PlaceholderText="{CustomResource ChooseCountry}"
-                      AutomationProperties.Name="{CustomResource ChooseCountry}"
-                      MinWidth="280"
-                      HorizontalAlignment="Stretch"
-                      Grid.Row="2">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:Country">
-                        <TextBlock AutomationProperties.Name="{x:Bind DisplayName}" Style="{StaticResource BodyTextBlockStyle}">
-                            <Run Text="{x:Bind DisplayName}"/>
-                            <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-                        </TextBlock>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+        <ProgressRing
+            x:Name="Loading"
+            Width="48"
+            Height="48"
+            Grid.Row="1"
+            Grid.RowSpan="2"/>
 
-            <Grid Margin="0,12,0,4" Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+        <StackPanel
+            x:Name="PhonePanel"
+            VerticalAlignment="Center"
+            Padding="12,20"
+            MaxWidth="360"
+            Grid.Row="1"
+            Grid.RowSpan="2">
+            <Border
+                x:Name="Logo2Panel"
+                Width="160"
+                Height="160">
+                <Border
+                    x:Name="Logo2"
+                    Background="#2AABEE"
+                    Width="160"
+                    Height="160"
+                    CornerRadius="80">
+                    <Path
+                        Fill="White"
+                        StrokeThickness="0"
+                        Data="M36.2,79.2C59.5,69,75.1,62.3,82.9,59.1c22.2-9.2,26.8-10.8,29.8-10.9c0.7,0,2.1,0.2,3.1,0.9 c0.8,0.7,1,1.5,1.1,2.2c0.1,0.6,0.2,2,0.1,3.1c-1.2,12.6-6.4,43.3-9.1,57.5c-1.1,6-3.3,8-5.5,8.2c-4.6,0.4-8.2-3.1-12.7-6 c-7-4.6-11-7.5-17.9-12c-7.9-5.2-2.8-8.1,1.7-12.7c1.2-1.2,21.6-19.8,22-21.5c0-0.2,0.1-1-0.4-1.4c-0.5-0.4-1.2-0.3-1.7-0.2 c-0.7,0.2-12,7.6-33.7,22.3c-3.2,2.2-6.1,3.3-8.7,3.2c-2.9-0.1-8.4-1.6-12.4-2.9c-5-1.6-9-2.5-8.6-5.3 C30.4,82.1,32.4,80.7,36.2,79.2z"/>
+                </Border>
+            </Border>
 
-                <TextBox
-                    x:Name="PhoneCode"
-                    Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Margin="0,0,8,0"
-                    Width="30"
-                    InputScope="TelephoneNumber"
-                    PlaceholderText="+"
-                    Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:PhoneTextBox
-                    x:Name="PrimaryInput"
-                    Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
-                    MinWidth="200"
-                    InputScope="TelephoneNumber"
-                    IsTextPredictionEnabled="False"
-                    KeyDown="PhoneNumber_KeyDown"
-                    Grid.Column="1"/>
+            <StackPanel
+                x:Name="PhoneInnerPanel"
+                Margin="0,12,0,0">
+                <TextBlock
+                    x:Name="TitleLabel"
+                    Text="{CustomResource YourPhone}"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Grid.Row="1"/>
+                <TextBlock
+                    Text="{CustomResource StartText}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Padding="0,8,0,16"
+                    Grid.Row="2"/>
+
+                <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
+                          SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                          PlaceholderText="{CustomResource ChooseCountry}"
+                          AutomationProperties.Name="{CustomResource ChooseCountry}"
+                          MinWidth="280"
+                          HorizontalAlignment="Stretch"
+                          Grid.Row="3">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:Country">
+                            <TextBlock AutomationProperties.Name="{x:Bind DisplayName}" Style="{StaticResource BodyTextBlockStyle}">
+                                <Run Text="{x:Bind DisplayName}"/>
+                                <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Grid Margin="0,12,0,4" Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        x:Name="PhoneCode"
+                        Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0,0,8,0"
+                        Width="30"
+                        InputScope="TelephoneNumber"
+                        PlaceholderText="+"
+                        Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
+                    <controls:PhoneTextBox
+                        x:Name="PrimaryInput"
+                        Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
+                        MinWidth="200"
+                        InputScope="TelephoneNumber"
+                        IsTextPredictionEnabled="False"
+                        KeyDown="PhoneNumber_KeyDown"
+                        Grid.Column="1"/>
+                </Grid>
+
+                <microsoft:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
+
+                <Button x:Name="NextButton"
+                        Content="{CustomResource OK}"
+                        Command="{x:Bind ViewModel.SendCommand}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,4,0,8"
+                        Grid.Row="6"/>
+
+                <HyperlinkButton
+                    x:Name="Switch2"
+                    Click="Switch2_Click"
+                    Content="[Quick log in using QR code]"
+                    Grid.Row="7"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel
+            x:Name="TokenPanel"
+            VerticalAlignment="Center"
+            Padding="12,20"
+            MaxWidth="360"
+            Grid.Row="1"
+            Grid.RowSpan="2">
+            <Grid
+                Width="240"
+                Height="240">
+                <Image
+                    x:Name="Token"
+                    Source="{x:Bind ConvertToken(ViewModel.Token), Mode=OneWay}"
+                    Width="240"
+                    Height="240"/>
+                <Border
+                    x:Name="Logo1Panel"
+                    Width="48"
+                    Height="48">
+                    <Border
+                        x:Name="Logo1"
+                        Background="#2AABEE"
+                        Width="48"
+                        Height="48"
+                        CornerRadius="24">
+                        <Path
+                            Fill="White"
+                            StrokeThickness="0"
+                            Data="M10.9,23.7c7-3,11.7-5.1,14-6c6.7-2.8,8-3.3,9-3.3c0.2,0,0.6,0,0.9,0.3c0.2,0.2,0.3,0.5,0.3,0.6 s0.1,0.6,0,0.9c-0.4,3.8-1.9,13-2.7,17.3c-0.3,1.8-1,2.4-1.6,2.5c-1.4,0.1-2.5-0.9-3.8-1.8c-2.1-1.4-3.3-2.2-5.4-3.6 c-2.4-1.6-0.8-2.4,0.5-3.8c0.4-0.4,6.5-6,6.6-6.5c0-0.1,0-0.3-0.1-0.4c-0.1-0.1-0.3-0.1-0.5,0c-0.2,0-3.6,2.3-10.1,6.7 c-1,0.7-1.8,1-2.6,1c-0.9,0-2.5-0.5-3.7-0.9c-1.5-0.5-2.7-0.7-2.6-1.6C9.1,24.6,9.7,24.2,10.9,23.7z"/>
+                    </Border>
+                </Border>
             </Grid>
 
-            <microsoft:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
+            <StackPanel
+                x:Name="TokenInnerPanel"
+                Margin="0,12,0,0">
+                <TextBlock
+                    Text="[Scan from Mobile Telegram]"
+                    Style="{StaticResource TitleTextBlockStyle}"/>
 
-            <Button x:Name="NextButton"
-                    Content="{CustomResource OK}"
-                    Command="{x:Bind ViewModel.SendCommand}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    HorizontalAlignment="Stretch"
-                    Margin="0,4,0,8"
-                    Grid.Row="5"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Border
+                        Background="{ThemeResource ChatUnreadBadgeBrush}"
+                        MinWidth="20"
+                        Height="20"
+                        CornerRadius="10"
+                        Margin="0,0,8,8">
+                        <TextBlock
+                           Text="1"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                           TextAlignment="Center"
+                           Margin="6,2,6,0"/>
+                    </Border>
+                    <Border
+                        Background="{ThemeResource ChatUnreadBadgeBrush}"
+                        MinWidth="20"
+                        Height="20"
+                        CornerRadius="10"
+                        Margin="0,0,8,8"
+                        Grid.Row="1">
+                        <TextBlock
+                           Text="2"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                           TextAlignment="Center"
+                           Margin="6,2,6,0"/>
+                    </Border>
+                    <Border
+                        Background="{ThemeResource ChatUnreadBadgeBrush}"
+                        MinWidth="20"
+                        Height="20"
+                        CornerRadius="10"
+                        Margin="0,0,8,8"
+                        Grid.Row="3">
+                        <TextBlock
+                           Text="3"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                           TextAlignment="Center"
+                           Margin="6,2,6,0"/>
+                    </Border>
 
-            <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
-                             Content="{CustomResource ProxySettings}"
-                             Grid.Row="6"/>
-        </Grid>
+                    <TextBlock
+                        Text="[Open Telegram on your phone]"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        VerticalAlignment="Top"
+                        Grid.Column="1"/>
+
+                    <TextBlock
+                        Text="[Go to Settings > Devices > Scan QR Code]"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        VerticalAlignment="Top"
+                        Grid.Column="1"
+                        Grid.Row="1"/>
+
+                    <TextBlock
+                        Text="[Scan this image to Log In]"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        VerticalAlignment="Top"
+                        Grid.Column="1"
+                        Grid.Row="2"/>
+                </Grid>
+
+                <HyperlinkButton
+                    Click="Switch1_Click"
+                    Content="[Or log in using your phone number]"
+                    Grid.Row="6"/>
+            </StackPanel>
+
+        </StackPanel>
 
         <Grid VerticalAlignment="Bottom"
               HorizontalAlignment="Center"
-              Grid.Row="1">
+              Grid.Row="2">
             <TextBlock
                 x:Name="Diagnostics"
                 Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -105,6 +257,14 @@
             <Button Click="Diagnostics_Click" Opacity="0" Style="{StaticResource EmptyButtonStyle}"/>
         </Grid>
 
+        <HyperlinkButton
+            Command="{x:Bind ViewModel.ProxyCommand}"
+            Content="{CustomResource ProxySettings}"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Margin="12,0"
+            Grid.Row="1"/>
+        
         <controls:BackButton Grid.Row="1"/>
     </Grid>
 </Page>

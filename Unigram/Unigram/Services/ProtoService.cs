@@ -189,7 +189,7 @@ namespace Unigram.Services
                 SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
                 DeviceModel = _deviceInfoService.DeviceModel,
 #if DEBUG
-                UseTestDc = false
+                UseTestDc = _settings.UseTestDC
 #else
                 UseTestDc = false
 #endif

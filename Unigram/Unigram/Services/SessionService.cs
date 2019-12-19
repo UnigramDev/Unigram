@@ -146,7 +146,7 @@ namespace Unigram.Services
                 _loggingOut = false;
                 _lifetimeService.Destroy(this);
             }
-            else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && !_isActive && _lifetimeService.Items.Count > 1)
+            else if ((update.AuthorizationState is AuthorizationStateWaitPhoneNumber || update.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation) && !_isActive && _lifetimeService.Items.Count > 1)
             {
                 ProtoService.Send(new Destroy());
             }

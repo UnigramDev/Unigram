@@ -97,9 +97,9 @@ PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 	return instance;
 }
 
-void PlaceholderImageHelper::DrawQR(String^ data, IRandomAccessStream^ randomAccessStream)
+void PlaceholderImageHelper::DrawQr(String^ data, IRandomAccessStream^ randomAccessStream)
 {
-	ThrowIfFailed(InternalDrawQR(data, randomAccessStream));
+	ThrowIfFailed(InternalDrawQr(data, randomAccessStream));
 }
 
 void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, int side, IRandomAccessStream^ randomAccessStream)
@@ -145,7 +145,7 @@ inline int ReplaceSize(const QrData& data, int pixel) {
 	return ReplaceElements(data) * pixel;
 }
 
-HRESULT PlaceholderImageHelper::InternalDrawQR(String^ text, IRandomAccessStream^ randomAccessStream)
+HRESULT PlaceholderImageHelper::InternalDrawQr(String^ text, IRandomAccessStream^ randomAccessStream)
 {
 	auto lock = m_criticalSection.Lock();
 
@@ -153,7 +153,7 @@ HRESULT PlaceholderImageHelper::InternalDrawQR(String^ text, IRandomAccessStream
 
 	ComPtr<ID2D1Bitmap1> targetBitmap;
 	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-	ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ 768, 768 }, nullptr, 0, &properties, &targetBitmap));
+	ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ kShareQrSize - 4 * kShareQrPadding, kShareQrSize - 4 * kShareQrPadding }, nullptr, 0, &properties, &targetBitmap));
 
 
 	m_d2dContext->SetTarget(targetBitmap.Get());
@@ -321,16 +321,16 @@ HRESULT PlaceholderImageHelper::InternalDrawQR(String^ text, IRandomAccessStream
 	}
 
 	float diamond = ReplaceSize(data, pixel);
-	float x1 = (size - diamond) / 2;
-	x1 -= kShareQrPadding;
-	ComPtr<ID2D1SolidColorBrush> red;
-	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &red));
-	m_d2dContext->FillRectangle(D2D1_RECT_F{ x1, x1, x1 + diamond, x1 + diamond }, red.Get());
+	float x1 = (size - diamond) / 2.0f;
+	x1 -= kShareQrPadding / 2.0f;
+	//ComPtr<ID2D1SolidColorBrush> red;
+	//ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &red));
+	//m_d2dContext->FillRectangle(D2D1_RECT_F{ x1, x1, x1 + diamond, x1 + diamond }, red.Get());
 
 	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
-		return InternalDrawQR(text, randomAccessStream);
+		return InternalDrawQr(text, randomAccessStream);
 	}
 
 	return SaveImageToStream(targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
@@ -695,6 +695,8 @@ HRESULT PlaceholderImageHelper::CreateDeviceResources()
 	D2D1_SIZE_U size = { 192, 192 };
 	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
 	ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, &m_targetBitmap));
+
+	m_d2dContext->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 
 	return m_wicFactory->CreateImageEncoder(m_d2dDevice.Get(), &m_imageEncoder);
 }

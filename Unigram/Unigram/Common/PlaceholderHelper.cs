@@ -329,6 +329,23 @@ namespace Unigram.Common
             return bitmap;
         }
 
+        public static ImageSource GetQr(string data)
+        {
+            var bitmap = new BitmapImage();
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    PlaceholderImageHelper.GetForCurrentView().DrawQr(data, stream);
+
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
+        }
+
         public static async Task<ImageSource> GetWebpAsync(string path)
         {
             if (ApiInfo.CanDecodeWebp)
