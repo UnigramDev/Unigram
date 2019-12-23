@@ -8,11 +8,11 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views
 {
-    public class ScheduledChatPage : ChatPage
-    {
-        protected override DialogViewModel GetViewModel()
-        {
-            return TLContainer.Current.Resolve<DialogScheduledViewModel, IDialogDelegate>(this);
-        }
-    }
+    //public class ScheduledChatPage : ChatPage
+    //{
+    //    protected override DialogViewModel GetViewModel()
+    //    {
+    //        return TLContainer.Current.Resolve<DialogScheduledViewModel, IDialogDelegate>(this);
+    //    }
+    //}
 }

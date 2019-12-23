@@ -56,7 +56,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public partial class ChatPage : Page, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
+    public sealed partial class ChatPage : UserControl, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -102,7 +102,7 @@ namespace Unigram.Views
             DataContext = GetViewModel();
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
-            NavigationCacheMode = NavigationCacheMode.Required;
+            //NavigationCacheMode = NavigationCacheMode.Required;
 
             _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
@@ -278,7 +278,7 @@ namespace Unigram.Views
             }
         }
 
-        protected virtual DialogViewModel GetViewModel()
+        private DialogViewModel GetViewModel()
         {
             return TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
         }
@@ -4033,7 +4033,7 @@ namespace Unigram.Views
                 }
                 else if (item is Sticker sticker)
                 {
-                    if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
+                    if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id && file.Local.IsDownloadingCompleted)
                     {
                         var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
                         if (container == null)

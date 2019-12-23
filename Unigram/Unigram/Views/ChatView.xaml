@@ -1,4 +1,4 @@
-<Page
+<UserControl
     x:Class="Unigram.Views.ChatPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,15 +16,15 @@
     Unloaded="OnUnloaded"
     SizeChanged="OnSizeChanged">
 
-    <Page.Transitions>
+    <!--<Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
                 <SuppressNavigationTransitionInfo />
             </NavigationThemeTransition>
         </TransitionCollection>
-    </Page.Transitions>
+    </Page.Transitions>-->
 
-    <Page.Resources>
+    <UserControl.Resources>
         <x:Double x:Key="MenuFlyoutMaxWidth">360</x:Double>
 
         <Style x:Key="AutocompleteListViewStyle" TargetType="ListView">
@@ -314,7 +314,7 @@
                 </Border>
             </Grid>
         </DataTemplate>
-    </Page.Resources>
+    </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot"
           Background="Transparent"
@@ -1264,4 +1264,4 @@
 
         <!--<controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48" Grid.RowSpan="4"/>-->
     </Grid>
-</Page>
+</UserControl>

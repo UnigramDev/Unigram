@@ -599,6 +599,7 @@
     <Compile Include="ViewModels\Delegates\IGalleryDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\ISignInDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupEditDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWalletExportDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IWalletTransactionDelegate.cs" />
@@ -743,12 +744,6 @@
     <Compile Include="Views\Channels\ChannelCreateStep3Page.xaml.cs">
       <DependentUpon>ChannelCreateStep3Page.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ChatPage.Bubbles.xaml.cs">
-      <DependentUpon>ChatPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ChatPage.xaml.cs">
-      <DependentUpon>ChatPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\ChatsPage.xaml.cs">
       <DependentUpon>ChatsPage.xaml</DependentUpon>
     </Compile>
@@ -763,6 +758,12 @@
     </Compile>
     <Compile Include="Views\Chats\ChatStatisticsPage.xaml.cs">
       <DependentUpon>ChatStatisticsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatView.Bubbles.xaml.cs">
+      <DependentUpon>ChatView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatView.xaml.cs">
+      <DependentUpon>ChatView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DiagnosticsPage.xaml.cs">
       <DependentUpon>DiagnosticsPage.xaml</DependentUpon>
@@ -2194,10 +2195,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ChatPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\ChatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2217,6 +2214,10 @@
     <Page Include="Views\Chats\ChatStatisticsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChatView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\DiagnosticsPage.xaml">
       <SubType>Designer</SubType>
