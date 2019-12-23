@@ -50,7 +50,7 @@ using Windows.Devices.Input;
 
 namespace Unigram.Views
 {
-    public partial class ChatPage : UserControl
+    public partial class ChatView : UserControl
     {
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {

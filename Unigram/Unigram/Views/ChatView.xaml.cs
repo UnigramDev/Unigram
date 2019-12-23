@@ -56,12 +56,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatPage : UserControl, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
+    public sealed partial class ChatView : UserControl, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         public BindConvert Convert => BindConvert.Current;
 
+        private Func<IDialogDelegate, DialogViewModel> _getViewModel;
         private DialogViewModel _viewModel;
         private double _lastKnownKeyboardHeight = 260;
 
@@ -92,15 +93,17 @@ namespace Unigram.Views
 
         private Compositor _compositor;
 
-        public ChatPage()
+        public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
         {
             InitializeComponent();
             DataContextChanged += (s, args) =>
             {
                 _viewModel = ViewModel;
             };
-            DataContext = GetViewModel();
+            DataContext = getViewModel(this);
             ViewModel.Sticker_Click = Stickers_ItemClick;
+
+            _getViewModel = getViewModel;
 
             //NavigationCacheMode = NavigationCacheMode.Required;
 
@@ -276,11 +279,6 @@ namespace Unigram.Views
                     }
                 };
             }
-        }
-
-        private DialogViewModel GetViewModel()
-        {
-            return TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(this);
         }
 
         private void InitializeAutomation()
@@ -508,7 +506,7 @@ namespace Unigram.Views
                 ViewModel.Dispose();
             }
 
-            DataContext = GetViewModel();
+            DataContext = _getViewModel(this);
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;

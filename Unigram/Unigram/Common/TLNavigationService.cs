@@ -268,11 +268,11 @@ namespace Unigram.Common
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift && !ctrl)
                 {
-                    await OpenAsync(scheduled ? typeof(ScheduledChatPage) : typeof(ChatPage), chat.Id);
+                    await OpenAsync(scheduled ? typeof(ChatScheduledPage) : typeof(ChatPage), chat.Id);
                 }
                 else
                 {
-                    await NavigateAsync(scheduled ? typeof(ScheduledChatPage) : typeof(ChatPage), chat.Id, state);
+                    await NavigateAsync(scheduled ? typeof(ChatScheduledPage) : typeof(ChatPage), chat.Id, state);
                 }
             }
         }

@@ -744,6 +744,12 @@
     <Compile Include="Views\Channels\ChannelCreateStep3Page.xaml.cs">
       <DependentUpon>ChannelCreateStep3Page.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatPage.xaml.cs">
+      <DependentUpon>ChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatScheduledPage.xaml.cs">
+      <DependentUpon>ChatScheduledPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatsPage.xaml.cs">
       <DependentUpon>ChatsPage.xaml</DependentUpon>
     </Compile>
@@ -835,7 +841,6 @@
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ChatScheduledPage.cs" />
     <Compile Include="Views\SecretChats\SecretChatCreatePage.xaml.cs">
       <DependentUpon>SecretChatCreatePage.xaml</DependentUpon>
     </Compile>
@@ -1650,6 +1655,7 @@
     <Content Include="Assets\Images\Reply.scale-200.png" />
     <Content Include="Assets\Images\Reply.scale-400.png" />
     <Content Include="Assets\Images\WalletGem.png" />
+    <Content Include="Assets\Logo.svg" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16_altform-lightunplated.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24_altform-lightunplated.png" />
     <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256_altform-lightunplated.png" />
@@ -2194,6 +2200,14 @@
     <Page Include="Views\Channels\ChannelCreateStep3Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChatScheduledPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ChatsPage.xaml">
       <SubType>Designer</SubType>
