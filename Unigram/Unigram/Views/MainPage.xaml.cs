@@ -68,6 +68,7 @@ namespace Unigram.Views
         IHandle<UpdateUserChatAction>,
         IHandle<UpdateUserStatus>,
         IHandle<UpdateMessageMentionRead>,
+        IHandle<UpdateUnreadChatCount>,
         //IHandle<UpdateMessageContent>,
         IHandle<UpdateSecretChat>,
         IHandle<UpdateChatNotificationSettings>,
@@ -319,6 +320,14 @@ namespace Unigram.Views
         public void Handle(UpdateChatNotificationSettings update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateNotificationSettings(chat));
+        }
+
+        public void Handle(UpdateUnreadChatCount update)
+        {
+            if (update.ChatList is ChatListArchive)
+            {
+                this.BeginOnUIThread(() => ArchivedChats.UpdateChatList(ViewModel.ProtoService, ViewModel.Chats, update.ChatList));
+            }
         }
 
         private void Handle(long chatId, long messageId, Action<Chat> update, Action<ChatCell, Chat> action)
