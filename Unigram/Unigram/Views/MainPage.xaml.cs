@@ -2132,10 +2132,12 @@ namespace Unigram.Views
 
             if (chatList is ChatListMain || chatList == null)
             {
+                rpMasterTitlebar.IsLocked = false;
                 DefaultHeader.Text = Strings.Resources.AppName;
             }
             else if (chatList is ChatListArchive)
             {
+                rpMasterTitlebar.IsLocked = true;
                 DefaultHeader.Text = Strings.Resources.ArchivedChats;
             }
 
