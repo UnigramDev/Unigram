@@ -12,6 +12,8 @@ namespace Unigram.Common
     {
         protected override object GetResource(string resourceId, string objectType, string propertyName, string propertyType)
         {
+            if (resourceId.StartsWith("Additional."))
+                return Strings.Additional.Resource.GetString(resourceId.Substring(11));
             return LocaleService.Current.GetString(resourceId);
         }
     }

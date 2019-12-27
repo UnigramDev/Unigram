@@ -117,6 +117,27 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChatFilterBots" xml:space="preserve">
+    <value>Bots</value>
+  </data>
+  <data name="ChatFilterChannels" xml:space="preserve">
+    <value>Channels</value>
+  </data>
+  <data name="ChatFilterGroups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="ChatFilterUnmuted" xml:space="preserve">
+    <value>Unmuted Chats</value>
+  </data>
+  <data name="ChatFilterUnread" xml:space="preserve">
+    <value>Unread Chats</value>
+  </data>
+  <data name="ChatFilterUnreadAndUnmuted" xml:space="preserve">
+    <value>Unread &amp; Unmuted Chats</value>
+  </data>
+  <data name="ChatFilterUsers" xml:space="preserve">
+    <value>Users</value>
+  </data>
   <data name="Chats" xml:space="preserve">
     <value>Chats</value>
   </data>
@@ -128,6 +149,9 @@
   </data>
   <data name="News" xml:space="preserve">
     <value>News</value>
+  </data>
+  <data name="NoChatFilter" xml:space="preserve">
+    <value>All Chats</value>
   </data>
   <data name="OriginalMessage" xml:space="preserve">
     <value>original</value>

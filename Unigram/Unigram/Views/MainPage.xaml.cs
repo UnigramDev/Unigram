@@ -759,28 +759,28 @@ namespace Unigram.Views
                 switch (args.VirtualKey)
                 {
                     case Windows.System.VirtualKey.F1:
-                        SetFilter(ChatTypeFilterMode.None, "All chats");
+                        SetFilter(ChatTypeFilterMode.None);
                         break;
                     case Windows.System.VirtualKey.F2:
-                        SetFilter(ChatTypeFilterMode.Users, "Users");
+                        SetFilter(ChatTypeFilterMode.Users);
                         break;
                     case Windows.System.VirtualKey.F3:
-                        SetFilter(ChatTypeFilterMode.Bots, "Bots");
+                        SetFilter(ChatTypeFilterMode.Bots);
                         break;
                     case Windows.System.VirtualKey.F4:
-                        SetFilter(ChatTypeFilterMode.Groups, "Groups");
+                        SetFilter(ChatTypeFilterMode.Groups);
                         break;
                     case Windows.System.VirtualKey.F5:
-                        SetFilter(ChatTypeFilterMode.Channels, "Channels");
+                        SetFilter(ChatTypeFilterMode.Channels);
                         break;
                     case Windows.System.VirtualKey.F6:
-                        SetFilter(ChatTypeFilterMode.Unread, "Unread chats");
+                        SetFilter(ChatTypeFilterMode.Unread);
                         break;
                     case Windows.System.VirtualKey.F7:
-                        SetFilter(ChatTypeFilterMode.Unmuted, "Unmuted chats");
+                        SetFilter(ChatTypeFilterMode.Unmuted);
                         break;
                     case Windows.System.VirtualKey.F8:
-                        SetFilter(ChatTypeFilterMode.UnreadAndUnmuted, "Unread & Unmuted chats");
+                        SetFilter(ChatTypeFilterMode.UnreadAndUnmuted);
                         break;
                 }
             }
@@ -2096,7 +2096,7 @@ namespace Unigram.Views
 
         private void ResetFilters_Click(object sender, RoutedEventArgs e)
         {
-            SetFilter(ChatTypeFilterMode.None, "All chats");
+            SetFilter(ChatTypeFilterMode.None);
         }
 
         private void ChatsFilter_Click(object sender, RoutedEventArgs e)
@@ -2104,10 +2104,10 @@ namespace Unigram.Views
             var item = sender as MenuFlyoutItem;
             var filter = (ChatTypeFilterMode)item.CommandParameter;
 
-            SetFilter(filter, item.Text);
+            SetFilter(filter);
         }
 
-        private void SetFilter(ChatTypeFilterMode filter, string text)
+        private void SetFilter(ChatTypeFilterMode filter)
         {
             foreach (var item in FiltersFlyout.Items)
             {
@@ -2129,7 +2129,30 @@ namespace Unigram.Views
             }
 
             FolderPanel.Visibility = Visibility.Collapsed;
-            ChatsFilters.Content = text;
+            ChatsFilters.Content = GetFilterText(filter);
+        }
+
+        private string GetFilterText(ChatTypeFilterMode filter)
+        {
+            switch (filter)
+            {
+                case ChatTypeFilterMode.Users:
+                    return Strings.Additional.ChatFilterUsers;
+                case ChatTypeFilterMode.Bots:
+                    return Strings.Additional.ChatFilterBots;
+                case ChatTypeFilterMode.Groups:
+                    return Strings.Additional.ChatFilterGroups;
+                case ChatTypeFilterMode.Channels:
+                    return Strings.Additional.ChatFilterChannels;
+                case ChatTypeFilterMode.Unread:
+                    return Strings.Additional.ChatFilterUnread;
+                case ChatTypeFilterMode.Unmuted:
+                    return Strings.Additional.ChatFilterUnmuted;
+                case ChatTypeFilterMode.UnreadAndUnmuted:
+                    return Strings.Additional.ChatFilterUnreadAndUnmuted;
+                default:
+                    return Strings.Additional.NoChatFilter;
+            }
         }
 
         private void SetFolder(ChatList chatList)

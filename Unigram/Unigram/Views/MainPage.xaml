@@ -138,7 +138,7 @@
                                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                    Style="{StaticResource BaseTextBlockStyle}"/>
 
-                        <Button x:Name="ChatsFilters" Content="All chats" Margin="5,0,0,0">
+                        <Button x:Name="ChatsFilters" Content="{CustomResource Additional.NoChatFilter}" Margin="5,0,0,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -200,43 +200,43 @@
                             </Button.Template>
                             <Button.Flyout>
                                 <MenuFlyout x:Name="FiltersFlyout">
-                                    <ToggleMenuFlyoutItem x:Name="FilterNone" Text="All chats" Click="ChatsFilter_Click" IsChecked="True">
+                                    <ToggleMenuFlyoutItem x:Name="FilterNone" Text="{CustomResource Additional.NoChatFilter}" Click="ChatsFilter_Click" IsChecked="True">
                                         <MenuFlyoutItem.CommandParameter>
                                             <viewModels:ChatTypeFilterMode>None</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
                                     </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterUsers" Text="Users" Click="ChatsFilter_Click">
+                                    <ToggleMenuFlyoutItem x:Name="FilterUsers" Text="{CustomResource Additional.ChatFilterUsers}" Click="ChatsFilter_Click">
                                         <MenuFlyoutItem.CommandParameter>
                                             <viewModels:ChatTypeFilterMode>Users</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
                                     </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterBots" Text="Bots" Click="ChatsFilter_Click">
+                                    <ToggleMenuFlyoutItem x:Name="FilterBots" Text="{CustomResource Additional.ChatFilterBots}" Click="ChatsFilter_Click">
                                         <MenuFlyoutItem.CommandParameter>
                                             <viewModels:ChatTypeFilterMode>Bots</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
                                     </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterGroups" Text="Groups" Click="ChatsFilter_Click">
+                                    <ToggleMenuFlyoutItem x:Name="FilterGroups" Text="{CustomResource Additional.ChatFilterGroups}" Click="ChatsFilter_Click">
                                         <MenuFlyoutItem.CommandParameter>
                                             <viewModels:ChatTypeFilterMode>Groups</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
                                     </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterChannels" Text="Channels" Click="ChatsFilter_Click">
+                                    <ToggleMenuFlyoutItem x:Name="FilterChannels" Text="{CustomResource Additional.ChatFilterChannels}" Click="ChatsFilter_Click">
                                         <MenuFlyoutItem.CommandParameter>
                                             <viewModels:ChatTypeFilterMode>Channels</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
                                     </ToggleMenuFlyoutItem>
                                     <MenuFlyoutSeparator/>
-                                    <ToggleMenuFlyoutItem x:Name="FilterUnread" Text="Unread chats" Click="ChatsFilter_Click">
+                                    <ToggleMenuFlyoutItem x:Name="FilterUnread" Text="{CustomResource Additional.ChatFilterUnread}" Click="ChatsFilter_Click">
                                         <MenuFlyoutItem.CommandParameter>
                                             <viewModels:ChatTypeFilterMode>Unread</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
                                     </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterUnmuted" Text="Unmuted chats" Click="ChatsFilter_Click">
+                                    <ToggleMenuFlyoutItem x:Name="FilterUnmuted" Text="{CustomResource Additional.ChatFilterUnmuted}" Click="ChatsFilter_Click">
                                         <MenuFlyoutItem.CommandParameter>
                                             <viewModels:ChatTypeFilterMode>Unmuted</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
                                     </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterUnreadAndUnmuted" Text="Unread &amp; Unmuted chats" Click="ChatsFilter_Click">
+                                    <ToggleMenuFlyoutItem x:Name="FilterUnreadAndUnmuted" Text="{CustomResource Additional.ChatFilterUnreadAndUnmuted}" Click="ChatsFilter_Click">
                                         <MenuFlyoutItem.CommandParameter>
                                             <viewModels:ChatTypeFilterMode>UnreadAndUnmuted</viewModels:ChatTypeFilterMode>
                                         </MenuFlyoutItem.CommandParameter>
@@ -649,7 +649,7 @@
 
                                                 <FontIcon Glyph="&#xE751;" HorizontalAlignment="Center"/>
 
-                                                <TextBlock Text="All chats" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
+                                                <TextBlock Text="{CustomResource Additional.NoChatFilter}" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
 
                                                 <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                             MinWidth="20"
