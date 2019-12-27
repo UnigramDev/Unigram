@@ -1989,8 +1989,8 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
+                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
 
