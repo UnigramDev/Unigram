@@ -321,14 +321,16 @@
                         </ListView.ItemContainerStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="common:EmojiGroup">
-                                <Border AutomationProperties.Name="{x:Bind Title}"
-                                        ToolTipService.ToolTip="{x:Bind Title}"
-                                        Background="Transparent">
-                                    <TextBlock Text="{x:Bind Glyph}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               IsColorFontEnabled="False"
-                                               TextLineBounds="TrimToBaseline,TrimToCapHeight"/>
+                                <Border
+                                    AutomationProperties.Name="{x:Bind Title}"
+                                    ToolTipService.ToolTip="{x:Bind Title}"
+                                    Background="Transparent">
+                                    <TextBlock
+                                        Text="{x:Bind Glyph}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsColorFontEnabled="False"
+                                        TextLineBounds="TrimToBaseline,TrimToCapHeight"/>
                                 </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>

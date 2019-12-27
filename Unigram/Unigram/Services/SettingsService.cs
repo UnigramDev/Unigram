@@ -20,6 +20,7 @@ namespace Unigram.Services
         ChatSettingsBase Chats { get; }
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
+        EmojiSettings Emoji { get; }
         WalletSettings Wallet { get; }
         AutoDownloadSettings AutoDownload { get; set; }
         AppearanceSettings Appearance { get; }
@@ -172,7 +173,7 @@ namespace Unigram.Services
         }
 
         public SettingsService(int session)
-            : base(session > 0 ? ApplicationData.Current.LocalSettings.CreateContainer(session.ToString(), ApplicationDataCreateDisposition.Always) : null)
+            : base(session > 0 ? ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always) : null)
         {
             _session = session;
             _local = ApplicationData.Current.LocalSettings;
@@ -183,8 +184,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (12UL << 32) | (2605UL << 16);
-        public const string CurrentChangelog = "ARCHIVED CHATS\r\n• Right click on any chat to archive it.\r\n• Right click on your archive to hide it from the chat list.\r\n• Pin an unlimited number of chats in your archive.\r\n\r\nADDING TO CONTACTS MADE EASIER\r\n• You can now add any users to your contacts, even if their phone numbers are not visible. \r\n• Quickly add users standing next to you by opening Contacts > Add People Nearby. You will see people who have this section open.\r\n\r\nLOCATION-BASED CHATS \r\n• Host local communities by creating location-based group chats from the People Nearby section.\r\n\r\nALSO IN THIS UPDATE\r\n• Choose who can see your phone number with granular precision in Privacy & Security settings.\r\n\r\nFor group admins and developers:\r\n• Connect a discussion group to your channel to get a 'Discuss' button.\r\n• Seamlessly integrate bots with web services.";
+        public const ulong CurrentVersion = (3UL << 48) | (13UL << 32) | (2635UL << 16);
+        public const string CurrentChangelog = "SCHEDULED MESSAGES\r\n• Right click the 'Send' button and select 'Schedule Message' to automatically send something at a specified time.\r\n• Schedule reminders for yourself in the 'Saved Messages' chat.\r\n• Get a notification when any of your scheduled messages are sent.\r\n\r\nSILENT MESSAGES, GROUP ADMIN TITLES AND SLOW MODE\r\n• Right click the Send button to send any message without sound – in case the recipient is sleeping.\r\n• Enable Slow Mode in Group Permissions to control how frequently members can post.\r\n• Set custom titles for group admins – like 'Founder', 'CFO' or 'Spam Fighter'.\r\n\r\nNEW PRIVACY SETTINGS\r\n• Choose who can find you on Telegram when they add your number to their phone contacts.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -218,7 +219,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _chats = _chats ?? new ChatSettingsBase(_own);
+                return _chats ??= new ChatSettingsBase(_own);
             }
         }
 
@@ -227,7 +228,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _notifications = _notifications ?? new NotificationsSettings(_container);
+                return _notifications ??= new NotificationsSettings(_container);
             }
         }
 
@@ -236,7 +237,16 @@ namespace Unigram.Services
         {
             get
             {
-                return _stickers = _stickers ?? new StickersSettings(_local);
+                return _stickers ??= new StickersSettings(_local);
+            }
+        }
+
+        private static EmojiSettings _emoji;
+        public EmojiSettings Emoji
+        {
+            get
+            {
+                return _emoji ??= new EmojiSettings();
             }
         }
 
@@ -245,7 +255,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _wallet = _wallet ?? new WalletSettings(_own);
+                return _wallet ??= new WalletSettings(_own);
             }
         }
 
@@ -254,7 +264,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _autoDownload = _autoDownload ?? new AutoDownloadSettings(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
+                return _autoDownload ??= new AutoDownloadSettings(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
             }
             set
             {
@@ -268,7 +278,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _appearance = _appearance ?? new AppearanceSettings();
+                return _appearance ??= new AppearanceSettings();
             }
         }
 
@@ -277,7 +287,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _diagnostics = _diagnostics ?? new DiagnosticsSettings();
+                return _diagnostics ??= new DiagnosticsSettings();
             }
         }
 
@@ -286,7 +296,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _wallpaper = _wallpaper ?? new WallpaperSettings(_container);
+                return _wallpaper ??= new WallpaperSettings(_container);
             }
         }
 
@@ -295,7 +305,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _passcodeLock = _passcodeLock ?? new PasscodeLockSettings();
+                return _passcodeLock ??= new PasscodeLockSettings();
             }
         }
 
@@ -304,7 +314,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _playback = _playback ?? new PlaybackSettings(_local);
+                return _playback ??= new PlaybackSettings(_local);
             }
         }
 
@@ -313,7 +323,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _voip = _voip ?? new VoIPSettings();
+                return _voip ??= new VoIPSettings();
             }
         }
 
@@ -363,14 +373,14 @@ namespace Unigram.Services
             get
             {
                 if (_useTestDC == null)
-                    _useTestDC = GetValueOrDefault(_local, "UseTestDC", false);
+                    _useTestDC = GetValueOrDefault(_own, "UseTestDC", false);
 
                 return _useTestDC ?? false;
             }
             set
             {
                 _useTestDC = value;
-                AddOrUpdateValue(_local, "UseTestDC", value);
+                AddOrUpdateValue(_own, "UseTestDC", value);
             }
         }
 

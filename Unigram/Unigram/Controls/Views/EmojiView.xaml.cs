@@ -31,6 +31,8 @@ namespace Unigram.Controls.Views
 
         public event ItemClickEventHandler ItemClick;
 
+        private bool _needUpdate;
+
         private EmojiSkinTone _selected;
         private bool _expanded;
 
@@ -75,24 +77,26 @@ namespace Unigram.Controls.Views
             {
                 if (groups.Count == Emoji.GroupsCount && microsoft)
                 {
-                    var items = Emoji.Get(tone, false);
-                    EmojiCollection.Source = items;
-                    Toolbar.ItemsSource = items;
+                    _needUpdate = true;
                 }
                 else if (groups.Count == Emoji.GroupsCount - 1 && !microsoft)
                 {
-                    var items = Emoji.Get(tone, true);
-                    EmojiCollection.Source = items;
-                    Toolbar.ItemsSource = items;
+                    _needUpdate = true;
                 }
             }
             else
+            {
+                _needUpdate = true;
+            }
+            
+            if (_needUpdate)
             {
                 var items = Emoji.Get(tone, !microsoft);
                 EmojiCollection.Source = items;
                 Toolbar.ItemsSource = items;
             }
 
+            _needUpdate = false;
             UpdateSkinTone(tone, false, false);
         }
 
@@ -130,6 +134,15 @@ namespace Unigram.Controls.Views
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             ItemClick?.Invoke(this, e);
+
+            if (e.ClickedItem is EmojiData data)
+            {
+                _needUpdate = true;
+
+                SettingsService.Current.Emoji.AddRecentEmoji(data.Value);
+                SettingsService.Current.Emoji.SortRecentEmoji();
+                SettingsService.Current.Emoji.SaveRecentEmoji();
+            }
         }
 
         private async void FieldEmoji_TextChanged(object sender, TextChangedEventArgs e)

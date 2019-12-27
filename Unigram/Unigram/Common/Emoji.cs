@@ -187,6 +187,15 @@ namespace Unigram.Common
         public static List<EmojiGroup> Get(EmojiSkinTone skin, bool flags)
         {
             var results = new List<EmojiGroup>();
+            var recent = new EmojiGroup
+            {
+                Title = Strings.Resources.RecentStickers,
+                Glyph = "🕒",
+                Items = SettingsService.Current.Emoji.GetRecentEmoji()
+            };
+
+            results.Add(recent);
+
             if (flags)
             {
                 results.AddRange(Items.Select(x => x.ToGroup(skin)));
