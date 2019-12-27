@@ -551,6 +551,11 @@ namespace Unigram.ViewModels
                 {
                     if (string.IsNullOrEmpty(admin.CustomTitle))
                     {
+                        if (admin.IsOwner)
+                        {
+                            return Strings.Resources.ChannelCreator;
+                        }
+
                         return Strings.Resources.ChannelAdmin;
                     }
 
