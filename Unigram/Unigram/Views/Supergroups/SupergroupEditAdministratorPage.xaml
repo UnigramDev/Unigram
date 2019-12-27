@@ -129,6 +129,7 @@
                         x:Name="EditRankField"
                         Text="{x:Bind ViewModel.CustomTitle, Mode=TwoWay}"
                         PlaceholderText="{CustomResource ChannelCreator}"
+                        MaxLength="16"
                         Margin="12,8"/>
                 </controls:HeaderedControl>
                 

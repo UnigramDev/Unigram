@@ -330,7 +330,7 @@ namespace Unigram.ViewModels.Supergroups
             ChatMemberStatus status;
             if (member.Status is ChatMemberStatusCreator creator)
             {
-                status = new ChatMemberStatusCreator(_customTitle, creator.IsMember);
+                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, creator.IsMember);
             }
             else
             {
@@ -344,7 +344,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = supergroup.IsChannel ? _canPostMessages : false,
                     CanPromoteMembers = _canPromoteMembers,
                     CanRestrictMembers = supergroup.IsChannel ? false : _canRestrictMembers,
-                    CustomTitle = _customTitle
+                    CustomTitle = _customTitle ?? string.Empty
                 };
             }
 

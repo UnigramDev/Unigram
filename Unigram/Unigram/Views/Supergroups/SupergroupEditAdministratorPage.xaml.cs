@@ -67,7 +67,7 @@ namespace Unigram.Views.Supergroups
         {
             if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
             {
-                var canBeEdited = member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited;
+                var canBeEdited = (member.Status is ChatMemberStatusCreator && member.UserId == ViewModel.CacheService.Options.MyId)  || (member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited);
 
                 Header.CommandVisibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 DismissPanel.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
