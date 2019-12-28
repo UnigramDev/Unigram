@@ -123,8 +123,17 @@
   <data name="CopyImage" xml:space="preserve">
     <value>Copy Image</value>
   </data>
+  <data name="Cut" xml:space="preserve">
+    <value>Ausschneiden</value>
+  </data>
   <data name="DeletedMessage" xml:space="preserve">
     <value>Deleted message</value>
+  </data>
+  <data name="EditLink" xml:space="preserve">
+    <value>Edit Link</value>
+  </data>
+  <data name="Formatting" xml:space="preserve">
+    <value>Formatting</value>
   </data>
   <data name="News" xml:space="preserve">
     <value>News</value>
@@ -133,13 +142,25 @@
     <value>original</value>
     <comment>Original message date and time</comment>
   </data>
+  <data name="Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
   <data name="SaveAs" xml:space="preserve">
     <value>Save as...</value>
   </data>
   <data name="Select" xml:space="preserve">
     <value>Select</value>
   </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>Select All</value>
+  </data>
   <data name="ShowInFolder" xml:space="preserve">
     <value>Show in Folder</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Undo</value>
   </data>
 </root>

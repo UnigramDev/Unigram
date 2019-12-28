@@ -114,28 +114,28 @@ namespace Unigram.Controls
             clone.StartOf(TextRangeUnit.Link, true);
             var mention = TryGetUserId(clone, out int userId);
 
-            var formatting = new MenuFlyoutSubItem { Text = "Formatting", Icon = new FontIcon { Glyph = "\uE8D3" } }; // Icons.Fontcolor
+            var formatting = new MenuFlyoutSubItem { Text = Strings.Additional.Formatting, Icon = new FontIcon { Glyph = "\uE8D3" } }; // Icons.Fontcolor
             CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.Bold }, VirtualKey.B);
             CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.Italic }, VirtualKey.I);
             CreateFlyoutItem(formatting.Items, length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.Underline }, VirtualKey.U);
             CreateFlyoutItem(formatting.Items, length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, null, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, null, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
+            CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? Strings.Additional.EditLink : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, Strings.Resources.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
-            CreateFlyoutItem(flyout.Items, Document.CanUndo(), ContextUndo_Click, "Undo", new FontIcon { Glyph = Icons.Undo }, VirtualKey.Z);
-            CreateFlyoutItem(flyout.Items, Document.CanRedo(), ContextRedo_Click, "Redo", new FontIcon { Glyph = Icons.Redo }, VirtualKey.Y);
+            CreateFlyoutItem(flyout.Items, Document.CanUndo(), ContextUndo_Click, Strings.Additional.Undo, new FontIcon { Glyph = Icons.Undo }, VirtualKey.Z);
+            CreateFlyoutItem(flyout.Items, Document.CanRedo(), ContextRedo_Click, Strings.Additional.Redo, new FontIcon { Glyph = Icons.Redo }, VirtualKey.Y);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCut_Click, "Cut", new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
-            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCopy_Click, "Copy", new FontIcon { Glyph = Icons.Copy }, VirtualKey.C);
-            CreateFlyoutItem(flyout.Items, Document.CanPaste(), ContextPaste_Click, "Paste", new FontIcon { Glyph = Icons.Paste }, VirtualKey.V);
-            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, "Delete", new FontIcon { Glyph = Icons.Delete });
+            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCut_Click, Strings.Additional.Cut, new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
+            CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCopy_Click, Strings.Resources.Copy, new FontIcon { Glyph = Icons.Copy }, VirtualKey.C);
+            CreateFlyoutItem(flyout.Items, Document.CanPaste(), ContextPaste_Click, Strings.Additional.Paste, new FontIcon { Glyph = Icons.Paste }, VirtualKey.V);
+            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
             flyout.Items.Add(new MenuFlyoutSeparator());
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", new FontIcon { Glyph = "\uE8B3" }, VirtualKey.A); //Icons.SelectAll
+            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, Strings.Additional.SelectAll, new FontIcon { Glyph = "\uE8B3" }, VirtualKey.A); //Icons.SelectAll
         }
 
         private void ContextBold_Click()
