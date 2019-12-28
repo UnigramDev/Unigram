@@ -114,7 +114,7 @@ namespace Unigram.Controls
             clone.StartOf(TextRangeUnit.Link, true);
             var mention = TryGetUserId(clone, out int userId);
 
-            var formatting = new MenuFlyoutSubItem { Text = "Formatting" };
+            var formatting = new MenuFlyoutSubItem { Text = "Formatting", Icon = new FontIcon { Glyph = "\uE8D3" } }; // Icons.Fontcolor
             CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.Bold }, VirtualKey.B);
             CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.Italic }, VirtualKey.I);
             CreateFlyoutItem(formatting.Items, length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.Underline }, VirtualKey.U);
@@ -131,11 +131,11 @@ namespace Unigram.Controls
             CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCut_Click, "Cut", new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
             CreateFlyoutItem(flyout.Items, length && Document.CanCopy(), ContextCopy_Click, "Copy", new FontIcon { Glyph = Icons.Copy }, VirtualKey.C);
             CreateFlyoutItem(flyout.Items, Document.CanPaste(), ContextPaste_Click, "Paste", new FontIcon { Glyph = Icons.Paste }, VirtualKey.V);
-            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, "Delete");
+            CreateFlyoutItem(flyout.Items, length, ContextDelete_Click, "Delete", new FontIcon { Glyph = Icons.Delete });
             flyout.Items.Add(new MenuFlyoutSeparator());
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
-            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
+            CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", new FontIcon { Glyph = "\uE8B3" }, VirtualKey.A); //Icons.SelectAll
         }
 
         private void ContextBold_Click()
