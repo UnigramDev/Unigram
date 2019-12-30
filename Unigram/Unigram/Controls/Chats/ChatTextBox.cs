@@ -616,7 +616,21 @@ namespace Unigram.Controls.Chats
                     var response = await _protoService.SendAsync(new SearchEmojis(_query, false));
                     if (response is Emojis emojis)
                     {
-                        foreach (var emoji in emojis.EmojisValue)
+                        SettingsService.Current.Emoji.LoadRecentEmoji();
+
+                        var results = emojis.EmojisValue.Reverse();
+                        results = results.OrderBy(x =>
+                        {
+                            var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
+                            if (index < 0)
+                            {
+                                return int.MaxValue;
+                            }
+
+                            return index;
+                        });
+
+                        foreach (var emoji in results)
                         {
                             Add(new EmojiData(emoji));
                             count++;

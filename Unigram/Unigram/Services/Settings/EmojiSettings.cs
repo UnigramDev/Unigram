@@ -21,6 +21,16 @@ namespace Unigram.Services.Settings
         {
         }
 
+        public List<string> RecentEmoji
+        {
+            get
+            {
+                LoadRecentEmoji();
+                return _recentEmoji;
+            }
+        }
+
+
         public EmojiData[] GetRecentEmoji()
         {
             LoadRecentEmoji();
