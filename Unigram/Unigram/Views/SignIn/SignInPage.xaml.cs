@@ -307,8 +307,8 @@ namespace Unigram.Views.SignIn
             else if (mode == QrCodeMode.Disabled || mode == QrCodeMode.Secondary)
             {
                 Loading.IsActive = false;
-                TokenPanel.Visibility = Visibility.Visible;
-                PhonePanel.Visibility = Visibility.Collapsed;
+                TokenPanel.Visibility = Visibility.Collapsed;
+                PhonePanel.Visibility = Visibility.Visible;
                 Switch2.Visibility = mode == QrCodeMode.Secondary
                     ? Visibility.Visible
                     : Visibility.Collapsed;
