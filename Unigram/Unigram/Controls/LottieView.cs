@@ -221,7 +221,7 @@ namespace Unigram.Controls
 
             canvas.Paused = true;
             canvas.ResetElapsedTime();
-            canvas.TargetElapsedTime = update;
+            canvas.TargetElapsedTime = update > TimeSpan.Zero ? update : TimeSpan.MaxValue;
 
             if (AutoPlay || _shouldPlay)
             {
