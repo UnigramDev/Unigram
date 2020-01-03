@@ -294,6 +294,7 @@
     <ClInclude Include="Streaming\UncompressedVideoSampleProvider.h" />
     <ClInclude Include="Streaming\VideoFrame.h" />
     <ClInclude Include="StringUtils.h" />
+    <ClInclude Include="SVG\nanosvg.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="GIF\GIFByteStreamHandler.h" />
     <ClInclude Include="GIF\GIFMediaSource.h" />
@@ -367,6 +368,7 @@
     <ClCompile Include="Streaming\UncompressedAudioSampleProvider.cpp" />
     <ClCompile Include="Streaming\UncompressedSampleProvider.cpp" />
     <ClCompile Include="Streaming\UncompressedVideoSampleProvider.cpp" />
+    <ClCompile Include="SVG\nanosvg.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>

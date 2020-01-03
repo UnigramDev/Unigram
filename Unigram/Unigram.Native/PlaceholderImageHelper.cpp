@@ -2,6 +2,7 @@
 #include <ShCore.h>
 #include "PlaceholderImageHelper.h"
 #include "Qr/QrCode.hpp"
+#include "SVG/nanosvg.h"
 #include "StringUtils.h"
 
 using namespace D2D1;
@@ -97,6 +98,11 @@ PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 	return instance;
 }
 
+void PlaceholderImageHelper::DrawSvg(String^ path, IRandomAccessStream^ randomAccessStream)
+{
+	ThrowIfFailed(InternalDrawSvg(path, randomAccessStream));
+}
+
 void PlaceholderImageHelper::DrawQr(String^ data, IRandomAccessStream^ randomAccessStream)
 {
 	ThrowIfFailed(InternalDrawQr(data, randomAccessStream));
@@ -130,6 +136,175 @@ void PlaceholderImageHelper::DrawProfilePlaceholder(Color clear, Platform::Strin
 void PlaceholderImageHelper::DrawThumbnailPlaceholder(Platform::String^ fileName, float blurAmount, IRandomAccessStream^ randomAccessStream)
 {
 	ThrowIfFailed(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
+}
+
+HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStream^ randomAccessStream)
+{
+	auto lock = m_criticalSection.Lock();
+
+	HRESULT result;
+
+	auto data = string_to_unmanaged(path);
+
+	struct NSVGimage* image;
+	image = nsvgParse((char*)data.c_str(), "px", 96);
+
+	ComPtr<ID2D1Bitmap1> targetBitmap;
+	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+	ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)image->width, (uint32_t)image->height }, nullptr, 0, &properties, &targetBitmap));
+
+	m_d2dContext->SetTarget(targetBitmap.Get());
+	m_d2dContext->BeginDraw();
+
+	for (auto shape = image->shapes; shape != NULL; shape = shape->next) {
+		if (!(shape->flags & NSVG_FLAGS_VISIBLE)) {
+			continue;
+		}
+
+		if (shape->fill.type != NSVG_PAINT_NONE) {
+
+			ComPtr<ID2D1PathGeometry1> geometry;
+			ReturnIfFailed(result, m_d2dFactory->CreatePathGeometry(&geometry));
+
+			ComPtr<ID2D1GeometrySink> sink;
+			ReturnIfFailed(result, geometry->Open(&sink));
+			////CGContextSetFillColorWithColor(context, UIColorRGBA(shape->fill.color, shape->opacity).CGColor);
+			//CGContextSetFillColorWithColor(context, [foregroundColor colorWithAlphaComponent : shape->opacity].CGColor);
+
+			bool isFirst = true;
+			bool hasStartPoint = false;
+			D2D1_POINT_2F startPoint;
+			for (NSVGpath* path = shape->paths; path != NULL; path = path->next) {
+				if (isFirst) {
+					//CGContextBeginPath(context);
+					sink->BeginFigure(D2D1::Point2F(path->pts[0], path->pts[1]), D2D1_FIGURE_BEGIN_FILLED);
+					isFirst = false;
+					hasStartPoint = true;
+					startPoint.x = path->pts[0];
+					startPoint.y = path->pts[1];
+				}
+				//CGContextMoveToPoint(context, path->pts[0], path->pts[1]);
+				else {
+					sink->AddLine(D2D1::Point2F(path->pts[0], path->pts[1]));
+				}
+				for (int i = 0; i < path->npts - 1; i += 3) {
+					float* p = &path->pts[i * 2];
+					//CGContextAddCurveToPoint(context, p[2], p[3], p[4], p[5], p[6], p[7]);
+					sink->AddBezier(D2D1::BezierSegment(D2D1::Point2F(p[2], p[3]), D2D1::Point2F(p[4], p[5]), D2D1::Point2F(p[6], p[7])));
+				}
+
+				if (path->closed) {
+					if (hasStartPoint) {
+						hasStartPoint = false;
+						//CGContextAddLineToPoint(context, startPoint.x, startPoint.y);
+						sink->AddLine(startPoint);
+					}
+				}
+
+				if (path->next != NULL) {
+					int a = 1 + 2;
+				}
+			}
+			sink->EndFigure(D2D1_FIGURE_END_OPEN);
+			switch (shape->fillRule) {
+			case NSVG_FILLRULE_EVENODD:
+				//CGContextEOFillPath(context);
+				sink->SetFillMode(D2D1_FILL_MODE_ALTERNATE);
+				break;
+			default:
+				//CGContextFillPath(context);
+				sink->SetFillMode(D2D1_FILL_MODE_WINDING);
+				break;
+			}
+
+			ReturnIfFailed(result, sink->Close());
+			m_d2dContext->FillGeometry(geometry.Get(), m_black.Get());
+		}
+
+		if (shape->stroke.type != NSVG_PAINT_NONE) {
+			ComPtr<ID2D1PathGeometry1> geometry;
+			ReturnIfFailed(result, m_d2dFactory->CreatePathGeometry(&geometry));
+
+			ComPtr<ID2D1GeometrySink> sink;
+			ReturnIfFailed(result, geometry->Open(&sink));
+
+			////CGContextSetStrokeColorWithColor(context, UIColorRGBA(shape->fill.color, shape->opacity).CGColor);
+			//CGContextSetStrokeColorWithColor(context, [foregroundColor colorWithAlphaComponent : shape->opacity].CGColor);
+			//CGContextSetMiterLimit(context, shape->miterLimit);
+
+
+			D2D1_STROKE_STYLE_PROPERTIES1 strokeProperties{};
+			strokeProperties.miterLimit = shape->miterLimit;
+
+			//CGContextSetLineWidth(context, shape->strokeWidth);
+			switch (shape->strokeLineCap) {
+			case NSVG_CAP_BUTT:
+				//CGContextSetLineCap(context, kCGLineCapButt);
+				strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_FLAT;
+				break;
+			case NSVG_CAP_ROUND:
+				//CGContextSetLineCap(context, kCGLineCapRound);
+				strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_ROUND;
+				break;
+			case NSVG_CAP_SQUARE:
+				//CGContextSetLineCap(context, kCGLineCapSquare);
+				strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_SQUARE;
+				break;
+			default:
+				break;
+			}
+			switch (shape->strokeLineJoin) {
+			case NSVG_JOIN_BEVEL:
+				//CGContextSetLineJoin(context, kCGLineJoinBevel);
+				strokeProperties.lineJoin = D2D1_LINE_JOIN_BEVEL;
+				break;
+			case NSVG_JOIN_MITER:
+				//CGContextSetLineCap(context, kCGLineJoinMiter);
+				strokeProperties.lineJoin = D2D1_LINE_JOIN_MITER;
+				break;
+			case NSVG_JOIN_ROUND:
+				//CGContextSetLineCap(context, kCGLineJoinRound);
+				strokeProperties.lineJoin = D2D1_LINE_JOIN_ROUND;
+				break;
+			default:
+				break;
+			}
+
+			ComPtr<ID2D1StrokeStyle1> strokeStyle;
+			ReturnIfFailed(result, m_d2dFactory->CreateStrokeStyle(strokeProperties, NULL, 0, &strokeStyle));
+
+			for (NSVGpath* path = shape->paths; path != NULL; path = path->next) {
+				//CGContextBeginPath(context);
+				//CGContextMoveToPoint(context, path->pts[0], path->pts[1]);
+				sink->BeginFigure(D2D1::Point2F(path->pts[0], path->pts[1]), D2D1_FIGURE_BEGIN_HOLLOW);
+				for (int i = 0; i < path->npts - 1; i += 3) {
+					float* p = &path->pts[i * 2];
+					//CGContextAddCurveToPoint(context, p[2], p[3], p[4], p[5], p[6], p[7]);
+					sink->AddBezier(D2D1::BezierSegment(D2D1::Point2F(p[2], p[3]), D2D1::Point2F(p[4], p[5]), D2D1::Point2F(p[6], p[7])));
+				}
+
+				//if (path->closed) {
+				//	CGContextClosePath(context);
+				//}
+				sink->EndFigure(path->closed ? D2D1_FIGURE_END_CLOSED : D2D1_FIGURE_END_OPEN);
+
+				//CGContextStrokePath(context);
+			}
+
+			ReturnIfFailed(result, sink->Close());
+			m_d2dContext->DrawGeometry(geometry.Get(), m_black.Get(), shape->strokeWidth);
+		}
+	}
+
+	nsvgDelete(image);
+
+	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+	{
+		ReturnIfFailed(result, CreateDeviceResources());
+		return InternalDrawSvg(path, randomAccessStream);
+	}
+
+	return SaveImageToStream(targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
 }
 
 constexpr auto kShareQrSize = 768;

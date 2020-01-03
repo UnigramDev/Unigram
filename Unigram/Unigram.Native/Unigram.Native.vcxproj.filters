@@ -31,6 +31,9 @@
     <Filter Include="Qr">
       <UniqueIdentifier>{554d0aa9-cb6c-4e0c-9761-3424c8d861cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SVG">
+      <UniqueIdentifier>{20f48c9c-22c5-4b5f-9ac3-113a8c4eaa06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -160,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="QR\QrSegment.cpp">
       <Filter>Qr</Filter>
+    </ClCompile>
+    <ClCompile Include="SVG\nanosvg.cpp">
+      <Filter>SVG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -351,6 +357,9 @@
     </ClInclude>
     <ClInclude Include="QR\QrSegment.hpp">
       <Filter>Qr</Filter>
+    </ClInclude>
+    <ClInclude Include="SVG\nanosvg.h">
+      <Filter>SVG</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
