@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -15,11 +16,28 @@ namespace Unigram.Controls.Brushes
     {
         public Uri Source { get; set; }
 
+        public LoadedImageSurface SvgSource { get; set; }
+
+        private int _width;
+        private int _height;
+
+        public TiledBrush()
+        {
+            _width = 480;
+            _height = 750;
+        }
+
+        public TiledBrush(int width, int height)
+        {
+            _width = width;
+            _height = height;
+        }
+
         protected override void OnConnected()
         {
             if (CompositionBrush == null)
             {
-                var surface = LoadedImageSurface.StartLoadFromUri(Source, new Size(480, 750));
+                var surface = SvgSource ?? LoadedImageSurface.StartLoadFromUri(Source, new Size(_width, _height));
                 var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
                 surfaceBrush.Stretch = CompositionStretch.None;
 

@@ -2075,7 +2075,7 @@ namespace Unigram.Views
         {
             if (sender is ChatBackgroundPresenter presenter)
             {
-                presenter.Update(ViewModel.SessionId, ((TLViewModelBase)ViewModel).Settings, ViewModel.Aggregator);
+                presenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
             }
         }
 

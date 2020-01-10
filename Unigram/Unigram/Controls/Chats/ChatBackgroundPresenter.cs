@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Brushes;
 using Unigram.Services;
@@ -22,16 +23,17 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Chats
 {
-    public class ChatBackgroundPresenter : Grid, IHandle<UpdateWallpaper>
+    public class ChatBackgroundPresenter : Grid, IHandle<UpdateSelectedBackground>
     {
         private int _session;
+        private IProtoService _protoService;
         private IEventAggregator _aggregator;
-        private ISettingsService _settings;
-
-        private ContentControl _container;
 
         private Rectangle _imageBackground;
         private Rectangle _colorBackground;
+
+        private SpriteVisual _blurVisual;
+        private CompositionEffectBrush _blurBrush;
 
         private Visual _motionVisual;
         private Compositor _compositor;
@@ -41,16 +43,18 @@ namespace Unigram.Controls.Chats
         public ChatBackgroundPresenter()
         {
             _parallaxEffect = new WallpaperParallaxEffect();
-            _container = new ContentControl { HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Stretch, IsTabStop = false };
-            _container.SizeChanged += OnSizeChanged;
+            _imageBackground = new Rectangle();
+            _colorBackground = new Rectangle();
+            _colorBackground.SizeChanged += OnSizeChanged;
 
-            Children.Add(_container);
+            Children.Add(_colorBackground);
+            Children.Add(_imageBackground);
 
             RegisterPropertyChangedCallback(OpacityProperty, OnOpacityChanged);
 
 
 
-            _motionVisual = ElementCompositionPreview.GetElementVisual(_container);
+            _motionVisual = ElementCompositionPreview.GetElementVisual(_colorBackground);
             _compositor = _motionVisual.Compositor;
 
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
@@ -58,7 +62,7 @@ namespace Unigram.Controls.Chats
 
         private async void OnOpacityChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (Opacity > 0 && _settings != null && _settings.Wallpaper.IsMotionEnabled && await _parallaxEffect.IsSupportedAsync())
+            if (Opacity > 0 && (_protoService?.SelectedBackground?.IsMoving() ?? false) && await _parallaxEffect.IsSupportedAsync())
             {
                 await _parallaxEffect.RegisterAsync(OnParallaxChanged);
             }
@@ -77,7 +81,7 @@ namespace Unigram.Controls.Chats
         {
             _motionVisual.Size = e.NewSize.ToVector2();
 
-            if (_settings != null && _settings.Wallpaper.IsMotionEnabled && await _parallaxEffect.IsSupportedAsync())
+            if ((_protoService?.SelectedBackground?.IsMoving() ?? false) && await _parallaxEffect.IsSupportedAsync())
             {
                 _motionVisual.CenterPoint = new Vector3((float)e.NewSize.Width / 2, (float)e.NewSize.Height / 2, 0);
                 _motionVisual.Scale = new Vector3(_parallaxEffect.getScale(e.NewSize.Width, e.NewSize.Height));
@@ -89,105 +93,90 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        public void Handle(UpdateWallpaper update)
+        public void Handle(UpdateSelectedBackground update)
         {
-            this.BeginOnUIThread(() => Update(_session, _settings.Wallpaper));
+            this.BeginOnUIThread(() => Update(_session, update.Background));
         }
 
-        public void Update(int session, ISettingsService settings, IEventAggregator aggregator)
+        public void Update(int session, IProtoService protoService, IEventAggregator aggregator)
         {
             _session = session;
+            _protoService = protoService;
             _aggregator = aggregator;
-            _settings = settings;
 
             aggregator.Subscribe(this);
-            Update(session, settings.Wallpaper);
+            //Update(session, settings.Wallpaper);
+            Update(session, protoService.SelectedBackground);
         }
 
-        private async void Update(int session, WallpaperSettings settings)
+        private void Update(int session, Background background)
         {
-            try
+            if (background == null)
             {
-                if (settings.SelectedColor == 0)
+                UpdateMotion(false);
+                UpdateBlurred(false);
+
+                Background = null;
+                _colorBackground.Opacity = 1;
+
+                if (SettingsService.Current.Appearance.IsLightTheme())
                 {
-                    if (settings.SelectedBackground != 1000001)
+                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
+                }
+                else
+                {
+                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
+                }
+            }
+            else if (background.Type is BackgroundTypeFill typeFill)
+            {
+                UpdateMotion(false);
+                UpdateBlurred(false);
+
+                Background = typeFill.ToBrush();
+                _colorBackground.Opacity = 1;
+                _colorBackground.Fill = null;
+            }
+            else if (background.Type is BackgroundTypePattern typePattern)
+            {
+                UpdateMotion(typePattern.IsMoving);
+                UpdateBlurred(false);
+
+                Background = typePattern.ToBrush();
+                _colorBackground.Opacity = typePattern.Intensity / 100d;
+
+                var document = background.Document.DocumentValue;
+                if (document.Local.IsDownloadingCompleted)
+                {
+                    if (string.Equals(background.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync($"{session}\\{Constants.WallpaperFileName}");
-                        if (item is StorageFile file)
-                        {
-                            if (_imageBackground == null)
-                                _imageBackground = new Rectangle();
-
-                            using (var stream = await file.OpenReadAsync())
-                            {
-                                var bitmap = new BitmapImage();
-                                await bitmap.SetSourceAsync(stream);
-                                _imageBackground.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-                            }
-
-                            _container.Content = _imageBackground;
-                        }
-                    }
-                    else if (SettingsService.Current.Appearance.IsLightTheme())
-                    {
-                        if (_colorBackground == null)
-                            _colorBackground = new Rectangle();
-
-                        _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
-                        _container.Content = _colorBackground;
+                        _colorBackground.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, document) };
                     }
                     else
                     {
-                        if (_colorBackground == null)
-                            _colorBackground = new Rectangle();
-
-                        _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
-                        _container.Content = _colorBackground;
-
-                        //_container.Content = null;
+                        _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                 }
-                else
-                {
-                    if (_colorBackground == null)
-                        _colorBackground = new Rectangle();
-
-                    _colorBackground.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF,
-                        (byte)((settings.SelectedColor >> 16) & 0xFF),
-                        (byte)((settings.SelectedColor >> 8) & 0xFF),
-                        (byte)((settings.SelectedColor & 0xFF))));
-
-                    _container.Content = _colorBackground;
-                }
-
-                InitializeMotion(settings);
             }
-            catch
+            else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
             {
-                if (SettingsService.Current.Appearance.IsLightTheme())
+                UpdateMotion(typeWallpaper.IsMoving);
+                UpdateBlurred(typeWallpaper.IsBlurred);
+
+                Background = null;
+                _colorBackground.Opacity = 1;
+
+                var document = background.Document.DocumentValue;
+                if (document.Local.IsDownloadingCompleted)
                 {
-                    if (_colorBackground == null)
-                        _colorBackground = new Rectangle();
-
-                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
-                    _container.Content = _colorBackground;
-                }
-                else
-                {
-                    if (_colorBackground == null)
-                        _colorBackground = new Rectangle();
-
-                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
-                    _container.Content = _colorBackground;
-
-                    //_container.Content = null;
+                    _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
             }
         }
 
-        private async void InitializeMotion(WallpaperSettings settings)
+        private async void UpdateMotion(bool enabled)
         {
-            if (settings.IsMotionEnabled && await _parallaxEffect.IsSupportedAsync())
+            if (enabled && await _parallaxEffect.IsSupportedAsync())
             {
                 _motionVisual.CenterPoint = new Vector3((float)ActualWidth / 2, (float)ActualHeight / 2, 0);
                 _motionVisual.Scale = new Vector3(_parallaxEffect.getScale(ActualWidth, ActualHeight));
@@ -200,6 +189,35 @@ namespace Unigram.Controls.Chats
                 _motionVisual.Scale = new Vector3(1);
 
                 await _parallaxEffect.UnregisterAsync(OnParallaxChanged);
+            }
+        }
+
+        private void UpdateBlurred(bool enabled)
+        {
+            if (enabled)
+            {
+                var graphicsEffect = new GaussianBlurEffect
+                {
+                    Name = "Blur",
+                    BlurAmount = 12,
+                    BorderMode = EffectBorderMode.Hard,
+                    Source = new CompositionEffectSourceParameter("backdrop")
+                };
+
+                var effectFactory = _compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
+                var effectBrush = effectFactory.CreateBrush();
+                var backdrop = _compositor.CreateBackdropBrush();
+                effectBrush.SetSourceParameter("backdrop", backdrop);
+
+                _blurBrush = effectBrush;
+                _blurVisual = _compositor.CreateSpriteVisual();
+                _blurVisual.Brush = _blurBrush;
+
+                ElementCompositionPreview.SetElementChildVisual(_colorBackground, _blurVisual);
+            }
+            else
+            {
+                ElementCompositionPreview.SetElementChildVisual(_colorBackground, null);
             }
         }
     }

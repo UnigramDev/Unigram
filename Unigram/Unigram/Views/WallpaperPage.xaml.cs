@@ -8,14 +8,17 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Brushes;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
+using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -147,11 +150,25 @@ namespace Unigram.Views
             _motionVisual.Offset = new Vector3(e.x, e.y, 0);
         }
 
-        //private void Color_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var row = Grid.GetRow(ColorPanel);
-        //    Grid.SetRow(ColorPanel, row == 3 ? 2 : 3);
-        //}
+        private void Color_Click(object sender, RoutedEventArgs e)
+        {
+            Grid.SetRow(ColorPanel, ColorRadio.IsChecked == true ? 2 : 4);
+
+            if (ColorRadio.IsChecked == true)
+            {
+                PatternRadio.IsChecked = false;
+            }
+        }
+
+        private void Pattern_Click(object sender, RoutedEventArgs e)
+        {
+            Grid.SetRow(PatternPanel, PatternRadio.IsChecked == true ? 2 : 4);
+
+            if (PatternRadio.IsChecked == true)
+            {
+                ColorRadio.IsChecked = false;
+            }
+        }
 
         private async void Image_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
@@ -181,8 +198,25 @@ namespace Unigram.Views
                     return;
                 }
 
-                var content = sender as Rectangle;
-                content.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                var content = sender as Border;
+                var rectangle = content.Child as Rectangle;
+
+                if (wallpaper.Type is BackgroundTypeWallpaper)
+                {
+                    content.Background = null;
+                    rectangle.Opacity = 1;
+                    rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                }
+                else if (wallpaper.Type is BackgroundTypePattern pattern)
+                {
+                    //content.Background = pattern.Fill.ToBrush();
+                    //rectangle.Opacity = pattern.Intensity / 100d
+                    var surface = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue);
+                    if (surface != null)
+                    {
+                        rectangle.Fill = new TiledBrush { SvgSource = surface }; //new ImageBrush { ImageSource = PlaceholderHelper.GetVector(ViewModel.ProtoService, big.DocumentValue), Stretch = Stretch.Uniform, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    }
+                }
             }
         }
 
@@ -194,14 +228,14 @@ namespace Unigram.Views
                 return;
             }
 
-            var solid = wallpaper.Type as BackgroundTypeSolid;
-            if (solid == null)
+            var fill = wallpaper.Type as BackgroundTypeFill;
+            if (fill == null)
             {
                 return;
             }
 
             var content = sender as Rectangle;
-            content.Fill = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, (byte)((solid.Color >> 16) & 0xFF), (byte)((solid.Color >> 8) & 0xFF), (byte)(solid.Color & 0xFF)));
+            content.Fill = null; // fill.ToBrush();
         }
 
         #region Delegates
@@ -228,6 +262,96 @@ namespace Unigram.Views
                 Motion.Visibility = Visibility.Collapsed;
                 ViewModel.IsMotionEnabled = false;
             }
+
+            if (wallpaper.Type is BackgroundTypeFill || wallpaper.Type is BackgroundTypePattern)
+            {
+                Blur.Visibility = Visibility.Collapsed;
+                Motion.Visibility = (wallpaper.Type is BackgroundTypePattern && await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
+                Pattern.Visibility = Visibility.Visible;
+                Color.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Blur.Visibility = Visibility.Collapsed;
+                Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
+                Pattern.Visibility = Visibility.Collapsed;
+                Color.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        #endregion
+
+        #region Binding
+
+        private Brush ConvertBackground(BackgroundColor color1, BackgroundColor color2, int rotation)
+        {
+            var panel = PatternList.ItemsPanelRoot as ItemsStackPanel;
+            if (panel != null)
+            {
+                for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
+                {
+                    var container = PatternList.ContainerFromIndex(i) as SelectorItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var wallpaper = ViewModel.Patterns[i];
+                    var root = container.ContentTemplateRoot as Grid;
+
+                    var check = root.Children[1] as UIElement;
+                    check.Visibility = wallpaper.Id == ViewModel.SelectedPattern?.Id ? Visibility.Visible : Visibility.Collapsed;
+
+                    var content = root.Children[0] as Image;
+                    if (wallpaper.Document != null)
+                    {
+                        var small = wallpaper.Document.Thumbnail;
+                        if (small == null)
+                        {
+                            continue;
+                        }
+
+                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
+                    }
+                    else
+                    {
+                        content.Source = null;
+                    }
+
+                    content.Opacity = ViewModel.Intensity / 100d;
+                    root.Background = ViewModel.GetFill().ToBrush();
+                }
+            }
+
+            if (!color1.IsEmpty && !color2.IsEmpty)
+            {
+                return TdBackground.GetGradient(color1, color2, rotation);
+            }
+            else if (!color1.IsEmpty)
+            {
+                return new SolidColorBrush(color1);
+            }
+            else if (!color2.IsEmpty)
+            {
+                return new SolidColorBrush(color2);
+            }
+
+            return null;
+        }
+
+        private Visibility ConvertColor2(BackgroundColor color)
+        {
+            AddColor.Visibility = color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+            ChangeRotation.Visibility = !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+            RemoveColor1.Visibility = !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+            ColumnColor2.Width = !color.IsEmpty ? new GridLength(1, GridUnitType.Star) : new GridLength(0, GridUnitType.Pixel);
+
+            return !color.IsEmpty ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private double ConvertIntensity(int intensity)
+        {
+            return intensity / 100d;
         }
 
         #endregion
@@ -244,10 +368,102 @@ namespace Unigram.Views
                         return;
                     }
 
-                    var content = Presenter.ContentTemplateRoot as Rectangle;
-                    content.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    var content = Presenter.ContentTemplateRoot as Border;
+                    var rectangle = content.Child as Rectangle;
+
+                    if (wallpaper.Type is BackgroundTypeWallpaper)
+                    {
+                        content.Background = null;
+                        rectangle.Opacity = 1;
+                        rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    }
+                    else if (wallpaper.Type is BackgroundTypePattern pattern)
+                    {
+                        //content.Background = pattern.Fill.ToBrush();
+                        //rectangle.Opacity = pattern.Intensity / 100d;
+                        var surface = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue);
+                        if (surface != null)
+                        {
+                            rectangle.Fill = new TiledBrush { SvgSource = surface }; //new ImageBrush { ImageSource = PlaceholderHelper.GetVector(ViewModel.ProtoService, big.DocumentValue), Stretch = Stretch.Uniform, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                        }
+                    }
                 }
             });
+        }
+
+        private void RadioColor_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (RadioColor1.IsChecked == true && ViewModel.Color1 is BackgroundColor color1)
+            {
+                PickerColor.Color = color1;
+                TextColor1.SelectAll();
+            }
+            else if (RadioColor2.IsChecked == true && ViewModel.Color2 is BackgroundColor color2)
+            {
+                PickerColor.Color = color2;
+                TextColor2.SelectAll();
+            }
+        }
+
+        private void PickerColor_ColorChanged(Microsoft.UI.Xaml.Controls.ColorPicker sender, Microsoft.UI.Xaml.Controls.ColorChangedEventArgs args)
+        {
+            if (RadioColor1.IsChecked == true)
+            {
+                ViewModel.Color1 = args.NewColor;
+            }
+            else if (RadioColor2.IsChecked == true)
+            {
+                ViewModel.Color2 = args.NewColor;
+            }
+        }
+
+        private void TextColor_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (TextColor1 == sender)
+            {
+                RadioColor1.IsChecked = true;
+            }
+            else if (TextColor2 == sender)
+            {
+                RadioColor2.IsChecked = true;
+            }
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var wallpaper = args.Item as Background;
+            var root = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            var check = root.Children[1] as UIElement;
+            check.Visibility = wallpaper.Id == ViewModel.SelectedPattern?.Id ? Visibility.Visible : Visibility.Collapsed;
+
+            if (wallpaper.Document != null)
+            {
+                var small = wallpaper.Document.Thumbnail;
+                if (small == null)
+                {
+                    return;
+                }
+
+                var content = root.Children[0] as Image;
+                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
+
+                content.Opacity = ViewModel.Intensity / 100d;
+                root.Background = ViewModel.GetFill().ToBrush();
+            }
+            else
+            {
+                var content = root.Children[0] as Image;
+                content.Source = null;
+
+                content.Opacity = 1;
+                root.Background = ViewModel.GetFill().ToBrush();
+            }
         }
     }
 
@@ -288,7 +504,13 @@ namespace Unigram.Views
                 if (_accelerometer == null && !_loaded)
                 {
                     _loaded = true;
-                    _accelerometer = await Task.Run(() => Accelerometer.GetDefault());
+                    //_accelerometer = await Task.Run(() => Accelerometer.GetDefault());
+
+                    var devices = await DeviceInformation.FindAllAsync(Accelerometer.GetDeviceSelector(AccelerometerReadingType.Standard));
+                    if (devices.Count > 0)
+                    {
+                        _accelerometer = await Accelerometer.FromIdAsync(devices[0].Id);
+                    }
                 }
 
                 return _accelerometer != null;
@@ -367,7 +589,18 @@ namespace Unigram.Views
                 if (_accelerometer == null && !_loaded)
                 {
                     _loaded = true;
-                    _accelerometer = await Task.Run(() => Accelerometer.GetDefault());
+                    //_accelerometer = await Task.Run(() => Accelerometer.GetDefault());
+
+                    var devices = await DeviceInformation.FindAllAsync(Accelerometer.GetDeviceSelector(AccelerometerReadingType.Standard));
+                    if (devices.Count > 0)
+                    {
+                        _accelerometer = await Accelerometer.FromIdAsync(devices[0].Id);
+                    }
+                }
+
+                if (_accelerometer == null)
+                {
+                    return;
                 }
 
                 _valueChanged += handler;

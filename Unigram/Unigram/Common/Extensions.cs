@@ -20,6 +20,7 @@ using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
+using Windows.UI;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -44,6 +45,11 @@ namespace Unigram.Common
             }
 
             return result.TrimEnd('&');
+        }
+
+        public static Color ToColor(this int color)
+        {
+            return Color.FromArgb(0xFF, (byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
         }
 
         public static int ToTimestamp(this DateTime dateTime)

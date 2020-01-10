@@ -557,7 +557,7 @@ namespace Unigram.Common
                             }
                             else if (username.Equals("bg", StringComparison.OrdinalIgnoreCase))
                             {
-                                NavigateToBackground(protoService, navigation, post);
+                                NavigateToBackground(protoService, navigation, post + uri.Query);
                             }
                             else
                             {
@@ -569,7 +569,7 @@ namespace Unigram.Common
             }
         }
 
-        private static async void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
+        private static void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
         {
             navigation.Navigate(typeof(WallpaperPage), slug);
 

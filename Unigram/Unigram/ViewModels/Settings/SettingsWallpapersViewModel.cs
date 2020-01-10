@@ -29,7 +29,7 @@ namespace Unigram.ViewModels.Settings
             {
                 if (result is Backgrounds wallpapers)
                 {
-                    var items = wallpapers.BackgroundsValue.Where(x => !(x.Type is BackgroundTypePattern)).ToList();
+                    var items = wallpapers.BackgroundsValue.ToList();
                     var id = Settings.Wallpaper.SelectedBackground;
 
                     var predefined = items.FirstOrDefault(x => x.Id == 1000001);

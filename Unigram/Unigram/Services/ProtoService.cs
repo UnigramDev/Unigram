@@ -19,9 +19,9 @@ namespace Unigram.Services
 
         BaseObject Execute(Function function);
 
-        void Send(Function function);
-        void Send(Function function, ClientResultHandler handler);
-        void Send(Function function, Action<BaseObject> handler);
+        //void Send(Function function);
+        //void Send(Function function, ClientResultHandler handler);
+        void Send(Function function, Action<BaseObject> handler = null);
         Task<BaseObject> SendAsync(Function function);
 
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
@@ -40,6 +40,7 @@ namespace Unigram.Services
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
+        Background GetSelectedBackground(bool darkTheme);
         Background SelectedBackground { get; }
 
         AuthorizationState GetAuthorizationState();
@@ -149,6 +150,7 @@ namespace Unigram.Services
         private JsonValueObject _config;
 
         private Background _selectedBackground;
+        private Background _selectedBackgroundDark;
 
         public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
@@ -411,17 +413,17 @@ namespace Unigram.Services
 
 
 
-        public void Send(Function function)
-        {
-            _client.Send(function);
-        }
+        //public void Send(Function function)
+        //{
+        //    _client.Send(function);
+        //}
 
-        public void Send(Function function, ClientResultHandler handler)
-        {
-            _client.Send(function, handler);
-        }
+        //public void Send(Function function, ClientResultHandler handler)
+        //{
+        //    _client.Send(function, handler);
+        //}
 
-        public void Send(Function function, Action<BaseObject> handler)
+        public void Send(Function function, Action<BaseObject> handler = null)
         {
             _client.Send(function, handler);
         }
@@ -567,7 +569,20 @@ namespace Unigram.Services
 
         public Background SelectedBackground
         {
-            get { return _selectedBackground; }
+            get
+            {
+                return GetSelectedBackground(_settings.Appearance.IsDarkTheme());
+            }
+        }
+
+        public Background GetSelectedBackground(bool darkTheme)
+        {
+            if (darkTheme)
+            {
+                return _selectedBackgroundDark;
+            }
+
+            return _selectedBackground;
         }
 
         public string GetTitle(Chat chat, bool tiny = false)
@@ -1053,7 +1068,7 @@ namespace Unigram.Services
 
         private async Task<StickerSet> GetAnimatedEmojiAsyncInternal()
         {
-            var response = await SendAsync(new SearchStickerSet("AnimatedEmojies"));
+            var response = await SendAsync(new SearchStickerSet(Options.AnimatedEmojiStickerSetName ?? "AnimatedEmojies"));
             if (response is StickerSet set)
             {
                 _animatedEmoji = set;
@@ -1387,7 +1402,14 @@ namespace Unigram.Services
             }
             else if (update is UpdateSelectedBackground updateSelectedBackground)
             {
-                _selectedBackground = updateSelectedBackground.Background;
+                if (updateSelectedBackground.ForDarkTheme)
+                {
+                    _selectedBackgroundDark = updateSelectedBackground.Background;
+                }
+                else
+                {
+                    _selectedBackground = updateSelectedBackground.Background;
+                }
             }
             else if (update is UpdateServiceNotification updateServiceNotification)
             {
@@ -1518,7 +1540,14 @@ namespace Unigram.Services
     {
         public static void Send(this Client client, Function function, Action<BaseObject> handler)
         {
-            client.Send(function, new TdHandler(handler));
+            if (handler == null)
+            {
+                client.Send(function, null);
+            }
+            else
+            {
+                client.Send(function, new TdHandler(handler));
+            }
         }
 
         public static void Send(this Client client, Function function)

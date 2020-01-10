@@ -84,12 +84,23 @@ namespace Unigram.Views.Settings
                 }
 
                 var content = root.Children[0] as Image;
-                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 64, 64);                
+                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);     
+                
+                if (wallpaper.Type is BackgroundTypePattern pattern)
+                {
+                    content.Opacity = pattern.Intensity / 100d;
+                    root.Background = pattern.Fill.ToBrush();
+                }
+                else
+                {
+                    content.Opacity = 1;
+                    root.Background = null;
+                }
             }
-            else if (wallpaper.Type is BackgroundTypeSolid solid)
+            else if (wallpaper.Type is BackgroundTypeFill fill)
             {
                 var content = root.Children[0] as Rectangle;
-                content.Fill = new SolidColorBrush(Color.FromArgb(0xFF, (byte)((solid.Color >> 16) & 0xFF), (byte)((solid.Color >> 8) & 0xFF), (byte)(solid.Color & 0xFF)));
+                content.Fill = fill.ToBrush();
             }
         }
 
@@ -125,7 +136,7 @@ namespace Unigram.Views.Settings
                             return;
                         }
 
-                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 64, 64);
+                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, item.Document.Thumbnail.Width, item.Document.Thumbnail.Height);
                     }
                 }
             });
@@ -135,7 +146,7 @@ namespace Unigram.Views.Settings
         {
             if (e.ClickedItem is Background wallpaper)
             {
-                ViewModel.NavigationService.Navigate(typeof(WallpaperPage), wallpaper.Name);
+                ViewModel.NavigationService.Navigate(typeof(WallpaperPage), TdBackground.ToString(wallpaper));
             }
         }
     }

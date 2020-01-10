@@ -398,7 +398,7 @@
             </Setter>
         </Style>
 
-        <Style TargetType="microsoft:ColorPicker">
+        <Style x:Key="asd" TargetType="microsoft:ColorPicker">
             <Setter Property="MaxWidth" Value="392" />
             <Setter Property="MinWidth" Value="312" />
             <Setter Property="IsTabStop" Value="False" />
@@ -708,6 +708,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
+        
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -720,10 +722,18 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="0" />
         </Grid.RowDefinitions>
-        <Border Grid.RowSpan="3">
-            <ContentControl x:Name="Presenter" Content="{x:Bind ViewModel.Item, Mode=OneWay}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Canvas.ZIndex="-1" Grid.RowSpan="2">
+        <Border Background="{x:Bind ConvertBackground(ViewModel.Color1, ViewModel.Color2, ViewModel.Rotation), Mode=OneWay}" Grid.RowSpan="3">
+            <ContentControl
+                x:Name="Presenter"
+                Content="{x:Bind ViewModel.Item, Mode=OneWay}"
+                Opacity="{x:Bind ConvertIntensity(ViewModel.Intensity), Mode=OneWay}"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                Canvas.ZIndex="-1"
+                Grid.RowSpan="2">
                 <ContentControl.ContentTemplateSelector>
                     <selectors:WallPaperTemplateSelector>
                         <selectors:WallPaperTemplateSelector.DefaultTemplate>
@@ -737,11 +747,13 @@
                         </selectors:WallPaperTemplateSelector.DefaultTemplate>
                         <selectors:WallPaperTemplateSelector.ItemTemplate>
                             <DataTemplate>
-                                <Rectangle DataContextChanged="Image_DataContextChanged">
-                                    <Rectangle.Fill>
-                                        <ImageBrush/>
-                                    </Rectangle.Fill>
-                                </Rectangle>
+                                <Border DataContextChanged="Image_DataContextChanged">
+                                    <Rectangle>
+                                        <Rectangle.Fill>
+                                            <ImageBrush/>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </Border>
                             </DataTemplate>
                         </selectors:WallPaperTemplateSelector.ItemTemplate>
                         <selectors:WallPaperTemplateSelector.SolidTemplate>
@@ -788,72 +800,209 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Border x:Name="Blur"
+                            Visibility="Collapsed"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
                             Padding="6,0"
                             Margin="4,12,4,10"
                             CornerRadius="4">
-                        <CheckBox x:Name="BlurToggle"
-                                  IsChecked="{x:Bind ViewModel.IsBlurEnabled, Mode=TwoWay}"
-                                  Content="{CustomResource BackgroundBlurred}"
-                                  RequestedTheme="Dark"
-                                  Checked="Blur_Click"
-                                  Unchecked="Blur_Click"/>
+                        <CheckBox
+                            x:Name="BlurToggle"
+                            IsChecked="{x:Bind ViewModel.IsBlurEnabled, Mode=TwoWay}"
+                            Content="{CustomResource BackgroundBlurred}"
+                            RequestedTheme="Dark"
+                            Checked="Blur_Click"
+                            Unchecked="Blur_Click"/>
                     </Border>
                     <Border x:Name="Motion"
+                            Visibility="Collapsed"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
                             Padding="6,0"
                             CornerRadius="4"
                             Margin="4,12,4,10"
                             Grid.Column="1">
-                        <CheckBox x:Name="MotionToggle"
-                                  IsChecked="{x:Bind ViewModel.IsMotionEnabled, Mode=TwoWay}"
-                                  Content="{CustomResource BackgroundMotion}"
-                                  RequestedTheme="Dark"
-                                  Checked="Motion_Click"
-                                  Unchecked="Motion_Click"/>
+                        <CheckBox
+                            x:Name="MotionToggle"
+                            IsChecked="{x:Bind ViewModel.IsMotionEnabled, Mode=TwoWay}"
+                            Content="{CustomResource BackgroundMotion}"
+                            RequestedTheme="Dark"
+                            Checked="Motion_Click"
+                            Unchecked="Motion_Click"/>
                     </Border>
-                    <!--<Border x:Name="Color"
+                    <Border x:Name="Color"
+                            Visibility="Collapsed"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
                             Padding="6,0"
                             CornerRadius="4"
-                            Margin="4,0"
+                            Margin="4,12,4,10"
                             Grid.Column="2">
-                        <CheckBox Content="{CustomResource BackgroundColor}"
-                                  RequestedTheme="Dark"
-                                  Click="Color_Click"/>
+                        <CheckBox
+                            x:Name="ColorRadio"
+                            Content="{CustomResource BackgroundColor}"
+                            RequestedTheme="Dark"
+                            Checked="Color_Click"
+                            Unchecked="Color_Click"/>
                     </Border>
                     <Border x:Name="Pattern"
+                            Visibility="Collapsed"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
                             Padding="6,0"
                             CornerRadius="4"
-                            Margin="4,0"
+                            Margin="4,12,4,10"
                             Grid.Column="3">
-                        <CheckBox Content="{CustomResource BackgroundPattern}"
-                                  RequestedTheme="Dark"
-                                  Click="Motion_Click"/>
-                    </Border>-->
+                        <CheckBox
+                            x:Name="PatternRadio"
+                            Content="{CustomResource BackgroundPattern}"
+                            RequestedTheme="Dark"
+                            Checked="Pattern_Click"
+                            Unchecked="Pattern_Click"/>
+                    </Border>
                 </Grid>
             </StackPanel>
         </Grid>
+
+        <Grid x:Name="ColorPanel"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Grid.Row="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition x:Name="ColumnColor2"/>
+            </Grid.ColumnDefinitions>
+            <RadioButton
+                x:Name="RadioColor1"
+                IsChecked="{x:Bind ViewModel.IsColor1Checked, Mode=TwoWay}"
+                Checked="RadioColor_Toggled"
+                Unchecked="RadioColor_Toggled">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse Width="32" Height="32">
+                        <Ellipse.Fill>
+                            <SolidColorBrush Color="{x:Bind ViewModel.Color1, Mode=OneWay}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBox x:Name="TextColor1" Text="#FFFFFF" GotFocus="TextColor_GotFocus"/>
+                    <controls:GlyphButton
+                        x:Name="RemoveColor1"
+                        Command="{x:Bind ViewModel.RemoveColor1Command}"
+                        Glyph="&#xE711;"/>
+                </StackPanel>
+            </RadioButton>
+
+            <controls:GlyphButton
+                x:Name="AddColor"
+                Command="{x:Bind ViewModel.AddColorCommand}"
+                Glyph="&#xE710;"
+                Grid.Column="1"/>
+
+            <controls:GlyphButton
+                x:Name="ChangeRotation"
+                Command="{x:Bind ViewModel.ChangeRotationCommand}"
+                Glyph="&#xE72C;"
+                RenderTransformOrigin="0.5,0.5"
+                Grid.Column="1">
+                <controls:GlyphButton.RenderTransform>
+                    <RotateTransform
+                        Angle="{x:Bind ViewModel.Rotation, Mode=OneWay}"/>
+                </controls:GlyphButton.RenderTransform>
+            </controls:GlyphButton>
+
+            <RadioButton
+                x:Name="RadioColor2"
+                IsChecked="{x:Bind ViewModel.IsColor2Checked, Mode=TwoWay}"
+                Visibility="{x:Bind ConvertColor2(ViewModel.Color2), Mode=OneWay}"
+                Checked="RadioColor_Toggled"
+                Unchecked="RadioColor_Toggled"
+                Grid.Column="2">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse Width="32" Height="32">
+                        <Ellipse.Fill>
+                            <SolidColorBrush Color="{x:Bind ViewModel.Color2, Mode=OneWay}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBox x:Name="TextColor2" Text="#FFFFFF" GotFocus="TextColor_GotFocus"/>
+                    <controls:GlyphButton
+                        x:Name="RemoveColor2"
+                        Command="{x:Bind ViewModel.RemoveColor2Command}"
+                        Glyph="&#xE711;"/>
+                </StackPanel>
+            </RadioButton>
+            
+            <microsoft:ColorPicker
+                x:Name="PickerColor"
+                ColorChanged="PickerColor_ColorChanged"
+                IsColorChannelTextInputVisible="False"
+                IsColorPreviewVisible="False"
+                ColorSpectrumShape="Box"
+                HorizontalAlignment="Stretch"
+                Grid.Row="1"/>
+        </Grid>
+
+        <Grid x:Name="PatternPanel"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Grid.Row="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <GridView
+                x:Name="PatternList"
+                ItemsSource="{x:Bind ViewModel.Patterns}"
+                SelectedItem="{x:Bind ViewModel.SelectedPattern, Mode=TwoWay}"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.HorizontalScrollMode="Auto"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollMode="Disabled"
+                ContainerContentChanging="OnContainerContentChanging">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Width="64" Height="64">
+                            <Image Stretch="UniformToFill"/>
+
+                            <Grid VerticalAlignment="Center">
+                                <Rectangle x:Name="NormalRectangle"
+                                               Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
+                                               Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
+                                               StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
+                                               RadiusX="16"
+                                               RadiusY="16"
+                                               UseLayoutRounding="False"
+                                               Height="32"
+                                               Width="32" />
+                                <FontIcon x:Name="CheckGlyph"
+                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              Glyph="&#xE001;"
+                                              FontSize="24"
+                                              Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </GridView>
+
+            <Slider
+                Value="{x:Bind ViewModel.Intensity, Mode=TwoWay}"
+                Grid.Row="1"/>
+        </Grid>
+
+        <RadioButton
+            x:Name="RadioPlaceholder"
+            GroupName="Background"
+            Grid.Row="3"/>
 
         <chats:ChatBottomButton
             x:Name="Action"
             Command="{x:Bind ViewModel.DoneCommand}"
             Content="{CustomResource SetBackground}"
             Height="{StaticResource TelegramToolBarHeight}"
-            Grid.Row="2"/>
+            Grid.Row="3"/>
 
-        <!--<Grid x:Name="ColorPanel"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-              Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <microsoft:ColorPicker IsColorChannelTextInputVisible="False"
-                                   IsColorPreviewVisible="False"
-                                   ColorSpectrumShape="Ring"
-                                   HorizontalAlignment="Center"/>
-        </Grid>-->
     </Grid>
 </Page>

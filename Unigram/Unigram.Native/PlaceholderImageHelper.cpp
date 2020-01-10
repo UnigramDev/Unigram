@@ -98,9 +98,11 @@ PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 	return instance;
 }
 
-void PlaceholderImageHelper::DrawSvg(String^ path, IRandomAccessStream^ randomAccessStream)
+Windows::Foundation::Size PlaceholderImageHelper::DrawSvg(String^ path, IRandomAccessStream^ randomAccessStream)
 {
-	ThrowIfFailed(InternalDrawSvg(path, randomAccessStream));
+	Windows::Foundation::Size size;
+	ThrowIfFailed(InternalDrawSvg(path, randomAccessStream, size));
+	return size;
 }
 
 void PlaceholderImageHelper::DrawQr(String^ data, IRandomAccessStream^ randomAccessStream)
@@ -138,7 +140,7 @@ void PlaceholderImageHelper::DrawThumbnailPlaceholder(Platform::String^ fileName
 	ThrowIfFailed(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
 }
 
-HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStream^ randomAccessStream)
+HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStream^ randomAccessStream, Windows::Foundation::Size& size)
 {
 	auto lock = m_criticalSection.Lock();
 
@@ -148,6 +150,8 @@ HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStrea
 
 	struct NSVGimage* image;
 	image = nsvgParse((char*)data.c_str(), "px", 96);
+
+	size = Windows::Foundation::Size(image->width, image->height);
 
 	ComPtr<ID2D1Bitmap1> targetBitmap;
 	D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
@@ -301,7 +305,7 @@ HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStrea
 	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
-		return InternalDrawSvg(path, randomAccessStream);
+		return InternalDrawSvg(path, randomAccessStream, size);
 	}
 
 	return SaveImageToStream(targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
