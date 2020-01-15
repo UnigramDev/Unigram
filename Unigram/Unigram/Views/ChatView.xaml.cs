@@ -3723,6 +3723,10 @@ namespace Unigram.Views
                 {
                     ShowAction(Strings.Resources.ChannelJoin, true);
                 }
+                else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator)
+                {
+                    ShowArea();
+                }
                 else if (group.Status is ChatMemberStatusRestricted restrictedSend)
                 {
                     if (!restrictedSend.IsMember && group.Username.Length > 0)
