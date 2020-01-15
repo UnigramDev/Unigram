@@ -308,6 +308,42 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:ColorPicker">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ColorPicker">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Spectrum">
+                            <Canvas>
+                                <Canvas.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                        <GradientStop Color="#FFFFFFFF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Canvas.Background>
+
+                                <Border x:Name="SpectrumThumb" Width="20" Height="20" CornerRadius="10" BorderThickness="2" BorderBrush="Black">
+                                    <Border CornerRadius="8" BorderThickness="2" BorderBrush="White"/>
+                                </Border>
+                            </Canvas>
+                        </Border>
+
+                        <Slider
+                            x:Name="ValueSlider"
+                            IsDirectionReversed="True"
+                            IsThumbToolTipEnabled="False"
+                            Margin="12"
+                            Grid.Row="1"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:TLContentDialog">
         <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{ThemeResource ContentDialogBackground}" />
