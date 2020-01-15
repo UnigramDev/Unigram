@@ -397,319 +397,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <Style x:Key="asd" TargetType="microsoft:ColorPicker">
-            <Setter Property="MaxWidth" Value="392" />
-            <Setter Property="MinWidth" Value="312" />
-            <Setter Property="IsTabStop" Value="False" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="microsoft:ColorPicker">
-                        <Grid Background="{TemplateBinding Background}">
-                            <Grid.Resources>
-                                <Style x:Key="ColorPickerSliderStyle" TargetType="primitives:ColorPickerSlider">
-                                    <Setter Property="Orientation" Value="Vertical"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Slider">
-                                                <Grid>
-                                                    <Grid.Resources>
-                                                        <Style x:Key="SliderThumbStyle" TargetType="Thumb">
-                                                            <Setter Property="BorderThickness" Value="0" />
-                                                            <Setter Property="Background" Value="{ThemeResource ColorPickerSliderThumbBackground}" />
-                                                            <Setter Property="Template">
-                                                                <Setter.Value>
-                                                                    <ControlTemplate TargetType="Thumb">
-                                                                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="4" />
-                                                                    </ControlTemplate>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Style>
-                                                    </Grid.Resources>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="*" />
-                                                    </Grid.RowDefinitions>
-                                                    <VisualStateManager.VisualStateGroups>
-                                                        <VisualStateGroup x:Name="CommonStates">
-                                                            <VisualState x:Name="Normal" />
-                                                            <VisualState x:Name="Pressed">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="VerticalThumb.Background" Value="{ThemeResource ColorPickerSliderThumbBackgroundPressed}" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Disabled">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="HeaderContentPresenter.Foreground" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
-                                                                    <Setter Target="VerticalThumb.Background" Value="{ThemeResource ColorPickerSliderThumbBackgroundDisabled}" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                            <VisualState x:Name="PointerOver">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="VerticalThumb.Background" Value="{ThemeResource ColorPickerSliderThumbBackgroundPointerOver}" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                        </VisualStateGroup>
-                                                        <VisualStateGroup x:Name="FocusEngagementStates">
-                                                            <VisualState x:Name="FocusDisengaged" />
-                                                            <VisualState x:Name="FocusEngagedHorizontal">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="SliderContainer.(Control.IsTemplateFocusTarget)" Value="False" />
-                                                                    <Setter Target="HorizontalThumb.(Control.IsTemplateFocusTarget)" Value="True" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                            <VisualState x:Name="FocusEngagedVertical">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="SliderContainer.(Control.IsTemplateFocusTarget)" Value="False" />
-                                                                    <Setter Target="VerticalThumb.(Control.IsTemplateFocusTarget)" Value="True" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                        </VisualStateGroup>
-                                                    </VisualStateManager.VisualStateGroups>
-                                                    <ContentPresenter x:Name="HeaderContentPresenter" ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Foreground="{ThemeResource SliderHeaderForeground}" FontWeight="{ThemeResource SliderHeaderThemeFontWeight}" Margin="{ThemeResource SliderHeaderThemeMargin}" TextWrapping="Wrap" Visibility="Collapsed" x:DeferLoadStrategy="Lazy" />
-                                                    <Grid x:Name="SliderContainer" Background="Transparent" Control.IsTemplateFocusTarget="True" Grid.Row="1">
-                                                        <Grid x:Name="VerticalTemplate" MinHeight="44">
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition Height="Auto" />
-                                                                <RowDefinition Height="Auto" />
-                                                                <RowDefinition />
-                                                            </Grid.RowDefinitions>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="18" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="18" />
-                                                            </Grid.ColumnDefinitions>
-                                                            <Rectangle x:Name="VerticalTrackRect" Grid.RowSpan="3" Fill="Transparent" Width="{ThemeResource SliderTrackThemeHeight}" Grid.Column="1" Opacity="0" />
-                                                            <Rectangle x:Name="VerticalDecreaseRect" Fill="Transparent" Grid.Column="1" Opacity="0" />
-                                                            <Thumb x:Name="VerticalThumb" AutomationProperties.AccessibilityView="Raw" Grid.Row="1" DataContext="{TemplateBinding Value}" Width="24" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource SliderThumbStyle}" Height="8">
-                                                                <ToolTipService.ToolTip>
-                                                                    <ToolTip x:Name="ToolTip" VerticalOffset="20" />
-                                                                </ToolTipService.ToolTip>
-                                                            </Thumb>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Grid.Resources>
-
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="ColorSpectrumVisibility">
-                                    <VisualState x:Name="ColorSpectrumVisible" />
-                                    <VisualState x:Name="ColorSpectrumCollapsed">
-                                        <VisualState.Setters>
-                                            <Setter Target="ColorSpectrum.Visibility" Value="Collapsed" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="PreviousColorVisibility">
-                                    <VisualState x:Name="PreviousColorCollapsedVertical" />
-                                    <VisualState x:Name="PreviousColorVisibleVertical">
-                                        <VisualState.Setters>
-                                            <Setter Target="ColorPreviewRectangle.(Grid.RowSpan)" Value="1" />
-                                            <Setter Target="PreviousColorRectangle.Visibility" Value="Visible" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="PreviousColorCollapsedHorizontal">
-                                        <VisualState.Setters>
-                                            <Setter Target="PreviousColorRectangle.(Grid.Row)" Value="0" />
-                                            <Setter Target="PreviousColorRectangle.(Grid.Column)" Value="1" />
-                                            <Setter Target="PreviousColorRectangle.(Grid.RowSpan)" Value="2" />
-                                            <Setter Target="PreviousColorRectangle.(Grid.ColumnSpan)" Value="1" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="PreviousColorVisibleHorizontal">
-                                        <VisualState.Setters>
-                                            <Setter Target="ColorPreviewRectangle.(Grid.ColumnSpan)" Value="1" />
-                                            <Setter Target="PreviousColorRectangle.Visibility" Value="Visible" />
-                                            <Setter Target="PreviousColorRectangle.(Grid.Row)" Value="0" />
-                                            <Setter Target="PreviousColorRectangle.(Grid.Column)" Value="1" />
-                                            <Setter Target="PreviousColorRectangle.(Grid.RowSpan)" Value="2" />
-                                            <Setter Target="PreviousColorRectangle.(Grid.ColumnSpan)" Value="1" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="ThirdDimensionSliderVisibility">
-                                    <VisualState x:Name="ThirdDimensionSliderVisible" />
-                                    <VisualState x:Name="ThirdDimensionSliderCollapsed">
-                                        <VisualState.Setters>
-                                            <Setter Target="ThirdDimensionSliderGrid.Visibility" Value="Collapsed" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="MoreButtonVisibility">
-                                    <VisualState x:Name="MoreButtonVisible" />
-                                    <VisualState x:Name="MoreButtonCollapsed">
-                                        <VisualState.Setters>
-                                            <Setter Target="MoreButton.Visibility" Value="Collapsed" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="TextEntryGridVisibility">
-                                    <VisualState x:Name="TextEntryGridCollapsed" />
-                                    <VisualState x:Name="TextEntryGridVisible">
-                                        <VisualState.Setters>
-                                            <Setter Target="TextEntryGrid.Visibility" Value="Visible" />
-                                            <Setter Target="MoreGlyph.Glyph" Value="&#xE70E;" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="ColorChannelTextInputVisibility">
-                                    <VisualState x:Name="ColorChannelTextInputVisible" />
-                                    <VisualState x:Name="ColorChannelTextInputCollapsed">
-                                        <VisualState.Setters>
-                                            <Setter Target="ColorRepresentationComboBox.Visibility" Value="Collapsed" />
-                                            <Setter Target="ColorChannelTextInputPanel.Visibility" Value="Collapsed" />
-                                            <Setter Target="HexTextBox.(Grid.Column)" Value="0" />
-                                            <Setter Target="HexTextBox.HorizontalAlignment" Value="Left" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="AlphaTextInputVisibility">
-                                    <VisualState x:Name="AlphaTextInputVisible" />
-                                    <VisualState x:Name="AlphaTextInputCollapsed">
-                                        <VisualState.Setters>
-                                            <Setter Target="AlphaPanel.Visibility" Value="Collapsed" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="ColorRepresentationSelected">
-                                    <VisualState x:Name="RgbSelected" />
-                                    <VisualState x:Name="HsvSelected">
-                                        <VisualState.Setters>
-                                            <Setter Target="RgbPanel.Visibility" Value="Collapsed" />
-                                            <Setter Target="HsvPanel.Visibility" Value="Visible" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="HexInputVisibility">
-                                    <VisualState x:Name="HexInputVisible" />
-                                    <VisualState x:Name="HexInputCollapsed">
-                                        <VisualState.Setters>
-                                            <Setter Target="HexTextBox.Visibility" Value="Collapsed" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="AlphaEnabledState">
-                                    <VisualState x:Name="AlphaDisabled" />
-                                    <VisualState x:Name="AlphaEnabled">
-                                        <VisualState.Setters>
-                                            <Setter Target="HexTextBox.MaxLength" Value="9" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-
-                            </VisualStateManager.VisualStateGroups>
-                            <StackPanel>
-                                <Grid x:Name="ColorSpectrumGrid">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <primitives:ColorSpectrum x:Name="ColorSpectrum" Grid.Column="0" Grid.Row="0" MaxWidth="256" MaxHeight="256" MinWidth="256" MinHeight="256" MinHue="{TemplateBinding MinHue}" MaxHue="{TemplateBinding MaxHue}" MinSaturation="{TemplateBinding MinSaturation}" MaxSaturation="{TemplateBinding MaxSaturation}" MinValue="{TemplateBinding MinValue}" MaxValue="{TemplateBinding MaxValue}" Shape="Ring" Components="{TemplateBinding ColorSpectrumComponents}" />
-                                    
-                                    <Grid x:Name="ThirdDimensionSliderGrid" Grid.Column="1">
-                                        <Rectangle Width="12" HorizontalAlignment="Center">
-                                            <Rectangle.Fill>
-                                                <LinearGradientBrush x:Name="ThirdDimensionSliderGradientBrush" />
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                        <primitives:ColorPickerSlider x:Name="ThirdDimensionSlider" Minimum="0" Maximum="100" ColorChannel="Value" IsDirectionReversed="True" Style="{StaticResource ColorPickerSliderStyle}" IsThumbToolTipEnabled="False" />
-                                    </Grid>
-                                </Grid>
-                                <Button
-                                x:Name="MoreButton"
-                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                Background="Transparent"
-                                Height="32"
-                                MinWidth="120"
-                                Margin="0,12,0,0" 
-                                Padding="0"
-                                HorizontalAlignment="Right"
-                                HorizontalContentAlignment="Right">
-                                    <Button.Content>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,7">
-                                            <TextBlock x:Name="MoreButtonLabel" VerticalAlignment="Center" />
-                                            <FontIcon x:Name="MoreGlyph"
-                                            Margin="8,0,0,0"
-                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                            Glyph="&#xE70D;"
-                                            FontSize="12" />
-                                        </StackPanel>
-                                    </Button.Content>
-                                    <Button.Resources>
-                                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Transparent" />
-                                        <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="Transparent" />
-                                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{ThemeResource SystemBaseMediumColor}" />
-                                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="Transparent" />
-                                        <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="Transparent" />
-                                        <SolidColorBrush x:Key="ButtonForegroundPressed" Color="{ThemeResource SystemBaseMediumLowColor}" />
-                                        <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="Transparent" />
-                                        <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="Transparent" />
-                                        <SolidColorBrush x:Key="ButtonForegroundDisabled" Color="{ThemeResource SystemBaseMediumLowColor}" />
-                                    </Button.Resources>
-                                </Button>
-                                <Grid x:Name="TextEntryGrid" Visibility="Collapsed">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <ComboBox Grid.Row="0" x:Name="ColorRepresentationComboBox" Width="132" Margin="0,12,0,0">
-                                        <ComboBoxItem x:Name="RGBComboBoxItem" Content="RGB" IsSelected="True" />
-                                        <ComboBoxItem x:Name="HSVComboBoxItem" Content="HSV" />
-                                    </ComboBox>
-                                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
-                                        <StackPanel x:Name="ColorChannelTextInputPanel">
-                                            <StackPanel x:Name="RgbPanel">
-                                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                                    <TextBox x:Name="RedTextBox" Width="100" MaxLength="3" Text="255" />
-                                                    <TextBlock x:Name="RedLabel" Text="Red" VerticalAlignment="Center" Margin="8,0,0,0" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                                    <TextBox x:Name="GreenTextBox" Width="100" MaxLength="3" Text="255" />
-                                                    <TextBlock x:Name="GreenLabel" Text="Green" VerticalAlignment="Center" Margin="8,0,0,0" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                                    <TextBox x:Name="BlueTextBox" Width="100" MaxLength="3" Text="255" />
-                                                    <TextBlock x:Name="BlueLabel" Text="Blue" VerticalAlignment="Center" Margin="8,0,0,0" />
-                                                </StackPanel>
-                                            </StackPanel>
-                                            <StackPanel x:Name="HsvPanel" Grid.Row="1" Visibility="Collapsed">
-                                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                                    <TextBox x:Name="HueTextBox" Width="100" MaxLength="3" Text="0" />
-                                                    <TextBlock x:Name="HueLabel" Text="Hue" VerticalAlignment="Center" Margin="8,0,0,0" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                                    <TextBox x:Name="SaturationTextBox" Width="100" MaxLength="3" Text="0" />
-                                                    <TextBlock x:Name="SaturationLabel" Text="Saturation" VerticalAlignment="Center" Margin="8,0,0,0" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                                    <TextBox x:Name="ValueTextBox" Width="100" MaxLength="3" Text="100" />
-                                                    <TextBlock x:Name="ValueLabel" Text="Value" VerticalAlignment="Center" Margin="8,0,0,0" />
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </StackPanel>
-                                        <StackPanel x:Name="AlphaPanel" Orientation="Horizontal" Margin="0,12,0,0">
-                                            <TextBox x:Name="AlphaTextBox" Width="100" MaxLength="4" Text="100%" />
-                                            <TextBlock x:Name="AlphaLabel" Text="Opacity" VerticalAlignment="Center" Margin="8,0,0,0" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                    <TextBox x:Name="HexTextBox" Grid.Column="1" MaxLength="7" Text="#FFFFFF" Margin="0,12,0,0" Width="132" HorizontalAlignment="Right" VerticalAlignment="Top" />
-                                </Grid>
-                            </StackPanel>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        
-        
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -862,10 +549,11 @@
 
         <Grid x:Name="ColorPanel"
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Height="320"
               Grid.Row="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -876,19 +564,37 @@
                 x:Name="RadioColor1"
                 IsChecked="{x:Bind ViewModel.IsColor1Checked, Mode=TwoWay}"
                 Checked="RadioColor_Toggled"
-                Unchecked="RadioColor_Toggled">
-                <StackPanel Orientation="Horizontal">
+                Unchecked="RadioColor_Toggled"
+                HorizontalContentAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Margin="12,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
                     <Ellipse Width="32" Height="32">
                         <Ellipse.Fill>
                             <SolidColorBrush Color="{x:Bind ViewModel.Color1, Mode=OneWay}"/>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <TextBox x:Name="TextColor1" Text="#FFFFFF" GotFocus="TextColor_GotFocus"/>
+                    <controls:ColorTextBox
+                        x:Name="TextColor1"
+                        ColorChanged="TextColor_ColorChanged"
+                        GotFocus="TextColor_GotFocus"
+                        HorizontalAlignment="Stretch"
+                        Grid.Column="1"/>
                     <controls:GlyphButton
                         x:Name="RemoveColor1"
                         Command="{x:Bind ViewModel.RemoveColor1Command}"
-                        Glyph="&#xE711;"/>
-                </StackPanel>
+                        Visibility="{x:Bind ConvertColor2(ViewModel.Color2), Mode=OneWay}"
+                        Glyph="&#xE711;"
+                        Height="32"
+                        Width="32"
+                        Grid.Column="2"/>
+                </Grid>
             </RadioButton>
 
             <controls:GlyphButton
@@ -915,33 +621,49 @@
                 Visibility="{x:Bind ConvertColor2(ViewModel.Color2), Mode=OneWay}"
                 Checked="RadioColor_Toggled"
                 Unchecked="RadioColor_Toggled"
+                HorizontalContentAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Margin="12,0"
                 Grid.Column="2">
-                <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
                     <Ellipse Width="32" Height="32">
                         <Ellipse.Fill>
                             <SolidColorBrush Color="{x:Bind ViewModel.Color2, Mode=OneWay}"/>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <TextBox x:Name="TextColor2" Text="#FFFFFF" GotFocus="TextColor_GotFocus"/>
+                    <controls:ColorTextBox
+                        x:Name="TextColor2"
+                        ColorChanged="TextColor_ColorChanged"
+                        GotFocus="TextColor_GotFocus"
+                        HorizontalAlignment="Stretch"
+                        Grid.Column="1"/>
                     <controls:GlyphButton
                         x:Name="RemoveColor2"
                         Command="{x:Bind ViewModel.RemoveColor2Command}"
-                        Glyph="&#xE711;"/>
-                </StackPanel>
+                        Glyph="&#xE711;"
+                        Height="32"
+                        Width="32"
+                        Grid.Column="2"/>
+                </Grid>
             </RadioButton>
             
-            <microsoft:ColorPicker
+            <controls:ColorPicker
                 x:Name="PickerColor"
                 ColorChanged="PickerColor_ColorChanged"
-                IsColorChannelTextInputVisible="False"
-                IsColorPreviewVisible="False"
-                ColorSpectrumShape="Box"
                 HorizontalAlignment="Stretch"
-                Grid.Row="1"/>
+                Grid.Row="1"
+                Grid.ColumnSpan="3"/>
         </Grid>
 
         <Grid x:Name="PatternPanel"
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Height="320"
               Grid.Row="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

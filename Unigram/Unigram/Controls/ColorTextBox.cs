@@ -141,6 +141,11 @@ namespace Unigram.Controls
                 return;
             }
 
+            if (newValue == default)
+            {
+                return;
+            }
+
             var value = newValue.ToValue();
             var hex = string.Format("#{0:X6}", value);
 

@@ -52,6 +52,11 @@ namespace Unigram.Common
             return Color.FromArgb(0xFF, (byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
         }
 
+        public static int ToValue(this Color color)
+        {
+            return (color.R << 16) + (color.G << 8) + color.B;
+        }
+
         public static int ToTimestamp(this DateTime dateTime)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);

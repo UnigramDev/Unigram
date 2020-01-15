@@ -405,14 +405,16 @@ namespace Unigram.Views
             }
         }
 
-        private void PickerColor_ColorChanged(Microsoft.UI.Xaml.Controls.ColorPicker sender, Microsoft.UI.Xaml.Controls.ColorChangedEventArgs args)
+        private void PickerColor_ColorChanged(Unigram.Controls.ColorPicker sender, Unigram.Controls.ColorChangedEventArgs args)
         {
             if (RadioColor1.IsChecked == true)
             {
+                TextColor1.Color = args.NewColor;
                 ViewModel.Color1 = args.NewColor;
             }
             else if (RadioColor2.IsChecked == true)
             {
+                TextColor2.Color = args.NewColor;
                 ViewModel.Color2 = args.NewColor;
             }
         }
@@ -463,6 +465,25 @@ namespace Unigram.Views
 
                 content.Opacity = 1;
                 root.Background = ViewModel.GetFill().ToBrush();
+            }
+        }
+
+        private void TextColor_ColorChanged(Controls.ColorTextBox sender, Controls.ColorChangedEventArgs args)
+        {
+            if (sender.FocusState == FocusState.Unfocused)
+            {
+                return;
+            }
+
+            if (TextColor1 == sender)
+            {
+                RadioColor1.IsChecked = true;
+                PickerColor.Color = args.NewColor;
+            }
+            else if (TextColor2 == sender)
+            {
+                RadioColor2.IsChecked = true;
+                PickerColor.Color = args.NewColor;
             }
         }
     }
