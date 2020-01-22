@@ -77,7 +77,8 @@ namespace Unigram.Views
         IHandle<UpdateConnectionState>,
         IHandle<UpdateOption>,
         IHandle<UpdateCallDialog>,
-        IHandle<UpdateChatListLayout>
+        IHandle<UpdateChatListLayout>,
+        IHandle<UpdateConfetti>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
@@ -443,6 +444,15 @@ namespace Unigram.Views
                 }
 
                 SettingsView.UpdateFile(update.File);
+            });
+        }
+
+        public void Handle(UpdateConfetti update)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                FindName(nameof(Confetti));
+                Confetti.Start();
             });
         }
 
@@ -2411,5 +2421,13 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Confetti_Completed(object sender, EventArgs e)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                UnloadObject(Confetti);
+            });
+        }
     }
 }

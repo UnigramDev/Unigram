@@ -80,782 +80,699 @@
         </Style>
     </Page.Resources>
 
-    <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate">
-        <controls:MasterDetailView.Header>
-            <Grid x:Name="TitleBarrr" Background="{ThemeResource PageHeaderBackgroundBrush}">
+    <Grid>
+        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate">
+            <controls:MasterDetailView.Header>
+                <Grid x:Name="TitleBarrr" Background="{ThemeResource PageHeaderBackgroundBrush}">
+                    <contract7Present:Grid.BackgroundTransition>
+                        <BrushTransition/>
+                    </contract7Present:Grid.BackgroundTransition>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <microsoft:ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
+                    <TextBlock x:Name="StatusLabel"
+                               VerticalAlignment="Center"
+                               TextLineBounds="TrimToCapHeight"
+                               Margin="6,0,0,0"
+                               AutomationProperties.LiveSetting="Assertive"
+                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Grid.Column="1"/>
+                </Grid>
+            </controls:MasterDetailView.Header>
+            <controls:MasterDetailView.PageHeader>
+                <controls:PlaybackHeader x:Name="Playback"/>
+            </controls:MasterDetailView.PageHeader>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="TitleBar">
+                        <VisualState.Setters>
+                            <Setter Target="MasterDetail.BorderBrush" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <contract7Present:Grid.BackgroundTransition>
                     <BrushTransition/>
                 </contract7Present:Grid.BackgroundTransition>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <microsoft:ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-                <TextBlock x:Name="StatusLabel"
-                           VerticalAlignment="Center"
-                           TextLineBounds="TrimToCapHeight"
-                           Margin="6,0,0,0"
-                           AutomationProperties.LiveSetting="Assertive"
-                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           Grid.Column="1"/>
-            </Grid>
-        </controls:MasterDetailView.Header>
-        <controls:MasterDetailView.PageHeader>
-            <controls:PlaybackHeader x:Name="Playback"/>
-        </controls:MasterDetailView.PageHeader>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="Normal"/>
-                <VisualState x:Name="TitleBar">
-                    <VisualState.Setters>
-                        <Setter Target="MasterDetail.BorderBrush" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <contract7Present:Grid.BackgroundTransition>
-                <BrushTransition/>
-            </contract7Present:Grid.BackgroundTransition>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <controls:ContentPageHeader x:Name="PageHeader" BackVisibility="Collapsed" Grid.Row="1">
-                <Grid x:Name="Header">
-                    <Grid x:Name="MainHeader">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="DefaultHeader"
-                                   Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}"
-                                   VerticalAlignment="Center"
-                                   Margin="46,0,0,0"
-                                   Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                   Style="{StaticResource BaseTextBlockStyle}"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <controls:ContentPageHeader x:Name="PageHeader" BackVisibility="Collapsed" Grid.Row="1">
+                    <Grid x:Name="Header">
+                        <Grid x:Name="MainHeader">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="DefaultHeader"
+                                       Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}"
+                                       VerticalAlignment="Center"
+                                       Margin="46,0,0,0"
+                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                       Style="{StaticResource BaseTextBlockStyle}"/>
 
-                        <Button x:Name="ChatsFilters" Content="All chats" Margin="5,0,0,0">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Grid x:Name="LayoutRoot" Background="Transparent">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="32" />
-                                        </Grid.ColumnDefinitions>
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroup x:Name="CommonStates">
-                                                <VisualState x:Name="Normal" />
-                                                <VisualState x:Name="PointerOver">
-                                                    <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPointerOver}" />
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="Pressed">
-                                                    <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPressed}" />
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="Disabled">
-                                                    <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxForegroundDisabled}" />
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DropDownGlyph" Storyboard.TargetProperty="Foreground">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxDropDownGlyphForegroundDisabled}" />
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </VisualState>
-                                            </VisualStateGroup>
-                                        </VisualStateManager.VisualStateGroups>
-                                        <ContentPresenter x:Name="ContentPresenter"
-                                                          Grid.Column="1"
-                                                          FontWeight="SemiBold"
-                                                          Margin="41,4,0,4"
-                                                          Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Button x:Name="ChatsFilters" Content="All chats" Margin="5,0,0,0">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid x:Name="LayoutRoot" Background="Transparent">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="32" />
+                                            </Grid.ColumnDefinitions>
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal" />
+                                                    <VisualState x:Name="PointerOver">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPointerOver}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Pressed">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPressed}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Disabled">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxForegroundDisabled}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DropDownGlyph" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxDropDownGlyphForegroundDisabled}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                            <ContentPresenter x:Name="ContentPresenter"
+                                                              Grid.Column="1"
+                                                              FontWeight="SemiBold"
+                                                              Margin="41,4,0,4"
+                                                              Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
-                                        <FontIcon x:Name="DropDownGlyph"
-                                                  Grid.Column="2"
-                                                  IsHitTestVisible="False"
-                                                  Margin="0,12,10,8"
-                                                  Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                  FontSize="12"
-                                                  Glyph="&#xE0E5;"
-                                                  HorizontalAlignment="Right"
-                                                  VerticalAlignment="Center"
-                                                  AutomationProperties.AccessibilityView="Raw" />
-                                    </Grid>
-                                </ControlTemplate>
-                            </Button.Template>
-                            <Button.Flyout>
-                                <MenuFlyout x:Name="FiltersFlyout">
-                                    <ToggleMenuFlyoutItem x:Name="FilterNone" Text="All chats" Click="ChatsFilter_Click" IsChecked="True">
-                                        <MenuFlyoutItem.CommandParameter>
-                                            <viewModels:ChatTypeFilterMode>None</viewModels:ChatTypeFilterMode>
-                                        </MenuFlyoutItem.CommandParameter>
-                                    </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterUsers" Text="Users" Click="ChatsFilter_Click">
-                                        <MenuFlyoutItem.CommandParameter>
-                                            <viewModels:ChatTypeFilterMode>Users</viewModels:ChatTypeFilterMode>
-                                        </MenuFlyoutItem.CommandParameter>
-                                    </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterBots" Text="Bots" Click="ChatsFilter_Click">
-                                        <MenuFlyoutItem.CommandParameter>
-                                            <viewModels:ChatTypeFilterMode>Bots</viewModels:ChatTypeFilterMode>
-                                        </MenuFlyoutItem.CommandParameter>
-                                    </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterGroups" Text="Groups" Click="ChatsFilter_Click">
-                                        <MenuFlyoutItem.CommandParameter>
-                                            <viewModels:ChatTypeFilterMode>Groups</viewModels:ChatTypeFilterMode>
-                                        </MenuFlyoutItem.CommandParameter>
-                                    </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterChannels" Text="Channels" Click="ChatsFilter_Click">
-                                        <MenuFlyoutItem.CommandParameter>
-                                            <viewModels:ChatTypeFilterMode>Channels</viewModels:ChatTypeFilterMode>
-                                        </MenuFlyoutItem.CommandParameter>
-                                    </ToggleMenuFlyoutItem>
-                                    <MenuFlyoutSeparator/>
-                                    <ToggleMenuFlyoutItem x:Name="FilterUnread" Text="Unread chats" Click="ChatsFilter_Click">
-                                        <MenuFlyoutItem.CommandParameter>
-                                            <viewModels:ChatTypeFilterMode>Unread</viewModels:ChatTypeFilterMode>
-                                        </MenuFlyoutItem.CommandParameter>
-                                    </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterUnmuted" Text="Unmuted chats" Click="ChatsFilter_Click">
-                                        <MenuFlyoutItem.CommandParameter>
-                                            <viewModels:ChatTypeFilterMode>Unmuted</viewModels:ChatTypeFilterMode>
-                                        </MenuFlyoutItem.CommandParameter>
-                                    </ToggleMenuFlyoutItem>
-                                    <ToggleMenuFlyoutItem x:Name="FilterUnreadAndUnmuted" Text="Unread &amp; Unmuted chats" Click="ChatsFilter_Click">
-                                        <MenuFlyoutItem.CommandParameter>
-                                            <viewModels:ChatTypeFilterMode>UnreadAndUnmuted</viewModels:ChatTypeFilterMode>
-                                        </MenuFlyoutItem.CommandParameter>
-                                    </ToggleMenuFlyoutItem>
-                                </MenuFlyout>
-                            </Button.Flyout>
-                        </Button>
-
-                        <controls:GlyphButton
-                            x:Name="BackButton"
-                            Click="BackButton_Click"
-                            Glyph="&#xE72B;"
-                            Height="{ThemeResource AppBarThemeCompactHeight}"
-                            FontSize="15"
-                            Width="40"
-                            Visibility="Collapsed"
-                            AutomationProperties.Name="{CustomResource AccDescrGoBack}"
-                            ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-
-
-                        <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
-                            <controls:GlyphButton
-                                Glyph="&#xE11A;"
-                                Click="Search_Click"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"
-                                AutomationProperties.LandmarkType="Search"
-                                AutomationProperties.Name="{CustomResource Search}"
-                                ToolTipService.ToolTip="{CustomResource Search}"/>
-                            <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                    Padding="{StaticResource EllipsisButtonPadding}"
-                                    Style="{StaticResource EllipsisButton}"
-                                    AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                                    ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}">
-                                <FontIcon x:Name="EllipsisIcon"
-                                          VerticalAlignment="Center"
-                                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                          FontSize="16"
-                                          Glyph="&#xE10C;"
-                                          Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                                            <FontIcon x:Name="DropDownGlyph"
+                                                      Grid.Column="2"
+                                                      IsHitTestVisible="False"
+                                                      Margin="0,12,10,8"
+                                                      Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
+                                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                      FontSize="12"
+                                                      Glyph="&#xE0E5;"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Center"
+                                                      AutomationProperties.AccessibilityView="Raw" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
                                 <Button.Flyout>
-                                    <MenuFlyout x:Name="SettingsFlyout">
-                                        <MenuFlyoutItem
-                                            Click="EditName_Click"
-                                            Text="{CustomResource EditName}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE104;"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem
-                                            Click="LogOut_Click"
-                                            Text="{CustomResource LogOut}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xF3B1;"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
+                                    <MenuFlyout x:Name="FiltersFlyout">
+                                        <ToggleMenuFlyoutItem x:Name="FilterNone" Text="All chats" Click="ChatsFilter_Click" IsChecked="True">
+                                            <MenuFlyoutItem.CommandParameter>
+                                                <viewModels:ChatTypeFilterMode>None</viewModels:ChatTypeFilterMode>
+                                            </MenuFlyoutItem.CommandParameter>
+                                        </ToggleMenuFlyoutItem>
+                                        <ToggleMenuFlyoutItem x:Name="FilterUsers" Text="Users" Click="ChatsFilter_Click">
+                                            <MenuFlyoutItem.CommandParameter>
+                                                <viewModels:ChatTypeFilterMode>Users</viewModels:ChatTypeFilterMode>
+                                            </MenuFlyoutItem.CommandParameter>
+                                        </ToggleMenuFlyoutItem>
+                                        <ToggleMenuFlyoutItem x:Name="FilterBots" Text="Bots" Click="ChatsFilter_Click">
+                                            <MenuFlyoutItem.CommandParameter>
+                                                <viewModels:ChatTypeFilterMode>Bots</viewModels:ChatTypeFilterMode>
+                                            </MenuFlyoutItem.CommandParameter>
+                                        </ToggleMenuFlyoutItem>
+                                        <ToggleMenuFlyoutItem x:Name="FilterGroups" Text="Groups" Click="ChatsFilter_Click">
+                                            <MenuFlyoutItem.CommandParameter>
+                                                <viewModels:ChatTypeFilterMode>Groups</viewModels:ChatTypeFilterMode>
+                                            </MenuFlyoutItem.CommandParameter>
+                                        </ToggleMenuFlyoutItem>
+                                        <ToggleMenuFlyoutItem x:Name="FilterChannels" Text="Channels" Click="ChatsFilter_Click">
+                                            <MenuFlyoutItem.CommandParameter>
+                                                <viewModels:ChatTypeFilterMode>Channels</viewModels:ChatTypeFilterMode>
+                                            </MenuFlyoutItem.CommandParameter>
+                                        </ToggleMenuFlyoutItem>
+                                        <MenuFlyoutSeparator/>
+                                        <ToggleMenuFlyoutItem x:Name="FilterUnread" Text="Unread chats" Click="ChatsFilter_Click">
+                                            <MenuFlyoutItem.CommandParameter>
+                                                <viewModels:ChatTypeFilterMode>Unread</viewModels:ChatTypeFilterMode>
+                                            </MenuFlyoutItem.CommandParameter>
+                                        </ToggleMenuFlyoutItem>
+                                        <ToggleMenuFlyoutItem x:Name="FilterUnmuted" Text="Unmuted chats" Click="ChatsFilter_Click">
+                                            <MenuFlyoutItem.CommandParameter>
+                                                <viewModels:ChatTypeFilterMode>Unmuted</viewModels:ChatTypeFilterMode>
+                                            </MenuFlyoutItem.CommandParameter>
+                                        </ToggleMenuFlyoutItem>
+                                        <ToggleMenuFlyoutItem x:Name="FilterUnreadAndUnmuted" Text="Unread &amp; Unmuted chats" Click="ChatsFilter_Click">
+                                            <MenuFlyoutItem.CommandParameter>
+                                                <viewModels:ChatTypeFilterMode>UnreadAndUnmuted</viewModels:ChatTypeFilterMode>
+                                            </MenuFlyoutItem.CommandParameter>
+                                        </ToggleMenuFlyoutItem>
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
-                        </StackPanel>
-                        <StackPanel x:Name="ContactsOptions" Orientation="Horizontal" Grid.Column="1">
+
                             <controls:GlyphButton
-                                Glyph="&#xE109;"
-                                Click="NewContact_Click"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"
-                                AutomationProperties.Name="{CustomResource CreateNewContact}"
-                                ToolTipService.ToolTip="{CustomResource CreateNewContact}"/>
-                            <controls:GlyphToggleButton
-                                UncheckedGlyph="&#xE91B;"
-                                CheckedGlyph="&#xE91E;"
-                                IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
-                                Style="{StaticResource HeaderGlyphToggleButtonStyle}"
-                                FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
-                                ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
-                                IsOneWay="False"/>
-                            <controls:GlyphButton
-                                Glyph="&#xE11A;"
-                                Click="Search_Click"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"
-                                AutomationProperties.LandmarkType="Search"
-                                AutomationProperties.Name="{CustomResource Search}"
-                                ToolTipService.ToolTip="{CustomResource Search}"/>
-                        </StackPanel>
-                        <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
-                            <controls:GlyphButton
-                                x:Name="Proxy"
-                                Glyph="&#xE915;"
-                                Click="Proxy_Click"
+                                x:Name="BackButton"
+                                Click="BackButton_Click"
+                                Glyph="&#xE72B;"
+                                Height="{ThemeResource AppBarThemeCompactHeight}"
+                                FontSize="15"
+                                Width="40"
                                 Visibility="Collapsed"
+                                AutomationProperties.Name="{CustomResource AccDescrGoBack}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
+
+
+                            <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
+                                <controls:GlyphButton
+                                    Glyph="&#xE11A;"
+                                    Click="Search_Click"
+                                    Style="{StaticResource HeaderGlyphButtonStyle}"
+                                    AutomationProperties.LandmarkType="Search"
+                                    AutomationProperties.Name="{CustomResource Search}"
+                                    ToolTipService.ToolTip="{CustomResource Search}"/>
+                                <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                        Padding="{StaticResource EllipsisButtonPadding}"
+                                        Style="{StaticResource EllipsisButton}"
+                                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}">
+                                    <FontIcon x:Name="EllipsisIcon"
+                                              VerticalAlignment="Center"
+                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              FontSize="16"
+                                              Glyph="&#xE10C;"
+                                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                                    <Button.Flyout>
+                                        <MenuFlyout x:Name="SettingsFlyout">
+                                            <MenuFlyoutItem
+                                                Click="EditName_Click"
+                                                Text="{CustomResource EditName}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE104;"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem
+                                                Click="LogOut_Click"
+                                                Text="{CustomResource LogOut}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xF3B1;"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel x:Name="ContactsOptions" Orientation="Horizontal" Grid.Column="1">
+                                <controls:GlyphButton
+                                    Glyph="&#xE109;"
+                                    Click="NewContact_Click"
+                                    Style="{StaticResource HeaderGlyphButtonStyle}"
+                                    AutomationProperties.Name="{CustomResource CreateNewContact}"
+                                    ToolTipService.ToolTip="{CustomResource CreateNewContact}"/>
+                                <controls:GlyphToggleButton
+                                    UncheckedGlyph="&#xE91B;"
+                                    CheckedGlyph="&#xE91E;"
+                                    IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
+                                    Style="{StaticResource HeaderGlyphToggleButtonStyle}"
+                                    FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                    AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
+                                    ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
+                                    IsOneWay="False"/>
+                                <controls:GlyphButton
+                                    Glyph="&#xE11A;"
+                                    Click="Search_Click"
+                                    Style="{StaticResource HeaderGlyphButtonStyle}"
+                                    AutomationProperties.LandmarkType="Search"
+                                    AutomationProperties.Name="{CustomResource Search}"
+                                    ToolTipService.ToolTip="{CustomResource Search}"/>
+                            </StackPanel>
+                            <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
+                                <controls:GlyphButton
+                                    x:Name="Proxy"
+                                    Glyph="&#xE915;"
+                                    Click="Proxy_Click"
+                                    Visibility="Collapsed"
+                                    FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                    Style="{StaticResource HeaderGlyphButtonStyle}"
+                                    AutomationProperties.Name="{CustomResource ProxySettings}"
+                                    ToolTipService.ToolTip="{CustomResource ProxySettings}"/>
+                                <controls:GlyphToggleButton
+                                    x:Name="Lock"
+                                    Visibility="Collapsed"
+                                    UncheckedGlyph="&#xE1F7;"
+                                    CheckedGlyph="&#xE1F6;"
+                                    Click="Lock_Click"
+                                    Style="{StaticResource HeaderGlyphToggleButtonStyle}"
+                                    AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
+                                    ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"/>
+                                <controls:GlyphButton
+                                    Glyph="&#xE11A;"
+                                    Click="Search_Click"
+                                    Style="{StaticResource HeaderGlyphButtonStyle}"
+                                    AutomationProperties.LandmarkType="Search"
+                                    AutomationProperties.Name="{CustomResource Search}"
+                                    ToolTipService.ToolTip="{CustomResource Search}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid x:Name="ManagePanel" Background="{ThemeResource PageHeaderBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:GlyphButton
+                                x:Name="ManageMute"
+                                Command="{x:Bind ViewModel.Chats.ChatsNotifyCommand}"
+                                Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                            <controls:GlyphButton
+                                x:Name="ManageMark"
+                                Command="{x:Bind ViewModel.Chats.ChatsMarkCommand}"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
-                                AutomationProperties.Name="{CustomResource ProxySettings}"
-                                ToolTipService.ToolTip="{CustomResource ProxySettings}"/>
-                            <controls:GlyphToggleButton
-                                x:Name="Lock"
-                                Visibility="Collapsed"
-                                UncheckedGlyph="&#xE1F7;"
-                                CheckedGlyph="&#xE1F6;"
-                                Click="Lock_Click"
-                                Style="{StaticResource HeaderGlyphToggleButtonStyle}"
-                                AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
-                                ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"/>
+                                Grid.Column="1"/>
                             <controls:GlyphButton
-                                Glyph="&#xE11A;"
-                                Click="Search_Click"
+                                Glyph="&#xE7B8;"
+                                Command="{x:Bind ViewModel.Chats.ChatsArchiveCommand}"
+                                AutomationProperties.Name="{CustomResource Archive}"
+                                ToolTipService.ToolTip="{CustomResource Archive}"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
-                                AutomationProperties.LandmarkType="Search"
-                                AutomationProperties.Name="{CustomResource Search}"
-                                ToolTipService.ToolTip="{CustomResource Search}"/>
-                        </StackPanel>
+                                Grid.Column="2"/>
+                            <controls:GlyphButton
+                                Glyph="&#xE107;"
+                                Command="{x:Bind ViewModel.Chats.ChatsDeleteCommand}"
+                                AutomationProperties.Name="{CustomResource Delete}"
+                                ToolTipService.ToolTip="{CustomResource Delete}"
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                Grid.Column="3"/>
+                            <controls:GlyphButton
+                                x:Name="ManageClear"
+                                Glyph="&#xEA99;"
+                                Command="{x:Bind ViewModel.Chats.ChatsClearCommand}"
+                                AutomationProperties.Name="{CustomResource ClearHistory}"
+                                ToolTipService.ToolTip="{CustomResource ClearHistory}"
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                Grid.Column="4"/>
+
+                            <ContentControl
+                                Content="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                FontWeight="SemiBold"
+                                Padding="12,0"
+                                Height="{ThemeResource AppBarThemeCompactHeight}"
+                                Grid.Column="6">
+                                <ContentControl.ContentTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition/>
+                                    </TransitionCollection>
+                                </ContentControl.ContentTransitions>
+                                <ContentControl.Clip>
+                                    <RectangleGeometry Rect="0,0,200,48"/>
+                                </ContentControl.Clip>
+                            </ContentControl>
+
+                            <controls:GlyphButton
+                                Click="Manage_Click"
+                                Glyph="&#xE10A;"
+                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                Grid.Column="7"/>
+                        </Grid>
+
+                        <controls:SearchTextBox
+                             x:Name="SearchField"
+                             Style="{StaticResource QueryTextBoxStyle}"
+                             PlaceholderText="{CustomResource Search}"
+                             PreventKeyboardDisplayOnProgrammaticFocus="True"
+                             Delete="Search_LostFocus"
+                             TextChanged="Search_TextChanged"
+                             KeyDown="Search_KeyDown"
+                             Visibility="Collapsed"/>
                     </Grid>
+                </controls:ContentPageHeader>
 
-                    <Grid x:Name="ManagePanel" Background="{ThemeResource PageHeaderBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <controls:GlyphButton
-                            x:Name="ManageMute"
-                            Command="{x:Bind ViewModel.Chats.ChatsNotifyCommand}"
-                            Style="{StaticResource HeaderGlyphButtonStyle}"/>
-                        <controls:GlyphButton
-                            x:Name="ManageMark"
-                            Command="{x:Bind ViewModel.Chats.ChatsMarkCommand}"
-                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                            Style="{StaticResource HeaderGlyphButtonStyle}"
-                            Grid.Column="1"/>
-                        <controls:GlyphButton
-                            Glyph="&#xE7B8;"
-                            Command="{x:Bind ViewModel.Chats.ChatsArchiveCommand}"
-                            AutomationProperties.Name="{CustomResource Archive}"
-                            ToolTipService.ToolTip="{CustomResource Archive}"
-                            Style="{StaticResource HeaderGlyphButtonStyle}"
-                            Grid.Column="2"/>
-                        <controls:GlyphButton
-                            Glyph="&#xE107;"
-                            Command="{x:Bind ViewModel.Chats.ChatsDeleteCommand}"
-                            AutomationProperties.Name="{CustomResource Delete}"
-                            ToolTipService.ToolTip="{CustomResource Delete}"
-                            Style="{StaticResource HeaderGlyphButtonStyle}"
-                            Grid.Column="3"/>
-                        <controls:GlyphButton
-                            x:Name="ManageClear"
-                            Glyph="&#xEA99;"
-                            Command="{x:Bind ViewModel.Chats.ChatsClearCommand}"
-                            AutomationProperties.Name="{CustomResource ClearHistory}"
-                            ToolTipService.ToolTip="{CustomResource ClearHistory}"
-                            Style="{StaticResource HeaderGlyphButtonStyle}"
-                            Grid.Column="4"/>
+                <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}" Grid.Row="2">
+                     <Grid.ColumnDefinitions>
+                     <ColumnDefinition />
+                     <ColumnDefinition Width="48"/>
+                     </Grid.ColumnDefinitions>
+                 
+                     <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                     <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
+                     <Run Text="{CustomResource AttachLiveLocation}" FontWeight="SemiBold"/>
+                     <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>
+                     </TextBlock>
+                     </Button>
+                 
+                     <controls:GlyphButton Command="{x:Bind ViewModel.StopLiveLocationCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
+                 
+                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                     </Grid>-->
 
-                        <ContentControl
-                            Content="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            FontWeight="SemiBold"
-                            Padding="12,0"
-                            Height="{ThemeResource AppBarThemeCompactHeight}"
-                            Grid.Column="6">
-                            <ContentControl.ContentTransitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition/>
-                                </TransitionCollection>
-                            </ContentControl.ContentTransitions>
-                            <ContentControl.Clip>
-                                <RectangleGeometry Rect="0,0,200,48"/>
-                            </ContentControl.Clip>
-                        </ContentControl>
-
-                        <controls:GlyphButton
-                            Click="Manage_Click"
-                            Glyph="&#xE10A;"
-                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                            Style="{StaticResource HeaderGlyphButtonStyle}"
-                            Grid.Column="7"/>
-                    </Grid>
-
-                    <controls:SearchTextBox
-                         x:Name="SearchField"
-                         Style="{StaticResource QueryTextBoxStyle}"
-                         PlaceholderText="{CustomResource Search}"
-                         PreventKeyboardDisplayOnProgrammaticFocus="True"
-                         Delete="Search_LostFocus"
-                         TextChanged="Search_TextChanged"
-                         KeyDown="Search_KeyDown"
-                         Visibility="Collapsed"/>
+                <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
+                    <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
+                        <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </Button>
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                 </Grid>
-            </controls:ContentPageHeader>
 
-            <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}" Grid.Row="2">
-                 <Grid.ColumnDefinitions>
-                 <ColumnDefinition />
-                 <ColumnDefinition Width="48"/>
-                 </Grid.ColumnDefinitions>
-                 
-                 <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                 <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
-                 <Run Text="{CustomResource AttachLiveLocation}" FontWeight="SemiBold"/>
-                 <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>
-                 </TextBlock>
-                 </Button>
-                 
-                 <controls:GlyphButton Command="{x:Bind ViewModel.StopLiveLocationCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
-                 
-                 <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                 </Grid>-->
-
-            <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
-                <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                    <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </Button>
-                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-            </Grid>
-
-            <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="3">
-                <PivotItem x:Name="TabChats" Header="Chats">
-                    <Grid>
-                        <ListView x:Name="DialogsSearchListView"
-                                  ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
-                                  IsItemClickEnabled="True"
-                                  SelectionMode="Single"
-                                  ItemClick="ListView_ItemClick"
-                                  ChoosingItemContainer="DialogsSearchListView_ChoosingItemContainer"
-                                  ContainerContentChanging="DialogsSearchListView_ContainerContentChanging"
-                                  SelectionChanged="ListView_SelectionChanged">
-                            <ListView.Header>
-                                <StackPanel Visibility="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                                    <Border Visibility="{x:Bind ViewModel.Chats.TopChats.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                        <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                                    </Border>
-                                    <ListView SelectionMode="None"
-                                              IsItemClickEnabled="True"
-                                              ItemClick="ListView_ItemClick"
-                                              ContainerContentChanging="TopChats_ContainerContentChanging"
-                                              ItemsSource="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay}"
-                                              Style="{StaticResource HorizontalListViewStyle}">
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Width="72" Padding="0,12" Background="Transparent" ContextRequested="TopChat_ContextRequested">
-                                                    <Grid Width="48" Height="48" Margin="12,0">
-                                                        <controls:ProfilePicture IsHitTestVisible="False"/>
-                                                        <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                                MinWidth="20"
-                                                                Height="20"
-                                                                CornerRadius="10"
-                                                                VerticalAlignment="Top"
-                                                                HorizontalAlignment="Right"
-                                                                Margin="0,-2,-2,0"
-                                                                Visibility="Collapsed">
-                                                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                                                       Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                                       TextAlignment="Center"
-                                                                       Margin="4,2,4,0"/>
-                                                        </Border>
-                                                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                                Width="13"
-                                                                Height="13"
-                                                                CornerRadius="6.5"
-                                                                HorizontalAlignment="Right"
-                                                                VerticalAlignment="Bottom"
-                                                                Margin="0,0,1,1">
-                                                            <Border Background="{ThemeResource ChatOnlineBadgeBrush}"
-                                                                    Width="9"
-                                                                    Height="9"
-                                                                    CornerRadius="4.5"/>
-                                                        </Border>
-                                                    </Grid>
-
-                                                    <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                        <ListView.ItemContainerStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="MinWidth" Value="0"/>
-                                                <Setter Property="Padding" Value="0"/>
-                                            </Style>
-                                        </ListView.ItemContainerStyle>
-                                    </ListView>
-
-                                    <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{CustomResource Recent}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                                        <controls:GlyphButton Command="{x:Bind ViewModel.Chats.ClearRecentChatsCommand}" AllowFocusOnInteraction="False" Glyph="&#xE10A;" FontSize="12" Width="48" Height="32" Grid.Column="1"/>
-                                    </Grid>
-                                </StackPanel>
-                            </ListView.Header>
-                            <ListView.ItemTemplateSelector>
-                                <selectors:SearchTemplateSelector>
-                                    <selectors:SearchTemplateSelector.ChatTemplate>
-                                        <DataTemplate>
-                                            <Grid Margin="0,6">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                                <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
-                                                    <Grid Margin="4,0,0,-2" Grid.Column="1">
-                                                        <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
-                                                    </Grid>
-                                                </Grid>
-                                                <TextBlock VerticalAlignment="Top"
-                                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           TextWrapping="NoWrap"
-                                                           Grid.Column="1"
-                                                           Grid.Row="1"
-                                                           MaxLines="1"/>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </selectors:SearchTemplateSelector.ChatTemplate>
-                                    <selectors:SearchTemplateSelector.MessageTemplate>
-                                        <DataTemplate>
-                                            <cells:ChatCell Margin="-12,0" Stroke="{ThemeResource ChatLastMessageStateBrush}" IsEnabled="False"/>
-                                        </DataTemplate>
-                                    </selectors:SearchTemplateSelector.MessageTemplate>
-                                </selectors:SearchTemplateSelector>
-                            </ListView.ItemTemplateSelector>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemContainerTransitions>
-                                <TransitionCollection/>
-                            </ListView.ItemContainerTransitions>
-                            <ListView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.HeaderTemplate>
-                                        <DataTemplate>
-                                            <!--<TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>-->
-                                            <TextBlock Text="{Binding Key}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                                        </DataTemplate>
-                                    </GroupStyle.HeaderTemplate>
-                                    <GroupStyle.HeaderContainerStyle>
-                                        <Style TargetType="ListViewHeaderItem">
-                                            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
-                                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                            <Setter Property="Margin" Value="0,0,0,0"/>
-                                            <Setter Property="Padding" Value="12,0,12,0"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                            <Setter Property="VerticalContentAlignment" Value="Top" />
-                                            <Setter Property="MinHeight" Value="0"/>
-                                            <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ListViewHeaderItem">
-                                                        <Border Visibility="{Binding Content.Count, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                            <Border Background="{TemplateBinding Background}"
-                                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                                    Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
-                                                                <ContentPresenter x:Name="ContentPresenter"
-                                                                                  Margin="{TemplateBinding Padding}"
-                                                                                  Content="{TemplateBinding Content}"
-                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                            </Border>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.HeaderContainerStyle>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
-                        </ListView>
-                        <Grid x:Name="DialogsPanel">
-                            <!--IsItemClickEnabled="True"
-                                                    SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
-                            <local:ChatsPage x:Name="ChatsList"
-                                             AutomationProperties.LandmarkType="Main"
-                                             DataContext="{x:Bind ViewModel.Chats}"
-                                             ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
-                                             SelectionMode2="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
-                                             AllowSelection="True">
+                <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="3">
+                    <PivotItem x:Name="TabChats" Header="Chats">
+                        <Grid>
+                            <ListView x:Name="DialogsSearchListView"
+                                      ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
+                                      IsItemClickEnabled="True"
+                                      SelectionMode="Single"
+                                      ItemClick="ListView_ItemClick"
+                                      ChoosingItemContainer="DialogsSearchListView_ChoosingItemContainer"
+                                      ContainerContentChanging="DialogsSearchListView_ContainerContentChanging"
+                                      SelectionChanged="ListView_SelectionChanged">
                                 <ListView.Header>
-                                    <StackPanel>
-                                        <HyperlinkButton x:Name="ResetFilters" Click="ResetFilters_Click" Visibility="Collapsed" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
-                                            <Grid Margin="0,3">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="48"/>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
+                                    <StackPanel Visibility="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                                        <Border Visibility="{x:Bind ViewModel.Chats.TopChats.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                            <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        </Border>
+                                        <ListView SelectionMode="None"
+                                                  IsItemClickEnabled="True"
+                                                  ItemClick="ListView_ItemClick"
+                                                  ContainerContentChanging="TopChats_ContainerContentChanging"
+                                                  ItemsSource="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay}"
+                                                  Style="{StaticResource HorizontalListViewStyle}">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Width="72" Padding="0,12" Background="Transparent" ContextRequested="TopChat_ContextRequested">
+                                                        <Grid Width="48" Height="48" Margin="12,0">
+                                                            <controls:ProfilePicture IsHitTestVisible="False"/>
+                                                            <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                                    MinWidth="20"
+                                                                    Height="20"
+                                                                    CornerRadius="10"
+                                                                    VerticalAlignment="Top"
+                                                                    HorizontalAlignment="Right"
+                                                                    Margin="0,-2,-2,0"
+                                                                    Visibility="Collapsed">
+                                                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                                                           Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                                           TextAlignment="Center"
+                                                                           Margin="4,2,4,0"/>
+                                                            </Border>
+                                                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                                    Width="13"
+                                                                    Height="13"
+                                                                    CornerRadius="6.5"
+                                                                    HorizontalAlignment="Right"
+                                                                    VerticalAlignment="Bottom"
+                                                                    Margin="0,0,1,1">
+                                                                <Border Background="{ThemeResource ChatOnlineBadgeBrush}"
+                                                                        Width="9"
+                                                                        Height="9"
+                                                                        CornerRadius="4.5"/>
+                                                            </Border>
+                                                        </Grid>
 
-                                                <FontIcon Glyph="&#xE751;" HorizontalAlignment="Center"/>
+                                                        <TextBlock Margin="0,8,0,0" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="MinWidth" Value="0"/>
+                                                    <Setter Property="Padding" Value="0"/>
+                                                </Style>
+                                            </ListView.ItemContainerStyle>
+                                        </ListView>
 
-                                                <TextBlock Text="All chats" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
-
-                                                <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                            MinWidth="20"
-                                                            Height="20"
-                                                            CornerRadius="10"
-                                                            VerticalAlignment="Center"
-                                                            HorizontalAlignment="Right"
-                                                            Margin="0,0,12,0"
-                                                            Grid.Column="2">
-                                                    <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
-                                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                                   TextAlignment="Center"
-                                                                   Margin="6,2,6,0"/>
-                                                </Border>
-
-                                            </Grid>
-                                        </HyperlinkButton>
-                                        <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                            <Border Visibility="{x:Bind ViewModel.CollapseArchivedChats, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                                                <cells:ChatCell
-                                                    x:Name="ArchivedChats"
-                                                    Click="ArchivedChats_Click"
-                                                    ContextRequested="ArchivedChats_ContextRequested"
-                                                    Visibility="Collapsed"
-                                                    Stroke="{ThemeResource ChatLastMessageStateBrush}"
-                                                    SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                    Accent="{ThemeResource SystemAccentColor}" />
-                                            </Border>
-                                            <Border Visibility="{x:Bind ViewModel.CollapseArchivedChats, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                <cells:ChatCell
-                                                    Content="{CustomResource ArchivedChats}"
-                                                    Click="ArchivedChats_Click"
-                                                    ContextRequested="ArchivedChats_ContextRequested"
-                                                    Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
-                                                    Padding="12,6"/>
-                                            </Border>
+                                        <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{CustomResource Recent}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                            <controls:GlyphButton Command="{x:Bind ViewModel.Chats.ClearRecentChatsCommand}" AllowFocusOnInteraction="False" Glyph="&#xE10A;" FontSize="12" Width="48" Height="32" Grid.Column="1"/>
                                         </Grid>
                                     </StackPanel>
                                 </ListView.Header>
-                            </local:ChatsPage>
+                                <ListView.ItemTemplateSelector>
+                                    <selectors:SearchTemplateSelector>
+                                        <selectors:SearchTemplateSelector.ChatTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,6">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                            <Grid x:Name="Arrow"
-                                  Margin="12,12"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Bottom"
-                                  common:VisualUtilities.IsVisible="False"
-                                  Visibility="Collapsed">
-                                <Ellipse x:Name="ArrowShadow" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="36" Height="36"/>
-                                <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                        CornerRadius="18"
-                                        Height="36"
-                                        Width="36">
-                                    <controls:GlyphButton
-                                        Click="Arrow_Click"
-                                        FontSize="16"
-                                        Width="36"
-                                        Height="36"
-                                        Glyph="&#xE74A;"
-                                        Radius="24"
-                                        AutomationProperties.Name="{CustomResource AccDescrPageDown}"
-                                        ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"/>
-                                </Border>
-                            </Grid>
-
-                            <Grid x:Name="FolderPanel" Visibility="Collapsed">
-                                <Border x:Name="FolderShadow" Background="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                                <local:ChatsPage
-                                    x:Name="FolderList"
-                                    AutomationProperties.LandmarkType="Main"
-                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                    DataContext="{x:Bind ViewModel.Folder, Mode=OneWay}"
-                                    ItemsSource="{x:Bind ViewModel.Folder.Items, Mode=OneWay}"
-                                    SelectionMode2="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"/>
-                            </Grid>
-
-                            <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom"/>
-
-                            <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                                 -->
-                            <!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"-->
-                            <!--
-                                 <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                         MinWidth="20"
-                                         Height="20"
-                                         CornerRadius="10"
-                                         HorizontalAlignment="Center"
-                                         Margin="0,6,0,-12"
-                                         Canvas.ZIndex="1">
-                                     <TextBlock x:Name="UnreadCount"
-                                                Text="{x:Bind ViewModel.UnreadUnmutedCount, Mode=OneWay}"
-                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                TextAlignment="Center"
-                                                Margin="4,2,4,0"/>
-                                 </Border>
-                                 <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                         BorderBrush="{ThemeResource TelegramSeparatorBrush}"
-                                         BorderThickness="1"
-                                         CornerRadius="24"
-                                         Margin="12,6"
-                                         Height="38"
-                                         Width="38"
-                                         Grid.ColumnSpan="2">
-                                     <controls:GlyphButton FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
-                                 </Border>
-                                 </StackPanel>-->
-                        </Grid>
-                    </Grid>
-                </PivotItem>
-                <PivotItem Header="{CustomResource Contacts}">
-                    <Grid>
-                        <ListView x:Name="ContactsSearchListView"
-                                  ItemsSource="{x:Bind ContactsResults.View, Mode=OneWay}"
-                                  IsItemClickEnabled="True"
-                                  SelectionMode="None"
-                                  ItemClick="ListView_ItemClick"
-                                  SelectionChanged="ListView_SelectionChanged"
-                                  ContainerContentChanging="ContactsSearchListView_ContainerContentChanging">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,4,0,8">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                        <TextBlock VerticalAlignment="Top"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   TextWrapping="NoWrap"
-                                                   Grid.Column="1"
-                                                   Grid.Row="1"
-                                                   MaxLines="1"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemContainerTransitions>
-                                <TransitionCollection/>
-                            </ListView.ItemContainerTransitions>
-                            <ListView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.HeaderTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Key}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                                        </DataTemplate>
-                                    </GroupStyle.HeaderTemplate>
-                                    <GroupStyle.HeaderContainerStyle>
-                                        <Style TargetType="ListViewHeaderItem">
-                                            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
-                                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                            <Setter Property="Margin" Value="0,0,0,0"/>
-                                            <Setter Property="Padding" Value="12,0,12,0"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                            <Setter Property="VerticalContentAlignment" Value="Top" />
-                                            <Setter Property="MinHeight" Value="0"/>
-                                            <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ListViewHeaderItem">
-                                                        <Border Visibility="{Binding Content.Count, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                            <Border Background="{TemplateBinding Background}"
-                                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                                    Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
-                                                                <ContentPresenter x:Name="ContentPresenter"
-                                                                                  Margin="{TemplateBinding Padding}"
-                                                                                  Content="{TemplateBinding Content}"
-                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
+                                                        <Grid Margin="4,0,0,-2" Grid.Column="1">
+                                                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
+                                                        </Grid>
+                                                    </Grid>
+                                                    <TextBlock VerticalAlignment="Top"
+                                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               TextWrapping="NoWrap"
+                                                               Grid.Column="1"
+                                                               Grid.Row="1"
+                                                               MaxLines="1"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </selectors:SearchTemplateSelector.ChatTemplate>
+                                        <selectors:SearchTemplateSelector.MessageTemplate>
+                                            <DataTemplate>
+                                                <cells:ChatCell Margin="-12,0" Stroke="{ThemeResource ChatLastMessageStateBrush}" IsEnabled="False"/>
+                                            </DataTemplate>
+                                        </selectors:SearchTemplateSelector.MessageTemplate>
+                                    </selectors:SearchTemplateSelector>
+                                </ListView.ItemTemplateSelector>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection/>
+                                </ListView.ItemContainerTransitions>
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <!--<TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>-->
+                                                <TextBlock Text="{Binding Key}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                        <GroupStyle.HeaderContainerStyle>
+                                            <Style TargetType="ListViewHeaderItem">
+                                                <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
+                                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                                <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                                <Setter Property="Margin" Value="0,0,0,0"/>
+                                                <Setter Property="Padding" Value="12,0,12,0"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="VerticalContentAlignment" Value="Top" />
+                                                <Setter Property="MinHeight" Value="0"/>
+                                                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ListViewHeaderItem">
+                                                            <Border Visibility="{Binding Content.Count, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                <Border Background="{TemplateBinding Background}"
+                                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                                        Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
+                                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                                                      Margin="{TemplateBinding Padding}"
+                                                                                      Content="{TemplateBinding Content}"
+                                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                </Border>
                                                             </Border>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.HeaderContainerStyle>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
-                        </ListView>
-                        <Grid x:Name="ContactsPanel">
-                            <ListView x:Name="UsersListView"
-                                      ItemsSource="{x:Bind ViewModel.Contacts.Items, Mode=OneWay}"
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.HeaderContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                            </ListView>
+                            <Grid x:Name="DialogsPanel">
+                                <!--IsItemClickEnabled="True"
+                                                        SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
+                                <local:ChatsPage x:Name="ChatsList"
+                                                 AutomationProperties.LandmarkType="Main"
+                                                 DataContext="{x:Bind ViewModel.Chats}"
+                                                 ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
+                                                 SelectionMode2="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
+                                                 AllowSelection="True">
+                                    <ListView.Header>
+                                        <StackPanel>
+                                            <HyperlinkButton x:Name="ResetFilters" Click="ResetFilters_Click" Visibility="Collapsed" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                <Grid Margin="0,3">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="48"/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <FontIcon Glyph="&#xE751;" HorizontalAlignment="Center"/>
+
+                                                    <TextBlock Text="All chats" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
+
+                                                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                                MinWidth="20"
+                                                                Height="20"
+                                                                CornerRadius="10"
+                                                                VerticalAlignment="Center"
+                                                                HorizontalAlignment="Right"
+                                                                Margin="0,0,12,0"
+                                                                Grid.Column="2">
+                                                        <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
+                                                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                                                       Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                                       TextAlignment="Center"
+                                                                       Margin="6,2,6,0"/>
+                                                    </Border>
+
+                                                </Grid>
+                                            </HyperlinkButton>
+                                            <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                                <Border Visibility="{x:Bind ViewModel.CollapseArchivedChats, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                                                    <cells:ChatCell
+                                                        x:Name="ArchivedChats"
+                                                        Click="ArchivedChats_Click"
+                                                        ContextRequested="ArchivedChats_ContextRequested"
+                                                        Visibility="Collapsed"
+                                                        Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                                                        SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                        Accent="{ThemeResource SystemAccentColor}" />
+                                                </Border>
+                                                <Border Visibility="{x:Bind ViewModel.CollapseArchivedChats, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    <cells:ChatCell
+                                                        Content="{CustomResource ArchivedChats}"
+                                                        Click="ArchivedChats_Click"
+                                                        ContextRequested="ArchivedChats_ContextRequested"
+                                                        Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
+                                                        Padding="12,6"/>
+                                                </Border>
+                                            </Grid>
+                                        </StackPanel>
+                                    </ListView.Header>
+                                </local:ChatsPage>
+
+                                <Grid x:Name="Arrow"
+                                      Margin="12,12"
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Bottom"
+                                      common:VisualUtilities.IsVisible="False"
+                                      Visibility="Collapsed">
+                                    <Ellipse x:Name="ArrowShadow" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="36" Height="36"/>
+                                    <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                                            CornerRadius="18"
+                                            Height="36"
+                                            Width="36">
+                                        <controls:GlyphButton
+                                            Click="Arrow_Click"
+                                            FontSize="16"
+                                            Width="36"
+                                            Height="36"
+                                            Glyph="&#xE74A;"
+                                            Radius="24"
+                                            AutomationProperties.Name="{CustomResource AccDescrPageDown}"
+                                            ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"/>
+                                    </Border>
+                                </Grid>
+
+                                <Grid x:Name="FolderPanel" Visibility="Collapsed">
+                                    <Border x:Name="FolderShadow" Background="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                                    <local:ChatsPage
+                                        x:Name="FolderList"
+                                        AutomationProperties.LandmarkType="Main"
+                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                        DataContext="{x:Bind ViewModel.Folder, Mode=OneWay}"
+                                        ItemsSource="{x:Bind ViewModel.Folder.Items, Mode=OneWay}"
+                                        SelectionMode2="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"/>
+                                </Grid>
+
+                                <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom"/>
+
+                                <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                     -->
+                                <!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"-->
+                                <!--
+                                     <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                             MinWidth="20"
+                                             Height="20"
+                                             CornerRadius="10"
+                                             HorizontalAlignment="Center"
+                                             Margin="0,6,0,-12"
+                                             Canvas.ZIndex="1">
+                                         <TextBlock x:Name="UnreadCount"
+                                                    Text="{x:Bind ViewModel.UnreadUnmutedCount, Mode=OneWay}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                    TextAlignment="Center"
+                                                    Margin="4,2,4,0"/>
+                                     </Border>
+                                     <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                                             BorderBrush="{ThemeResource TelegramSeparatorBrush}"
+                                             BorderThickness="1"
+                                             CornerRadius="24"
+                                             Margin="12,6"
+                                             Height="38"
+                                             Width="38"
+                                             Grid.ColumnSpan="2">
+                                         <controls:GlyphButton FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
+                                     </Border>
+                                     </StackPanel>-->
+                            </Grid>
+                        </Grid>
+                    </PivotItem>
+                    <PivotItem Header="{CustomResource Contacts}">
+                        <Grid>
+                            <ListView x:Name="ContactsSearchListView"
+                                      ItemsSource="{x:Bind ContactsResults.View, Mode=OneWay}"
                                       IsItemClickEnabled="True"
+                                      SelectionMode="None"
                                       ItemClick="ListView_ItemClick"
-                                      ChoosingItemContainer="UsersListView_ChoosingItemContainer"
-                                      ContainerContentChanging="UsersListView_ContainerContentChanging"
-                                      SelectionMode="None">
+                                      SelectionChanged="ListView_SelectionChanged"
+                                      ContainerContentChanging="ContactsSearchListView_ContainerContentChanging">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Margin="0,6">
+                                        <Grid Margin="0,4,0,8">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
@@ -864,9 +781,9 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
-                                            <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                                            <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
-                                            <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom"/>
+                                            <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
                                             <TextBlock VerticalAlignment="Top"
                                                        Style="{StaticResource CaptionTextBlockStyle}"
                                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
@@ -878,73 +795,164 @@
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
-                                <ListView.Header>
-                                    <StackPanel>
-                                        <controls:BadgeButton
-                                            Content="{CustomResource AddPeopleNearby}"
-                                            Click="ChatsNearby_Click"
-                                            Style="{StaticResource GlyphBadgeButtonStyle}"
-                                            Glyph="&#xE1C4;"/>
-
-                                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                            <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                                        </Border>
-                                    </StackPanel>
-                                </ListView.Header>
-                                <!--<ListView.ItemContainerTransitions>
-                                     <TransitionCollection/>
-                                     </ListView.ItemContainerTransitions>-->
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection/>
+                                </ListView.ItemContainerTransitions>
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Key}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                        <GroupStyle.HeaderContainerStyle>
+                                            <Style TargetType="ListViewHeaderItem">
+                                                <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
+                                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                                <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                                <Setter Property="Margin" Value="0,0,0,0"/>
+                                                <Setter Property="Padding" Value="12,0,12,0"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="VerticalContentAlignment" Value="Top" />
+                                                <Setter Property="MinHeight" Value="0"/>
+                                                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ListViewHeaderItem">
+                                                            <Border Visibility="{Binding Content.Count, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                <Border Background="{TemplateBinding Background}"
+                                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                                        Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
+                                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                                                      Margin="{TemplateBinding Padding}"
+                                                                                      Content="{TemplateBinding Content}"
+                                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                </Border>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.HeaderContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
                             </ListView>
+                            <Grid x:Name="ContactsPanel">
+                                <ListView x:Name="UsersListView"
+                                          ItemsSource="{x:Bind ViewModel.Contacts.Items, Mode=OneWay}"
+                                          IsItemClickEnabled="True"
+                                          ItemClick="ListView_ItemClick"
+                                          ChoosingItemContainer="UsersListView_ChoosingItemContainer"
+                                          ContainerContentChanging="UsersListView_ContainerContentChanging"
+                                          SelectionMode="None">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,6">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                                <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom"/>
+                                                <TextBlock VerticalAlignment="Top"
+                                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           TextWrapping="NoWrap"
+                                                           Grid.Column="1"
+                                                           Grid.Row="1"
+                                                           MaxLines="1"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.Header>
+                                        <StackPanel>
+                                            <controls:BadgeButton
+                                                Content="{CustomResource AddPeopleNearby}"
+                                                Click="ChatsNearby_Click"
+                                                Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                Glyph="&#xE1C4;"/>
+
+                                            <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                                <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </ListView.Header>
+                                    <!--<ListView.ItemContainerTransitions>
+                                         <TransitionCollection/>
+                                         </ListView.ItemContainerTransitions>-->
+                                </ListView>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </PivotItem>
-                <PivotItem x:Name="Calls" Header="{CustomResource Calls}">
-                    <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
-                              ItemClick="ListView_ItemClick"
-                              IsItemClickEnabled="True"
-                              ContainerContentChanging="Calls_ContainerContentChanging"
-                              SelectionMode="None">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <cells:CallCell ContextRequested="Call_ContextRequested"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="Padding" Value="0"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <!--<ListView.ItemContainerTransitions>
-                             <TransitionCollection/>
-                             </ListView.ItemContainerTransitions>-->
-                    </ListView>
-                </PivotItem>
-                <PivotItem Header="{CustomResource Settings}">
-                    <Grid>
-                        <ListView ItemsSource="{x:Bind ViewModel.Settings.Results}"
-                                  SelectionMode="None"
-                                  ContainerContentChanging="Settings_ContainerContentChanging"
-                                  Grid.Row="1">
+                    </PivotItem>
+                    <PivotItem x:Name="Calls" Header="{CustomResource Calls}">
+                        <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
+                                  ItemClick="ListView_ItemClick"
+                                  IsItemClickEnabled="True"
+                                  ContainerContentChanging="Calls_ContainerContentChanging"
+                                  SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <cells:CallCell ContextRequested="Call_ContextRequested"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                     <Setter Property="Padding" Value="0"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <controls:BadgeButton Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"/>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
+                            <!--<ListView.ItemContainerTransitions>
+                                 <TransitionCollection/>
+                                 </ListView.ItemContainerTransitions>-->
                         </ListView>
+                    </PivotItem>
+                    <PivotItem Header="{CustomResource Settings}">
+                        <Grid>
+                            <ListView ItemsSource="{x:Bind ViewModel.Settings.Results}"
+                                      SelectionMode="None"
+                                      ContainerContentChanging="Settings_ContainerContentChanging"
+                                      Grid.Row="1">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Padding" Value="0"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:BadgeButton Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
 
-                        <local:SettingsPage x:Name="SettingsView" MasterDetail="{x:Bind MasterDetail}"/>
-                    </Grid>
-                </PivotItem>
-            </Pivot>
+                            <local:SettingsPage x:Name="SettingsView" MasterDetail="{x:Bind MasterDetail}"/>
+                        </Grid>
+                    </PivotItem>
+                </Pivot>
 
-            <Border x:Name="Separator" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="0"/>
-        </Grid>
-    </controls:MasterDetailView>
+                <Border x:Name="Separator" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="0"/>
+            </Grid>
+        </controls:MasterDetailView>
+
+        <controls:ConfettiView
+            x:Name="Confetti"
+            x:Load="False"
+            Completed="Confetti_Completed"
+            IsHitTestVisible="False"/>
+    </Grid>
 </Page>

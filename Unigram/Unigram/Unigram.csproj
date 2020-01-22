@@ -214,6 +214,9 @@
     <Compile Include="Controls\Chats\ChatSearchTextBox.cs" />
     <Compile Include="Controls\Chats\ChatSendButton.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
+    <Compile Include="Controls\ColorPicker.cs" />
+    <Compile Include="Controls\ColorTextBox.cs" />
+    <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
@@ -531,6 +534,7 @@
     <Compile Include="Services\NotificationsService.cs" />
     <Compile Include="Services\Settings\AutoDownloadSettings.cs" />
     <Compile Include="Services\Settings\DiagnosticsSettings.cs" />
+    <Compile Include="Services\Settings\EmojiSettings.cs" />
     <Compile Include="Services\Settings\NotificationsSettings.cs" />
     <Compile Include="Services\OptionsService.cs" />
     <Compile Include="Services\Settings\PasscodeLockSettings.cs" />
@@ -556,6 +560,7 @@
     <Compile Include="Services\TonService.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
     <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
+    <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
     <Compile Include="Services\Updates\UpdateWallpaper.cs" />

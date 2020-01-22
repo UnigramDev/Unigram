@@ -344,6 +344,19 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:ConfettiView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ConfettiView">
+                    <xaml:CanvasAnimatedControl
+                        x:Name="Canvas"
+                        Paused="True"
+                        IsHitTestVisible="False"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:TLContentDialog">
         <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{ThemeResource ContentDialogBackground}" />
