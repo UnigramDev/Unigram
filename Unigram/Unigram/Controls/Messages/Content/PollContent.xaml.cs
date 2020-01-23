@@ -40,9 +40,29 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
+            var results = poll.Poll.IsClosed || poll.Poll.Options.Any(x => x.IsChosen);
+
             Question.Text = poll.Poll.Question;
-            Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : Strings.Resources.AnonymousPoll; // No public polls for now
-            Votes.Text = poll.Poll.TotalVoterCount > 0 ? Locale.Declension("Vote", poll.Poll.TotalVoterCount) : Strings.Resources.NoVotes;
+            Votes.Text = poll.Poll.TotalVoterCount > 0
+                ? Locale.Declension(poll.Poll.Type is PollTypeQuiz ? "Answer" : "Vote", poll.Poll.TotalVoterCount)
+                : poll.Poll.Type is PollTypeQuiz
+                ? Strings.Resources.NoVotesQuiz
+                : Strings.Resources.NoVotes;
+
+            if (poll.Poll.Type is PollTypeRegular reg)
+            {
+                Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousPoll : Strings.Resources.PublicPoll;
+                View.Visibility = results && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
+                Submit.Visibility = !results && reg.AllowMultipleAnswers ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else if (poll.Poll.Type is PollTypeQuiz)
+            {
+                Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousQuizPoll : Strings.Resources.QuizPoll;
+                View.Visibility = results && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
+                Submit.Visibility = Visibility.Collapsed;
+            }
+
+            Votes.Visibility = View.Visibility == Visibility.Collapsed && Submit.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
 
             //Options.Children.Clear();
 
@@ -60,10 +80,20 @@ namespace Unigram.Controls.Messages.Content
                 if (i < Options.Children.Count)
                 {
                     var button = Options.Children[i] as PollOptionControl;
+                    button.Click -= Option_Click;
 
                     if (i < poll.Poll.Options.Count)
                     {
                         button.UpdatePollOption(poll.Poll, poll.Poll.Options[i]);
+
+                        if (poll.Poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers)
+                        {
+
+                        }
+                        else
+                        {
+                            button.Click += Option_Click;
+                        }
                     }
                     else
                     {
@@ -73,11 +103,46 @@ namespace Unigram.Controls.Messages.Content
                 else
                 {
                     var button = new PollOptionControl();
-                    button.Click += Option_Click;
                     button.UpdatePollOption(poll.Poll, poll.Poll.Options[i]);
+
+                    if (poll.Poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers)
+                    {
+
+                    }
+                    else
+                    {
+                        button.Click += Option_Click;
+                    }
 
                     Options.Children.Add(button);
                 }
+            }
+
+            RecentVoters.Children.Clear();
+
+            foreach (var id in poll.Poll.RecentVoterUserIds)
+            {
+                var user = message.ProtoService.GetUser(id);
+                if (user == null)
+                {
+                    continue;
+                }
+
+                var picture = new ProfilePicture();
+                picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 16);
+                picture.Width = 16;
+                picture.Height = 16;
+
+                if (RecentVoters.Children.Count > 0)
+                {
+                    picture.Margin = new Thickness(-6, -1, 0, 0);
+                }
+                else
+                {
+                    picture.Margin = new Thickness(0, -1, 0, 0);
+                }
+
+                RecentVoters.Children.Add(picture);
             }
         }
 
@@ -95,7 +160,7 @@ namespace Unigram.Controls.Messages.Content
             }
 
             var button = sender as PollOptionControl;
-            if (button.IsChecked == true)
+            if (button.IsChecked == null)
             {
                 return;
             }
@@ -112,7 +177,33 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            _message.Delegate.VotePoll(_message, option);
+            _message.Delegate.VotePoll(_message, new[] { option });
+        }
+
+        private void Submit_Click(object sender, RoutedEventArgs e)
+        {
+            var options = new List<PollOption>();
+
+            foreach (PollOptionControl button in Options.Children)
+            {
+                if (button.IsChecked == true && button.Tag is PollOption option)
+                {
+                    options.Add(option);
+                }
+            }
+
+            var poll = _message?.Content as MessagePoll;
+            if (poll == null)
+            {
+                return;
+            }
+
+            _message.Delegate.VotePoll(_message, options);
+        }
+
+        private void View_Click(object sender, RoutedEventArgs e)
+        {
+            _message.Delegate.OpenMedia(_message, null);
         }
     }
 }

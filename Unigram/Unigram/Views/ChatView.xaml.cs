@@ -2112,7 +2112,7 @@ namespace Unigram.Views
 
         private bool MessageUnvotePoll_Loaded(MessageViewModel message)
         {
-            if (message.Content is MessagePoll poll)
+            if (message.Content is MessagePoll poll && poll.Poll.Type is PollTypeRegular)
             {
                 return poll.Poll.Options.Any(x => x.IsChosen) && !poll.Poll.IsClosed;
             }

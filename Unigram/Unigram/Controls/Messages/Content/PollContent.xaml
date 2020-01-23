@@ -11,21 +11,57 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <TextBlock x:Name="Question"
-               TextWrapping="Wrap"
-               Style="{StaticResource BaseTextBlockStyle}"
-               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-               IsTextSelectionEnabled="True"/>
-    <TextBlock x:Name="Type"
-               Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-               Style="{StaticResource CaptionTextBlockStyle}"
-               Margin="0,0,0,4"/>
+    <TextBlock
+        x:Name="Question"
+        TextWrapping="Wrap"
+        Style="{StaticResource BaseTextBlockStyle}"
+        FontFamily="{ThemeResource EmojiThemeFontFamily}"
+        IsTextSelectionEnabled="True"/>
+    <StackPanel
+        Orientation="Horizontal">
+        <TextBlock
+            x:Name="Type"
+            Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            VerticalAlignment="Top"
+            Margin="0,0,4,4"/>
 
-    <StackPanel x:Name="Options"
-                Margin="-10,0"/>
+        <StackPanel
+            Orientation="Horizontal"
+            x:Name="RecentVoters"/>
+    </StackPanel>
 
-    <TextBlock x:Name="Votes"
-               Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-               Style="{StaticResource CaptionTextBlockStyle}"
-               Margin="0,8,0,0"/>
+    <StackPanel
+        x:Name="Options"
+        Margin="-10,0"/>
+
+    <TextBlock
+        x:Name="Votes"
+        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+        Style="{StaticResource CaptionTextBlockStyle}"
+        Margin="0,12,0,0"/>
+
+    <Button
+        x:Name="Submit"
+        Style="{StaticResource EmptyButtonStyle}"
+        Click="Submit_Click"
+        Margin="0,0,0,-8">
+        <TextBlock
+            Text="{CustomResource PollSubmitVotes}"
+            Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Margin="0,12,0,8"/>
+    </Button>
+
+    <Button
+        x:Name="View"
+        Style="{StaticResource EmptyButtonStyle}"
+        Click="View_Click"
+        Margin="-10,0,-10,-8">
+        <TextBlock
+            Text="{CustomResource PollViewResults}"
+            Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Margin="10,12,10,8"/>
+    </Button>
 </StackPanel>

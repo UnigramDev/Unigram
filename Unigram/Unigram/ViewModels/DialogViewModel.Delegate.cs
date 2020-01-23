@@ -20,6 +20,8 @@ using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Gallery;
 using Unigram.Services.Settings;
 using Unigram.Controls.Gallery;
+using Unigram.Services.Updates;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -315,7 +317,7 @@ namespace Unigram.ViewModels
             CallCommand.Execute();
         }
 
-        public void VotePoll(MessageViewModel message, PollOption option)
+        public async void VotePoll(MessageViewModel message, IList<PollOption> options)
         {
             var poll = message.Content as MessagePoll;
             if (poll == null)
@@ -323,7 +325,35 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetPollAnswer(message.ChatId, message.Id, new int[] { poll.Poll.Options.IndexOf(option) }));
+            var ids = options.Select(x => poll.Poll.Options.IndexOf(x)).ToArray();
+            if (ids.IsEmpty())
+            {
+                return;
+            }
+
+            await ProtoService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, ids));
+
+            var updated = message.Content as MessagePoll;
+            if (updated.Poll.Type is PollTypeQuiz quiz)
+            {
+                if (quiz.CorrectOptionId == ids[0])
+                {
+                    Aggregator.Publish(new UpdateConfetti());
+                }
+                else
+                {
+                    var container = ListField?.ContainerFromItem(message) as SelectorItem;
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+
+                    var bubble = root.FindName("Bubble") as FrameworkElement;
+                    if (bubble == null)
+                    {
+                        return;
+                    }
+
+                    VisualUtilities.ShakeView(bubble);
+                }
+            }
         }
 
 
@@ -463,6 +493,12 @@ namespace Unigram.ViewModels
 
         public async void OpenMedia(MessageViewModel message, FrameworkElement target)
         {
+            if (message.Content is MessagePoll poll)
+            {
+                await new PollResultsView(ProtoService, CacheService, Settings, Aggregator, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
+                return;
+            }
+
             GalleryViewModelBase viewModel = null;
 
             var webPage = message.Content is MessageText text ? text.WebPage : null;

@@ -10,67 +10,101 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Padding="10,0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="28"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="0"/>
-        </Grid.RowDefinitions>
-        <Ellipse x:Name="Ellipse"
-                 Width="20"
-                 Height="20"
-                 UseLayoutRounding="False"
-                 Stroke="{ThemeResource MessageSubtleForegroundBrush}"
-                 StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}"
-                 VerticalAlignment="Top"
-                 Margin="0,8,8,8"/>
-
-
-        <ProgressRing x:Name="Loading"
-                      MinWidth="20"
-                      MinHeight="20"
-                      Width="20"
-                      Height="20"
-                      UseLayoutRounding="False"
-                      Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-                      VerticalAlignment="Top"
-                      Margin="0,8,8,8"/>
-
-        <TextBlock x:Name="Percentage"
-                   Style="{StaticResource CaptionTextBlockStyle}"
-                   FontWeight="SemiBold"
-                   TextWrapping="NoWrap"
-                   VerticalAlignment="Top"
-                   HorizontalAlignment="Right"
-                   Margin="-10,10,8,8"/>
-
-        <TextBlock x:Name="Text"
-                   Style="{StaticResource BodyTextBlockStyle}"
-                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                   VerticalAlignment="Top"
-                   Margin="0,8,0,8"
-                   Grid.Column="1"/>
-
-        <Ellipse x:Name="Zero"
-                 Fill="{ThemeResource MessageHeaderBorderBrush}"
-                 VerticalAlignment="Top"
-                 HorizontalAlignment="Left"
-                 Width="4"
-                 Height="4"
-                 Margin="0,-4,0,0"
-                 Grid.Column="1"
-                 Grid.Row="1"/>
-
-        <ProgressBar x:Name="Votes"
-                     Foreground="{ThemeResource MessageHeaderBorderBrush}"
-                     Style="{StaticResource PollOptionProgressBarStyle}"
-                     Background="Transparent"
-                     Margin="0,-4,0,0"
+    <UserControl x:Name="LayoutRoot">
+        <Grid Padding="10,0">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="ResultState">
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="Wrong">
+                        <VisualState.Setters>
+                            <Setter Target="TickGlyph.Glyph" Value="&#xF13D;"/>
+                            <Setter Target="TickFill.Foreground" Value="Red"/>
+                            <Setter Target="Zero.Fill" Value="Red"/>
+                            <Setter Target="Votes.Foreground" Value="Red"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="28"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0"/>
+            </Grid.RowDefinitions>
+            <Ellipse x:Name="Ellipse"
+                     Width="20"
+                     Height="20"
+                     UseLayoutRounding="False"
+                     Stroke="{ThemeResource MessageSubtleForegroundBrush}"
+                     StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}"
                      VerticalAlignment="Top"
-                     Grid.Row="1"
-                     Grid.Column="1"/>
-    </Grid>
+                     Margin="0,8,8,8"/>
+            <FontIcon
+                Visibility="{x:Bind ConvertCheckMark(IsChecked), Mode=OneWay}"
+                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                Glyph="&#xEC61;"
+                FontSize="20"
+                VerticalAlignment="Top"
+                Margin="0,8,8,8"/>
+
+
+            <ProgressRing x:Name="Loading"
+                          MinWidth="20"
+                          MinHeight="20"
+                          Width="20"
+                          Height="20"
+                          UseLayoutRounding="False"
+                          Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                          VerticalAlignment="Top"
+                          Margin="0,8,8,8"/>
+
+            <TextBlock x:Name="Percentage"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       FontWeight="SemiBold"
+                       TextWrapping="NoWrap"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Right"
+                       Margin="-10,10,6,8"/>
+
+            <TextBlock x:Name="Text"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                       VerticalAlignment="Top"
+                       Margin="0,8,0,8"
+                       Grid.Column="1"/>
+
+            <Grid x:Name="Tick"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Right"
+                  Width="12"
+                  Height="12"
+                  Margin="0,-8,6,-4"
+                  Grid.Column="0"
+                  Grid.Row="1">
+                <FontIcon x:Name="TickFill" Glyph="&#xF136;" FontSize="12" Foreground="{ThemeResource MessageHeaderBorderBrush}"/>
+                <FontIcon x:Name="TickGlyph" Glyph="&#xF13E;" FontSize="12" Foreground="White"/>
+            </Grid>
+
+            <Ellipse x:Name="Zero"
+                     Fill="{ThemeResource MessageHeaderBorderBrush}"
+                     VerticalAlignment="Top"
+                     HorizontalAlignment="Left"
+                     Width="4"
+                     Height="4"
+                     Margin="0,-4,0,0"
+                     Grid.Column="1"
+                     Grid.Row="1"/>
+
+            <ProgressBar x:Name="Votes"
+                         Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                         Style="{StaticResource PollOptionProgressBarStyle}"
+                         Background="Transparent"
+                         Margin="0,-4,0,0"
+                         VerticalAlignment="Top"
+                         Grid.Row="1"
+                         Grid.Column="1"/>
+        </Grid>
+    </UserControl>
 </ToggleButton>
