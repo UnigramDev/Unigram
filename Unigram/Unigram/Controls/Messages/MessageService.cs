@@ -414,7 +414,15 @@ namespace Unigram.Controls.Messages
 
             var fromUser = message.GetSenderUser();
 
-            content = ReplaceWithLink(Strings.Resources.EventLogStopPoll, "un1", fromUser, ref entities);
+            var poll = message.Content as MessagePoll;
+            if (poll.Poll.Type is PollTypeRegular)
+            {
+                content = ReplaceWithLink(Strings.Resources.EventLogStopPoll, "un1", fromUser, ref entities);
+            }
+            else if (poll.Poll.Type is PollTypeQuiz)
+            {
+                content = ReplaceWithLink(Strings.Resources.EventLogStopQuiz, "un1", fromUser, ref entities);
+            }
 
             return (content, entities);
         }
@@ -920,9 +928,16 @@ namespace Unigram.Controls.Messages
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionPinnedPhoto, "un1", sender ?? (BaseObject)chat, ref entities);
                 }
-                else if (reply.Content is MessagePoll)
+                else if (reply.Content is MessagePoll poll)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedPoll, "un1", sender ?? (BaseObject)chat, ref entities);
+                    if (poll.Poll.Type is PollTypeRegular)
+                    {
+                        content = ReplaceWithLink(Strings.Resources.ActionPinnedPoll, "un1", sender ?? (BaseObject)chat, ref entities);
+                    }
+                    else if (poll.Poll.Type is PollTypeQuiz)
+                    {
+                        content = ReplaceWithLink(Strings.Resources.ActionPinnedQuiz, "un1", sender ?? (BaseObject)chat, ref entities);
+                    }
                 }
                 else if (reply.Content is MessageGame game)
                 {
