@@ -813,7 +813,12 @@ namespace Unigram.ViewModels
         public RelayCommand SendPollCommand { get; }
         private async void SendPollExecute()
         {
-            var dialog = new CreatePollView();
+            await SendPollAsync(false, false, _chat?.Type is ChatTypeSupergroup super && super.IsChannel);
+        }
+
+        private async Task SendPollAsync(bool forceQuiz, bool forceRegular, bool forceAnonymous)
+        {
+            var dialog = new CreatePollView(forceQuiz, forceRegular, forceAnonymous);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -828,7 +833,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessagePoll(dialog.Question, dialog.Options);
+            var input = new InputMessagePoll(dialog.Question, dialog.Options, dialog.IsAnonymous, dialog.Type, false);
 
             await SendMessageAsync(reply, input, options);
         }

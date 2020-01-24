@@ -421,6 +421,9 @@
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\PollResultsView.xaml.cs">
+      <DependentUpon>PollResultsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ScheduleMessageView.xaml.cs">
       <DependentUpon>ScheduleMessageView.xaml</DependentUpon>
     </Compile>
@@ -2067,6 +2070,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageReference.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\PollResultsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

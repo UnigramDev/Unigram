@@ -64,6 +64,7 @@ namespace Unigram.Controls.Messages.Content
 
             Votes.Visibility = View.Visibility == Visibility.Collapsed && Submit.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
 
+            Submit.IsEnabled = false;
             //Options.Children.Clear();
 
             //foreach (var option in poll.Poll.Options)
@@ -81,6 +82,8 @@ namespace Unigram.Controls.Messages.Content
                 {
                     var button = Options.Children[i] as PollOptionControl;
                     button.Click -= Option_Click;
+                    button.Checked -= Option_Toggled;
+                    button.Unchecked -= Option_Toggled;
 
                     if (i < poll.Poll.Options.Count)
                     {
@@ -88,7 +91,8 @@ namespace Unigram.Controls.Messages.Content
 
                         if (poll.Poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers)
                         {
-
+                            button.Checked += Option_Toggled;
+                            button.Unchecked += Option_Toggled;
                         }
                         else
                         {
@@ -107,7 +111,8 @@ namespace Unigram.Controls.Messages.Content
 
                     if (poll.Poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers)
                     {
-
+                        button.Checked += Option_Toggled;
+                        button.Unchecked += Option_Toggled;
                     }
                     else
                     {
@@ -178,6 +183,19 @@ namespace Unigram.Controls.Messages.Content
             }
 
             _message.Delegate.VotePoll(_message, new[] { option });
+        }
+
+        private void Option_Toggled(object sender, RoutedEventArgs e)
+        {
+            Submit.IsEnabled = false;
+
+            foreach (PollOptionControl button in Options.Children)
+            {
+                if (button.IsChecked == true && button.Tag is PollOption option)
+                {
+                    Submit.IsEnabled = true;
+                }
+            }
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)

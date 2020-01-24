@@ -13,12 +13,13 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <StackPanel>
+    <StackPanel Margin="0,0,0,24">
         <TextBlock Text="{CustomResource Question}"
                    Style="{StaticResource SettingsGroupTextBlockStyle}"
                    Margin="12,8,12,0"/>
 
         <TextBox x:Name="QuestionText"
+                 TextChanged="Question_TextChanged"
                  PlaceholderText="{CustomResource QuestionHint}"
                  AcceptsReturn="True"
                  TextWrapping="Wrap"
@@ -33,6 +34,10 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="local:PollOptionViewModel">
                     <Grid Margin="12,8,12,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
                         <Grid.Resources>
                             <Style x:Name="DeleteButtonStyle" TargetType="Button">
                                 <Setter Property="Template">
@@ -96,18 +101,30 @@
                                 </Setter>
                             </Style>
                         </Grid.Resources>
-                        <TextBox Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 PlaceholderText="{CustomResource OptionHint}"
-                                 MaxLength="100"
-                                 Loaded="Option_Loaded"
-                                 KeyDown="Option_KeyDown"/>
+                        <CheckBox
+                            IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
+                            Visibility="{x:Bind IsQuiz, Mode=OneWay}"
+                            Checked="Option_Checked"
+                            Unchecked="Option_Unchecked"
+                            MinWidth="0"/>
 
-                        <Button Style="{StaticResource DeleteButtonStyle}"
-                                Command="{x:Bind RemoveCommand}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch"
-                                Width="32"
-                                Height="32"/>
+                        <TextBox
+                            Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            PlaceholderText="{CustomResource OptionHint}"
+                            MaxLength="100"
+                            Loaded="Option_Loaded"
+                            KeyDown="Option_KeyDown"
+                            TextChanged="Question_TextChanged"
+                            Grid.Column="1"/>
+
+                        <Button
+                            Style="{StaticResource DeleteButtonStyle}"
+                            Command="{x:Bind RemoveCommand}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Width="32"
+                            Height="32"
+                            Grid.Column="1"/>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -124,7 +141,29 @@
         <TextBlock x:Name="InfoLabel"
                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                    Style="{StaticResource CaptionTextBlockStyle}"
-                   Margin="12,8,12,0"/>
+                   Margin="12,8,12,24"/>
+
+        <ToggleSwitch
+            x:Name="Anonymous"
+            Header="{CustomResource PollAnonymous}"
+            Style="{StaticResource CheckButtonStyle}"/>
+        <ToggleSwitch
+            x:Name="Multiple"
+            Header="{CustomResource PollMultiple}"
+            Style="{StaticResource CheckButtonStyle}"
+            Toggled="Multiple_Toggled"/>
+        <ToggleSwitch
+            x:Name="Quiz"
+            Header="{CustomResource PollQuiz}"
+            Style="{StaticResource CheckButtonStyle}"
+            Toggled="Quiz_Toggled"/>
+
+        <TextBlock
+            x:Name="QuizInfo"
+            Text="{CustomResource QuizInfo}"
+            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Margin="12,8,12,0"/>
 
     </StackPanel>
 </controls:TLContentDialog>

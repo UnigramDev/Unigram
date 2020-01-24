@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Td.Api;
 using Template10.Mvvm;
 using Unigram.Common;
 using Windows.Foundation;
@@ -23,7 +24,7 @@ namespace Unigram.Controls.Views
     {
         private const int MAXIMUM_OPTIONS = 10;
 
-        public CreatePollView()
+        public CreatePollView(bool forceQuiz, bool forceRegular, bool forceAnonymous)
         {
             InitializeComponent();
 
@@ -33,7 +34,31 @@ namespace Unigram.Controls.Views
 
             Items = new ObservableCollection<PollOptionViewModel>();
             Items.CollectionChanged += Items_CollectionChanged;
-            Items.Add(new PollOptionViewModel(false, option => Remove_Click(option)));
+            Items.Add(new PollOptionViewModel(forceQuiz, false, option => Remove_Click(option)));
+
+            if (forceQuiz)
+            {
+                Quiz.IsOn = true;
+                Quiz.Visibility = Visibility.Collapsed;
+                Multiple.Visibility = Visibility.Collapsed;
+            }
+            else if (forceRegular)
+            {
+                Quiz.IsOn = false;
+                Quiz.Visibility = Visibility.Collapsed;
+                QuizInfo.Visibility = Visibility.Collapsed;
+            }
+
+            if (forceAnonymous)
+            {
+                Anonymous.IsOn = true;
+                Anonymous.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Anonymous.IsOn = true;
+                Anonymous.Visibility = Visibility.Visible;
+            }
         }
 
         public string Question
@@ -52,6 +77,27 @@ namespace Unigram.Controls.Views
             }
         }
 
+        public bool IsAnonymous
+        {
+            get
+            {
+                return Anonymous.IsOn;
+            }
+        }
+
+        public PollType Type
+        {
+            get
+            {
+                if (Quiz.IsOn)
+                {
+                    return new PollTypeQuiz(Items.IndexOf(Items.FirstOrDefault(x => x.IsChecked)));
+                }
+
+                return new PollTypeRegular(Multiple.IsOn);
+            }
+        }
+
         private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (MAXIMUM_OPTIONS - Items.Count <= 0)
@@ -67,7 +113,20 @@ namespace Unigram.Controls.Views
                 InfoLabel.Text = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count));
             }
 
-            IsPrimaryButtonEnabled = Items.Count >= 2;
+            UpdatePrimaryButton();
+        }
+
+        private void UpdatePrimaryButton()
+        {
+            var condition = !string.IsNullOrEmpty(Question);
+            condition = condition && Items.Count(x => !string.IsNullOrEmpty(x.Text)) >= 2;
+
+            if (Quiz.IsOn)
+            {
+                condition = condition && Items.Count(x => x.IsChecked) == 1;
+            }
+
+            IsPrimaryButtonEnabled = condition;
         }
 
         public ObservableCollection<PollOptionViewModel> Items { get; private set; }
@@ -84,7 +143,7 @@ namespace Unigram.Controls.Views
         {
             if (Items.Count < MAXIMUM_OPTIONS)
             {
-                Items.Add(new PollOptionViewModel(true, option => Remove_Click(option)));
+                Items.Add(new PollOptionViewModel(Quiz.IsOn, true, option => Remove_Click(option)));
             }
         }
 
@@ -92,6 +151,29 @@ namespace Unigram.Controls.Views
         {
             Items.Remove(option);
             Focus(Items.Count - 1);
+        }
+
+        private void Question_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdatePrimaryButton();
+        }
+
+        private void Option_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox check && check.DataContext is PollOptionViewModel option)
+            {
+                foreach (var item in Items)
+                {
+                    item.IsChecked = item == option;
+                }
+            }
+
+            UpdatePrimaryButton();
+        }
+
+        private void Option_Unchecked(object sender, RoutedEventArgs e)
+        {
+            UpdatePrimaryButton();
         }
 
         private void Option_Loaded(object sender, RoutedEventArgs e)
@@ -135,14 +217,38 @@ namespace Unigram.Controls.Views
 
             inner.Focus(FocusState.Keyboard);
         }
+
+        private void Multiple_Toggled(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Quiz_Toggled(object sender, RoutedEventArgs e)
+        {
+            Multiple.IsEnabled = !Quiz.IsOn;
+
+            if (Quiz.IsOn)
+            {
+                Multiple.IsOn = false;
+            }
+
+            foreach (var item in Items)
+            {
+                item.IsChecked = false;
+                item.IsQuiz = Quiz.IsOn;
+            }
+
+            UpdatePrimaryButton();
+        }
     }
 
     public class PollOptionViewModel : BindableBase
     {
         private readonly Action<PollOptionViewModel> _remove;
 
-        public PollOptionViewModel(bool focus, Action<PollOptionViewModel> remove)
+        public PollOptionViewModel(bool quiz, bool focus, Action<PollOptionViewModel> remove)
         {
+            _isQuiz = quiz;
             _focusOnLoaded = focus;
             _remove = remove;
             RemoveCommand = new RelayCommand(() => _remove(this));
@@ -153,6 +259,20 @@ namespace Unigram.Controls.Views
         {
             get { return _text; }
             set { Set(ref _text, value); }
+        }
+
+        private bool _isChecked;
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set => Set(ref _isChecked, value);
+        }
+
+        private bool _isQuiz;
+        public bool IsQuiz
+        {
+            get => _isQuiz;
+            set => Set(ref _isQuiz, value);
         }
 
         private bool _focusOnLoaded;
