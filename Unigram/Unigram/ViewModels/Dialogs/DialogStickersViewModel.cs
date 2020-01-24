@@ -22,6 +22,7 @@ using Unigram.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.ViewManagement;
 using Unigram.Native;
+using Windows.UI.Text.Core;
 
 namespace Unigram.ViewModels.Dialogs
 {
@@ -342,7 +343,7 @@ namespace Unigram.ViewModels.Dialogs
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, Aggregator, false, query);
+                var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, Aggregator, false, query, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 await items.LoadMoreItemsAsync(0);
             }
         }
@@ -867,13 +868,15 @@ namespace Unigram.ViewModels.Dialogs
         private readonly IEventAggregator _aggregator;
         private readonly bool _masks;
         private readonly string _query;
+        private readonly string _inputLanguage;
 
-        public SearchStickerSetsCollection(IProtoService protoService, IEventAggregator aggregator, bool masks, string query)
+        public SearchStickerSetsCollection(IProtoService protoService, IEventAggregator aggregator, bool masks, string query, string inputLanguage)
         {
             _protoService = protoService;
             _aggregator = aggregator;
             _masks = masks;
             _query = query;
+            _inputLanguage = inputLanguage;
         }
 
         public string Query => _query;
@@ -909,7 +912,7 @@ namespace Unigram.ViewModels.Dialogs
                     }
                     else
                     {
-                        var emojis = await _protoService.SendAsync(new SearchEmojis(_query, false)) as Emojis;
+                        var emojis = await _protoService.SendAsync(new SearchEmojis(_query, false, _inputLanguage)) as Emojis;
                         if (emojis != null)
                         {
                             for (int i = 0; i < Math.Min(10, emojis.EmojisValue.Count); i++)

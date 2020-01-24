@@ -208,11 +208,11 @@ namespace Unigram.Common
             return results;
         }
 
-        public static async Task<List<EmojiGroup>> SearchAsync(IProtoService protoService, string query, EmojiSkinTone skin)
+        public static async Task<List<EmojiGroup>> SearchAsync(IProtoService protoService, string query, EmojiSkinTone skin, string inputLanguage)
         {
             var result = new List<EmojiData>();
 
-            var response = await protoService.SendAsync(new SearchEmojis(query, false));
+            var response = await protoService.SendAsync(new SearchEmojis(query, false, inputLanguage));
             if (response is Emojis suggestions)
             {
                 foreach (var item in suggestions.EmojisValue)

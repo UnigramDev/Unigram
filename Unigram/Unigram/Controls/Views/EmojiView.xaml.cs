@@ -14,6 +14,7 @@ using Unigram.Views;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -153,7 +154,7 @@ namespace Unigram.Controls.Views
             }
             else
             {
-                EmojiCollection.Source = await Emoji.SearchAsync(ViewModel.ProtoService, FieldEmoji.Text, _selected);
+                EmojiCollection.Source = await Emoji.SearchAsync(ViewModel.ProtoService, FieldEmoji.Text, _selected, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
             }
         }
 

@@ -43,6 +43,7 @@ using Unigram.Converters;
 using Windows.Graphics.Imaging;
 using System.Collections;
 using System.Globalization;
+using Windows.UI.Text.Core;
 
 namespace Unigram.Controls.Chats
 {
@@ -494,7 +495,7 @@ namespace Unigram.Controls.Chats
             }
             else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
             {
-                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement);
+                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 return true;
             }
             else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
@@ -597,13 +598,15 @@ namespace Unigram.Controls.Chats
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
+            private readonly string _inputLanguage;
 
             private bool _hasMore = true;
 
-            public EmojiCollection(IProtoService protoService, string query)
+            public EmojiCollection(IProtoService protoService, string query, string inputLanguage)
             {
                 _protoService = protoService;
                 _query = query;
+                _inputLanguage = inputLanguage;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -613,7 +616,7 @@ namespace Unigram.Controls.Chats
                     count = 0;
                     _hasMore = false;
 
-                    var response = await _protoService.SendAsync(new SearchEmojis(_query, false));
+                    var response = await _protoService.SendAsync(new SearchEmojis(_query, false, _inputLanguage));
                     if (response is Emojis emojis)
                     {
                         SettingsService.Current.Emoji.LoadRecentEmoji();
@@ -651,14 +654,16 @@ namespace Unigram.Controls.Chats
             private readonly IProtoService _protoService;
             private readonly string _query;
             private readonly EmojiSkinTone _skin;
+            private readonly string _inputLanguage;
 
             private bool _hasMore = true;
 
-            public EmojiGroupCollection(IProtoService protoService, string query, EmojiSkinTone skin)
+            public EmojiGroupCollection(IProtoService protoService, string query, EmojiSkinTone skin, string inputLanguage)
             {
                 _protoService = protoService;
                 _query = query;
                 _skin = skin;
+                _inputLanguage = inputLanguage;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -667,7 +672,7 @@ namespace Unigram.Controls.Chats
                 {
                     _hasMore = false;
 
-                    Add(await Emoji.SearchAsync(_protoService, _query, _skin));
+                    Add(await Emoji.SearchAsync(_protoService, _query, _skin, _inputLanguage));
 
                     return new LoadMoreItemsResult { Count = 1 };
                 });

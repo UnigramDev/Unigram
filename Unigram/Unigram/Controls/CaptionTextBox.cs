@@ -14,6 +14,7 @@ using Unigram.ViewModels;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Text;
+using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
@@ -158,7 +159,7 @@ namespace Unigram.Controls
             }
             else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
             {
-                View.Autocomplete = new ChatTextBox.EmojiCollection(ViewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower());
+                View.Autocomplete = new ChatTextBox.EmojiCollection(ViewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
             }
             else
             {
