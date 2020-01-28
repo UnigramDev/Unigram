@@ -41,6 +41,11 @@ namespace Unigram.Views.SignIn
             Diagnostics.Text = $"Unigram " + GetVersion();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+
+
+
+            var token = ElementCompositionPreview.GetElementVisual(Token);
+            token.Opacity = 0;
         }
 
         private string GetVersion()
@@ -324,12 +329,17 @@ namespace Unigram.Views.SignIn
 
         public void UpdateQrCode(string code)
         {
-            if (Token.Source != null)
+            //if (Token.Source != null)
+            //{
+            //    return;
+            //}
+
+            var token = ElementCompositionPreview.GetElementVisual(Token);
+            if (token.Opacity != 0)
             {
                 return;
             }
 
-            var token = ElementCompositionPreview.GetElementVisual(Token);
             var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0.0f, 0);
             opacity.InsertKeyFrame(1.0f, 1);

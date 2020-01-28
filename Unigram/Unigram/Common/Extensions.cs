@@ -47,6 +47,26 @@ namespace Unigram.Common
             return result.TrimEnd('&');
         }
 
+        public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
+        {
+            var tip = new Microsoft.UI.Xaml.Controls.TeachingTip
+            {
+                Target = target,
+                PreferredPlacement = placement,
+                IsLightDismissEnabled = true,
+                Subtitle = text
+            };
+            if (app.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = tip;
+            }
+            else
+            {
+                target.Resources["TeachinTip"] = tip;
+            }
+            tip.IsOpen = true;
+        }
+
         public static Color ToColor(this int color)
         {
             return Color.FromArgb(0xFF, (byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));

@@ -52,7 +52,6 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = false;
 
-#if DEBUG
                 Delegate.UpdateQrCodeMode(QrCodeMode.Loading);
 
                 ProtoService.Send(new GetApplicationConfig(), result =>
@@ -71,9 +70,12 @@ namespace Unigram.ViewModels.SignIn
                                 ProtoService.Send(new RequestQrCodeAuthentication());
                             }
                         }
+                        else
+                        {
+                            BeginOnUIThread(() => Delegate?.UpdateQrCodeMode(QrCodeMode.Disabled));
+                        }
                     }
                 });
-#endif
             }
             else if (authState is AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation)
             {

@@ -120,7 +120,7 @@
                 <HyperlinkButton
                     x:Name="Switch2"
                     Click="Switch2_Click"
-                    Content="[Quick log in using QR code]"
+                    Content="Quick log in using QR code"
                     Grid.Row="7"/>
             </StackPanel>
         </StackPanel>
@@ -162,7 +162,7 @@
                 x:Name="TokenInnerPanel"
                 Margin="0,12,0,0">
                 <TextBlock
-                    Text="[Scan from Mobile Telegram]"
+                    Text="Scan from Mobile Telegram"
                     Style="{StaticResource TitleTextBlockStyle}"/>
 
                 <Grid Margin="0,8,0,0">
@@ -218,20 +218,20 @@
                     </Border>
 
                     <TextBlock
-                        Text="[Open Telegram on your phone]"
+                        Text="Open Telegram on your phone"
                         Style="{StaticResource BodyTextBlockStyle}"
                         VerticalAlignment="Top"
                         Grid.Column="1"/>
 
                     <TextBlock
-                        Text="[Go to Settings > Devices > Scan QR Code]"
+                        Text="Go to Settings > Devices > Scan QR Code"
                         Style="{StaticResource BodyTextBlockStyle}"
                         VerticalAlignment="Top"
                         Grid.Column="1"
                         Grid.Row="1"/>
 
                     <TextBlock
-                        Text="[Scan this image to Log In]"
+                        Text="Scan this image to Log In"
                         Style="{StaticResource BodyTextBlockStyle}"
                         VerticalAlignment="Top"
                         Grid.Column="1"
@@ -240,7 +240,7 @@
 
                 <HyperlinkButton
                     Click="Switch1_Click"
-                    Content="[Or log in using your phone number]"
+                    Content="[Or log in using your phone number"
                     Grid.Row="6"/>
             </StackPanel>
 
