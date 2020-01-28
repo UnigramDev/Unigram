@@ -689,6 +689,8 @@
                 <Border Visibility="{x:Bind SelectedItem.IsPhoto, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#99000000" CornerRadius="18">
                     <controls:GlyphToggleButton UncheckedGlyph="&#xE160;"
                                                 CheckedGlyph="&#xE160;"
+                                                AutomationProperties.Name="{CustomResource SendAsFile}"
+                                                ToolTipService.ToolTip="{CustomResource SendAsFile}"
                                                 IsChecked="{Binding SelectedItem.IsForceFile, Mode=TwoWay}"
                                                 Style="{StaticResource MuteToggleButtonStyle}"/>
                 </Border>
