@@ -204,15 +204,15 @@ namespace Unigram.Services
 
         private async void Handle(UpdateSendLiteServerQuery update)
         {
-            var response = await _protoService.SendAsync(new Telegram.Td.Api.SendTonLiteServerRequest(update.Data));
-            if (response is Telegram.Td.Api.TonLiteServerResponse liteServerResponse)
-            {
-                Send(new OnLiteServerQueryResult(update.Id, liteServerResponse.Response));
-            }
-            else if (response is Telegram.Td.Api.Error error)
-            {
-                Send(new OnLiteServerQueryError(update.Id, new Error(error.Code, error.Message)));
-            }
+            //var response = await _protoService.SendAsync(new Telegram.Td.Api.SendTonLiteServerRequest(update.Data));
+            //if (response is Telegram.Td.Api.TonLiteServerResponse liteServerResponse)
+            //{
+            //    Send(new OnLiteServerQueryResult(update.Id, liteServerResponse.Response));
+            //}
+            //else if (response is Telegram.Td.Api.Error error)
+            //{
+            //    Send(new OnLiteServerQueryError(update.Id, new Error(error.Code, error.Message)));
+            //}
         }
 
 

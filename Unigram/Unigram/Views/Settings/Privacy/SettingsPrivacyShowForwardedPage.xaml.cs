@@ -35,7 +35,7 @@ namespace Unigram.Views.Settings.Privacy
                 MessagePreview.Mockup(Strings.Resources.PrivacyForwardsMessageLine, user.GetFullName(), true, false, DateTime.Now);
             }
 
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
+            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
             {

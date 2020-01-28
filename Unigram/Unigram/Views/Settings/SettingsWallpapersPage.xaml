@@ -28,7 +28,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -44,21 +44,22 @@
                   Padding="8,0,8,8"
                   Grid.Row="1">
             <common:FluidGridView.Triggers>
-                <common:FluidGridViewTrigger RowsOrColumns="3" MaxLength="124"/>
+                <common:FluidGridViewTrigger RowsOrColumns="3" MaxLength="216"/>
             </common:FluidGridView.Triggers>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid MaximumRowsOrColumns="3" Orientation="Horizontal"/>
+                    <ItemsWrapGrid MaximumRowsOrColumns="3" Orientation="Horizontal" MaxWidth="648"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.Header>
-                <StackPanel Margin="-8,0,-8,8">
+                <controls:HeaderedControl
+                    Margin="-8,0,-8,8">
                     <controls:BadgeButton
                         Content="{CustomResource SelectFromGallery}"
                         Command="{x:Bind ViewModel.LocalCommand}"/>
                     <!--<controls:BadgeButton
                         Content="{CustomResource SetColor}"/>-->
-                </StackPanel>
+                </controls:HeaderedControl>
             </GridView.Header>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">

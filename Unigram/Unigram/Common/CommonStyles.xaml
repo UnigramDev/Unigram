@@ -5113,8 +5113,20 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled" />
                                 <VisualState x:Name="Checked" />
-                                <VisualState x:Name="CheckedPointerOver"/>
-                                <VisualState x:Name="CheckedPressed"/>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="CheckedDisabled"/>
                                 <VisualState x:Name="Indeterminate"/>
                                 <VisualState x:Name="IndeterminatePointerOver"/>

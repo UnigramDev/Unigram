@@ -460,7 +460,7 @@ namespace Unigram.ViewModels.Chats
             throw new NotImplementedException();
         }
 
-        public void VotePoll(MessageViewModel message, PollOption option)
+        public void VotePoll(MessageViewModel message, IList<PollOption> options)
         {
             throw new NotImplementedException();
         }
