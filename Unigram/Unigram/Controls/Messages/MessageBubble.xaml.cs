@@ -487,7 +487,7 @@ namespace Unigram.Controls.Messages
             message.Delegate.OpenViaBot(message.ViaBotUserId);
         }
 
-        private async void FwdFrom_Click(MessageViewModel message)
+        private void FwdFrom_Click(MessageViewModel message)
         {
             if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
             {
@@ -500,7 +500,8 @@ namespace Unigram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
             {
-                await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
+                Window.Current.ShowTeachingTip(HeaderLabel, Strings.Resources.HidAccount);
+                //await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -1763,6 +1764,35 @@ namespace Unigram.Controls.Messages
             KnockoutMask.Segments.Add(new LineSegment { Point = new Point(bottomLeft + left, height - bottom) });
             KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(left, height - bottomLeft - bottom), Size = new Size(bottomLeft, bottomLeft), SweepDirection = SweepDirection.Clockwise });
             //KnockoutMask.Segments.Add(new LineSegment { Point = new Point(1, topLeft + 1) });
+        }
+
+        private ScrollViewer _scrollingHost;
+        private FrameworkElement _background;
+
+        public void UpdateKnockout(ScrollViewer scrollingHost, FrameworkElement background)
+        {
+            _scrollingHost = scrollingHost;
+            _background = background;
+        }
+
+        private void OnLayoutUpdated(object sender, object e)
+        {
+            if (_background == null)
+            {
+                return;
+            }
+
+            var transform = this.TransformToVisual(_background);
+            var point = transform.TransformPoint(new Point());
+
+            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(_scrollingHost);
+            var visual = ElementCompositionPreview.GetElementVisual(ContentPanel);
+
+            var offset = Window.Current.Compositor.CreateExpressionAnimation(point.Y + " + scrollViewer.Translation.Y");
+            offset.SetReferenceParameter("scrollViewer", properties);
+
+            visual.StopAnimation("Offset.Y");
+            visual.StartAnimation("Offset.Y", offset);
         }
     }
 }

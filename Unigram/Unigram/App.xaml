@@ -258,6 +258,7 @@
                 <!--<ResourceDictionary Source="ms-appx:///Themes/ThemeGreen.xaml"/>-->
                 <common:Theme/>
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
+                <ResourceDictionary Source="ms-appx:///Themes/TeachingTip.xaml"/>
                 <themes:Messages/>
                 <!--<ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />-->
             </ResourceDictionary.MergedDictionaries>

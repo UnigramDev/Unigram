@@ -1646,7 +1646,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().TryShow();
         }
 
-        private async void Participant_Click(object sender, RoutedEventArgs e)
+        private void Participant_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
 
@@ -1669,7 +1669,8 @@ namespace Unigram.Views
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
+                    Window.Current.ShowTeachingTip(sender as FrameworkElement, Strings.Resources.HidAccount);
+                    //await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else if (message.IsChannelPost)

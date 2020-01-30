@@ -2181,6 +2181,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
+    <Page Include="Themes\TeachingTip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\ThemeGreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
