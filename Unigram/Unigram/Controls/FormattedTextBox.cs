@@ -119,7 +119,7 @@ namespace Unigram.Controls
             CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.Italic }, VirtualKey.I);
             CreateFlyoutItem(formatting.Items, length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.Underline }, VirtualKey.U);
             CreateFlyoutItem(formatting.Items, length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, null, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, null, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Monospace }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());

@@ -51,7 +51,7 @@
     <selectors:AutocompleteTemplateSelector x:Name="AutocompleteTemplate">
         <selectors:AutocompleteTemplateSelector.MentionTemplate>
             <DataTemplate>
-                <Grid>
+                <Grid Padding="12,6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -65,7 +65,7 @@
         </selectors:AutocompleteTemplateSelector.MentionTemplate>
         <selectors:AutocompleteTemplateSelector.CommandTemplate>
             <DataTemplate>
-                <Grid>
+                <Grid Padding="12,6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -77,6 +77,13 @@
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.CommandTemplate>
+        <selectors:AutocompleteTemplateSelector.ItemTemplate>
+            <DataTemplate>
+                <Grid Padding="12,6">
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}" VerticalAlignment="Center"/>
+                </Grid>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.ItemTemplate>
         <selectors:AutocompleteTemplateSelector.StickerTemplate>
             <DataTemplate>
                 <Image Margin="4,8" Width="60" Height="60"/>

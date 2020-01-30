@@ -3001,6 +3001,14 @@ namespace Unigram.Views
 
                 photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
             }
+            else if (args.Item is string hashtag)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+                var title = content.Children[0] as TextBlock;
+
+                title.Text = hashtag;
+            }
             else if (args.Item is Sticker sticker)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as Image;

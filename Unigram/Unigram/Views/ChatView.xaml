@@ -633,7 +633,7 @@
                                 SelectionChanged="List_SelectionChanged"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                Padding="0,0,0,2"
+                                Padding="0,0,0,6"
                                 Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -862,7 +862,9 @@
 
             <Grid SizeChanged="InlinePanel_SizeChanged"
                   VerticalAlignment="Bottom"
-                  Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
+                  Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
+                  Margin="12,0,12,-12"
+                  CornerRadius="8,8,0,0">
                 <views:InlineBotResultsView
                     x:Name="InlinePanel"
                     Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
@@ -880,7 +882,8 @@
                     IsItemClickEnabled="True"
                     ItemClick="Autocomplete_ItemClick"
                     VerticalAlignment="Bottom"
-                    Style="{StaticResource ZoomableListViewStyle}">
+                    Style="{StaticResource ZoomableListViewStyle}"
+                    Padding="0,0,0,12">
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
                             <Setter Property="MinWidth" Value="0"/>
@@ -912,17 +915,21 @@
 
         <!-- Input pane -->
         <!--<Border x:Name="Separator" Visibility="{x:Bind ConvertShadowVisibility(ViewModel.InlineBotResultsVisibility, ViewModel.StickerPack, ViewModel.Autocomplete), Mode=OneWay}" Grid.Row="3"/>-->
-        <Border x:Name="Separator" Grid.Row="3"/>
+        <Border x:Name="Separator" Margin="12,0" Grid.Row="3"/>
 
         <ContentControl x:Name="TextArea"
                         IsTabStop="False"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
+                        Margin="12,0,12,8"
                         Grid.Row="3">
-            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            <Grid x:Name="TextRoot"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   MinHeight="{StaticResource TelegramToolBarHeight}"
-                  SizeChanged="TextArea_SizeChanged">
+                  SizeChanged="TextArea_SizeChanged"
+                  CornerRadius="15">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -1210,6 +1217,8 @@
                                           AllowFocusOnInteraction="False"
                                           Padding="0,2,0,0"/>
                 </Border>
+
+                <!--<chats:ChatTextTools Grid.Row="2"/>-->
             </Grid>
         </ContentControl>
 

@@ -40,9 +40,7 @@ namespace Unigram.Selectors
                 return EmojiTemplate;
             }
 
-            //return ItemTemplate;
-
-            return base.SelectTemplateCore(item, container);
+            return ItemTemplate ?? base.SelectTemplateCore(item, container);
         }
     }
 }
