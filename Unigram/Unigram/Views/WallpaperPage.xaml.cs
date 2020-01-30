@@ -272,7 +272,7 @@ namespace Unigram.Views
             }
             else
             {
-                Blur.Visibility = Visibility.Collapsed;
+                Blur.Visibility = Visibility.Visible;
                 Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
                 Pattern.Visibility = Visibility.Collapsed;
                 Color.Visibility = Visibility.Collapsed;

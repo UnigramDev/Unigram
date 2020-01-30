@@ -81,6 +81,11 @@ namespace Unigram.Controls.Chats
         {
             _motionVisual.Size = e.NewSize.ToVector2();
 
+            if (_blurVisual != null)
+            {
+                _blurVisual.Size = e.NewSize.ToVector2();
+            }
+
             if ((_protoService?.SelectedBackground?.IsMoving() ?? false) && await _parallaxEffect.IsSupportedAsync())
             {
                 _motionVisual.CenterPoint = new Vector3((float)e.NewSize.Width / 2, (float)e.NewSize.Height / 2, 0);
@@ -95,7 +100,7 @@ namespace Unigram.Controls.Chats
 
         public void Handle(UpdateSelectedBackground update)
         {
-            this.BeginOnUIThread(() => Update(_session, update.Background));
+            this.BeginOnUIThread(() => Update(_session, _protoService.SelectedBackground));
         }
 
         public void Update(int session, IProtoService protoService, IEventAggregator aggregator)
@@ -213,11 +218,11 @@ namespace Unigram.Controls.Chats
                 _blurVisual = _compositor.CreateSpriteVisual();
                 _blurVisual.Brush = _blurBrush;
 
-                ElementCompositionPreview.SetElementChildVisual(_colorBackground, _blurVisual);
+                ElementCompositionPreview.SetElementChildVisual(_imageBackground, _blurVisual);
             }
             else
             {
-                ElementCompositionPreview.SetElementChildVisual(_colorBackground, null);
+                ElementCompositionPreview.SetElementChildVisual(_imageBackground, null);
             }
         }
     }
