@@ -566,7 +566,6 @@
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
-    <Compile Include="Services\Updates\UpdateWallpaper.cs" />
     <Compile Include="Services\VibrationService.cs" />
     <Compile Include="Services\VoIPService.cs" />
     <Compile Include="Strings\en\Additional.cs">

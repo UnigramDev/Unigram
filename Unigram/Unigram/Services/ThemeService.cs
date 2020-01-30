@@ -13,6 +13,7 @@ using Unigram.Services.Updates;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Unigram.Services
@@ -35,13 +36,26 @@ namespace Unigram.Services
 
     public class ThemeService : IThemeService
     {
+        private readonly IProtoService _protoService;
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        public ThemeService(ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly UISettings _uiSettings;
+
+        public ThemeService(IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
         {
+            _protoService = protoService;
             _settingsService = settingsService;
             _aggregator = aggregator;
+
+            _uiSettings = new UISettings();
+            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
+        }
+
+        private void OnColorValuesChanged(UISettings sender, object args)
+        {
+            _aggregator.Publish(new UpdateSelectedBackground(true, _protoService.GetSelectedBackground(true)));
+            _aggregator.Publish(new UpdateSelectedBackground(false, _protoService.GetSelectedBackground(false)));
         }
 
         public Dictionary<string, string[]> GetMapping(TelegramTheme flags)
@@ -248,7 +262,8 @@ namespace Unigram.Services
                 });
             }
 
-            _aggregator.Publish(new UpdateWallpaper(0, 0));
+            _aggregator.Publish(new UpdateSelectedBackground(true, _protoService.GetSelectedBackground(true)));
+            _aggregator.Publish(new UpdateSelectedBackground(false, _protoService.GetSelectedBackground(false)));
         }
 
         public async void Refresh()
