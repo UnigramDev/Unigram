@@ -1161,7 +1161,7 @@ namespace Unigram.ViewModels
                     if (maxId == chat.LastReadInboxMessageId && maxId == chat.LastMessage?.Id && alignment != VerticalAlignment.Center)
                     {
                         alignment = VerticalAlignment.Bottom;
-                        pixel = 4;
+                        pixel = 12;
                     }
 
                     if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
@@ -2473,7 +2473,7 @@ namespace Unigram.ViewModels
         #region Join channel
 
         public RelayCommand JoinChannelCommand { get; }
-        private void JoinChannelExecute()
+        private async void JoinChannelExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -2481,7 +2481,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new JoinChat(chat.Id));
+            var response = await ProtoService.SendAsync(new JoinChat(chat.Id));
+            if (response is Error error)
+            {
+
+            }
         }
 
         #endregion

@@ -40,6 +40,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Controls.Views;
 using Unigram.Converters;
+using Unigram.Controls.Chats;
 
 namespace Unigram.Controls
 {
@@ -71,6 +72,38 @@ namespace Unigram.Controls
                 CreateKeyboardAccelerator(VirtualKey.K);
                 CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             }
+        }
+
+        public event TypedEventHandler<FormattedTextBox, EventArgs> ShowFormatting;
+        public event TypedEventHandler<FormattedTextBox, EventArgs> HideFormatting;
+
+        private bool _isFormattingVisible = false;
+        public bool IsFormattingVisible
+        {
+            get => _isFormattingVisible;
+            set
+            {
+                if (_isFormattingVisible != value)
+                {
+                    _isFormattingVisible = value;
+
+                    if (value)
+                    {
+                        ShowFormatting?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        HideFormatting?.Invoke(this, EventArgs.Empty);
+                    }
+                }
+            }
+        }
+
+        private ChatTextFormatting _formatting;
+        public ChatTextFormatting Formatting
+        {
+            get => _formatting;
+            set => _formatting = value;
         }
 
         #region Context menu
@@ -118,12 +151,14 @@ namespace Unigram.Controls
             CreateFlyoutItem(formatting.Items, length && format.Bold == FormatEffect.Off, ContextBold_Click, Strings.Resources.Bold, new FontIcon { Glyph = Icons.Bold }, VirtualKey.B);
             CreateFlyoutItem(formatting.Items, length && format.Italic == FormatEffect.Off, ContextItalic_Click, Strings.Resources.Italic, new FontIcon { Glyph = Icons.Italic }, VirtualKey.I);
             CreateFlyoutItem(formatting.Items, length && format.Underline == UnderlineType.None, ContextUnderline_Click, Strings.Resources.Underline, new FontIcon { Glyph = Icons.Underline }, VirtualKey.U);
-            CreateFlyoutItem(formatting.Items, length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, null, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateFlyoutItem(formatting.Items, length && format.Strikethrough == FormatEffect.Off, ContextStrikethrough_Click, Strings.Resources.Strike, new FontIcon { Glyph = Icons.Strikethrough, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             CreateFlyoutItem(formatting.Items, length && format.Name != "Consolas", ContextMonospace_Click, Strings.Resources.Mono, new FontIcon { Glyph = Icons.Monospace }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(formatting.Items, !mention, ContextLink_Click, clone.Link.Length > 0 ? "Edit link" : Strings.Resources.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
             formatting.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(formatting.Items, length && !IsDefault(format), ContextPlain_Click, Strings.Resources.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.Items.Add(new MenuFlyoutSeparator());
+            CreateFlyoutItem(formatting.Items, true, () => IsFormattingVisible = !_isFormattingVisible, _isFormattingVisible ? "Hide formatting" : "Show formatting", new FontIcon { Glyph = "\uE8D2" });
 
             CreateFlyoutItem(flyout.Items, Document.CanUndo(), ContextUndo_Click, "Undo", new FontIcon { Glyph = Icons.Undo }, VirtualKey.Z);
             CreateFlyoutItem(flyout.Items, Document.CanRedo(), ContextRedo_Click, "Redo", new FontIcon { Glyph = Icons.Redo }, VirtualKey.Y);
@@ -138,69 +173,109 @@ namespace Unigram.Controls
             CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
         }
 
+        public void ToggleBold()
+        {
+            ContextBold_Click();
+        }
+
         private void ContextBold_Click()
         {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
+            //if (Math.Abs(Document.Selection.Length) < 1)
+            //{
+            //    return;
+            //}
 
             Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
-            Document.Selection.CharacterFormat.Bold = FormatEffect.On;
+            ClearStyle(Document.Selection, false);
+            Document.Selection.CharacterFormat.Bold = FormatEffect.Toggle;
             Document.ApplyDisplayUpdates();
+
+            _formatting?.Update(Document.Selection.CharacterFormat);
+        }
+
+        public void ToggleItalic()
+        {
+            ContextItalic_Click();
         }
 
         private void ContextItalic_Click()
         {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
+            //if (Math.Abs(Document.Selection.Length) < 1)
+            //{
+            //    return;
+            //}
 
             Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
-            Document.Selection.CharacterFormat.Italic = FormatEffect.On;
+            ClearStyle(Document.Selection, false);
+            Document.Selection.CharacterFormat.Italic = FormatEffect.Toggle;
             Document.ApplyDisplayUpdates();
+
+            _formatting?.Update(Document.Selection.CharacterFormat);
+        }
+
+        public void ToggleUnderline()
+        {
+            ContextUnderline_Click();
         }
 
         private void ContextUnderline_Click()
         {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
+            //if (Math.Abs(Document.Selection.Length) < 1)
+            //{
+            //    return;
+            //}
 
             Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
-            Document.Selection.CharacterFormat.Underline = UnderlineType.Single;
+            ClearStyle(Document.Selection, false);
+            Document.Selection.CharacterFormat.Underline = Document.Selection.CharacterFormat.Underline != UnderlineType.Single ? UnderlineType.Single : UnderlineType.None;
             Document.ApplyDisplayUpdates();
+
+            _formatting?.Update(Document.Selection.CharacterFormat);
+        }
+
+        public void ToggleStrikethrough()
+        {
+            ContextStrikethrough_Click();
         }
 
         private void ContextStrikethrough_Click()
         {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
+            //if (Math.Abs(Document.Selection.Length) < 1)
+            //{
+            //    return;
+            //}
 
             Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
-            Document.Selection.CharacterFormat.Strikethrough = FormatEffect.On;
+            ClearStyle(Document.Selection, false);
+            Document.Selection.CharacterFormat.Strikethrough = FormatEffect.Toggle;
             Document.ApplyDisplayUpdates();
+
+            _formatting?.Update(Document.Selection.CharacterFormat);
+        }
+
+        public void ToggleMonospace()
+        {
+            ContextMonospace_Click();
         }
 
         private void ContextMonospace_Click()
         {
-            if (Math.Abs(Document.Selection.Length) < 1)
-            {
-                return;
-            }
+            //if (Math.Abs(Document.Selection.Length) < 1)
+            //{
+            //    return;
+            //}
 
             Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
+            ClearStyle(Document.Selection, true);
             Document.Selection.CharacterFormat.Name = "Consolas";
             Document.ApplyDisplayUpdates();
+
+            _formatting?.Update(Document.Selection.CharacterFormat);
+        }
+
+        public void CreateLink()
+        {
+            ContextLink_Click();
         }
 
         private async void ContextLink_Click()
@@ -249,21 +324,28 @@ namespace Unigram.Controls
             }
 
             Document.BatchDisplayUpdates();
-            ClearStyle(Document.Selection);
+            ClearStyle(Document.Selection, true);
             Document.ApplyDisplayUpdates();
         }
 
-        private void ClearStyle(ITextRange range)
+        private void ClearStyle(ITextRange range, bool monospace)
         {
-            var start = Math.Min(range.StartPosition, range.EndPosition);
-            var end = Math.Max(range.StartPosition, range.EndPosition);
+            if (monospace)
+            {
+                var start = Math.Min(range.StartPosition, range.EndPosition);
+                var end = Math.Max(range.StartPosition, range.EndPosition);
 
-            range.SetRange(start, end);
-            range.CharacterFormat = Document.GetDefaultCharacterFormat();
+                range.SetRange(start, end);
+                range.CharacterFormat = Document.GetDefaultCharacterFormat();
 
-            range.GetText(TextGetOptions.NoHidden, out string text);
-            range.SetText(TextSetOptions.Unlink, text);
-            range.SetRange(start, start + text.Length);
+                range.GetText(TextGetOptions.NoHidden, out string text);
+                range.SetText(TextSetOptions.Unlink, text);
+                range.SetRange(start, start + text.Length);
+            }
+            else
+            {
+                range.CharacterFormat.Name = Document.GetDefaultCharacterFormat().Name;
+            }
         }
 
         protected bool IsDefault(ITextCharacterFormat format)
@@ -308,6 +390,26 @@ namespace Unigram.Controls
             }
 
             userId = 0;
+            return false;
+        }
+
+        protected bool TryGetEntityType(string link, out TextEntityType type)
+        {
+            link = link.Trim('"');
+
+            if (Uri.TryCreate(link, UriKind.Absolute, out Uri result))
+            {
+                if (string.Equals(result.Scheme, "tg-user") && int.TryParse(result.Host, out int userId))
+                {
+                    type = new TextEntityTypeMentionName(userId);
+                    return true;
+                }
+
+                type = new TextEntityTypeTextUrl(link);
+                return true;
+            }
+
+            type = null;
             return false;
         }
 
@@ -428,135 +530,84 @@ namespace Unigram.Controls
             OnGettingFormattedText();
 
             Document.BatchDisplayUpdates();
-            var entities = new List<TextEntity>();
-            var adjust = 0;
+            Document.GetText(TextGetOptions.None, out string value);
 
-            void ProcessSpan(ITextRange range)
-            {
-                range.GetText(TextGetOptions.NoHidden, out string value);
+            var builder = new StringBuilder(value);
+            var runs = new List<TextStyleRun>();
 
-                value = value.Format();
+            var last = default(TextStyleRun);
+            var type = default(TextEntityType);
 
-                var sub = Markdown.Parse(ref value);
-                if (sub != null && sub.Count > 0)
-                {
-                    range.SetText(TextSetOptions.None, value);
+            var hidden = 0;
 
-                    foreach (var entity in sub)
-                    {
-                        entity.Offset = range.StartPosition - adjust + entity.Offset;
-                        entities.Add(entity);
-                    }
-                }
-            }
-
-
-            var i = 0;
-            var start = 0;
-            var end = false;
-            for (i = 0; !end; i++)
+            for (int i = 0; i < value.Length; i++)
             {
                 var range = Document.GetRange(i, i + 1);
-                if (range.Expand(TextRangeUnit.Bold) > 0)
-                {
-                    if (start > -1 && start < range.StartPosition)
-                    {
-                        ProcessSpan(Document.GetRange(start, range.StartPosition));
-                    }
+                var flags = default(TextStyle);
 
-                    start = -1;
-                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeBold() });
+                if (string.Equals(range.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
+                {
+                    flags = TextStyle.Monospace;
                 }
-                else if (range.Expand(TextRangeUnit.Italic) > 0)
+                else
                 {
-                    if (start > -1 && start < range.StartPosition)
+                    if (range.CharacterFormat.Hidden == FormatEffect.On)
                     {
-                        ProcessSpan(Document.GetRange(start, range.StartPosition));
+                        builder.Remove(i - hidden, 1);
+
+                        hidden++;
+                        continue;
                     }
 
-                    start = -1;
-                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeItalic() });
-                }
-                else if (range.Expand(TextRangeUnit.Underline) > 0)
-                {
-                    if (start > -1 && start < range.StartPosition)
+                    if (range.CharacterFormat.Bold == FormatEffect.On)
                     {
-                        ProcessSpan(Document.GetRange(start, range.StartPosition));
+                        flags |= TextStyle.Bold;
+                    }
+                    if (range.CharacterFormat.Italic == FormatEffect.On)
+                    {
+                        flags |= TextStyle.Italic;
+                    }
+                    if (range.CharacterFormat.Strikethrough == FormatEffect.On)
+                    {
+                        flags |= TextStyle.Strikethrough;
+                    }
+                    if (range.CharacterFormat.Underline == UnderlineType.Single)
+                    {
+                        flags |= TextStyle.Underline;
                     }
 
-                    start = -1;
-                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeUnderline() });
-                }
-                else if (range.Expand(TextRangeUnit.Strikethrough) > 0)
-                {
-                    if (start > -1 && start < range.StartPosition)
+                    if (range.Link.Length > 0 && TryGetEntityType(range.Link, out TextEntityType linkType))
                     {
-                        ProcessSpan(Document.GetRange(start, range.StartPosition));
-                    }
+                        flags |= TextStyle.Url;
+                        flags &= ~TextStyle.Underline;
 
-                    start = -1;
-                    entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeStrikethrough() });
-                }
-                else if (range.Expand(TextRangeUnit.Link) > 0)
-                {
-                    if (start > -1 && start < range.StartPosition)
-                    {
-                        ProcessSpan(Document.GetRange(start, range.StartPosition));
-                    }
-
-                    start = -1;
-                    range.GetText(TextGetOptions.NoHidden, out string value);
-
-                    if (TryGetUserId(range, out int userId))
-                    {
-                        entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = value.Length, Type = new TextEntityTypeMentionName { UserId = userId } });
-                    }
-                    else
-                    {
-                        entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = value.Length, Type = new TextEntityTypeTextUrl { Url = range.Link.Trim('"') } });
-                    }
-
-                    adjust += Math.Abs(range.Length) - value.Length;
-                }
-                else if (range.Expand(TextRangeUnit.CharacterFormat) > 0)
-                {
-                    if (range.CharacterFormat.Name.Equals("Consolas"))
-                    {
-                        if (start > -1 && start < range.StartPosition)
-                        {
-                            ProcessSpan(Document.GetRange(start, range.StartPosition));
-                        }
-
-                        start = -1;
-                        range.GetText(TextGetOptions.NoHidden, out string value);
-
-                        if (value.Contains('\v') || value.Contains('\r'))
-                        {
-                            entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypePre() });
-                        }
-                        else
-                        {
-                            entities.Add(new TextEntity { Offset = range.StartPosition - adjust, Length = Math.Abs(range.Length), Type = new TextEntityTypeCode() });
-                        }
-                    }
-                    else
-                    {
-                        range.GetText(TextGetOptions.NoHidden, out string value);
-
-                        if (value.Length > 0 && start < 0)
-                        {
-                            start = range.StartPosition;
-                        }
+                        type = linkType;
                     }
                 }
 
-                end = i >= range.EndPosition;
-                i = range.EndPosition;
+                if (last != null && last.Flags == flags)
+                {
+                    last.End++;
+                }
+                else
+                {
+                    if (last != null)
+                    {
+                        runs.Add(last);
+                        last = null;
+                    }
+
+                    if (flags != 0)
+                    {
+                        last = new TextStyleRun { Start = i - hidden, End = i - hidden + 1, Flags = flags, Type = type };
+                        type = null;
+                    }
+                }
             }
 
-            if (start > -1 && start < i)
+            if (last != null)
             {
-                ProcessSpan(Document.GetRange(start, i));
+                runs.Add(last);
             }
 
             Document.GetText(TextGetOptions.NoHidden, out string text);
@@ -567,6 +618,12 @@ namespace Unigram.Controls
             }
 
             Document.ApplyDisplayUpdates();
+
+            var entities = TextStyleRun.GetEntities(text, runs);
+            if (entities.Count < 1)
+            {
+                entities = Markdown.Parse(ref text);
+            }
 
             return new FormattedText(text.Replace('\v', '\n').Replace('\r', '\n'), entities);
         }

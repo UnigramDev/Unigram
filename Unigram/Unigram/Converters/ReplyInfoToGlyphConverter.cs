@@ -46,6 +46,7 @@ namespace Unigram.Converters
         public const string Bold = "\uE8DD";
         public const string Italic = "\uE8DB";
         public const string Underline = "\uE8DC";
+        public const string Strikethrough = "\uE8DE";
         public const string Monospace = "\uE943";
         public const string Link = "\uE71B";
 

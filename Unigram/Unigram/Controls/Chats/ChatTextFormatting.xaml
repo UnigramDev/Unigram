@@ -1,0 +1,84 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.Chats.ChatTextFormatting"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Chats"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <StackPanel Orientation="Horizontal">
+        <controls:GlyphToggleButton
+            x:Name="Bold"
+            Click="Bold_Click"
+            AutomationProperties.Name="{CustomResource Bold}"
+            ToolTipService.ToolTip="{CustomResource Bold}"
+            AllowFocusOnInteraction="False"
+            CheckedGlyph="&#xE8DD;"
+            UncheckedGlyph="&#xE8DD;"
+            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+            IsOneWay="False"
+            FontSize="16"/>
+        <controls:GlyphToggleButton
+            x:Name="Italic"
+            Click="Italic_Click"
+            AutomationProperties.Name="{CustomResource Italic}"
+            ToolTipService.ToolTip="{CustomResource Italic}"
+            AllowFocusOnInteraction="False"
+            CheckedGlyph="&#xE8DB;"
+            UncheckedGlyph="&#xE8DB;"
+            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+            IsOneWay="False"
+            FontSize="16"/>
+        <controls:GlyphToggleButton
+            x:Name="Underline"
+            Click="Underline_Click"
+            AutomationProperties.Name="{CustomResource Underline}"
+            ToolTipService.ToolTip="{CustomResource Underline}"
+            AllowFocusOnInteraction="False"
+            CheckedGlyph="&#xE8DC;"
+            UncheckedGlyph="&#xE8DC;"
+            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+            IsOneWay="False"
+            FontSize="16"/>
+        <controls:GlyphToggleButton
+            x:Name="Strikethrough"
+            Click="Strikethrough_Click"
+            AutomationProperties.Name="{CustomResource Strike}"
+            ToolTipService.ToolTip="{CustomResource Strike}"
+            AllowFocusOnInteraction="False"
+            CheckedGlyph="&#xE8DE;"
+            UncheckedGlyph="&#xE8DE;"
+            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+            FontFamily="{StaticResource TelegramThemeFontFamily}"
+            IsOneWay="False"
+            FontSize="16"/>
+
+        <controls:GlyphToggleButton
+            x:Name="Monospace"
+            Click="Monospace_Click"
+            AutomationProperties.Name="{CustomResource Mono}"
+            ToolTipService.ToolTip="{CustomResource Mono}"
+            AllowFocusOnInteraction="False"
+            CheckedGlyph="&#xE943;"
+            UncheckedGlyph="&#xE943;"
+            CheckedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+            IsOneWay="False"
+            FontSize="16"/>
+
+        <Rectangle
+            Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+            Margin="4,12,4,12"
+            Width="{ThemeResource MenuFlyoutSeparatorThemeHeight}" />
+        
+        <controls:GlyphButton
+            x:Name="Link"
+            Click="Link_Click"
+            AutomationProperties.Name="{CustomResource CreateLink}"
+            ToolTipService.ToolTip="{CustomResource CreateLink}"
+            Glyph="&#xE71B;"/>
+    </StackPanel>
+</UserControl>

@@ -41,6 +41,7 @@ namespace Unigram.Services
         bool IsTrayVisible { get; set; }
         bool IsLaunchMinimized { get; set; }
         bool IsSendByEnterEnabled { get; set; }
+        bool IsTextFormattingVisible { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsLargeEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
@@ -184,8 +185,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (13UL << 32) | (2635UL << 16);
-        public const string CurrentChangelog = "SCHEDULED MESSAGES\r\n• Right click the 'Send' button and select 'Schedule Message' to automatically send something at a specified time.\r\n• Schedule reminders for yourself in the 'Saved Messages' chat.\r\n• Get a notification when any of your scheduled messages are sent.\r\n\r\nSILENT MESSAGES, GROUP ADMIN TITLES AND SLOW MODE\r\n• Right click the Send button to send any message without sound – in case the recipient is sleeping.\r\n• Enable Slow Mode in Group Permissions to control how frequently members can post.\r\n• Set custom titles for group admins – like 'Founder', 'CFO' or 'Spam Fighter'.\r\n\r\nNEW PRIVACY SETTINGS\r\n• Choose who can find you on Telegram when they add your number to their phone contacts.";
+        public const ulong CurrentVersion = (3UL << 48) | (14UL << 32) | (2659UL << 16);
+        public const string CurrentChangelog = "• Create three new kinds of polls.\r\n• See who voted for what in polls with visible votes.\r\n• Vote for several options in polls that allow multiple answers.\r\n• Try to guess the correct answer in quiz-style polls.\r\n• Use bots like @QuizBot to create quizzes with multiple questions.";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -586,6 +587,23 @@ namespace Unigram.Services
             {
                 _isSendByEnterEnabled = value;
                 AddOrUpdateValue("IsSendByEnterEnabled", value);
+            }
+        }
+
+        private bool? _isTextFormattingVisible;
+        public bool IsTextFormattingVisible
+        {
+            get
+            {
+                if (_isTextFormattingVisible == null)
+                    _isTextFormattingVisible = GetValueOrDefault("IsTextFormattingVisible", false);
+
+                return _isTextFormattingVisible ?? false;
+            }
+            set
+            {
+                _isTextFormattingVisible = value;
+                AddOrUpdateValue("IsTextFormattingVisible", value);
             }
         }
 

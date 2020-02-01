@@ -940,7 +940,6 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-
                 <Grid x:Name="ComposerHeader" Visibility="Collapsed" Grid.ColumnSpan="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48"/>
@@ -955,11 +954,19 @@
                     <controls:GlyphButton x:Name="ComposerHeaderCancel" Command="{x:Bind ViewModel.ClearReplyCommand}" Height="{StaticResource TelegramToolBarHeight}" AllowFocusOnInteraction="False" Glyph="&#xE10A;" Grid.Column="2"/>
                 </Grid>
 
-                <Grid Grid.ColumnSpan="2" Grid.Row="1">
+                <Border Grid.ColumnSpan="4" Grid.Row="2">
+                    <Border
+                        x:Name="TextBackground"
+                        Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                        Visibility="Collapsed"/>
+                </Border>
+
+                <Border Grid.ColumnSpan="2" Grid.Row="1">
                     <chats:ChatTextBox
                         x:Name="TextField"
                         FontFamily="{ThemeResource EmojiThemeFontFamily}"
                         Background="Transparent"
+                        Formatting="{x:Bind TextFormatting}"
                         Messages="{x:Bind Messages}"
                         Autocomplete="{x:Bind ListAutocomplete}"
                         AcceptsReturn="False"
@@ -975,8 +982,11 @@
                         MaxHeight="192"
                         TextChanged="TextField_TextChanged"
                         LostFocus="TextField_LostFocus"
-                        Capture="TextField_Tapped"/>
-
+                        Capture="TextField_Tapped"
+                        ShowFormatting="TextField_Formatting"
+                        HideFormatting="TextField_Formatting"/>
+                </Border>
+                <Border x:Name="btnAttach" Grid.Row="1">
                     <controls:GlyphButton x:Name="ButtonAttach"
                                           Click="Attach_Click"
                                           Glyph="&#xE917;"
@@ -1060,7 +1070,7 @@
                             </MenuFlyout>
                         </FlyoutBase.AttachedFlyout>
                     </controls:GlyphButton>
-                </Grid>
+                </Border>
 
                 <Border HorizontalAlignment="Left" Margin="0,0,48,0" Grid.ColumnSpan="4" Grid.Row="1">
                     <StackPanel x:Name="ElapsedPanel" SizeChanged="ElapsedPanel_SizeChanged" Orientation="Horizontal">
@@ -1218,11 +1228,16 @@
                                           Padding="0,2,0,0"/>
                 </Border>
 
-                <!--<chats:ChatTextTools Grid.Row="2"/>-->
+                <Border Grid.Column="1" Grid.Row="2">
+                    <chats:ChatTextFormatting
+                        x:Name="TextFormatting"
+                        TextBox="{x:Bind TextField}"
+                        Visibility="Collapsed"/>
+                </Border>
             </Grid>
         </ContentControl>
 
-        <Grid x:Name="ChatFooter" Grid.Row="3">
+        <Grid x:Name="ChatFooter" Margin="12,0,12,8" CornerRadius="15" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition x:Name="DiscussColumn"/>

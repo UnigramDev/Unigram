@@ -103,6 +103,8 @@ namespace Unigram.Views
             DataContext = getViewModel(this);
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
+            TextField.IsFormattingVisible = ViewModel.Settings.IsTextFormattingVisible;
+
             _getViewModel = getViewModel;
 
             //NavigationCacheMode = NavigationCacheMode.Required;
@@ -3471,6 +3473,7 @@ namespace Unigram.Views
         }
 
         private bool _composerHeaderCollapsed = false;
+        private bool _textFormattingCollapsed = false;
 
         private void ShowHideComposerHeader(bool show)
         {
@@ -3499,7 +3502,33 @@ namespace Unigram.Views
 
             var value = show ? 48 : 0;
 
-            textArea.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
+            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateRoundedRectangleGeometry"))
+            {
+                var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
+                rect.CornerRadius = new Vector2(15);
+                rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
+                rect.Offset = new Vector2(0, value);
+
+                textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
+
+                var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
+                animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
+                animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
+
+                rect.StartAnimation("Offset", animClip3);
+            }
+            else
+            {
+                textArea.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
+
+                var animClip3 = textArea.Compositor.CreateScalarKeyFrameAnimation();
+                animClip3.InsertKeyFrame(0, show ? 48 : 0);
+                animClip3.InsertKeyFrame(1, show ? 0 : 48);
+                animClip3.Duration = TimeSpan.FromMilliseconds(150);
+
+                textArea.Clip.StartAnimation("TopInset", animClip3);
+            }
+
             messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
             composer.Clip = textArea.Compositor.CreateInsetClip(0, 0, 0, value);
 
@@ -3539,7 +3568,7 @@ namespace Unigram.Views
             anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
             anim1.Duration = TimeSpan.FromMilliseconds(150);
 
-            textArea.Clip.StartAnimation("TopInset", animClip);
+            //textArea.Clip.StartAnimation("TopInset", animClip);
             messages.Clip.StartAnimation("TopInset", animClip2);
             composer.Clip.StartAnimation("BottomInset", animClip);
             messages.StartAnimation("Offset", anim1);
@@ -3559,6 +3588,133 @@ namespace Unigram.Views
             else
             {
                 _composerHeaderCollapsed = true;
+            }
+        }
+
+        private void ShowHideTextFormatting(bool show)
+        {
+            //if (ButtonAction.Visibility == Visibility.Visible)
+            //{
+            //    _composerHeaderCollapsed = true;
+            //    ComposerHeader.Visibility = Visibility.Collapsed;
+
+            //    return;
+            //}
+
+            var composer = ElementCompositionPreview.GetElementVisual(ComposerHeader);
+            var messages = ElementCompositionPreview.GetElementVisual(Messages);
+            var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
+            var textField = ElementCompositionPreview.GetElementVisual(TextField);
+            var textFormatting = ElementCompositionPreview.GetElementVisual(TextFormatting);
+            var textBackground = ElementCompositionPreview.GetElementVisual(TextBackground);
+
+            ////textArea.Clip?.StopAnimation("TopInset");
+            ////messages.Clip?.StopAnimation("TopInset");
+            ////composer.Clip?.StopAnimation("BottomInset");
+            ////messages.StopAnimation("Offset");
+            ////composer.StopAnimation("Offset");
+
+            if ((show && TextFormatting.Visibility == Visibility.Visible) || (!show && (TextFormatting.Visibility == Visibility.Collapsed || _textFormattingCollapsed)))
+            {
+                return;
+            }
+
+            var value = show ? 48 : 0;
+
+            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateRoundedRectangleGeometry"))
+            {
+                var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
+                rect.CornerRadius = new Vector2(15);
+                rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
+                rect.Offset = new Vector2(0, value);
+
+                textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
+
+                var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
+                animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
+                animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
+
+                rect.StartAnimation("Offset", animClip3);
+            }
+            else
+            {
+                textArea.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
+
+                var animClip3 = textArea.Compositor.CreateScalarKeyFrameAnimation();
+                animClip3.InsertKeyFrame(0, show ? 48 : 0);
+                animClip3.InsertKeyFrame(1, show ? 0 : 48);
+                animClip3.Duration = TimeSpan.FromMilliseconds(150);
+
+                textArea.Clip.StartAnimation("TopInset", animClip3);
+            }
+
+            messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
+
+            var batch = composer.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                textArea.Clip = null;
+                messages.Clip = null;
+                composer.Offset = new Vector3();
+                messages.Offset = new Vector3();
+                textField.Offset = new Vector3();
+                textFormatting.Offset = new Vector3();
+                textBackground.Offset = new Vector3();
+
+                ContentPanel.Margin = new Thickness();
+
+                if (show)
+                {
+                    _textFormattingCollapsed = false;
+                }
+                else
+                {
+                    TextFormatting.Visibility = Visibility.Collapsed;
+                    TextBackground.Visibility = Visibility.Collapsed;
+
+                    Grid.SetRow(btnAttach, show ? 2 : 1);
+                    Grid.SetRow(ButtonsPanel, show ? 2 : 1);
+                    Grid.SetColumnSpan(TextArea, show ? 4 : 2);
+                }
+            };
+
+            var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
+            animClip2.InsertKeyFrame(0, show ? 0 : 48);
+            animClip2.InsertKeyFrame(1, show ? 48 : 0);
+            animClip2.Duration = TimeSpan.FromMilliseconds(150);
+
+            var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
+            anim1.InsertKeyFrame(0, new Vector3(0, show ? 48 : 0, 0));
+            anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
+            anim1.Duration = TimeSpan.FromMilliseconds(150);
+
+            //textArea.Clip.StartAnimation("TopInset", animClip);
+            messages.Clip.StartAnimation("TopInset", animClip2);
+            messages.StartAnimation("Offset", anim1);
+            composer.StartAnimation("Offset", anim1);
+            textField.StartAnimation("Offset", anim1);
+            textFormatting.StartAnimation("Offset", anim1);
+            textBackground.StartAnimation("Offset", anim1);
+
+            batch.End();
+
+
+
+            ContentPanel.Margin = new Thickness(0, -48, 0, 0);
+
+            if (show)
+            {
+                _textFormattingCollapsed = false;
+                TextFormatting.Visibility = Visibility.Visible;
+                TextBackground.Visibility = Visibility.Visible;
+
+                Grid.SetRow(btnAttach, show ? 2 : 1);
+                Grid.SetRow(ButtonsPanel, show ? 2 : 1);
+                Grid.SetColumnSpan(TextArea, show ? 4 : 2);
+            }
+            else
+            {
+                _textFormattingCollapsed = true;
             }
         }
 
@@ -4072,6 +4228,12 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void TextField_Formatting(FormattedTextBox sender, EventArgs args)
+        {
+            ViewModel.Settings.IsTextFormattingVisible = sender.IsFormattingVisible;
+            ShowHideTextFormatting(sender.IsFormattingVisible);
+        }
     }
 
     public enum StickersPanelMode
