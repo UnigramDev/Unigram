@@ -7,7 +7,6 @@ using Telegram.Td.Api;
 
 namespace Unigram.Common
 {
-
     public class TextStyleRun
     {
         public TextStyle Flags { get; set; }
@@ -47,12 +46,6 @@ namespace Unigram.Common
             }
         }
 
-        private void Replace(TextStyleRun run)
-        {
-            Flags = run.Flags;
-            Type = run.Type;
-        }
-
         public static IList<TextStyleRun> GetRuns(FormattedText formatted)
         {
             return GetRuns(formatted.Text, formatted.Entities);
@@ -63,17 +56,20 @@ namespace Unigram.Common
             var runs = new List<TextStyleRun>();
             var entitiesCopy = new List<TextEntity>(entities);
 
-            //Collections.sort(entitiesCopy, (o1, o2)-> {
-            //    if (o1.offset > o2.offset)
-            //    {
-            //        return 1;
-            //    }
-            //    else if (o1.offset < o2.offset)
-            //    {
-            //        return -1;
-            //    }
-            //    return 0;
-            //});
+            entitiesCopy.Sort((x, y) =>
+            {
+                if (x.Offset > y.Offset)
+                {
+                    return 1;
+                }
+                else if (y.Offset > x.Offset)
+                {
+                    return -1;
+                }
+
+                return 0;
+            });
+
             for (int a = 0, N = entitiesCopy.Count; a < N; a++)
             {
                 var entity = entitiesCopy[a];
@@ -204,7 +200,96 @@ namespace Unigram.Common
                     runs.Add(newRun);
                 }
             }
+
+            runs.Sort((x, y) =>
+            {
+                if (x.Offset > y.Offset)
+                {
+                    return 1;
+                }
+                else if (y.Offset > x.Offset)
+                {
+                    return -1;
+                }
+
+                return 0;
+            });
+
             return runs;
+        }
+
+        public static IList<TextEntity> GetEntities(string text, IList<TextStyleRun> runs)
+        {
+            var results = new List<TextEntity>();
+
+            foreach (var run in runs)
+            {
+                if (run.HasFlag(TextStyle.Monospace))
+                {
+                    var part = text.Substring(run.Offset, run.Length);
+                    if (part.Contains('\v') || part.Contains('\r'))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypePre());
+                    }
+                    else
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeCode());
+                    }
+                }
+                else
+                {
+                    if (run.HasFlag(TextStyle.Bold))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeBold());
+                    }
+                    if (run.HasFlag(TextStyle.Italic))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeItalic());
+                    }
+                    if (run.HasFlag(TextStyle.Strikethrough))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeStrikethrough());
+                    }
+                    if (run.HasFlag(TextStyle.Underline))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeUnderline());
+                    }
+
+                    if (run.Type != null)
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, run.Type);
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        private static void CreateOrMerge(int offset, int length, IList<TextEntity> entities, TextEntityType type)
+        {
+            var last = entities.LastOrDefault(x => x.Length + x.Offset == offset && AreEquals(x.Type, type));
+            if (last != null)
+            {
+                last.Length += length;
+            }
+            else
+            {
+                entities.Add(new TextEntity(offset, length, type));
+            }
+        }
+
+        private static bool AreEquals(TextEntityType x, TextEntityType y)
+        {
+            if (x is TextEntityTypeTextUrl xTextUrl && y is TextEntityTypeTextUrl yTextUrl)
+            {
+                return string.Equals(xTextUrl.Url, yTextUrl.Url, StringComparison.OrdinalIgnoreCase);
+            }
+            else if (x is TextEntityTypeMentionName xMentionName && y is TextEntityTypeMentionName yMentionName)
+            {
+                return int.Equals(xMentionName.UserId, yMentionName.UserId);
+            }
+
+            return x.GetType() == y.GetType();
         }
     }
 
@@ -216,7 +301,7 @@ namespace Unigram.Common
         Monospace = 4,
         Strikethrough = 8,
         Underline = 16,
-        BlockQuote = 32,
+        //BlockQuote = 32,
         Mention = 64,
         Url = 128
     }
