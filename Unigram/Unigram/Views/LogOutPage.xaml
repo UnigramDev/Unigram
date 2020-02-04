@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -19,55 +19,50 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <TextBlock Text="{CustomResource AlternativeOptions}" Margin="12,16,12,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                <controls:HeaderedControl Header="{CustomResource AlternativeOptions}">
+                    <controls:BadgeButton
+                        Badge="{CustomResource AddAnotherAccountInfo}"
+                        Content="{CustomResource AddAnotherAccount}"
+                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                        Glyph="&#xE8FA;"
+                        Click="AddAnotherAccount_Click"/>
 
-                <controls:BadgeButton
-                    Badge="{CustomResource AddAnotherAccountInfo}"
-                    Content="{CustomResource AddAnotherAccount}"
-                    Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                    Glyph="&#xE8FA;"
-                    Click="AddAnotherAccount_Click"/>
+                    <controls:BadgeButton
+                        Badge="{CustomResource SetPasscodeInfo}"
+                        Content="{CustomResource SetPasscode}"
+                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                        Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                        Glyph="&#xE192;"
+                        Click="SetPasscode_Click"/>
+                
+                    <controls:BadgeButton
+                        Badge="{CustomResource ClearCacheInfo}"
+                        Content="{CustomResource ClearCache}"
+                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                        Glyph="&#xE107;"
+                        Click="ClearCache_Click"/>
+                
+                    <controls:BadgeButton
+                        Badge="{CustomResource ChangePhoneNumberInfo}"
+                        Content="{CustomResource ChangePhoneNumber}"
+                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                        Glyph="&#xF61B;"
+                        Click="ChangePhoneNumber_Click"/>
+                
+                    <controls:BadgeButton
+                        Badge="{CustomResource ContactSupportInfo}"
+                        Content="{CustomResource ContactSupport}"
+                        Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                        Glyph="&#xED15;"
+                        Command="{x:Bind ViewModel.AskCommand}"/>
+                </controls:HeaderedControl>
 
-                <controls:BadgeButton
-                    Badge="{CustomResource SetPasscodeInfo}"
-                    Content="{CustomResource SetPasscode}"
-                    Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                    Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                    Glyph="&#xE192;"
-                    Click="SetPasscode_Click"/>
-                
-                <controls:BadgeButton
-                    Badge="{CustomResource ClearCacheInfo}"
-                    Content="{CustomResource ClearCache}"
-                    Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                    Glyph="&#xE107;"
-                    Click="ClearCache_Click"/>
-                
-                <controls:BadgeButton
-                    Badge="{CustomResource ChangePhoneNumberInfo}"
-                    Content="{CustomResource ChangePhoneNumber}"
-                    Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                    Glyph="&#xF61B;"
-                    Click="ChangePhoneNumber_Click"/>
-                
-                <controls:BadgeButton
-                    Badge="{CustomResource ContactSupportInfo}"
-                    Content="{CustomResource ContactSupport}"
-                    Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                    Glyph="&#xED15;"
-                    Command="{x:Bind ViewModel.AskCommand}"/>
-
-                <StackPanel x:Name="DeletePanel" Margin="0,24">
+                <controls:HeaderedControl Footer="{CustomResource LogOutInfo}">
                     <controls:BadgeButton
                         Content="{CustomResource LogOutTitle}"
                         Foreground="Red"
                         Command="{x:Bind ViewModel.LogoutCommand}"/>
-                    <TextBlock
-                        Text="{CustomResource LogOutInfo}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,8,12,0"/>
-                </StackPanel>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>
