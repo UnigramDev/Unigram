@@ -36,7 +36,7 @@ Example:
 ## Feature requests
 Feature requests are welcome, anyway you should firstly read:
 - [Missing features list](https://github.com/UnigramDev/Unigram/wiki/Missing-features)
-- [TDLib missing features list](https://telegra.ph/Features-not-supported-by-TDLib-12-23)
+- [TDLib missing features list](https://telegra.ph/TDLib-missing-features-02-01)
 
 Consider that Unigram follows the official clients guidelines, so **do not** ask for features that aren't in [official clients](https://telegram.org/apps) (for who is wondering, Telegram X is an official client, but doesn't follow the official guidelines, so its stuff won't be considered).
 
