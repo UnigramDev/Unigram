@@ -215,6 +215,7 @@
     <Style TargetType="local:HeaderedControl">
         <!--<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>-->
+        <Setter Property="Radius" Value="8"/>
         <Setter Property="Padding" Value="0,16,0,8"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -267,15 +268,15 @@
                     <Grid x:Name="LayoutRoot" Padding="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup>
-                                <VisualState x:Name="NarrowState"/>
-                                <VisualState x:Name="WideState">
+                                <VisualState x:Name="NarrowState">
                                     <VisualState.Setters>
-                                        <Setter Target="ContentPanel.CornerRadius" Value="8"/>
+                                        <Setter Target="ContentPanel.CornerRadius" Value="0"/>
                                     </VisualState.Setters>
                                 </VisualState>
+                                <VisualState x:Name="WideState"/>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="ContentRoot" MaxWidth="640">
+                        <Grid x:Name="ContentRoot" CornerRadius="{TemplateBinding Radius}" MaxWidth="640">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -3052,15 +3053,15 @@
                         </Grid>
 
                         <TextBlock
-                                x:Name="LockedContentPresenter"
+                            x:Name="LockedContentPresenter"
                             Foreground="White"
-                                FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Text="&#xE919;"
-                                Visibility="Collapsed"/>
+                            FontFamily="{StaticResource TelegramThemeFontFamily}"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Text="&#xE919;"
+                            Visibility="Collapsed"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

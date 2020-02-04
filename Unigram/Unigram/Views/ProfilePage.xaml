@@ -6,6 +6,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
+    xmlns:chats="using:Unigram.Views.Chats"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -18,108 +19,6 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
-
-    <Page.Resources>
-        <selectors:MemberTemplateSelector x:Key="MemberTemplateSelector">
-            <selectors:MemberTemplateSelector.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   VerticalAlignment="Top"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Grid.Column="1"
-                                   Grid.Row="1"
-                                   MaxLines="1"/>
-                    </Grid>
-                </DataTemplate>
-            </selectors:MemberTemplateSelector.ItemTemplate>
-            <selectors:MemberTemplateSelector.AdminTemplate>
-                <DataTemplate>
-                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   VerticalAlignment="Top"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Grid.Column="1"
-                                   Grid.Row="1"
-                                   MaxLines="1"/>
-
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   VerticalAlignment="Center"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Grid.Column="2"
-                                   Grid.RowSpan="2"
-                                   MaxLines="1"/>
-                    </Grid>
-                </DataTemplate>
-            </selectors:MemberTemplateSelector.AdminTemplate>
-            <selectors:MemberTemplateSelector.CreatorTemplate>
-                <DataTemplate>
-                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   VerticalAlignment="Top"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Grid.Column="1"
-                                   Grid.Row="1"
-                                   MaxLines="1"/>
-                        
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   VerticalAlignment="Center"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Grid.Column="2"
-                                   Grid.RowSpan="2"
-                                   MaxLines="1"/>
-                    </Grid>
-                </DataTemplate>
-            </selectors:MemberTemplateSelector.CreatorTemplate>
-        </selectors:MemberTemplateSelector>
-    </Page.Resources>
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
@@ -189,363 +88,280 @@
             </Grid>
         </controls:ContentPageHeader>
 
-        <Grid x:Name="ContentPanel" Grid.Row="1">
+        <Grid x:Name="ContentPanel" SizeChanged="OnSizeChanged" Grid.Row="1">
             <controls:ScrollViewerBackground 
                 Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                 ScrollingHost="{x:Bind ScrollingHost}"
                 VerticalAlignment="Top"
                 Grid.Row="1"/>
-            <controls:TableListView
+            <ScrollViewer
                 x:Name="ScrollingHost"
-                ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
-                ItemTemplateSelector="{StaticResource MemberTemplateSelector}"
-                ItemClick="ListView_ItemClick"
-                IsItemClickEnabled="True"
-                ChoosingItemContainer="OnChoosingItemContainer"
-                ContainerContentChanging="OnContainerContentChanging"
-                SelectionMode="None"
+                VerticalScrollBarVisibility="Auto"
+                VerticalScrollMode="Auto"
                 Grid.Row="1">
-                <ListView.Header>
-                    <StackPanel>
-                        <controls:HeaderedControl>
-                            <Grid x:Name="HeaderPanel">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Border x:Name="HeaderOverlay" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+                <StackPanel x:Name="Test">
+                    <controls:HeaderedControl>
+                        <Grid x:Name="HeaderPanel">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="HeaderOverlay" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
 
-                                <Border Height="64"
-                                        Width="64"
-                                        Margin="12,8"
-                                        Grid.RowSpan="2">
-                                    <controls:ProfilePicture
-                                        x:Name="Photo"
-                                        Click="Photo_Click"
-                                        AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"/>
-                                </Border>
+                            <Border Height="64"
+                                    Width="64"
+                                    Margin="12,8"
+                                    Grid.RowSpan="2">
+                                <controls:ProfilePicture
+                                    x:Name="Photo"
+                                    Click="Photo_Click"
+                                    AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"/>
+                            </Border>
 
-                                <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
-                                    <Grid x:Name="LabelTitle">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
-                                        <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
-                                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
-                                        </Grid>
+                            <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                                <Grid x:Name="LabelTitle">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+                                    <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
+                                        <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
                                     </Grid>
-                                </Border>
-                                <Border VerticalAlignment="Top" Grid.Row="1" Grid.Column="1">
-                                    <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource PageHeaderDisabledBrush}"/>
-                                </Border>
+                                </Grid>
+                            </Border>
+                            <Border VerticalAlignment="Top" Grid.Row="1" Grid.Column="1">
+                                <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource PageHeaderDisabledBrush}"/>
+                            </Border>
 
-                                <Border x:Name="SendMessage" VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
-                                    <Border.Background>
-                                        <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
-                                    </Border.Background>
-                                    <controls:GlyphButton
-                                        Glyph="&#xE8BD;"
-                                        Command="{x:Bind ViewModel.SendMessageCommand}"
-                                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                        AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
-                                        ToolTipService.ToolTip="{CustomResource AccDescrOpenChat}"
-                                        Width="36"
-                                        Height="36"
-                                        Radius="18"
-                                        Padding="0,0,0,-2"
-                                        FontSize="16"/>
-                                </Border>
-                            </Grid>
+                            <Border x:Name="SendMessage" VerticalAlignment="Center" Width="36" Height="36" CornerRadius="18" Margin="8,12,12,12" Grid.Column="2" Grid.RowSpan="2">
+                                <Border.Background>
+                                    <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
+                                </Border.Background>
+                                <controls:GlyphButton
+                                    Glyph="&#xE8BD;"
+                                    Command="{x:Bind ViewModel.SendMessageCommand}"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                    AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
+                                    ToolTipService.ToolTip="{CustomResource AccDescrOpenChat}"
+                                    Width="36"
+                                    Height="36"
+                                    Radius="18"
+                                    Padding="0,0,0,-2"
+                                    FontSize="16"/>
+                            </Border>
+                        </Grid>
 
-                            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
 
-                        <!--</controls:HeaderedControl>
+                    <!--</controls:HeaderedControl>
                         
-                        <controls:HeaderedControl>-->
-                            <Grid x:Name="DescriptionPanel" Visibility="Collapsed">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="48"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE8C8;"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                    </MenuFlyout>
-                                </Grid.ContextFlyout>
-                                <Border Height="44" VerticalAlignment="Top">
-                                    <TextBlock
-                                        FontSize="16"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        Text="&#xE946;"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"/>
-                                </Border>
-
-                                <RichTextBlock x:Name="DescriptionLabel"
-                                                ContextRequested="About_ContextRequested"
-                                                ContextMenuOpening="About_ContextMenuOpening"
-                                                Padding="0,11,12,12"
-                                                Style="{StaticResource BodyRichTextBlockStyle}"
-                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                Grid.Column="1">
-                                    <Paragraph>
-                                        <Span x:Name="DescriptionSpan"/>
-                                    </Paragraph>
-                                </RichTextBlock>
-
-                                <TextBlock x:Name="DescriptionTitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,-14,12,12" Grid.Column="1" Grid.Row="1"/>
-
-                                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2" Grid.ColumnSpan="2"/>
-                            </Grid>
-
-                            <controls:BadgeButton
-                                x:Name="UserPhone"
-                                Visibility="Collapsed"
-                                Content="{CustomResource Phone}"
-                                Command="{x:Bind ViewModel.CallCommand}"
-                                Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                Glyph="&#xE717;">
-                                <Button.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE8C8;"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                    </MenuFlyout>
-                                </Button.ContextFlyout>
-                            </controls:BadgeButton>
-
-                            <controls:BadgeButton
-                                x:Name="Username"
-                                Visibility="Collapsed"
-                                Content="{CustomResource Username}"
-                                Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                Glyph="&#xE168;">
-                                <Button.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE8C8;"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem Text="{CustomResource CopyLink}" Command="{x:Bind ViewModel.CopyUsernameLinkCommand}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE71B;"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                    </MenuFlyout>
-                                </Button.ContextFlyout>
-                            </controls:BadgeButton>
-
-                            <controls:BadgeButton
-                                x:Name="Location"
-                                Visibility="Collapsed"
-                                Content="{CustomResource AttachLocation}"
-                                Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                Glyph="&#xE1C4;">
-                                <Button.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE8C8;"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                    </MenuFlyout>
-                                </Button.ContextFlyout>
-                            </controls:BadgeButton>
-
-                            <Grid x:Name="NotificationsPanel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="48"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
+                    <controls:HeaderedControl>-->
+                        <Grid x:Name="DescriptionPanel" Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="48"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE8C8;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Grid.ContextFlyout>
+                            <Border Height="44" VerticalAlignment="Top">
                                 <TextBlock
-                                    x:Name="NotificationGlyph"
                                     FontSize="16"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     AutomationProperties.AccessibilityView="Raw"
-                                    Text="&#xEA8F;"
+                                    Text="&#xE946;"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                            </Border>
 
-                                <ToggleSwitch x:Name="Notifications"
-                                                Padding="48,11,12,12"
-                                                Header="{CustomResource Notifications}"
-                                                Style="{StaticResource CheckButtonStyle}"
-                                                Toggled="Notifications_Toggled"
-                                                Grid.ColumnSpan="2"/>
-                            </Grid>
-                        </controls:HeaderedControl>
+                            <RichTextBlock x:Name="DescriptionLabel"
+                                            ContextRequested="About_ContextRequested"
+                                            ContextMenuOpening="About_ContextMenuOpening"
+                                            Padding="0,11,12,12"
+                                            Style="{StaticResource BodyRichTextBlockStyle}"
+                                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                            Grid.Column="1">
+                                <Paragraph>
+                                    <Span x:Name="DescriptionSpan"/>
+                                </Paragraph>
+                            </RichTextBlock>
 
-                        <controls:HeaderedControl
-                            x:Name="ChannelMembersPanel"
-                            Header="{CustomResource ChannelMembers}"
-                            Visibility="Collapsed">
-                            <controls:BadgeButton
-                                x:Name="Members"
-                                Content="{CustomResource ChannelSubscribers}"
-                                Command="{x:Bind ViewModel.MembersCommand}"
-                                Style="{StaticResource GlyphBadgeButtonStyle}"
-                                Glyph="&#xE902;"/>
-                            <controls:BadgeButton
-                                x:Name="Admins"
-                                Content="{CustomResource ChannelAdministrators}"
-                                Command="{x:Bind ViewModel.AdminsCommand}"
-                                Style="{StaticResource GlyphBadgeButtonStyle}"
-                                Glyph="&#xE734;"/>
-                            <controls:BadgeButton
-                                x:Name="Banned"
-                                Content="{CustomResource ChannelBlockedUsers}"
-                                Command="{x:Bind ViewModel.BannedCommand}"
-                                Style="{StaticResource GlyphBadgeButtonStyle}"
-                                Glyph="&#xF140;"/>
-                        </controls:HeaderedControl>
+                            <TextBlock x:Name="DescriptionTitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,-14,12,12" Grid.Column="1" Grid.Row="1"/>
 
-                        <controls:HeaderedControl
-                            Header="{CustomResource SharedContent}"
-                            Visibility="{x:Bind ConvertSharedCount(ViewModel.SharedCount[0], ViewModel.SharedCount[1], ViewModel.SharedCount[2], ViewModel.SharedCount[3], ViewModel.SharedCount[4], ViewModel.SharedCount[5]), Mode=OneWay}">
-                            <controls:BadgeButton
-                                Command="{x:Bind ViewModel.MediaCommand}"
-                                Badge="{x:Bind ViewModel.SharedCount[0], Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.SharedCount[0], Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                Content="{CustomResource SharedPhotosAndVideos}"
-                                Glyph="&#xEB9F;"
-                                Style="{StaticResource GlyphBadgeButtonStyle}">
-                                <controls:BadgeButton.CommandParameter>
-                                    <x:Int32>0</x:Int32>
-                                </controls:BadgeButton.CommandParameter>
-                            </controls:BadgeButton>
+                            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2" Grid.ColumnSpan="2"/>
+                        </Grid>
 
-                            <controls:BadgeButton
-                                Command="{x:Bind ViewModel.MediaCommand}"
-                                Badge="{x:Bind ViewModel.SharedCount[1], Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.SharedCount[1], Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                Content="{CustomResource FilesDataUsage}"
-                                Glyph="&#xE160;"
-                                Style="{StaticResource GlyphBadgeButtonStyle}">
-                                <controls:BadgeButton.CommandParameter>
-                                    <x:Int32>1</x:Int32>
-                                </controls:BadgeButton.CommandParameter>
-                            </controls:BadgeButton>
-
-                            <controls:BadgeButton
-                                Command="{x:Bind ViewModel.MediaCommand}"
-                                Badge="{x:Bind ViewModel.SharedCount[2], Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.SharedCount[2], Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                Content="{CustomResource SharedLinks}"
-                                Glyph="&#xE71B;"
-                                Style="{StaticResource GlyphBadgeButtonStyle}">
-                                <controls:BadgeButton.CommandParameter>
-                                    <x:Int32>2</x:Int32>
-                                </controls:BadgeButton.CommandParameter>
-                            </controls:BadgeButton>
-
-                            <controls:BadgeButton
-                                Command="{x:Bind ViewModel.MediaCommand}"
-                                Badge="{x:Bind ViewModel.SharedCount[3], Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.SharedCount[3], Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                Content="{CustomResource SharedAudioFiles}"
-                                Glyph="&#xE7F6;"
-                                Style="{StaticResource GlyphBadgeButtonStyle}">
-                                <controls:BadgeButton.CommandParameter>
-                                    <x:Int32>3</x:Int32>
-                                </controls:BadgeButton.CommandParameter>
-                            </controls:BadgeButton>
-
-                            <controls:BadgeButton
-                                Command="{x:Bind ViewModel.MediaCommand}"
-                                Badge="{x:Bind ViewModel.SharedCount[4], Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.SharedCount[4], Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                Content="{CustomResource AudioAutodownload}"
-                                Glyph="&#xE720;"
-                                Style="{StaticResource GlyphBadgeButtonStyle}">
-                                <controls:BadgeButton.CommandParameter>
-                                    <x:Int32>4</x:Int32>
-                                </controls:BadgeButton.CommandParameter>
-                            </controls:BadgeButton>
-
-                            <controls:BadgeButton
-                                x:Name="UserCommonChats"
-                                Visibility="Collapsed"
-                                Command="{x:Bind ViewModel.CommonChatsCommand}"
-                                Content="{CustomResource GroupsInCommonTitle}"
-                                Glyph="&#xE902;"
-                                Style="{StaticResource GlyphBadgeButtonStyle}"/>
-                        </controls:HeaderedControl>
-
-                        <controls:HeaderedControl
-                            x:Name="MiscPanel">
-                            <!--<controls:BadgeButton Content="{CustomResource SharedMedia}"
-                                 Command="{x:Bind ViewModel.MediaCommand}"
-                                 Badge="{x:Bind ViewModel.SharedMedia, Mode=OneWay}"/>-->
-
-                            <controls:BadgeButton x:Name="SecretLifetime"
-                                                  Visibility="Collapsed"
-                                                  Command="{x:Bind ViewModel.SetTimerCommand}"
-                                                  Content="{CustomResource MessageLifetime}"/>
-
-                            <controls:BadgeButton x:Name="SecretHashKey"
-                                                  Visibility="Collapsed"
-                                                  Content="{CustomResource EncryptionKey}"
-                                                  Command="{x:Bind ViewModel.IdenticonCommand}">
-                                <!--<controls:BadgeButton.Badge>
-                                     <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
-                                     </controls:BadgeButton.Badge>-->
-                            </controls:BadgeButton>
-
-                            <controls:BadgeButton
-                                x:Name="UserStartSecret"
-                                Visibility="Collapsed"
-                                Content="{CustomResource StartEncryptedChat}"
-                                Command="{x:Bind ViewModel.SecretChatCommand}"
-                                Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
-
-                            <controls:BadgeButton
-                                x:Name="GroupLeave"
-                                Visibility="Collapsed"
-                                Content="{CustomResource LeaveChannel}"
-                                Command="{x:Bind ViewModel.DeleteCommand}"
-                                Foreground="Red"/>
-                        </controls:HeaderedControl>
-
-                        <Border
-                            x:Name="MembersPanel"
+                        <controls:BadgeButton
+                            x:Name="UserPhone"
                             Visibility="Collapsed"
-                            MaxWidth="640"
-                            Margin="0,16,0,0">
-                            <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,0,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                        </Border>
-                    </StackPanel>
-                </ListView.Header>
-                <ListView.Footer>
-                    <Border x:Name="Footer" Height="48"/>
-                </ListView.Footer>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="MaxWidth" Value="640"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </controls:TableListView>
+                            Content="{CustomResource Phone}"
+                            Command="{x:Bind ViewModel.CallCommand}"
+                            Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                            Glyph="&#xE717;">
+                            <Button.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyPhoneCommand}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE8C8;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.ContextFlyout>
+                        </controls:BadgeButton>
+
+                        <controls:BadgeButton
+                            x:Name="Username"
+                            Visibility="Collapsed"
+                            Content="{CustomResource Username}"
+                            Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                            Glyph="&#xE168;">
+                            <Button.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE8C8;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem Text="{CustomResource CopyLink}" Command="{x:Bind ViewModel.CopyUsernameLinkCommand}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE71B;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.ContextFlyout>
+                        </controls:BadgeButton>
+
+                        <controls:BadgeButton
+                            x:Name="Location"
+                            Visibility="Collapsed"
+                            Content="{CustomResource AttachLocation}"
+                            Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                            Glyph="&#xE1C4;">
+                            <Button.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyUsernameCommand}">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE8C8;"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.ContextFlyout>
+                        </controls:BadgeButton>
+
+                        <Grid x:Name="NotificationsPanel">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="48"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                x:Name="NotificationGlyph"
+                                FontSize="16"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="&#xEA8F;"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+
+                            <ToggleSwitch x:Name="Notifications"
+                                            Padding="48,11,12,12"
+                                            Header="{CustomResource Notifications}"
+                                            Style="{StaticResource CheckButtonStyle}"
+                                            Toggled="Notifications_Toggled"
+                                            Grid.ColumnSpan="2"/>
+                        </Grid>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        x:Name="ChannelMembersPanel"
+                        Header="{CustomResource ChannelMembers}"
+                        Visibility="Collapsed">
+                        <controls:BadgeButton
+                            x:Name="Members"
+                            Content="{CustomResource ChannelSubscribers}"
+                            Command="{x:Bind ViewModel.MembersCommand}"
+                            Style="{StaticResource GlyphBadgeButtonStyle}"
+                            Glyph="&#xE902;"/>
+                        <controls:BadgeButton
+                            x:Name="Admins"
+                            Content="{CustomResource ChannelAdministrators}"
+                            Command="{x:Bind ViewModel.AdminsCommand}"
+                            Style="{StaticResource GlyphBadgeButtonStyle}"
+                            Glyph="&#xE734;"/>
+                        <controls:BadgeButton
+                            x:Name="Banned"
+                            Content="{CustomResource ChannelBlockedUsers}"
+                            Command="{x:Bind ViewModel.BannedCommand}"
+                            Style="{StaticResource GlyphBadgeButtonStyle}"
+                            Glyph="&#xF140;"/>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        x:Name="MiscPanel">
+                        <!--<controls:BadgeButton Content="{CustomResource SharedMedia}"
+                                Command="{x:Bind ViewModel.MediaCommand}"
+                                Badge="{x:Bind ViewModel.SharedMedia, Mode=OneWay}"/>-->
+
+                        <controls:BadgeButton x:Name="SecretLifetime"
+                                                Visibility="Collapsed"
+                                                Command="{x:Bind ViewModel.SetTimerCommand}"
+                                                Content="{CustomResource MessageLifetime}"/>
+
+                        <controls:BadgeButton x:Name="SecretHashKey"
+                                                Visibility="Collapsed"
+                                                Content="{CustomResource EncryptionKey}"
+                                                Command="{x:Bind ViewModel.IdenticonCommand}">
+                            <!--<controls:BadgeButton.Badge>
+                                    <Image x:Name="SecretIdenticon" Width="24" Height="24"/>
+                                    </controls:BadgeButton.Badge>-->
+                        </controls:BadgeButton>
+
+                        <controls:BadgeButton
+                            x:Name="UserStartSecret"
+                            Visibility="Collapsed"
+                            Content="{CustomResource StartEncryptedChat}"
+                            Command="{x:Bind ViewModel.SecretChatCommand}"
+                            Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"/>
+
+                        <controls:BadgeButton
+                            x:Name="GroupLeave"
+                            Visibility="Collapsed"
+                            Content="{CustomResource LeaveChannel}"
+                            Command="{x:Bind ViewModel.DeleteCommand}"
+                            Foreground="Red"/>
+                    </controls:HeaderedControl>
+
+                    <Border
+                        x:Name="MembersPanel"
+                        Visibility="Collapsed"
+                        MaxWidth="640"
+                        Margin="0,16,0,0">
+                        <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,0,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    </Border>
+
+                    <chats:ChatSharedMediaPage x:Name="SharedMedia" Margin="0,16,0,0" IsEmbedded="True" Height="0">
+                        <UserControl.Resources>
+                            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent"/>
+                        </UserControl.Resources>
+                    </chats:ChatSharedMediaPage>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

@@ -48,8 +48,8 @@ namespace Unigram.Common
                 : owner.Padding.Bottom;
 
             var parentLength = reference.Orientation == Orientation.Horizontal
-                ? owner.ActualWidth
-                : owner.ActualHeight;
+                ? owner.ItemsPanelRoot.ActualWidth
+                : owner.ItemsPanelRoot.ActualHeight;
 
             FluidGridViewTriggerBase trigger = null;
 

@@ -34,7 +34,7 @@ using Windows.ApplicationModel.DataTransfer;
 
 namespace Unigram.ViewModels
 {
-    public class ProfileViewModel : TLViewModelBase,
+    public class ProfileViewModel : TLMultipleViewModelBase,
         IDelegable<IProfileDelegate>,
         IHandle<UpdateUser>,
         IHandle<UpdateUserFullInfo>,
@@ -55,11 +55,15 @@ namespace Unigram.ViewModels
         private readonly IVoIPService _voipService;
         private readonly INotificationsService _notificationsService;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService, INotificationsService notificationsService)
+        private readonly ChatSharedMediaViewModel _chatSharedMediaViewModel;
+
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _voipService = voipService;
             _notificationsService = notificationsService;
+
+            _chatSharedMediaViewModel = chatSharedMediaViewModel;
 
             SendMessageCommand = new RelayCommand(SendMessageExecute);
             MediaCommand = new RelayCommand<int>(MediaExecute);
@@ -92,20 +96,17 @@ namespace Unigram.ViewModels
             AdminsCommand = new RelayCommand(AdminsExecute);
             BannedCommand = new RelayCommand(BannedExecute);
             KickedCommand = new RelayCommand(KickedExecute);
+
+            Children.Add(chatSharedMediaViewModel);
         }
+
+        public ChatSharedMediaViewModel ChatSharedMedia => _chatSharedMediaViewModel;
 
         protected Chat _chat;
         public Chat Chat
         {
             get { return _chat; }
             set { Set(ref _chat, value); }
-        }
-
-        private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
-        public int[] SharedCount
-        {
-            get { return _sharedCount; }
-            set { Set(ref _sharedCount, value); }
         }
 
         protected ObservableCollection<ChatMember> _members;
@@ -197,34 +198,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            UpdateSharedCount(chat);
-
-            return Task.CompletedTask;
-        }
-
-        private void UpdateSharedCount(Chat chat)
-        {
-            var filters = new SearchMessagesFilter[]
-            {
-                new SearchMessagesFilterPhotoAndVideo(),
-                new SearchMessagesFilterDocument(),
-                new SearchMessagesFilterUrl(),
-                new SearchMessagesFilterAudio(),
-                new SearchMessagesFilterVoiceNote()
-            };
-
-            for (int i = 0; i < filters.Length; i++)
-            {
-                int index = i + 0;
-                ProtoService.Send(new SearchChatMessages(chat.Id, string.Empty, 0, 0, 0, 1, filters[index]), result =>
-                {
-                    if (result is Messages messages)
-                    {
-                        SharedCount[index] = messages.TotalCount;
-                        BeginOnUIThread(() => RaisePropertyChanged(() => SharedCount));
-                    }
-                });
-            }
+            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)

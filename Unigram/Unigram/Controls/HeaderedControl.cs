@@ -43,6 +43,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region Radius
+
+        public CornerRadius Radius
+        {
+            get { return (CornerRadius)GetValue(RadiusProperty); }
+            set { SetValue(RadiusProperty, value); }
+        }
+
+        public static readonly DependencyProperty RadiusProperty =
+            DependencyProperty.Register("Radius", typeof(CornerRadius), typeof(HeaderedControl), new PropertyMetadata(default));
+
+        #endregion
+
         protected override Size ArrangeOverride(Size finalSize)
         {
             var size = base.ArrangeOverride(finalSize);
