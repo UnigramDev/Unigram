@@ -23,7 +23,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="{CustomResource GroupsInCommonTitle}"/>
+        <controls:PageHeader x:Name="Header" Text="{CustomResource GroupsInCommonTitle}"/>
 
         <controls:TableListView
             x:Name="List"
@@ -49,14 +49,12 @@
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="MaxWidth" Value="640"/>
                     <Setter Property="Padding" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Header>
-                <Border Height="16"/>
+                <Border x:Name="ListHeader" Height="16"/>
             </ListView.Header>
             <ListView.Footer>
                 <Border Height="32"/>

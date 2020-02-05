@@ -33,6 +33,8 @@ using Unigram.Controls.Gallery;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Hosting;
 using System.Numerics;
+using Unigram.Views.Users;
+using Unigram.Views.Supergroups;
 
 namespace Unigram.Views
 {
@@ -198,11 +200,17 @@ namespace Unigram.Views
                 DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
             }
 
-            ViewModel.SharedCount[5] = fullInfo.GroupInCommonCount;
-            ViewModel.RaisePropertyChanged(() => ViewModel.SharedCount);
-
             //UserCommonChats.Badge = fullInfo.GroupInCommonCount;
             //UserCommonChats.Visibility = fullInfo.GroupInCommonCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            if (fullInfo.GroupInCommonCount > 0)
+            {
+                SharedMedia.Tab = new UserCommonChatsPage { DataContext = ViewModel.UserCommonChats, IsEmbedded = true };
+            }
+            else
+            {
+                SharedMedia.Tab = null;
+            }
 
             Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
             Edit.Visibility = Visibility.Collapsed;
@@ -275,6 +283,8 @@ namespace Unigram.Views
             //Banned.Visibility = Visibility.Collapsed;
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
+
+            SharedMedia.Tab = new SupergroupMembersPage { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -337,6 +347,15 @@ namespace Unigram.Views
             UserStartSecret.Visibility = Visibility.Collapsed;
             SecretLifetime.Visibility = Visibility.Collapsed;
             SecretHashKey.Visibility = Visibility.Collapsed;
+
+            if (group.IsChannel)
+            {
+                SharedMedia.Tab = null;
+            }
+            else
+            {
+                SharedMedia.Tab = new SupergroupMembersPage { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
+            }
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)

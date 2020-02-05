@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -45,6 +46,11 @@ namespace Unigram.Common
             }
 
             return result.TrimEnd('&');
+        }
+
+        public static Vector2 GetActualSize(this FrameworkElement element)
+        {
+            return new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
         }
 
         public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)

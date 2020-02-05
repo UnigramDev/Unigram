@@ -23,14 +23,25 @@ namespace Unigram.ViewModels.Users
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (parameter is int userId)
+            if (parameter is long chatId)
             {
-                //if (Items != null)
-                //{
-                //    Items.HasMoreItems = false;
-                //    Items.Clear();
-                //}
+                var chat = CacheService.GetChat(chatId);
+                if (chat == null)
+                {
+                    return Task.CompletedTask;
+                }
 
+                var user = CacheService.GetUser(chat);
+                if (user == null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                Items = new ItemsCollection(ProtoService, user.Id);
+                RaisePropertyChanged(() => Items);
+            }
+            else if (parameter is int userId)
+            {
                 Items = new ItemsCollection(ProtoService, userId);
                 RaisePropertyChanged(() => Items);
             }

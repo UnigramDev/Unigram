@@ -48,7 +48,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ContentPageHeader>
+        <controls:ContentPageHeader x:Name="Header">
             <Grid>
                 <Grid x:Name="MainHeader">
                     <Grid.ColumnDefinitions>
@@ -90,9 +90,7 @@
             Grid.Row="1">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </controls:TableListView>
@@ -107,23 +105,24 @@
                 SelectionMode="None"
                 Grid.Row="1">
                 <ListView.Header>
-                    <controls:HeaderedControl
-                        x:Name="AddNewPanel"
-                        Visibility="Collapsed"
-                        Margin="0,0,0,16">
-                        <controls:BadgeButton
-                            x:Name="AddNew"
-                            Content="{CustomResource AddSubscriber}"
-                            Command="{x:Bind ViewModel.AddCommand}"
-                            Style="{StaticResource TextGlyphButtonStyle}"
-                            Glyph="&#xE8FA;"/>
-                    </controls:HeaderedControl>
+                    <Border x:Name="ListHeader">
+                        <controls:HeaderedControl
+                            x:Name="AddNewPanel"
+                            Visibility="Collapsed"
+                            Margin="0,0,0,16">
+                            <controls:BadgeButton
+                                x:Name="AddNew"
+                                Content="{CustomResource AddSubscriber}"
+                                Command="{x:Bind ViewModel.AddCommand}"
+                                Style="{StaticResource TextGlyphButtonStyle}"
+                                Glyph="&#xE8FA;"/>
+                        </controls:HeaderedControl>
+                    </Border>
                 </ListView.Header>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="MaxWidth" Value="640"/>
+                        <Setter Property="MinHeight" Value="0"/>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplateSelector>

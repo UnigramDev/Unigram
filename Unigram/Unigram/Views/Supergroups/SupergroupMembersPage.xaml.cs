@@ -15,6 +15,7 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
+using Unigram.Views.Chats;
 using Unigram.Views.Users;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -28,7 +29,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersPage : Page, IBasicAndSupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupMembersPage : Page, IProfileTab, IBasicAndSupergroupDelegate, INavigablePage
     {
         public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
 
@@ -49,6 +50,43 @@ namespace Unigram.Views.Supergroups
                     ViewModel.Find(SearchField.Text);
                 }
             });
+        }
+
+        public int Index { get => 0; }
+        public string Text { get => Strings.Resources.ChannelMembers; }
+
+        public ListViewBase GetSelector()
+        {
+            return ScrollingHost;
+        }
+
+        public ScrollViewer GetScrollViewer()
+        {
+            return ScrollingHost.GetScrollViewer();
+        }
+
+        private bool _isLocked;
+
+        private bool _isEmbedded;
+        public bool IsEmbedded
+        {
+            get => _isEmbedded;
+            set
+            {
+                Update(value, _isLocked);
+            }
+        }
+
+        public void Update(bool embedded, bool locked)
+        {
+            _isEmbedded = embedded;
+            _isLocked = locked;
+
+            Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
+            ListHeader.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
+            ScrollingHost.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 16 : 16, 0, 0);
+            ScrollingHost.ItemsPanelCornerRadius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
+            //ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
         }
 
         public void OnBackRequested(HandledRoutedEventArgs args)

@@ -28,6 +28,7 @@ namespace Unigram.ViewModels.Supergroups
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
         }
 
+        public bool IsEmbedded { get; set; }
 
         protected Chat _chat;
         public Chat Chat
@@ -70,7 +71,7 @@ namespace Unigram.ViewModels.Supergroups
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
-                Members = new ChatMemberGroupedCollection(ProtoService, supergroup.SupergroupId);
+                Members = new ChatMemberGroupedCollection(ProtoService, supergroup.SupergroupId, !IsEmbedded);
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
@@ -81,7 +82,7 @@ namespace Unigram.ViewModels.Supergroups
                     basicDelegate.UpdateBasicGroup(chat, item);
                 }
 
-                Members = new ChatMemberGroupedCollection(ProtoService, chat.Id, string.Empty);
+                Members = new ChatMemberGroupedCollection(ProtoService, chat.Id, string.Empty, !IsEmbedded);
             }
 
             return Task.CompletedTask;

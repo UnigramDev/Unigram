@@ -31,6 +31,8 @@ using Unigram.Views.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Windows.ApplicationModel.DataTransfer;
+using Unigram.ViewModels.Users;
+using Unigram.ViewModels.Supergroups;
 
 namespace Unigram.ViewModels
 {
@@ -56,14 +58,19 @@ namespace Unigram.ViewModels
         private readonly INotificationsService _notificationsService;
 
         private readonly ChatSharedMediaViewModel _chatSharedMediaViewModel;
+        private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
+        private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _voipService = voipService;
             _notificationsService = notificationsService;
 
             _chatSharedMediaViewModel = chatSharedMediaViewModel;
+            _userCommonChatsViewModel = userCommonChatsViewModel;
+            _supergroupMembersVieModel = supergroupMembersViewModel;
+            _supergroupMembersVieModel.IsEmbedded = true;
 
             SendMessageCommand = new RelayCommand(SendMessageExecute);
             MediaCommand = new RelayCommand<int>(MediaExecute);
@@ -98,9 +105,13 @@ namespace Unigram.ViewModels
             KickedCommand = new RelayCommand(KickedExecute);
 
             Children.Add(chatSharedMediaViewModel);
+            Children.Add(userCommonChatsViewModel);
+            Children.Add(supergroupMembersViewModel);
         }
 
         public ChatSharedMediaViewModel ChatSharedMedia => _chatSharedMediaViewModel;
+        public UserCommonChatsViewModel UserCommonChats => _userCommonChatsViewModel;
+        public SupergroupMembersViewModel SupergroupMembers => _supergroupMembersVieModel;
 
         protected Chat _chat;
         public Chat Chat
@@ -1359,22 +1370,26 @@ namespace Unigram.ViewModels
         private SupergroupMembersFilter _filter;
         private int _offset;
 
+        private bool _group;
+
         private bool _hasMore;
 
-        public ChatMemberGroupedCollection(IProtoService protoService, long chatId, string query)
+        public ChatMemberGroupedCollection(IProtoService protoService, long chatId, string query, bool group)
         {
             _protoService = protoService;
             _chatId = chatId;
             _query = query;
             _hasMore = true;
+            _group = group;
         }
 
-        public ChatMemberGroupedCollection(IProtoService protoService, int supergroupId)
+        public ChatMemberGroupedCollection(IProtoService protoService, int supergroupId, bool group)
         {
             _protoService = protoService;
             _supergroupId = supergroupId;
-            _filter = new SupergroupMembersFilterContacts();
+            _filter = _group ? new SupergroupMembersFilterContacts() : null;
             _hasMore = true;
+            _group = group;
         }
 
         public override async Task<IList<object>> LoadDataAsync()
@@ -1391,76 +1406,98 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, _offset, 200));
-                if (response is ChatMembers members)
+                if (_group)
                 {
 
-                    List<ChatMember> items;
-                    if ((_filter == null || _filter is SupergroupMembersFilterRecent) && _offset == 0 && members.TotalCount <= 200)
+                    var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, _offset, 200));
+                    if (response is ChatMembers members)
                     {
-                        items = members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
-                    }
-                    else
-                    {
-                        items = members.Members.ToList();
-                    }
 
-                    for (int i = 0; i < items.Count; i++)
-                    {
-                        var already = this.OfType<ChatMember>().FirstOrDefault(x => x.UserId == items[i].UserId);
-                        if (already != null)
+                        List<ChatMember> items;
+                        if ((_filter == null || _filter is SupergroupMembersFilterRecent) && _offset == 0 && members.TotalCount <= 200)
                         {
-                            items.RemoveAt(i);
-                            i--;
+                            items = members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToList();
+                        }
+                        else
+                        {
+                            items = members.Members.ToList();
+                        }
+
+                        for (int i = 0; i < items.Count; i++)
+                        {
+                            var already = this.OfType<ChatMember>().FirstOrDefault(x => x.UserId == items[i].UserId);
+                            if (already != null)
+                            {
+                                items.RemoveAt(i);
+                                i--;
+                            }
+                        }
+
+                        string title = null;
+                        if (_offset == 0)
+                        {
+                            switch (_filter)
+                            {
+                                case SupergroupMembersFilterContacts contacts:
+                                    title = Strings.Resources.GroupContacts;
+                                    break;
+                                case SupergroupMembersFilterBots bots:
+                                    title = Strings.Resources.ChannelBots;
+                                    break;
+                                case SupergroupMembersFilterRecent recent:
+                                    title = Strings.Resources.ChannelOtherMembers;
+                                    break;
+                            }
+                        }
+
+
+
+                        _offset += members.Members.Count;
+
+                        if (members.Members.Count < 200)
+                        {
+                            switch (_filter)
+                            {
+                                case SupergroupMembersFilterContacts contacts:
+                                    _filter = new SupergroupMembersFilterBots();
+                                    _offset = 0;
+                                    break;
+                                case SupergroupMembersFilterBots bots:
+                                    _filter = new SupergroupMembersFilterRecent();
+                                    _offset = 0;
+                                    break;
+                                case SupergroupMembersFilterRecent recent:
+                                    _hasMore = false;
+                                    break;
+                            }
+                        }
+
+                        if (title != null)
+                        {
+                            return new object[] { title }.Union(items).ToArray();
+                        }
+                        else
+                        {
+                            return items.Cast<object>().ToArray();
                         }
                     }
-
-                    string title = null;
-                    if (_offset == 0)
+                }
+                else
+                {
+                    var response = await _protoService.SendAsync(new GetSupergroupMembers(_supergroupId, _filter, Count, 200));
+                    if (response is ChatMembers members)
                     {
-                        switch (_filter)
+                        if (members.Members.Count < 200)
                         {
-                            case SupergroupMembersFilterContacts contacts:
-                                title = Strings.Resources.GroupContacts;
-                                break;
-                            case SupergroupMembersFilterBots bots:
-                                title = Strings.Resources.ChannelBots;
-                                break;
-                            case SupergroupMembersFilterRecent recent:
-                                title = Strings.Resources.ChannelOtherMembers;
-                                break;
+                            _hasMore = false;
                         }
-                    }
 
-
-
-                    _offset += members.Members.Count;
-
-                    if (members.Members.Count < 200)
-                    {
-                        switch (_filter)
+                        if ((_filter == null || _filter is SupergroupMembersFilterRecent) && Count == 0 && members.TotalCount <= 200)
                         {
-                            case SupergroupMembersFilterContacts contacts:
-                                _filter = new SupergroupMembersFilterBots();
-                                _offset = 0;
-                                break;
-                            case SupergroupMembersFilterBots bots:
-                                _filter = new SupergroupMembersFilterRecent();
-                                _offset = 0;
-                                break;
-                            case SupergroupMembersFilterRecent recent:
-                                _hasMore = false;
-                                break;
+                            return members.Members.OrderBy(x => x, new ChatMemberComparer(_protoService, true)).ToArray();
                         }
-                    }
 
-                    if (title != null)
-                    {
-                        return new object[] { title }.Union(items).ToArray();
-                    }
-                    else
-                    {
-                        return items.Cast<object>().ToArray();
+                        return members.Members.Cast<object>().ToArray();
                     }
                 }
             }

@@ -35,7 +35,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid x:Name="HeaderPanel">
-            <Border x:Name="HeaderAnimator" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+            <Border x:Name="HeaderAnimator" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}" BorderThickness="0,0,0,1"/>
             <!--<Border x:Name="HeaderAnimator" />-->
             <microsoft:NavigationView x:Name="Header" IsBackEnabled="True" OverflowLabelMode="NoLabel" PaneDisplayMode="Top" ItemInvoked="NavigationView_ItemInvoked" IsSettingsVisible="False" IsBackButtonVisible="Visible" BackRequested="Header_BackRequested" Grid.RowSpan="1">
                 <microsoft:NavigationView.MenuItems>
@@ -44,8 +44,6 @@
                     <microsoft:NavigationViewItem x:Name="LinksHeader" Content="{CustomResource SharedLinksTab}"/>
                     <microsoft:NavigationViewItem x:Name="MusicHeader" Content="{CustomResource SharedMusicTab}"/>
                     <microsoft:NavigationViewItem x:Name="VoiceHeader" Content="{CustomResource SharedVoiceTab}"/>
-
-                    <!--<microsoft:NavigationViewItem x:Name="MembersHeader" Content="{CustomResource ChannelMembers}"/>-->
                 </microsoft:NavigationView.MenuItems>
             </microsoft:NavigationView>
         </Grid>

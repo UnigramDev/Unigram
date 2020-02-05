@@ -74,8 +74,49 @@ namespace Unigram.Views.Chats
             }
         }
 
+        private IProfileTab _tab;
+        public IProfileTab Tab
+        {
+            get => _tab;
+            set
+            {
+                if (_tab != null && _tab is Page old)
+                {
+                    old.Loaded -= Tab_Loaded;
+
+                    ScrollingHost.Items.RemoveAt(_tab.Index);
+                    Header.MenuItems.RemoveAt(_tab.Index);
+                }
+
+                _tab = value;
+
+                if (value != null && value is Page page)
+                {
+                    page.Loaded += Tab_Loaded;
+
+                    var pivotItem = new PivotItem
+                    {
+                        Header = value.Text,
+                        Content = page
+                    };
+
+                    ScrollingHost.Items.Insert(value.Index, pivotItem);
+
+                    var header = new Microsoft.UI.Xaml.Controls.NavigationViewItem
+                    {
+                        Content = value.Text,
+                        IsSelected = value.Index == 0
+                    };
+
+                    Header.MenuItems.Insert(value.Index, header);
+                }
+            }
+        }
+
         private void Update(bool embedded, bool locked)
         {
+            _tab?.Update(embedded, locked);
+
             _isEmbedded = embedded;
             _isLocked = locked;
 
@@ -109,7 +150,15 @@ namespace Unigram.Views.Chats
 
         public ScrollViewer GetScrollViewer()
         {
-            switch (ScrollingHost.SelectedIndex)
+            var tab = _tab;
+            var shift = 0;
+
+            if (tab?.Index < 1)
+            {
+                shift -= 1;
+            }
+
+            switch (ScrollingHost.SelectedIndex + shift)
             {
                 case 0:
                     return ScrollingMedia.GetScrollViewer();
@@ -121,6 +170,11 @@ namespace Unigram.Views.Chats
                     return ScrollingMusic.GetScrollViewer();
                 case 4:
                     return ScrollingVoice.GetScrollViewer();
+            }
+
+            if (ScrollingHost.SelectedIndex == tab.Index)
+            {
+                return tab.GetScrollViewer();
             }
 
             return null;
@@ -178,39 +232,16 @@ namespace Unigram.Views.Chats
             {
                 yield return viewer5;
             }
+
+            var viewer6 = _tab?.GetScrollViewer();
+            if (viewer6 != null)
+            {
+                yield return viewer6;
+            }
         }
 
         public event EventHandler<ScrollViewerViewChangedEventArgs> ViewChanged;
         public event EventHandler<EventArgs> ViewRequested;
-
-        private FrameworkElement _placeholder;
-        public FrameworkElement Placeholder
-        {
-            get => _placeholder;
-            set
-            {
-                if (_placeholder != null)
-                {
-                    _placeholder.SizeChanged -= Placeholder_SizeChanged;
-                }
-
-                _placeholder = value;
-
-                if (_placeholder != null)
-                {
-                    _placeholder.SizeChanged += Placeholder_SizeChanged;
-                }
-            }
-        }
-
-        private void Placeholder_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            ScrollingMedia.Padding = new Thickness(0, e.NewSize.Height, 0, 0);
-            ScrollingFiles.Padding = new Thickness(0, e.NewSize.Height, 0, 0);
-            ScrollingLinks.Padding = new Thickness(0, e.NewSize.Height, 0, 0);
-            ScrollingMusic.Padding = new Thickness(0, e.NewSize.Height, 0, 0);
-            ScrollingVoice.Padding = new Thickness(0, e.NewSize.Height, 0, 0);
-        }
 
         private string Camelize(string text)
         {
@@ -230,7 +261,15 @@ namespace Unigram.Views.Chats
         {
             if (e.PropertyName.Equals("SelectedItems"))
             {
-                switch (ScrollingHost.SelectedIndex)
+                var tab = _tab;
+                var shift = 0;
+
+                if (tab?.Index < 1)
+                {
+                    shift -= 1;
+                }
+
+                switch (ScrollingHost.SelectedIndex + shift)
                 {
                     case 0:
                         ScrollingMedia.SelectedItems.AddRange(ViewModel.SelectedItems);
@@ -574,49 +613,67 @@ namespace Unigram.Views.Chats
 
         private void NavigationView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
         {
+            var tab = _tab;
+            var shift = 0;
+
+            if (tab?.Index < 1)
+            {
+                shift += 1;
+            }
+
             if (args.InvokedItemContainer == MediaHeader)
             {
-                ScrollingHost.SelectedIndex = 0;
+                ScrollingHost.SelectedIndex = 0 + shift;
             }
             else if (args.InvokedItemContainer == FilesHeader)
             {
-                ScrollingHost.SelectedIndex = 1;
+                ScrollingHost.SelectedIndex = 1 + shift;
             }
             else if (args.InvokedItemContainer == LinksHeader)
             {
-                ScrollingHost.SelectedIndex = 2;
+                ScrollingHost.SelectedIndex = 2 + shift;
             }
             else if (args.InvokedItemContainer == MusicHeader)
             {
-                ScrollingHost.SelectedIndex = 3;
+                ScrollingHost.SelectedIndex = 3 + shift;
             }
             else if (args.InvokedItemContainer == VoiceHeader)
             {
-                ScrollingHost.SelectedIndex = 4;
+                ScrollingHost.SelectedIndex = 4 + shift;
+            }
+            else if (args.InvokedItemContainer == Header.MenuItems[tab.Index])
+            {
+                ScrollingHost.SelectedIndex = tab.Index;
             }
         }
 
         private void ScrollingHost_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ScrollingHost.SelectedIndex == 0)
+            var tab = _tab;
+            var shift = 0;
+
+            if (tab?.Index < 1)
             {
-                Header.SelectedItem = MediaHeader;
+                shift -= 1;
             }
-            else if (ScrollingHost.SelectedIndex == 1)
+
+            switch (ScrollingHost.SelectedIndex + shift)
             {
-                Header.SelectedItem = FilesHeader;
-            }
-            else if (ScrollingHost.SelectedIndex == 2)
-            {
-                Header.SelectedItem = LinksHeader;
-            }
-            else if (ScrollingHost.SelectedIndex == 3)
-            {
-                Header.SelectedItem = MusicHeader;
-            }
-            else if (ScrollingHost.SelectedIndex == 4)
-            {
-                Header.SelectedItem = VoiceHeader;
+                case 0:
+                    Header.SelectedItem = MediaHeader;
+                    break;
+                case 1:
+                    Header.SelectedItem = FilesHeader;
+                    break;
+                case 2:
+                    Header.SelectedItem = LinksHeader;
+                    break;
+                case 3:
+                    Header.SelectedItem = MusicHeader;
+                    break;
+                case 4:
+                    Header.SelectedItem = VoiceHeader;
+                    break;
             }
         }
 
@@ -637,26 +694,42 @@ namespace Unigram.Views.Chats
 
             if (selector == ScrollingMedia)
             {
-                ScrollingMedia.ItemsPanelRoot.SizeChanged += ScrollingMedia_SizeChanged;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingMedia_SizeChanged;
             }
             else if (selector == ScrollingFiles)
             {
-                ScrollingFiles.ItemsPanelRoot.SizeChanged += ScrollingFiles_SizeChanged;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingFiles_SizeChanged;
             }
             else if (selector == ScrollingLinks)
             {
-                ScrollingLinks.ItemsPanelRoot.SizeChanged += ScrollingLinks_SizeChanged;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingLinks_SizeChanged;
             }
             else if (selector == ScrollingMusic)
             {
-                ScrollingMusic.ItemsPanelRoot.SizeChanged += ScrollingMusic_SizeChanged;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingMusic_SizeChanged;
             }
             else if (selector == ScrollingVoice)
             {
-                ScrollingVoice.ItemsPanelRoot.SizeChanged += ScrollingVoice_SizeChanged;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingVoice_SizeChanged;
             }
 
-            //scrollViewer.Margin = new Thickness(0, -12, 0, 0);
+            var scrollViewer = selector.GetScrollViewer();
+            scrollViewer.ChangeView(null, 12, null, true);
+            scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
+        }
+
+        private void Tab_Loaded(object sender, RoutedEventArgs e)
+        {
+            var tab = sender as IProfileTab;
+            tab.Update(_isEmbedded, _isLocked);
+
+            var selector = tab.GetSelector();
+            selector.ItemsPanelRoot.MinHeight = ScrollingHost.ActualHeight + 12;
+
+            selector.ItemsPanelRoot.SizeChanged += Tab_SizeChanged;
+
             var scrollViewer = selector.GetScrollViewer();
             scrollViewer.ChangeView(null, 12, null, true);
             scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
@@ -707,6 +780,15 @@ namespace Unigram.Views.Chats
             }
         }
 
+        private void Tab_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_tab.GetScrollViewer().VerticalOffset < 12)
+            {
+                _tab.GetSelector().ItemsPanelRoot.SizeChanged -= Tab_SizeChanged;
+                _tab.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+        }
+
         private void ScrollingMedia_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ScrollingMedia.GetScrollViewer().VerticalOffset < 12)
@@ -751,5 +833,16 @@ namespace Unigram.Views.Chats
                 ScrollingVoice.GetScrollViewer().ChangeView(null, 12, null, true);
             }
         }
+    }
+
+    public interface IProfileTab
+    {
+        int Index { get; }
+        string Text { get; }
+
+        ListViewBase GetSelector();
+        ScrollViewer GetScrollViewer();
+
+        void Update(bool embedded, bool locked);
     }
 }
