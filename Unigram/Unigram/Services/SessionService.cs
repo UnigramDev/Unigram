@@ -26,6 +26,8 @@ namespace Unigram.Services
 
         IProtoService ProtoService { get; }
         IEventAggregator Aggregator { get; }
+
+        Task<BaseObject> SetAuthenticationPhoneNumberAsync(SetAuthenticationPhoneNumber function);
     }
 
     public class SessionService : TLViewModelBase, ISessionService, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateUnreadChatCount>, IHandle<UpdateAuthorizationState>, IHandle<UpdateConnectionState>
@@ -134,17 +136,61 @@ namespace Unigram.Services
         #region Lifecycle
 
         private bool _loggingOut;
+        private SetAuthenticationPhoneNumber _continueOnLogOut;
+        private TaskCompletionSource<BaseObject> _continueResult;
+
+        public Task<BaseObject> SetAuthenticationPhoneNumberAsync(SetAuthenticationPhoneNumber function)
+        {
+            _loggingOut = false;
+            _continueOnLogOut = function;
+            _continueResult = new TaskCompletionSource<BaseObject>();
+
+            ProtoService.Send(new LogOut());
+
+            return _continueResult.Task;
+        }
+
+        private async void ContinueOnLogOut()
+        {
+            var function = _continueOnLogOut;
+            if (function == null)
+            {
+                return;
+            }
+
+            var source = _continueResult;
+            if (source == null)
+            {
+                return;
+            }
+
+            _continueOnLogOut = null;
+
+            var response = await ProtoService.SendAsync(function);
+            source.SetResult(response);
+        }
 
         public void Handle(UpdateAuthorizationState update)
         {
-            if (update.AuthorizationState is AuthorizationStateLoggingOut)
+            if (update.AuthorizationState is AuthorizationStateLoggingOut && _continueOnLogOut == null)
             {
                 _loggingOut = true;
             }
-            else if (update.AuthorizationState is AuthorizationStateClosed && _loggingOut)
+            else if (update.AuthorizationState is AuthorizationStateClosed)
             {
-                _loggingOut = false;
-                _lifetimeService.Destroy(this);
+                if (_loggingOut)
+                {
+                    _loggingOut = false;
+                    _lifetimeService.Destroy(this);
+                }
+                else if (_continueOnLogOut != null)
+                {
+                    ProtoService.TryInitialize();
+                }
+            }
+            else if (update.AuthorizationState is AuthorizationStateWaitPhoneNumber && _continueOnLogOut != null)
+            {
+                ContinueOnLogOut();
             }
             else if ((update.AuthorizationState is AuthorizationStateWaitPhoneNumber || update.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation) && !_isActive && _lifetimeService.Items.Count > 1)
             {

@@ -44,6 +44,7 @@ namespace Unigram.Services
         Background SelectedBackground { get; }
 
         AuthorizationState GetAuthorizationState();
+        AuthorizationState AuthorizationState { get; }
         ConnectionState GetConnectionState();
 
         string GetTitle(Chat chat, bool tiny = false);
@@ -166,7 +167,7 @@ namespace Unigram.Services
 
         public bool TryInitialize()
         {
-            if (_authorizationState == null)
+            if (_authorizationState == null || _authorizationState is AuthorizationStateClosed)
             {
                 Initialize();
                 return true;
@@ -551,6 +552,8 @@ namespace Unigram.Services
         {
             return _authorizationState;
         }
+
+        public AuthorizationState AuthorizationState => _authorizationState;
 
         public ConnectionState GetConnectionState()
         {

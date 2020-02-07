@@ -22,17 +22,20 @@ namespace Unigram.ViewModels.SignIn
 {
     public class SignInViewModel : TLViewModelBase, IDelegable<ISignInDelegate>
     {
+        private readonly ISessionService _sessionService;
         private readonly ILifetimeService _lifetimeService;
         private readonly INotificationsService _notificationsService;
 
         public ISignInDelegate Delegate { get; set; }
 
-        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService, INotificationsService notificationsService)
+        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService, ILifetimeService lifecycleService, INotificationsService notificationsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _sessionService = sessionService;
             _lifetimeService = lifecycleService;
             _notificationsService = notificationsService;
 
+            SwitchCommand = new RelayCommand(SwitchExecute);
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ProxyCommand = new RelayCommand(ProxyExecute);
         }
@@ -48,7 +51,7 @@ namespace Unigram.ViewModels.SignIn
             });
 
             var authState = ProtoService.GetAuthorizationState();
-            if (authState is AuthorizationStateWaitPhoneNumber)
+            if (authState is AuthorizationStateWaitPhoneNumber && mode == NavigationMode.New)
             {
                 IsLoading = false;
 
@@ -65,7 +68,7 @@ namespace Unigram.ViewModels.SignIn
                         {
                             BeginOnUIThread(() => Delegate?.UpdateQrCodeMode(mode));
 
-                            if (mode != QrCodeMode.Disabled)
+                            if (mode == QrCodeMode.Primary)
                             {
                                 ProtoService.Send(new RequestQrCodeAuthentication());
                             }
@@ -183,6 +186,15 @@ namespace Unigram.ViewModels.SignIn
 
         public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
+        public RelayCommand SwitchCommand { get; }
+        private void SwitchExecute()
+        {
+            if (ProtoService.AuthorizationState is AuthorizationStateWaitPhoneNumber)
+            {
+                ProtoService.Send(new RequestQrCodeAuthentication());
+            }
+        }
+
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
@@ -225,7 +237,19 @@ namespace Unigram.ViewModels.SignIn
 
             await _notificationsService.CloseAsync();
 
-            var response = await ProtoService.SendAsync(new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false)));
+            var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false));
+            var request = default(Task<BaseObject>);
+
+            if (ProtoService.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation)
+            {
+                request = _sessionService.SetAuthenticationPhoneNumberAsync(function);
+            }
+            else
+            {
+                request = ProtoService.SendAsync(function);
+            }
+
+            var response = await request;
             if (response is Error error)
             {
                 IsLoading = false;

@@ -120,6 +120,7 @@
                 <HyperlinkButton
                     x:Name="Switch2"
                     Click="Switch2_Click"
+                    Command="{x:Bind ViewModel.SwitchCommand}"
                     Content="Quick log in using QR code"
                     Grid.Row="7"/>
             </StackPanel>
@@ -240,7 +241,7 @@
 
                 <HyperlinkButton
                     Click="Switch1_Click"
-                    Content="[Or log in using your phone number"
+                    Content="Or log in using your phone number"
                     Grid.Row="6"/>
             </StackPanel>
 
