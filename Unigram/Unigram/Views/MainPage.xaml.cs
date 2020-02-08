@@ -158,6 +158,11 @@ namespace Unigram.Views
             //         StatusLabel.Text = "None";
             //     }
             // };
+
+            var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
+
+            ArchivedChatsPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
         }
 
         ~MainPage()
@@ -2220,14 +2225,77 @@ namespace Unigram.Views
 
             if (((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats)
             {
-                flyout.CreateFlyoutItem(viewModel.ToggleArchiveCommand, Strings.Resources.AccDescrExpandPanel, new FontIcon { Glyph = "\uF164" });
+                flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrExpandPanel, new FontIcon { Glyph = "\uF164" });
             }
             else
             {
-                flyout.CreateFlyoutItem(viewModel.ToggleArchiveCommand, Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = "\uF166" });
+                flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = "\uF166" });
             }
 
             args.ShowAt(flyout, element);
+        }
+
+        private async void ToggleArchive()
+        {
+            ViewModel.ToggleArchiveCommand.Execute();
+
+            ArchivedChatsPanel.Visibility = Visibility.Visible;
+            ArchivedChatsCompactPanel.Visibility = Visibility.Visible;
+
+            await ArchivedChatsPanel.UpdateLayoutAsync();
+
+            var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
+
+            var chats = ElementCompositionPreview.GetElementVisual(ChatsList);
+            var panel = ElementCompositionPreview.GetElementVisual(ArchivedChatsPanel);
+            var compact = ElementCompositionPreview.GetElementVisual(ArchivedChatsCompactPanel);
+
+            var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                chats.Offset = new Vector3();
+                panel.Offset = new Vector3();
+                compact.Offset = new Vector3();
+
+                ArchivedChatsPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
+                ChatsList.Margin = new Thickness();
+            };
+
+            var panelY = (float)ArchivedChatsPanel.ActualHeight;
+            var compactY = (float)ArchivedChatsCompactPanel.ActualHeight;
+
+            ChatsList.Margin = new Thickness(0, 0, 0, -(panelY - compactY));
+
+            float y0, y1;
+
+            if (show)
+            {
+                y0 = -(panelY - compactY);
+                y1 = 0;
+            }
+            else
+            {
+                y0 = 0;
+                y1 = -(panelY - compactY);
+            }
+
+            var offset0 = chats.Compositor.CreateVector3KeyFrameAnimation();
+            offset0.InsertKeyFrame(0, new Vector3(0, y0, 0));
+            offset0.InsertKeyFrame(1, new Vector3(0, y1, 0));
+            chats.StartAnimation("Offset", offset0);
+
+            var offset1 = chats.Compositor.CreateVector3KeyFrameAnimation();
+            offset1.InsertKeyFrame(0, new Vector3(0, show ? 0 : compactY, 0));
+            offset1.InsertKeyFrame(1, new Vector3(0, show ? compactY : 0, 0));
+            compact.StartAnimation("Offset", offset1);
+
+            var offset2 = chats.Compositor.CreateVector3KeyFrameAnimation();
+            offset2.InsertKeyFrame(0, new Vector3(0, show ? -compactY : 0, 0));
+            offset2.InsertKeyFrame(1, new Vector3(0, show ? 0 : -compactY, 0));
+            panel.StartAnimation("Offset", offset2);
+
+            batch.End();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

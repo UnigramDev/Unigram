@@ -669,7 +669,7 @@
 
                                                 </Grid>
                                             </HyperlinkButton>
-                                            <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                            <!--<Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                                                 <Border Visibility="{x:Bind ViewModel.CollapseArchivedChats, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
                                                     <cells:ChatCell
                                                         x:Name="ArchivedChats"
@@ -687,6 +687,28 @@
                                                         ContextRequested="ArchivedChats_ContextRequested"
                                                         Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
                                                         Padding="12,6"/>
+                                                </Border>
+                                            </Grid>-->
+                                            <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                                <Border x:Name="ArchivedChatsPanel">
+                                                    <cells:ChatCell
+                                                        x:Name="ArchivedChats"
+                                                        Click="ArchivedChats_Click"
+                                                        ContextRequested="ArchivedChats_ContextRequested"
+                                                        Visibility="Collapsed"
+                                                        Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                                                        SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                        Accent="{ThemeResource SystemAccentColor}" />
+                                                </Border>
+                                                <Border VerticalAlignment="Bottom">
+                                                    <Border x:Name="ArchivedChatsCompactPanel">
+                                                        <cells:ChatCell
+                                                            Content="{CustomResource ArchivedChats}"
+                                                            Click="ArchivedChats_Click"
+                                                            ContextRequested="ArchivedChats_ContextRequested"
+                                                            Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
+                                                            Padding="12,6"/>
+                                                    </Border>
                                                 </Border>
                                             </Grid>
                                         </StackPanel>
