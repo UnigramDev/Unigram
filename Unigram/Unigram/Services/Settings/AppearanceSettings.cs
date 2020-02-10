@@ -482,6 +482,25 @@ namespace Unigram.Services.Settings
                 ? ApplicationTheme.Dark
                 : ApplicationTheme.Light;
         }
+
+
+
+        private static int? _bubbleRadius;
+        public int BubbleRadius
+        {
+            get
+            {
+                if (_bubbleRadius == null)
+                    _bubbleRadius = GetValueOrDefault("BubbleRadius", 15);
+
+                return _bubbleRadius ?? 15;
+            }
+            set
+            {
+                _bubbleRadius = value;
+                AddOrUpdateValue("BubbleRadius", value);
+            }
+        }
     }
 
     public enum NightMode

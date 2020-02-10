@@ -172,6 +172,21 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl
+                    Header="{CustomResource BubbleRadius}">
+                    <Slider
+                        Value="{x:Bind ViewModel.BubbleRadius, Mode=TwoWay}"
+                        AutomationProperties.Name="{CustomResource BubbleRadius}"
+                        Minimum="0"
+                        Maximum="15"
+                        SmallChange="1"
+                        LargeChange="1"
+                        TickFrequency="1"
+                        TickPlacement="Outside"
+                        IsThumbToolTipEnabled="False"
+                        Margin="12,6,12,6"/>
+                </controls:HeaderedControl>
+                
+                <controls:HeaderedControl
                     Header="{CustomResource ChatList}">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                   HorizontalScrollMode="Auto"

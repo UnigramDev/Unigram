@@ -108,6 +108,11 @@ namespace Unigram.Views.Settings
                 Message1.UpdateMockup();
                 Message2.UpdateMockup();
             }
+            else if (e.PropertyName.Equals("BubbleRadius"))
+            {
+                Message1.UpdateMockup();
+                Message2.UpdateMockup();
+            }
         }
 
         private async void Switch_Click(object sender, RoutedEventArgs e)

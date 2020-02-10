@@ -166,10 +166,17 @@ namespace Unigram.Controls.Messages
 
         public void UpdateAttach(MessageViewModel message, bool wide = false)
         {
-            var topLeft = 15d;
-            var topRight = 15d;
-            var bottomRight = 15d;
-            var bottomLeft = 15d;
+            //var topLeft = 15d;
+            //var topRight = 15d;
+            //var bottomRight = 15d;
+            //var bottomLeft = 15d;
+            var radius = SettingsService.Current.Appearance.BubbleRadius;
+            var small = radius < 4 ? radius : 4;
+
+            var topLeft = radius;
+            var topRight = radius;
+            var bottomRight = radius;
+            var bottomLeft = radius;
 
             if (message.IsOutgoing && !wide)
             {
@@ -178,16 +185,16 @@ namespace Unigram.Controls.Messages
                 }
                 else if (message.IsFirst)
                 {
-                    bottomRight = 4;
+                    bottomRight = small;
                 }
                 else if (message.IsLast)
                 {
-                    topRight = 4;
+                    topRight = small;
                 }
                 else
                 {
-                    topRight = 4;
-                    bottomRight = 4;
+                    topRight = small;
+                    bottomRight = small;
                 }
             }
             else
@@ -197,16 +204,16 @@ namespace Unigram.Controls.Messages
                 }
                 else if (message.IsFirst)
                 {
-                    bottomLeft = 4;
+                    bottomLeft = small;
                 }
                 else if (message.IsLast)
                 {
-                    topLeft = 4;
+                    topLeft = small;
                 }
                 else
                 {
-                    topLeft = 4;
-                    bottomLeft = 4;
+                    topLeft = small;
+                    bottomLeft = small;
                 }
             }
 
@@ -219,10 +226,10 @@ namespace Unigram.Controls.Messages
                 }
                 else
                 {
-                    ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, 4, 4);
+                    ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, small, small);
                 }
 
-                Markup.CornerRadius = new CornerRadius(4, 4, bottomRight, bottomLeft);
+                Markup.CornerRadius = new CornerRadius(small, small, bottomRight, bottomLeft);
             }
             else if (content is MessageSticker || content is MessageVideoNote || _knockout)
             {
@@ -1476,6 +1483,7 @@ namespace Unigram.Controls.Messages
         public void UpdateMockup()
         {
             Span.FontSize = (double)App.Current.Resources["MessageFontSize"];
+            ContentPanel.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
         }
 
         private void UpdateMockup(bool outgoing, bool first, bool last)

@@ -110,6 +110,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public int BubbleRadius
+        {
+            get
+            {
+                return Settings.Appearance.BubbleRadius;
+            }
+            set
+            {
+                Settings.Appearance.BubbleRadius = value;
+                RaisePropertyChanged();
+            }
+        }
+
         //public bool IsSystemTheme
         //{
         //    get

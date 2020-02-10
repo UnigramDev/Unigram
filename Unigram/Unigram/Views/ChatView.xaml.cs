@@ -527,6 +527,7 @@ namespace Unigram.Views
 
             //Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
 
+            TextRoot.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
             TextField.Focus(FocusState.Programmatic);
         }
 
@@ -3505,7 +3506,7 @@ namespace Unigram.Views
             if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateRoundedRectangleGeometry"))
             {
                 var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-                rect.CornerRadius = new Vector2(15);
+                rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
                 rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
                 rect.Offset = new Vector2(0, value);
 
@@ -3624,7 +3625,7 @@ namespace Unigram.Views
             if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateRoundedRectangleGeometry"))
             {
                 var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-                rect.CornerRadius = new Vector2(15);
+                rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
                 rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
                 rect.Offset = new Vector2(0, value);
 
