@@ -71,6 +71,14 @@ namespace Unigram.Collections
                     {
                         return !_protoService.CanPostMessages(chat);
                     }
+                    else if (_type == SearchChatsType.PrivateAndGroups)
+                    {
+                        return !(chat.Type is ChatTypePrivate || chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel);
+                    }
+                    else if (_type == SearchChatsType.Private)
+                    {
+                        return !(chat.Type is ChatTypePrivate);
+                    }
 
                     return false;
                 }
@@ -210,6 +218,8 @@ namespace Unigram.Collections
     {
         All,
         Post,
-        BasicAndSupergroups,
+        Private,
+        PrivateAndGroups,
+        BasicAndSupergroups
     }
 }
