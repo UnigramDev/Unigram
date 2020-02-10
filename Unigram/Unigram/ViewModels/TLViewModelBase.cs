@@ -92,6 +92,7 @@ namespace Unigram.ViewModels
         }
     }
 
+#if INCLUDE_WALLET
     public class TonViewModelBase : TLViewModelBase
     {
         private readonly ITonService _tonService;
@@ -104,4 +105,5 @@ namespace Unigram.ViewModels
 
         public ITonService TonService => _tonService;
     }
+#endif
 }

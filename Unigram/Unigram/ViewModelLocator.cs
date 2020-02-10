@@ -21,7 +21,9 @@ using Unigram.ViewModels.Settings.Privacy;
 using Unigram.ViewModels.SignIn;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
+#if INCLUDE_WALLET
 using Unigram.ViewModels.Wallet;
+#endif
 using Unigram.Views;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
@@ -97,10 +99,12 @@ namespace Unigram
                     .WithParameter("online", session == SettingsService.Current.ActiveSession)
                     .As<IProtoService, ICacheService>()
                     .SingleInstance();
+#if INCLUDE_WALLET
                 builder.RegisterType<TonService>()
                     .WithParameter("session", session)
                     .As<ITonService>()
                     .SingleInstance();
+#endif
                 builder.RegisterType<EncryptionService>()
                     .WithParameter("session", session)
                     .As<IEncryptionService>()
@@ -276,6 +280,7 @@ namespace Unigram
                 builder.RegisterType<InviteViewModel>();
                 builder.RegisterType<ChatsNearbyViewModel>();
 
+#if INCLUDE_WALLET
                 builder.RegisterType<WalletViewModel>();
                 builder.RegisterType<WalletSettingsViewModel>();
                 builder.RegisterType<WalletCreateViewModel>();
@@ -288,6 +293,7 @@ namespace Unigram
                 builder.RegisterType<WalletSendingViewModel>();
                 builder.RegisterType<WalletTransactionViewModel>();
                 builder.RegisterType<WalletInfoViewModel>();
+#endif
 
                 return builder.Build();
             });
