@@ -51,7 +51,7 @@ namespace Unigram.ViewModels.SignIn
             });
 
             var authState = ProtoService.GetAuthorizationState();
-            if (authState is AuthorizationStateWaitPhoneNumber && mode == NavigationMode.New)
+            if (authState is AuthorizationStateWaitPhoneNumber && mode != NavigationMode.Refresh)
             {
                 IsLoading = false;
 
@@ -72,12 +72,12 @@ namespace Unigram.ViewModels.SignIn
                             {
                                 ProtoService.Send(new RequestQrCodeAuthentication());
                             }
-                        }
-                        else
-                        {
-                            BeginOnUIThread(() => Delegate?.UpdateQrCodeMode(QrCodeMode.Disabled));
+
+                            return;
                         }
                     }
+
+                    BeginOnUIThread(() => Delegate?.UpdateQrCodeMode(QrCodeMode.Disabled));
                 });
             }
             else if (authState is AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation)
