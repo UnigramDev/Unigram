@@ -532,6 +532,8 @@ namespace Unigram.Controls
             Document.BatchDisplayUpdates();
             Document.GetText(TextGetOptions.None, out string value);
 
+            value = value.TrimEnd('\v', '\r');
+
             var builder = new StringBuilder(value);
             var runs = new List<TextStyleRun>();
 
