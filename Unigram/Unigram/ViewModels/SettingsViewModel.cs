@@ -20,7 +20,6 @@ using Unigram.Collections;
 using System.Text.RegularExpressions;
 using Unigram.Views.Settings.Privacy;
 using System.Diagnostics;
-using Unigram.Views.Wallet;
 
 namespace Unigram.ViewModels
 {
@@ -201,10 +200,10 @@ namespace Unigram.ViewModels
                 {
                     NavigationService.NavigateToInstant(Strings.Resources.TelegramFaqUrl);
                 }
-                else if (page.Page == typeof(WalletPage))
-                {
-                    NavigationService.NavigateToWallet();
-                }
+                //else if (page.Page == typeof(WalletPage))
+                //{
+                //    NavigationService.NavigateToWallet();
+                //}
                 else
                 {
                     NavigationService.Navigate(page.Page);

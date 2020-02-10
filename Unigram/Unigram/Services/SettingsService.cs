@@ -21,7 +21,9 @@ namespace Unigram.Services
         NotificationsSettings Notifications { get; }
         StickersSettings Stickers { get; }
         EmojiSettings Emoji { get; }
+#if INCLUDE_WALLET
         WalletSettings Wallet { get; }
+#endif
         AutoDownloadSettings AutoDownload { get; set; }
         AppearanceSettings Appearance { get; }
         WallpaperSettings Wallpaper { get; }
@@ -183,10 +185,10 @@ namespace Unigram.Services
 
         public ApplicationDataContainer Container => _container;
 
-        #region App version
+#region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (14UL << 32) | (2659UL << 16);
-        public const string CurrentChangelog = "• Create three new kinds of polls.\r\n• See who voted for what in polls with visible votes.\r\n• Vote for several options in polls that allow multiple answers.\r\n• Try to guess the correct answer in quiz-style polls.\r\n• Use bots like @QuizBot to create quizzes with multiple questions.";
+        public const ulong CurrentVersion = (3UL << 48) | (14UL << 32) | (2665UL << 16);
+        public const string CurrentChangelog = "• Enjoy rich text editing capabilites by right clicking on Chat input > Formatting > Show formatting";
         public const bool CurrentMedia = false;
 
         public int Session => _session;
@@ -213,7 +215,7 @@ namespace Unigram.Services
             Version = CurrentVersion;
         }
 
-        #endregion
+#endregion
 
         private ChatSettingsBase _chats;
         public ChatSettingsBase Chats
@@ -251,6 +253,7 @@ namespace Unigram.Services
             }
         }
 
+#if INCLUDE_WALLET
         private WalletSettings _wallet;
         public WalletSettings Wallet
         {
@@ -259,6 +262,7 @@ namespace Unigram.Services
                 return _wallet ??= new WalletSettings(_own);
             }
         }
+#endif
 
         private AutoDownloadSettings _autoDownload;
         public AutoDownloadSettings AutoDownload

@@ -10,7 +10,9 @@ using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Settings;
+#if INCLUDE_WALLET
 using Unigram.Views.Wallet;
+#endif
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Metadata;
 using Windows.Security.Credentials;
@@ -81,6 +83,7 @@ namespace Unigram.Common
 
         public async void NavigateToWallet(string address = null)
         {
+#if INCLUDE_WALLET
             Type page;
             if (_protoService.Options.WalletPublicKey != null)
             {
@@ -167,6 +170,7 @@ namespace Unigram.Common
 
                 await ApplicationViewSwitcher.TryShowAsStandaloneAsync(_walletLifetime.Id, ViewSizePreference.Default, ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), ViewSizePreference.UseHalf);
             }
+#endif
         }
 
         public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)

@@ -10,7 +10,6 @@ using Unigram.ViewModels.Settings;
 using Unigram.Views;
 using Unigram.Views.Settings;
 using Unigram.Views.Settings.Privacy;
-using Unigram.Views.Wallet;
 
 namespace Unigram.Services
 {
@@ -95,7 +94,7 @@ namespace Unigram.Services
                 new SettingsSearchPage(null, Strings.Resources.Language, "\uE164"),
                 new SettingsSearchPage(null, Strings.Resources.AskAQuestion, "\uED15"),
 
-                new SettingsSearchPage(typeof(WalletPage), Strings.Resources.Wallet, "\uD83D\uDC8E")
+                //new SettingsSearchPage(typeof(WalletPage), Strings.Resources.Wallet, "\uD83D\uDC8E")
             };
 
             // FAQ indexing is done asyncronously
