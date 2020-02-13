@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views;
@@ -25,12 +26,25 @@ namespace Unigram.ViewModels.Settings
         {
             Items = new MvxObservableCollection<Background>();
 
+            RefreshItems();
+
+            LocalCommand = new RelayCommand(LocalExecute);
+            ResetCommand = new RelayCommand(ResetExecute);
+        }
+
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            return base.OnNavigatedToAsync(parameter, mode, state);
+        }
+
+        private void RefreshItems()
+        {
             ProtoService.Send(new GetBackgrounds(Settings.Appearance.IsDarkTheme()), result =>
             {
                 if (result is Backgrounds wallpapers)
                 {
                     var items = wallpapers.BackgroundsValue.ToList();
-                    var id = Settings.Wallpaper.SelectedBackground;
+                    var background = CacheService.SelectedBackground;
 
                     var predefined = items.FirstOrDefault(x => x.Id == 1000001);
                     if (predefined != null)
@@ -39,16 +53,16 @@ namespace Unigram.ViewModels.Settings
                         items.Insert(0, predefined);
                     }
 
-                    var selected = items.FirstOrDefault(x => x.Id == id);
+                    var selected = items.FirstOrDefault(x => x.Id == background?.Id);
                     if (selected != null)
                     {
                         items.Remove(selected);
                         items.Insert(0, selected);
                     }
-                    else if (id == Constants.WallpaperLocalId)
-                    {
-                        //items.Insert(0, selected = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0));
-                    }
+                    //else if (id == Constants.WallpaperLocalId)
+                    //{
+                    //    //items.Insert(0, selected = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0));
+                    //}
 
                     BeginOnUIThread(() =>
                     {
@@ -57,13 +71,6 @@ namespace Unigram.ViewModels.Settings
                     });
                 }
             });
-
-            LocalCommand = new RelayCommand(LocalExecute);
-        }
-
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
-        {
-            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         private Background _selectedItem;
@@ -96,6 +103,26 @@ namespace Unigram.ViewModels.Settings
                 await file.CopyAndReplaceAsync(result);
 
                 NavigationService.Navigate(typeof(WallpaperPage), Constants.WallpaperLocalFileName);
+            }
+        }
+
+        public RelayCommand ResetCommand { get; }
+        private async void ResetExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
+            if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new ResetBackgrounds());
+            if (response is Ok)
+            {
+                RefreshItems();
+            }
+            else if (response is Error error)
+            {
+
             }
         }
     }

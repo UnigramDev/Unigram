@@ -61,6 +61,15 @@
                         Content="{CustomResource SetColor}"/>-->
                 </controls:HeaderedControl>
             </GridView.Header>
+            <GridView.Footer>
+                <controls:HeaderedControl
+                    Footer="{CustomResource ResetChatBackgroundsInfo}"
+                    Margin="-8,0,-8,8">
+                    <controls:BadgeButton
+                        Content="{CustomResource ResetChatBackgrounds}"
+                        Command="{x:Bind ViewModel.ResetCommand}"/>
+                </controls:HeaderedControl>
+            </GridView.Footer>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="Margin" Value="4"/>
