@@ -219,7 +219,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Animations\ChatArchivedAnimation.cs" />
@@ -1622,6 +1621,7 @@
     <Content Include="Assets\Animations\WalletApologiesAccepted.tgs" />
     <Content Include="Assets\Animations\WalletInitializing.tgs" />
     <Content Include="Assets\Animations\WalletSynchronization.tgs" />
+    <Content Include="Assets\Animations\Compass.tgs" />
     <None Include="Assets\Fonts\Telegram.json" />
     <PRIResource Include="Strings\uk\Additional.resw">
       <SubType>Designer</SubType>
