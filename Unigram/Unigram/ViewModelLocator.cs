@@ -12,6 +12,7 @@ using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Dialogs;
+using Unigram.ViewModels.Filters;
 using Unigram.ViewModels.Passport;
 using Unigram.ViewModels.Payments;
 using Unigram.ViewModels.SecretChats;
@@ -279,6 +280,8 @@ namespace Unigram
                 builder.RegisterType<PassportAddressViewModel>();
                 builder.RegisterType<InviteViewModel>();
                 builder.RegisterType<ChatsNearbyViewModel>();
+                builder.RegisterType<FiltersViewModel>();
+                builder.RegisterType<FilterViewModel>();
 
 #if INCLUDE_WALLET
                 builder.RegisterType<WalletViewModel>();
