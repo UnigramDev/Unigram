@@ -32,42 +32,6 @@ namespace Unigram.Controls.Messages.Content
             UpdateMessage(message);
         }
 
-        private static readonly Dictionary<uint, uint> _thumbColor1 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0xca907aU },
-			{ 0xffb139U, 0xedc5a5U },
-			{ 0xffd140U, 0xf7e3c3U },
-			{ 0xffdf79U, 0xfbefd6U },
-	    };
-        private static readonly Dictionary<uint, uint> _thumbColor2 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0xaa7c60U },
-			{ 0xffb139U, 0xc8a987U },
-			{ 0xffd140U, 0xddc89fU },
-			{ 0xffdf79U, 0xe6d6b2U },
-	    };
-        private static readonly Dictionary<uint, uint> _thumbColor3 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0x8c6148U },
-			{ 0xffb139U, 0xad8562U },
-			{ 0xffd140U, 0xc49e76U },
-			{ 0xffdf79U, 0xd4b188U },
-	    };
-        private static readonly Dictionary<uint, uint> _thumbColor4 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0x6e3c2cU },
-			{ 0xffb139U, 0x925a34U },
-			{ 0xffd140U, 0xa16e46U },
-			{ 0xffdf79U, 0xac7a52U },
-	    };
-        private static readonly Dictionary<uint, uint> _thumbColor5 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0x291c12U },
-			{ 0xffb139U, 0x472a22U },
-			{ 0xffd140U, 0x573b30U },
-			{ 0xffdf79U, 0x68493cU },
-	    };
-
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
@@ -81,33 +45,11 @@ namespace Unigram.Controls.Messages.Content
             //Background = null;
             //Texture.Source = null;
             //Texture.Constraint = message;
-            if (message.GeneratedContent != null)
+            if (message.GeneratedContent != null && message.Content is MessageText text)
             {
                 Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
                 Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
-                Player.ColorReplacements = null;
-
-                if (message.Content is MessageText text && text.Text.Text.StartsWith("\uD83D\uDC4D"))
-                {
-                    switch (text.Text.Text.Last())
-                    {
-                        case '\uDFFB':
-                            Player.ColorReplacements = _thumbColor1;
-                            break;
-                        case '\uDFFC':
-                            Player.ColorReplacements = _thumbColor2;
-                            break;
-                        case '\uDFFD':
-                            Player.ColorReplacements = _thumbColor3;
-                            break;
-                        case '\uDFFE':
-                            Player.ColorReplacements = _thumbColor4;
-                            break;
-                        case '\uDFFF':
-                            Player.ColorReplacements = _thumbColor5;
-                            break;
-                    }
-                }
+                Player.ColorReplacements = Emoji.GetColorReplacements(text.Text.Text);
             }
             else
             {
