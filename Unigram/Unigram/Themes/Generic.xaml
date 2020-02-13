@@ -29,7 +29,7 @@
                             <local:GlyphButton x:Name="TogglePaneButton"
                                                Grid.Row="1"
                                                Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                               Width="{ThemeResource AppBarThemeCompactHeight}"
+                                               Width="40"
                                                Height="{ThemeResource AppBarThemeCompactHeight}"
                                                FontSize="{StaticResource GlyphButtonFontSize}"
                                                AutomationProperties.LandmarkType="Navigation"
@@ -2051,6 +2051,8 @@
     
     <Style TargetType="local:ButtonPageHeader">
         <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="Template">
@@ -2066,6 +2068,8 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="3"/>
+
                             <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
                             <local:GlyphButton Glyph="{TemplateBinding Glyph}"
@@ -2092,6 +2096,8 @@
     </Style>
 
     <Style TargetType="local:ContentPageHeader">
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="IsTabStop" Value="False"/>
@@ -2107,6 +2113,8 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="2"/>
+
                             <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
                             <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
@@ -2126,6 +2134,8 @@
 
     <Style TargetType="local:PageHeader">
         <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="Template">
@@ -2140,6 +2150,8 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="2"/>
+
                             <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
                             <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
                             <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>

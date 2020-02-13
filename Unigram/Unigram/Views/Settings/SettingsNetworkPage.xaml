@@ -42,7 +42,7 @@
             
             <ScrollViewer
                 x:Name="ScrollingHost"
-                Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                Background="{ThemeResource PageBackgroundDarkBrush}"
                 VerticalScrollBarVisibility="Auto"
                 VerticalScrollMode="Auto"
                 Grid.Row="1">

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Views;
@@ -20,10 +19,11 @@ using Unigram.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Services;
 using Unigram.Views.Chats;
+using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Users
 {
-    public sealed partial class UserCommonChatsPage : Page, IProfileTab, IHandle<UpdateFile>
+    public sealed partial class UserCommonChatsPage : Page, IProfileTab, IFileDelegate
     {
         public UserCommonChatsViewModel ViewModel => DataContext as UserCommonChatsViewModel;
 
@@ -122,7 +122,7 @@ namespace Unigram.Views.Users
             args.Handled = true;
         }
 
-        public void Handle(UpdateFile update)
+        public void UpdateFile(File file)
         {
             this.BeginOnUIThread(() =>
             {
@@ -141,7 +141,7 @@ namespace Unigram.Views.Users
                 for (int i = 0; i < ViewModel.Items.Count; i++)
                 {
                     var chat = ViewModel.Items[i];
-                    if (chat.UpdateFile(update.File))
+                    if (chat.UpdateFile(file))
                     {
                         var container = List.ContainerFromItem(chat) as ListViewItem;
                         if (container == null)

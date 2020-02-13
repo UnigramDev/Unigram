@@ -133,7 +133,7 @@ namespace Unigram.Controls
                 }
 
                 header.Measure(new Size(availableSize.Width - result, availableSize.Height));
-                title.Measure(new Size(_isBlank && header.DesiredSize.Height < 1 ? result : availableSize.Width, availableSize.Height));
+                title.Measure(new Size(availableSize.Width, availableSize.Height));
                 background.Measure(new Size(availableSize.Width - result, availableSize.Height));
 
                 master.Measure(new Size(result, availableSize.Height - title.DesiredSize.Height));
@@ -186,7 +186,7 @@ namespace Unigram.Controls
                     CurrentState = MasterDetailState.Expanded;
                 }
 
-                title.Arrange(new Rect(0, 0, _isBlank && header.DesiredSize.Height < 1 ? result : finalSize.Width, finalSize.Height));
+                title.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
                 background.Arrange(new Rect(result, 0, finalSize.Width - result, finalSize.Height));
                 header.Arrange(new Rect(result, title.DesiredSize.Height, finalSize.Width - result, finalSize.Height));
 

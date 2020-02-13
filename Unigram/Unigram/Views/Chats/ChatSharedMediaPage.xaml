@@ -31,7 +31,7 @@
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="{StaticResource AppBarThemeCompactHeight}"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid x:Name="HeaderPanel">

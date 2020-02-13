@@ -87,6 +87,11 @@ namespace Unigram.Views.Supergroups
             ScrollingHost.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 16 : 16, 0, 0);
             ScrollingHost.ItemsPanelCornerRadius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
             //ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
+
+            if (embedded)
+            {
+                Footer.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void OnBackRequested(HandledRoutedEventArgs args)

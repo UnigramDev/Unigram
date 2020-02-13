@@ -13,17 +13,21 @@ namespace Unigram.Themes
     {
         public Fluent()
         {
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))
-            {
-                this["EllipsisButtonPadding"] = new Thickness(16, 19, 16, 0);
-                this["GlyphButtonFontSize"] = 16d;
-                this["ChatPhotoSize"] = 30d;
-            }
-            else
+            //if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))
+            //{
+            //    this["EllipsisButtonPadding"] = new Thickness(16, 19, 16, 0);
+            //    this["GlyphButtonFontSize"] = 16d;
+            //    this["ChatPhotoSize"] = 30d;
+            //}
+            //else
             {
                 this["EllipsisButtonPadding"] = new Thickness(16, 23, 16, 0);
-                this["GlyphButtonFontSize"] = 20d;
+                //this["GlyphButtonFontSize"] = 20d;
                 this["ChatPhotoSize"] = 36d;
+
+                this["GlyphButtonFontSize"] = 16d;
+                this["AppBarThemeCompactHeight"] = 48d;
+                this["NavigationViewTopPaneHeight"] = 48d;
             }
 
             var commonStyles = new ResourceDictionary { Source = new Uri("ms-appx:///Common/CommonStyles.xaml") };
@@ -54,7 +58,7 @@ namespace Unigram.Themes
             {
                 // We don't want any kind of fluent effect prior to Fall Creators Update (so fluent will affect PCs only)
                 MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx://Microsoft.UI.Xaml.2.3/Microsoft.UI.Xaml/Themes/rs2_themeresources.xaml") });
-                this["NavigationViewTopPaneHeight"] = 48d;
+                //this["NavigationViewTopPaneHeight"] = 48d;
             }
         }
     }
