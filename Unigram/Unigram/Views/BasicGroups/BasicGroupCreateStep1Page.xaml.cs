@@ -20,6 +20,7 @@ using Unigram.Controls.Views;
 using Unigram.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.ViewModels.BasicGroups;
+using Telegram.Td.Api;
 
 namespace Unigram.Views.BasicGroups
 {
@@ -80,5 +81,33 @@ namespace Unigram.Views.BasicGroups
         }
 
         #endregion
+
+        private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        {
+            var button = args.Element as Button;
+            var content = button.Content as Grid;
+
+            var chat = sender.ItemsSourceView.GetAt(args.Index) as Chat;
+
+            var title = content.Children[1] as TextBlock;
+            title.Text = ViewModel.ProtoService.GetTitle(chat);
+
+            //if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+            //{
+            //    var subtitle = content.Children[2] as TextBlock;
+            //    subtitle.Text = string.Format("{0}, {1}", BindConvert.Distance(nearby.Distance), Locale.Declension("Members", supergroup.MemberCount));
+            //}
+            //else
+            //{
+            //    var subtitle = content.Children[2] as TextBlock;
+            //    subtitle.Text = BindConvert.Distance(nearby.Distance);
+            //}
+
+            var photo = content.Children[0] as ProfilePicture;
+            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+
+            //button.Command = ViewModel.OpenChatCommand;
+            //button.CommandParameter = nearby;
+        }
     }
 }

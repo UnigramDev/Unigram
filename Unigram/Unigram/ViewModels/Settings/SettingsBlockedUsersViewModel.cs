@@ -11,6 +11,7 @@ using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Settings;
@@ -103,9 +104,17 @@ namespace Unigram.ViewModels.Settings
         //}
 
         public RelayCommand BlockCommand { get; }
-        private void BlockExecute()
+        private async void BlockExecute()
         {
-            NavigationService.Navigate(typeof(SettingsBlockUserPage));
+            var selected = await ShareView.PickChatAsync(Strings.Resources.BlockUser);
+            var user = CacheService.GetUser(selected);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new BlockUser(user.Id));
         }
 
         public RelayCommand<User> UnblockCommand { get; }

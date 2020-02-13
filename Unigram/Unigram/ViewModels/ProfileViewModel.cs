@@ -804,7 +804,25 @@ namespace Unigram.ViewModels
             }
             else
             {
-                NavigationService.Navigate(typeof(ChatInvitePage), chat.Id);
+                var selected = await ShareView.PickChatAsync(Strings.Resources.SelectContact);
+                var user = CacheService.GetUser(selected);
+
+                if (user == null)
+                {
+                    return;
+                }
+
+                var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.AddToTheGroup, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                var response = await ProtoService.SendAsync(new AddChatMember(chat.Id, user.Id, CacheService.Options.ForwardedMessageCountMax));
+                if (response is Error error)
+                {
+
+                }
             }
         }
 

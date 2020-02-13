@@ -263,6 +263,21 @@ namespace Unigram.ViewModels.Settings
 
             var dialog = ShareView.GetForCurrentView();
 
+            switch (_inputKey)
+            {
+                case UserPrivacySettingAllowCalls allowCalls:
+                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
+                case UserPrivacySettingAllowChatInvites allowChatInvites:
+                //case UserPrivacySettingShowProfilePhoto showProfilePhoto:
+                //case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
+                default:
+                    dialog.ViewModel.Title = Strings.Resources.AlwaysAllow;
+                    break;
+                case UserPrivacySettingShowStatus showStatus:
+                    dialog.ViewModel.Title = Strings.Resources.AlwaysShareWithTitle;
+                    break;
+            }
+
             var confirm = await dialog.PickAsync(chats, SearchChatsType.PrivateAndGroups);
             if (confirm != ContentDialogResult.Primary)
             {
@@ -311,6 +326,21 @@ namespace Unigram.ViewModels.Settings
             }
 
             var dialog = ShareView.GetForCurrentView();
+
+            switch (_inputKey)
+            {
+                case UserPrivacySettingAllowCalls allowCalls:
+                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
+                case UserPrivacySettingAllowChatInvites allowChatInvites:
+                //case UserPrivacySettingShowProfilePhoto showProfilePhoto:
+                //case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
+                default:
+                    dialog.ViewModel.Title = Strings.Resources.NeverAllow;
+                    break;
+                case UserPrivacySettingShowStatus showStatus:
+                    dialog.ViewModel.Title = Strings.Resources.NeverShareWithTitle;
+                    break;
+            }
 
             var confirm = await dialog.PickAsync(chats, SearchChatsType.PrivateAndGroups);
             if (confirm != ContentDialogResult.Primary)

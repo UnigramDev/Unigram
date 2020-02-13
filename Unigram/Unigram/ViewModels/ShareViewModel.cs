@@ -185,7 +185,10 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                RaisePropertyChanged("PreSelectedItems");
+                if (PreSelectedItems.Count > 0 && SelectionMode == ListViewSelectionMode.Multiple)
+                {
+                    RaisePropertyChanged(nameof(PreSelectedItems));
+                }
             }
         }
 
@@ -201,6 +204,13 @@ namespace Unigram.ViewModels
                 Set(ref _selectedItems, value);
                 SendCommand?.RaiseCanExecuteChanged();
             }
+        }
+
+        private string _title = Strings.Resources.ShareSendTo;
+        public string Title
+        {
+            get => _title;
+            set => Set(ref _title, value);
         }
 
         private string _comment;

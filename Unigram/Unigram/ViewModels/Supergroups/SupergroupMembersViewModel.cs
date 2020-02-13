@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Channels;
 using Unigram.Views.Chats;
 using Unigram.Views.Supergroups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -133,7 +136,7 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         public RelayCommand AddCommand { get; }
-        private void AddExecute()
+        private async void AddExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -141,7 +144,25 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(ChatInvitePage), chat.Id);
+            var selected = await ShareView.PickChatAsync(Strings.Resources.SelectContact);
+            var user = CacheService.GetUser(selected);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.AddToTheGroup, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new AddChatMember(chat.Id, user.Id, CacheService.Options.ForwardedMessageCountMax));
+            if (response is Error error)
+            {
+
+            }
         }
 
         #region Context menu

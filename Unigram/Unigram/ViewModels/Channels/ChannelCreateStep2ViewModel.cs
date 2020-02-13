@@ -59,7 +59,8 @@ namespace Unigram.ViewModels.Channels
                     }
                 }
 
-                NavigationService.Navigate(typeof(ChannelCreateStep3Page), chat.Id);
+                NavigationService.NavigateToChat(chat);
+                //NavigationService.Navigate(typeof(ChannelCreateStep3Page), chat.Id);
             }
         }
     }

@@ -17,6 +17,7 @@ using Windows.Storage;
 using System.Linq;
 using Unigram.Controls;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -73,6 +74,8 @@ namespace Unigram.ViewModels
             ReturnToCallCommand = new RelayCommand(ReturnToCallExecute);
 
             ToggleArchiveCommand = new RelayCommand(ToggleArchiveExecute);
+
+            CreateSecretChatCommand = new RelayCommand(CreateSecretChatExecute);
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
@@ -206,6 +209,44 @@ namespace Unigram.ViewModels
             Folder.Dispatcher = Dispatcher;
             Folder.NavigationService = NavigationService;
             RaisePropertyChanged(() => Folder);
+        }
+
+
+
+        public RelayCommand CreateSecretChatCommand { get; }
+        private async void CreateSecretChatExecute()
+        {
+            var selected = await ShareView.PickChatAsync(Strings.Resources.NewSecretChat);
+            var user = CacheService.GetUser(selected);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureSecretChat, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            //Function request;
+
+            //var existing = ProtoService.GetSecretChatForUser(user.Id);
+            //if (existing != null)
+            //{
+            //    request = new CreateSecretChat(existing.Id);
+            //}
+            //else
+            //{
+            //    request = new CreateNewSecretChat(user.Id);
+            //}
+
+            var response = await ProtoService.SendAsync(new CreateNewSecretChat(user.Id));
+            if (response is Chat chat)
+            {
+                NavigationService.NavigateToChat(chat);
+            }
         }
     }
 

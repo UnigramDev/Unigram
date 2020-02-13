@@ -35,6 +35,7 @@ using Windows.UI.Xaml.Automation.Provider;
 using Unigram.Controls.Cells;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Unigram.Services;
 
 namespace Unigram.Controls.Views
 {
@@ -96,6 +97,44 @@ namespace Unigram.Controls.Views
             _windowContext[id] = new WeakReference<ShareView>(context);
 
             return context;
+        }
+
+        public static async Task<Chat> PickChatAsync(string title)
+        {
+            var dialog = GetForCurrentView();
+            dialog.ViewModel.Title = title;
+
+            var confirm = await dialog.PickAsync(new long[0], SearchChatsType.Private, ListViewSelectionMode.Single);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return null;
+            }
+
+            return dialog.ViewModel.SelectedItems.FirstOrDefault();
+        }
+
+        public static async Task<User> PickUserAsync(ICacheService cacheService, string title)
+        {
+            return cacheService.GetUser(await PickChatAsync(title));
+        }
+
+        public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected)
+        {
+            var dialog = GetForCurrentView();
+            dialog.ViewModel.Title = title;
+
+            var confirm = await dialog.PickAsync(selected, SearchChatsType.Private);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return null;
+            }
+
+            return dialog.ViewModel.SelectedItems.ToList();
+        }
+
+        public static async Task<IList<User>> PickUsersAsync(ICacheService cacheService, string title)
+        {
+            return (await PickChatsAsync(title, new long[0]))?.Select(x => cacheService.GetUser(x)).Where(x => x != null).ToList();
         }
 
         public Task<ContentDialogResult> ShowAsync(DataPackageView package)
@@ -254,9 +293,9 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
-        public Task<ContentDialogResult> PickAsync(IList<long> selectedItems, SearchChatsType type)
+        public Task<ContentDialogResult> PickAsync(IList<long> selectedItems, SearchChatsType type, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
         {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
+            ChatsPanel.SelectionMode = selectionMode;
             ViewModel.SearchType = type;
             ViewModel.IsCommentEnabled = false;
             ViewModel.IsSendAsCopyEnabled = false;
@@ -575,8 +614,6 @@ namespace Unigram.Controls.Views
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ViewModel.SelectedItems = new MvxObservableCollection<Chat>(ChatsPanel.SelectedItems.Cast<Chat>());
-            Subtitle.Visibility = ViewModel.SelectedItems.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-            Subtitle.Text = string.Join(", ", ViewModel.SelectedItems.Select(x => ViewModel.CacheService.GetTitle(x)));
 
             CommentPanel.Visibility = ViewModel.SelectedItems.Count > 0 && ViewModel.IsCommentEnabled ? Visibility.Visible : Visibility.Collapsed;
 

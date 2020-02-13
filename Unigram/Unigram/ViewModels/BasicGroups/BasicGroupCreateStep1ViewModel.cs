@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Chats;
@@ -21,7 +24,10 @@ namespace Unigram.ViewModels.BasicGroups
         public BasicGroupCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
+            Items = new MvxObservableCollection<Chat>();
+
+            AddCommand = new RelayCommand(AddExecute);
+            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title) && Items.Count > 0);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
         }
 
@@ -52,11 +58,45 @@ namespace Unigram.ViewModels.BasicGroups
             }
         }
 
-        public RelayCommand SendCommand { get; }
-        private void SendExecute()
+        public MvxObservableCollection<Chat> Items { get; private set; }
+
+        public RelayCommand AddCommand { get; }
+        private async void AddExecute()
         {
+            var chats = await ShareView.PickChatsAsync(Strings.Resources.SelectContacts, Items.Select(x => x.Id).ToArray());
+            if (chats != null)
             {
-                NavigationService.Navigate(typeof(BasicGroupCreateStep2Page), new ChatCreateStep2Tuple(_title, null));
+                Items.ReplaceWith(chats);
+            }
+
+            SendCommand.RaiseCanExecuteChanged();
+        }
+
+        public RelayCommand SendCommand { get; }
+        private async void SendExecute()
+        {
+            var maxSize = CacheService.Options.BasicGroupSizeMax;
+
+            var peers = Items.Select(x => x.Type).OfType<ChatTypePrivate>().Select(x => x.UserId).ToArray();
+            if (peers.Length <= maxSize)
+            {
+                // Classic chat
+                var response = await ProtoService.SendAsync(new CreateNewBasicGroupChat(peers, _title));
+                if (response is Chat chat)
+                {
+                    // TODO: photo
+
+                    NavigationService.NavigateToChat(chat);
+                    NavigationService.RemoveLast();
+                }
+                else if (response is Error error)
+                {
+                    AlertsService.ShowAddUserAlert(Dispatcher, error.Message, false);
+                }
+            }
+            else
+            {
+
             }
         }
 
@@ -68,7 +108,7 @@ namespace Unigram.ViewModels.BasicGroups
 
         private void ContinueUploadingPhoto()
         {
-            NavigationService.Navigate(typeof(BasicGroupCreateStep2Page), new ChatCreateStep2Tuple(_title, null));
+            //NavigationService.Navigate(typeof(BasicGroupCreateStep2Page), new ChatCreateStep2Tuple(_title, null));
         }
     }
 }

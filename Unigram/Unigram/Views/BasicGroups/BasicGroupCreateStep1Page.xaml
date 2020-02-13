@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.BasicGroups"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -16,7 +17,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -27,32 +28,69 @@
             Text="{CustomResource NewGroup}"
             Glyph="&#xE10B;"/>
 
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
-                <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" Radius="32" Width="64" Height="64" RequestedTheme="Dark" Margin="12,6"/>
+        <muxc:ItemsRepeaterScrollHost Grid.Row="1">
+            <ScrollViewer
+                VerticalScrollBarVisibility="Auto"
+                VerticalScrollMode="Auto">
+                <StackPanel>
+                    <controls:HeaderedControl>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,8" Grid.RowSpan="2"/>
+                            <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" Radius="32" Width="64" Height="64" RequestedTheme="Dark" Margin="12,6"/>
 
-                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                    <TextBox x:Name="Title"
-                             Loaded="Title_Loaded"
-                        Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        MaxLength="{StaticResource ChatTitleMaxLength}"
-                        PlaceholderText="{CustomResource EnterGroupNamePlaceholder}"/>
-                </Border>
-            </Grid>
-        </Grid>
+                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
+                                <TextBox x:Name="Title"
+                                         Loaded="Title_Loaded"
+                                    Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    MaxLength="{StaticResource ChatTitleMaxLength}"
+                                    PlaceholderText="{CustomResource EnterGroupNamePlaceholder}"/>
+                            </Border>
+                        </Grid>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        Header="{CustomResource ChannelMembers}">
+                        <controls:BadgeButton
+                            Content="{CustomResource AddSubscriber}"
+                            Command="{x:Bind ViewModel.AddCommand}"
+                            Style="{StaticResource TextGlyphButtonStyle}"
+                            Glyph="&#xE8FA;"/>
+
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.Items}"
+                            ElementPrepared="OnElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource EmptyButtonStyle}">
+                                        <Grid Margin="12,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <controls:ProfilePicture IsHitTestVisible="False" Width="36" Height="36" Margin="0,0,12,0"/>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                TextWrapping="NoWrap"
+                                                TextTrimming="CharacterEllipsis"
+                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Grid.Column="1"/>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+                </StackPanel>
+            </ScrollViewer>
+        </muxc:ItemsRepeaterScrollHost>
     </Grid>
 </Page>

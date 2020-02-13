@@ -575,12 +575,6 @@
     <Compile Include="Controls\Views\SupergroupEventLogFiltersView.xaml.cs">
       <DependentUpon>SupergroupEventLogFiltersView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\UsersPickerView.xaml.cs">
-      <DependentUpon>UsersPickerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
-      <DependentUpon>UsersSelectionView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
@@ -689,16 +683,13 @@
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
-    <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep2ViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
-    <Compile Include="ViewModels\Channels\ChannelCreateStep3ViewModel.cs" />
     <Compile Include="ViewModels\ChatsNearbyViewModel.cs" />
     <Compile Include="ViewModels\ChatsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
-    <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
@@ -750,7 +741,6 @@
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
-    <Compile Include="ViewModels\SecretChats\SecretChatCreateViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordConfirmViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordCreateViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordDoneViewModel.cs" />
@@ -764,8 +754,6 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowChatInvitesViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowFindingByPhoneNumberViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowP2PCallsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAlwaysViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNeverViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowForwardedViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowPhoneViewModel.cs" />
@@ -793,7 +781,6 @@
     <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksArchivedViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
@@ -821,24 +808,17 @@
     <Compile Include="ViewModels\Supergroups\SupergroupPermissionsViewModel.cs" />
     <Compile Include="ViewModels\TLMultipleViewModelBase.cs" />
     <Compile Include="ViewModels\TLViewModelBase.cs" />
-    <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
     <Compile Include="ViewModels\WallpaperViewModel.cs" />
     <Compile Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml.cs">
       <DependentUpon>BasicGroupCreateStep1Page.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\BasicGroups\BasicGroupCreateStep2Page.xaml.cs">
-      <DependentUpon>BasicGroupCreateStep2Page.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Channels\ChannelCreateStep1Page.xaml.cs">
       <DependentUpon>ChannelCreateStep1Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelCreateStep2Page.xaml.cs">
       <DependentUpon>ChannelCreateStep2Page.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Channels\ChannelCreateStep3Page.xaml.cs">
-      <DependentUpon>ChannelCreateStep3Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
@@ -851,9 +831,6 @@
     </Compile>
     <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
       <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatInvitePage.xaml.cs">
-      <DependentUpon>ChatInvitePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
       <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
@@ -936,9 +913,6 @@
     </Compile>
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SecretChats\SecretChatCreatePage.xaml.cs">
-      <DependentUpon>SecretChatCreatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Password\SettingsPasswordConfirmPage.xaml.cs">
       <DependentUpon>SettingsPasswordConfirmPage.xaml</DependentUpon>
@@ -1044,9 +1018,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsBlockedUsersPage.xaml.cs">
       <DependentUpon>SettingsBlockedUsersPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsBlockUserPage.xaml.cs">
-      <DependentUpon>SettingsBlockUserPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsMasksArchivedPage.xaml.cs">
       <DependentUpon>SettingsMasksArchivedPage.xaml</DependentUpon>
@@ -2197,14 +2168,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\UsersPickerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\UsersSelectionView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\ZoomableGridViewPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2257,19 +2220,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\BasicGroups\BasicGroupCreateStep2Page.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Channels\ChannelCreateStep1Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Channels\ChannelCreateStep2Page.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Channels\ChannelCreateStep3Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2286,10 +2241,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\ChatInviteLinkPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Chats\ChatInvitePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2408,10 +2359,6 @@
     <Page Include="Views\ProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\SecretChats\SecretChatCreatePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\Password\SettingsPasswordConfirmPage.xaml">
       <SubType>Designer</SubType>
@@ -2574,10 +2521,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsBlockedUsersPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsBlockUserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Telegram.Td.Api;
 using Template10.Common;
-using Template10.Services.NavigationService;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
@@ -23,16 +20,12 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
-using Unigram.Views.Chats;
 using Unigram.Views.Host;
-using Unigram.Views.Passport;
-using Unigram.Views.SecretChats;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -2024,7 +2017,7 @@ namespace Unigram.Views
             }
             else if (destination == RootDestination.NewSecretChat)
             {
-                MasterDetail.NavigationService.Navigate(typeof(SecretChatCreatePage));
+                ViewModel.CreateSecretChatCommand.Execute();
             }
             else if (destination == RootDestination.NewChannel)
             {
