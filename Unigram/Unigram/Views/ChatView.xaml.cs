@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -478,6 +479,7 @@ namespace Unigram.Views
             if (ViewModel != null)
             {
                 ViewModel.PropertyChanged -= OnPropertyChanged;
+                ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
@@ -501,6 +503,7 @@ namespace Unigram.Views
             SearchMask.Update(ViewModel.Search);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+            ViewModel.Items.CollectionChanged += OnCollectionChanged;
             ViewModel.Items.AttachChanged = OnAttachChanged;
 
             //Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
@@ -508,6 +511,81 @@ namespace Unigram.Views
             TextRoot.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
             TextField.Focus(FocusState.Programmatic);
         }
+
+        private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            var panel = Messages.ItemsStack;
+            if (panel == null)
+            {
+                return;
+            }
+
+            if (args.Action == NotifyCollectionChangedAction.Remove && panel.FirstCacheIndex < args.OldStartingIndex && panel.LastCacheIndex >= args.OldStartingIndex)
+            {
+                //var container = ContainerFromItem(args.OldItems[0]);
+                //if (container == null)
+                //{
+                //    return;
+                //}
+
+                var owner = panel.Descendants<SelectorItem>().FirstOrDefault(x => x is SelectorItem item && item.ContentTemplateRoot is FrameworkElement element && element.Tag == args.OldItems[0]) as SelectorItem;
+                if (owner == null)
+                {
+                    return;
+                }
+
+                owner.Measure(new Size(ActualWidth, ActualHeight));
+
+                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(0, new Vector3(0, -(float)owner.DesiredSize.Height, 0));
+                anim.InsertKeyFrame(1, new Vector3());
+                //anim.Duration = TimeSpan.FromSeconds(1);
+
+                for (int i = panel.FirstCacheIndex; i < args.OldStartingIndex; i++)
+                {
+                    var container = Messages.ContainerFromIndex(i) as SelectorItem;
+                    var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
+
+                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    visual.StartAnimation("Offset", anim);
+                }
+
+                batch.End();
+            }
+            else if (args.Action == NotifyCollectionChangedAction.Add && panel.LastVisibleIndex >= args.NewStartingIndex - 1)
+            {
+                await Messages.ItemsStack.UpdateLayoutAsync();
+
+                var owner = Messages.ContainerFromItem(args.NewItems[0]) as SelectorItem;
+                if (owner == null)
+                {
+                    return;
+                }
+
+                owner.Measure(new Size(ActualWidth, ActualHeight));
+
+                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(0, new Vector3(0, (float)owner.DesiredSize.Height, 0));
+                anim.InsertKeyFrame(1, new Vector3());
+                //anim.Duration = TimeSpan.FromSeconds(1);
+
+                for (int i = panel.FirstCacheIndex; i <= args.NewStartingIndex; i++)
+                {
+                    var container = Messages.ContainerFromIndex(i) as SelectorItem;
+                    var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
+
+                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    visual.StartAnimation("Offset", anim);
+                }
+
+                batch.End();
+            }
+        }
+
 
         //private void DialogPage_LosingFocus(UIElement sender, LosingFocusEventArgs args)
         //{
@@ -1494,7 +1572,7 @@ namespace Unigram.Views
             get
             {
 #if DEBUG
-                return StickersPanelMode.Sidebar;
+                return StickersPanelMode.Overlay;
 #endif
                 return /*ActualWidth >= 900 ? StickersPanelMode.Sidebar :*/ StickersPanelMode.Overlay;
             }
