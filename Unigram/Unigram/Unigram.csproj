@@ -722,6 +722,8 @@
     <Compile Include="ViewModels\Delegates\IDialogDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IFileDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IMessageDelegate.cs" />
+    <Compile Include="ViewModels\Filters\FiltersViewModel.cs" />
+    <Compile Include="ViewModels\Filters\FilterViewModel.cs" />
     <Compile Include="ViewModels\Gallery\GalleryAnimation.cs" />
     <Compile Include="ViewModels\Gallery\GalleryChatPhoto.cs" />
     <Compile Include="ViewModels\Gallery\GalleryContent.cs" />
@@ -872,6 +874,12 @@
     </Compile>
     <Compile Include="Views\Dialogs\DialogShareLocationPage.xaml.cs">
       <DependentUpon>DialogShareLocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Filters\FilterPage.xaml.cs">
+      <DependentUpon>FilterPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Filters\FiltersPage.xaml.cs">
+      <DependentUpon>FiltersPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Host\RootPage.xaml.cs">
       <DependentUpon>RootPage.xaml</DependentUpon>
@@ -2312,6 +2320,14 @@
     <Page Include="Views\Dialogs\DialogShareLocationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Filters\FilterPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Filters\FiltersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Host\RootPage.xaml">
       <Generator>MSBuild:Compile</Generator>

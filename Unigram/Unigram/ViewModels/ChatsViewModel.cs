@@ -33,7 +33,7 @@ namespace Unigram.ViewModels
 
         public IChatsDelegate Delegate { get; set; }
 
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList, IChatFilter filter = null)
+        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList, ChatFilter filter = null)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _notificationsService = notificationsService;
@@ -607,7 +607,7 @@ namespace Unigram.ViewModels
             var chat = GetChat(chatId);
             if (chat != null && _chatList.ListEquals(chat.ChatList))
             {
-                if (items.Filter != null && !items.Filter.Intersects(chat))
+                if (items.Filter != null && !items.CanAdd(chat))
                 {
                     BeginOnUIThread(() => items.Remove(chat));
                     return;
@@ -675,7 +675,7 @@ namespace Unigram.ViewModels
             return ProtoService.GetChat(chatId);
         }
 
-        public void SetFilter(IChatFilter filter)
+        public void SetFilter(ChatFilter filter)
         {
             Items = new ItemsCollection(ProtoService, Aggregator, this, _chatList, filter);
             RaisePropertyChanged(() => Items);
@@ -697,7 +697,7 @@ namespace Unigram.ViewModels
             private readonly ChatsViewModel _viewModel;
 
             private readonly ChatList _chatList;
-            private readonly IChatFilter _filter;
+            private readonly ChatFilter _filter;
 
             private bool _hasMoreItems = true;
 
@@ -712,9 +712,9 @@ namespace Unigram.ViewModels
             public long LastChatId => _lastChatId;
             public long LastOrder => _lastOrder;
 
-            public IChatFilter Filter => _filter;
+            public ChatFilter Filter => _filter;
 
-            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList, IChatFilter filter = null)
+            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList, ChatFilter filter = null)
                 : base(new ChatComparer(), true)
             {
                 _protoService = protoService;
@@ -749,7 +749,7 @@ namespace Unigram.ViewModels
                                     _internalChatId = chat.Id;
                                     _internalOrder = chat.Order;
 
-                                    if (_filter != null && !_filter.Intersects(chat))
+                                    if (_filter != null && !CanAdd(chat))
                                     {
                                         continue;
                                     }
@@ -775,74 +775,73 @@ namespace Unigram.ViewModels
             }
 
             public bool HasMoreItems => _hasMoreItems;
-        }
-    }
 
-    public interface IChatFilter
-    {
-        bool Intersects(Chat chat);
-    }
-
-    public class ChatTypeFilter : IChatFilter
-    {
-        private readonly ICacheService _cacheService;
-        private readonly ChatTypeFilterMode _filter;
-
-        public ChatTypeFilter(ICacheService cacheService, ChatTypeFilterMode filter)
-        {
-            _cacheService = cacheService;
-            _filter = filter;
-        }
-
-        public bool Intersects(Chat chat)
-        {
-            switch (_filter)
+            public bool CanAdd(Chat chat)
             {
-                case ChatTypeFilterMode.Unmuted:
-                    return _cacheService.GetNotificationSettingsMuteFor(chat) > 0 ? false : true;
-                case ChatTypeFilterMode.Unread:
-                    return chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread;
-                case ChatTypeFilterMode.UnreadAndUnmuted:
-                    return (_cacheService.GetNotificationSettingsMuteFor(chat) > 0 ? false : true) && (chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread);
-                case ChatTypeFilterMode.Users:
-                    var user = _cacheService.GetUser(chat);
-                    if (user != null)
-                    {
-                        return user.Type is UserTypeRegular;
-                    }
-
-                    return false;
-                case ChatTypeFilterMode.Bots:
-                    var bot = _cacheService.GetUser(chat);
-                    if (bot != null)
-                    {
-                        return bot.Type is UserTypeBot;
-                    }
-
-                    return false;
-                case ChatTypeFilterMode.Groups:
-                    return chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup super && !super.IsChannel;
-                case ChatTypeFilterMode.Channels:
-                    return chat.Type is ChatTypeSupergroup channel && channel.IsChannel;
-                default:
-                case ChatTypeFilterMode.None:
+                if (_filter == null)
+                {
                     return true;
+                }
+
+                if (_filter.IncludeChats != null && _filter.IncludeChats.Contains(chat.Id))
+                {
+                    return true;
+                }
+
+                if (_filter.ExcludeMuted && _protoService.GetNotificationSettingsMuteFor(chat) > 0)
+                {
+                    return false;
+                }
+                if (_filter.ExcludeRead && !(chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread))
+                {
+                    return false;
+                }
+
+                if (_filter.IncludeAll())
+                {
+                    return true;
+                }
+
+                if (chat.Type is ChatTypePrivate)
+                {
+                    var user = _protoService.GetUser(chat);
+                    if (user.Type is UserTypeBot && _filter.IncludeBots)
+                    {
+                        return true;
+                    }
+                    else if (_filter.IncludePrivate)
+                    {
+                        return true;
+                    }
+                }
+                else if (chat.Type is ChatTypeSecret && _filter.IncludeSecret)
+                {
+                    return true;
+                }
+                else if (chat.Type is ChatTypeBasicGroup && _filter.IncludePrivateGroups)
+                {
+                    return true;
+                }
+                else if (chat.Type is ChatTypeSupergroup)
+                {
+                    var supergroup = _protoService.GetSupergroup(chat);
+                    if (supergroup.IsChannel && _filter.IncludeChannels)
+                    {
+                        return true;
+                    }
+                    else if (supergroup.Username.Length > 0 && _filter.IncludePublicGroups)
+                    {
+                        return true;
+                    }
+                    else if (_filter.IncludePrivateGroups)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
-    }
-
-    public enum ChatTypeFilterMode
-    {
-        None,
-
-        Users,
-        Bots,
-        Groups,
-        Channels,
-
-        Unread,
-        Unmuted,
-        UnreadAndUnmuted
     }
 
     public class SearchResult

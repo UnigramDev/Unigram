@@ -17,6 +17,9 @@ using Windows.Storage;
 using System.Linq;
 using Unigram.Controls;
 using Windows.UI.Xaml;
+using Unigram.Collections;
+using Unigram.ViewModels.Filters;
+using Unigram.Views.Filters;
 
 namespace Unigram.ViewModels
 {
@@ -49,6 +52,8 @@ namespace Unigram.ViewModels
             _emojiSetService = emojiSetService;
             _playbackService = playbackService;
 
+            Filters = new MvxObservableCollection<ChatFilter>();
+
             Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
             ArchivedChats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListArchive());
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
@@ -73,6 +78,8 @@ namespace Unigram.ViewModels
             ReturnToCallCommand = new RelayCommand(ReturnToCallExecute);
 
             ToggleArchiveCommand = new RelayCommand(ToggleArchiveExecute);
+
+            SetupFiltersCommand = new RelayCommand(SetupFiltersExecute);
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
@@ -99,6 +106,12 @@ namespace Unigram.ViewModels
         private void ToggleArchiveExecute()
         {
             CollapseArchivedChats = !CollapseArchivedChats;
+        }
+
+        public RelayCommand SetupFiltersCommand { get; }
+        private void SetupFiltersExecute()
+        {
+            NavigationService.Navigate(typeof(FiltersPage));
         }
 
         public bool CollapseArchivedChats
@@ -161,6 +174,20 @@ namespace Unigram.ViewModels
             });
         }
 
+        private IList<ChatFilter> _filters;
+        public IList<ChatFilter> Filters
+        {
+            get => _filters;
+            set => Set(ref _filters, value);
+        }
+
+        private ChatFilter _selectedFilter;
+        public ChatFilter SelectedFilter
+        {
+            get => _selectedFilter;
+            set => Set(ref _selectedFilter, value);
+        }
+
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             if (mode == NavigationMode.New)
@@ -168,6 +195,14 @@ namespace Unigram.ViewModels
                 Task.Run(() => _pushService.RegisterAsync());
                 Task.Run(() => _contactsService.JumpListAsync());
                 Task.Run(() => _emojiSetService.UpdateAsync());
+
+                ProtoService.Send(new GetChatFilters(), result =>
+                {
+                    if (result is ChatFilters filters)
+                    {
+                        BeginOnUIThread(() => Filters = filters.FiltersValue);
+                    }
+                });
             }
 
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
