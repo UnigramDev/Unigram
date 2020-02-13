@@ -54,13 +54,18 @@
                 VerticalScrollBarVisibility="Auto"
                 VerticalScrollMode="Auto">
                 <StackPanel Margin="0,0,0,24">
-                    <Border MaxWidth="640">
+                    <StackPanel MaxWidth="640">
+                        <controls:LottieView
+                            Source="ms-appx:///Assets/Animations/Compass.tgs"
+                            Width="180"
+                            Height="180"
+                            Margin="0,24,0,0"/>
                         <TextBlock
                             Text="{CustomResource PeopleNearbyInfo}"
                             Style="{StaticResource InfoCaptionTextBlockStyle}"
                             TextAlignment="Center"
                             Margin="12,16,12,8"/>
-                    </Border>
+                    </StackPanel>
 
                     <controls:HeaderedControl
                         Header="{CustomResource PeopleNearbyHeader}">
