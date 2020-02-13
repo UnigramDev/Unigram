@@ -14,8 +14,10 @@
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
             <StaticResource x:Key="PageHeaderDisabledBrush" ResourceKey="SystemControlForegroundBaseMediumBrush"/>
 
-            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
-            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+            <StaticResource x:Key="PageTitleBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
+            <StaticResource x:Key="PageHeaderBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
             <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
 
             <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
@@ -1237,8 +1239,10 @@
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
             <StaticResource x:Key="PageHeaderDisabledBrush" ResourceKey="SystemControlForegroundBaseMediumBrush"/>
 
-            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
-            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageTitleBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
+            <StaticResource x:Key="PageHeaderBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
             <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
 
             <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
