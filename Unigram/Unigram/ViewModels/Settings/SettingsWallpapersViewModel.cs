@@ -29,6 +29,7 @@ namespace Unigram.ViewModels.Settings
             RefreshItems();
 
             LocalCommand = new RelayCommand(LocalExecute);
+            ColorCommand = new RelayCommand(ColorExecute);
             ResetCommand = new RelayCommand(ResetExecute);
         }
 
@@ -104,6 +105,12 @@ namespace Unigram.ViewModels.Settings
 
                 NavigationService.Navigate(typeof(WallpaperPage), Constants.WallpaperLocalFileName);
             }
+        }
+
+        public RelayCommand ColorCommand { get; }
+        private void ColorExecute()
+        {
+            NavigationService.Navigate(typeof(WallpaperPage), Constants.WallpaperColorFileName);
         }
 
         public RelayCommand ResetCommand { get; }

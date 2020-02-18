@@ -178,7 +178,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Name == Constants.WallpaperLocalFileName)
+            if (wallpaper.Id == Constants.WallpaperLocalId && wallpaper.Name == Constants.WallpaperLocalFileName)
             {
                 var file = await ApplicationData.Current.LocalFolder.GetFileAsync($"{ViewModel.SessionId}\\{Constants.WallpaperLocalFileName}");
                 using (var stream = await file.OpenReadAsync())
@@ -186,8 +186,9 @@ namespace Unigram.Views
                     var bitmap = new BitmapImage();
                     await bitmap.SetSourceAsync(stream);
 
-                    var content = sender as Rectangle;
-                    content.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    var content = sender as Border;
+                    var rectangle = content.Child as Rectangle;
+                    rectangle.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
             }
             else
@@ -205,7 +206,7 @@ namespace Unigram.Views
                 {
                     content.Background = null;
                     rectangle.Opacity = 1;
-                    rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
                 else if (wallpaper.Type is BackgroundTypePattern pattern)
                 {
@@ -375,7 +376,7 @@ namespace Unigram.Views
                     {
                         content.Background = null;
                         rectangle.Opacity = 1;
-                        rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                        rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                     else if (wallpaper.Type is BackgroundTypePattern pattern)
                     {
