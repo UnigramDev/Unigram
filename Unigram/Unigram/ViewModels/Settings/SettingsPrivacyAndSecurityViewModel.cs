@@ -330,27 +330,19 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AccountTTLCommand { get; }
         private async void AccountTTLExecute()
         {
-            var dialog = new TLContentDialog();
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 30, Content = Locale.Declension("Months", 1) });
-            stack.Children.Add(new RadioButton { Tag = 90, Content = Locale.Declension("Months", 3) });
-            stack.Children.Add(new RadioButton { Tag = 180, Content = Locale.Declension("Months", 6) });
-            stack.Children.Add(new RadioButton { Tag = 365, Content = Locale.Declension("Years", 1) });
-
-            RadioButton GetSelectedPeriod(UIElementCollection periods, RadioButton defaultPeriod)
+            SelectRadioItem GetSelectedPeriod(SelectRadioItem[] periods, SelectRadioItem defaultPeriod)
             {
                 if (_accountTTL == 0)
                 {
-                    return stack.Children[2] as RadioButton;
+                    return defaultPeriod;
                 }
 
-                RadioButton period = null;
+                SelectRadioItem period = null;
 
                 var max = 2147483647;
-                foreach (RadioButton current in stack.Children)
+                foreach (var current in periods)
                 {
-                    var days = (int)current.Tag;
+                    var days = (int)current.Value;
                     int abs = Math.Abs(_accountTTL - days);
                     if (abs < max)
                     {
@@ -359,33 +351,31 @@ namespace Unigram.ViewModels.Settings
                     }
                 }
 
-                return period ?? stack.Children[2] as RadioButton;
+                return period ?? defaultPeriod;
             };
 
-            var selected = GetSelectedPeriod(stack.Children, stack.Children[2] as RadioButton);
+            var items = new[]
+            {
+                new SelectRadioItem(30, Locale.Declension("Months", 1), false),
+                new SelectRadioItem(90, Locale.Declension("Months", 3), false),
+                new SelectRadioItem(180, Locale.Declension("Months", 6), false),
+                new SelectRadioItem(365, Locale.Declension("Years", 1), false)
+            };
+
+            var selected = GetSelectedPeriod(items, items[2]);
             if (selected != null)
             {
                 selected.IsChecked = true;
             }
 
+            var dialog = new SelectRadioView(items);
             dialog.Title = Strings.Resources.DeleteAccountTitle;
-            dialog.Content = stack;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is int days)
             {
-                var days = 180;
-                foreach (RadioButton current in stack.Children)
-                {
-                    if (current.IsChecked == true)
-                    {
-                        days = (int)current.Tag;
-                        break;
-                    }
-                }
-
                 var response = await ProtoService.SendAsync(new SetAccountTtl(new AccountTtl(days)));
                 if (response is Ok)
                 {

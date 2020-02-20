@@ -207,32 +207,22 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand DistanceUnitsCommand { get; }
         private async void DistanceUnitsExecute()
         {
-            var dialog = new TLContentDialog();
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = DistanceUnits.Automatic, Content = Strings.Resources.DistanceUnitsAutomatic, IsChecked = DistanceUnits == DistanceUnits.Automatic });
-            stack.Children.Add(new RadioButton { Tag = DistanceUnits.Kilometers, Content = Strings.Resources.DistanceUnitsKilometers, IsChecked = DistanceUnits == DistanceUnits.Kilometers });
-            stack.Children.Add(new RadioButton { Tag = DistanceUnits.Miles, Content = Strings.Resources.DistanceUnitsMiles, IsChecked = DistanceUnits == DistanceUnits.Miles });
+            var items = new[]
+            {
+                new SelectRadioItem(DistanceUnits.Automatic, Strings.Resources.DistanceUnitsAutomatic, DistanceUnits == DistanceUnits.Automatic),
+                new SelectRadioItem(DistanceUnits.Kilometers, Strings.Resources.DistanceUnitsKilometers, DistanceUnits == DistanceUnits.Kilometers),
+                new SelectRadioItem(DistanceUnits.Miles, Strings.Resources.DistanceUnitsMiles, DistanceUnits == DistanceUnits.Miles),
+            };
 
+            var dialog = new SelectRadioView(items);
             dialog.Title = Strings.Resources.DistanceUnitsTitle;
-            dialog.Content = stack;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is DistanceUnits index)
             {
-                var mode = DistanceUnits.Automatic;
-                foreach (RadioButton current in stack.Children)
-                {
-                    if (current.IsChecked == true)
-                    {
-                        mode = (DistanceUnits)current.Tag;
-                        break;
-                    }
-                }
-
-                DistanceUnits = mode;
+                DistanceUnits = index;
             }
         }
 

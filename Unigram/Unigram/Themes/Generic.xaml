@@ -543,8 +543,9 @@
                                     MaxWidth="{TemplateBinding MaxWidth}"
                                     MaxHeight="{TemplateBinding MaxHeight}"
                                     MinWidth="{TemplateBinding MinWidth}"
-                                    MinHeight="{TemplateBinding MinHeight}">
-                                <Grid x:Name="DialogSpace" VerticalAlignment="Stretch" Padding="0,0,0,12">
+                                    MinHeight="{TemplateBinding MinHeight}"
+                                    CornerRadius="8">
+                                <Grid x:Name="DialogSpace" VerticalAlignment="Stretch">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
@@ -561,7 +562,6 @@
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
                                             <ContentControl x:Name="Title"
-                                                            Margin="{ThemeResource ContentDialogTitleMargin}"
                                                             Content="{TemplateBinding Title}"
                                                             ContentTemplate="{TemplateBinding TitleTemplate}"
                                                             FontSize="20"
@@ -601,7 +601,8 @@
                                           Margin="12,0"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Bottom"
-                                        XYFocusKeyboardNavigation="Enabled">
+                                          XYFocusKeyboardNavigation="Enabled"
+                                          Padding="0,8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="0.5*"/>
