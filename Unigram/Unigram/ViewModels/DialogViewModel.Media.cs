@@ -485,7 +485,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void SendMediaExecute(ObservableCollection<StorageMedia> media, StorageMedia selectedItem)
+        public async void SendMediaExecute(ObservableCollection<StorageMedia> media, StorageMedia selectedItem, bool preserveCaption = false)
         {
             var chat = _chat;
             if (chat == null)
@@ -499,9 +499,10 @@ namespace Unigram.ViewModels
             }
 
             var formattedText = GetFormattedText(true);
-            selectedItem.Caption = formattedText
-                .Substring(0, CacheService.Options.MessageCaptionLengthMax);
-
+            if (!preserveCaption){
+                selectedItem.Caption = formattedText
+                    .Substring(0, CacheService.Options.MessageCaptionLengthMax);
+            }
 #if zDEBUG
             var dialog = new SendFilesView(media, true);
             dialog.ViewModel = this;
@@ -1003,13 +1004,28 @@ namespace Unigram.ViewModels
                     media.Add(photo);
                 }
 
+                var captionElements = new List<string>();
+
                 if (package.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
-                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0])
+                    captionElements.Add(await package.GetTextAsync());
+                }
+                if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
+                {
+                    var webLink = await package.GetWebLinkAsync();
+                    captionElements.Add(webLink.AbsoluteUri);
+                }
+
+                var preserveCaption = false;
+                if (captionElements.Count > 0)
+                {
+                    preserveCaption = true;
+                    var resultCaption = string.Join(Environment.NewLine, captionElements);
+                    media[0].Caption = new FormattedText(resultCaption, new TextEntity[0])
                         .Substring(0, CacheService.Options.MessageCaptionLengthMax);
                 }
 
-                SendMediaExecute(media, media[0]);
+                SendMediaExecute(media, media[0], preserveCaption);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
