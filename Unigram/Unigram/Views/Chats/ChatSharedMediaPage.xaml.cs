@@ -50,12 +50,6 @@ namespace Unigram.Views.Chats
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
-            MediaHeader.Content = Camelize(Strings.Resources.SharedMediaTab);
-            FilesHeader.Content = Camelize(Strings.Resources.SharedFilesTab);
-            LinksHeader.Content = Camelize(Strings.Resources.SharedLinksTab);
-            MusicHeader.Content = Camelize(Strings.Resources.SharedMusicTab);
-            VoiceHeader.Content = Camelize(Strings.Resources.SharedVoiceTab);
-
             InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
             InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
             InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
@@ -127,6 +121,7 @@ namespace Unigram.Views.Chats
             Header.IsBackButtonVisible = embedded ? Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Collapsed : Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Visible;
             HeaderPanel.CornerRadius = new CornerRadius(embedded && !locked ? 8 : 0, embedded && !locked ? 8 : 0, 0, 0);
             HeaderPanel.MaxWidth = embedded && !locked ? 640 : double.PositiveInfinity;
+            HeaderPanel.Margin = new Thickness(embedded && !locked ? 12 : 0, 0, embedded && !locked ? 12 : 0, 0);
 
             HeaderMedia.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 8 : 8, 0, 0);
             HeaderFiles.Padding = HeaderLinks.Padding = HeaderMusic.Padding = HeaderVoice.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 16 : 16, 0, 8);
