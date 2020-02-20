@@ -1261,7 +1261,7 @@
 
         <chats:ChatSearchBar
             x:Name="SearchMask"
-            Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            Visibility="Collapsed"
             Grid.RowSpan="4"
             Canvas.ZIndex="3"/>
 
