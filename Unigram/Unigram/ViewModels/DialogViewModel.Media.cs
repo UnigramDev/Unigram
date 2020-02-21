@@ -499,6 +499,7 @@ namespace Unigram.ViewModels
             }
 
             var formattedText = GetFormattedText(true);
+
             if (selectedItem.Caption is null)
             {
                 selectedItem.Caption = formattedText
