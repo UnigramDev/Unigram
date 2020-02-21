@@ -485,7 +485,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void SendMediaExecute(ObservableCollection<StorageMedia> media, StorageMedia selectedItem, bool preserveCaption = false)
+        public async void SendMediaExecute(ObservableCollection<StorageMedia> media, StorageMedia selectedItem)
         {
             var chat = _chat;
             if (chat == null)
@@ -499,7 +499,8 @@ namespace Unigram.ViewModels
             }
 
             var formattedText = GetFormattedText(true);
-            if (!preserveCaption){
+            if (selectedItem.Caption is null)
+            {
                 selectedItem.Caption = formattedText
                     .Substring(0, CacheService.Options.MessageCaptionLengthMax);
             }
@@ -1016,16 +1017,14 @@ namespace Unigram.ViewModels
                     captionElements.Add(webLink.AbsoluteUri);
                 }
 
-                var preserveCaption = false;
                 if (captionElements.Count > 0)
                 {
-                    preserveCaption = true;
                     var resultCaption = string.Join(Environment.NewLine, captionElements);
                     media[0].Caption = new FormattedText(resultCaption, new TextEntity[0])
                         .Substring(0, CacheService.Options.MessageCaptionLengthMax);
                 }
 
-                SendMediaExecute(media, media[0], preserveCaption);
+                SendMediaExecute(media, media[0]);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
