@@ -34,6 +34,7 @@ namespace Unigram.ViewModels.Delegates
 
         void OpenUrl(string url, bool untrust);
         void OpenHashtag(string hashtag);
+        void OpenBankCardNumber(string number);
 
         void SendBotCommand(string command);
 

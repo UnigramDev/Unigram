@@ -110,5 +110,7 @@ namespace Unigram.Converters
         public const string Photo = "\uEB9F";
 
         public const string Statistics = "\uE9D2";
+
+        public const string Add = "\uE710";
     }
 }

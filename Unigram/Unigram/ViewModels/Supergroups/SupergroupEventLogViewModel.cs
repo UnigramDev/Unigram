@@ -902,6 +902,10 @@ namespace Unigram.ViewModels.Supergroups
         {
         }
 
+        public void OpenBankCardNumber(string number)
+        {
+        }
+
         public void OpenUser(int userId)
         {
         }

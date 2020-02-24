@@ -260,7 +260,7 @@ namespace Unigram.Controls.Cells
                     textBlock.Blocks.Add(paragraph);
                     textBlock.ContextRequested += Paragraph_ContextRequested;
 
-                    MessageHelper.SetEntity(hyperlink, link);
+                    MessageHelper.SetEntityData(hyperlink, link);
 
                     ToolTipService.SetToolTip(hyperlink, link);
                     Grid.SetRow(textBlock, i);
@@ -273,7 +273,7 @@ namespace Unigram.Controls.Cells
 
         private void Paragraph_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            MessageHelper.Hyperlink_ContextRequested(sender, args);
+            MessageHelper.Hyperlink_ContextRequested(null, sender, args);
         }
 
         private void InstantView_Click(Hyperlink sender, string link)

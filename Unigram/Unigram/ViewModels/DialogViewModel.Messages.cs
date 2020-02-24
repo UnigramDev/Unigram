@@ -467,7 +467,7 @@ namespace Unigram.ViewModels
                 new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
                 new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
                 new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
-                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatOther, true)
+                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, true)
             };
 
             var dialog = new SelectRadioView(items);
@@ -836,7 +836,7 @@ namespace Unigram.ViewModels
                 new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
                 new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
                 new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
-                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatOther, true)
+                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, true)
             };
 
             var dialog = new SelectRadioView(items);

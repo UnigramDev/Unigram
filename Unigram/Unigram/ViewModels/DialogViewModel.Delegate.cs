@@ -491,6 +491,15 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void OpenBankCardNumber(string number)
+        {
+            //var response = await ProtoService.SendAsync(new GetBankCardInfo(number));
+            //if (response is BankCardInfo info)
+            //{
+            //    var url = info.Actions.FirstOrDefault(x => x.)
+            //}
+        }
+
         public async void OpenMedia(MessageViewModel message, FrameworkElement target)
         {
             if (message.Content is MessagePoll poll)

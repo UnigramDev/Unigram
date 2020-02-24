@@ -956,7 +956,9 @@ namespace Unigram.Controls.Messages
                             if (entity.Type is TextEntityTypeTextUrl textUrl)
                             {
                                 data = textUrl.Url;
-                                MessageHelper.SetEntity(hyperlink, textUrl.Url);
+                                MessageHelper.SetEntityData(hyperlink, textUrl.Url);
+                                MessageHelper.SetEntityType(hyperlink, entity.Type);
+
                                 ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                             }
                             else if (entity.Type is TextEntityTypeMentionName mentionName)
@@ -980,9 +982,10 @@ namespace Unigram.Controls.Messages
                             hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");
                             //hyperlink.Foreground = foreground;
 
-                            if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress)
+                            //if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeBankCardNumber)
                             {
-                                MessageHelper.SetEntity(hyperlink, data);
+                                MessageHelper.SetEntityData(hyperlink, data);
+                                MessageHelper.SetEntityType(hyperlink, entity.Type);
                             }
 
                             span.Inlines.Add(hyperlink);
@@ -1153,6 +1156,10 @@ namespace Unigram.Controls.Messages
             else if (type is TextEntityTypeUrl)
             {
                 message.Delegate.OpenUrl(data, false);
+            }
+            else if (type is TextEntityTypeBankCardNumber)
+            {
+                message.Delegate.OpenBankCardNumber(data);
             }
         }
 

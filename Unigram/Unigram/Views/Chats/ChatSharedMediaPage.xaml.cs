@@ -238,11 +238,6 @@ namespace Unigram.Views.Chats
         public event EventHandler<ScrollViewerViewChangedEventArgs> ViewChanged;
         public event EventHandler<EventArgs> ViewRequested;
 
-        private string Camelize(string text)
-        {
-            return text.Substring(0, 1).ToUpper() + text.Substring(1).ToLower();
-        }
-
         private void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
         {
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(field, "TextChanged");

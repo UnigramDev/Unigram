@@ -1010,7 +1010,7 @@ namespace Unigram.Common
 
         #region Entity
 
-        public static void Hyperlink_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        public static async void Hyperlink_ContextRequested(MessageViewModel message, UIElement sender, ContextRequestedEventArgs args)
         {
             var text = sender as RichTextBlock;
             if (args.TryGetPosition(sender, out Point point))
@@ -1052,8 +1052,15 @@ namespace Unigram.Common
                         return;
                     }
 
-                    var link = GetEntity(hyperlink);
+                    var link = GetEntityData(hyperlink);
                     if (link == null)
+                    {
+                        args.Handled = false;
+                        return;
+                    }
+
+                    var type = GetEntityType(hyperlink);
+                    if (type == null)
                     {
                         args.Handled = false;
                         return;
@@ -1061,11 +1068,27 @@ namespace Unigram.Common
 
                     var flyout = new MenuFlyout();
 
-                    if (!link.Contains('@'))
+                    if (type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
                     {
                         var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
                         open.Click += LinkOpen_Click;
                         flyout.Items.Add(open);
+                    }
+                    else if (type is TextEntityTypeBankCardNumber)
+                    {
+                        var response = await message.ProtoService.SendAsync(new GetBankCardInfo(link));
+                        if (response is BankCardInfo info)
+                        {
+                            var title = new MenuFlyoutItem { Text = info.Title, IsEnabled = false, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                            flyout.Items.Add(title);
+
+                            foreach (var action in info.Actions)
+                            {
+                                var open = new MenuFlyoutItem { Text = action.Text, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                                open.Click += LinkOpen_Click;
+                                flyout.Items.Add(open);
+                            }
+                        }
                     }
 
                     var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
@@ -1145,18 +1168,39 @@ namespace Unigram.Common
             ClipboardEx.TrySetContent(dataPackage);
         }
 
-        public static string GetEntity(DependencyObject obj)
+        public static string GetEntityData(DependencyObject obj)
         {
-            return (string)obj.GetValue(EntityProperty);
+            return (string)obj.GetValue(EntityDataProperty);
         }
 
-        public static void SetEntity(DependencyObject obj, string value)
+        public static void SetEntityData(DependencyObject obj, string value)
         {
-            obj.SetValue(EntityProperty, value);
+            obj.SetValue(EntityDataProperty, value);
         }
 
-        public static readonly DependencyProperty EntityProperty =
-            DependencyProperty.RegisterAttached("Entity", typeof(string), typeof(MessageHelper), new PropertyMetadata(null));
+        public static readonly DependencyProperty EntityDataProperty =
+            DependencyProperty.RegisterAttached("EntityData", typeof(string), typeof(MessageHelper), new PropertyMetadata(null));
+
+
+
+
+
+        public static TextEntityType GetEntityType(DependencyObject obj)
+        {
+            return (TextEntityType)obj.GetValue(EntityTypeProperty);
+        }
+
+        public static void SetEntityType(DependencyObject obj, TextEntityType value)
+        {
+            obj.SetValue(EntityTypeProperty, value);
+        }
+
+        public static readonly DependencyProperty EntityTypeProperty =
+            DependencyProperty.RegisterAttached("EntityType", typeof(TextEntityType), typeof(MessageHelper), new PropertyMetadata(null));
+
+
+
+
 
         #endregion
     }

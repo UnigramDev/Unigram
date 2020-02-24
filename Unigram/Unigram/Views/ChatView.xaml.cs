@@ -324,7 +324,7 @@ namespace Unigram.Views
             {
                 _stickersTimer.Stop();
 
-                if (_stickersMode != StickersPanelMode.Overlay)
+                if (_stickersMode == StickersPanelMode.Sidebar)
                 {
                     return;
                 }
@@ -439,6 +439,8 @@ namespace Unigram.Views
                 return;
             }
 
+            _stickersMode = StickersPanelMode.Overlay;
+
             VisualStateManager.GoToState(this, "FilledState", false);
             StickersPanel.SetView(StickersPanelMode.Overlay);
 
@@ -479,7 +481,7 @@ namespace Unigram.Views
             if (ViewModel != null)
             {
                 ViewModel.PropertyChanged -= OnPropertyChanged;
-                ViewModel.Items.CollectionChanged -= OnCollectionChanged;
+                //ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
@@ -503,12 +505,21 @@ namespace Unigram.Views
             SearchMask.Update(ViewModel.Search);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
-            ViewModel.Items.CollectionChanged += OnCollectionChanged;
+            //ViewModel.Items.CollectionChanged += OnCollectionChanged;
             ViewModel.Items.AttachChanged = OnAttachChanged;
 
             //Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
 
-            TextRoot.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
+            if (SettingsService.Current.Appearance.BubbleRadius > 0)
+            {
+                TextArea.Margin = ChatFooter.Margin = new Thickness(12, 0, 12, 8);
+            }
+            else
+            {
+                TextArea.Margin = ChatFooter.Margin = new Thickness();
+            }
+
+            TextRoot.CornerRadius = ChatFooter.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
             TextField.Focus(FocusState.Programmatic);
         }
 
@@ -1972,7 +1983,7 @@ namespace Unigram.Views
                 var textBlock = children.FirstOrDefault(x => x is RichTextBlock) as RichTextBlock;
                 if (textBlock != null)
                 {
-                    MessageHelper.Hyperlink_ContextRequested(textBlock, args);
+                    MessageHelper.Hyperlink_ContextRequested(message, textBlock, args);
 
                     if (args.Handled)
                     {

@@ -64,7 +64,7 @@
                     ChoosingItemContainer="OnChoosingItemContainer"
                     ContainerContentChanging="OnContainerContentChanging"
                     Loaded="Scrolling_Loaded"
-                    Padding="0,0,0,8"
+                    Padding="12,0,12,8"
                     common:FluidGridView.OrientationOnly="False">
                     <common:FluidGridView.Triggers>
                         <common:LengthGridViewTrigger ItemLength="96"/>
@@ -118,7 +118,7 @@
                     </GridView.ItemTemplateSelector>
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8" Margin="12,0" MaxWidth="640" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                            <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8" MaxWidth="640" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                 </controls:SelectGridView>

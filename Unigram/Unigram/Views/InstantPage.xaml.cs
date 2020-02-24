@@ -1733,6 +1733,10 @@ namespace Unigram.Views
         {
         }
 
+        public void OpenBankCardNumber(string number)
+        {
+        }
+
         public void OpenUser(int userId)
         {
         }

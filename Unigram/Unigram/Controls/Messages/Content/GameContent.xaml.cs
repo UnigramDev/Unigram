@@ -149,7 +149,7 @@ namespace Unigram.Controls.Messages.Content
 
                     if (entity.Type is TextEntityTypeUrl)
                     {
-                        MessageHelper.SetEntity(hyperlink, data);
+                        MessageHelper.SetEntityData(hyperlink, data);
                     }
                 }
                 else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
@@ -159,7 +159,7 @@ namespace Unigram.Controls.Messages.Content
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
                         data = textUrl.Url;
-                        MessageHelper.SetEntity(hyperlink, textUrl.Url);
+                        MessageHelper.SetEntityData(hyperlink, textUrl.Url);
                         ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                     }
                     else if (entity.Type is TextEntityTypeMentionName mentionName)
