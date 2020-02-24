@@ -21,6 +21,7 @@ namespace Unigram
 
         public const string WallpaperFileName = "wallpaper.jpg";
         public const string WallpaperLocalFileName = "wallpaper.local.jpg";
+        public const string WallpaperColorFileName = "wallpaper.color.jpg";
         public const int WallpaperLocalId = -1;
 
         public static readonly string[] TelegramHosts = new string[]
