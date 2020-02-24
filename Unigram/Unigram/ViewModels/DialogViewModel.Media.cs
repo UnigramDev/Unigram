@@ -499,9 +499,12 @@ namespace Unigram.ViewModels
             }
 
             var formattedText = GetFormattedText(true);
-            selectedItem.Caption = formattedText
-                .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 
+            if (selectedItem.Caption is null)
+            {
+                selectedItem.Caption = formattedText
+                    .Substring(0, CacheService.Options.MessageCaptionLengthMax);
+            }
 #if zDEBUG
             var dialog = new SendFilesView(media, true);
             dialog.ViewModel = this;
@@ -1003,9 +1006,22 @@ namespace Unigram.ViewModels
                     media.Add(photo);
                 }
 
+                var captionElements = new List<string>();
+
                 if (package.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
-                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0])
+                    captionElements.Add(await package.GetTextAsync());
+                }
+                if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
+                {
+                    var webLink = await package.GetWebLinkAsync();
+                    captionElements.Add(webLink.AbsoluteUri);
+                }
+
+                if (captionElements.Count > 0)
+                {
+                    var resultCaption = string.Join(Environment.NewLine, captionElements);
+                    media[0].Caption = new FormattedText(resultCaption, new TextEntity[0])
                         .Substring(0, CacheService.Options.MessageCaptionLengthMax);
                 }
 
