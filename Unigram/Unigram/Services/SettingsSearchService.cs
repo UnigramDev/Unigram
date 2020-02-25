@@ -274,10 +274,10 @@ namespace Unigram.Services
             {
                 new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.Resources.TextSizeHeader),
 
-                new SettingsSearchPage(typeof(SettingsWallpapersPage), Strings.Resources.ChatBackground, "\uE2B1", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.ChatBackground, "\uE2B1", new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsWallpapersPage), Strings.Resources.SelectFromGallery),
-                    new SettingsSearchPage(typeof(SettingsWallpapersPage), Strings.Resources.SetColor)
+                    new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.SelectFromGallery),
+                    new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.SetColor)
                 }),
 
                 new SettingsSearchPage(typeof(SettingsNightModePage), Strings.Resources.AutoNightTheme)

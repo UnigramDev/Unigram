@@ -688,6 +688,7 @@
     <Compile Include="Triggers\FullExperienceTrigger.cs" />
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
+    <Compile Include="ViewModels\BackgroundViewModel.cs" />
     <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
@@ -700,6 +701,7 @@
     <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IBackgroundDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IBasicAndSupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IChatsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
@@ -708,7 +710,6 @@
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISignInDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupEditDelegate.cs" />
-    <Compile Include="ViewModels\Delegates\IWallpaperDelegate.cs" />
     <Compile Include="ViewModels\DialogScheduledViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />
@@ -768,6 +769,7 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsAdvancedViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAppearanceViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsBackgroundsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAndStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAutoViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsLanguageViewModel.cs" />
@@ -781,7 +783,6 @@
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsVoIPViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsWallpapersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
@@ -816,7 +817,9 @@
     <Compile Include="ViewModels\TLViewModelBase.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
-    <Compile Include="ViewModels\WallpaperViewModel.cs" />
+    <Compile Include="Views\BackgroundPage.xaml.cs">
+      <DependentUpon>BackgroundPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml.cs">
       <DependentUpon>BasicGroupCreateStep1Page.xaml</DependentUpon>
     </Compile>
@@ -971,6 +974,9 @@
     <Compile Include="Views\Settings\SettingsAppearancePage.xaml.cs">
       <DependentUpon>SettingsAppearancePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsBackgroundsPage.xaml.cs">
+      <DependentUpon>SettingsBackgroundsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsDataAutoPage.xaml.cs">
       <DependentUpon>SettingsDataAutoPage.xaml</DependentUpon>
     </Compile>
@@ -1006,9 +1012,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsVoIPPage.xaml.cs">
       <DependentUpon>SettingsVoIPPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsWallpapersPage.xaml.cs">
-      <DependentUpon>SettingsWallpapersPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsWebSessionsPage.xaml.cs">
       <DependentUpon>SettingsWebSessionsPage.xaml</DependentUpon>
@@ -1075,9 +1078,6 @@
     </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WallpaperPage.xaml.cs">
-      <DependentUpon>WallpaperPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Audio\sent.mp3" />
     <Content Include="Assets\Audio\silence.mp3" />
@@ -2228,6 +2228,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\BackgroundPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2440,6 +2444,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsBackgroundsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\SettingsDataAutoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2487,10 +2495,6 @@
     <Page Include="Views\Settings\SettingsVoIPPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsWallpapersPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsWebSessionsPage.xaml">
       <SubType>Designer</SubType>
@@ -2639,10 +2643,6 @@
     <Page Include="Views\VoIPPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\WallpaperPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

@@ -7,8 +7,8 @@ using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Delegates
 {
-    public interface IWallpaperDelegate : IViewModelDelegate
+    public interface IBackgroundDelegate : IViewModelDelegate
     {
-        void UpdateWallpaper(Background wallpaper);
+        void UpdateBackground(Background wallpaper);
     }
 }

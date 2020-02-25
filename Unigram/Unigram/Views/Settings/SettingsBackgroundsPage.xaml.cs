@@ -23,14 +23,14 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsWallpapersPage : Page, IHandle<UpdateFile>
+    public sealed partial class SettingsBackgroundsPage : Page, IHandle<UpdateFile>
     {
-        public SettingsWallpapersViewModel ViewModel => DataContext as SettingsWallpapersViewModel;
+        public SettingsBackgroundsViewModel ViewModel => DataContext as SettingsBackgroundsViewModel;
 
-        public SettingsWallpapersPage()
+        public SettingsBackgroundsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsWallpapersViewModel>();
+            DataContext = TLContainer.Current.Resolve<SettingsBackgroundsViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -146,7 +146,7 @@ namespace Unigram.Views.Settings
         {
             if (e.ClickedItem is Background wallpaper)
             {
-                ViewModel.NavigationService.Navigate(typeof(WallpaperPage), TdBackground.ToString(wallpaper));
+                ViewModel.NavigationService.Navigate(typeof(BackgroundPage), TdBackground.ToString(wallpaper));
             }
         }
     }

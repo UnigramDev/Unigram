@@ -571,7 +571,7 @@ namespace Unigram.Common
 
         private static void NavigateToBackground(IProtoService protoService, INavigationService navigation, string slug)
         {
-            navigation.Navigate(typeof(WallpaperPage), slug);
+            navigation.Navigate(typeof(BackgroundPage), slug);
 
             //var response = await protoService.SendAsync(new SearchBackground(slug));
             //if (response is Background background)

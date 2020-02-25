@@ -33,21 +33,21 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
-    public sealed partial class WallpaperPage : Page, IHandle<UpdateFile>, IWallpaperDelegate
+    public sealed partial class BackgroundPage : Page, IHandle<UpdateFile>, IBackgroundDelegate
     {
-        public WallpaperViewModel ViewModel => DataContext as WallpaperViewModel;
+        public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
 
         private Visual _motionVisual;
         private SpriteVisual _blurVisual;
         private CompositionEffectBrush _blurBrush;
         private Compositor _compositor;
 
-        private WallpaperParallaxEffect _parallaxEffect;
+        private BackgroundParallaxEffect _parallaxEffect;
 
-        public WallpaperPage()
+        public BackgroundPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<WallpaperViewModel, IWallpaperDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(this);
 
             Message1.Mockup(Strings.Resources.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.Resources.BackgroundPreviewLine2, true, DateTime.Now);
@@ -88,7 +88,7 @@ namespace Unigram.Views
 
         private async void InitializeMotion()
         {
-            _parallaxEffect = new WallpaperParallaxEffect();
+            _parallaxEffect = new BackgroundParallaxEffect();
 
             Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -241,7 +241,7 @@ namespace Unigram.Views
 
         #region Delegates
 
-        public async void UpdateWallpaper(Background wallpaper)
+        public async void UpdateBackground(Background wallpaper)
         {
             if (wallpaper == null)
             {
@@ -489,7 +489,7 @@ namespace Unigram.Views
         }
     }
 
-    public class WallpaperParallaxEffect
+    public class BackgroundParallaxEffect
     {
         /** Earth's gravity in SI units (m/s^2) */
         public const float GRAVITY_EARTH = 9.80665f;
@@ -502,7 +502,7 @@ namespace Unigram.Views
         private float[] _pitchBuffer = new float[3];
         private int bufferOffset;
 
-        public WallpaperParallaxEffect()
+        public BackgroundParallaxEffect()
         {
             //_accelerometer = Accelerometer.GetDefault();
             _registerMutex = new DisposableMutex();

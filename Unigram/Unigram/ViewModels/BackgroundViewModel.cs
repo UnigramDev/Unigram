@@ -20,11 +20,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class WallpaperViewModel : TLViewModelBase, IDelegable<IWallpaperDelegate>
+    public class BackgroundViewModel : TLViewModelBase, IDelegable<IBackgroundDelegate>
     {
-        public IWallpaperDelegate Delegate { get; set; }
+        public IBackgroundDelegate Delegate { get; set; }
 
-        public WallpaperViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public BackgroundViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Patterns = new MvxObservableCollection<Background>();
@@ -121,7 +121,7 @@ namespace Unigram.ViewModels
                 IsMotionEnabled = Settings.Wallpaper.IsMotionEnabled;
             }
 
-            Delegate?.UpdateWallpaper(_item);
+            Delegate?.UpdateBackground(_item);
 
             if (_item.Type is BackgroundTypePattern || _item.Type is BackgroundTypeFill)
             {

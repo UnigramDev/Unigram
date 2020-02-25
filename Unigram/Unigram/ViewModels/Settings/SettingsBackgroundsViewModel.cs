@@ -19,9 +19,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsWallpapersViewModel : TLViewModelBase
+    public class SettingsBackgroundsViewModel : TLViewModelBase
     {
-        public SettingsWallpapersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SettingsBackgroundsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Background>();
@@ -103,14 +103,14 @@ namespace Unigram.ViewModels.Settings
                 var result = await ApplicationData.Current.LocalFolder.CreateFileAsync($"{SessionId}\\{Constants.WallpaperLocalFileName}", CreationCollisionOption.ReplaceExisting);
                 await file.CopyAndReplaceAsync(result);
 
-                NavigationService.Navigate(typeof(WallpaperPage), Constants.WallpaperLocalFileName);
+                NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperLocalFileName);
             }
         }
 
         public RelayCommand ColorCommand { get; }
         private void ColorExecute()
         {
-            NavigationService.Navigate(typeof(WallpaperPage), Constants.WallpaperColorFileName);
+            NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperColorFileName);
         }
 
         public RelayCommand ResetCommand { get; }
