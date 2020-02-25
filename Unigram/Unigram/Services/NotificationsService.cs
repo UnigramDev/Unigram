@@ -13,13 +13,13 @@ using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Native.Tasks;
-using Unigram.Views;
 using Windows.ApplicationModel.AppService;
-using Windows.Data.Json;
+using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
-using Windows.System.Threading;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
 
@@ -32,6 +32,8 @@ namespace Unigram.Services
         Task CloseAsync();
 
         Task ProcessAsync(Dictionary<string, string> data);
+
+        void PlaySound();
 
         #region Chats related
 
@@ -246,6 +248,26 @@ namespace Unigram.Services
             {
                 CreateToastCollection(update.User);
             }
+        }
+
+        public void PlaySound()
+        {
+            if (!_settings.Notifications.InAppSounds)
+            {
+                return;
+            }
+
+            TypedEventHandler<MediaPlayer, object> handler = null;
+            handler = (s, args) =>
+            {
+                s.MediaEnded -= handler;
+                s.Dispose();
+            };
+
+            var player = new MediaPlayer();
+            player.MediaEnded += handler;
+            player.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/sent.mp3"));
+            player.Play();
         }
 
         public void Handle(UpdateActiveNotifications update)
