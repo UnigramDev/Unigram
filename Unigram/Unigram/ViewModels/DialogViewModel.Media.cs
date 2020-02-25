@@ -762,7 +762,7 @@ namespace Unigram.ViewModels
             var dialog = new SendLocationView();
             //page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
 
-            var confirm = await dialog.DisplayAsync();
+            var confirm = await dialog.OpenAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 var options = await PickSendMessageOptionsAsync();
