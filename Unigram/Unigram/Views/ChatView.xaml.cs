@@ -1847,7 +1847,7 @@ namespace Unigram.Views
                 {
                     if (!string.IsNullOrEmpty(user.PhoneNumber))
                     {
-                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts);
+                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts, new FontIcon { Glyph = Icons.AddUser });
                     }
                     else
                     {
@@ -2966,7 +2966,7 @@ namespace Unigram.Views
             ViewModel.MessageServiceCommand.Execute(message);
         }
 
-        private async void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -3037,14 +3037,14 @@ namespace Unigram.Views
                         var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
                         if (bitmap == null)
                         {
-                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                            bitmap = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                         }
 
                         content.Source = bitmap;
                     }
                     else
                     {
-                        content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -4014,7 +4014,7 @@ namespace Unigram.Views
 
 
 
-        public async void UpdateFile(Telegram.Td.Api.File file)
+        public void UpdateFile(Telegram.Td.Api.File file)
         {
             //for (int i = 0; i < Messages.Items.Count; i++)
             //{
@@ -4220,7 +4220,7 @@ namespace Unigram.Views
                             continue;
                         }
 
-                        photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
             }

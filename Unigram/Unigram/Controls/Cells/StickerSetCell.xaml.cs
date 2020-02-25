@@ -63,7 +63,7 @@ namespace Unigram.Controls.Cells
             //List.ItemsSource = stickerSet.Stickers;
         }
 
-        private async void List_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void List_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var content = args.ItemContainer.ContentTemplateRoot as Image;
 
@@ -96,7 +96,7 @@ namespace Unigram.Controls.Cells
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

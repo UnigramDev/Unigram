@@ -135,7 +135,7 @@ namespace Unigram.Controls.Views
 
         #region Recycle
 
-        private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -167,7 +167,7 @@ namespace Unigram.Controls.Views
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -221,7 +221,7 @@ namespace Unigram.Controls.Views
             this.BeginOnUIThread(() => UpdateFile(update.File));
         }
 
-        public async void UpdateFile(File file)
+        public void UpdateFile(File file)
         {
             foreach (Sticker sticker in List.Items)
             {
@@ -240,7 +240,7 @@ namespace Unigram.Controls.Views
                     }
 
                     var photo = content.Children[0] as Image;
-                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                 }
             }
         }

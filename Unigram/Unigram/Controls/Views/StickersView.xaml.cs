@@ -139,7 +139,7 @@ namespace Unigram.Controls.Views
             Bindings.StopTracking();
         }
 
-        public async void UpdateFile(File file)
+        public void UpdateFile(File file)
         {
             if (!file.Local.IsDownloadingCompleted)
             {
@@ -159,7 +159,7 @@ namespace Unigram.Controls.Views
                     }
 
                     var content = container.ContentTemplateRoot as Image;
-                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                 }
             }
 
@@ -230,14 +230,14 @@ namespace Unigram.Controls.Views
                         var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
                         if (bitmap == null)
                         {
-                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                            bitmap = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                         }
 
                         content.Source = bitmap;
                     }
                     else
                     {
-                        content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
             }
@@ -482,7 +482,7 @@ namespace Unigram.Controls.Views
                         var file = sticker.Thumbnail.Photo;
                         if (file.Local.IsDownloadingCompleted)
                         {
-                            content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                            content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                         }
                         else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
@@ -508,7 +508,7 @@ namespace Unigram.Controls.Views
             args.IsContainerPrepared = true;
         }
 
-        private async void Stickers_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void Stickers_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var content = args.ItemContainer.ContentTemplateRoot as Image;
 
@@ -543,7 +543,7 @@ namespace Unigram.Controls.Views
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -611,7 +611,7 @@ namespace Unigram.Controls.Views
             args.Handled = true;
         }
 
-        private async void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -657,14 +657,14 @@ namespace Unigram.Controls.Views
                         var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 36, 36);
                         if (bitmap == null)
                         {
-                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                            bitmap = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                         }
 
                         content.Source = bitmap;
                     }
                     else
                     {
-                        content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

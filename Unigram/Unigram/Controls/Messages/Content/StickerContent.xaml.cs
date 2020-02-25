@@ -57,7 +57,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message) { }
 
-        public async void UpdateFile(MessageViewModel message, File file)
+        public void UpdateFile(MessageViewModel message, File file)
         {
             var sticker = GetContent(message.Content);
             if (sticker == null)
@@ -77,7 +77,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -85,11 +85,11 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
+                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetWebPFrame(file.Local.Path) };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
