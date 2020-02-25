@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.UI.Input;
@@ -18,6 +19,8 @@ namespace Unigram.Controls
 {
     public class TLContentDialog : ContentDialog
     {
+        private ContentDialogResult _result;
+
         public TLContentDialog()
         {
             DefaultStyleKey = typeof(TLContentDialog);
@@ -74,8 +77,16 @@ namespace Unigram.Controls
             }
         }
 
+        public async Task<ContentDialogResult> OpenAsync()
+        {
+            await this.ShowQueuedAsync();
+            return _result;
+        }
+
         public void Hide(ContentDialogResult result)
         {
+            _result = result;
+
             if (result == ContentDialogResult.Primary)
             {
                 var button = GetTemplateChild("PrimaryButton") as Button;

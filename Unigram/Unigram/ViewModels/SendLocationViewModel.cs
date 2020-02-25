@@ -9,16 +9,15 @@ using Template10.Utils;
 using Unigram.Services;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Services;
 using Unigram.Collections;
 
-namespace Unigram.ViewModels.Dialogs
+namespace Unigram.ViewModels
 {
-    public class DialogShareLocationViewModel : TLViewModelBase
+    public class SendLocationViewModel : TLViewModelBase
     {
         private readonly ILocationService _locationService;
 
-        public DialogShareLocationViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService foursquareService)
+        public SendLocationViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService foursquareService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = foursquareService;

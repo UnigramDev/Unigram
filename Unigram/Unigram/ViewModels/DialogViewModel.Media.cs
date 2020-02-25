@@ -2,10 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -13,23 +10,18 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Entities;
-using Unigram.Native;
 using Unigram.Services;
 using Unigram.Services.Factories;
-using Unigram.Views;
-using Unigram.Views.Dialogs;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
-using Windows.Media.Transcoding;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -767,15 +759,10 @@ namespace Unigram.ViewModels
         public RelayCommand SendLocationCommand { get; }
         private async void SendLocationExecute()
         {
-            var page = new DialogShareLocationPage();
-
-            var dialog = new OverlayPage();
-            dialog.Content = page;
-
-            page.Dialog = dialog;
+            var dialog = new SendLocationView();
             //page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.DisplayAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 var options = await PickSendMessageOptionsAsync();
@@ -785,7 +772,7 @@ namespace Unigram.ViewModels
                 }
 
                 var reply = GetReply(true);
-                var input = page.Media;
+                var input = dialog.Media;
 
                 await SendMessageAsync(reply, input, options);
 
