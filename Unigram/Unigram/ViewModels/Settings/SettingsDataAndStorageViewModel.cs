@@ -126,32 +126,22 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand UseLessDataCommand { get; }
         private async void UseLessDataExecute()
         {
-            var dialog = new TLContentDialog();
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Resources.UseLessDataNever, IsChecked = UseLessData == libtgvoip.DataSavingMode.Never });
-            stack.Children.Add(new RadioButton { Tag = 1, Content = Strings.Resources.UseLessDataOnMobile, IsChecked = UseLessData == libtgvoip.DataSavingMode.MobileOnly });
-            stack.Children.Add(new RadioButton { Tag = 2, Content = Strings.Resources.UseLessDataAlways, IsChecked = UseLessData == libtgvoip.DataSavingMode.Always });
+            var items = new[]
+            {
+                new SelectRadioItem(libtgvoip.DataSavingMode.Never, Strings.Resources.UseLessDataNever, UseLessData == libtgvoip.DataSavingMode.Never),
+                new SelectRadioItem(libtgvoip.DataSavingMode.MobileOnly, Strings.Resources.UseLessDataOnMobile, UseLessData == libtgvoip.DataSavingMode.MobileOnly),
+                new SelectRadioItem(libtgvoip.DataSavingMode.Always, Strings.Resources.UseLessDataAlways, UseLessData == libtgvoip.DataSavingMode.Always),
+            };
 
+            var dialog = new SelectRadioView(items);
             dialog.Title = Strings.Resources.VoipUseLessData;
-            dialog.Content = stack;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is libtgvoip.DataSavingMode index)
             {
-                var mode = 1;
-                foreach (RadioButton current in stack.Children)
-                {
-                    if (current.IsChecked == true)
-                    {
-                        mode = (int)current.Tag;
-                        break;
-                    }
-                }
-
-                UseLessData = (libtgvoip.DataSavingMode)mode;
+                UseLessData = index;
             }
         }
 

@@ -35,40 +35,42 @@ using Unigram.Controls.Views;
 using Unigram.ViewModels.Dialogs;
 using Telegram.Td.Api;
 
-namespace Unigram.Views.Dialogs
+namespace Unigram.Controls.Views
 {
-    public sealed partial class DialogShareLocationPage : Page
+    public sealed partial class SendLocationView : TLContentDialog
     {
-        public DialogShareLocationViewModel ViewModel => DataContext as DialogShareLocationViewModel;
+        public SendLocationViewModel ViewModel => DataContext as SendLocationViewModel;
 
         private MapIcon userPos;
         private Geoposition _lastPosition;
 
         public InputMessageContent Media { get; private set; }
-        public OverlayPage Dialog { get; set; }
 
-        private bool? _liveLocation;
-        public bool? LiveLocation
-        {
-            get
-            {
-                return _liveLocation;
-            }
-            set
-            {
-                _liveLocation = value;
+        //private bool? _liveLocation;
+        //public bool? LiveLocation
+        //{
+        //    get
+        //    {
+        //        return _liveLocation;
+        //    }
+        //    set
+        //    {
+        //        _liveLocation = value;
 
-                LiveLocationButton.Visibility = value.HasValue ? Visibility.Visible : Visibility.Collapsed;
-                LiveLocationLabel.Text = value == true ? Strings.Resources.SendLiveLocation : Strings.Resources.StopLiveLocation;
+        //        LiveLocationButton.Visibility = value.HasValue ? Visibility.Visible : Visibility.Collapsed;
+        //        LiveLocationLabel.Text = value == true ? Strings.Resources.SendLiveLocation : Strings.Resources.StopLiveLocation;
 
-                LiveLocationButton.Visibility = Visibility.Collapsed;
-            }
-        }
+        //        LiveLocationButton.Visibility = Visibility.Collapsed;
+        //    }
+        //}
 
-        public DialogShareLocationPage()
+        public SendLocationView()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<DialogShareLocationViewModel>();
+            DataContext = TLContainer.Current.Resolve<SendLocationViewModel>();
+
+            //PrimaryButtonText = Strings.Resources.Send;
+            //SecondaryButtonText = Strings.Resources.Cancel;
 
             Loaded += OnLoaded;
 
@@ -221,34 +223,34 @@ namespace Unigram.Views.Dialogs
         private void CurrentLocation_Click(object sender, RoutedEventArgs e)
         {
             Media = new InputMessageLocation(new Location(mMap.Center.Position.Latitude, mMap.Center.Position.Longitude), 0);
-            Dialog.Hide(ContentDialogResult.Primary);
+            Hide(ContentDialogResult.Primary);
         }
 
-        private async void LiveLocation_Click(object sender, RoutedEventArgs e)
-        {
-            if (LiveLocation == true)
-            {
-                var dialog = new SelectLivePeriodView(false, null);
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary && _lastPosition != null)
-                {
-                    Media = new InputMessageLocation(new Location(_lastPosition.Coordinate.Point.Position.Latitude, _lastPosition.Coordinate.Point.Position.Longitude), dialog.Period);
-                    Dialog.Hide(ContentDialogResult.Primary);
-                }
-            }
-            else if (LiveLocation == false)
-            {
-                //Media = new TLMessageMediaGeoLive();
-                Dialog.Hide(ContentDialogResult.Primary);
-            }
-        }
+        //private async void LiveLocation_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (LiveLocation == true)
+        //    {
+        //        var dialog = new SelectLivePeriodView(false, null);
+        //        var confirm = await dialog.ShowQueuedAsync();
+        //        if (confirm == ContentDialogResult.Primary && _lastPosition != null)
+        //        {
+        //            Media = new InputMessageLocation(new Location(_lastPosition.Coordinate.Point.Position.Latitude, _lastPosition.Coordinate.Point.Position.Longitude), dialog.Period);
+        //            Dialog.Hide(ContentDialogResult.Primary);
+        //        }
+        //    }
+        //    else if (LiveLocation == false)
+        //    {
+        //        //Media = new TLMessageMediaGeoLive();
+        //        Dialog.Hide(ContentDialogResult.Primary);
+        //    }
+        //}
 
         private void NearbyList_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is Venue venue)
             {
                 Media = new InputMessageVenue(venue);
-                Dialog.Hide(ContentDialogResult.Primary);
+                Hide(ContentDialogResult.Primary);
             }
         }
 
@@ -352,6 +354,7 @@ namespace Unigram.Views.Dialogs
             var border = content.Children[0] as Border;
             var bitmap = border.Child as BitmapIcon;
 
+            border.Background = PlaceholderHelper.GetBrush(venue.Id.GetHashCode());
             bitmap.UriSource = new Uri(string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png", venue.Type));
         }
 

@@ -172,11 +172,11 @@ namespace Unigram.ViewModels.Settings
             switch (Key)
             {
                 case TdNetworkType.Mobile:
-                    return Strings.Resources.NetworkUsageMobile;
+                    return Strings.Resources.NetworkUsageMobileTab;
                 case TdNetworkType.MobileRoaming:
-                    return Strings.Resources.NetworkUsageRoaming;
+                    return Strings.Resources.NetworkUsageRoamingTab;
                 case TdNetworkType.WiFi:
-                    return Strings.Resources.NetworkUsageWiFi;
+                    return Strings.Resources.NetworkUsageWiFiTab;
                 default:
                     return Key.ToString();
             }

@@ -38,11 +38,11 @@ namespace Unigram.Controls.Chats
         private Visual _motionVisual;
         private Compositor _compositor;
 
-        private WallpaperParallaxEffect _parallaxEffect;
+        private BackgroundParallaxEffect _parallaxEffect;
 
         public ChatBackgroundPresenter()
         {
-            _parallaxEffect = new WallpaperParallaxEffect();
+            _parallaxEffect = new BackgroundParallaxEffect();
             _imageBackground = new Rectangle();
             _colorBackground = new Rectangle();
             _colorBackground.SizeChanged += OnSizeChanged;

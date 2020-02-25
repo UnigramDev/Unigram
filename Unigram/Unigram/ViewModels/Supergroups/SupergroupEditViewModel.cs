@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Services;
@@ -367,33 +368,21 @@ namespace Unigram.ViewModels.Supergroups
                 initialValue = full.IsAllHistoryAvailable;
             }
 
-            var dialog = new TLContentDialog();
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = true, Content = Strings.Resources.ChatHistoryVisible, IsChecked = initialValue });
-            stack.Children.Add(new TextBlock { Text = Strings.Resources.ChatHistoryVisibleInfo, Margin = new Thickness(28, -6, 0, 8), Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style });
-            stack.Children.Add(new RadioButton { Tag = false, Content = Strings.Resources.ChatHistoryHidden, IsChecked = !initialValue });
-            stack.Children.Add(new TextBlock { Text = Strings.Resources.ChatHistoryHiddenInfo, Margin = new Thickness(28, -6, 0, 8), Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style });
+            var items = new[]
+            {
+                new SelectRadioItem(true, Strings.Resources.ChatHistoryVisible, initialValue) { Footer = Strings.Resources.ChatHistoryVisibleInfo },
+                new SelectRadioItem(false, Strings.Resources.ChatHistoryHidden, !initialValue) { Footer = Strings.Resources.ChatHistoryHiddenInfo }
+            };
 
+            var dialog = new SelectRadioView(items);
             dialog.Title = Strings.Resources.ChatHistory;
-            dialog.Content = stack;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is bool index)
             {
-                var isAllHistoryAvailable = true;
-                foreach (RadioButton current in stack.Children.OfType<RadioButton>())
-                {
-                    if (current.IsChecked == true)
-                    {
-                        isAllHistoryAvailable = (bool)current.Tag;
-                        break;
-                    }
-                }
-
-                IsAllHistoryAvailable = isAllHistoryAvailable;
+                IsAllHistoryAvailable = index;
             }
         }
 

@@ -396,6 +396,11 @@ namespace Unigram.ViewModels
             {
                 var endReached = IsEndReached();
                 BeginOnUIThread(() => InsertMessage(update.Message, endReached));
+
+                if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
+                {
+                    _pushService.PlaySound();
+                }
             }
         }
 
@@ -598,6 +603,11 @@ namespace Unigram.ViewModels
                     message.Replace(update.Message);
                     ProcessFiles(_chat, new[] { message });
                 }, (bubble, message) => bubble.UpdateMessage(message));
+
+                if (Settings.Notifications.InAppSounds)
+                {
+                    _pushService.PlaySound();
+                }
             }
         }
 

@@ -46,7 +46,7 @@ namespace Unigram.Controls.Views
             {
                 Quiz.IsOn = false;
                 Quiz.Visibility = Visibility.Collapsed;
-                QuizInfo.Visibility = Visibility.Collapsed;
+                Settings.Footer = string.Empty;
             }
 
             if (forceAnonymous)
@@ -103,14 +103,12 @@ namespace Unigram.Controls.Views
             if (MAXIMUM_OPTIONS - Items.Count <= 0)
             {
                 Add.Visibility = Visibility.Collapsed;
-                Separator.Visibility = Visibility.Visible;
-                InfoLabel.Text = Strings.Resources.AddAnOptionInfoMax;
+                OptionsPanel.Footer = Strings.Resources.AddAnOptionInfoMax;
             }
             else
             {
                 Add.Visibility = Visibility.Visible;
-                Separator.Visibility = Visibility.Collapsed;
-                InfoLabel.Text = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count));
+                OptionsPanel.Footer = string.Format(Strings.Resources.AddAnOptionInfo, Locale.Declension("Option", MAXIMUM_OPTIONS - Items.Count));
             }
 
             UpdatePrimaryButton();

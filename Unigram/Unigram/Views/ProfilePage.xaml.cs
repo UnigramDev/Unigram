@@ -421,7 +421,7 @@ namespace Unigram.Views
 
         private void About_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            MessageHelper.Hyperlink_ContextRequested(sender, args);
+            MessageHelper.Hyperlink_ContextRequested(null, sender, args);
         }
 
         private void About_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -773,7 +773,7 @@ namespace Unigram.Views
 
                     if (entity.Type is TextEntityTypeUrl)
                     {
-                        MessageHelper.SetEntity(hyperlink, data);
+                        MessageHelper.SetEntityData(hyperlink, data);
                     }
                 }
                 else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
@@ -783,7 +783,7 @@ namespace Unigram.Views
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
                         data = textUrl.Url;
-                        MessageHelper.SetEntity(hyperlink, textUrl.Url);
+                        MessageHelper.SetEntityData(hyperlink, textUrl.Url);
                         ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                     }
                     else if (entity.Type is TextEntityTypeMentionName mentionName)

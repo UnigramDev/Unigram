@@ -29,7 +29,6 @@ using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
 using Unigram.Views.Chats;
-using Unigram.Views.Dialogs;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Input;
@@ -324,7 +323,7 @@ namespace Unigram.Views
             {
                 _stickersTimer.Stop();
 
-                if (_stickersMode != StickersPanelMode.Overlay)
+                if (_stickersMode == StickersPanelMode.Sidebar)
                 {
                     return;
                 }
@@ -439,6 +438,8 @@ namespace Unigram.Views
                 return;
             }
 
+            _stickersMode = StickersPanelMode.Overlay;
+
             VisualStateManager.GoToState(this, "FilledState", false);
             StickersPanel.SetView(StickersPanelMode.Overlay);
 
@@ -479,7 +480,7 @@ namespace Unigram.Views
             if (ViewModel != null)
             {
                 ViewModel.PropertyChanged -= OnPropertyChanged;
-                ViewModel.Items.CollectionChanged -= OnCollectionChanged;
+                //ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
@@ -503,12 +504,21 @@ namespace Unigram.Views
             SearchMask.Update(ViewModel.Search);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
-            ViewModel.Items.CollectionChanged += OnCollectionChanged;
+            //ViewModel.Items.CollectionChanged += OnCollectionChanged;
             ViewModel.Items.AttachChanged = OnAttachChanged;
 
             //Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
 
-            TextRoot.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
+            if (SettingsService.Current.Appearance.BubbleRadius > 0)
+            {
+                TextArea.Margin = ChatFooter.Margin = new Thickness(12, 0, 12, 8);
+            }
+            else
+            {
+                TextArea.Margin = ChatFooter.Margin = new Thickness();
+            }
+
+            TextRoot.CornerRadius = ChatFooter.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
             TextField.Focus(FocusState.Programmatic);
         }
 
@@ -1836,7 +1846,7 @@ namespace Unigram.Views
                 {
                     if (!string.IsNullOrEmpty(user.PhoneNumber))
                     {
-                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts);
+                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts, new FontIcon { Glyph = Icons.AddUser });
                     }
                     else
                     {
@@ -1972,7 +1982,7 @@ namespace Unigram.Views
                 var textBlock = children.FirstOrDefault(x => x is RichTextBlock) as RichTextBlock;
                 if (textBlock != null)
                 {
-                    MessageHelper.Hyperlink_ContextRequested(textBlock, args);
+                    MessageHelper.Hyperlink_ContextRequested(message, textBlock, args);
 
                     if (args.Handled)
                     {
@@ -2955,7 +2965,7 @@ namespace Unigram.Views
             ViewModel.MessageServiceCommand.Execute(message);
         }
 
-        private async void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -3023,17 +3033,11 @@ namespace Unigram.Views
                 {
                     if (sticker.IsAnimated)
                     {
-                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
-                        if (bitmap == null)
-                        {
-                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
-                        }
-
-                        content.Source = bitmap;
+                        content.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
                     }
                     else
                     {
-                        content.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -4003,7 +4007,7 @@ namespace Unigram.Views
 
 
 
-        public async void UpdateFile(Telegram.Td.Api.File file)
+        public void UpdateFile(Telegram.Td.Api.File file)
         {
             //for (int i = 0; i < Messages.Items.Count; i++)
             //{
@@ -4209,7 +4213,7 @@ namespace Unigram.Views
                             continue;
                         }
 
-                        photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
             }

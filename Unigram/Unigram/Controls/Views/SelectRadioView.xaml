@@ -1,5 +1,5 @@
 ﻿<controls:TLContentDialog
-    x:Class="Unigram.Controls.Views.UsersPickerView"
+    x:Class="Unigram.Controls.Views.SelectRadioView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Views"
@@ -7,11 +7,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    TitleTemplate="{x:Null}"
+    Title="TITLE"
     PrimaryButtonText="Button1"
     SecondaryButtonText="Button2"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <local:UsersSelectionView x:Name="View" IsConfirmVisible="False"/>
+    <ContentDialog.Resources>
+        <Style x:Key="RectangleStyle" TargetType="Rectangle">
+            <Setter Property="Fill" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
+            <Setter Property="Height" Value="1"/>
+        </Style>
+    </ContentDialog.Resources>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}" Width="320">
+        <controls:HeaderedControl x:Name="LayoutRoot" Margin="0,0,0,8"/>
+    </Grid>
 </controls:TLContentDialog>

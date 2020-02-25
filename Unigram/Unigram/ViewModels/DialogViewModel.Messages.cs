@@ -461,24 +461,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatChild, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt5 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
-            var stack = new StackPanel();
-            stack.Children.Add(opt1);
-            stack.Children.Add(opt2);
-            stack.Children.Add(opt3);
-            stack.Children.Add(opt4);
-            stack.Children.Add(opt5);
-            stack.Margin = new Thickness(12, 16, 12, 0);
+            var items = new[]
+            {
+                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, false),
+                new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
+                new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
+                new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
+                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, true)
+            };
 
-            var dialog = new TLContentDialog();
-            dialog.Content = stack;
+            var dialog = new SelectRadioView(items);
             dialog.Title = Strings.Resources.ReportChat;
-            dialog.IsPrimaryButtonEnabled = true;
-            dialog.IsSecondaryButtonEnabled = true;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -488,15 +481,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var reason = opt1.IsChecked == true
-                ? new ChatReportReasonSpam()
-                : (opt2.IsChecked == true
-                    ? new ChatReportReasonViolence()
-                    : (opt3.IsChecked == true
-                        ? new ChatReportReasonPornography()
-                        : (opt4.IsChecked == true
-                            ? new ChatReportReasonChildAbuse()
-                            : (ChatReportReason)new ChatReportReasonCustom())));
+            var reason = dialog.SelectedIndex as ChatReportReason;
+            if (reason == null)
+            {
+                return;
+            }
 
             if (reason is ChatReportReasonCustom other)
             {
@@ -841,24 +830,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatChild, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt5 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
-            var stack = new StackPanel();
-            stack.Children.Add(opt1);
-            stack.Children.Add(opt2);
-            stack.Children.Add(opt3);
-            stack.Children.Add(opt4);
-            stack.Children.Add(opt5);
-            stack.Margin = new Thickness(12, 16, 12, 0);
+            var items = new[]
+            {
+                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, false),
+                new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
+                new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
+                new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
+                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, true)
+            };
 
-            var dialog = new TLContentDialog();
-            dialog.Content = stack;
+            var dialog = new SelectRadioView(items);
             dialog.Title = Strings.Resources.ReportChat;
-            dialog.IsPrimaryButtonEnabled = true;
-            dialog.IsSecondaryButtonEnabled = true;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -868,15 +850,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var reason = opt1.IsChecked == true
-                ? new ChatReportReasonSpam()
-                : (opt2.IsChecked == true
-                    ? new ChatReportReasonViolence()
-                    : (opt3.IsChecked == true
-                        ? new ChatReportReasonPornography()
-                        : (opt4.IsChecked == true
-                            ? new ChatReportReasonChildAbuse()
-                            : (ChatReportReason)new ChatReportReasonCustom())));
+            var reason = dialog.SelectedIndex as ChatReportReason;
+            if (reason == null)
+            {
+                return;
+            }
 
             if (reason is ChatReportReasonCustom other)
             {

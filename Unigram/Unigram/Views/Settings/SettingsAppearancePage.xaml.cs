@@ -55,7 +55,7 @@ namespace Unigram.Views.Settings
 
         private void Wallpaper_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsWallpapersPage));
+            Frame.Navigate(typeof(SettingsBackgroundsPage));
         }
 
         private void NightMode_Click(object sender, RoutedEventArgs e)

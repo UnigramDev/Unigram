@@ -1073,7 +1073,7 @@ Remember, logging out kills all your Secret Chats.</value>
     <value>The bot will know your phone number. This can be useful for integration with other services.</value>
   </data>
   <data name="AreYouSureShareMyContactInfoUser" xml:space="preserve">
-    <value>Are you sure you want to share your phone number {0} with **{1}**?</value>
+    <value>Do you want to share your phone number {0} with **{1}**?</value>
   </data>
   <data name="AreYouSureUnblockContact" xml:space="preserve">
     <value>Are you sure you want to unblock this contact?</value>
@@ -1210,7 +1210,7 @@ Please take a look at the <![CDATA[<a href="https://telegram.org/faq#general-que
     <value>No auth token found</value>
   </data>
   <data name="AuthAnotherClientOk" xml:space="preserve">
-    <value>Auth successfull</value>
+    <value>Auth successful</value>
   </data>
   <data name="AuthAnotherClientScan" xml:space="preserve">
     <value>Scan QR Code</value>
@@ -1559,8 +1559,17 @@ Sunrise: {1}</value>
   <data name="BlockUserContactsTitle" xml:space="preserve">
     <value>CONTACTS</value>
   </data>
+  <data name="BlockUserMessage" xml:space="preserve">
+    <value>Do you want to block **{0}** from messaging and calling you on Telegram?</value>
+  </data>
   <data name="BlockUserMultiTitle" xml:space="preserve">
     <value>Block User</value>
+  </data>
+  <data name="BlockUsers" xml:space="preserve">
+    <value>Block users</value>
+  </data>
+  <data name="BlockUsersMessage" xml:space="preserve">
+    <value>Do you want to block **{0}** from messaging and calling you on Telegram?</value>
   </data>
   <data name="BlockUserTitle" xml:space="preserve">
     <value>Block {0}</value>
@@ -1761,6 +1770,9 @@ If this wasn't you, please enter the code we've just sent you via SMS to your nu
   </data>
   <data name="Caption" xml:space="preserve">
     <value>Caption</value>
+  </data>
+  <data name="CardNumberCopied" xml:space="preserve">
+    <value>Card number copied to clipboard</value>
   </data>
   <data name="Change" xml:space="preserve">
     <value>Change</value>
@@ -2539,6 +2551,24 @@ Minimum length is 5 characters.</value>
   <data name="ColorYellow" xml:space="preserve">
     <value>Yellow</value>
   </data>
+  <data name="CommonGroupsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsOne" xml:space="preserve">
+    <value>{0} group in common</value>
+  </data>
+  <data name="CommonGroupsOther" xml:space="preserve">
+    <value>{0} groups in common</value>
+  </data>
+  <data name="CommonGroupsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="CompatibilityChat" xml:space="preserve">
     <value>{0} is using an older version of Telegram, so secret photos will be shown in compatibility mode.
 
@@ -2654,6 +2684,9 @@ To go over the limit and get additional features, upgrade to a supergroup:
     <value>Convert to supergroup</value>
   </data>
   <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="CopyCardNumber" xml:space="preserve">
     <value>Copy</value>
   </data>
   <data name="CopyLink" xml:space="preserve">
@@ -2835,11 +2868,23 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>Disable Logs</value>
   </data>
+  <data name="DebugMenuDisablePauseMusic" xml:space="preserve">
+    <value>Disable pause music when recording</value>
+  </data>
+  <data name="DebugMenuDisableSmoothKeyboard" xml:space="preserve">
+    <value>Disable smooth keyboard</value>
+  </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>Enable in-app camera</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>Enable Logs</value>
+  </data>
+  <data name="DebugMenuEnablePauseMusic" xml:space="preserve">
+    <value>Enable pause music when recording</value>
+  </data>
+  <data name="DebugMenuEnableSmoothKeyboard" xml:space="preserve">
+    <value>Enable smooth keyboard</value>
   </data>
   <data name="DebugMenuImportContacts" xml:space="preserve">
     <value>Import Contacts</value>
@@ -3008,6 +3053,9 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteThemeTitle" xml:space="preserve">
     <value>Delete theme</value>
+  </data>
+  <data name="DeleteTheseChats" xml:space="preserve">
+    <value>Delete chats</value>
   </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>Delete this chat</value>
@@ -4272,6 +4320,9 @@ Duration: {1}</value>
   <data name="GifsTab" xml:space="preserve">
     <value>GIFS</value>
   </data>
+  <data name="GifsTab2" xml:space="preserve">
+    <value>GIFs</value>
+  </data>
   <data name="GlobalAttachGifRestricted" xml:space="preserve">
     <value>GIFs aren't allowed in this group.</value>
   </data>
@@ -4487,6 +4538,9 @@ Note that they can still join via the group's invite link as long as they are no
   </data>
   <data name="ImagesTab" xml:space="preserve">
     <value>IMAGES</value>
+  </data>
+  <data name="ImagesTab2" xml:space="preserve">
+    <value>Images</value>
   </data>
   <data name="ImportContacts" xml:space="preserve">
     <value>Import Contacts</value>
@@ -4871,8 +4925,26 @@ This link will only work for members of this chat.</value>
   <data name="LinkPreview" xml:space="preserve">
     <value>Link preview</value>
   </data>
+  <data name="LinksFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksOne" xml:space="preserve">
+    <value>{0} link</value>
+  </data>
+  <data name="LinksOther" xml:space="preserve">
+    <value>{0} links</value>
+  </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>Shared Links</value>
+  </data>
+  <data name="LinksTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>Choose for how long people in this chat will see your live location.</value>
@@ -4986,6 +5058,17 @@ This operation can take a few minutes to complete.</value>
   </data>
   <data name="MakeAdmin" xml:space="preserve">
     <value>MAKE ADMIN</value>
+  </data>
+  <data name="MakeMyselfVisible" xml:space="preserve">
+    <value>Make Myself Visible</value>
+  </data>
+  <data name="MakeMyselfVisibleInfo" xml:space="preserve">
+    <value>Users nearby will be able to view your profile and send you messages. This may help you find new friends, but could also attract excessive attention. You can stop sharing your profile at any time.
+
+Your phone number will remain hidden.</value>
+  </data>
+  <data name="MakeMyselfVisibleTitle" xml:space="preserve">
+    <value>Show Your Profile?</value>
   </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>Manage Channel</value>
@@ -5142,6 +5225,24 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="MembersCount" xml:space="preserve">
     <value>{0} of {1} selected</value>
+  </data>
+  <data name="MembersCountSelectedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedOne" xml:space="preserve">
+    <value>{0} of {1} selected</value>
+  </data>
+  <data name="MembersCountSelectedOther" xml:space="preserve">
+    <value>{0} of {1} selected</value>
+  </data>
+  <data name="MembersCountSelectedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="MembersCountZero" xml:space="preserve">
     <value>up to {0}</value>
@@ -5350,6 +5451,24 @@ Minimum length is 5 characters.</value>
   <data name="MoreInfo" xml:space="preserve">
     <value>More info</value>
   </data>
+  <data name="MusicFilesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesOne" xml:space="preserve">
+    <value>{0} music file</value>
+  </data>
+  <data name="MusicFilesOther" xml:space="preserve">
+    <value>{0} music files</value>
+  </data>
+  <data name="MusicFilesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MusicInfo" xml:space="preserve">
     <value>To send music files</value>
   </data>
@@ -5386,14 +5505,23 @@ Minimum length is 5 characters.</value>
   <data name="NetworkUsageMobile" xml:space="preserve">
     <value>MOBILE</value>
   </data>
+  <data name="NetworkUsageMobileTab" xml:space="preserve">
+    <value>Mobile</value>
+  </data>
   <data name="NetworkUsageRoaming" xml:space="preserve">
     <value>ROAMING</value>
+  </data>
+  <data name="NetworkUsageRoamingTab" xml:space="preserve">
+    <value>Roaming</value>
   </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>Network usage since {0}</value>
   </data>
   <data name="NetworkUsageWiFi" xml:space="preserve">
     <value>WI-FI</value>
+  </data>
+  <data name="NetworkUsageWiFiTab" xml:space="preserve">
+    <value>Wi-Fi</value>
   </data>
   <data name="NeverAllow" xml:space="preserve">
     <value>Never Allow</value>
@@ -5448,6 +5576,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="NewPoll" xml:space="preserve">
     <value>New Poll</value>
+  </data>
+  <data name="NewQuiz" xml:space="preserve">
+    <value>New Quiz</value>
   </data>
   <data name="NewSecretChat" xml:space="preserve">
     <value>New Secret Chat</value>
@@ -7193,6 +7324,9 @@ Please turn on location services to enable this feature.</value>
   <data name="PeopleNearbyInfo" xml:space="preserve">
     <value>Ask your friend nearby to open this page to exchange phone numbers.</value>
   </data>
+  <data name="PeopleNearbyInfo2" xml:space="preserve">
+    <value>Exchange contact info with people nearby and find new friends.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>To let you connect with friends across all your devices, your contacts will be continuously synced with Telegram's heavily encrypted cloud servers.</value>
   </data>
@@ -7640,6 +7774,9 @@ Please turn on location services to enable this feature.</value>
   <data name="QuickReplyDefault4" xml:space="preserve">
     <value>Can't talk now. Call me later?</value>
   </data>
+  <data name="QuizAnswers" xml:space="preserve">
+    <value>Quiz answers</value>
+  </data>
   <data name="QuizInfo" xml:space="preserve">
     <value>Polls in Quiz Mode have one correct answer. Users can't revoke their answers.</value>
   </data>
@@ -7854,6 +7991,9 @@ Please turn on location services to enable this feature.</value>
   </data>
   <data name="ReportUnrelatedGroupTextNoAddress" xml:space="preserve">
     <value>Please let us know if this group is not related to this location.</value>
+  </data>
+  <data name="ReportUserLocation" xml:space="preserve">
+    <value>Report</value>
   </data>
   <data name="ResendCode" xml:space="preserve">
     <value>Resend code</value>
@@ -8302,6 +8442,9 @@ You may need to restart the app for this to take effect.</value>
   <data name="SendLocation" xml:space="preserve">
     <value>Send my current location</value>
   </data>
+  <data name="SendMessageLocation" xml:space="preserve">
+    <value>Send Message</value>
+  </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>The admins of this group have restricted you from writing here until {0}</value>
   </data>
@@ -8496,11 +8639,20 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>FILES</value>
   </data>
+  <data name="SharedFilesTab2" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="SharedGroupsTab2" xml:space="preserve">
+    <value>Groups</value>
+  </data>
   <data name="SharedLinks" xml:space="preserve">
     <value>Links</value>
   </data>
   <data name="SharedLinksTab" xml:space="preserve">
     <value>LINKS</value>
+  </data>
+  <data name="SharedLinksTab2" xml:space="preserve">
+    <value>Links</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>Shared Media</value>
@@ -8508,11 +8660,20 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="SharedMediaTab" xml:space="preserve">
     <value>MEDIA</value>
   </data>
+  <data name="SharedMediaTab2" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="SharedMediaTabFull2" xml:space="preserve">
+    <value>Shared Media</value>
+  </data>
   <data name="SharedMediaTitle" xml:space="preserve">
     <value>Shared Media</value>
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
     <value>AUDIO</value>
+  </data>
+  <data name="SharedMusicTab2" xml:space="preserve">
+    <value>Audio</value>
   </data>
   <data name="SharedPhotosAndVideos" xml:space="preserve">
     <value>Photos and videos</value>
@@ -8522,6 +8683,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   </data>
   <data name="SharedVoiceTab" xml:space="preserve">
     <value>VOICE</value>
+  </data>
+  <data name="SharedVoiceTab2" xml:space="preserve">
+    <value>Voice Messages</value>
   </data>
   <data name="ShareFile" xml:space="preserve">
     <value>Share</value>
@@ -8557,7 +8721,7 @@ Don't accept the call, Telegram will process everything automatically.</value>
     <value>This bot would like to know your location each time you send it a request. This can be used to provide location-specific results.</value>
   </data>
   <data name="ShareYouLocationTitle" xml:space="preserve">
-    <value>Share your location?</value>
+    <value>Share Your Location?</value>
   </data>
   <data name="ShareYouLocationUnable" xml:space="preserve">
     <value>App was unable to determine your current location</value>
@@ -8825,6 +8989,9 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   </data>
   <data name="StopQuizAlertTitle" xml:space="preserve">
     <value>Stop quiz?</value>
+  </data>
+  <data name="StopShowingMe" xml:space="preserve">
+    <value>Stop Showing Me</value>
   </data>
   <data name="StopVerification" xml:space="preserve">
     <value>Do you want to stop the verification process?</value>
@@ -9683,6 +9850,42 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Forever</value>
   </data>
+  <data name="UsersCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountOne" xml:space="preserve">
+    <value>{0} user</value>
+  </data>
+  <data name="UsersCountOther" xml:space="preserve">
+    <value>{0} users</value>
+  </data>
+  <data name="UsersCountTitleFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleOne" xml:space="preserve">
+    <value>{0} user</value>
+  </data>
+  <data name="UsersCountTitleOther" xml:space="preserve">
+    <value>{0} users</value>
+  </data>
+  <data name="UsersCountTitleTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="UsersFew" xml:space="preserve">
     <value/>
   </data>
@@ -9796,6 +9999,24 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="Vignette" xml:space="preserve">
     <value>Vignette</value>
+  </data>
+  <data name="VoiceFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceOne" xml:space="preserve">
+    <value>{0} voice message</value>
+  </data>
+  <data name="VoiceOther" xml:space="preserve">
+    <value>{0} voice messages</value>
+  </data>
+  <data name="VoiceTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Answer</value>

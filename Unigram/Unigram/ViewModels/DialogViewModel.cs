@@ -2432,22 +2432,29 @@ namespace Unigram.ViewModels
             {
                 var reply = GetReply(true);
 
-                if (text.Length > CacheService.Options.MessageTextLengthMax)
+                //if (string.Equals(text, "\uD83C\uDFB2"))
+                //{
+                //    await SendMessageAsync(reply, new InputMessageDice());
+                //}
+                //else
                 {
-                    foreach (var split in formattedText.Split(CacheService.Options.MessageTextLengthMax))
+                    if (text.Length > CacheService.Options.MessageTextLengthMax)
                     {
-                        var input = new InputMessageText(split, disablePreview, true);
+                        foreach (var split in formattedText.Split(CacheService.Options.MessageTextLengthMax))
+                        {
+                            var input = new InputMessageText(split, disablePreview, true);
+                            await SendMessageAsync(reply, input, options);
+                        }
+                    }
+                    else if (text.Length > 0)
+                    {
+                        var input = new InputMessageText(formattedText, disablePreview, true);
                         await SendMessageAsync(reply, input, options);
                     }
-                }
-                else if (text.Length > 0)
-                {
-                    var input = new InputMessageText(formattedText, disablePreview, true);
-                    await SendMessageAsync(reply, input, options);
-                }
-                else
-                {
-                    await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
+                    else
+                    {
+                        await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
+                    }
                 }
             }
 
@@ -3051,24 +3058,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatChild, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt5 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
-            var stack = new StackPanel();
-            stack.Children.Add(opt1);
-            stack.Children.Add(opt2);
-            stack.Children.Add(opt3);
-            stack.Children.Add(opt4);
-            stack.Children.Add(opt5);
-            stack.Margin = new Thickness(12, 16, 12, 0);
+            var items = new[]
+            {
+                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, false),
+                new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
+                new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
+                new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
+                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, true)
+            };
 
-            var dialog = new TLContentDialog();
-            dialog.Content = stack;
+            var dialog = new SelectRadioView(items);
             dialog.Title = Strings.Resources.ReportChat;
-            dialog.IsPrimaryButtonEnabled = true;
-            dialog.IsSecondaryButtonEnabled = true;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -3078,15 +3078,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var reason = opt1.IsChecked == true
-                ? new ChatReportReasonSpam()
-                : (opt2.IsChecked == true
-                    ? new ChatReportReasonViolence()
-                    : (opt3.IsChecked == true
-                        ? new ChatReportReasonPornography()
-                        : (opt4.IsChecked == true
-                            ? new ChatReportReasonChildAbuse()
-                            : (ChatReportReason)new ChatReportReasonCustom())));
+            var reason = dialog.SelectedIndex as ChatReportReason;
+            if (reason == null)
+            {
+                return;
+            }
 
             if (reason is ChatReportReasonCustom other)
             {

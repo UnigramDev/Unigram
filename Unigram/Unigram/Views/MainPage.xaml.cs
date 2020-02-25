@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Telegram.Td.Api;
 using Template10.Common;
-using Template10.Services.NavigationService;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
@@ -23,16 +20,12 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
-using Unigram.Views.Chats;
 using Unigram.Views.Host;
-using Unigram.Views.Passport;
-using Unigram.Views.SecretChats;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -1428,6 +1421,57 @@ namespace Unigram.Views
 
         #region Search
 
+        private bool _searchCollapsed = true;
+
+        private void ShowHideSearch(bool show)
+        {
+            SearchField.Visibility = Visibility.Visible;
+            DialogsPanel.Visibility = Visibility.Visible;
+
+            var search = ElementCompositionPreview.GetElementVisual(SearchField);
+            var chats = ElementCompositionPreview.GetElementVisual(DialogsPanel);
+            var panel = ElementCompositionPreview.GetElementVisual(DialogsSearchListView);
+
+            chats.CenterPoint = panel.CenterPoint = new Vector3((float)DialogsPanel.ActualWidth / 2, (float)DialogsPanel.ActualHeight / 2, 0);
+
+            var batch = panel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    DialogsPanel.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var scale1 = panel.Compositor.CreateVector3KeyFrameAnimation();
+            scale1.InsertKeyFrame(show ? 0 : 1, new Vector3(1.05f, 1.05f, 1));
+            scale1.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
+            //scale1.Duration = TimeSpan.FromMilliseconds(150);
+
+            var scale2 = panel.Compositor.CreateVector3KeyFrameAnimation();
+            scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(1));
+            scale2.InsertKeyFrame(show ? 1 : 0, new Vector3(0.95f, 0.95f, 1));
+            //scale2.Duration = TimeSpan.FromMilliseconds(150);
+
+            var opacity1 = panel.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+            //opacity1.Duration = TimeSpan.FromMilliseconds(150);
+
+            var opacity2 = panel.Compositor.CreateScalarKeyFrameAnimation();
+            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
+            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
+            //opacity2.Duration = TimeSpan.FromMilliseconds(150);
+
+            panel.StartAnimation("Scale", scale1);
+            panel.StartAnimation("Opacity", opacity1);
+
+            chats.StartAnimation("Scale", scale2);
+            chats.StartAnimation("Opacity", opacity2);
+
+            batch.End();
+        }
+
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             MainHeader.Visibility = Visibility.Collapsed;
@@ -1985,7 +2029,7 @@ namespace Unigram.Views
             }
             else if (destination == RootDestination.NewSecretChat)
             {
-                MasterDetail.NavigationService.Navigate(typeof(SecretChatCreatePage));
+                ViewModel.CreateSecretChatCommand.Execute();
             }
             else if (destination == RootDestination.NewChannel)
             {

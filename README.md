@@ -40,10 +40,13 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 - Drag&drop files to chats to send them quickly
 - Open chats in separated windows (Shift+click)
 - Replace sent media content
-- Polls
+- Polls 2.0
 - Backgrounds 2.0 (blurred and motion options available)
-- Built-in app lock (fingerprint and Windows Hello authentication available)
-- Windows My People integration
+- Built-in app lock with support for Windows Hello authentication (fingerprint, face and iris recognition)
+- Advanced markdown editor for messages
+- In-app music player
+- Animated stickers and emojis
+- Scheduled and silent messages
 - Full support of Windows 10 notifications and Action Centre (reply to a message or mark it as read without opening the app)
 - Accessibility for visually impaired people
 

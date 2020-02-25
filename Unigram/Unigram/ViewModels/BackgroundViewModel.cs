@@ -20,11 +20,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class WallpaperViewModel : TLViewModelBase, IDelegable<IWallpaperDelegate>
+    public class BackgroundViewModel : TLViewModelBase, IDelegable<IBackgroundDelegate>
     {
-        public IWallpaperDelegate Delegate { get; set; }
+        public IBackgroundDelegate Delegate { get; set; }
 
-        public WallpaperViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public BackgroundViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Patterns = new MvxObservableCollection<Background>();
@@ -42,10 +42,15 @@ namespace Unigram.ViewModels
         {
             Background background = null;
 
-            var url = parameter as string;
-            url = "tg://bg/" + url;
-
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+            if (parameter as string == Constants.WallpaperLocalFileName)
+            {
+                background = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperLocalFileName, null, new BackgroundTypeWallpaper(false, false));
+            }
+            else if (parameter as string == Constants.WallpaperColorFileName)
+            {
+                background = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperColorFileName, null, new BackgroundTypeFill(new BackgroundFillSolid(0xdfe4e8)));
+            }
+            else if (Uri.TryCreate("tg://bg/" + parameter, UriKind.Absolute, out Uri uri))
             {
                 var type = TdBackground.FromUri(uri);
                 if (type is BackgroundTypeFill)
@@ -65,12 +70,6 @@ namespace Unigram.ViewModels
 
                     }
                 }
-
-                Item = background;
-            }
-            else if (url == Constants.WallpaperLocalFileName)
-            {
-                background = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperLocalFileName, null, new BackgroundTypeWallpaper(false, false));
             }
 
             if (background == null)
@@ -122,8 +121,9 @@ namespace Unigram.ViewModels
                 IsMotionEnabled = Settings.Wallpaper.IsMotionEnabled;
             }
 
-            Delegate?.UpdateWallpaper(_item);
+            Delegate?.UpdateBackground(_item);
 
+            if (_item.Type is BackgroundTypePattern || _item.Type is BackgroundTypeFill)
             {
                 var response = await ProtoService.SendAsync(new GetBackgrounds());
                 if (response is Backgrounds backgrounds)
@@ -237,7 +237,7 @@ namespace Unigram.ViewModels
         public Background SelectedPattern
         {
             get => _selectedPattern;
-            set { Set(ref _selectedPattern, value); Set(() => Item, ref _item, value); }
+            set { Set(ref _selectedPattern, value); if (_item?.Type is BackgroundTypeFill || _item?.Type is BackgroundTypePattern) Set(() => Item, ref _item, value); }
         }
 
         public RelayCommand RemoveColor1Command { get; }
@@ -295,7 +295,7 @@ namespace Unigram.ViewModels
 
             // This is a new background and it has to be uploaded to Telegram servers
             Task<BaseObject> task;
-            if (background.Id == Constants.WallpaperLocalId)
+            if (background.Id == Constants.WallpaperLocalId && background.Name == Constants.WallpaperLocalFileName)
             {
                 var item = await ApplicationData.Current.LocalFolder.GetFileAsync($"{SessionId}\\{Constants.WallpaperLocalFileName}");
                 task = ProtoService.SendAsync(new SetBackground(new InputBackgroundLocal(new InputFileLocal(item.Path)), new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled), Settings.Appearance.IsDarkTheme()));
@@ -320,7 +320,7 @@ namespace Unigram.ViewModels
                 {
                     return;
                 }
-                
+
                 task = ProtoService.SendAsync(new SetBackground(new InputBackgroundRemote(background.Id), type, Settings.Appearance.IsDarkTheme()));
             }
 
@@ -359,7 +359,7 @@ namespace Unigram.ViewModels
         {
             if (rhs.IsEmpty)
             {
-                return default;
+                return Color.FromArgb(0, 0, 0, 0);
             }
 
             return rhs.Value.ToColor();
@@ -367,7 +367,7 @@ namespace Unigram.ViewModels
 
         public static implicit operator BackgroundColor(Color lhs)
         {
-            return BackgroundColor.FromValue((lhs.R << 16) + (lhs.G << 8) + lhs.B);
+            return FromValue((lhs.R << 16) + (lhs.G << 8) + lhs.B);
         }
     }
 }

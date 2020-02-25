@@ -243,6 +243,7 @@
                     <ItemsStackPanel
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         VerticalAlignment="Top"
+                        Margin="12,0"
                         MaxWidth="640"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
@@ -334,17 +335,7 @@
                         </Grid>
                     </Grid>-->
                     <Grid x:Name="LayoutRoot" Padding="{TemplateBinding Padding}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup>
-                                <VisualState x:Name="NarrowState">
-                                    <VisualState.Setters>
-                                        <Setter Target="ContentPanel.CornerRadius" Value="0"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="WideState"/>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="ContentRoot" MaxWidth="640">
+                        <Grid x:Name="ContentRoot" Margin="12,0" MaxWidth="640">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -552,8 +543,9 @@
                                     MaxWidth="{TemplateBinding MaxWidth}"
                                     MaxHeight="{TemplateBinding MaxHeight}"
                                     MinWidth="{TemplateBinding MinWidth}"
-                                    MinHeight="{TemplateBinding MinHeight}">
-                                <Grid x:Name="DialogSpace" VerticalAlignment="Stretch" Padding="0,0,0,12">
+                                    MinHeight="{TemplateBinding MinHeight}"
+                                    CornerRadius="8">
+                                <Grid x:Name="DialogSpace" VerticalAlignment="Stretch">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
@@ -570,7 +562,6 @@
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
                                             <ContentControl x:Name="Title"
-                                                            Margin="{ThemeResource ContentDialogTitleMargin}"
                                                             Content="{TemplateBinding Title}"
                                                             ContentTemplate="{TemplateBinding TitleTemplate}"
                                                             FontSize="20"
@@ -610,7 +601,8 @@
                                           Margin="12,0"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Bottom"
-                                        XYFocusKeyboardNavigation="Enabled">
+                                          XYFocusKeyboardNavigation="Enabled"
+                                          Padding="0,8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="0.5*"/>
@@ -3125,11 +3117,14 @@
                                 Visibility="Collapsed"/>
                             <TextBlock
                                 x:Name="UncheckedContentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding UncheckedGlyph}"/>
+                                Text="{TemplateBinding UncheckedGlyph}"
+                                Width="20"
+                                Height="20"
+                                Margin="14"/>
                         </Grid>
 
                         <TextBlock

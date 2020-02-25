@@ -94,11 +94,11 @@ namespace Unigram.Controls
             }
         }
 
-        public async void UpdateFile(IProtoService protoService, File file)
+        public void UpdateFile(IProtoService protoService, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -107,11 +107,11 @@ namespace Unigram.Controls
             }
         }
 
-        private async void UpdateThumbnail(IProtoService protoService, File file)
+        private void UpdateThumbnail(IProtoService protoService, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Container.Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
+                Container.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetWebPFrame(file.Local.Path) };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

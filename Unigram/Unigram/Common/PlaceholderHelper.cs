@@ -479,26 +479,21 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static async Task<ImageSource> GetWebpAsync(string path)
+        public static ImageSource GetWebPFrame(string path)
         {
-            if (ApiInfo.CanDecodeWebp)
-            {
-                return new BitmapImage(new Uri("file:///" + path));
-            }
-            else
-            {
-                var temp = await StorageFile.GetFileFromPathAsync(path);
-                var buffer = await FileIO.ReadBufferAsync(temp);
-
-                return WebPImage.DecodeFromBuffer(buffer);
-            }
+            return WebPImage.DecodeFromPath(path);
         }
 
-        public static ImageSource GetLottieFrame(string path, int frame, int width, int height)
+        public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
         {
             var animation = RLottie.Animation.LoadFromFile(path);
             if (animation == null)
             {
+                if (webp)
+                {
+                    return GetWebPFrame(path);
+                }
+
                 return null;
             }
 

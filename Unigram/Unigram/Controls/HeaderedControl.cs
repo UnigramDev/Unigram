@@ -56,19 +56,19 @@ namespace Unigram.Controls
 
         #endregion
 
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            var size = base.ArrangeOverride(finalSize);
-            if (size.Width > 640)
-            {
-                VisualStateManager.GoToState(this, "WideState", false);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "NarrowState", false);
-            }
+        //protected override Size ArrangeOverride(Size finalSize)
+        //{
+        //    var size = base.ArrangeOverride(finalSize);
+        //    if (size.Width > 640)
+        //    {
+        //        VisualStateManager.GoToState(this, "WideState", false);
+        //    }
+        //    else
+        //    {
+        //        VisualStateManager.GoToState(this, "NarrowState", false);
+        //    }
 
-            return size;
-        }
+        //    return size;
+        //}
     }
 }

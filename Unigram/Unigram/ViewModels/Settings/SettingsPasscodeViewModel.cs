@@ -133,33 +133,23 @@ namespace Unigram.ViewModels.Settings
         {
             var timeout = AutolockTimeout + 0;
 
-            var dialog = new TLContentDialog();
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 0,           Content = Locale.FormatAutoLock(0),           IsChecked = timeout == 0 });
-            stack.Children.Add(new RadioButton { Tag = 1 * 60,      Content = Locale.FormatAutoLock(1 * 60),      IsChecked = timeout == 1 * 60 });
-            stack.Children.Add(new RadioButton { Tag = 5 * 60,      Content = Locale.FormatAutoLock(5 * 60),      IsChecked = timeout == 5 * 60 });
-            stack.Children.Add(new RadioButton { Tag = 1 * 60 * 60, Content = Locale.FormatAutoLock(1 * 60 * 60), IsChecked = timeout == 1 * 60 * 60 });
-            stack.Children.Add(new RadioButton { Tag = 5 * 60 * 60, Content = Locale.FormatAutoLock(5 * 60 * 60), IsChecked = timeout == 5 * 60 * 60 });
+            var items = new[]
+            {
+                new SelectRadioItem(0,           Locale.FormatAutoLock(0),           timeout == 0),
+                new SelectRadioItem(1 * 60,      Locale.FormatAutoLock(1 * 60),      timeout == 1 * 60),
+                new SelectRadioItem(5 * 60,      Locale.FormatAutoLock(5 * 60),      timeout == 5 * 60),
+                new SelectRadioItem(1 * 60 * 60, Locale.FormatAutoLock(1 * 60 * 60), timeout == 1 * 60 * 60),
+                new SelectRadioItem(5 * 60 * 60, Locale.FormatAutoLock(5 * 60 * 60), timeout == 5 * 60 * 60)
+            };
 
+            var dialog = new SelectRadioView(items);
             dialog.Title = Strings.Resources.AutoLock;
-            dialog.Content = stack;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is int mode)
             {
-                var mode = 1;
-                foreach (RadioButton current in stack.Children)
-                {
-                    if (current.IsChecked == true)
-                    {
-                        mode = (int)current.Tag;
-                        break;
-                    }
-                }
-
                 AutolockTimeout = mode;
                 InactivityHelper.Initialize(mode);
             }

@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -13,6 +14,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using static Unigram.Controls.Chats.ChatTextBox;
 
@@ -34,8 +36,6 @@ namespace Unigram.Controls.Chats
             {
                 Field.KeyDown += OnKeyDown;
             }
-
-            RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
         }
 
         public void Update(ChatSearchViewModel viewModel)
@@ -47,15 +47,60 @@ namespace Unigram.Controls.Chats
             Field.From = null;
             Field.Filter = null;
             Field.State = ChatSearchState.Text;
+
+            ShowHide(viewModel != null);
         }
 
-        private async void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)
+        private bool _collapsed = true;
+
+        private void ShowHide(bool show)
         {
-            if (Visibility == Visibility.Visible)
+            if ((show && Visibility == Visibility.Visible) || (!show && (Visibility == Visibility.Collapsed || _collapsed)))
             {
-                await Task.Delay(100);
-                Field.Focus(FocusState.Keyboard);
+                return;
             }
+
+            if (show)
+            {
+                _collapsed = false;
+            }
+
+            Visibility = Visibility.Visible;
+
+            var visual = ElementCompositionPreview.GetElementVisual(TopPanel);
+            visual.Clip = visual.Compositor.CreateInsetClip();
+
+            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                visual.Clip = null;
+                visual.Offset = new Vector3();
+
+                if (show)
+                {
+                    _collapsed = false;
+                    Field.Focus(FocusState.Keyboard);
+                }
+                else
+                {
+                    Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(show ? 0 : 1, 48);
+            clip.InsertKeyFrame(show ? 1 : 0, 0);
+            clip.Duration = TimeSpan.FromMilliseconds(150);
+
+            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -48, 0));
+            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
+            offset.Duration = TimeSpan.FromMilliseconds(150);
+
+            visual.Clip.StartAnimation("TopInset", clip);
+            visual.StartAnimation("Offset", offset);
+
+            batch.End();
         }
 
         #region Recycle
@@ -215,20 +260,20 @@ namespace Unigram.Controls.Chats
             switch (state)
             {
                 case ChatSearchState.Members:
-                    ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Collapsed;
+                    ToolsPanel.Visibility = Visibility.Collapsed;
                     ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, string.Empty, false, true);
                     break;
                 case ChatSearchState.Media:
-                    ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Collapsed;
+                    ToolsPanel.Visibility = Visibility.Collapsed;
                     ViewModel.Autocomplete = ViewModel.Filters;
                     break;
                 case ChatSearchState.TextByMember:
                 case ChatSearchState.TextByMedia:
-                    ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Collapsed;
+                    ToolsPanel.Visibility = Visibility.Collapsed;
                     ViewModel.Autocomplete = null;
                     break;
                 default:
-                    ToolsPanel.Visibility = ToolsMiniPanel.Visibility = Visibility.Visible;
+                    ToolsPanel.Visibility = Visibility.Visible;
                     ViewModel.Autocomplete = null;
                     break;
             }

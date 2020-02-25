@@ -107,11 +107,11 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                LayoutRoot.Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
+                LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetWebPFrame(file.Local.Path) };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

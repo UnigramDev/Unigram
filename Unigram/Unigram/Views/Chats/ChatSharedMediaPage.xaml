@@ -39,11 +39,11 @@
             <!--<Border x:Name="HeaderAnimator" />-->
             <microsoft:NavigationView x:Name="Header" IsBackEnabled="True" OverflowLabelMode="NoLabel" PaneDisplayMode="Top" ItemInvoked="NavigationView_ItemInvoked" IsSettingsVisible="False" IsBackButtonVisible="Visible" BackRequested="Header_BackRequested" Grid.RowSpan="1">
                 <microsoft:NavigationView.MenuItems>
-                    <microsoft:NavigationViewItem x:Name="MediaHeader" Content="{CustomResource SharedMediaTab}" IsSelected="True"/>
-                    <microsoft:NavigationViewItem x:Name="FilesHeader" Content="{CustomResource SharedFilesTab}"/>
-                    <microsoft:NavigationViewItem x:Name="LinksHeader" Content="{CustomResource SharedLinksTab}"/>
-                    <microsoft:NavigationViewItem x:Name="MusicHeader" Content="{CustomResource SharedMusicTab}"/>
-                    <microsoft:NavigationViewItem x:Name="VoiceHeader" Content="{CustomResource SharedVoiceTab}"/>
+                    <microsoft:NavigationViewItem x:Name="MediaHeader" Content="{CustomResource SharedMediaTab2}" IsSelected="True"/>
+                    <microsoft:NavigationViewItem x:Name="FilesHeader" Content="{CustomResource SharedFilesTab2}"/>
+                    <microsoft:NavigationViewItem x:Name="LinksHeader" Content="{CustomResource SharedLinksTab2}"/>
+                    <microsoft:NavigationViewItem x:Name="MusicHeader" Content="{CustomResource SharedMusicTab2}"/>
+                    <microsoft:NavigationViewItem x:Name="VoiceHeader" Content="{CustomResource SharedVoiceTab2}"/>
                 </microsoft:NavigationView.MenuItems>
             </microsoft:NavigationView>
         </Grid>
@@ -64,7 +64,7 @@
                     ChoosingItemContainer="OnChoosingItemContainer"
                     ContainerContentChanging="OnContainerContentChanging"
                     Loaded="Scrolling_Loaded"
-                    Padding="0,0,0,8"
+                    Padding="12,0,12,8"
                     common:FluidGridView.OrientationOnly="False">
                     <common:FluidGridView.Triggers>
                         <common:LengthGridViewTrigger ItemLength="96"/>
@@ -135,9 +135,7 @@
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="MaxWidth" Value="640"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
@@ -170,6 +168,15 @@
                             </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                         </selectors:MessageContentTemplateSelector>
                     </ListView.ItemTemplateSelector>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                VerticalAlignment="Top"
+                                Margin="12,0"
+                                MaxWidth="640"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
                 </controls:SelectListView>
             </PivotItem>
             <PivotItem>
@@ -184,9 +191,7 @@
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="MaxWidth" Value="640"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
@@ -219,6 +224,15 @@
                             </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                         </selectors:MessageContentTemplateSelector>
                     </ListView.ItemTemplateSelector>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                VerticalAlignment="Top"
+                                Margin="12,0"
+                                MaxWidth="640"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
                 </controls:SelectListView>
             </PivotItem>
             <PivotItem>
@@ -233,9 +247,7 @@
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="MaxWidth" Value="640"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
@@ -268,6 +280,15 @@
                             </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                         </selectors:MessageContentTemplateSelector>
                     </ListView.ItemTemplateSelector>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                VerticalAlignment="Top"
+                                Margin="12,0"
+                                MaxWidth="640"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
                 </controls:SelectListView>
             </PivotItem>
             <PivotItem>
@@ -282,9 +303,7 @@
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="MaxWidth" Value="640"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
@@ -317,6 +336,15 @@
                             </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
                         </selectors:MessageContentTemplateSelector>
                     </ListView.ItemTemplateSelector>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                VerticalAlignment="Top"
+                                Margin="12,0"
+                                MaxWidth="640"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
                 </controls:SelectListView>
             </PivotItem>
         </Pivot>
