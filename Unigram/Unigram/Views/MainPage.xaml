@@ -125,8 +125,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Border x:Name="Separator" BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="1,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="0"/>
-
                 <controls:ContentPageHeader x:Name="PageHeader" BackVisibility="Collapsed" Grid.Row="1">
                     <Grid x:Name="Header">
                         <Grid x:Name="MainHeader">
@@ -434,6 +432,8 @@
                     </Grid>
                 </controls:ContentPageHeader>
 
+                <Border x:Name="Separator" BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="1,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="0"/>
+
                 <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}" Grid.Row="2">
                      <Grid.ColumnDefinitions>
                      <ColumnDefinition />
@@ -631,7 +631,7 @@
                                     </GroupStyle>
                                 </ListView.GroupStyle>
                             </ListView>
-                            <Grid x:Name="DialogsPanel">
+                            <Grid x:Name="DialogsPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                                 <!--IsItemClickEnabled="True"
                                                         SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
                                 <local:ChatsPage x:Name="ChatsList"
