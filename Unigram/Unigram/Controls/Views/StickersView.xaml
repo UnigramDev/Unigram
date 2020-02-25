@@ -132,6 +132,7 @@
                         <Setter Target="Hide.Width" Value="*"/>
                         <Setter Target="BackgroundElement.BorderThickness" Value="1"/>
                         <Setter Target="BackgroundElement.Margin" Value="8"/>
+                        <Setter Target="BackgroundElement.CornerRadius" Value="4"/>
 
                         <Setter Target="ShowRow.Height" Value="736*"/>
                         <Setter Target="ShowRow.MaxHeight" Value="736"/>

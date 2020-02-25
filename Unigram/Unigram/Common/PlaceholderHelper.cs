@@ -484,11 +484,16 @@ namespace Unigram.Common
             return WebPImage.DecodeFromPath(path);
         }
 
-        public static ImageSource GetLottieFrame(string path, int frame, int width, int height)
+        public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
         {
             var animation = RLottie.Animation.LoadFromFile(path);
             if (animation == null)
             {
+                if (webp)
+                {
+                    return GetWebPFrame(path);
+                }
+
                 return null;
             }
 

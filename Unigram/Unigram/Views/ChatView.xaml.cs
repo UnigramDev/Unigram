@@ -3034,13 +3034,7 @@ namespace Unigram.Views
                 {
                     if (sticker.IsAnimated)
                     {
-                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
-                        if (bitmap == null)
-                        {
-                            bitmap = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                        }
-
-                        content.Source = bitmap;
+                        content.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
                     }
                     else
                     {

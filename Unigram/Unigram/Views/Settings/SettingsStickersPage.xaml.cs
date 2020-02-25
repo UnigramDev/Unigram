@@ -105,13 +105,7 @@ namespace Unigram.Views.Settings
                 {
                     if (stickerSet.IsAnimated)
                     {
-                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
-                        if (bitmap == null)
-                        {
-                            bitmap = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                        }
-
-                        photo.Source = bitmap;
+                        photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
                     }
                     else
                     {
