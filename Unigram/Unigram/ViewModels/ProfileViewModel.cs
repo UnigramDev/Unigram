@@ -1490,7 +1490,7 @@ namespace Unigram.ViewModels
                             }
                         }
 
-                        if (title != null)
+                        if (title != null && items.Count > 0)
                         {
                             return new object[] { title }.Union(items).ToArray();
                         }
