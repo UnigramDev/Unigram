@@ -194,49 +194,68 @@ namespace Unigram.ViewModels.Supergroups
             }
             else
             {
-                var linkedSupergroup = CacheService.GetSupergroup(linkedChat);
-                if (linkedSupergroup == null)
-                {
-                    return;
-                }
-
-                var linkedFullInfo = CacheService.GetSupergroupFull(linkedChat);
-                if (linkedFullInfo == null)
-                {
-                    linkedFullInfo = await ProtoService.SendAsync(new GetSupergroupFullInfo(linkedSupergroup.Id)) as SupergroupFullInfo;
-                }
-
-                if (linkedSupergroup == null)
-                {
-                    return;
-                }
-
                 String message;
-                if (string.IsNullOrEmpty(linkedSupergroup.Username))
+                bool history = false;
+                if (CacheService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
                 {
-                    message = string.Format(Strings.Resources.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(supergroup.Username))
+                    var linkedFullInfo = CacheService.GetSupergroupFull(linkedChat);
+                    if (linkedFullInfo == null)
                     {
-                        message = string.Format(Strings.Resources.DiscussionLinkGroupPrivateAlert, linkedChat.Title, chat.Title);
+                        linkedFullInfo = await ProtoService.SendAsync(new GetSupergroupFullInfo(linkedSupergroup.Id)) as SupergroupFullInfo;
+                    }
+
+                    if (linkedSupergroup == null)
+                    {
+                        return;
+                    }
+
+                    if (string.IsNullOrEmpty(linkedSupergroup.Username))
+                    {
+                        message = string.Format(Strings.Resources.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
                     }
                     else
                     {
-                        message = string.Format(Strings.Resources.DiscussionLinkGroupPublicAlert, linkedChat.Title, chat.Title);
+                        if (string.IsNullOrEmpty(supergroup.Username))
+                        {
+                            message = string.Format(Strings.Resources.DiscussionLinkGroupPrivateAlert, linkedChat.Title, chat.Title);
+                        }
+                        else
+                        {
+                            message = string.Format(Strings.Resources.DiscussionLinkGroupPublicAlert, linkedChat.Title, chat.Title);
+                        }
+                    }
+
+                    if (!linkedFullInfo.IsAllHistoryAvailable)
+                    {
+                        message += "\r\n\r\n" + Strings.Resources.DiscussionLinkGroupAlertHistory;
+                        history = true;
                     }
                 }
-
-                if (!linkedFullInfo.IsAllHistoryAvailable)
+                else
                 {
-                    message += "\r\n\r\n" + Strings.Resources.DiscussionLinkGroupAlertHistory;
+                    message = string.Format(Strings.Resources.DiscussionLinkGroupPublicPrivateAlert, linkedChat.Title, chat.Title);
+                    history = true;
                 }
 
                 var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.DiscussionLinkGroup, Strings.Resources.DiscussionLinkGroup, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
+                }
+
+                if (linkedChat.Type is ChatTypeBasicGroup)
+                {
+                    linkedChat = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(linkedChat.Id)) as Chat;
+                }
+
+                if (linkedChat == null)
+                {
+                    return;
+                }
+
+                if (history && linkedChat.Type is ChatTypeSupergroup super)
+                {
+                    await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(super.SupergroupId, true));
                 }
 
                 var response = await ProtoService.SendAsync(new SetChatDiscussionGroup(chat.Id, linkedChat.Id));
