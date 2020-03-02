@@ -805,38 +805,34 @@ namespace Unigram.ViewModels
                 if (chat.Type is ChatTypePrivate)
                 {
                     var user = _protoService.GetUser(chat);
-                    if (user.Type is UserTypeBot && _filter.IncludeBots)
+                    if (user.Type is UserTypeBot)
                     {
-                        return true;
+                        return _filter.IncludeBots;
                     }
-                    else if (_filter.IncludePrivate)
-                    {
-                        return true;
-                    }
+
+                    return _filter.IncludePrivate;
                 }
-                else if (chat.Type is ChatTypeSecret && _filter.IncludeSecret)
+                else if (chat.Type is ChatTypeSecret)
                 {
-                    return true;
+                    return _filter.IncludeSecret;
                 }
-                else if (chat.Type is ChatTypeBasicGroup && _filter.IncludePrivateGroups)
+                else if (chat.Type is ChatTypeBasicGroup)
                 {
-                    return true;
+                    return _filter.IncludePrivateGroups;
                 }
                 else if (chat.Type is ChatTypeSupergroup)
                 {
                     var supergroup = _protoService.GetSupergroup(chat);
-                    if (supergroup.IsChannel && _filter.IncludeChannels)
+                    if (supergroup.IsChannel)
                     {
-                        return true;
+                        return _filter.IncludeChannels;
                     }
-                    else if (supergroup.Username.Length > 0 && _filter.IncludePublicGroups)
+                    else if (supergroup.Username.Length > 0)
                     {
-                        return true;
+                        return _filter.IncludePublicGroups;
                     }
-                    else if (_filter.IncludePrivateGroups)
-                    {
-                        return true;
-                    }
+
+                    return _filter.IncludePrivateGroups;
                 }
 
                 return false;
