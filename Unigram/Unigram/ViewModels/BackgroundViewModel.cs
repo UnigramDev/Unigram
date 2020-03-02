@@ -115,12 +115,6 @@ namespace Unigram.ViewModels
                 Rotation = fillGradient.RotationAngle;
             }
 
-            if (_item?.Id == Settings.Wallpaper.SelectedBackground)
-            {
-                IsBlurEnabled = Settings.Wallpaper.IsBlurEnabled;
-                IsMotionEnabled = Settings.Wallpaper.IsMotionEnabled;
-            }
-
             Delegate?.UpdateBackground(_item);
 
             if (_item.Type is BackgroundTypePattern || _item.Type is BackgroundTypeFill)

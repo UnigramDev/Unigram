@@ -132,25 +132,5 @@ namespace Unigram.ViewModels.Settings
 
             }
         }
-
-        public RelayCommand ResetCommand { get; }
-        private async void ResetExecute()
-        {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
-            if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var response = await ProtoService.SendAsync(new ResetBackgrounds());
-            if (response is Ok)
-            {
-                RefreshItems();
-            }
-            else if (response is Error error)
-            {
-
-            }
-        }
     }
 }
