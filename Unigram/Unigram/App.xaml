@@ -142,6 +142,13 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
+            <Style x:Key="DefaultListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+
+            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}"/>
+
             <SolidColorBrush x:Key="GridViewItemCheckBrush" Color="White"/>
 
             <x:Double x:Key="PaneToggleButtonSize">48</x:Double>

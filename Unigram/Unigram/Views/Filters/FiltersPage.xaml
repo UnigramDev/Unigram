@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views.Filters"
     xmlns:controls="using:Unigram.Controls"
     xmlns:td="using:Telegram.Td.Api"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -14,32 +15,54 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Filters"/>
+        <controls:PageHeader Text="{CustomResource Filters}"/>
 
-        <controls:TableListView
-            ItemsSource="{x:Bind ViewModel.Items}"
-            VerticalContentAlignment="Top"
-            Grid.Row="1">
-            <ListView.Header>
-                <controls:HeaderedControl
-                    Footer="[Display filter tabs on main screen for quick switching.]">
-                    <ToggleSwitch
-                        Header="[Show Tabs]"
-                        Style="{StaticResource CheckButtonStyle}"/>
-                </controls:HeaderedControl>
-            </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="td:ChatFilter">
-                    <TextBlock Text="{x:Bind Title}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.Footer>
-                <controls:HeaderedControl>
-                    <controls:BadgeButton
-                        Command="{x:Bind ViewModel.AddCommand}"
-                        Content="[Create new filter]"/>
-                </controls:HeaderedControl>
-            </ListView.Footer>
-        </controls:TableListView>
+        <muxc:ItemsRepeaterScrollHost Grid.Row="1">
+            <ScrollViewer
+                VerticalScrollBarVisibility="Auto"
+                VerticalScrollMode="Auto">
+                <StackPanel>
+                    <StackPanel MaxWidth="640">
+                        <controls:LottieView
+                        Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
+                            Width="140"
+                            Height="140"
+                            Margin="0,24,0,0"/>
+                        <TextBlock
+                            Text="{CustomResource PeopleNearbyInfo}"
+                            Style="{StaticResource InfoCaptionTextBlockStyle}"
+                            TextAlignment="Center"
+                            Margin="12,16,12,8"/>
+                    </StackPanel>
+
+                    <controls:HeaderedControl
+                        Header="{CustomResource Filters}"
+                        Footer="[Stronzate varie.]">
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.Items}"
+                            ElementPrepared="Items_ElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <controls:BadgeButton/>
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        Header="[Recommended Filters]">
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.Suggestions}"
+                            ElementPrepared="Suggestions_ElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <controls:BadgeButton Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+                </StackPanel>
+            </ScrollViewer>
+        </muxc:ItemsRepeaterScrollHost>
     </Grid>
 </Page>

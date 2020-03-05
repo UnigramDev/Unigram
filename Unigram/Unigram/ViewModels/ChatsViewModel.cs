@@ -33,7 +33,7 @@ namespace Unigram.ViewModels
 
         public IChatsDelegate Delegate { get; set; }
 
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList, ChatFilter filter = null)
+        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList, ChatListFilter filter = null)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _notificationsService = notificationsService;
@@ -675,7 +675,7 @@ namespace Unigram.ViewModels
             return ProtoService.GetChat(chatId);
         }
 
-        public void SetFilter(ChatFilter filter)
+        public void SetFilter(ChatListFilter filter)
         {
             Items = new ItemsCollection(ProtoService, Aggregator, this, _chatList, filter);
             RaisePropertyChanged(() => Items);
@@ -697,7 +697,7 @@ namespace Unigram.ViewModels
             private readonly ChatsViewModel _viewModel;
 
             private readonly ChatList _chatList;
-            private readonly ChatFilter _filter;
+            private readonly ChatListFilter _filter;
 
             private bool _hasMoreItems = true;
 
@@ -712,9 +712,9 @@ namespace Unigram.ViewModels
             public long LastChatId => _lastChatId;
             public long LastOrder => _lastOrder;
 
-            public ChatFilter Filter => _filter;
+            public ChatListFilter Filter => _filter;
 
-            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList, ChatFilter filter = null)
+            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList, ChatListFilter filter = null)
                 : base(new ChatComparer(), true)
             {
                 _protoService = protoService;
@@ -787,6 +787,10 @@ namespace Unigram.ViewModels
                 {
                     return true;
                 }
+                else if (_filter.ExcludeChats != null && _filter.ExcludeChats.Contains(chat.Id))
+                {
+                    return false;
+                }
 
                 if (_filter.ExcludeMuted && _protoService.GetNotificationSettingsMuteFor(chat) > 0)
                 {
@@ -802,23 +806,29 @@ namespace Unigram.ViewModels
                     return true;
                 }
 
-                if (chat.Type is ChatTypePrivate)
+                if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret /* ? */)
                 {
                     var user = _protoService.GetUser(chat);
                     if (user.Type is UserTypeBot)
                     {
                         return _filter.IncludeBots;
                     }
-
-                    return _filter.IncludePrivate;
-                }
-                else if (chat.Type is ChatTypeSecret)
-                {
-                    return _filter.IncludeSecret;
+                    else if (user.IsContact)
+                    {
+                        return _filter.IncludeContacts;
+                    }
+                    
+                    return _filter.IncludeNonContacts;
                 }
                 else if (chat.Type is ChatTypeBasicGroup)
                 {
-                    return _filter.IncludePrivateGroups;
+                    var group = _protoService.GetBasicGroup(chat);
+                    if (group.MemberCount > 30)
+                    {
+                        return _filter.IncludeLargeGroups;
+                    }
+
+                    return _filter.IncludeSmallGroups;
                 }
                 else if (chat.Type is ChatTypeSupergroup)
                 {
@@ -827,12 +837,12 @@ namespace Unigram.ViewModels
                     {
                         return _filter.IncludeChannels;
                     }
-                    else if (supergroup.Username.Length > 0)
+                    else if (supergroup.MemberCount > 30)
                     {
-                        return _filter.IncludePublicGroups;
+                        return _filter.IncludeLargeGroups;
                     }
 
-                    return _filter.IncludePrivateGroups;
+                    return _filter.IncludeSmallGroups;
                 }
 
                 return false;

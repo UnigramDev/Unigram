@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.ViewModels.Filters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -34,27 +35,61 @@ namespace Unigram.Views.Filters
             var button = args.Element as Button;
             var content = button.Content as Grid;
 
-            var chat = sender.ItemsSourceView.GetAt(args.Index) as Chat;
+            var element = sender.ItemsSourceView.GetAt(args.Index) as ChatListFilterElement;
+            button.Tag = element;
 
             var title = content.Children[1] as TextBlock;
-            title.Text = ViewModel.ProtoService.GetTitle(chat);
-
-            //if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
-            //{
-            //    var subtitle = content.Children[2] as TextBlock;
-            //    subtitle.Text = string.Format("{0}, {1}", BindConvert.Distance(nearby.Distance), Locale.Declension("Members", supergroup.MemberCount));
-            //}
-            //else
-            //{
-            //    var subtitle = content.Children[2] as TextBlock;
-            //    subtitle.Text = BindConvert.Distance(nearby.Distance);
-            //}
-
             var photo = content.Children[0] as ProfilePicture;
-            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+
+            if (element is FilterChat chat)
+            {
+                title.Text = ViewModel.ProtoService.GetTitle(chat.Chat);
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat.Chat, 36);
+            }
+            else if (element is FilterFlag flag)
+            {
+                title.Text = Enum.GetName(typeof(ChatListFilterFlags), flag.Flag);
+                photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFilterIcon(flag.Flag), (int)flag.Flag, 36);
+            }
 
             //button.Command = ViewModel.OpenChatCommand;
             //button.CommandParameter = nearby;
+        }
+
+        private void Include_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var chat = element.Tag as ChatListFilterElement;
+
+            flyout.CreateFlyoutItem(viewModel.RemoveIncludeCommand, chat, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+
+            args.ShowAt(flyout, element);
+        }
+
+        private void Exclude_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var chat = element.Tag as ChatListFilterElement;
+
+            flyout.CreateFlyoutItem(viewModel.RemoveExcludeCommand, chat, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+
+            args.ShowAt(flyout, element);
         }
     }
 }

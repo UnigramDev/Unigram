@@ -51,7 +51,7 @@ namespace Unigram.ViewModels
             _emojiSetService = emojiSetService;
             _playbackService = playbackService;
 
-            Filters = new MvxObservableCollection<ChatFilter>();
+            Filters = new MvxObservableCollection<ChatListFilter>();
 
             Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
             ArchivedChats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListArchive());
@@ -163,18 +163,21 @@ namespace Unigram.ViewModels
             });
         }
 
-        private IList<ChatFilter> _filters;
-        public IList<ChatFilter> Filters
+        private IList<ChatListFilter> _filters;
+        public IList<ChatListFilter> Filters
         {
             get => _filters;
             set => Set(ref _filters, value);
         }
 
-        private ChatFilter _selectedFilter;
-        public ChatFilter SelectedFilter
+        public ChatListFilter SelectedFilter
         {
-            get => _selectedFilter;
-            set => Set(ref _selectedFilter, value);
+            get => Chats.Items.Filter ?? _filters[0];
+            set
+            {
+                Chats.SetFilter(value?.Id == Constants.ChatListFilterAll ? null : value);
+                RaisePropertyChanged();
+            }
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -185,11 +188,15 @@ namespace Unigram.ViewModels
                 Task.Run(() => _contactsService.JumpListAsync());
                 Task.Run(() => _emojiSetService.UpdateAsync());
 
-                ProtoService.Send(new GetChatFilters(), result =>
+                ProtoService.Send(new GetChatListFilters(), result =>
                 {
-                    if (result is ChatFilters filters)
+                    if (result is ChatListFilters filters)
                     {
-                        BeginOnUIThread(() => Filters = filters.FiltersValue);
+                        BeginOnUIThread(() =>
+                        {
+                            Filters = new[] { new ChatListFilter { Id = Constants.ChatListFilterAll, Title = Strings.Resources.FilterAllChats } }.Union(filters.Filters).ToList();
+                            SelectedFilter = Filters[0];
+                        });
                     }
                 });
             }

@@ -661,7 +661,6 @@
     <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
-    <Compile Include="Services\Updates\UpdateChatFilterTabs.cs" />
     <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />

@@ -57,8 +57,8 @@
                     <StackPanel MaxWidth="640">
                         <controls:LottieView
                             Source="ms-appx:///Assets/Animations/Compass.tgs"
-                            Width="180"
-                            Height="180"
+                            Width="140"
+                            Height="140"
                             Margin="0,24,0,0"/>
                         <TextBlock
                             Text="{CustomResource PeopleNearbyInfo}"

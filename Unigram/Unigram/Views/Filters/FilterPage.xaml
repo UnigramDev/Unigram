@@ -22,72 +22,56 @@
                 VerticalScrollMode="Auto">
                 <StackPanel>
                     <controls:HeaderedControl
-                        Header="[Filter name]">
+                        Header="{CustomResource FilterNameHint}">
                         <TextBox
-                            Text="{x:Bind ViewModel.Title, Mode=TwoWay}"/>
+                            Text="{x:Bind ViewModel.Title, Mode=TwoWay}"
+                            Margin="12,8"/>
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl
-                        Header="[Include chat types]">
-                        <CheckBox
-                            IsChecked="{x:Bind ViewModel.IncludePrivate, Mode=TwoWay}"
-                            Content="[Private Chats]"
-                            Margin="12,6,12,0"/>
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
-
-                        <CheckBox
-                            IsChecked="{x:Bind ViewModel.IncludeSecret, Mode=TwoWay}"
-                            Content="[Secret Chats]"
-                            Margin="12,0,12,0"/>
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
-
-                        <CheckBox
-                            IsChecked="{x:Bind ViewModel.IncludePublicGroups, Mode=TwoWay}"
-                            Content="[Public Groups]"
-                            Margin="12,0,12,0"/>
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
-
-                        <CheckBox
-                            IsChecked="{x:Bind ViewModel.IncludePrivateGroups, Mode=TwoWay}"
-                            Content="[Private Groups]"
-                            Margin="12,0,12,0"/>
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
-
-                        <CheckBox
-                            IsChecked="{x:Bind ViewModel.IncludeChannels, Mode=TwoWay}"
-                            Content="[Channels]"
-                            Margin="12,0,12,0"/>
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
-
-                        <CheckBox
-                            IsChecked="{x:Bind ViewModel.IncludeBots, Mode=TwoWay}"
-                            Content="[Bots]"
-                            Margin="12,0,12,6"/>
-                    </controls:HeaderedControl>
-
-                    <controls:HeaderedControl>
-                        <ToggleSwitch
-                            IsOn="{x:Bind ViewModel.ExcludeMuted, Mode=TwoWay}"
-                            Header="[Exclude muted]"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                        <ToggleSwitch
-                            IsOn="{x:Bind ViewModel.ExcludeRead, Mode=TwoWay}"
-                            Header="[Exclude read]"
-                            Style="{StaticResource CheckButtonStyle}"/>
-                    </controls:HeaderedControl>
-
-                    <controls:HeaderedControl
-                        Header="[Always include]"
+                        Header="{CustomResource FilterAlwaysShow}"
                         Footer="[These chats will be always included in the chats list]">
                         <controls:BadgeButton
-                            Command="{x:Bind ViewModel.AddChatsCommand}"
-                            Content="[Add chats]"/>
+                            Command="{x:Bind ViewModel.AddIncludeCommand}"
+                            Content="{CustomResource FilterAddChats}"/>
                         <muxc:ItemsRepeater
-                            ItemsSource="{x:Bind ViewModel.IncludeChats}"
+                            ItemsSource="{x:Bind ViewModel.Include}"
                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Style="{StaticResource EmptyButtonStyle}">
+                                    <Button ContextRequested="Include_ContextRequested" Style="{StaticResource EmptyButtonStyle}">
+                                        <Grid Margin="12,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <controls:ProfilePicture IsHitTestVisible="False" Width="36" Height="36" Margin="0,0,12,0"/>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                TextWrapping="NoWrap"
+                                                TextTrimming="CharacterEllipsis"
+                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Grid.Column="1"/>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        Header="{CustomResource FilterNeverShow}"
+                        Footer="[These chats will be always included in the chats list]">
+                        <controls:BadgeButton
+                            Command="{x:Bind ViewModel.AddExcludeCommand}"
+                            Content="{CustomResource FilterAddChats}"/>
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.Exclude}"
+                            ElementPrepared="OnElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button ContextRequested="Exclude_ContextRequested" Style="{StaticResource EmptyButtonStyle}">
                                         <Grid Margin="12,6">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>

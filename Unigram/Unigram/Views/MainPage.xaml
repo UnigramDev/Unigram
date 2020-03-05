@@ -12,6 +12,7 @@
     xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+    xmlns:td="using:Telegram.Td.Api"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:triggers="using:Unigram.Triggers"
@@ -125,108 +126,32 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Border x:Name="Separator" BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="1,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="0"/>
-
                 <controls:ContentPageHeader x:Name="PageHeader" BackVisibility="Collapsed" Grid.Row="1">
                     <Grid x:Name="Header">
-                        <Grid x:Name="MainHeader">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid x:Name="MainHeader" Grid.Column="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto" MinWidth="12"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="DefaultHeader"
-                                       Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}"
-                                       VerticalAlignment="Center"
-                                       Margin="46,0,0,0"
-                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                       Style="{StaticResource BaseTextBlockStyle}"/>
-
                             <Button
-                                x:Name="ChatsFilters"
-                                Click="ChatsFilters_Click"
-                                Content="All chats"
-                                Margin="5,0,0,0">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Grid x:Name="LayoutRoot" Background="Transparent">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="32" />
-                                            </Grid.ColumnDefinitions>
-                                            <VisualStateManager.VisualStateGroups>
-                                                <VisualStateGroup x:Name="CommonStates">
-                                                    <VisualState x:Name="Normal" />
-                                                    <VisualState x:Name="PointerOver">
-                                                        <Storyboard>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPointerOver}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </VisualState>
-                                                    <VisualState x:Name="Pressed">
-                                                        <Storyboard>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPressed}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </VisualState>
-                                                    <VisualState x:Name="Disabled">
-                                                        <Storyboard>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxForegroundDisabled}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DropDownGlyph" Storyboard.TargetProperty="Foreground">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxDropDownGlyphForegroundDisabled}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </VisualState>
-                                                </VisualStateGroup>
-                                            </VisualStateManager.VisualStateGroups>
-                                            <ContentPresenter x:Name="ContentPresenter"
-                                                              Grid.Column="1"
-                                                              FontWeight="SemiBold"
-                                                              Margin="41,4,0,4"
-                                                              Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-
-                                            <FontIcon x:Name="DropDownGlyph"
-                                                      Grid.Column="2"
-                                                      IsHitTestVisible="False"
-                                                      Margin="0,12,10,8"
-                                                      Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                      FontSize="12"
-                                                      Glyph="&#xE0E5;"
-                                                      HorizontalAlignment="Right"
-                                                      VerticalAlignment="Center"
-                                                      AutomationProperties.AccessibilityView="Raw" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-
-                            <controls:GlyphButton
-                                x:Name="BackButton"
-                                Click="BackButton_Click"
-                                Glyph="&#xE72B;"
-                                Height="{ThemeResource AppBarThemeCompactHeight}"
-                                FontSize="15"
-                                Width="40"
-                                Visibility="Collapsed"
-                                AutomationProperties.Name="{CustomResource AccDescrGoBack}"
-                                ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-
+                                x:Name="ChatTabsSearch"
+                                Click="Search_Click"
+                                AutomationProperties.LandmarkType="Search"
+                                Content="{CustomResource Search}"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                Background="{ThemeResource TextControlBackground}"
+                                BorderBrush="{ThemeResource TextControlBorderBrush}"
+                                Padding="{ThemeResource TextControlThemePadding}"
+                                HorizontalContentAlignment="Left"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Margin="0,0,0,8"/>
 
                             <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
-                                <controls:GlyphButton
-                                    Glyph="&#xE11A;"
-                                    Click="Search_Click"
-                                    Style="{StaticResource HeaderGlyphButtonStyle}"
-                                    AutomationProperties.LandmarkType="Search"
-                                    AutomationProperties.Name="{CustomResource Search}"
-                                    ToolTipService.ToolTip="{CustomResource Search}"/>
                                 <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                         Padding="{StaticResource EllipsisButtonPadding}"
                                         Style="{StaticResource EllipsisButton}"
@@ -259,12 +184,6 @@
                                 </Button>
                             </StackPanel>
                             <StackPanel x:Name="ContactsOptions" Orientation="Horizontal" Grid.Column="1">
-                                <controls:GlyphButton
-                                    Glyph="&#xE109;"
-                                    Click="NewContact_Click"
-                                    Style="{StaticResource HeaderGlyphButtonStyle}"
-                                    AutomationProperties.Name="{CustomResource CreateNewContact}"
-                                    ToolTipService.ToolTip="{CustomResource CreateNewContact}"/>
                                 <controls:GlyphToggleButton
                                     UncheckedGlyph="&#xE91B;"
                                     CheckedGlyph="&#xE91E;"
@@ -274,13 +193,6 @@
                                     AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
                                     ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
                                     IsOneWay="False"/>
-                                <controls:GlyphButton
-                                    Glyph="&#xE11A;"
-                                    Click="Search_Click"
-                                    Style="{StaticResource HeaderGlyphButtonStyle}"
-                                    AutomationProperties.LandmarkType="Search"
-                                    AutomationProperties.Name="{CustomResource Search}"
-                                    ToolTipService.ToolTip="{CustomResource Search}"/>
                             </StackPanel>
                             <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
                                 <controls:GlyphButton
@@ -301,15 +213,19 @@
                                     Style="{StaticResource HeaderGlyphToggleButtonStyle}"
                                     AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
                                     ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"/>
-                                <controls:GlyphButton
-                                    Glyph="&#xE11A;"
-                                    Click="Search_Click"
-                                    Style="{StaticResource HeaderGlyphButtonStyle}"
-                                    AutomationProperties.LandmarkType="Search"
-                                    AutomationProperties.Name="{CustomResource Search}"
-                                    ToolTipService.ToolTip="{CustomResource Search}"/>
                             </StackPanel>
                         </Grid>
+
+                        <controls:GlyphButton
+                            x:Name="BackButton"
+                            Click="BackButton_Click"
+                            Glyph="&#xE72B;"
+                            Height="{ThemeResource AppBarThemeCompactHeight}"
+                            FontSize="15"
+                            Width="40"
+                            Visibility="Collapsed"
+                            AutomationProperties.Name="{CustomResource AccDescrGoBack}"
+                            ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
 
                         <Grid x:Name="ManagePanel" Background="{ThemeResource PageHeaderBackgroundBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
                             <Grid.ColumnDefinitions>
@@ -382,36 +298,20 @@
                         </Grid>
 
                         <controls:SearchTextBox
-                             x:Name="SearchField"
-                             Style="{StaticResource QueryTextBoxStyle}"
-                             PlaceholderText="{CustomResource Search}"
-                             PreventKeyboardDisplayOnProgrammaticFocus="True"
-                             Delete="Search_LostFocus"
-                             TextChanged="Search_TextChanged"
-                             KeyDown="Search_KeyDown"
-                             Visibility="Collapsed"/>
+                            x:Name="SearchField"
+                            Style="{StaticResource QueryTextBoxStyle}"
+                            PlaceholderText="{CustomResource Search}"
+                            PreventKeyboardDisplayOnProgrammaticFocus="True"
+                            Delete="Search_LostFocus"
+                            TextChanged="Search_TextChanged"
+                            KeyDown="Search_KeyDown"
+                            Visibility="Collapsed"
+                            Margin="0,0,12,8"
+                            Grid.Column="1"/>
                     </Grid>
                 </controls:ContentPageHeader>
 
                 <Border x:Name="Separator" BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="1,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="0"/>
-
-                <!--<Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageSubHeaderBackgroundBrush}" Grid.Row="2">
-                     <Grid.ColumnDefinitions>
-                     <ColumnDefinition />
-                     <ColumnDefinition Width="48"/>
-                     </Grid.ColumnDefinitions>
-                 
-                     <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                     <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
-                     <Run Text="{CustomResource AttachLiveLocation}" FontWeight="SemiBold"/>
-                     <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>
-                     </TextBlock>
-                     </Button>
-                 
-                     <controls:GlyphButton Command="{x:Bind ViewModel.StopLiveLocationCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
-                 
-                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource TelegramSeparatorBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                     </Grid>-->
 
                 <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
                     <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
@@ -593,46 +493,42 @@
                                 </ListView.GroupStyle>
                             </ListView>
                             <Grid x:Name="DialogsPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                                <!--IsItemClickEnabled="True"
-                                                        SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
-                                <local:ChatsPage x:Name="ChatsList"
-                                                 AutomationProperties.LandmarkType="Main"
-                                                 DataContext="{x:Bind ViewModel.Chats}"
-                                                 ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
-                                                 SelectionMode2="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
-                                                 AllowSelection="True">
-                                    <ListView.Header>
-                                        <StackPanel>
-                                            <HyperlinkButton x:Name="ResetFilters" Click="ResetFilters_Click" Visibility="Collapsed" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
-                                                <Grid Margin="0,3">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="48"/>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
+                                <Grid x:Name="ChatsPanel">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <ScrollViewer x:Name="ChatTabs" x:Load="False" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Hidden">
+                                        <ScrollViewer.Resources>
+                                            <x:Double x:Key="NavigationViewTopPaneHeight">40</x:Double>
+                                        </ScrollViewer.Resources>
+                                        <Grid x:Name="ChatTabsView">
+                                            <microsoft:NavigationView PaneDisplayMode="Top" MenuItemsSource="{x:Bind ViewModel.Filters}" SelectedItem="{x:Bind ViewModel.SelectedFilter, Mode=OneWay}" ItemInvoked="NavigationView_ItemInvoked" IsBackButtonVisible="Collapsed" IsBackEnabled="False" IsSettingsVisible="False">
+                                                <microsoft:NavigationView.MenuItemTemplate>
+                                                    <DataTemplate x:DataType="td:ChatListFilter">
+                                                        <microsoft:NavigationViewItem
+                                                            Tag="{x:Bind}"
+                                                            Content="{x:Bind Title}"
+                                                            ContextRequested="ChatListFilter_ContextRequested"/>
+                                                    </DataTemplate>
+                                                </microsoft:NavigationView.MenuItemTemplate>
+                                            </microsoft:NavigationView>
+                                        
+                                            <Border BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom"/>
+                                        </Grid>
+                                    </ScrollViewer>
 
-                                                    <FontIcon Glyph="&#xE751;" HorizontalAlignment="Center"/>
-
-                                                    <TextBlock Text="All chats" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
-
-                                                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                                MinWidth="20"
-                                                                Height="20"
-                                                                CornerRadius="10"
-                                                                VerticalAlignment="Center"
-                                                                HorizontalAlignment="Right"
-                                                                Margin="0,0,12,0"
-                                                                Grid.Column="2">
-                                                        <TextBlock Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
-                                                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                                                       Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                                       TextAlignment="Center"
-                                                                       Margin="6,2,6,0"/>
-                                                    </Border>
-
-                                                </Grid>
-                                            </HyperlinkButton>
-                                            <Grid>
+                                    <!--IsItemClickEnabled="True"
+                                                            SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
+                                    <local:ChatsPage x:Name="ChatsList"
+                                                     AutomationProperties.LandmarkType="Main"
+                                                     DataContext="{x:Bind ViewModel.Chats}"
+                                                     ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
+                                                     SelectionMode2="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
+                                                     AllowSelection="True"
+                                                     Grid.Row="1">
+                                        <ListView.Header>
+                                            <Grid x:Name="ArchivedChatsPresenter">
                                                 <Border x:Name="ArchivedChatsPanel">
                                                     <cells:ChatCell
                                                         x:Name="ArchivedChats"
@@ -654,34 +550,11 @@
                                                     </Border>
                                                 </Border>
                                             </Grid>
-                                        </StackPanel>
-                                    </ListView.Header>
-                                </local:ChatsPage>
-
-                                <Grid x:Name="Arrow"
-                                      Margin="12,12"
-                                      HorizontalAlignment="Right"
-                                      VerticalAlignment="Bottom"
-                                      common:VisualUtilities.IsVisible="False"
-                                      Visibility="Collapsed">
-                                    <Ellipse x:Name="ArrowShadow" Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="36" Height="36"/>
-                                    <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                            CornerRadius="18"
-                                            Height="36"
-                                            Width="36">
-                                        <controls:GlyphButton
-                                            Click="Arrow_Click"
-                                            FontSize="16"
-                                            Width="36"
-                                            Height="36"
-                                            Glyph="&#xE74A;"
-                                            Radius="24"
-                                            AutomationProperties.Name="{CustomResource AccDescrPageDown}"
-                                            ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"/>
-                                    </Border>
+                                        </ListView.Header>
+                                    </local:ChatsPage>
                                 </Grid>
 
-                                <Grid x:Name="FolderPanel" Visibility="Collapsed">
+                                <Grid x:Name="FolderPanel" Visibility="Collapsed" Grid.RowSpan="2">
                                     <Border x:Name="FolderShadow" Background="{ThemeResource MessageOverlayBackgroundBrush}"/>
                                     <local:ChatsPage
                                         x:Name="FolderList"
@@ -692,7 +565,7 @@
                                         SelectionMode2="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"/>
                                 </Grid>
 
-                                <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom"/>
+                                <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Grid.Row="1"/>
 
                                 <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                      -->
@@ -851,6 +724,12 @@
                                                 Click="ChatsNearby_Click"
                                                 Style="{StaticResource GlyphBadgeButtonStyle}"
                                                 Glyph="&#xE1C4;"/>
+                                            
+                                            <controls:BadgeButton
+                                                Content="{CustomResource CreateNewContact}"
+                                                Click="NewContact_Click"
+                                                Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                Glyph="&#xE8FA;"/>
 
                                             <Border Background="{ThemeResource PageBackgroundDarkBrush}">
                                                 <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
