@@ -181,6 +181,8 @@ namespace Unigram.Controls.Messages
                     return SetCallTemplate(message, call, title);
                 case MessageContact contact:
                     return SetContactTemplate(message, contact, title);
+                case MessageDice dice:
+                    return SetDiceTemplate(message, dice, title);
                 case MessageDocument document:
                     return SetDocumentTemplate(message, document, title);
                 case MessageGame game:
@@ -327,6 +329,20 @@ namespace Unigram.Controls.Messages
             TitleLabel.Text = GetFromLabel(message, title);
             ServiceLabel.Text = string.Empty;
             MessageLabel.Text = text.Text.Text.Replace("\r\n", "\n").Replace('\n', ' ');
+
+            return true;
+        }
+
+        private bool SetDiceTemplate(MessageViewModel message, MessageDice dice, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = string.Empty;
+            MessageLabel.Text = "\uD83C\uDFB2";
 
             return true;
         }

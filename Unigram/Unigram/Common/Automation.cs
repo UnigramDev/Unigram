@@ -117,6 +117,10 @@ namespace Unigram.Common
             {
                 builder.Append(text.Text.Text);
             }
+            else if (message.Content is MessageDice dice)
+            {
+                builder.Append("\uD83C\uDFB2");
+            }
 
             if (builder.Length > 0 && builder[builder.Length - 1] != '.')
             {
@@ -140,6 +144,10 @@ namespace Unigram.Common
             if (message.Content is MessageText text)
             {
                 return text.Text.Text + ", ";
+            }
+            if (message.Content is MessageDice dice)
+            {
+                return "\uD83C\uDFB2" + ", ";
             }
             if (message.Content is MessageGame gameMedia)
             {

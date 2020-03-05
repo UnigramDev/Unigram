@@ -725,6 +725,9 @@ namespace Unigram.Services
 
                 case MessageText text:
                     return text.Text.Text;
+
+                case MessageDice dice:
+                    return "\uD83C\uDFB2";
             }
 
             return string.Empty;

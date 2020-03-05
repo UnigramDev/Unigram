@@ -2269,6 +2269,11 @@ namespace Unigram.Common
             file.Local = update.Local;
             file.Remote = update.Remote;
         }
+
+        public static File GetLocalFile(string path)
+        {
+            return new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, path), false, false, false, true, 0, 0, 0), new RemoteFile(string.Empty, string.Empty, false, false, 0));
+        }
     }
 }
 

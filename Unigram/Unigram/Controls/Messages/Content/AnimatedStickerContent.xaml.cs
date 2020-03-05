@@ -42,14 +42,17 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            //Background = null;
-            //Texture.Source = null;
-            //Texture.Constraint = message;
-            if (message.GeneratedContent != null && message.Content is MessageText text)
+            if (message.Content is MessageText text)
             {
                 Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
                 Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
                 Player.ColorReplacements = Emoji.GetColorReplacements(text.Text.Text);
+            }
+            else if (message.Content is MessageDice)
+            {
+                Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
+                Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
+                Player.ColorReplacements = null;
             }
             else
             {
@@ -93,7 +96,7 @@ namespace Unigram.Controls.Messages.Content
                     LayoutRoot.Background = null;
 
                     Player.IsCachingEnabled = SettingsService.Current.Diagnostics.CacheStickers;
-                    Player.IsLoopingEnabled = message.GeneratedContent == null && SettingsService.Current.Stickers.IsLoopingEnabled;
+                    Player.IsLoopingEnabled = (message.Content is MessageDice dice && dice.Value == 0) || (message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled);
                     Player.Source = new Uri("file:///" + file.Local.Path);
                 }
                 else

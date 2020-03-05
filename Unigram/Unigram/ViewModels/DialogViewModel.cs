@@ -1336,6 +1336,18 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
+                else if (message.Content is MessageDice dice)
+                {
+                    switch (dice.Value)
+                    {
+                        case 0:
+                            message.GeneratedContent = new MessageSticker(new Sticker(0, 512, 512, "\uD83C\uDFB2", true, false, null, null, Common.TdExtensions.GetLocalFile("Assets\\Animations\\DiceLoop.tgs")));
+                            break;
+                        default:
+                            message.GeneratedContent = new MessageSticker(new Sticker(0, 512, 512, "\uD83C\uDFB2", true, false, null, null, Common.TdExtensions.GetLocalFile($"Assets\\Animations\\Dice_{dice.Value}.tgs")));
+                            break;
+                    }
+                }
             }
         }
 
