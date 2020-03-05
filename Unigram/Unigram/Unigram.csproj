@@ -505,9 +505,6 @@
     <Compile Include="Controls\Views\EmojiView.xaml.cs">
       <DependentUpon>EmojiView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\LiveLocationsView.xaml.cs">
-      <DependentUpon>LiveLocationsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Views\LoginUrlInfoView.xaml.cs">
       <DependentUpon>LoginUrlInfoView.xaml</DependentUpon>
     </Compile>
@@ -635,7 +632,6 @@
     <Compile Include="Services\GenerationService.cs" />
     <Compile Include="Services\HockeyUpdateService.cs" />
     <Compile Include="Services\LifetimeService.cs" />
-    <Compile Include="Services\LiveLocationService.cs" />
     <Compile Include="Services\LocaleService.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\NetworkService.cs" />
@@ -643,6 +639,7 @@
     <Compile Include="Services\Settings\AutoDownloadSettings.cs" />
     <Compile Include="Services\Settings\DiagnosticsSettings.cs" />
     <Compile Include="Services\Settings\EmojiSettings.cs" />
+    <Compile Include="Services\Settings\FiltersSettings.cs" />
     <Compile Include="Services\Settings\NotificationsSettings.cs" />
     <Compile Include="Services\OptionsService.cs" />
     <Compile Include="Services\Settings\PasscodeLockSettings.cs" />
@@ -654,7 +651,6 @@
     <Compile Include="Services\Settings\PlaybackSettings.cs" />
     <Compile Include="Services\Settings\StickersSettings.cs" />
     <Compile Include="Services\Settings\VoIPSettings.cs" />
-    <Compile Include="Services\Settings\WallpaperSettings.cs" />
     <Compile Include="Services\Stripe\Card.cs" />
     <Compile Include="Services\Stripe\CardUtils.cs" />
     <Compile Include="Services\Stripe\DateUtils.cs" />
@@ -665,6 +661,7 @@
     <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
+    <Compile Include="Services\Updates\UpdateChatFilterTabs.cs" />
     <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
@@ -1605,6 +1602,14 @@
     <Content Include="Assets\Animations\WalletInitializing.tgs" />
     <Content Include="Assets\Animations\WalletSynchronization.tgs" />
     <Content Include="Assets\Animations\Compass.tgs" />
+    <Content Include="Assets\Animations\ChatListFolders.tgs" />
+    <Content Include="Assets\Animations\DiceLoop.tgs" />
+    <Content Include="Assets\Animations\Dice_1.tgs" />
+    <Content Include="Assets\Animations\Dice_2.tgs" />
+    <Content Include="Assets\Animations\Dice_3.tgs" />
+    <Content Include="Assets\Animations\Dice_4.tgs" />
+    <Content Include="Assets\Animations\Dice_5.tgs" />
+    <Content Include="Assets\Animations\Dice_6.tgs" />
     <None Include="Assets\Fonts\Telegram.json" />
     <PRIResource Include="Strings\uk\Additional.resw">
       <SubType>Designer</SubType>
@@ -2077,10 +2082,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\EditUserNameView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\LiveLocationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

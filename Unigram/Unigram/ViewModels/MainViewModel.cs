@@ -29,7 +29,6 @@ namespace Unigram.ViewModels
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
         private readonly IVibrationService _vibrationService;
-        private readonly ILiveLocationService _liveLocationService;
         private readonly IPasscodeService _passcodeService;
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
@@ -39,13 +38,12 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, IPlaybackService playbackService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, IPlaybackService playbackService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
             _contactsService = contactsService;
             _vibrationService = vibrationService;
-            _liveLocationService = liveLocationService;
             _passcodeService = passcodeService;
             _lifetimeService = lifecycle;
             _sessionService = session;
@@ -73,9 +71,6 @@ namespace Unigram.ViewModels
 
             aggregator.Subscribe(this);
 
-            LiveLocationCommand = new RelayCommand(LiveLocationExecute);
-            StopLiveLocationCommand = new RelayCommand(StopLiveLocationExecute);
-
             ReturnToCallCommand = new RelayCommand(ReturnToCallExecute);
 
             ToggleArchiveCommand = new RelayCommand(ToggleArchiveExecute);
@@ -83,27 +78,18 @@ namespace Unigram.ViewModels
             CreateSecretChatCommand = new RelayCommand(CreateSecretChatExecute);
 
             SetupFiltersCommand = new RelayCommand(SetupFiltersExecute);
+
+            FilterEditCommand = new RelayCommand<ChatListFilter>(FilterEditExecute);
+            FilterAddCommand = new RelayCommand<ChatListFilter>(FilterAddExecute);
+            FilterDeleteCommand = new RelayCommand<ChatListFilter>(FilterDeleteExecute);
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
         public ISessionService Session => _sessionService;
 
-        public ILiveLocationService LiveLocation => _liveLocationService;
         public IPasscodeService Passcode => _passcodeService;
 
         public IPlaybackService PlaybackService => _playbackService;
-
-        public RelayCommand LiveLocationCommand { get; }
-        private async void LiveLocationExecute()
-        {
-            await new LiveLocationsView().ShowQueuedAsync();
-        }
-
-        public RelayCommand StopLiveLocationCommand { get; }
-        private void StopLiveLocationExecute()
-        {
-            _liveLocationService.StopTracking();
-        }
 
         public RelayCommand ToggleArchiveCommand { get; }
         private void ToggleArchiveExecute()
@@ -283,51 +269,29 @@ namespace Unigram.ViewModels
                 NavigationService.NavigateToChat(chat);
             }
         }
-    }
 
-    public class YoloTimer
-    {
-        private Timer _timer;
-        private TimerCallback _callback;
-        private DateTime? _start;
-
-        public YoloTimer(TimerCallback callback, object state)
+        public RelayCommand<ChatListFilter> FilterAddCommand { get; }
+        public RelayCommand<ChatListFilter> FilterEditCommand { get; }
+        private void FilterEditExecute(ChatListFilter filter)
         {
-            _callback = callback;
-            _timer = new Timer(OnCallback, state, Timeout.Infinite, Timeout.Infinite);
+            NavigationService.Navigate(typeof(FilterPage), filter.Id);
         }
 
-        private void OnCallback(object state)
+        private async void FilterAddExecute(ChatListFilter filter)
         {
-            _start = null;
-            _callback(state);
+            // Meh I'm lazy
         }
 
-        public void CallOnce(int seconds)
+        public RelayCommand<ChatListFilter> FilterDeleteCommand { get; }
+        private async void FilterDeleteExecute(ChatListFilter filter)
         {
-            _start = DateTime.Now;
-            _timer.Change(seconds * 1000, Timeout.Infinite);
-        }
-
-        public bool IsActive
-        {
-            get
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
             {
-                return _start.HasValue;
+                return;
             }
-        }
 
-        public TimeSpan RemainingTime
-        {
-            get
-            {
-                if (_start.HasValue)
-                {
-                    return DateTime.Now - _start.Value;
-                }
-
-                return TimeSpan.Zero;
-            }
+            //ProtoService.Send(new Boh(filter.Id));
         }
     }
 }

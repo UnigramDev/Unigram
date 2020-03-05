@@ -144,7 +144,6 @@ namespace Unigram
                 builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
 
                 builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
-                builder.RegisterType<LiveLocationService>().As<ILiveLocationService>().SingleInstance();
                 builder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
                 //builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
                 builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
