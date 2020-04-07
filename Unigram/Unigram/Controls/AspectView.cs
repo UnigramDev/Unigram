@@ -68,6 +68,11 @@ namespace Unigram.Controls
                     return base.MeasureOverride(availableSize);
                 }
             }
+            else if (Constraint is ViewModels.Chats.ChartViewData)
+            {
+                width = 640;
+                height = 520;
+            }
 
             #region MessageContent
 
@@ -182,6 +187,11 @@ namespace Unigram.Controls
             {
                 width = animation.Width;
                 height = animation.Height;
+            }
+            else if (constraint is Document document)
+            {
+                width = document.Thumbnail?.Width ?? width;
+                height = document.Thumbnail?.Height ?? height;
             }
             else if (constraint is Location location)
             {

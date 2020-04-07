@@ -222,6 +222,36 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Animations\ChatArchivedAnimation.cs" />
+    <Compile Include="Charts\Animator.cs" />
+    <Compile Include="Charts\BarChartView.cs" />
+    <Compile Include="Charts\BaseChartView.cs" />
+    <Compile Include="Charts\ChartPickerDelegate.cs" />
+    <Compile Include="Charts\CubicBezierInterpolator.cs" />
+    <Compile Include="Charts\DataView\BarViewData.cs" />
+    <Compile Include="Charts\DataView\ChartBottomSignatureData.cs" />
+    <Compile Include="Charts\DataView\ChartHorizontalLinesData.cs" />
+    <Compile Include="Charts\DataView\LegendSignatureView.cs" />
+    <Compile Include="Charts\DataView\LineViewData.cs" />
+    <Compile Include="Charts\DataView\PieChartViewData.cs" />
+    <Compile Include="Charts\DataView\StackBarViewData.cs" />
+    <Compile Include="Charts\DataView\StackLinearViewData.cs" />
+    <Compile Include="Charts\DataView\TransitionParams.cs" />
+    <Compile Include="Charts\Data\ChartData.cs" />
+    <Compile Include="Charts\Data\DoubleLinearChartData.cs" />
+    <Compile Include="Charts\Data\StackBarChartData.cs" />
+    <Compile Include="Charts\Data\StackLinearChartData.cs" />
+    <Compile Include="Charts\DoubleLinearChartView.cs" />
+    <Compile Include="Charts\DoubleStepChartView.cs" />
+    <Compile Include="Charts\Extensions.cs" />
+    <Compile Include="Charts\FastOutSlowInInterpolator.cs" />
+    <Compile Include="Charts\LinearChartView.cs" />
+    <Compile Include="Charts\LookupTableInterpolator.cs" />
+    <Compile Include="Charts\Paint.cs" />
+    <Compile Include="Charts\PieChartView.cs" />
+    <Compile Include="Charts\SegmentTree.cs" />
+    <Compile Include="Charts\StackBarChartView.cs" />
+    <Compile Include="Charts\StackLinearChartView.cs" />
+    <Compile Include="Charts\StepChartView.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\IncrementalCollectionWithDelegate.cs" />
     <Compile Include="Collections\KeyedList.cs" />
@@ -324,6 +354,7 @@
     <Compile Include="Controls\ColorTextBox.cs" />
     <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\DialogListView.cs" />
+    <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
     <Compile Include="Controls\Gallery\EmbedUrlView.xaml.cs">
@@ -696,6 +727,7 @@
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatStatisticsViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IBackgroundDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IBasicAndSupergroupDelegate.cs" />
@@ -1603,12 +1635,6 @@
     <Content Include="Assets\Animations\Compass.tgs" />
     <Content Include="Assets\Animations\ChatListFolders.tgs" />
     <Content Include="Assets\Animations\DiceLoop.tgs" />
-    <Content Include="Assets\Animations\Dice_1.tgs" />
-    <Content Include="Assets\Animations\Dice_2.tgs" />
-    <Content Include="Assets\Animations\Dice_3.tgs" />
-    <Content Include="Assets\Animations\Dice_4.tgs" />
-    <Content Include="Assets\Animations\Dice_5.tgs" />
-    <Content Include="Assets\Animations\Dice_6.tgs" />
     <None Include="Assets\Fonts\Telegram.json" />
     <PRIResource Include="Strings\uk\Additional.resw">
       <SubType>Designer</SubType>

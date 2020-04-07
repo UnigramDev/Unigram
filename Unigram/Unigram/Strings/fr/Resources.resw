@@ -58,6 +58,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Abort" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
   <data name="AbortEmail" xml:space="preserve">
     <value>Annuler l'activation du courriel de récupération</value>
   </data>
@@ -298,6 +301,12 @@
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Options d'utilisateur</value>
   </data>
+  <data name="AccDescrVideoCompressHigh" xml:space="preserve">
+    <value>Qualité supérieure</value>
+  </data>
+  <data name="AccDescrVideoCompressLow" xml:space="preserve">
+    <value>Taille réduite</value>
+  </data>
   <data name="AccDescrVideoMessage" xml:space="preserve">
     <value>Enregistrer un message vidéo</value>
   </data>
@@ -469,6 +478,9 @@
   <data name="ActionPinnedPoll" xml:space="preserve">
     <value>un1 a épinglé un sondage</value>
   </data>
+  <data name="ActionPinnedQuiz" xml:space="preserve">
+    <value>un1 a épinglé un quiz</value>
+  </data>
   <data name="ActionPinnedRound" xml:space="preserve">
     <value>un1 a épinglé un message vidéo</value>
   </data>
@@ -539,7 +551,7 @@
     <value>Vous ne pouvez pas ajouter cet utilisateur aux administrateurs car il n'est pas membre du groupe et vous n'êtes pas autorisé à l'y ajouter.</value>
   </data>
   <data name="AddAnOption" xml:space="preserve">
-    <value>Ajouter une option</value>
+    <value>Ajouter une option...</value>
   </data>
   <data name="AddAnOptionInfo" xml:space="preserve">
     <value>Vous pouvez encore ajouter {0}.</value>
@@ -574,6 +586,9 @@
   <data name="AddContactFullChat" xml:space="preserve">
     <value>AJOUTER {0} AUX CONTACTS</value>
   </data>
+  <data name="AddContactPhonebookTitle" xml:space="preserve">
+    <value>Ajouter aux contacts</value>
+  </data>
   <data name="AddContactTitle" xml:space="preserve">
     <value>Ajouter contact</value>
   </data>
@@ -588,6 +603,9 @@
   </data>
   <data name="AddMasksInstalled" xml:space="preserve">
     <value>Nouveaux masques ajoutés</value>
+  </data>
+  <data name="AddMasksInstalledInfo" xml:space="preserve">
+    <value>{0} a été ajouté à vos masques.</value>
   </data>
   <data name="AddMember" xml:space="preserve">
     <value>Ajouter un membre</value>
@@ -614,7 +632,7 @@
     <value>Afficher les 100 derniers messages à **{0}**</value>
   </data>
   <data name="AddPeopleNearby" xml:space="preserve">
-    <value>Ajouter des personnes à proximité</value>
+    <value>Personnes à proximité</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>Ajouter un serveur proxy</value>
@@ -633,6 +651,9 @@
   </data>
   <data name="AddStickersInstalled" xml:space="preserve">
     <value>Nouveaux autocollants ajoutés</value>
+  </data>
+  <data name="AddStickersInstalledInfo" xml:space="preserve">
+    <value>{0} a été ajouté à vos autocollants.</value>
   </data>
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Autocollants introuvables</value>
@@ -661,11 +682,20 @@
   <data name="AddToTheGroup" xml:space="preserve">
     <value>Ajouter {0} au groupe ?</value>
   </data>
+  <data name="AddToTheGroupAlertText" xml:space="preserve">
+    <value>Voulez-vous ajouter **{0}** au groupe **{1}** ?</value>
+  </data>
+  <data name="AddToTheGroupAlertTitle" xml:space="preserve">
+    <value>Ajouter le bot</value>
+  </data>
   <data name="AddToTheGroupForwardCount" xml:space="preserve">
     <value>Nombre des derniers messages à transmettre :</value>
   </data>
   <data name="AddToTheGroupTitle" xml:space="preserve">
     <value>Ajouter {0} à l'échange {1} ?</value>
+  </data>
+  <data name="AddUserErrorBlacklisted" xml:space="preserve">
+    <value>Désolé, vous ne pouvez pas ajouter cet utilisateur car il fait partie de la liste des utilisateurs supprimés, et vous ne pouvez pas le débannir.</value>
   </data>
   <data name="AdminWillBeRemoved" xml:space="preserve">
     <value>{0} sera retiré des administrateurs si vous le restreignez.</value>
@@ -758,7 +788,7 @@
     <value/>
   </data>
   <data name="AndMoreTypingOne" xml:space="preserve">
-    <value>et {0} autres écrivent</value>
+    <value>et {0} autre écrivent</value>
   </data>
   <data name="AndMoreTypingOther" xml:space="preserve">
     <value>et {0} autres écrivent</value>
@@ -787,14 +817,41 @@
   <data name="AndOtherZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="AnimatedStickers" xml:space="preserve">
+    <value>Autocollants animés</value>
+  </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>Sondage anonyme</value>
+  </data>
+  <data name="AnonymousQuizPoll" xml:space="preserve">
+    <value>Quiz anonyme</value>
+  </data>
+  <data name="AnswerFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AnswerMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AnswerOne" xml:space="preserve">
+    <value>{0} réponse</value>
+  </data>
+  <data name="AnswerOther" xml:space="preserve">
+    <value>{0} réponses</value>
+  </data>
+  <data name="AnswerTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AnswerZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="ApkRestricted" xml:space="preserve">
     <value>Cette application ne peut pas installer d'APK. Autorisez-la dans les paramètres système.</value>
   </data>
   <data name="Appearance" xml:space="preserve">
     <value>Apparence</value>
+  </data>
+  <data name="AppFolderInfo" xml:space="preserve">
+    <value>Parcourir le dossier de l'application</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>Appliquer la traduction</value>
@@ -882,6 +939,12 @@ Au delà, les lots inutilisés seront archivés.</value>
   <data name="ArchivePinnedInfo" xml:space="preserve">
     <value>Glissez à gauche sur l'archive pour la masquer.</value>
   </data>
+  <data name="ArchiveStickersAlertMessage" xml:space="preserve">
+    <value>Voulez-vous vraiment archiver les lots d'autocollants sélectionnés ?</value>
+  </data>
+  <data name="ArchiveStickerSetsAlertTitle" xml:space="preserve">
+    <value>Archiver {0}</value>
+  </data>
   <data name="AreTyping" xml:space="preserve">
     <value>écrivent…</value>
   </data>
@@ -899,6 +962,9 @@ Au delà, les lots inutilisés seront archivés.</value>
   </data>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer tous les brouillons en ligne ?</value>
+  </data>
+  <data name="AreYouSureClearDraftsTitle" xml:space="preserve">
+    <value>Supprimer les brouillons dans le cloud</value>
   </data>
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer tous les messages de cet échange ?</value>
@@ -948,11 +1014,17 @@ Au delà, les lots inutilisés seront archivés.</value>
   <data name="AreYouSureDeleteGIF" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer ce GIF ?</value>
   </data>
+  <data name="AreYouSureDeleteGIFTitle" xml:space="preserve">
+    <value>Supprimer le GIF</value>
+  </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer {0} ?</value>
   </data>
   <data name="AreYouSureDeletePhoto" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer cette photo ?</value>
+  </data>
+  <data name="AreYouSureDeletePhotoTitle" xml:space="preserve">
+    <value>Supprimer la photo</value>
   </data>
   <data name="AreYouSureDeleteSingleMessage" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer ce message ?</value>
@@ -978,6 +1050,9 @@ Au delà, les lots inutilisés seront archivés.</value>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer cette vidéo ?</value>
   </data>
+  <data name="AreYouSureDeleteVideoTitle" xml:space="preserve">
+    <value>Supprimer la vidéo</value>
+  </data>
   <data name="AreYouSureLogout" xml:space="preserve">
     <value>Voulez-vous vraiment vous déconnecter ?
 
@@ -997,6 +1072,12 @@ Rappelez-vous que vous déconnecter supprimera tous vos échanges secrets.</valu
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>Voulez-vous vraiment fermer toutes les autres sessions ?</value>
   </data>
+  <data name="AreYouSureSessionsTitle" xml:space="preserve">
+    <value>Terminer les sessions</value>
+  </data>
+  <data name="AreYouSureSessionTitle" xml:space="preserve">
+    <value>Terminer la session</value>
+  </data>
   <data name="AreYouSureShareMyContactInfo" xml:space="preserve">
     <value>Voulez-vous vraiment partager votre numéro ?</value>
   </data>
@@ -1004,7 +1085,7 @@ Rappelez-vous que vous déconnecter supprimera tous vos échanges secrets.</valu
     <value>Le bot connaîtra votre numéro. Cela peut être utile pour l'intégration à d'autres services.</value>
   </data>
   <data name="AreYouSureShareMyContactInfoUser" xml:space="preserve">
-    <value>Voulez-vous vraiment partager votre numéro {0} avec **{1}** ?</value>
+    <value>Voulez-vous partager votre numéro {0} avec **{1}** ?</value>
   </data>
   <data name="AreYouSureUnblockContact" xml:space="preserve">
     <value>Voulez-vous vraiment débloquer ce contact ?</value>
@@ -1121,6 +1202,38 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
   </data>
   <data name="August" xml:space="preserve">
     <value>Août</value>
+  </data>
+  <data name="AuthAnotherClient" xml:space="preserve">
+    <value>Scanner le code QR</value>
+  </data>
+  <data name="AuthAnotherClientDownloadClientUrl" xml:space="preserve">
+    <value>https://desktop.telegram.org/</value>
+  </data>
+  <data name="AuthAnotherClientInfo1" xml:space="preserve">
+    <value>Téléchargez Telegram sur votre ordinateur depuis *desktop.telegram.org*.</value>
+  </data>
+  <data name="AuthAnotherClientInfo2" xml:space="preserve">
+    <value>Lancez Telegram Desktop pour obtenir le code QR.</value>
+  </data>
+  <data name="AuthAnotherClientInfo3" xml:space="preserve">
+    <value>Scannez le code QR pour vous connecter à votre compte.</value>
+  </data>
+  <data name="AuthAnotherClientNotFound" xml:space="preserve">
+    <value>Aucun jeton d'authentification trouvé</value>
+  </data>
+  <data name="AuthAnotherClientOk" xml:space="preserve">
+    <value>Authentification réussie</value>
+  </data>
+  <data name="AuthAnotherClientScan" xml:space="preserve">
+    <value>Scanner le code QR</value>
+  </data>
+  <data name="AuthAnotherClientTokenError" xml:space="preserve">
+    <value>Jeton invalide ou expiré.</value>
+  </data>
+  <data name="AuthAnotherClientUrl" xml:space="preserve">
+    <value>Ce code peut être utilisé pour permettre à quelqu'un de se connecter à votre compte Telegram.
+
+Pour confirmer la connexion à Telegram, rendez-vous dans Paramètres > Appareils > Scan QR et scannez le code.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Les messages vocaux sont légers, ils sont donc toujours téléchargés automatiquement.</value>
@@ -1284,6 +1397,9 @@ La <![CDATA[<a href="https://telegram.org/faq#general">FAQ Telegram</a>]]> répo
   <data name="AutoNightLocation" xml:space="preserve">
     <value>Lever et coucher de soleil locaux</value>
   </data>
+  <data name="AutoNightModeOff" xml:space="preserve">
+    <value>Mode nuit automatique désactivé</value>
+  </data>
   <data name="AutoNightPreferred" xml:space="preserve">
     <value>Thème à utiliser</value>
   </data>
@@ -1346,6 +1462,9 @@ Lever : {1}</value>
   </data>
   <data name="BackgroundBrightness" xml:space="preserve">
     <value>Luminosité</value>
+  </data>
+  <data name="BackgroundChoosePattern" xml:space="preserve">
+    <value>Choisir le schéma</value>
   </data>
   <data name="BackgroundColor" xml:space="preserve">
     <value>Couleur</value>
@@ -1452,8 +1571,17 @@ Lever : {1}</value>
   <data name="BlockUserContactsTitle" xml:space="preserve">
     <value>CONTACTS</value>
   </data>
+  <data name="BlockUserMessage" xml:space="preserve">
+    <value>Voulez-vous empêcher **{0}** de vous écrire et de vous appeler sur Telegram ?</value>
+  </data>
   <data name="BlockUserMultiTitle" xml:space="preserve">
     <value>Bloquer l'utilisateur</value>
+  </data>
+  <data name="BlockUsers" xml:space="preserve">
+    <value>Bloquer les utilisateurs</value>
+  </data>
+  <data name="BlockUsersMessage" xml:space="preserve">
+    <value>Voulez-vous empêcher **{0}** de vous écrire et de vous appeler sur Telegram ?</value>
   </data>
   <data name="BlockUserTitle" xml:space="preserve">
     <value>Bloquer {0}</value>
@@ -1518,6 +1646,9 @@ Lever : {1}</value>
   <data name="Brown" xml:space="preserve">
     <value>Marron</value>
   </data>
+  <data name="BubbleRadius" xml:space="preserve">
+    <value>Coins des messages</value>
+  </data>
   <data name="BuiltInThemes" xml:space="preserve">
     <value>Thèmes intégrés</value>
   </data>
@@ -1573,7 +1704,7 @@ Lever : {1}</value>
     <value>{0} ({1})</value>
   </data>
   <data name="CallNotAvailable" xml:space="preserve">
-    <value>**{0}** n'accepte pas les appels.</value>
+    <value>Désolé, vous ne pouvez pas appeler {0} en raison de ses paramètres de confidentialité.</value>
   </data>
   <data name="CallReportHint" xml:space="preserve">
     <value>Qu'est-ce qui n'allait pas ?</value>
@@ -1591,7 +1722,7 @@ Lever : {1}</value>
     <value>Appels</value>
   </data>
   <data name="CallsDataUsage" xml:space="preserve">
-    <value>Appels</value>
+    <value>Paramètres des appels</value>
   </data>
   <data name="CallsTotalTime" xml:space="preserve">
     <value>Temps total</value>
@@ -1618,6 +1749,9 @@ Si ce n'était pas vous, merci d'entrer le code que nous venons de vous envoyer 
   </data>
   <data name="CancelEmailQuestion" xml:space="preserve">
     <value>Voulez-vous vraiment annuler l'activation du courriel de récupération ?</value>
+  </data>
+  <data name="CancelEmailQuestionTitle" xml:space="preserve">
+    <value>Annuler le paramétrage</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Lien invalide ou expiré.</value>
@@ -1648,6 +1782,9 @@ Si ce n'était pas vous, merci d'entrer le code que nous venons de vous envoyer 
   </data>
   <data name="Caption" xml:space="preserve">
     <value>Légende</value>
+  </data>
+  <data name="CardNumberCopied" xml:space="preserve">
+    <value>Numéro de carte copié dans le presse-papier</value>
   </data>
   <data name="Change" xml:space="preserve">
     <value>Changer</value>
@@ -1692,6 +1829,9 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
   </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
     <value>Modifier le courriel de récupération</value>
+  </data>
+  <data name="ChangeWallpaperToColor" xml:space="preserve">
+    <value>Voulez-vous vraiment remplacer votre arrière-plan de conversation par une couleur ?</value>
   </data>
   <data name="ChannelAddAdmin" xml:space="preserve">
     <value>Ajouter un administrateur</value>
@@ -1778,7 +1918,7 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>Supprimer le canal</value>
   </data>
   <data name="ChannelDeleteAlert" xml:space="preserve">
-    <value>Voulez-vous vraiment supprimer ce canal ? Tous les membres seront éjectés et tous les messages seront perdus.</value>
+    <value>Attendez ! Supprimer ce canal retirera tous les abonnés et tous les messages seront perdus. Voulez-vous quand même le supprimer ?</value>
   </data>
   <data name="ChannelDeletedUndo" xml:space="preserve">
     <value>Canal supprimé.</value>
@@ -1879,6 +2019,9 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
   <data name="ChannelMessagePoll2" xml:space="preserve">
     <value>{0} a publié un sondage {1}</value>
   </data>
+  <data name="ChannelMessageQuiz2" xml:space="preserve">
+    <value>{0} a publié le quiz "{1}"</value>
+  </data>
   <data name="ChannelMessageRound" xml:space="preserve">
     <value>{0} a publié un message vidéo</value>
   </data>
@@ -1895,10 +2038,10 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>SOURDINE</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
-    <value>Les membres recevront une notification silencieuse</value>
+    <value>Les abonnés recevront une notification silencieuse</value>
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
-    <value>Les membres seront notifiés lorsque vous publiez</value>
+    <value>Les abonnés seront notifiés lorsque vous publiez</value>
   </data>
   <data name="ChannelOtherMembers" xml:space="preserve">
     <value>Autres membres</value>
@@ -1931,6 +2074,9 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>Choisissez un lien pour que votre canal public puisse être trouvé et partagé.
 
 Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.</value>
+  </data>
+  <data name="ChannelPublicEmptyUsernameTitle" xml:space="preserve">
+    <value>Choisir un lien</value>
   </data>
   <data name="ChannelPublicInfo" xml:space="preserve">
     <value>Un canal public apparaît dans les recherches et n'importe qui peut le rejoindre.</value>
@@ -1992,6 +2138,9 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
   <data name="ChannelTooMuchJoin" xml:space="preserve">
     <value>Désolé, vous êtes membre de trop de groupes et canaux. Veuillez en quitter un avant d'en rejoindre un nouveau.</value>
   </data>
+  <data name="ChannelTooMuchTitle" xml:space="preserve">
+    <value>Trop de communautés</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>Type de canal</value>
   </data>
@@ -2014,7 +2163,7 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
     <value>Il y a trop de bots sur ce canal.</value>
   </data>
   <data name="ChannelUserLeftError" xml:space="preserve">
-    <value>Cet utilisateur a décidé de quitter ce canal, vous ne pouvez donc plus l'y ajouter.</value>
+    <value>Désolé, si une personne ne fait plus partie d'un canal, vous devez figurer dans ses contacts Telegram afin de l'y rajouter à nouveau.</value>
   </data>
   <data name="ChannelUsernameHelp" xml:space="preserve">
     <value>Si vous définissez un lien permanent, il sera possible de trouver et de rejoindre votre canal.
@@ -2024,6 +2173,9 @@ La longueur minimale est de 5 caractères.</value>
   </data>
   <data name="ChannelUsernamePlaceholder" xml:space="preserve">
     <value>lien</value>
+  </data>
+  <data name="ChannelVerifiedWarning" xml:space="preserve">
+    <value>Attention</value>
   </data>
   <data name="ChatAdmin" xml:space="preserve">
     <value>admin</value>
@@ -2035,7 +2187,7 @@ La longueur minimale est de 5 caractères.</value>
     <value>Masquez l'archive en la glissant vers la gauche.</value>
   </data>
   <data name="ChatBackground" xml:space="preserve">
-    <value>Changer l’arrière-plan</value>
+    <value>Arrière-plan</value>
   </data>
   <data name="ChatCamera" xml:space="preserve">
     <value>Caméra</value>
@@ -2044,7 +2196,7 @@ La longueur minimale est de 5 caractères.</value>
     <value>d MMMM</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
-    <value>Échange supprimé.</value>
+    <value>Échange supprimé</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>Fichier</value>
@@ -2242,7 +2394,7 @@ La longueur minimale est de 5 caractères.</value>
     <value>Sélectionnez un pays</value>
   </data>
   <data name="ChooseFromGallery" xml:space="preserve">
-    <value>Choisir dans la galerie</value>
+    <value>Choisir depuis la galerie</value>
   </data>
   <data name="ChooseFromSearch" xml:space="preserve">
     <value>Rechercher sur Internet</value>
@@ -2311,7 +2463,7 @@ La longueur minimale est de 5 caractères.</value>
     <value>Supprimer du cache</value>
   </data>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
-    <value>Effacer l'historique aussi pour {0}</value>
+    <value>Effacer aussi pour {0}</value>
   </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Effacer le cache</value>
@@ -2325,6 +2477,9 @@ La longueur minimale est de 5 caractères.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Effacer les emoji récents ?</value>
   </data>
+  <data name="ClearRecentHistory" xml:space="preserve">
+    <value>Effacer l’historique</value>
+  </data>
   <data name="ClearSearch" xml:space="preserve">
     <value>Effacer l'historique des recherches ?</value>
   </data>
@@ -2333,6 +2488,18 @@ La longueur minimale est de 5 caractères.</value>
   </data>
   <data name="ClearSearchAlertTitle" xml:space="preserve">
     <value>Effacer l'historique de recherche</value>
+  </data>
+  <data name="ClearSearchRemove" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="ClearSearchSingleAlertTitle" xml:space="preserve">
+    <value>Historique de recherche</value>
+  </data>
+  <data name="ClearSearchSingleChatAlertText" xml:space="preserve">
+    <value>Voulez-vous vraiment retirer "{0}" de votre historique de recherche ?</value>
+  </data>
+  <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
+    <value>Voulez-vous vraiment retirer "{0}" de votre historique de recherche ?</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Fermer</value>
@@ -2361,6 +2528,21 @@ La longueur minimale est de 5 caractères.</value>
   <data name="ColorOrange" xml:space="preserve">
     <value>Orange</value>
   </data>
+  <data name="ColorPickerBackground" xml:space="preserve">
+    <value>Arrière-plan</value>
+  </data>
+  <data name="ColorPickerMainColor" xml:space="preserve">
+    <value>Couleur dominante</value>
+  </data>
+  <data name="ColorPickerMyMessages" xml:space="preserve">
+    <value>Mes messages</value>
+  </data>
+  <data name="ColorPickerReset" xml:space="preserve">
+    <value>RÉINITIALISER</value>
+  </data>
+  <data name="ColorPickerResetAll" xml:space="preserve">
+    <value>TOUT RÉINITIALISER</value>
+  </data>
   <data name="ColorPink" xml:space="preserve">
     <value>Rose</value>
   </data>
@@ -2373,6 +2555,12 @@ La longueur minimale est de 5 caractères.</value>
   <data name="ColorTheme" xml:space="preserve">
     <value>Thème de couleur</value>
   </data>
+  <data name="ColorThemeChanged" xml:space="preserve">
+    <value>Thème de couleur changé.</value>
+  </data>
+  <data name="ColorThemeChangedInfo" xml:space="preserve">
+    <value>Vous pouvez les modifier à nouveau dans *Paramètres des échanges*.</value>
+  </data>
   <data name="ColorThemes" xml:space="preserve">
     <value>Thèmes de couleur</value>
   </data>
@@ -2384,6 +2572,24 @@ La longueur minimale est de 5 caractères.</value>
   </data>
   <data name="ColorYellow" xml:space="preserve">
     <value>Jaune</value>
+  </data>
+  <data name="CommonGroupsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsOne" xml:space="preserve">
+    <value>{0} groupe en commun</value>
+  </data>
+  <data name="CommonGroupsOther" xml:space="preserve">
+    <value>{0} groupes en commun</value>
+  </data>
+  <data name="CommonGroupsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="CompatibilityChat" xml:space="preserve">
     <value>{0} utilise une version antérieure de Telegram, les photos éphémères seront donc affichées en mode compatibilité.
@@ -2431,6 +2637,9 @@ Une fois que {1} aura mis à jour Telegram, le mode "Touchez et maintenez pour v
   </data>
   <data name="ContactNotRegistered" xml:space="preserve">
     <value>{0} n'est pas encore sur Telegram, voulez-vous lui envoyer une invitation ?</value>
+  </data>
+  <data name="ContactNotRegisteredTitle" xml:space="preserve">
+    <value>Inviter sur Telegram</value>
   </data>
   <data name="Contacts" xml:space="preserve">
     <value>Contacts</value>
@@ -2499,8 +2708,29 @@ Pour aller au delà, passez à un supergroupe :
   <data name="Copy" xml:space="preserve">
     <value>Copier</value>
   </data>
+  <data name="CopyCardNumber" xml:space="preserve">
+    <value>Copier</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Copier le lien</value>
+  </data>
+  <data name="CountOfResultsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CountOfResultsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CountOfResultsOne" xml:space="preserve">
+    <value>{0} de {1} résultat</value>
+  </data>
+  <data name="CountOfResultsOther" xml:space="preserve">
+    <value>{0} de {1} résultats</value>
+  </data>
+  <data name="CountOfResultsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CountOfResultsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="CountReceived" xml:space="preserve">
     <value>Réception</value>
@@ -2522,6 +2752,12 @@ Pour aller au delà, passez à un supergroupe :
   </data>
   <data name="CreateNewContact" xml:space="preserve">
     <value>Créer un contact</value>
+  </data>
+  <data name="CreateNewFilter" xml:space="preserve">
+    <value>Créer un nouveau dossier</value>
+  </data>
+  <data name="CreateNewFilterInfo" xml:space="preserve">
+    <value>Créez des dossiers pour différents groupes d'échanges et passez rapidement de l'un à l'autre.</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>Créer un nouveau thème</value>
@@ -2660,11 +2896,23 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>Désactiver la journalisation</value>
   </data>
+  <data name="DebugMenuDisablePauseMusic" xml:space="preserve">
+    <value>Ne pas mettre en pause la musique pendant l'enregistrement</value>
+  </data>
+  <data name="DebugMenuDisableSmoothKeyboard" xml:space="preserve">
+    <value>Désactiver le clavier doux</value>
+  </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>Activer la caméra intégrée</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>Activer la journalisation</value>
+  </data>
+  <data name="DebugMenuEnablePauseMusic" xml:space="preserve">
+    <value>Mettre en pause la musique pendant l'enregistrement</value>
+  </data>
+  <data name="DebugMenuEnableSmoothKeyboard" xml:space="preserve">
+    <value>Activer le clavier doux</value>
   </data>
   <data name="DebugMenuImportContacts" xml:space="preserve">
     <value>Importer des contacts</value>
@@ -2679,7 +2927,7 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
     <value>Réinitialiser les contacts importés</value>
   </data>
   <data name="DebugMenuResetDialogs" xml:space="preserve">
-    <value>Réinitialiser les boîtes de dialogue</value>
+    <value>Réinitialiser les échanges</value>
   </data>
   <data name="DebugSendLogs" xml:space="preserve">
     <value>Envoyer les journaux</value>
@@ -2732,6 +2980,24 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   <data name="DeleteAndStop" xml:space="preserve">
     <value>Supprimer et arrêter</value>
   </data>
+  <data name="DeleteBackgroundFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteBackgroundMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteBackgroundOne" xml:space="preserve">
+    <value>Supprimer l'arrière-plan</value>
+  </data>
+  <data name="DeleteBackgroundOther" xml:space="preserve">
+    <value>Supprimer {0} arrière-plans</value>
+  </data>
+  <data name="DeleteBackgroundTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteBackgroundZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="DeleteBanUser" xml:space="preserve">
     <value>Bannir l'utilisateur</value>
   </data>
@@ -2759,11 +3025,20 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   <data name="DeleteFromFavorites" xml:space="preserve">
     <value>Supprimer des favoris</value>
   </data>
+  <data name="DeleteFromRecent" xml:space="preserve">
+    <value>Supprimer des récents</value>
+  </data>
   <data name="DeleteGif" xml:space="preserve">
     <value>Supprimer le GIF</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>Supprimer la traduction ?</value>
+  </data>
+  <data name="DeleteLocalizationText" xml:space="preserve">
+    <value>Voulez-vous vraiment supprimer le paquet de langue **{0}** ?</value>
+  </data>
+  <data name="DeleteLocalizationTitle" xml:space="preserve">
+    <value>Supprimer le paquet de langue</value>
   </data>
   <data name="DeleteMega" xml:space="preserve">
     <value>Supprimer le groupe</value>
@@ -2778,10 +3053,10 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
     <value>Supprimer aussi pour {0}</value>
   </data>
   <data name="DeleteMessagesText" xml:space="preserve">
-    <value>Vous pouvez aussi supprimer vos {0} pour {1} en cochant "Retirer mes messages".</value>
+    <value>Vous pouvez aussi supprimer {0} de vous pour **{1}** en cochant "Retirer mes messages".</value>
   </data>
   <data name="DeleteMessagesTextGroup" xml:space="preserve">
-    <value>Vous pouvez aussi supprimer vos {0} messages pour les autres membres du groupe en cochant "Retirer mes messages".</value>
+    <value>Vous pouvez aussi supprimer {0} de vous pour les autres membres du groupe en cochant "Retirer mes messages".</value>
   </data>
   <data name="DeleteMessagesTextGroupPart" xml:space="preserve">
     <value>Vous pouvez aussi supprimer vos {0} pour les autres membres du groupe en cochant "Supprimer pour tous les membres".</value>
@@ -2801,8 +3076,23 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Supprimer le message</value>
   </data>
+  <data name="DeleteStickersAlertMessage" xml:space="preserve">
+    <value>Voulez-vous vraiment supprimer les lots d'autocollants sélectionnés ?</value>
+  </data>
+  <data name="DeleteStickerSetsAlertTitle" xml:space="preserve">
+    <value>Supprimer {0}</value>
+  </data>
+  <data name="DeleteTheme" xml:space="preserve">
+    <value>Supprimer le thème</value>
+  </data>
   <data name="DeleteThemeAlert" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer ce thème ?</value>
+  </data>
+  <data name="DeleteThemeTitle" xml:space="preserve">
+    <value>Supprimer le thème</value>
+  </data>
+  <data name="DeleteTheseChats" xml:space="preserve">
+    <value>Supprimer les échanges</value>
   </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>Supprimer cet échange</value>
@@ -2819,17 +3109,38 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   <data name="DescriptionPlaceholder" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Appareils</value>
+  </data>
+  <data name="DialogPin" xml:space="preserve">
+    <value>Épingler</value>
+  </data>
+  <data name="DialogUnpin" xml:space="preserve">
+    <value>Désépingler</value>
+  </data>
+  <data name="DiceInfo" xml:space="preserve">
+    <value>Envoyez un emoji 🎲 dans n'importe quel échange pour obtenir un nombre aléatoire de Telegram.</value>
+  </data>
+  <data name="DiceInfo2" xml:space="preserve">
+    <value>Envoyez un emoji **:dice:** dans n’importe quel échange pour lancer un dé.</value>
+  </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Vous n'avez pas reçu le code ?</value>
   </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>Envoyer le code par SMS</value>
   </data>
+  <data name="Directions" xml:space="preserve">
+    <value>Itinéraire</value>
+  </data>
   <data name="DirectShare" xml:space="preserve">
     <value>Partage direct</value>
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
     <value>Échanges récents dans le menu partage</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Désactiver</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>GIF éphémère</value>
@@ -2841,7 +3152,7 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
     <value>Vidéo éphémère</value>
   </data>
   <data name="DiscardChanges" xml:space="preserve">
-    <value>Effacer les changements ?</value>
+    <value>Voulez-vous annuler les changements ?</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
     <value>Voulez-vous vraiment arrêter l'enregistrement et effacer votre message vidéo ?</value>
@@ -2857,6 +3168,9 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>Effacer le message vocal</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Se déconnecter</value>
   </data>
   <data name="DiscussChannel" xml:space="preserve">
     <value>canal</value>
@@ -2886,7 +3200,7 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
     <value>Ajouter un groupe de discussion pour les commentaires</value>
   </data>
   <data name="DiscussionLinkGroup" xml:space="preserve">
-    <value>LIER CE GROUPE</value>
+    <value>LIER LE GROUPE</value>
   </data>
   <data name="DiscussionLinkGroupAlertHistory" xml:space="preserve">
     <value>"L'historique de discussion pour les nouveaux membres" passera à l'état Visible.</value>
@@ -3072,6 +3386,9 @@ Tout abonné à ce canal pourra voir les messages de ce groupe.</value>
   <data name="EditName" xml:space="preserve">
     <value>Modifier le nom</value>
   </data>
+  <data name="EditThemeColors" xml:space="preserve">
+    <value>Modifier les couleurs</value>
+  </data>
   <data name="EditThemeTitle" xml:space="preserve">
     <value>Modifier le thème</value>
   </data>
@@ -3231,6 +3548,11 @@ Plus d'informations sur telegram.org</value>
   </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>Entrez le nom du thème</value>
+  </data>
+  <data name="EnterThemeNameEdit" xml:space="preserve">
+    <value>Touchez **Créer** si vous souhaitez partager votre thème avec d'autres utilisateurs ou personnaliser chaque couleur manuellement.
+
+Veuillez saisir le nom du thème :</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Entrez votre code d'accès</value>
@@ -3521,6 +3843,9 @@ Durée : {1}</value>
   <data name="EventLogStopPoll" xml:space="preserve">
     <value>un1 a clôt le sondage :</value>
   </data>
+  <data name="EventLogStopQuiz" xml:space="preserve">
+    <value>un1 a arrêté le quiz :</value>
+  </data>
   <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
     <value>un1 a caché l'historique du groupe pour les nouveaux membres</value>
   </data>
@@ -3575,6 +3900,9 @@ Durée : {1}</value>
   <data name="Exposure" xml:space="preserve">
     <value>Exposition</value>
   </data>
+  <data name="ExternalFolderInfo" xml:space="preserve">
+    <value>Parcourir votre stockage externe</value>
+  </data>
   <data name="ExternalStorage" xml:space="preserve">
     <value>Stockage externe</value>
   </data>
@@ -3617,6 +3945,213 @@ Durée : {1}</value>
   <data name="FileUploadLimit" xml:space="preserve">
     <value>La taille du fichier ne devrait pas dépasser {0}</value>
   </data>
+  <data name="FilterAddChats" xml:space="preserve">
+    <value>Ajouter des échanges</value>
+  </data>
+  <data name="FilterAddException" xml:space="preserve">
+    <value>Ajouter une exception</value>
+  </data>
+  <data name="FilterAddingChats" xml:space="preserve">
+    <value>Ajout des échanges</value>
+  </data>
+  <data name="FilterAddingChatsInfo" xml:space="preserve">
+    <value>Veuillez patienter quelques instants pendant que nous remplissons ce dossier pour vous...</value>
+  </data>
+  <data name="FilterAllChats" xml:space="preserve">
+    <value>Tous les échanges</value>
+  </data>
+  <data name="FilterAllChatsShort" xml:space="preserve">
+    <value>Tous</value>
+  </data>
+  <data name="FilterAlwaysShow" xml:space="preserve">
+    <value>Inclure des échanges</value>
+  </data>
+  <data name="FilterArchived" xml:space="preserve">
+    <value>Archivés</value>
+  </data>
+  <data name="FilterAvailableText" xml:space="preserve">
+    <value>Ouvrez *Paramètres > Dossiers* pour organiser vos échanges dans des dossiers.</value>
+  </data>
+  <data name="FilterAvailableTitle" xml:space="preserve">
+    <value>Dossiers d'échanges</value>
+  </data>
+  <data name="FilterBots" xml:space="preserve">
+    <value>Bots</value>
+  </data>
+  <data name="FilterChannels" xml:space="preserve">
+    <value>Canaux</value>
+  </data>
+  <data name="FilterChats" xml:space="preserve">
+    <value>Échanges</value>
+  </data>
+  <data name="FilterChatTypes" xml:space="preserve">
+    <value>Types d’échange</value>
+  </data>
+  <data name="FilterContact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="FilterContacts" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="FilterDelete" xml:space="preserve">
+    <value>Supprimer le dossier</value>
+  </data>
+  <data name="FilterDeleteAlert" xml:space="preserve">
+    <value>Voulez-vous vraiment supprimer ce dossier ? Vos échanges ne seront pas supprimés.</value>
+  </data>
+  <data name="FilterDeleteItem" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="FilterDiscardAlert" xml:space="preserve">
+    <value>Vous avez modifié ce dossier. Appliquer les changements ?</value>
+  </data>
+  <data name="FilterDiscardNewAlert" xml:space="preserve">
+    <value>Vous n'avez pas terminé la création du dossier. Créer maintenant ?</value>
+  </data>
+  <data name="FilterDiscardNewSave" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="FilterDiscardNewTitle" xml:space="preserve">
+    <value>Créer le dossier ?</value>
+  </data>
+  <data name="FilterDiscardTitle" xml:space="preserve">
+    <value>Appliquer les changements ?</value>
+  </data>
+  <data name="FilterEdit" xml:space="preserve">
+    <value>Modifier le dossier</value>
+  </data>
+  <data name="FilterEditAll" xml:space="preserve">
+    <value>Modifier les dossiers</value>
+  </data>
+  <data name="FilterEditItem" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="FilterExclude" xml:space="preserve">
+    <value>Échanges exclus</value>
+  </data>
+  <data name="FilterExcludeArchived" xml:space="preserve">
+    <value>Exclure les archives</value>
+  </data>
+  <data name="FilterExcludeInfo" xml:space="preserve">
+    <value>Choisissez les échanges et les types d'échanges qui n'apparaîtront pas dans ce dossier.</value>
+  </data>
+  <data name="FilterExcludeMuted" xml:space="preserve">
+    <value>Exclure les mis en sourdine</value>
+  </data>
+  <data name="FilterExcludeRead" xml:space="preserve">
+    <value>Exclure les lus</value>
+  </data>
+  <data name="FilterGroups" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="FilterInclude" xml:space="preserve">
+    <value>Échanges inclus</value>
+  </data>
+  <data name="FilterIncludeInfo" xml:space="preserve">
+    <value>Choisissez les échanges et les types d'échanges qui apparaîtront dans ce dossier.</value>
+  </data>
+  <data name="FilterMuted" xml:space="preserve">
+    <value>En sourdine</value>
+  </data>
+  <data name="FilterNameHint" xml:space="preserve">
+    <value>Nom du dossier</value>
+  </data>
+  <data name="FilterNameNonMuted" xml:space="preserve">
+    <value>Sans sourdine</value>
+  </data>
+  <data name="FilterNameUnread" xml:space="preserve">
+    <value>Non lus</value>
+  </data>
+  <data name="FilterNeverShow" xml:space="preserve">
+    <value>Exclure des échanges</value>
+  </data>
+  <data name="FilterNew" xml:space="preserve">
+    <value>Nouveau dossier</value>
+  </data>
+  <data name="FilterNoChats" xml:space="preserve">
+    <value>Aucun échange</value>
+  </data>
+  <data name="FilterNoChatsToDisplay" xml:space="preserve">
+    <value>Aucun échange trouvé</value>
+  </data>
+  <data name="FilterNoChatsToDisplayInfo" xml:space="preserve">
+    <value>Aucun échange ne correspond à ce dossier.</value>
+  </data>
+  <data name="FilterNonContact" xml:space="preserve">
+    <value>Non-contacts</value>
+  </data>
+  <data name="FilterNonContacts" xml:space="preserve">
+    <value>Non-contacts</value>
+  </data>
+  <data name="FilterRead" xml:space="preserve">
+    <value>Lus</value>
+  </data>
+  <data name="FilterRecommended" xml:space="preserve">
+    <value>Dossiers recommandés</value>
+  </data>
+  <data name="FilterRemoveChats" xml:space="preserve">
+    <value>Supprimer des échanges</value>
+  </data>
+  <data name="FilterRemoveExclusionChatText" xml:space="preserve">
+    <value>Voulez-vous vraiment retirer "{0}" de la liste toujours exclue ?</value>
+  </data>
+  <data name="FilterRemoveExclusionText" xml:space="preserve">
+    <value>Voulez-vous vraiment retirer "{0}" de la liste toujours exclue ?</value>
+  </data>
+  <data name="FilterRemoveExclusionTitle" xml:space="preserve">
+    <value>Supprimer l'exception</value>
+  </data>
+  <data name="FilterRemoveExclusionUserText" xml:space="preserve">
+    <value>Voulez-vous vraiment retirer "{0}" de la liste toujours exclue ?</value>
+  </data>
+  <data name="FilterRemoveInclusionChatText" xml:space="preserve">
+    <value>Voulez-vous vraiment retirer "{0}" de la liste toujours incluse ?</value>
+  </data>
+  <data name="FilterRemoveInclusionText" xml:space="preserve">
+    <value>Voulez-vous vraiment retirer "{0}" de la liste toujours incluse ?</value>
+  </data>
+  <data name="FilterRemoveInclusionTitle" xml:space="preserve">
+    <value>Supprimer l'exception</value>
+  </data>
+  <data name="FilterRemoveInclusionUserText" xml:space="preserve">
+    <value>Voulez-vous vraiment retirer "{0}" de la liste toujours incluse ?</value>
+  </data>
+  <data name="FilterReorder" xml:space="preserve">
+    <value>Réordonner</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Dossiers</value>
+  </data>
+  <data name="FilterSecretChats" xml:space="preserve">
+    <value>Échanges secrets</value>
+  </data>
+  <data name="FilterShowMoreChatsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilterShowMoreChatsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilterShowMoreChatsOne" xml:space="preserve">
+    <value>Afficher {0} échange en plus</value>
+  </data>
+  <data name="FilterShowMoreChatsOther" xml:space="preserve">
+    <value>Afficher {0} échanges en plus</value>
+  </data>
+  <data name="FilterShowMoreChatsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilterShowMoreChatsZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FiltersSetup" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+  <data name="FiltersSetupPinAlert" xml:space="preserve">
+    <value>Configuration des dossiers</value>
+  </data>
+  <data name="FilterUnread" xml:space="preserve">
+    <value>Non lus</value>
+  </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Résultats finaux</value>
   </data>
@@ -3641,6 +4176,9 @@ Durée : {1}</value>
   <data name="Folder" xml:space="preserve">
     <value>Dossier</value>
   </data>
+  <data name="FollowersChartTitle" xml:space="preserve">
+    <value>Abonnés</value>
+  </data>
   <data name="FontSize" xml:space="preserve">
     <value>Taille de la police</value>
   </data>
@@ -3655,6 +4193,9 @@ Durée : {1}</value>
   </data>
   <data name="FontSizePreviewReply" xml:space="preserve">
     <value>Salut ! 👋</value>
+  </data>
+  <data name="FontType" xml:space="preserve">
+    <value>Police d'écriture</value>
   </data>
   <data name="FootsAway" xml:space="preserve">
     <value>à {0} pieds</value>
@@ -3957,7 +4498,7 @@ Durée : {1}</value>
     <value>De {0}</value>
   </data>
   <data name="FromGalley" xml:space="preserve">
-    <value>Sélectionner une photo</value>
+    <value>Depuis la galerie</value>
   </data>
   <data name="FromYou" xml:space="preserve">
     <value>Vous</value>
@@ -3980,8 +4521,29 @@ Durée : {1}</value>
   <data name="GifCaption" xml:space="preserve">
     <value>Légende du GIF</value>
   </data>
+  <data name="GIFsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsOne" xml:space="preserve">
+    <value>{0} GIF</value>
+  </data>
+  <data name="GIFsOther" xml:space="preserve">
+    <value>{0} GIF</value>
+  </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIF</value>
+  </data>
+  <data name="GifsTab2" xml:space="preserve">
+    <value>GIF</value>
+  </data>
+  <data name="GIFsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="GlobalAttachGifRestricted" xml:space="preserve">
     <value>Les GIF ne sont pas autorisés dans ce groupe.</value>
@@ -4007,6 +4569,12 @@ sur Telegram ?</value>
   </data>
   <data name="GpsDisabledAlert" xml:space="preserve">
     <value>Votre GPS est désactivé, activez-le pour accéder aux fonctionnalités géo-dépendantes.</value>
+  </data>
+  <data name="GpsDisabledAlertText" xml:space="preserve">
+    <value>Veuillez activer votre GPS pour accéder aux fonctionnalités basées sur la localisation.</value>
+  </data>
+  <data name="GpsDisabledAlertTitle" xml:space="preserve">
+    <value>Activer GPS</value>
   </data>
   <data name="Grain" xml:space="preserve">
     <value>Grain</value>
@@ -4121,6 +4689,9 @@ sur Telegram ?</value>
 
 Veuillez noter qu'ils peuvent toujours rejoindre le groupe par un lien d'invitation, du moment qu'ils ne figurent pas dans la liste des utilisateurs bannis.</value>
   </data>
+  <data name="GrowthChartTitle" xml:space="preserve">
+    <value>Croissance</value>
+  </data>
   <data name="Hashtags" xml:space="preserve">
     <value>MOTS-DIÈSE</value>
   </data>
@@ -4129,6 +4700,9 @@ Veuillez noter qu'ils peuvent toujours rejoindre le groupe par un lien d'invitat
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>Compte supprimé</value>
+  </data>
+  <data name="HideAboveTheList" xml:space="preserve">
+    <value>Masquer au-dessus de la liste</value>
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Masquer</value>
@@ -4190,8 +4764,20 @@ Veuillez noter qu'ils peuvent toujours rejoindre le groupe par un lien d'invitat
   <data name="ImagesTab" xml:space="preserve">
     <value>IMAGES</value>
   </data>
+  <data name="ImagesTab2" xml:space="preserve">
+    <value>Images</value>
+  </data>
   <data name="ImportContacts" xml:space="preserve">
     <value>Importer des contacts</value>
+  </data>
+  <data name="InactiveChannelSignature" xml:space="preserve">
+    <value>canal, inactif depuis {0}</value>
+  </data>
+  <data name="InactiveChats" xml:space="preserve">
+    <value>Échanges inactifs</value>
+  </data>
+  <data name="InactiveChatSignature" xml:space="preserve">
+    <value>{0}, inactif depuis {1}</value>
   </data>
   <data name="InAppNotifications" xml:space="preserve">
     <value>Notifications dans l'application</value>
@@ -4231,6 +4817,12 @@ Veuillez noter qu'ils peuvent toujours rejoindre le groupe par un lien d'invitat
   </data>
   <data name="InstantViewReference" xml:space="preserve">
     <value>Référence</value>
+  </data>
+  <data name="InteractionsChartTitle" xml:space="preserve">
+    <value>Interactions</value>
+  </data>
+  <data name="InternalFolderInfo" xml:space="preserve">
+    <value>Parcourir votre stockage interne</value>
   </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>Stockage interne</value>
@@ -4346,6 +4938,9 @@ Veuillez noter qu'ils peuvent toujours rejoindre le groupe par un lien d'invitat
   <data name="ItemsZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="IVInteractionsChartTitle" xml:space="preserve">
+    <value>Interactions IV</value>
+  </data>
   <data name="January" xml:space="preserve">
     <value>Janvier</value>
   </data>
@@ -4425,6 +5020,9 @@ Vous pouvez changer de langue à tout moment dans les paramètres.</value>
   <data name="LanguageSame" xml:space="preserve">
     <value>Vous utilisez déjà cette langue (**{0}**). Vous pouvez changer de langue à tout moment dans les paramètres.</value>
   </data>
+  <data name="LanguagesChartTitle" xml:space="preserve">
+    <value>Langues</value>
+  </data>
   <data name="LanguageTitle" xml:space="preserve">
     <value>Changer de langue ?</value>
   </data>
@@ -4497,6 +5095,9 @@ Vous pouvez changer de langue à tout moment dans les paramètres.</value>
   <data name="LeaveChannelMenu" xml:space="preserve">
     <value>Quitter le canal</value>
   </data>
+  <data name="LeaveChats" xml:space="preserve">
+    <value>Quitter {0}</value>
+  </data>
   <data name="LeaveMegaMenu" xml:space="preserve">
     <value>Quitter le groupe</value>
   </data>
@@ -4505,6 +5106,9 @@ Vous pouvez changer de langue à tout moment dans les paramètres.</value>
   </data>
   <data name="LedDisabled" xml:space="preserve">
     <value>Désactiver</value>
+  </data>
+  <data name="LimitReached" xml:space="preserve">
+    <value>Limite atteinte</value>
   </data>
   <data name="LinkAvailable" xml:space="preserve">
     <value>{0} est disponible.</value>
@@ -4552,14 +5156,35 @@ Ce lien ne fonctionnera que pour les membres de cet échange.</value>
   <data name="LinkPreview" xml:space="preserve">
     <value>Aperçu du lien</value>
   </data>
+  <data name="LinksFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksOne" xml:space="preserve">
+    <value>{0} lien</value>
+  </data>
+  <data name="LinksOther" xml:space="preserve">
+    <value>{0} liens</value>
+  </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>Liens partagés</value>
+  </data>
+  <data name="LinksTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>Pour combien de temps voulez-vous partager votre position dans cet échange ?</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>Pour combien de temps voulez-vous partager votre position avec {0} ?</value>
+  </data>
+  <data name="LiveLocationContext" xml:space="preserve">
+    <value>Position en temps réel</value>
   </data>
   <data name="LiveLocations" xml:space="preserve">
     <value>Positions en temps réel</value>
@@ -4569,6 +5194,12 @@ Ce lien ne fonctionnera que pour les membres de cet échange.</value>
   </data>
   <data name="LoadingFullImage" xml:space="preserve">
     <value>chargement de l'image entière...</value>
+  </data>
+  <data name="LoadingStats" xml:space="preserve">
+    <value>Chargement des statistiques...</value>
+  </data>
+  <data name="LoadingStatsDescription" xml:space="preserve">
+    <value>Veuillez patienter pendant que nous générons les graphiques.</value>
   </data>
   <data name="LocalAudioCache" xml:space="preserve">
     <value>Messages vidéo / vocaux </value>
@@ -4581,6 +5212,12 @@ Ce lien ne fonctionnera que pour les membres de cet échange.</value>
   </data>
   <data name="LocalDatabaseClear" xml:space="preserve">
     <value>Effacer les messages texte du cache ?</value>
+  </data>
+  <data name="LocalDatabaseClearText" xml:space="preserve">
+    <value>Voulez-vous vraiment effacer les messages texte en cache ?</value>
+  </data>
+  <data name="LocalDatabaseClearTextTitle" xml:space="preserve">
+    <value>Effacer la base de données locale</value>
   </data>
   <data name="LocalDatabaseInfo" xml:space="preserve">
     <value>Effacer la base de données locale supprimera les messages textes du cache et la compressera pour préserver l'espace disque. Sa taille ne sera jamais nulle, car certaines données sont nécessaires au fonctionnement de Telegram.
@@ -4644,6 +5281,9 @@ Cette opération peut prendre plusieurs minutes.</value>
   <data name="LoopAnimatedStickers" xml:space="preserve">
     <value>Autocollants animés en boucle</value>
   </data>
+  <data name="LoopAnimatedStickersInfo" xml:space="preserve">
+    <value>Les autocollants animés seront joués en continu dans les échanges.</value>
+  </data>
   <data name="LowDiskSpaceMessage" xml:space="preserve">
     <value>Votre téléphone n'a presque plus d'espace libre. Pour faire de la place, paramétrez le cache de Telegram pour ne garder que les médias récents.</value>
   </data>
@@ -4658,6 +5298,17 @@ Cette opération peut prendre plusieurs minutes.</value>
   </data>
   <data name="MakeAdmin" xml:space="preserve">
     <value>PROMOUVOIR</value>
+  </data>
+  <data name="MakeMyselfVisible" xml:space="preserve">
+    <value>Me rendre visible</value>
+  </data>
+  <data name="MakeMyselfVisibleInfo" xml:space="preserve">
+    <value>Les utilisateurs à proximité pourront voir votre profil et vous envoyer des messages. Cela peut vous aider à trouver de nouveaux amis, mais peut aussi attirer trop d'attention. Vous pouvez donc cesser de partager votre profil à tout moment.
+
+Votre numéro de téléphone restera masqué.</value>
+  </data>
+  <data name="MakeMyselfVisibleTitle" xml:space="preserve">
+    <value>Afficher votre profil ?</value>
   </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>Gérer le canal</value>
@@ -4686,11 +5337,17 @@ Cette opération peut prendre plusieurs minutes.</value>
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>Telegram</value>
   </data>
+  <data name="MapPreviewProviderTitle" xml:space="preserve">
+    <value>Fournisseur de l'aperçu des plans</value>
+  </data>
   <data name="MapPreviewProviderYandex" xml:space="preserve">
     <value>Yandex</value>
   </data>
   <data name="March" xml:space="preserve">
     <value>Mars</value>
+  </data>
+  <data name="MarkAllAsRead" xml:space="preserve">
+    <value>Tout marquer comme lu</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>Marquer comme lu</value>
@@ -4700,6 +5357,12 @@ Cette opération peut prendre plusieurs minutes.</value>
   </data>
   <data name="Masks" xml:space="preserve">
     <value>Masques</value>
+  </data>
+  <data name="MasksArchived" xml:space="preserve">
+    <value>Masques archivés.</value>
+  </data>
+  <data name="MasksArchivedInfo" xml:space="preserve">
+    <value>{0} a été déplacé dans votre archive.</value>
   </data>
   <data name="MasksCountFew" xml:space="preserve">
     <value/>
@@ -4724,6 +5387,9 @@ Cette opération peut prendre plusieurs minutes.</value>
   </data>
   <data name="MasksRemoved" xml:space="preserve">
     <value>Masques supprimés</value>
+  </data>
+  <data name="MasksRemovedInfo" xml:space="preserve">
+    <value>{0} n'est plus dans vos masques.</value>
   </data>
   <data name="May" xml:space="preserve">
     <value>Mai</value>
@@ -4809,6 +5475,24 @@ La longueur minimale est de 5 caractères.</value>
   <data name="MembersCount" xml:space="preserve">
     <value>{0} de {1} sélectionné(s)</value>
   </data>
+  <data name="MembersCountSelectedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedOne" xml:space="preserve">
+    <value>{0} sur {1} sélectionné</value>
+  </data>
+  <data name="MembersCountSelectedOther" xml:space="preserve">
+    <value>{0} sur {1} sélectionnés</value>
+  </data>
+  <data name="MembersCountSelectedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MembersCountZero" xml:space="preserve">
     <value>jusqu’à {0}</value>
   </data>
@@ -4875,8 +5559,14 @@ La longueur minimale est de 5 caractères.</value>
   <data name="MessageScheduledReminderNotification" xml:space="preserve">
     <value>📅 Rappel</value>
   </data>
+  <data name="MessageScheduledUntilOnline" xml:space="preserve">
+    <value>Planifié jusqu'en ligne</value>
+  </data>
   <data name="MessageScheduledVote" xml:space="preserve">
     <value>Le vote sera disponible après la publication du message.</value>
+  </data>
+  <data name="MessageScheduledVoteResults" xml:space="preserve">
+    <value>Les résultats du sondage seront disponibles après la publication du message.</value>
   </data>
   <data name="MessageScheduleEditTime" xml:space="preserve">
     <value>Replanifier</value>
@@ -5010,6 +5700,24 @@ La longueur minimale est de 5 caractères.</value>
   <data name="MoreInfo" xml:space="preserve">
     <value>Plus d'infos</value>
   </data>
+  <data name="MusicFilesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesOne" xml:space="preserve">
+    <value>{0} fichier musical</value>
+  </data>
+  <data name="MusicFilesOther" xml:space="preserve">
+    <value>{0} fichiers musicaux</value>
+  </data>
+  <data name="MusicFilesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MusicInfo" xml:space="preserve">
     <value>Envoyer des fichiers de musique</value>
   </data>
@@ -5037,20 +5745,32 @@ La longueur minimale est de 5 caractères.</value>
   <data name="NearbyStartGroup" xml:space="preserve">
     <value>Démarrer un groupe</value>
   </data>
+  <data name="NearbyVenue" xml:space="preserve">
+    <value>Ou choisissez un lieu</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>Utilisation des données</value>
   </data>
   <data name="NetworkUsageMobile" xml:space="preserve">
     <value>MOBILE</value>
   </data>
+  <data name="NetworkUsageMobileTab" xml:space="preserve">
+    <value>Mobile</value>
+  </data>
   <data name="NetworkUsageRoaming" xml:space="preserve">
     <value>ITINÉRANCE</value>
+  </data>
+  <data name="NetworkUsageRoamingTab" xml:space="preserve">
+    <value>Itinérance</value>
   </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>Utilisation réseau depuis le {0}</value>
   </data>
   <data name="NetworkUsageWiFi" xml:space="preserve">
     <value>WI-FI</value>
+  </data>
+  <data name="NetworkUsageWiFiTab" xml:space="preserve">
+    <value>Wi-Fi</value>
   </data>
   <data name="NeverAllow" xml:space="preserve">
     <value>Ne jamais autoriser</value>
@@ -5079,6 +5799,9 @@ La longueur minimale est de 5 caractères.</value>
   <data name="NewConversationShortcut" xml:space="preserve">
     <value>Nouvel échange</value>
   </data>
+  <data name="NewFollowersBySourceChartTitle" xml:space="preserve">
+    <value>Nouveaux abonnés par source</value>
+  </data>
   <data name="NewGroup" xml:space="preserve">
     <value>Nouveau groupe</value>
   </data>
@@ -5106,6 +5829,9 @@ La longueur minimale est de 5 caractères.</value>
   <data name="NewPoll" xml:space="preserve">
     <value>Nouveau sondage</value>
   </data>
+  <data name="NewQuiz" xml:space="preserve">
+    <value>Nouveau quiz</value>
+  </data>
   <data name="NewSecretChat" xml:space="preserve">
     <value>Nouvel échange secret</value>
   </data>
@@ -5118,11 +5844,17 @@ La longueur minimale est de 5 caractères.</value>
   <data name="NewThemePreviewLine2" xml:space="preserve">
     <value>C'est le matin à Tokyo 😎</value>
   </data>
+  <data name="NewThemePreviewLine3" xml:space="preserve">
+    <value>C'est le matin *Tokyo* 😎</value>
+  </data>
   <data name="NewThemePreviewName" xml:space="preserve">
     <value>Bob Harris</value>
   </data>
   <data name="NewThemePreviewReply" xml:space="preserve">
     <value>Bonjour ! 👋</value>
+  </data>
+  <data name="NewThemePreviewReply2" xml:space="preserve">
+    <value>Bonjour</value>
   </data>
   <data name="NewThemeTitle" xml:space="preserve">
     <value>Nouveau thème</value>
@@ -5132,6 +5864,18 @@ La longueur minimale est de 5 caractères.</value>
   </data>
   <data name="NoAudio" xml:space="preserve">
     <value>Ajoutez des fichiers à la musithèque de l'appareil pour les voir ici.</value>
+  </data>
+  <data name="NoAudioFiles" xml:space="preserve">
+    <value>Aucun fichier audio</value>
+  </data>
+  <data name="NoAudioFilesInfo" xml:space="preserve">
+    <value>Votre bibliothèque musicale est vide.</value>
+  </data>
+  <data name="NoAudioFound" xml:space="preserve">
+    <value>Aucun résultat trouvé</value>
+  </data>
+  <data name="NoAudioFoundInfo" xml:space="preserve">
+    <value>Il n'y a aucun résultat pour **{0}** dans votre bibliothèque musicale.</value>
   </data>
   <data name="NoBlocked" xml:space="preserve">
     <value>Aucun utilisateur bloqué pour l'instant</value>
@@ -5185,6 +5929,18 @@ sur le bouton en bas à droite.</value>
 
 Pour personnaliser les notifications d'un échange, ouvrez son profil et sélectionnez 'Notifications'.</value>
   </data>
+  <data name="NoFilesFound" xml:space="preserve">
+    <value>Aucun résultat trouvé</value>
+  </data>
+  <data name="NoFilesFoundInfo" xml:space="preserve">
+    <value>Il n'y a aucun résultat pour **{0}** dans le dossier actuel.</value>
+  </data>
+  <data name="NoFilesInfo" xml:space="preserve">
+    <value>Ce dossier est vide.</value>
+  </data>
+  <data name="NoGIFs" xml:space="preserve">
+    <value>Aucun GIF</value>
+  </data>
   <data name="NoGIFsFound" xml:space="preserve">
     <value>Aucun GIF trouvé</value>
   </data>
@@ -5227,6 +5983,12 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   <data name="NoPhotos" xml:space="preserve">
     <value>Aucune photo pour l'instant</value>
   </data>
+  <data name="NoPlacesFound" xml:space="preserve">
+    <value>Aucun lieu trouvé</value>
+  </data>
+  <data name="NoPlacesFoundInfo" xml:space="preserve">
+    <value>Aucun résultat près de vous pour **{0}**.</value>
+  </data>
   <data name="NoPlayerInstalled" xml:space="preserve">
     <value>Vous n'avez pas de lecteur vidéo, installez-en un pour continuer.</value>
   </data>
@@ -5241,6 +6003,9 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   </data>
   <data name="NoRecentPhotos" xml:space="preserve">
     <value>Aucune photo récente</value>
+  </data>
+  <data name="NoRecentSearches" xml:space="preserve">
+    <value>Aucune recherche récente</value>
   </data>
   <data name="NoResult" xml:space="preserve">
     <value>Aucun résultat</value>
@@ -5259,6 +6024,9 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   </data>
   <data name="NoSharedFilesSecret" xml:space="preserve">
     <value>Les fichiers et documents de cet échange s'afficheront ici.</value>
+  </data>
+  <data name="NoSharedGifSecret" xml:space="preserve">
+    <value>Les GIF de cet échange seront affichés ici.</value>
   </data>
   <data name="NoSharedLinks" xml:space="preserve">
     <value>Partagez des liens dans cet échange et accédez-y sur tous vos appareils.</value>
@@ -5365,6 +6133,12 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
     <value>{0} a épinglé un sondage {1}</value>
   </data>
+  <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
+    <value>{0} a épinglé le quiz "{2}" dans le groupe {1}</value>
+  </data>
+  <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
+    <value>{0} a épinglé le quiz "{1}"</value>
+  </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0} a épinglé un message vidéo dans le groupe {1}</value>
   </data>
@@ -5439,6 +6213,18 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   </data>
   <data name="NotificationGroupLeftMember" xml:space="preserve">
     <value>{0} a quitté le groupe {1}</value>
+  </data>
+  <data name="NotificationHiddenChatName" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="NotificationHiddenChatUserName" xml:space="preserve">
+    <value>Utilisateur</value>
+  </data>
+  <data name="NotificationHiddenMessage" xml:space="preserve">
+    <value>Nouveau message</value>
+  </data>
+  <data name="NotificationHiddenName" xml:space="preserve">
+    <value>Telegram</value>
   </data>
   <data name="NotificationInvitedToGroup" xml:space="preserve">
     <value>{0} vous a invité au groupe {1}</value>
@@ -5521,6 +6307,9 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   <data name="NotificationMessageGroupPoll2" xml:space="preserve">
     <value>{0} a envoyé un sondage {2} au groupe {1}</value>
   </data>
+  <data name="NotificationMessageGroupQuiz2" xml:space="preserve">
+    <value>{0} a envoyé le quiz "{2}" au groupe {1}</value>
+  </data>
   <data name="NotificationMessageGroupRound" xml:space="preserve">
     <value>{0} a envoyé un message vidéo au groupe {1}</value>
   </data>
@@ -5559,6 +6348,9 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   </data>
   <data name="NotificationMessagePoll2" xml:space="preserve">
     <value>{0} vous a envoyé un sondage {1}</value>
+  </data>
+  <data name="NotificationMessageQuiz2" xml:space="preserve">
+    <value>{0} vous a envoyé le quiz "{1}"</value>
   </data>
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>{0} vous a envoyé un message vidéo</value>
@@ -5601,6 +6393,9 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   </data>
   <data name="NotificationsChannels" xml:space="preserve">
     <value>Canaux</value>
+  </data>
+  <data name="NotificationsChartTitle" xml:space="preserve">
+    <value>Notifications</value>
   </data>
   <data name="NotificationsCustom" xml:space="preserve">
     <value>Personnalisées</value>
@@ -5754,6 +6549,9 @@ L'équipe Telegram</value>
   <data name="NoVotes" xml:space="preserve">
     <value>Aucun vote</value>
   </data>
+  <data name="NoVotesQuiz" xml:space="preserve">
+    <value>Personne n'a répondu</value>
+  </data>
   <data name="NowInContacts" xml:space="preserve">
     <value>{0} est maintenant dans votre liste de contacts.</value>
   </data>
@@ -5768,6 +6566,9 @@ L'équipe Telegram</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="OneResult" xml:space="preserve">
+    <value>1 résultat</value>
   </data>
   <data name="Online" xml:space="preserve">
     <value>en ligne</value>
@@ -5816,6 +6617,9 @@ L'équipe Telegram</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>OUVRIR DANS...</value>
+  </data>
+  <data name="OpenInEditor" xml:space="preserve">
+    <value>Ouvrir dans l'éditeur</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Ouvrir dans...</value>
@@ -6567,6 +7371,9 @@ Vous pouvez consulter notre *FAQ* pour plus d'informations.</value>
   <data name="PasswordReset" xml:space="preserve">
     <value>Mot de passe désactivé</value>
   </data>
+  <data name="PasteFromClipboard" xml:space="preserve">
+    <value>Coller depuis le presse-papier</value>
+  </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>Adresse de facturation</value>
   </data>
@@ -6780,6 +7587,9 @@ Veuillez activer les services de localisation pour accéder à cette fonctionnal
   <data name="PeopleNearbyInfo" xml:space="preserve">
     <value>Demandez à votre ami à proximité d'ouvrir cette page pour échanger vos numéros de téléphone.</value>
   </data>
+  <data name="PeopleNearbyInfo2" xml:space="preserve">
+    <value>Échangez vos infos de contact avec les personnes à proximité et trouvez de nouveaux amis.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>Pour vous permettre de joindre vos proches sur tous vos appareils, vos contacts seront synchronisés en continu sur les serveurs chiffrés de Telegram.</value>
   </data>
@@ -6895,8 +7705,14 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinFolderLimitReached" xml:space="preserve">
+    <value>Désolé, vous ne pouvez pas épingler plus d'échanges.</value>
+  </data>
   <data name="Ping" xml:space="preserve">
     <value>Ping : {0} ms</value>
+  </data>
+  <data name="PinInTheList" xml:space="preserve">
+    <value>Épingler dans la liste</value>
   </data>
   <data name="Pink" xml:space="preserve">
     <value>Rose</value>
@@ -6932,7 +7748,13 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
     <value>Épingler</value>
   </data>
   <data name="PinToTopLimitReached" xml:space="preserve">
-    <value>Désolé, vous ne pouvez épingler {0} dans votre liste principale. Si vous souhaitez davantage d'organisation, essayez d'archiver quelques échanges – le dossier Échanges archivés permet une infinité d'épingles.</value>
+    <value>Désolé, vous ne pouvez épingler que {0} dans votre liste principale. Pour une meilleure organisation, votre liste d'échanges archivés permet une infinité d'épingles.</value>
+  </data>
+  <data name="PinToTopLimitReached2" xml:space="preserve">
+    <value>Désolé, vous ne pouvez épingler que {0} dans la liste principale. Plus d'échanges peuvent être épinglés dans les dossiers et dans votre archive.</value>
+  </data>
+  <data name="PlacesInThisArea" xml:space="preserve">
+    <value>Lieux dans cette zone</value>
   </data>
   <data name="PleaseDownload" xml:space="preserve">
     <value>Téléchargez le média au préalable</value>
@@ -6979,8 +7801,41 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   <data name="Poll" xml:space="preserve">
     <value>Sondage</value>
   </data>
+  <data name="PollAnonymous" xml:space="preserve">
+    <value>Vote anonyme</value>
+  </data>
+  <data name="PollCantForwardSecretChat" xml:space="preserve">
+    <value>Désolé, les sondages ne peuvent pas être transférés vers les échanges secrets.</value>
+  </data>
+  <data name="PollCollapse" xml:space="preserve">
+    <value>Réduire</value>
+  </data>
+  <data name="PollExpand" xml:space="preserve">
+    <value>Étendre</value>
+  </data>
+  <data name="PollMultiple" xml:space="preserve">
+    <value>Réponses multiples</value>
+  </data>
   <data name="PollOptions" xml:space="preserve">
     <value>Options du sondage</value>
+  </data>
+  <data name="PollQuiz" xml:space="preserve">
+    <value>Mode quiz</value>
+  </data>
+  <data name="PollResults" xml:space="preserve">
+    <value>Résultats du sondage</value>
+  </data>
+  <data name="PollSelectOption" xml:space="preserve">
+    <value>Sélectionnez d’abord une option</value>
+  </data>
+  <data name="PollSubmitVotes" xml:space="preserve">
+    <value>VOTER</value>
+  </data>
+  <data name="PollTapToSelect" xml:space="preserve">
+    <value>Touchez pour choisir la bonne réponse</value>
+  </data>
+  <data name="PollViewResults" xml:space="preserve">
+    <value>RÉSULTATS</value>
   </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>Désactivées</value>
@@ -6992,13 +7847,16 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
     <value>Notifications flottantes</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
-    <value>Laisser un commentaire sur cet aperçu</value>
+    <value>Signaler un bug avec cet aperçu</value>
+  </data>
+  <data name="PreviewFeedback2" xml:space="preserve">
+    <value>Mauvaise mise en page ?</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Les notifications de priorité élevée fonctionneront même en mode Ne Pas Déranger.</value>
   </data>
   <data name="PrivacyAddAnException" xml:space="preserve">
-    <value>Ajouter des utilisateurs ou des groupes</value>
+    <value>Ajouter des utilisateurs ou groupes</value>
   </data>
   <data name="PrivacyAdvanced" xml:space="preserve">
     <value>Avancé</value>
@@ -7074,6 +7932,12 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   </data>
   <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
     <value>Supprimer vos infos de livraison et demander à tous les fournisseur de paiement de supprimer vos cartes de crédit enregistrées ? Telegram ne stocke jamais les données de vos cartes de crédit.</value>
+  </data>
+  <data name="PrivacyPaymentsClearAlertText" xml:space="preserve">
+    <value>Voulez-vous vraiment effacer vos informations de paiement et de livraison ?</value>
+  </data>
+  <data name="PrivacyPaymentsClearAlertTitle" xml:space="preserve">
+    <value>Effacer les infos de paiement</value>
   </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>Vous pouvez supprimer vos infos de livraison et demander aux fournisseurs de paiement de supprimer vos cartes de crédit enregistrées. Telegram n'enregistre jamais les données de vos cartes de crédit.</value>
@@ -7153,6 +8017,12 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>Désolé, l'utilisateur-cible a déjà trop de groupes publics ou de canaux. Demandez-lui d'abord de supprimer ou de transférer un de ses groupes ou canaux existants.</value>
   </data>
+  <data name="PublicPoll" xml:space="preserve">
+    <value>Sondage</value>
+  </data>
+  <data name="PublicPollCantForward" xml:space="preserve">
+    <value>Désolé, les sondages à votes visibles ne peuvent pas être transférés vers les canaux.</value>
+  </data>
   <data name="Purple" xml:space="preserve">
     <value>Violet</value>
   </data>
@@ -7176,6 +8046,27 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   </data>
   <data name="QuickReplyDefault4" xml:space="preserve">
     <value>Je ne peux pas parler. Rappelle-moi plus tard.</value>
+  </data>
+  <data name="QuizAnswers" xml:space="preserve">
+    <value>Réponses du quiz</value>
+  </data>
+  <data name="QuizInfo" xml:space="preserve">
+    <value>Les quiz n'ont qu'une seule bonne réponse. Les utilisateurs ne peuvent pas révoquer leurs réponses.</value>
+  </data>
+  <data name="QuizPoll" xml:space="preserve">
+    <value>Quiz</value>
+  </data>
+  <data name="QuizWellDone" xml:space="preserve">
+    <value>Bien joué !</value>
+  </data>
+  <data name="QuizWellDoneInfo" xml:space="preserve">
+    <value>Vous avez choisi la bonne réponse.</value>
+  </data>
+  <data name="QuizWrongAnswer" xml:space="preserve">
+    <value>Mauvaise réponse !</value>
+  </data>
+  <data name="QuizWrongAnswerInfo" xml:space="preserve">
+    <value>Ce n'était pas la bonne réponse.</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
     <value>Mettre à l'oreille pour parler</value>
@@ -7204,11 +8095,17 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   <data name="Recent" xml:space="preserve">
     <value>Récents</value>
   </data>
+  <data name="RecentFiles" xml:space="preserve">
+    <value>Fichier récents</value>
+  </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>En ligne récemment</value>
   </data>
   <data name="RecentlyViewedHide" xml:space="preserve">
     <value>CACHER</value>
+  </data>
+  <data name="RecentPosts" xml:space="preserve">
+    <value>Publications récentes</value>
   </data>
   <data name="RecentStickers" xml:space="preserve">
     <value>Récents</value>
@@ -7269,6 +8166,9 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>Autocollant retiré des favoris</value>
+  </data>
+  <data name="RemovedFromRecent" xml:space="preserve">
+    <value>L'autocollant a été retiré des récents</value>
   </data>
   <data name="RemovedUserFew" xml:space="preserve">
     <value/>
@@ -7364,12 +8264,15 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
     <value>Signaler un groupe sans lien</value>
   </data>
   <data name="ReportUnrelatedGroupText" xml:space="preserve">
-    <value>Merci de nous signaler si ce groupe est sans rapport avec cette position :
+    <value>Merci de nous signaler si ce groupe n'est pas en lien avec cette position :
 
 **{0}**</value>
   </data>
   <data name="ReportUnrelatedGroupTextNoAddress" xml:space="preserve">
-    <value>Merci de nous signaler si ce groupe est sans rapport avec cette position.</value>
+    <value>Merci de nous signaler si ce groupe n'est pas en lien avec cette position.</value>
+  </data>
+  <data name="ReportUserLocation" xml:space="preserve">
+    <value>Signaler</value>
   </data>
   <data name="ResendCode" xml:space="preserve">
     <value>Renvoyer le code</value>
@@ -7441,6 +8344,9 @@ Si vous réinitialisez votre compte, tous vos échanges seront supprimés.</valu
   <data name="ResetNotificationsAlert" xml:space="preserve">
     <value>Voulez-vous vraiment réinitialiser tous les paramètres de notifications ?</value>
   </data>
+  <data name="ResetNotificationsAlertTitle" xml:space="preserve">
+    <value>Réinitialiser toutes les notifications</value>
+  </data>
   <data name="ResetNotificationsText" xml:space="preserve">
     <value>Tous les paramètres de notification ont été rétablis par défaut</value>
   </data>
@@ -7460,6 +8366,9 @@ Si vous réinitialisez votre compte, tous vos échanges seront supprimés.</valu
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
     <value>Entrez le code à 6 chiffres qui vous a été envoyé par courriel.</value>
+  </data>
+  <data name="RestoreEmailSentTitle" xml:space="preserve">
+    <value>Code de récupération</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>Pas d'accès à votre courriel {0} ?</value>
@@ -7517,7 +8426,13 @@ Le canal "**{1}**" deviendra privé.</value>
     <value>Saturation</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Enregistrer</value>
+    <value>Valider</value>
+  </data>
+  <data name="SaveChangesAlertText" xml:space="preserve">
+    <value>Voulez-vous appliquer les nouvelles couleurs choisies ?</value>
+  </data>
+  <data name="SaveChangesAlertTitle" xml:space="preserve">
+    <value>Enregistrer les changements ?</value>
   </data>
   <data name="SavedMessages" xml:space="preserve">
     <value>Messages enregistrés</value>
@@ -7552,8 +8467,14 @@ Le canal "**{1}**" deviendra privé.</value>
   <data name="ScheduledMessages" xml:space="preserve">
     <value>Messages planifiés</value>
   </data>
+  <data name="ScheduledOrNoSoundHint" xml:space="preserve">
+    <value>Maintenez ce bouton pour planifier l'envoi de votre message ou l'envoyer silencieusement.</value>
+  </data>
   <data name="ScheduleMessage" xml:space="preserve">
     <value>Envoi planifié</value>
+  </data>
+  <data name="ScheduleWhenOnline" xml:space="preserve">
+    <value>Envoyer quand {0} sera en ligne</value>
   </data>
   <data name="ScreenCapture" xml:space="preserve">
     <value>Autoriser les captures d'écran</value>
@@ -7616,6 +8537,9 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   </data>
   <data name="SearchMessages" xml:space="preserve">
     <value>Messages</value>
+  </data>
+  <data name="SearchRecentFiles" xml:space="preserve">
+    <value>Rechercher des fichiers récents</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Rechercher des autocollants</value>
@@ -7696,10 +8620,10 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
     <value>Choisir des contacts</value>
   </data>
   <data name="SelectFile" xml:space="preserve">
-    <value>Sélectionnez un fichier</value>
+    <value>Choisir un fichier</value>
   </data>
   <data name="SelectFromGallery" xml:space="preserve">
-    <value>Choisir dans la galerie</value>
+    <value>Choisir depuis la galerie</value>
   </data>
   <data name="SelectImage" xml:space="preserve">
     <value>Sélectionner une image</value>
@@ -7722,17 +8646,32 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   <data name="SendContactToGroup" xml:space="preserve">
     <value>Envoyer le contact à {0} ?</value>
   </data>
+  <data name="SendContactToGroupText" xml:space="preserve">
+    <value>Voulez-vous envoyer ce contact à **{0}** ?</value>
+  </data>
+  <data name="SendContactToText" xml:space="preserve">
+    <value>Voulez-vous envoyer ce contact à **{0}** ?</value>
+  </data>
   <data name="SendDayAt" xml:space="preserve">
     <value>'Envoyer le' MMM d 'à' HH:mm</value>
   </data>
   <data name="SendDayYearAt" xml:space="preserve">
     <value>'Envoyer le' d MMM yyyy 'à' HH:mm</value>
   </data>
+  <data name="SendDice" xml:space="preserve">
+    <value>ENVOYER</value>
+  </data>
   <data name="SendGameTo" xml:space="preserve">
     <value>Partager le jeu avec {0} ?</value>
   </data>
   <data name="SendGameToGroup" xml:space="preserve">
     <value>Partager le jeu avec {0} ?</value>
+  </data>
+  <data name="SendGameToGroupText" xml:space="preserve">
+    <value>Voulez-vous partager ce jeu avec **{0}** ?</value>
+  </data>
+  <data name="SendGameToText" xml:space="preserve">
+    <value>Voulez-vous partager ce jeu avec **{0}** ?</value>
   </data>
   <data name="SendGifPreview" xml:space="preserve">
     <value>Envoyer le GIF</value>
@@ -7779,8 +8718,14 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   <data name="SendLiveLocationInfo" xml:space="preserve">
     <value>Actualisée quand vous vous déplacez</value>
   </data>
+  <data name="SendLiveLocationMenu" xml:space="preserve">
+    <value>Partager ma position en temps réel</value>
+  </data>
   <data name="SendLocation" xml:space="preserve">
     <value>Envoyer ma position actuelle</value>
+  </data>
+  <data name="SendMessageLocation" xml:space="preserve">
+    <value>Envoyer un message</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>Les administrateurs du groupe vous ont interdit d'envoyer des messages jusqu'au {0}.</value>
@@ -7793,6 +8738,15 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   </data>
   <data name="SendMessagesToGroup" xml:space="preserve">
     <value>Envoyer les messages à {0} ?</value>
+  </data>
+  <data name="SendMessagesToGroupText" xml:space="preserve">
+    <value>Voulez-vous envoyer ce message à **{0}** ?</value>
+  </data>
+  <data name="SendMessagesToText" xml:space="preserve">
+    <value>Voulez-vous envoyer ce message à **{0}** ?</value>
+  </data>
+  <data name="SendMessageTitle" xml:space="preserve">
+    <value>Envoyer un message</value>
   </data>
   <data name="SendMessageTo" xml:space="preserve">
     <value>Ajouter quelqu'un...</value>
@@ -7807,7 +8761,7 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
     <value>Envoyer l'autocollant</value>
   </data>
   <data name="SendTodayAt" xml:space="preserve">
-    <value>'Envoyer aujourd'hui à' HH:mm</value>
+    <value>'Envoyer aujourd’hui à' HH:mm</value>
   </data>
   <data name="SendWithoutCompression" xml:space="preserve">
     <value>Envoyer sans compression</value>
@@ -7901,6 +8855,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="SETTINGS" xml:space="preserve">
     <value>Paramètres</value>
   </data>
+  <data name="SettingsDebug" xml:space="preserve">
+    <value>Débogage</value>
+  </data>
   <data name="SettingsFaqSearchTitle" xml:space="preserve">
     <value>Foire aux questions</value>
   </data>
@@ -7952,6 +8909,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="ShareContact" xml:space="preserve">
     <value>Partager le contact</value>
   </data>
+  <data name="ShareContactTitle" xml:space="preserve">
+    <value>Partager le contact</value>
+  </data>
   <data name="SharedAudioFiles" xml:space="preserve">
     <value>Fichiers audio</value>
   </data>
@@ -7964,11 +8924,23 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>FICHIERS</value>
   </data>
+  <data name="SharedFilesTab2" xml:space="preserve">
+    <value>Fichiers</value>
+  </data>
+  <data name="SharedGIFsTab2" xml:space="preserve">
+    <value>GIF</value>
+  </data>
+  <data name="SharedGroupsTab2" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
   <data name="SharedLinks" xml:space="preserve">
     <value>Liens</value>
   </data>
   <data name="SharedLinksTab" xml:space="preserve">
     <value>LIENS</value>
+  </data>
+  <data name="SharedLinksTab2" xml:space="preserve">
+    <value>Liens</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>Médias partagés</value>
@@ -7976,11 +8948,20 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="SharedMediaTab" xml:space="preserve">
     <value>MÉDIAS</value>
   </data>
+  <data name="SharedMediaTab2" xml:space="preserve">
+    <value>Médias</value>
+  </data>
+  <data name="SharedMediaTabFull2" xml:space="preserve">
+    <value>Médias partagés</value>
+  </data>
   <data name="SharedMediaTitle" xml:space="preserve">
     <value>Médias partagés</value>
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
     <value>AUDIO</value>
+  </data>
+  <data name="SharedMusicTab2" xml:space="preserve">
+    <value>Audio</value>
   </data>
   <data name="SharedPhotosAndVideos" xml:space="preserve">
     <value>Photos et vidéos</value>
@@ -7990,6 +8971,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   </data>
   <data name="SharedVoiceTab" xml:space="preserve">
     <value>VOIX</value>
+  </data>
+  <data name="SharedVoiceTab2" xml:space="preserve">
+    <value>Messages vocaux</value>
   </data>
   <data name="ShareFile" xml:space="preserve">
     <value>Partager</value>
@@ -8004,16 +8988,37 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Partager mon contact</value>
   </data>
   <data name="ShareMyPhone" xml:space="preserve">
-    <value>PARTAGER MON NUMÉRO DE TÉLÉPHONE</value>
+    <value>PARTAGER MON NUMÉRO</value>
   </data>
   <data name="SharePhoneNumberWith" xml:space="preserve">
-    <value>Partager mon numéro de téléphone avec {0}</value>
+    <value>Partager mon numéro avec {0}</value>
   </data>
   <data name="ShareSendTo" xml:space="preserve">
     <value>Envoyer à...</value>
   </data>
+  <data name="SharesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SharesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SharesOne" xml:space="preserve">
+    <value>{0} partage</value>
+  </data>
+  <data name="SharesOther" xml:space="preserve">
+    <value>{0} partages</value>
+  </data>
+  <data name="SharesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SharesZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="ShareTelegram" xml:space="preserve">
     <value>Partager Telegram...</value>
+  </data>
+  <data name="ShareTheme" xml:space="preserve">
+    <value>Partager le thème</value>
   </data>
   <data name="ShareYouLocationInfo" xml:space="preserve">
     <value>Cela enverra votre position actuelle au bot.</value>
@@ -8051,11 +9056,20 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="ShowAllFiles" xml:space="preserve">
     <value>Afficher tous les fichiers</value>
   </data>
+  <data name="ShowAllGIFs" xml:space="preserve">
+    <value>Afficher tous les GIF</value>
+  </data>
   <data name="ShowAllMedia" xml:space="preserve">
     <value>Afficher tous les médias</value>
   </data>
   <data name="ShowAllThemes" xml:space="preserve">
     <value>Afficher tous les thèmes</value>
+  </data>
+  <data name="ShowAsGrid" xml:space="preserve">
+    <value>Afficher en grille</value>
+  </data>
+  <data name="ShowAsList" xml:space="preserve">
+    <value>Afficher en liste</value>
   </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>Afficher dans l'échange</value>
@@ -8067,7 +9081,25 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Afficher les notifications de</value>
   </data>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
-    <value>Désactivez pour ne recevoir que les notifications du compte actif.</value>
+    <value>Désactivez ceci pour ne recevoir que les notifications du compte que vous utilisez actuellement.</value>
+  </data>
+  <data name="ShowVotesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ShowVotesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ShowVotesOne" xml:space="preserve">
+    <value>Montrer plus ({0})</value>
+  </data>
+  <data name="ShowVotesOther" xml:space="preserve">
+    <value>Montrer plus ({0})</value>
+  </data>
+  <data name="ShowVotesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ShowVotesZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>Mélanger</value>
@@ -8080,6 +9112,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   </data>
   <data name="SlideToCancel" xml:space="preserve">
     <value>GLISSER POUR ANNULER</value>
+  </data>
+  <data name="SlideUpToLock" xml:space="preserve">
+    <value>Faites glisser vers le haut pour verrouiller l'enregistrement</value>
   </data>
   <data name="Slowmode" xml:space="preserve">
     <value>Mode ralenti</value>
@@ -8176,8 +9211,35 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Autocollants et masques</value>
   </data>
+  <data name="StickersArchived" xml:space="preserve">
+    <value>Autocollants archivés.</value>
+  </data>
+  <data name="StickersArchivedInfo" xml:space="preserve">
+    <value>{0} a été déplacé dans votre archive.</value>
+  </data>
+  <data name="StickersBotInfo" xml:space="preserve">
+    <value>Les artistes sont invités à ajouter leurs propres lots d'autocollants via notre bot @stickers.</value>
+  </data>
   <data name="StickersCopy" xml:space="preserve">
     <value>Copier le lien</value>
+  </data>
+  <data name="StickerSetsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsOne" xml:space="preserve">
+    <value>{0} lot d'autocollants</value>
+  </data>
+  <data name="StickerSetsOther" xml:space="preserve">
+    <value>{0} lots d'autocollants</value>
+  </data>
+  <data name="StickerSetsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="StickersFew" xml:space="preserve">
     <value/>
@@ -8203,6 +9265,15 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
   <data name="StickersRemoved" xml:space="preserve">
     <value>Autocollants supprimés</value>
   </data>
+  <data name="StickersRemovedInfo" xml:space="preserve">
+    <value>{0} n'est plus dans vos autocollants.</value>
+  </data>
+  <data name="StickersReorder" xml:space="preserve">
+    <value>Réordonner</value>
+  </data>
+  <data name="StickersReorderHint" xml:space="preserve">
+    <value>Déplacer les autocollants pour les réordonner.</value>
+  </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Partager</value>
   </data>
@@ -8227,11 +9298,23 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
   <data name="StopLiveLocationAlertAll" xml:space="preserve">
     <value>Voulez-vous vraiment arrêter de partager votre position en temps réel ?</value>
   </data>
+  <data name="StopLiveLocationAlertAllText" xml:space="preserve">
+    <value>Voulez-vous arrêter de partager votre position en temps réel ?</value>
+  </data>
   <data name="StopLiveLocationAlertToGroup" xml:space="preserve">
     <value>Voulez-vous vraiment arrêter de partager votre position en temps réel avec {0} ?</value>
   </data>
+  <data name="StopLiveLocationAlertToGroupText" xml:space="preserve">
+    <value>Voulez-vous arrêter de partager votre position en temps réel avec **{0}** ?</value>
+  </data>
+  <data name="StopLiveLocationAlertToTitle" xml:space="preserve">
+    <value>Arrêter le partage de position</value>
+  </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>Voulez-vous vraiment arrêter de partager votre position en temps réel avec {0} ?</value>
+  </data>
+  <data name="StopLiveLocationAlertToUserText" xml:space="preserve">
+    <value>Voulez-vous arrêter de partager votre position en temps réel avec **{0}** ?</value>
   </data>
   <data name="StopLoading" xml:space="preserve">
     <value>Arrêter le chargement ?</value>
@@ -8244,6 +9327,18 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
   </data>
   <data name="StopPollAlertTitle" xml:space="preserve">
     <value>Arrêter le sondage ?</value>
+  </data>
+  <data name="StopQuiz" xml:space="preserve">
+    <value>Arrêter le quiz</value>
+  </data>
+  <data name="StopQuizAlertText" xml:space="preserve">
+    <value>Si vous arrêtez ce quiz maintenant, plus personne ne pourra y participer. Cette action est irréversible.</value>
+  </data>
+  <data name="StopQuizAlertTitle" xml:space="preserve">
+    <value>Arrêter le quiz ?</value>
+  </data>
+  <data name="StopShowingMe" xml:space="preserve">
+    <value>Me rendre invisible</value>
   </data>
   <data name="StopVerification" xml:space="preserve">
     <value>Voulez-vous arrêter le processus de vérification ?</value>
@@ -8284,6 +9379,9 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
   <data name="SuggestContactsInfo" xml:space="preserve">
     <value>Afficher les personnes que vous contactez souvent en haut des recherches pour un accès rapide.</value>
   </data>
+  <data name="SuggestContactsTitle" xml:space="preserve">
+    <value>Désactiver les suggestions</value>
+  </data>
   <data name="SuggestStickers" xml:space="preserve">
     <value>Suggérer des autocollants par emoji</value>
   </data>
@@ -8314,6 +9412,14 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
   <data name="SyncContactsDeleteInfo" xml:space="preserve">
     <value>Cela supprima vos contacts des serveurs Telegram. Si la synchronisation est activée, ils seront synchronisés à nouveau.</value>
   </data>
+  <data name="SyncContactsDeleteText" xml:space="preserve">
+    <value>Ceci supprimera vos contacts des serveurs de Telegram.
+
+Si '**Synchroniser les contacts**' est activé, les contacts seront resynchronisés.</value>
+  </data>
+  <data name="SyncContactsDeleteTitle" xml:space="preserve">
+    <value>Supprimer les contacts</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
     <value>Activez pour synchroniser en continu les contacts de cet appareil avec votre compte.</value>
   </data>
@@ -8343,6 +9449,12 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
   </data>
   <data name="TapToDownload" xml:space="preserve">
     <value>Touchez pour télécharger</value>
+  </data>
+  <data name="TapToSendLocation" xml:space="preserve">
+    <value>Envoyer la position</value>
+  </data>
+  <data name="TapToViewAsList" xml:space="preserve">
+    <value>Toucher pour un affichage par liste.</value>
   </data>
   <data name="Teal" xml:space="preserve">
     <value>Turquoise</value>
@@ -8388,8 +9500,14 @@ Ce mot de passe sera aussi requis à chaque fois que vous vous connecterez à Te
   <data name="TelegramPassportDeleteAlert" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer Telegram Passport ?</value>
   </data>
+  <data name="TelegramPassportDeleteTitle" xml:space="preserve">
+    <value>Supprimer Telegram Passport</value>
+  </data>
   <data name="TelegramVersion" xml:space="preserve">
     <value>Telegram pour Android {0}</value>
+  </data>
+  <data name="Terminate" xml:space="preserve">
+    <value>Terminer</value>
   </data>
   <data name="TerminateAllSessions" xml:space="preserve">
     <value>Fermer toutes les autres sessions</value>
@@ -8403,14 +9521,26 @@ Ce mot de passe sera aussi requis à chaque fois que vous vous connecterez à Te
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>Fermer cette session ?</value>
   </data>
+  <data name="TerminateSessionText" xml:space="preserve">
+    <value>Voulez-vous vraiment terminer cette session ?</value>
+  </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
     <value>Touchez pour déconnecter de votre compte Telegram.</value>
   </data>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>Déconnecter {0} ?</value>
   </data>
+  <data name="TerminateWebSessionsTitle" xml:space="preserve">
+    <value>Se déconnecter des sites web</value>
+  </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>Bloquer {0}</value>
+  </data>
+  <data name="TerminateWebSessionText" xml:space="preserve">
+    <value>Voulez-vous vraiment déconnecter {0} ?</value>
+  </data>
+  <data name="TerminateWebSessionTitle" xml:space="preserve">
+    <value>Se déconnecter du site web</value>
   </data>
   <data name="TermsOfService" xml:space="preserve">
     <value>Conditions de service</value>
@@ -8421,6 +9551,9 @@ vous acceptez les *conditions de service*.</value>
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Texte copié dans le presse-papier</value>
+  </data>
+  <data name="TextSelectionHit" xml:space="preserve">
+    <value>Maintenez le **mot**, puis déplacez le curseur pour sélectionner le texte à copier.</value>
   </data>
   <data name="TextSize" xml:space="preserve">
     <value>Taille de texte des messages</value>
@@ -8443,6 +9576,9 @@ vous acceptez les *conditions de service*.</value>
   <data name="ThemeBlue" xml:space="preserve">
     <value>Mono</value>
   </data>
+  <data name="ThemeClassic" xml:space="preserve">
+    <value>Classique</value>
+  </data>
   <data name="ThemeCreateHelp" xml:space="preserve">
     <value>N'importe qui peut installer votre thème en utilisant ce lien. Lorsque vous y apportez une modification, le thème sera mis à jour pour tous les utilisateurs qui l'ont installé.
 
@@ -8458,6 +9594,9 @@ Les liens des thèmes doivent faire au moins 5 caractères, incluant des chiffre
   </data>
   <data name="ThemeDarkBlue" xml:space="preserve">
     <value>Bleu sombre</value>
+  </data>
+  <data name="ThemeDay" xml:space="preserve">
+    <value>Jour</value>
   </data>
   <data name="ThemeGraphite" xml:space="preserve">
     <value>Graphite</value>
@@ -8492,6 +9631,9 @@ Les liens des thèmes doivent faire au moins 5 caractères, incluant des chiffre
   </data>
   <data name="ThemeNamePlaceholder" xml:space="preserve">
     <value>Nom</value>
+  </data>
+  <data name="ThemeNight" xml:space="preserve">
+    <value>Nuit</value>
   </data>
   <data name="ThemeNotFound" xml:space="preserve">
     <value>Thème introuvable</value>
@@ -8574,6 +9716,15 @@ Les liens des thèmes doivent faire au moins 5 caractères, incluant des chiffre
   <data name="ThemePreviewTitle" xml:space="preserve">
     <value>Reinhardt</value>
   </data>
+  <data name="ThemeResetToDefaults" xml:space="preserve">
+    <value>Rétablir par défaut</value>
+  </data>
+  <data name="ThemeResetToDefaultsText" xml:space="preserve">
+    <value>Voulez-vous vraiment réinitialiser les réglages de taille et de couleur ?</value>
+  </data>
+  <data name="ThemeResetToDefaultsTitle" xml:space="preserve">
+    <value>Réinitialiser les réglages</value>
+  </data>
   <data name="ThemeSetUrl" xml:space="preserve">
     <value>Définir le lien</value>
   </data>
@@ -8620,9 +9771,27 @@ La longueur minimale est de 5 caractères.</value>
   <data name="TodayAtFormatted" xml:space="preserve">
     <value>à {0}</value>
   </data>
+  <data name="TodayAtFormattedWithToday" xml:space="preserve">
+    <value>aujourd'hui à {0}</value>
+  </data>
+  <data name="TooManyCommunities" xml:space="preserve">
+    <value>Trop de communautés</value>
+  </data>
+  <data name="TooManyCommunitiesHintCreate" xml:space="preserve">
+    <value>Désolé, vous êtes membre de trop de groupes et canaux. Veuillez en quitter un avant d'en créer un nouveau.</value>
+  </data>
+  <data name="TooManyCommunitiesHintEdit" xml:space="preserve">
+    <value>Désolé, vous êtes membre de trop de groupes et canaux. Pour des raisons techniques, vous devez en quitter certains avant de changer ce paramètre dans vos groupes.</value>
+  </data>
+  <data name="TooManyCommunitiesHintJoin" xml:space="preserve">
+    <value>Désolé, vous êtes membre de trop de groupes et canaux. Veuillez en quitter certains pour en rejoindre un nouveau.</value>
+  </data>
   <data name="TooManyTries" xml:space="preserve">
     <value>Trop de tentatives.
 Merci de réessayer dans {0}.</value>
+  </data>
+  <data name="TopHoursChartTitle" xml:space="preserve">
+    <value>Vues par heures (UTC)</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
     <value>Tapez Accepter pour confirmer que vous avez plus de {0} ans.</value>
@@ -8638,9 +9807,9 @@ Contrairement à d'autres, nous n'utilisons pas vos données pour du ciblage pub
 Mais si les besoins modestes de Telegram ne vous conviennent pas, il nous est impossible de vous fournir ce service.</value>
   </data>
   <data name="TosDeclineDeleteAccount" xml:space="preserve">
-    <value>Attention, votre compte Telegram et toutes vos données stockées sur Telegram seront supprimés de manière irréversible.
+    <value>Attention, votre compte Telegram et toutes vos données stockées sur le cloud Telegram seront supprimés de manière irréversible.
 
-Important : pour ne pas tout perdre, vous pouvez annuler maintenant et exporter vos données avant de supprimer votre compte. Pour cela, ouvrez la dernière version de Telegram pour bureau et allez dans Paramètres > Exporter les données Telegram.</value>
+Important : pour ne pas tout perdre, vous pouvez annuler maintenant et exporter vos données avant de supprimer votre compte. Pour cela, ouvrez la dernière version de Telegram pour bureau et allez dans Paramètres > Avancé > Exporter les données Telegram.</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
     <value>Nous sommes désolés, mais cela veut dire que nos chemins se séparent ici. Contrairement à d'autres, nous n'utilisons pas vos données pour du ciblage publicitaire ou d'autres fin commerciales. Telegram ne stocke que les informations nécessaires à son fonctionnement. Vous pouvez régler notre utilisation de vos données (comme supprimer les contacts synchronisés) dans les paramètres de confidentialité et sécurité.
@@ -8658,6 +9827,9 @@ Mais si les besoins modestes de Telegram ne vous conviennent pas, il nous est im
   </data>
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>Voulez-vous vraiment désactiver votre mot de passe ?</value>
+  </data>
+  <data name="TurnPasswordOffQuestionTitle" xml:space="preserve">
+    <value>Désactiver le mot de passe</value>
   </data>
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Double authentification</value>
@@ -8896,6 +10068,9 @@ Mais si les besoins modestes de Telegram ne vous conviennent pas, il nous est im
   <data name="UserBlocked" xml:space="preserve">
     <value>Utilisateur bloqué</value>
   </data>
+  <data name="UserChannelTooMuchJoin" xml:space="preserve">
+    <value>Désolé, l'utilisateur cible est membre de trop de groupes et canaux. Veuillez lui demander d'en quitter un d'abord.</value>
+  </data>
   <data name="Username" xml:space="preserve">
     <value>Nom d'utilisateur</value>
   </data>
@@ -9028,6 +10203,42 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Pour toujours</value>
   </data>
+  <data name="UsersCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountOne" xml:space="preserve">
+    <value>{0} utilisateur</value>
+  </data>
+  <data name="UsersCountOther" xml:space="preserve">
+    <value>{0} utilisateurs</value>
+  </data>
+  <data name="UsersCountTitleFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleOne" xml:space="preserve">
+    <value>{0} utilisateur</value>
+  </data>
+  <data name="UsersCountTitleOther" xml:space="preserve">
+    <value>{0} utilisateurs</value>
+  </data>
+  <data name="UsersCountTitleTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="UsersFew" xml:space="preserve">
     <value/>
   </data>
@@ -9050,7 +10261,7 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
     <value>Utilisateur débloqué</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
-    <value>via</value>
+    <value>avec</value>
   </data>
   <data name="Vibrate" xml:space="preserve">
     <value>Vibreur</value>
@@ -9069,6 +10280,9 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>Messages vidéo</value>
+  </data>
+  <data name="VideoQualityIsTooLow" xml:space="preserve">
+    <value>La qualité de la vidéo est trop basse pour modifier les réglages de compression.</value>
   </data>
   <data name="VideosFew" xml:space="preserve">
     <value/>
@@ -9118,8 +10332,47 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Voir le lot d'autocollants</value>
   </data>
+  <data name="ViewsBySourceChartTitle" xml:space="preserve">
+    <value>Vues par source</value>
+  </data>
+  <data name="ViewsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewsOne" xml:space="preserve">
+    <value>{0} vue</value>
+  </data>
+  <data name="ViewsOther" xml:space="preserve">
+    <value>{0} vues</value>
+  </data>
+  <data name="ViewsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewsZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Vignette" xml:space="preserve">
     <value>Vignettage</value>
+  </data>
+  <data name="VoiceFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceOne" xml:space="preserve">
+    <value>{0} message vocal</value>
+  </data>
+  <data name="VoiceOther" xml:space="preserve">
+    <value>{0} messages vocaux</value>
+  </data>
+  <data name="VoiceTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Répondre</value>
@@ -9436,6 +10689,9 @@ Si vous oubliez votre mot de passe, vous perdrez l'accès à votre compte Telegr
     <value>Votre téléphone</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
-    <value>vous avez été éjecté du groupe</value>
+    <value>vous avez été éjecté</value>
+  </data>
+  <data name="ZoomOut" xml:space="preserve">
+    <value>Dézoomer</value>
   </data>
 </root>

@@ -58,6 +58,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Abort" xml:space="preserve">
+    <value>لغو</value>
+  </data>
   <data name="AbortEmail" xml:space="preserve">
     <value>لغو راه‌اندازی ایمیل بازیابی</value>
   </data>
@@ -298,6 +301,12 @@
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>گزینه‌های کاربر</value>
   </data>
+  <data name="AccDescrVideoCompressHigh" xml:space="preserve">
+    <value>کیفیت بالاتر</value>
+  </data>
+  <data name="AccDescrVideoCompressLow" xml:space="preserve">
+    <value>حجم کمتر</value>
+  </data>
   <data name="AccDescrVideoMessage" xml:space="preserve">
     <value>ضبط پیام ویدیویی</value>
   </data>
@@ -329,7 +338,7 @@
     <value>برای بایگانی رها کنید</value>
   </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
-    <value>برای بایگانی صفحه را به پایین بکشید</value>
+    <value>برای بایگانی صفحه را به سمت پایین بکشید</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>با دقت ⁨{0}⁩</value>
@@ -470,6 +479,9 @@
   <data name="ActionPinnedPoll" xml:space="preserve">
     <value>⁨un1⁩ یک نظرسنجی را سنجاق کرد</value>
   </data>
+  <data name="ActionPinnedQuiz" xml:space="preserve">
+    <value>⁨un1⁩ یک آزمون را سنجاق کرد</value>
+  </data>
   <data name="ActionPinnedRound" xml:space="preserve">
     <value>⁨un1⁩ یک پیام ویدیویی را سنجاق کرد</value>
   </data>
@@ -575,6 +587,9 @@
   <data name="AddContactFullChat" xml:space="preserve">
     <value>افزودن ⁨{0}⁩ به مخاطبین</value>
   </data>
+  <data name="AddContactPhonebookTitle" xml:space="preserve">
+    <value>افزودن مخاطب</value>
+  </data>
   <data name="AddContactTitle" xml:space="preserve">
     <value>افزودن مخاطب</value>
   </data>
@@ -589,6 +604,9 @@
   </data>
   <data name="AddMasksInstalled" xml:space="preserve">
     <value>ماسک‌های جدید اضافه شد</value>
+  </data>
+  <data name="AddMasksInstalledInfo" xml:space="preserve">
+    <value>⁨{0}⁩ به ماسک‌های شما اضافه شد.</value>
   </data>
   <data name="AddMember" xml:space="preserve">
     <value>افزودن عضو</value>
@@ -615,7 +633,7 @@
     <value>100 پیام اخیر برای **⁨{0}⁩** نمایش داده شوند</value>
   </data>
   <data name="AddPeopleNearby" xml:space="preserve">
-    <value>افزودن افراد نزدیک</value>
+    <value>پیدا کردن افراد نزدیک</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>افزودن پروکسی</value>
@@ -634,6 +652,9 @@
   </data>
   <data name="AddStickersInstalled" xml:space="preserve">
     <value>استیکرهای جدید اضافه شد</value>
+  </data>
+  <data name="AddStickersInstalledInfo" xml:space="preserve">
+    <value>⁨{0}⁩ به استیکرهای شما اضافه شد.</value>
   </data>
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>استیکرها یافت نشدند</value>
@@ -662,11 +683,20 @@
   <data name="AddToTheGroup" xml:space="preserve">
     <value>⁨{0}⁩ به گروه اضافه شود؟</value>
   </data>
+  <data name="AddToTheGroupAlertText" xml:space="preserve">
+    <value>آیا می‌خواهید **⁨{0}⁩** را به گروه **⁨{1}⁩** اضافه کنید؟</value>
+  </data>
+  <data name="AddToTheGroupAlertTitle" xml:space="preserve">
+    <value>افزودن ربات</value>
+  </data>
   <data name="AddToTheGroupForwardCount" xml:space="preserve">
     <value>تعداد آخرین پیام‌ها برای هدایت:</value>
   </data>
   <data name="AddToTheGroupTitle" xml:space="preserve">
     <value>⁨{0}⁩ به گفتگوی ⁨{1}⁩ اضافه شود؟</value>
+  </data>
+  <data name="AddUserErrorBlacklisted" xml:space="preserve">
+    <value>متأسفانه شما نمی‌توانید این کاربر را اضافه کنید زیرا او در فهرست کاربران حذف شده است و شما نمی‌توانید محرومیت او را رفع کنید.</value>
   </data>
   <data name="AdminWillBeRemoved" xml:space="preserve">
     <value>در صورتی که ⁨{0}⁩ را محدود کنید، او از فهرست مدیران حذف خواهد شد.</value>
@@ -788,14 +818,41 @@
   <data name="AndOtherZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="AnimatedStickers" xml:space="preserve">
+    <value>استیکرهای متحرک</value>
+  </data>
   <data name="AnonymousPoll" xml:space="preserve">
     <value>نظرسنجی ناشناس</value>
+  </data>
+  <data name="AnonymousQuizPoll" xml:space="preserve">
+    <value>آزمون ناشناس</value>
+  </data>
+  <data name="AnswerFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AnswerMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AnswerOne" xml:space="preserve">
+    <value>⁨{0}⁩ پاسخ</value>
+  </data>
+  <data name="AnswerOther" xml:space="preserve">
+    <value>⁨{0}⁩ پاسخ</value>
+  </data>
+  <data name="AnswerTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AnswerZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="ApkRestricted" xml:space="preserve">
     <value>نصب APK برای این برنامه محدود شده است. شما می‌توانید آن را در تنظیمات سیستم فعال کنید.</value>
   </data>
   <data name="Appearance" xml:space="preserve">
     <value>ظاهر</value>
+  </data>
+  <data name="AppFolderInfo" xml:space="preserve">
+    <value>جستجو در پوشه برنامه</value>
   </data>
   <data name="ApplyLocalizationFile" xml:space="preserve">
     <value>اعمال فایل زبان</value>
@@ -857,7 +914,7 @@
     <value>بایگانی پنهان شد.</value>
   </data>
   <data name="ArchiveHiddenInfo" xml:space="preserve">
-    <value>جهت مشاهده بایگانی صفحه را به پایین بکشید.</value>
+    <value>جهت مشاهده بایگانی صفحه را به سمت پایین بکشید.</value>
   </data>
   <data name="ArchiveHintHeader1" xml:space="preserve">
     <value>این بایگانی شماست</value>
@@ -881,7 +938,13 @@
     <value>بایگانی سنجاق شد.</value>
   </data>
   <data name="ArchivePinnedInfo" xml:space="preserve">
-    <value>با کشیدن به چپ بر روی بایگانی، آن را پنهان کنید.</value>
+    <value>با کشیدن به سمت چپ بر روی بایگانی، آن را پنهان کنید.</value>
+  </data>
+  <data name="ArchiveStickersAlertMessage" xml:space="preserve">
+    <value>آیا از بایگانی کردن بسته‌های استیکر انتخاب شده اطمینان دارید؟</value>
+  </data>
+  <data name="ArchiveStickerSetsAlertTitle" xml:space="preserve">
+    <value>بایگانی ⁨{0}⁩</value>
   </data>
   <data name="AreTyping" xml:space="preserve">
     <value>در حال نوشتن هستند...</value>
@@ -900,6 +963,9 @@
   </data>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
     <value>آیا از حذف تمامی پیش‌نویس‌های ابری اطمینان دارید؟</value>
+  </data>
+  <data name="AreYouSureClearDraftsTitle" xml:space="preserve">
+    <value>حذف پیش‌نویس‌های ابری</value>
   </data>
   <data name="AreYouSureClearHistory" xml:space="preserve">
     <value>آیا از پاک کردن تمامی پیام‌های این گفتگو اطمینان دارید؟</value>
@@ -949,11 +1015,17 @@
   <data name="AreYouSureDeleteGIF" xml:space="preserve">
     <value>آیا از حذف این گیف اطمینان دارید؟</value>
   </data>
+  <data name="AreYouSureDeleteGIFTitle" xml:space="preserve">
+    <value>حذف گیف</value>
+  </data>
   <data name="AreYouSureDeleteMessages" xml:space="preserve">
     <value>آیا از حذف ⁨{0}⁩ اطمینان دارید؟</value>
   </data>
   <data name="AreYouSureDeletePhoto" xml:space="preserve">
     <value>آیا از حذف این عکس اطمینان دارید؟</value>
+  </data>
+  <data name="AreYouSureDeletePhotoTitle" xml:space="preserve">
+    <value>حذف عکس</value>
   </data>
   <data name="AreYouSureDeleteSingleMessage" xml:space="preserve">
     <value>آیا از حذف این پیام اطمینان دارید؟</value>
@@ -979,6 +1051,9 @@
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>آیا از حذف این ویدیو اطمینان دارید؟</value>
   </data>
+  <data name="AreYouSureDeleteVideoTitle" xml:space="preserve">
+    <value>حذف ویدیو</value>
+  </data>
   <data name="AreYouSureLogout" xml:space="preserve">
     <value>آیا از خروج از حساب کاربری اطمینان دارید؟
 
@@ -997,6 +1072,12 @@
   </data>
   <data name="AreYouSureSessions" xml:space="preserve">
     <value>آیا از پایان دادن به تمامی نشست‌های دیگر اطمینان دارید؟</value>
+  </data>
+  <data name="AreYouSureSessionsTitle" xml:space="preserve">
+    <value>پایان دادن به نشست‌ها</value>
+  </data>
+  <data name="AreYouSureSessionTitle" xml:space="preserve">
+    <value>پایان دادن به نشست</value>
   </data>
   <data name="AreYouSureShareMyContactInfo" xml:space="preserve">
     <value>آیا از به اشتراک گذاتن شماره تلفن خود اطمینان دارید؟</value>
@@ -1122,6 +1203,38 @@
   </data>
   <data name="August" xml:space="preserve">
     <value>آگوست</value>
+  </data>
+  <data name="AuthAnotherClient" xml:space="preserve">
+    <value>اسکن کد QR</value>
+  </data>
+  <data name="AuthAnotherClientDownloadClientUrl" xml:space="preserve">
+    <value>https://desktop.telegram.org/</value>
+  </data>
+  <data name="AuthAnotherClientInfo1" xml:space="preserve">
+    <value>تلگرام را از *desktop.telegram.org* برای کامپیوتر خود دانلود کنید.</value>
+  </data>
+  <data name="AuthAnotherClientInfo2" xml:space="preserve">
+    <value>برای دریافت کد QR تلگرام دسکتاپ را اجرا کنید.</value>
+  </data>
+  <data name="AuthAnotherClientInfo3" xml:space="preserve">
+    <value>برای اتصال حساب کاربری خود کد QR را اسکن کنید.</value>
+  </data>
+  <data name="AuthAnotherClientNotFound" xml:space="preserve">
+    <value>نشان احراز هویتی یافت نشد</value>
+  </data>
+  <data name="AuthAnotherClientOk" xml:space="preserve">
+    <value>احراز هویت با موفقیت انجام شد</value>
+  </data>
+  <data name="AuthAnotherClientScan" xml:space="preserve">
+    <value>اسکن کد QR</value>
+  </data>
+  <data name="AuthAnotherClientTokenError" xml:space="preserve">
+    <value>نشان نامعتبر است یا منقضی شده است.</value>
+  </data>
+  <data name="AuthAnotherClientUrl" xml:space="preserve">
+    <value>این کد می‌تواند به افراد دیگر اجازه دهد تا به حساب کاربری تلگرام شما وارد شوند.
+
+برای تأیید ورود به حساب کاربری تلگرام، لطفاً به قسمت تنظیمات > دستگاه‌ها > اسکن QR مراجعه کرده و کد را اسکن کنید.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>پیام‌های صوتی کم‌حجم هستند و همیشه به صورت خودکار دانلود می‌شوند.</value>
@@ -1285,6 +1398,9 @@
   <data name="AutoNightLocation" xml:space="preserve">
     <value>استفاده از زمان غروب و طلوع محلی</value>
   </data>
+  <data name="AutoNightModeOff" xml:space="preserve">
+    <value>حالت شب خودکار غیرفعال است</value>
+  </data>
   <data name="AutoNightPreferred" xml:space="preserve">
     <value>پوسته شب ترجیحی</value>
   </data>
@@ -1348,11 +1464,14 @@
   <data name="BackgroundBrightness" xml:space="preserve">
     <value>روشنایی</value>
   </data>
+  <data name="BackgroundChoosePattern" xml:space="preserve">
+    <value>انتخاب الگو</value>
+  </data>
   <data name="BackgroundColor" xml:space="preserve">
     <value>رنگ</value>
   </data>
   <data name="BackgroundColorPreviewLine1" xml:space="preserve">
-    <value>جهت مشاهده رنگ‌های بیشتر صفحه را به چپ یا راست بکشید.</value>
+    <value>جهت مشاهده رنگ‌های بیشتر صفحه را به سمت چپ یا راست بکشید.</value>
   </data>
   <data name="BackgroundColorPreviewLine2" xml:space="preserve">
     <value>سالمون اسم ماهی است، نه رنگ.</value>
@@ -1394,7 +1513,7 @@
     <value>شمارنده نشانگر</value>
   </data>
   <data name="BadgeNumberMutedChats" xml:space="preserve">
-    <value>افزودن گفتگوهای بی‌صدا</value>
+    <value>شامل شدن گفتگوهای بی‌صدا</value>
   </data>
   <data name="BadgeNumberShow" xml:space="preserve">
     <value>فعال</value>
@@ -1453,8 +1572,17 @@
   <data name="BlockUserContactsTitle" xml:space="preserve">
     <value>مخاطبین</value>
   </data>
+  <data name="BlockUserMessage" xml:space="preserve">
+    <value>آیا می‌خواهید **⁨{0}⁩** را از ارسال پیام و تماس با شما در تلگرام مسدود کنید؟</value>
+  </data>
   <data name="BlockUserMultiTitle" xml:space="preserve">
     <value>مسدود کردن کاربر</value>
+  </data>
+  <data name="BlockUsers" xml:space="preserve">
+    <value>مسدود کردن کاربران</value>
+  </data>
+  <data name="BlockUsersMessage" xml:space="preserve">
+    <value>آیا می‌خواهید **⁨{0}⁩** را از ارسال پیام و تماس با شما در تلگرام مسدود کنید؟</value>
   </data>
   <data name="BlockUserTitle" xml:space="preserve">
     <value>مسدود کردن ⁨{0}⁩</value>
@@ -1481,7 +1609,7 @@
     <value>این ربات نمی‌تواند به گروه‌ها بپیوندد.</value>
   </data>
   <data name="BotHelp" xml:space="preserve">
-    <value>راهنمایی</value>
+    <value>راهنما</value>
   </data>
   <data name="BotInfoTitle" xml:space="preserve">
     <value>این ربات چه می‌کند؟</value>
@@ -1518,6 +1646,9 @@
   </data>
   <data name="Brown" xml:space="preserve">
     <value>قهوه‌ای</value>
+  </data>
+  <data name="BubbleRadius" xml:space="preserve">
+    <value>گوشه‌های پیام</value>
   </data>
   <data name="BuiltInThemes" xml:space="preserve">
     <value>پوسته‌های درون‌برنامه</value>
@@ -1574,7 +1705,7 @@
     <value>⁨{0}⁩ (⁨{1}⁩)</value>
   </data>
   <data name="CallNotAvailable" xml:space="preserve">
-    <value>متأسفانه **⁨{0}⁩** تماس‌ها را قبول نمی‌کند.</value>
+    <value>متأسفانه به دلیل تنظیمات حریم خصوصی ⁨{0}⁩، شما نمی‌توانید با او تماس بگیرید.</value>
   </data>
   <data name="CallReportHint" xml:space="preserve">
     <value>مشکل چه بود؟</value>
@@ -1592,7 +1723,7 @@
     <value>تماس‌ها</value>
   </data>
   <data name="CallsDataUsage" xml:space="preserve">
-    <value>تماس‌ها</value>
+    <value>تنظیمات تماس</value>
   </data>
   <data name="CallsTotalTime" xml:space="preserve">
     <value>مجموع زمان</value>
@@ -1619,6 +1750,9 @@
   </data>
   <data name="CancelEmailQuestion" xml:space="preserve">
     <value>آیا از لغو راه‌اندازی ایمیل بازیابی اطمینان دارید؟</value>
+  </data>
+  <data name="CancelEmailQuestionTitle" xml:space="preserve">
+    <value>لغو راه‌اندازی</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>لینک منقضی شده یا نامعتبر است.</value>
@@ -1649,6 +1783,9 @@
   </data>
   <data name="Caption" xml:space="preserve">
     <value>عنوان</value>
+  </data>
+  <data name="CardNumberCopied" xml:space="preserve">
+    <value>شماره کارت در حافظه کپی شد</value>
   </data>
   <data name="Change" xml:space="preserve">
     <value>تغییر</value>
@@ -1693,6 +1830,9 @@
   </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
     <value>تغییر ایمیل بازیابی</value>
+  </data>
+  <data name="ChangeWallpaperToColor" xml:space="preserve">
+    <value>آیا از تغییر عکس پس‌زمینه گفتگوی خود به یک رنگ اطمینان دارید؟</value>
   </data>
   <data name="ChannelAddAdmin" xml:space="preserve">
     <value>افزودن مدیر</value>
@@ -1779,7 +1919,7 @@
     <value>حذف کانال</value>
   </data>
   <data name="ChannelDeleteAlert" xml:space="preserve">
-    <value>صبر کنید! با حذف این کانال تمامی اعضا حذف شده و تمامی پیام‌ها از بین خواهند رفت. آیا با این حال کانال را حذف می‌کنید؟</value>
+    <value>صبر کنید! با حذف این کانال تمامی مشترکین حذف شده و تمامی پیام‌ها از بین خواهند رفت. با این حال کانال را حذف می‌کنید؟</value>
   </data>
   <data name="ChannelDeletedUndo" xml:space="preserve">
     <value>کانال حذف شد.</value>
@@ -1880,6 +2020,9 @@
   <data name="ChannelMessagePoll2" xml:space="preserve">
     <value>⁨{0}⁩ یک نظرسنجی ⁨{1}⁩ ارسال کرد</value>
   </data>
+  <data name="ChannelMessageQuiz2" xml:space="preserve">
+    <value>⁨{0}⁩ آزمون "⁨{1}⁩" را ارسال کرد</value>
+  </data>
   <data name="ChannelMessageRound" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام ویدیویی ارسال کرد</value>
   </data>
@@ -1896,10 +2039,10 @@
     <value>بی‌صدا کردن</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
-    <value>اعضا یک اعلان بی‌صدا دریافت خواهند کرد</value>
+    <value>مشترکین یک اعلان بی‌صدا دریافت خواهند کرد</value>
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
-    <value>در صورت ارسال پیام به اعضا اطلاع داده خواهد شد</value>
+    <value>در صورت ارسال پیام به مشترکین اطلاع داده خواهد شد</value>
   </data>
   <data name="ChannelOtherMembers" xml:space="preserve">
     <value>سایر اعضا</value>
@@ -1932,6 +2075,9 @@
     <value>لطفاً برای کانال عمومی خود لینکی انتخاب کنید تا افراد بتوانند آن را در نتایج جستجو پیدا کنند و با دیگران به اشتراک بگذارند.
 
 اگر مایل به این کار نیستید، می‌توانید در عوض یک کانال خصوصی ایجاد کنید.</value>
+  </data>
+  <data name="ChannelPublicEmptyUsernameTitle" xml:space="preserve">
+    <value>لینکی انتخاب کنید</value>
   </data>
   <data name="ChannelPublicInfo" xml:space="preserve">
     <value>کانال‌های عمومی در نتایج جستجو پیدا می‌شوند و هر کسی می‌تواند به آن‌ها بپیوندد.</value>
@@ -1994,6 +2140,9 @@
     <value>متأسفانه شما عضو گروه‌ها و کانال‌های زیادی هستید.
 لطفاً پیش از عضویت در گروه یا کانال جدید برخی از آن‌ها را ترک کنید.</value>
   </data>
+  <data name="ChannelTooMuchTitle" xml:space="preserve">
+    <value>در کانال‌ها و گروه‌های بسیار زیادی عضو هستید</value>
+  </data>
   <data name="ChannelType" xml:space="preserve">
     <value>نوع کانال</value>
   </data>
@@ -2004,7 +2153,7 @@
     <value>صدادار کردن</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
-    <value>متأسفانه شما می‌توانید تنها 200 عضو را در ابتدا به کانال اضافه کنید. توجه داشته باشید تعداد افراد نامحدودی می‌توانند از طریق لینک کانال به آن بپیوندند.</value>
+    <value>متأسفانه شما می‌توانید فقط 200 عضو را در ابتدا به کانال اضافه کنید. توجه داشته باشید تعداد افراد نامحدودی می‌توانند از طریق لینک کانال به آن بپیوندند.</value>
   </data>
   <data name="ChannelUserCantAdd" xml:space="preserve">
     <value>متأسفانه شما نمی‌توانید این کاربر را به کانال‌ها اضافه کنید.</value>
@@ -2016,7 +2165,9 @@
     <value>متأسفانه تعداد مدیران در این کانال بسیار زیاد است.</value>
   </data>
   <data name="ChannelUserLeftError" xml:space="preserve">
-    <value>متأسفانه این کاربر تصمیم گرفت این کانال را ترک کند و شما نمی‌توانید دوباره او را به اینجا اضافه کنید.</value>
+    <value>متأسفانه اگر کاربری دیگر عضو یک کانال نباشد، جهت بازگرداندن او به کانال، شما باید در مخاطبین تلگرام او باشید.
+
+توجه داشته باشید، مادامی که او در فهرست کاربران حذف شده نباشد، همچنان می‌تواند از طریق لینک دعوت به کانال بپیوندد.</value>
   </data>
   <data name="ChannelUsernameHelp" xml:space="preserve">
     <value>در صورتی که یک لینک همیشگی تنظیم کنید، سایر افراد می‌توانند کانال شما را پیدا کرده و به آن بپیوندند.
@@ -2027,6 +2178,9 @@
   <data name="ChannelUsernamePlaceholder" xml:space="preserve">
     <value>لینک</value>
   </data>
+  <data name="ChannelVerifiedWarning" xml:space="preserve">
+    <value>هشدار</value>
+  </data>
   <data name="ChatAdmin" xml:space="preserve">
     <value>مدیر</value>
   </data>
@@ -2034,10 +2188,10 @@
     <value>گفتگو بایگانی شد.</value>
   </data>
   <data name="ChatArchivedInfo" xml:space="preserve">
-    <value>با کشیدن به چپ بر روی بایگانی، آن را پنهان کنید.</value>
+    <value>با کشیدن به سمت چپ بر روی بایگانی، آن را پنهان کنید.</value>
   </data>
   <data name="ChatBackground" xml:space="preserve">
-    <value>تغییر پس‌زمینه گفتگو</value>
+    <value>پس‌زمینه گفتگو</value>
   </data>
   <data name="ChatCamera" xml:space="preserve">
     <value>دوربین </value>
@@ -2046,7 +2200,7 @@
     <value>MMMM d</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
-    <value>گفتگو حذف شد.</value>
+    <value>گفتگو حذف شد</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>فایل</value>
@@ -2061,10 +2215,10 @@
     <value>افراد</value>
   </data>
   <data name="ChatHintsDelete" xml:space="preserve">
-    <value>⁨{0}⁩ از پیشنهادات حذف شود؟</value>
+    <value>⁨{0}⁩ از پیشنهادها حذف شود؟</value>
   </data>
   <data name="ChatHintsDeleteAlert" xml:space="preserve">
-    <value>آیا از حذف **⁨{0}⁩** از پیشنهادات اطمینان دارید؟</value>
+    <value>آیا از حذف **⁨{0}⁩** از پیشنهادها اطمینان دارید؟</value>
   </data>
   <data name="ChatHintsDeleteAlertTitle" xml:space="preserve">
     <value>حذف پیشنهاد</value>
@@ -2327,6 +2481,9 @@
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>اموجی‌های اخیر پاک شوند؟</value>
   </data>
+  <data name="ClearRecentHistory" xml:space="preserve">
+    <value>پاک کردن تاریخچه</value>
+  </data>
   <data name="ClearSearch" xml:space="preserve">
     <value>تاریخچه جستجو پاک شود؟</value>
   </data>
@@ -2335,6 +2492,18 @@
   </data>
   <data name="ClearSearchAlertTitle" xml:space="preserve">
     <value>پاک کردن تاریخچه گفتگو</value>
+  </data>
+  <data name="ClearSearchRemove" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="ClearSearchSingleAlertTitle" xml:space="preserve">
+    <value>تاریخچه جستجو</value>
+  </data>
+  <data name="ClearSearchSingleChatAlertText" xml:space="preserve">
+    <value>آیا از حذف "⁨{0}⁩" از تاریخچه جستجوی خود اطمینان دارید؟</value>
+  </data>
+  <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
+    <value>آیا از حذف "⁨{0}⁩" از تاریخچه جستجوی خود اطمینان دارید؟</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>بستن</value>
@@ -2363,6 +2532,21 @@
   <data name="ColorOrange" xml:space="preserve">
     <value>نارنجی</value>
   </data>
+  <data name="ColorPickerBackground" xml:space="preserve">
+    <value>پس‌زمینه</value>
+  </data>
+  <data name="ColorPickerMainColor" xml:space="preserve">
+    <value>رنگ تأکیدی</value>
+  </data>
+  <data name="ColorPickerMyMessages" xml:space="preserve">
+    <value>پیام‌های من</value>
+  </data>
+  <data name="ColorPickerReset" xml:space="preserve">
+    <value>بازنشانی</value>
+  </data>
+  <data name="ColorPickerResetAll" xml:space="preserve">
+    <value>بازنشانی همه</value>
+  </data>
   <data name="ColorPink" xml:space="preserve">
     <value>صورتی</value>
   </data>
@@ -2374,6 +2558,12 @@
   </data>
   <data name="ColorTheme" xml:space="preserve">
     <value>پوسته رنگی</value>
+  </data>
+  <data name="ColorThemeChanged" xml:space="preserve">
+    <value>پوسته رنگی تغییر کرد.</value>
+  </data>
+  <data name="ColorThemeChangedInfo" xml:space="preserve">
+    <value>شما می‌توانید از قسمت *تنظیمات گفتگو* آن را به حالت قبلی بازگردانید.</value>
   </data>
   <data name="ColorThemes" xml:space="preserve">
     <value>پوسته‌های رنگی</value>
@@ -2387,13 +2577,31 @@
   <data name="ColorYellow" xml:space="preserve">
     <value>زرد</value>
   </data>
+  <data name="CommonGroupsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsOne" xml:space="preserve">
+    <value>⁨{0}⁩ گروه مشترک </value>
+  </data>
+  <data name="CommonGroupsOther" xml:space="preserve">
+    <value>⁨{0}⁩ گروه مشترک</value>
+  </data>
+  <data name="CommonGroupsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommonGroupsZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="CompatibilityChat" xml:space="preserve">
     <value>⁨{0}⁩ از یک نسخه قدیمی تلگرام استفاده می‌کند، به همین دلیل عکس‌های محرمانه در حالت سازگار نمایش داده می‌شوند.
 
 زمانی که ⁨{1}⁩ تلگرام خود را به‌روزسانی کند، عکس‌هایی با زمان‌سنج 1 دقیقه یا کمتر در حالت «برای مشاهده ضربه بزنید و نگه دارید» شروع به کار می‌کنند و هر زمان که طرف مقابل از صفحه عکس بگیرد شما مطلع خواهید شد.</value>
   </data>
   <data name="ConfirmDeleteCallLog" xml:space="preserve">
-    <value>آیا می‌خواهید این مورد را از گزارش تماس‌ها حذف کنید؟</value>
+    <value>آیا می‌خواهید این مورد را از گزارش تماس حذف کنید؟</value>
   </data>
   <data name="Connected" xml:space="preserve">
     <value>متصل</value>
@@ -2433,6 +2641,9 @@
   </data>
   <data name="ContactNotRegistered" xml:space="preserve">
     <value>⁨{0}⁩ هنوز وارد تلگرام نشده است، آیا تمایل دارید او را به پیوستن به تلگرام دعوت‌ کنید؟</value>
+  </data>
+  <data name="ContactNotRegisteredTitle" xml:space="preserve">
+    <value>دعوت به تلگرام</value>
   </data>
   <data name="Contacts" xml:space="preserve">
     <value>مخاطبین</value>
@@ -2501,8 +2712,30 @@
   <data name="Copy" xml:space="preserve">
     <value>کپی کردن</value>
   </data>
+  <data name="CopyCardNumber" xml:space="preserve">
+    <value>کپی</value>
+  </data>
   <data name="CopyLink" xml:space="preserve">
     <value>کپی لینک</value>
+  </data>
+  <data name="CountOfResultsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CountOfResultsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CountOfResultsOne" xml:space="preserve">
+    <value>⁨{0}⁩ از ⁨{1}⁩ نتیجه</value>
+  </data>
+  <data name="CountOfResultsOther" xml:space="preserve">
+    <value>
+⁨{0}⁩ از ⁨{1}⁩ نتیجه</value>
+  </data>
+  <data name="CountOfResultsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CountOfResultsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="CountReceived" xml:space="preserve">
     <value>دریافتی</value>
@@ -2524,6 +2757,12 @@
   </data>
   <data name="CreateNewContact" xml:space="preserve">
     <value>ایجاد مخاطب جدید</value>
+  </data>
+  <data name="CreateNewFilter" xml:space="preserve">
+    <value>ایجاد پوشه جدید</value>
+  </data>
+  <data name="CreateNewFilterInfo" xml:space="preserve">
+    <value>پوشه‌هایی را برای گروه‌های مختلف گفتگوها ایجاد کرده و به سرعت به هر یک از آن‌ها بروید.</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>ایجاد پوسته جدید</value>
@@ -2662,11 +2901,23 @@
   <data name="DebugMenuDisableLogs" xml:space="preserve">
     <value>غیرفعال کردن گزارشات</value>
   </data>
+  <data name="DebugMenuDisablePauseMusic" xml:space="preserve">
+    <value>غیرفعال کردن مکث موسیقی در هنگام ضبط</value>
+  </data>
+  <data name="DebugMenuDisableSmoothKeyboard" xml:space="preserve">
+    <value>غیرفعال کردن صفحه‌کلید نرم</value>
+  </data>
   <data name="DebugMenuEnableCamera" xml:space="preserve">
     <value>فعال کردن دوربین درون‌برنامه</value>
   </data>
   <data name="DebugMenuEnableLogs" xml:space="preserve">
     <value>فعال کردن گزارشات</value>
+  </data>
+  <data name="DebugMenuEnablePauseMusic" xml:space="preserve">
+    <value>فعال کردن مکث موسیقی در هنگام ضبط</value>
+  </data>
+  <data name="DebugMenuEnableSmoothKeyboard" xml:space="preserve">
+    <value>فعال کردن صفحه‌کلید نرم</value>
   </data>
   <data name="DebugMenuImportContacts" xml:space="preserve">
     <value>وارد کردن مخاطبین</value>
@@ -2734,6 +2985,24 @@
   <data name="DeleteAndStop" xml:space="preserve">
     <value>حذف و متوقف کردن</value>
   </data>
+  <data name="DeleteBackgroundFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteBackgroundMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteBackgroundOne" xml:space="preserve">
+    <value>حذف پس‌زمینه</value>
+  </data>
+  <data name="DeleteBackgroundOther" xml:space="preserve">
+    <value>حذف ⁨{0}⁩ پس‌زمینه</value>
+  </data>
+  <data name="DeleteBackgroundTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeleteBackgroundZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="DeleteBanUser" xml:space="preserve">
     <value>محروم کردن کاربر</value>
   </data>
@@ -2761,11 +3030,20 @@
   <data name="DeleteFromFavorites" xml:space="preserve">
     <value>حذف از علاقه‌مندی‌ها</value>
   </data>
+  <data name="DeleteFromRecent" xml:space="preserve">
+    <value>حذف از اخیراً</value>
+  </data>
   <data name="DeleteGif" xml:space="preserve">
     <value>گیف حذف شود؟</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>فایل زبان حذف شود؟</value>
+  </data>
+  <data name="DeleteLocalizationText" xml:space="preserve">
+    <value>آیا از حذف بسته زبان **⁨{0}⁩** اطمینان دارید؟</value>
+  </data>
+  <data name="DeleteLocalizationTitle" xml:space="preserve">
+    <value>حذف بسته زبان</value>
   </data>
   <data name="DeleteMega" xml:space="preserve">
     <value>حذف گروه</value>
@@ -2803,8 +3081,23 @@
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>حذف پیام</value>
   </data>
+  <data name="DeleteStickersAlertMessage" xml:space="preserve">
+    <value>آیا از حذف بسته‌های استیکر انتخاب شده اطمینان دارید؟</value>
+  </data>
+  <data name="DeleteStickerSetsAlertTitle" xml:space="preserve">
+    <value>حذف ⁨{0}⁩</value>
+  </data>
+  <data name="DeleteTheme" xml:space="preserve">
+    <value>حذف پوسته</value>
+  </data>
   <data name="DeleteThemeAlert" xml:space="preserve">
     <value>آیا از حذف این پوسته اطمینان دارید؟</value>
+  </data>
+  <data name="DeleteThemeTitle" xml:space="preserve">
+    <value>حذف پوسته</value>
+  </data>
+  <data name="DeleteTheseChats" xml:space="preserve">
+    <value>حذف گفتگوها</value>
   </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>حذف این گفتگو</value>
@@ -2821,17 +3114,38 @@
   <data name="DescriptionPlaceholder" xml:space="preserve">
     <value>توضیحات</value>
   </data>
+  <data name="Devices" xml:space="preserve">
+    <value>دستگاه‌ها</value>
+  </data>
+  <data name="DialogPin" xml:space="preserve">
+    <value>سنجاق کردن</value>
+  </data>
+  <data name="DialogUnpin" xml:space="preserve">
+    <value>برداشتن سنجاق</value>
+  </data>
+  <data name="DiceInfo" xml:space="preserve">
+    <value>اموجی 🎲 را به هر گفتگویی ارسال کنید تا عددی تصادفی از تلگرام دریافت کنید. </value>
+  </data>
+  <data name="DiceInfo2" xml:space="preserve">
+    <value>اموجی **:dice:** را به هر گفتگویی ارسال کنید و تاس بریزید.</value>
+  </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>کد را دریافت نکردید؟</value>
   </data>
   <data name="DidNotGetTheCodeSms" xml:space="preserve">
     <value>ارسال کد به صورت پیامک</value>
   </data>
+  <data name="Directions" xml:space="preserve">
+    <value>مسیر</value>
+  </data>
   <data name="DirectShare" xml:space="preserve">
     <value>به اشتراک گذاری مستقیم</value>
   </data>
   <data name="DirectShareInfo" xml:space="preserve">
     <value>نمایش گفتگوهای اخیر در فهرست به اشتراک گذاری اندروید</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>غیرفعال کردن</value>
   </data>
   <data name="DisappearingGif" xml:space="preserve">
     <value>گیف محرمانه</value>
@@ -2855,10 +3169,13 @@
     <value>حذف پیام</value>
   </data>
   <data name="DiscardVoiceMessageDescription" xml:space="preserve">
-    <value>آیا از متوقف کردن ضبط و حذف پیام صوتی خود اطمینان دارید؟</value>
+    <value>آیا از متوقف کردن ضبط صدا و حذف پیام صوتی خود اطمینان دارید؟</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>حذف پیام صوتی</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>قطع اتصال</value>
   </data>
   <data name="DiscussChannel" xml:space="preserve">
     <value>کانال</value>
@@ -3074,6 +3391,9 @@
   <data name="EditName" xml:space="preserve">
     <value>ویرایش نام</value>
   </data>
+  <data name="EditThemeColors" xml:space="preserve">
+    <value>ویرایش رنگ‌ها</value>
+  </data>
   <data name="EditThemeTitle" xml:space="preserve">
     <value>ویرایش پوسته</value>
   </data>
@@ -3125,7 +3445,7 @@
     <value>رسم اموجی تکی بزرگ</value>
   </data>
   <data name="EmojiSuggestions" xml:space="preserve">
-    <value>پیشنهادات اموجی</value>
+    <value>پیشنهادهای اموجی</value>
   </data>
   <data name="EmojiSuggestionsInfo" xml:space="preserve">
     <value>**تلگرام** به شما اجازه می‌دهد اموجی‌ها را با هزاران کلمه کلیدی جستجو کنید، اما همیشه ممکن است چیزی از قلم بیفتد. در صورت تمایل به پیشنهاد جایگزین اموجی جدید، می‌توانید با مراجعه به لینک زیر به ما کمک کنید:</value>
@@ -3143,7 +3463,7 @@
     <value>خالی</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
-    <value>برخی از ویدیوها نمی‌توانند به صورت پیوسته پخش شوند - مانند تمامی ویدیوهایی که از دستگاه اندروید توسط تلگرام نسخه 4.7 یا قدیمی‌تر ارسال شده‌اند.</value>
+    <value>برخی از ویدیوها نمی‌توانند به صورت پیوسته پخش شوند – مانند تمامی ویدیوهایی که از دستگاه اندروید توسط تلگرام نسخه 4.7 یا قدیمی‌تر ارسال شده‌اند.</value>
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>فعال کردن انیمیشن</value>
@@ -3233,6 +3553,11 @@
   </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>نام پوسته را وارد کنید</value>
+  </data>
+  <data name="EnterThemeNameEdit" xml:space="preserve">
+    <value>برای به اشتراک گذاشتن پوسته خود با دیگران یا سفارشی‌سازی هر رنگ به صورت دستی، بر روی **ایجاد** بزنید.
+
+لطفاً نام پوسته را وارد کنید:</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>گذرواژه خود را وارد کنید</value>
@@ -3395,7 +3720,7 @@
     <value>این فهرستی از تمامی فعالیت‌های سرویس انجام شده توسط اعضا و مدیران این گروه در 48 ساعت گذشته است.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
-    <value>این فهرستی از تمامی فعالیت‌های سرویس انجام شده توسط مدیران این کانال در 48 ساعت گذشته است.</value>
+    <value>این فهرستی از تمامی فعالیت‌های سرویس انجام شده توسط مدیران کانال در 48 ساعت گذشته است.</value>
   </data>
   <data name="EventLogInfoTitle" xml:space="preserve">
     <value>فعالیت‌های اخیر چیست؟</value>
@@ -3522,6 +3847,9 @@
   <data name="EventLogStopPoll" xml:space="preserve">
     <value>⁨un1⁩ نظرسنجی را متوقف کرد:</value>
   </data>
+  <data name="EventLogStopQuiz" xml:space="preserve">
+    <value>⁨un1⁩ آزمون را متوقف کرد:</value>
+  </data>
   <data name="EventLogToggledInvitesHistoryOff" xml:space="preserve">
     <value>⁨un1⁩ تاریخچه گروه را برای اعضای جدید پنهان کرد</value>
   </data>
@@ -3576,6 +3904,9 @@
   <data name="Exposure" xml:space="preserve">
     <value>آشکارسازی</value>
   </data>
+  <data name="ExternalFolderInfo" xml:space="preserve">
+    <value>جستجو در فضای ذخیره‌سازی خارجی شما</value>
+  </data>
   <data name="ExternalStorage" xml:space="preserve">
     <value>فضای ذخیره‌سازی خارجی</value>
   </data>
@@ -3618,6 +3949,213 @@
   <data name="FileUploadLimit" xml:space="preserve">
     <value>حجم فایل نباید بیش از ⁨{0}⁩ باشد</value>
   </data>
+  <data name="FilterAddChats" xml:space="preserve">
+    <value>افزودن گفتگوها</value>
+  </data>
+  <data name="FilterAddException" xml:space="preserve">
+    <value>افزودن استثنا</value>
+  </data>
+  <data name="FilterAddingChats" xml:space="preserve">
+    <value>در حال افزودن گفتگوها</value>
+  </data>
+  <data name="FilterAddingChatsInfo" xml:space="preserve">
+    <value>لطفاً تا پر شدن این پوشه چند لحظه صبر کنید...</value>
+  </data>
+  <data name="FilterAllChats" xml:space="preserve">
+    <value>تمامی گفتگوها</value>
+  </data>
+  <data name="FilterAllChatsShort" xml:space="preserve">
+    <value>همه</value>
+  </data>
+  <data name="FilterAlwaysShow" xml:space="preserve">
+    <value>شامل شدن گفتگوها</value>
+  </data>
+  <data name="FilterArchived" xml:space="preserve">
+    <value>بایگانی</value>
+  </data>
+  <data name="FilterAvailableText" xml:space="preserve">
+    <value>برای مرتب‌سازی گفتگوهای خود در پوشه‌ها، قسمت *تنظیمات > پوشه‌ها* را باز کنید.</value>
+  </data>
+  <data name="FilterAvailableTitle" xml:space="preserve">
+    <value>پوشه‌های گفتگو</value>
+  </data>
+  <data name="FilterBots" xml:space="preserve">
+    <value>ربات‌ها</value>
+  </data>
+  <data name="FilterChannels" xml:space="preserve">
+    <value>کانال‌ها</value>
+  </data>
+  <data name="FilterChats" xml:space="preserve">
+    <value>گفتگوها</value>
+  </data>
+  <data name="FilterChatTypes" xml:space="preserve">
+    <value>انواع گفتگو</value>
+  </data>
+  <data name="FilterContact" xml:space="preserve">
+    <value>مخاطب</value>
+  </data>
+  <data name="FilterContacts" xml:space="preserve">
+    <value>مخاطبین</value>
+  </data>
+  <data name="FilterDelete" xml:space="preserve">
+    <value>حذف پوشه</value>
+  </data>
+  <data name="FilterDeleteAlert" xml:space="preserve">
+    <value>آیا از حذف این پوشه اطمینان دارید؟ گفتگوهای شما حذف نخواهند شد.</value>
+  </data>
+  <data name="FilterDeleteItem" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="FilterDiscardAlert" xml:space="preserve">
+    <value>شما این پوشه را ویرایش کرده‌اید. تغییرات اعمال شود؟</value>
+  </data>
+  <data name="FilterDiscardNewAlert" xml:space="preserve">
+    <value>شما هنوز ایجاد پوشه را به اتمام نرسانده‌اید. الان ایجاد شود؟</value>
+  </data>
+  <data name="FilterDiscardNewSave" xml:space="preserve">
+    <value>ایجاد</value>
+  </data>
+  <data name="FilterDiscardNewTitle" xml:space="preserve">
+    <value>پوشه ایجاد شود؟</value>
+  </data>
+  <data name="FilterDiscardTitle" xml:space="preserve">
+    <value>تغییرات اعمال شود؟</value>
+  </data>
+  <data name="FilterEdit" xml:space="preserve">
+    <value>ویرایش پوشه</value>
+  </data>
+  <data name="FilterEditAll" xml:space="preserve">
+    <value>ویرایش پوشه‌ها</value>
+  </data>
+  <data name="FilterEditItem" xml:space="preserve">
+    <value>ویرایش</value>
+  </data>
+  <data name="FilterExclude" xml:space="preserve">
+    <value>گفتگوهای شامل نشده</value>
+  </data>
+  <data name="FilterExcludeArchived" xml:space="preserve">
+    <value>شامل نشدن گفتگوهای بایگانی شده</value>
+  </data>
+  <data name="FilterExcludeInfo" xml:space="preserve">
+    <value>گفتگوها و انواع گفتگوهایی که در این پوشه نمایش داده نخواهند شد را انتخاب کنید.</value>
+  </data>
+  <data name="FilterExcludeMuted" xml:space="preserve">
+    <value>شامل نشدن گفتگوهای بی‌صدا</value>
+  </data>
+  <data name="FilterExcludeRead" xml:space="preserve">
+    <value>شامل نشدن گفتگوهای خوانده شده</value>
+  </data>
+  <data name="FilterGroups" xml:space="preserve">
+    <value>گروه‌ها</value>
+  </data>
+  <data name="FilterInclude" xml:space="preserve">
+    <value>گفتگوهای شامل شده</value>
+  </data>
+  <data name="FilterIncludeInfo" xml:space="preserve">
+    <value>گفتگوها و انواع گفتگوهایی که در این پوشه نمایش داده خواهند شد را انتخاب کنید.</value>
+  </data>
+  <data name="FilterMuted" xml:space="preserve">
+    <value>بی‌صدا</value>
+  </data>
+  <data name="FilterNameHint" xml:space="preserve">
+    <value>نام پوشه</value>
+  </data>
+  <data name="FilterNameNonMuted" xml:space="preserve">
+    <value>صدادار</value>
+  </data>
+  <data name="FilterNameUnread" xml:space="preserve">
+    <value>خوانده نشده</value>
+  </data>
+  <data name="FilterNeverShow" xml:space="preserve">
+    <value>شامل نشدن گفتگوها</value>
+  </data>
+  <data name="FilterNew" xml:space="preserve">
+    <value>پوشه جدید</value>
+  </data>
+  <data name="FilterNoChats" xml:space="preserve">
+    <value>گفتگویی موجود نیست</value>
+  </data>
+  <data name="FilterNoChatsToDisplay" xml:space="preserve">
+    <value>گفتگویی یافت نشد</value>
+  </data>
+  <data name="FilterNoChatsToDisplayInfo" xml:space="preserve">
+    <value>در حال حاضر هیچ گفتگویی متعلق به این پوشه نیست.</value>
+  </data>
+  <data name="FilterNonContact" xml:space="preserve">
+    <value>غیرمخاطب</value>
+  </data>
+  <data name="FilterNonContacts" xml:space="preserve">
+    <value>غیرمخاطبین</value>
+  </data>
+  <data name="FilterRead" xml:space="preserve">
+    <value>خوانده شده</value>
+  </data>
+  <data name="FilterRecommended" xml:space="preserve">
+    <value>پوشه‌های پیشنهاد شده</value>
+  </data>
+  <data name="FilterRemoveChats" xml:space="preserve">
+    <value>حذف گفتگوها</value>
+  </data>
+  <data name="FilterRemoveExclusionChatText" xml:space="preserve">
+    <value>آیا از حذف "⁨{0}⁩" از فهرست هرگز شامل نشده اطمینان دارید؟</value>
+  </data>
+  <data name="FilterRemoveExclusionText" xml:space="preserve">
+    <value>آیا از حذف "⁨{0}⁩" از فهرست هرگز شامل نشده اطمینان دارید؟</value>
+  </data>
+  <data name="FilterRemoveExclusionTitle" xml:space="preserve">
+    <value>حذف استثنا</value>
+  </data>
+  <data name="FilterRemoveExclusionUserText" xml:space="preserve">
+    <value>آیا از حذف "⁨{0}⁩" از فهرست هرگز شامل نشده اطمینان دارید؟</value>
+  </data>
+  <data name="FilterRemoveInclusionChatText" xml:space="preserve">
+    <value>آیا از حذف "⁨{0}⁩" از فهرست همیشه شامل شده اطمینان دارید؟</value>
+  </data>
+  <data name="FilterRemoveInclusionText" xml:space="preserve">
+    <value>آیا از حذف "⁨{0}⁩" از فهرست همیشه شامل شده اطمینان دارید؟</value>
+  </data>
+  <data name="FilterRemoveInclusionTitle" xml:space="preserve">
+    <value>حذف استثنا</value>
+  </data>
+  <data name="FilterRemoveInclusionUserText" xml:space="preserve">
+    <value>آیا از حذف "⁨{0}⁩" از فهرست همیشه شامل شده اطمینان دارید؟</value>
+  </data>
+  <data name="FilterReorder" xml:space="preserve">
+    <value>مرتب‌سازی مجدد</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>پوشه‌ها</value>
+  </data>
+  <data name="FilterSecretChats" xml:space="preserve">
+    <value>گفتگوهای محرمانه</value>
+  </data>
+  <data name="FilterShowMoreChatsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilterShowMoreChatsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilterShowMoreChatsOne" xml:space="preserve">
+    <value>نمایش ⁨{0}⁩ گفتگوی بیشتر</value>
+  </data>
+  <data name="FilterShowMoreChatsOther" xml:space="preserve">
+    <value>نمایش ⁨{0}⁩ گفتگوی بیشتر</value>
+  </data>
+  <data name="FilterShowMoreChatsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilterShowMoreChatsZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FiltersSetup" xml:space="preserve">
+    <value>راه‌اندازی</value>
+  </data>
+  <data name="FiltersSetupPinAlert" xml:space="preserve">
+    <value>تنظیم پوشه‌ها</value>
+  </data>
+  <data name="FilterUnread" xml:space="preserve">
+    <value>خوانده نشده</value>
+  </data>
   <data name="FinalResults" xml:space="preserve">
     <value>نتایج نهایی</value>
   </data>
@@ -3642,6 +4180,9 @@
   <data name="Folder" xml:space="preserve">
     <value> پوشه</value>
   </data>
+  <data name="FollowersChartTitle" xml:space="preserve">
+    <value>دنبال‌کنندگان</value>
+  </data>
   <data name="FontSize" xml:space="preserve">
     <value>اندازه قلم</value>
   </data>
@@ -3649,13 +4190,16 @@
     <value>می‌دونی ساعت چنده؟</value>
   </data>
   <data name="FontSizePreviewLine2" xml:space="preserve">
-    <value>تو توکیو الان صبحه 😎</value>
+    <value>تو توکیو صبحه 😎</value>
   </data>
   <data name="FontSizePreviewName" xml:space="preserve">
-    <value>بابک هراتی</value>
+    <value>باب هریس</value>
   </data>
   <data name="FontSizePreviewReply" xml:space="preserve">
     <value>صبح بخیر! 👋</value>
+  </data>
+  <data name="FontType" xml:space="preserve">
+    <value>نوع فونت</value>
   </data>
   <data name="FootsAway" xml:space="preserve">
     <value>⁨{0}⁩ فوت دورتر</value>
@@ -3981,8 +4525,29 @@
   <data name="GifCaption" xml:space="preserve">
     <value>عنوان گیف</value>
   </data>
+  <data name="GIFsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsOne" xml:space="preserve">
+    <value>⁨{0}⁩ گیف</value>
+  </data>
+  <data name="GIFsOther" xml:space="preserve">
+    <value>⁨{0}⁩ گیف</value>
+  </data>
   <data name="GifsTab" xml:space="preserve">
     <value>گیف‌ها</value>
+  </data>
+  <data name="GifsTab2" xml:space="preserve">
+    <value>گیف‌ها</value>
+  </data>
+  <data name="GIFsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="GlobalAttachGifRestricted" xml:space="preserve">
     <value>گیف‌ها در این گروه مجاز نیستند.</value>
@@ -4008,6 +4573,12 @@
   </data>
   <data name="GpsDisabledAlert" xml:space="preserve">
     <value>بنظر می رسد GPS شما غیرفعال است، لطفاً برای استفاده از امکانات مختص موقعیت مکانی، آن را فعال کنید.</value>
+  </data>
+  <data name="GpsDisabledAlertText" xml:space="preserve">
+    <value>جهت دسترسی به امکانات مختص موقعیت مکانی لطفاً GPS خود را فعال کنید.</value>
+  </data>
+  <data name="GpsDisabledAlertTitle" xml:space="preserve">
+    <value>فعال کردن GPS</value>
   </data>
   <data name="Grain" xml:space="preserve">
     <value>دانه</value>
@@ -4122,6 +4693,9 @@
 
 توجه داشته باشید، مادامی که او در فهرست کاربران حذف شده نباشد، همچنان می‌تواند از طریق لینک دعوت به گروه بپیوندد.</value>
   </data>
+  <data name="GrowthChartTitle" xml:space="preserve">
+    <value>رشد</value>
+  </data>
   <data name="Hashtags" xml:space="preserve">
     <value>هشتگ‌ها</value>
   </data>
@@ -4130,6 +4704,9 @@
   </data>
   <data name="HiddenName" xml:space="preserve">
     <value>حساب کاربری حذف شده</value>
+  </data>
+  <data name="HideAboveTheList" xml:space="preserve">
+    <value>پنهان کردن بالای فهرست</value>
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>پنهان کردن</value>
@@ -4191,8 +4768,20 @@
   <data name="ImagesTab" xml:space="preserve">
     <value>عکس‌ها</value>
   </data>
+  <data name="ImagesTab2" xml:space="preserve">
+    <value>تصاویر</value>
+  </data>
   <data name="ImportContacts" xml:space="preserve">
     <value>وارد کردن مخاطبین</value>
+  </data>
+  <data name="InactiveChannelSignature" xml:space="preserve">
+    <value>کانال، غیرفعال به مدت ⁨{0}⁩</value>
+  </data>
+  <data name="InactiveChats" xml:space="preserve">
+    <value>گفتگوهای غیرفعال</value>
+  </data>
+  <data name="InactiveChatSignature" xml:space="preserve">
+    <value>⁨{0}⁩، غیرفعال به مدت ⁨{1}⁩</value>
   </data>
   <data name="InAppNotifications" xml:space="preserve">
     <value>اعلان‌های درون‌برنامه</value>
@@ -4232,6 +4821,12 @@
   </data>
   <data name="InstantViewReference" xml:space="preserve">
     <value>منابع</value>
+  </data>
+  <data name="InteractionsChartTitle" xml:space="preserve">
+    <value>تعاملات</value>
+  </data>
+  <data name="InternalFolderInfo" xml:space="preserve">
+    <value>جستجو در فایل سیستم شما</value>
   </data>
   <data name="InternalStorage" xml:space="preserve">
     <value>فضای ذخیره‌سازی داخلی</value>
@@ -4347,6 +4942,9 @@
   <data name="ItemsZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="IVInteractionsChartTitle" xml:space="preserve">
+    <value>تعاملات IV</value>
+  </data>
   <data name="January" xml:space="preserve">
     <value>ژانویه</value>
   </data>
@@ -4426,6 +5024,9 @@
   <data name="LanguageSame" xml:space="preserve">
     <value>شما در حال حاضر از این بسته زبان (**⁨{0}⁩**) استفاده می‌کنید. شما می‌توانید زبان خود را در هر زمانی در قسمت تنظیمات تغییر دهید.</value>
   </data>
+  <data name="LanguagesChartTitle" xml:space="preserve">
+    <value>زبان‌ها</value>
+  </data>
   <data name="LanguageTitle" xml:space="preserve">
     <value>زبان تغییر کند؟</value>
   </data>
@@ -4498,6 +5099,9 @@
   <data name="LeaveChannelMenu" xml:space="preserve">
     <value>ترک کانال</value>
   </data>
+  <data name="LeaveChats" xml:space="preserve">
+    <value>ترک ⁨{0}⁩</value>
+  </data>
   <data name="LeaveMegaMenu" xml:space="preserve">
     <value>ترک گروه</value>
   </data>
@@ -4506,6 +5110,9 @@
   </data>
   <data name="LedDisabled" xml:space="preserve">
     <value>غیرفعال</value>
+  </data>
+  <data name="LimitReached" xml:space="preserve">
+    <value>به سقف مجاز رسیدید</value>
   </data>
   <data name="LinkAvailable" xml:space="preserve">
     <value>⁨{0}⁩ امکان‌پذیر است.</value>
@@ -4553,14 +5160,35 @@
   <data name="LinkPreview" xml:space="preserve">
     <value>پیش‌نمایش لینک</value>
   </data>
+  <data name="LinksFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksOne" xml:space="preserve">
+    <value>⁨{0}⁩ لینک</value>
+  </data>
+  <data name="LinksOther" xml:space="preserve">
+    <value>⁨{0}⁩ لینک</value>
+  </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>لینک‌های اشتراکی</value>
+  </data>
+  <data name="LinksTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="LinksZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>انتخاب کنید که تا چه مدت افراد در این گفتگو بتوانند موقعیت مکانی لحظه‌ای شما را ببینند.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
     <value>انتخاب کنید که تا چه مدت ⁨{0}⁩ بتواند موقعیت مکانی دقیق شما را ببیند.</value>
+  </data>
+  <data name="LiveLocationContext" xml:space="preserve">
+    <value>موقعیت‌ مکانی لحظه‌ای</value>
   </data>
   <data name="LiveLocations" xml:space="preserve">
     <value>موقعیت‌های مکانی لحظه‌ای</value>
@@ -4570,6 +5198,12 @@
   </data>
   <data name="LoadingFullImage" xml:space="preserve">
     <value>در حال بارگذاری تصویر کامل...</value>
+  </data>
+  <data name="LoadingStats" xml:space="preserve">
+    <value>در حال بارگذاری آمار...</value>
+  </data>
+  <data name="LoadingStatsDescription" xml:space="preserve">
+    <value>لطفاً تا زمان تولید نمودارها چند لحظه صبر کنید.</value>
   </data>
   <data name="LocalAudioCache" xml:space="preserve">
     <value>پیام‌های صوتی/ویدیویی</value>
@@ -4582,6 +5216,12 @@
   </data>
   <data name="LocalDatabaseClear" xml:space="preserve">
     <value>پیام‌های متنی ذخیره شده پاک شوند؟</value>
+  </data>
+  <data name="LocalDatabaseClearText" xml:space="preserve">
+    <value>آیا از پاک کردن پیام‌های متنی ذخیره شده اطمینان دارید؟</value>
+  </data>
+  <data name="LocalDatabaseClearTextTitle" xml:space="preserve">
+    <value>پاک کردن پایگاه داده محلی</value>
   </data>
   <data name="LocalDatabaseInfo" xml:space="preserve">
     <value>پاک کردن پایگاه داده محلی متن پیام‌های ذخیره شده را پاک کرده و پایگاه داده را برای حفظ فضای ذخیره‌سازی داخلی فشرده‌سازی می‌کند. تلگرام نیازمند مقداری داده برای کار کردن است، بنابراین حجم پایگاه داده صفر نخواهد شد.
@@ -4645,6 +5285,9 @@
   <data name="LoopAnimatedStickers" xml:space="preserve">
     <value>تکرار پخش استیکرهای متحرک</value>
   </data>
+  <data name="LoopAnimatedStickersInfo" xml:space="preserve">
+    <value>استیکرهای متحرک به طور مداوم در گفتگوها پخش می‌شوند.</value>
+  </data>
   <data name="LowDiskSpaceMessage" xml:space="preserve">
     <value>دستگاه شما تقریباً دیگر فضای خالی ندارد. جهت آزادسازی فضای دیسک، می‌توانید تلگرام را طوری تنظیم کنید تا فقط رسانه‌‌های اخیر را در حافظه موقت ذخیره کند.</value>
   </data>
@@ -4659,6 +5302,17 @@
   </data>
   <data name="MakeAdmin" xml:space="preserve">
     <value>مدیر کردن</value>
+  </data>
+  <data name="MakeMyselfVisible" xml:space="preserve">
+    <value>قابل مشاهده کردن من</value>
+  </data>
+  <data name="MakeMyselfVisibleInfo" xml:space="preserve">
+    <value>کاربران در نزدیکی شما می‌توانند پروفایل شما را مشاهده کنند و برای شما پیام ارسال کنند. این کار می‌تواند به شما کمک کند تا دوستان جدیدی پیدا کنید، اما همچنین می‌تواند توجهات بیش از اندازه‌ای را جلب کند. شما می‌توانید به اشتراک گذاری پروفایلتان را در هر زمان متوقف کنید.
+
+شماره تلفن شما مخفی باقی می‌ماند.</value>
+  </data>
+  <data name="MakeMyselfVisibleTitle" xml:space="preserve">
+    <value>پروفایل شما نمایش داده شود؟</value>
   </data>
   <data name="ManageChannel" xml:space="preserve">
     <value>مدیریت کانال</value>
@@ -4687,11 +5341,17 @@
   <data name="MapPreviewProviderTelegram" xml:space="preserve">
     <value>تلگرام</value>
   </data>
+  <data name="MapPreviewProviderTitle" xml:space="preserve">
+    <value>ارائه دهنده پیش‌نمایش نقشه</value>
+  </data>
   <data name="MapPreviewProviderYandex" xml:space="preserve">
     <value>Yandex</value>
   </data>
   <data name="March" xml:space="preserve">
     <value>مارس</value>
+  </data>
+  <data name="MarkAllAsRead" xml:space="preserve">
+    <value>علامت زدن همه به عنوان خوانده شده</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
     <value>علامت زدن به عنوان خوانده شده</value>
@@ -4701,6 +5361,12 @@
   </data>
   <data name="Masks" xml:space="preserve">
     <value>ماسک‌ها</value>
+  </data>
+  <data name="MasksArchived" xml:space="preserve">
+    <value>ماسک‌ها بایگانی شدند.</value>
+  </data>
+  <data name="MasksArchivedInfo" xml:space="preserve">
+    <value>⁨{0}⁩ به بایگانی شما منتقل شد.</value>
   </data>
   <data name="MasksCountFew" xml:space="preserve">
     <value/>
@@ -4725,6 +5391,9 @@
   </data>
   <data name="MasksRemoved" xml:space="preserve">
     <value>ماسک‌ها حذف شدند</value>
+  </data>
+  <data name="MasksRemovedInfo" xml:space="preserve">
+    <value>⁨{0}⁩ دیگر در ماسک‌های شما نیست.</value>
   </data>
   <data name="May" xml:space="preserve">
     <value>می</value>
@@ -4811,6 +5480,24 @@
   <data name="MembersCount" xml:space="preserve">
     <value>⁨{0}⁩ از ⁨{1}⁩ انتخاب شده</value>
   </data>
+  <data name="MembersCountSelectedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedOne" xml:space="preserve">
+    <value>⁨{0}⁩ از ⁨{1}⁩ انتخاب شده</value>
+  </data>
+  <data name="MembersCountSelectedOther" xml:space="preserve">
+    <value>⁨{0}⁩ از ⁨{1}⁩ انتخاب شده</value>
+  </data>
+  <data name="MembersCountSelectedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersCountSelectedZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MembersCountZero" xml:space="preserve">
     <value>تا ⁨{0}⁩</value>
   </data>
@@ -4877,8 +5564,14 @@
   <data name="MessageScheduledReminderNotification" xml:space="preserve">
     <value>📅 یادآور</value>
   </data>
+  <data name="MessageScheduledUntilOnline" xml:space="preserve">
+    <value>زمان‌بندی شده تا زمان آنلاین شدن</value>
+  </data>
   <data name="MessageScheduledVote" xml:space="preserve">
     <value>رأی‌گیری پس از انتشار پیام امکان‌پذیر خواهد شد.</value>
+  </data>
+  <data name="MessageScheduledVoteResults" xml:space="preserve">
+    <value>نتایج نظرسنجی پس از انتشار پیام در دسترس خواهند بود</value>
   </data>
   <data name="MessageScheduleEditTime" xml:space="preserve">
     <value>زمان‌بندی مجدد</value>
@@ -5012,6 +5705,24 @@
   <data name="MoreInfo" xml:space="preserve">
     <value>اطلاعات بیشتر</value>
   </data>
+  <data name="MusicFilesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesOne" xml:space="preserve">
+    <value>⁨{0}⁩ فایل موسیقی </value>
+  </data>
+  <data name="MusicFilesOther" xml:space="preserve">
+    <value>⁨{0}⁩ فایل موسیقی</value>
+  </data>
+  <data name="MusicFilesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MusicFilesZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MusicInfo" xml:space="preserve">
     <value>جهت ارسال فایل‌های موسیقی</value>
   </data>
@@ -5039,19 +5750,31 @@
   <data name="NearbyStartGroup" xml:space="preserve">
     <value>آغاز گروه</value>
   </data>
+  <data name="NearbyVenue" xml:space="preserve">
+    <value>یا محلی را انتخاب کنید</value>
+  </data>
   <data name="NetworkUsage" xml:space="preserve">
     <value>میزان استفاده از داده</value>
   </data>
   <data name="NetworkUsageMobile" xml:space="preserve">
     <value>تلفن همراه</value>
   </data>
+  <data name="NetworkUsageMobileTab" xml:space="preserve">
+    <value>تلفن همراه</value>
+  </data>
   <data name="NetworkUsageRoaming" xml:space="preserve">
+    <value>رومینگ</value>
+  </data>
+  <data name="NetworkUsageRoamingTab" xml:space="preserve">
     <value>رومینگ</value>
   </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>میزان استفاده از شبکه از تاریخ ⁨{0}⁩</value>
   </data>
   <data name="NetworkUsageWiFi" xml:space="preserve">
+    <value>وای فای</value>
+  </data>
+  <data name="NetworkUsageWiFiTab" xml:space="preserve">
     <value>وای فای</value>
   </data>
   <data name="NeverAllow" xml:space="preserve">
@@ -5081,6 +5804,9 @@
   <data name="NewConversationShortcut" xml:space="preserve">
     <value>گفتگوی جدید</value>
   </data>
+  <data name="NewFollowersBySourceChartTitle" xml:space="preserve">
+    <value>دنبال‌کنندگان جدید بر اساس منبع</value>
+  </data>
   <data name="NewGroup" xml:space="preserve">
     <value>گروه جدید</value>
   </data>
@@ -5108,6 +5834,9 @@
   <data name="NewPoll" xml:space="preserve">
     <value>نظرسنجی جدید</value>
   </data>
+  <data name="NewQuiz" xml:space="preserve">
+    <value>آزمون جدید</value>
+  </data>
   <data name="NewSecretChat" xml:space="preserve">
     <value>گفتگوی محرمانه جدید</value>
   </data>
@@ -5118,13 +5847,19 @@
     <value>می‌دونی ساعت چنده؟</value>
   </data>
   <data name="NewThemePreviewLine2" xml:space="preserve">
-    <value>تو توکیو الان صبحه 😎 </value>
+    <value>تو توکیو صبحه 😎 </value>
+  </data>
+  <data name="NewThemePreviewLine3" xml:space="preserve">
+    <value>تو *توکیو* صبحه😎</value>
   </data>
   <data name="NewThemePreviewName" xml:space="preserve">
-    <value>بابک هراتی</value>
+    <value>باب هریس</value>
   </data>
   <data name="NewThemePreviewReply" xml:space="preserve">
     <value>صبح بخیر! 👋</value>
+  </data>
+  <data name="NewThemePreviewReply2" xml:space="preserve">
+    <value>صبح بخیر</value>
   </data>
   <data name="NewThemeTitle" xml:space="preserve">
     <value>پوسته جدید</value>
@@ -5134,6 +5869,18 @@
   </data>
   <data name="NoAudio" xml:space="preserve">
     <value>لطفاً جهت مشاهده فایل‌ها در اینجا آن‌ها را به کتابخانه موسیقی دستگاه خود اضافه کنید.</value>
+  </data>
+  <data name="NoAudioFiles" xml:space="preserve">
+    <value>فایل صدایی موجود نیست</value>
+  </data>
+  <data name="NoAudioFilesInfo" xml:space="preserve">
+    <value>کتابخانه موسیقی شما خالی است.</value>
+  </data>
+  <data name="NoAudioFound" xml:space="preserve">
+    <value>نتیجه‌ای یافت نشد</value>
+  </data>
+  <data name="NoAudioFoundInfo" xml:space="preserve">
+    <value>نتیجه‌ای مطابق با **⁨{0}⁩** در کتابخانه موسیقی شما وجود ندارد.</value>
   </data>
   <data name="NoBlocked" xml:space="preserve">
     <value>هنوز کاربر مسدودی موجود نیست</value>
@@ -5154,10 +5901,10 @@
     <value>کاربر حذف شده‌ای موجود نیست</value>
   </data>
   <data name="NobodyLikesSpam1" xml:space="preserve">
-    <value>متأسفانه شما در حال حاضر تنها می‌توانید به مخاطبین مشترک پیام ارسال کنید.</value>
+    <value>متأسفانه شما در حال حاضر فقط می‌توانید به مخاطبین مشترک پیام ارسال کنید.</value>
   </data>
   <data name="NobodyLikesSpam2" xml:space="preserve">
-    <value>متأسفانه شما در حال حاضر تنها می‌توانید مخاطبین مشترک را به گروه‌ها اضافه کنید.</value>
+    <value>متأسفانه شما در حال حاضر فقط می‌توانید مخاطبین مشترک را به گروه‌ها اضافه کنید.</value>
   </data>
   <data name="NobodyLikesSpam3" xml:space="preserve">
     <value>متأسفانه شما در حال حاضر از ارسال پیام به گروه‌های عمومی محدود شده‌اید.</value>
@@ -5169,10 +5916,10 @@
     <value>به تلگرام خوش آمدید</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>با زدن دکمه مداد در گوشه پایین سمت راست پیام‌رسانی را شروع کنید.</value>
+    <value>با زدن دکمه مداد در گوشه پایین سمت چپ پیام‌رسانی را شروع کنید.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
-    <value>با زدن دکمه مداد در گوشه پایین سمت راست پیام‌رسانی را شروع کنید.</value>
+    <value>با زدن دکمه مداد در گوشه پایین سمت چپ پیام‌رسانی را شروع کنید.</value>
   </data>
   <data name="NoContacts" xml:space="preserve">
     <value>هنوز مخاطبی موجود نیست</value>
@@ -5184,6 +5931,18 @@
     <value>در این قسمت تمامی گفتگوها با تنظیمات اعلان غیرپیش‌فرض فهرست خواهد شد.
 
 شما می‌توانید اعلان‌های یک گفتگو را با باز کردن پروفایل آن بر انتخاب 'اعلان‌ها' سفارشی‌سازی کنید.</value>
+  </data>
+  <data name="NoFilesFound" xml:space="preserve">
+    <value>نتیجه‌ای یافت نشد</value>
+  </data>
+  <data name="NoFilesFoundInfo" xml:space="preserve">
+    <value>نتیجه‌ای مطابق با **⁨{0}⁩** در مسیر فعلی شما وجود ندارد.</value>
+  </data>
+  <data name="NoFilesInfo" xml:space="preserve">
+    <value>این پوشه خالی است.</value>
+  </data>
+  <data name="NoGIFs" xml:space="preserve">
+    <value>گیفی موجود نیست</value>
   </data>
   <data name="NoGIFsFound" xml:space="preserve">
     <value>گیفی یافت نشد</value>
@@ -5201,7 +5960,7 @@
     <value>هنوز ماسکی موجود نیست</value>
   </data>
   <data name="NoMedia" xml:space="preserve">
-    <value>عکس‌ها و ویدیوها را در این گفتگو به اشتراک بگذارید و از هر دستگاه‌ خود به آن‌ها دسترسی داشته باشید.</value>
+    <value>عکس‌ها و ویدیوها را در این گفتگو به اشتراک بگذارید و بر روی هر دستگاه خود به آن‌ها دسترسی داشته باشید.</value>
   </data>
   <data name="NoMediaAutoDownload" xml:space="preserve">
     <value>هیچ رسانه‌ای </value>
@@ -5227,6 +5986,12 @@
   <data name="NoPhotos" xml:space="preserve">
     <value>هنوز عکسی موجود نیست</value>
   </data>
+  <data name="NoPlacesFound" xml:space="preserve">
+    <value>مکانی یافت نشد</value>
+  </data>
+  <data name="NoPlacesFoundInfo" xml:space="preserve">
+    <value>نتیجه‌ای مطابق با **⁨{0}⁩** در نزدیکی شما وجود ندارد.</value>
+  </data>
   <data name="NoPlayerInstalled" xml:space="preserve">
     <value>شما هیچ برنامه‌ای جهت پخش ویدیو ندارید، لطفاً جهت ادامه یک برنامه پخش کننده ویدیو نصب نمایید</value>
   </data>
@@ -5242,6 +6007,9 @@
   <data name="NoRecentPhotos" xml:space="preserve">
     <value>عکس اخیری موجود نیست</value>
   </data>
+  <data name="NoRecentSearches" xml:space="preserve">
+    <value>جستجوی اخیری موجود نیست</value>
+  </data>
   <data name="NoResult" xml:space="preserve">
     <value>بدون نتیجه</value>
   </data>
@@ -5255,19 +6023,22 @@
     <value>موسیقی‌های این گفتگو در اینجا نمایش داده می‌شوند.</value>
   </data>
   <data name="NoSharedFiles" xml:space="preserve">
-    <value>فایل‌ها و سندها را در این گفتگو به اشتراک بگذارید و از هر دستگاه خود به آن‌ها دسترسی داشته باشید.</value>
+    <value>فایل‌ها و سندها را در این گفتگو به اشتراک بگذارید و بر روی هر دستگاه خود به آن‌ها دسترسی داشته باشید.</value>
   </data>
   <data name="NoSharedFilesSecret" xml:space="preserve">
     <value>فایل‌ها و سند‌های به اشتراک گذاشته شده در این گفتگو در اینجا نمایش داده می‌شوند.</value>
   </data>
+  <data name="NoSharedGifSecret" xml:space="preserve">
+    <value>گیف‌های این گفتگو در اینجا نمایش داده خواهند شد.</value>
+  </data>
   <data name="NoSharedLinks" xml:space="preserve">
-    <value>لینک‌ها را در این گفتگو به اشتراک بگذارید و از هر دستگاه خود به آن‌ها دسترسی داشته باشید.</value>
+    <value>لینک‌ها را در این گفتگو به اشتراک بگذارید و بر روی هر دستگاه خود به آن‌ها دسترسی داشته باشید.</value>
   </data>
   <data name="NoSharedLinksSecret" xml:space="preserve">
     <value>لینک‌های به اشتراک گذاشته شده در این گفتگو در اینجا نمایش داده می‌شوند.</value>
   </data>
   <data name="NoSharedVoice" xml:space="preserve">
-    <value>پیام‌های صوتی را در این گفتگو به اشتراک بگذارید و از دستگاه خود به آن‌ها دسترسی داشته باشید.</value>
+    <value>پیام‌های صوتی را در این گفتگو به اشتراک بگذارید و بر روی هر دستگاه خود به آن‌ها دسترسی داشته باشید.</value>
   </data>
   <data name="NoSharedVoiceSecret" xml:space="preserve">
     <value>پیام‌های صوتی این گفتگو در اینجا نمایش داده خواهند شد.</value>
@@ -5365,6 +6136,12 @@
   <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
     <value>⁨{0}⁩ یک نظرسنجی ⁨{1}⁩ را سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
+    <value>⁨{0}⁩ آزمون "⁨{2}⁩" را در گروه ⁨{1}⁩ سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
+    <value>⁨{0}⁩ آزمون "⁨{1}⁩" را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام ویدیویی را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
@@ -5439,6 +6216,18 @@
   </data>
   <data name="NotificationGroupLeftMember" xml:space="preserve">
     <value>⁨{0}⁩ گروه ⁨{1}⁩ را ترک کرد</value>
+  </data>
+  <data name="NotificationHiddenChatName" xml:space="preserve">
+    <value>تلگرام</value>
+  </data>
+  <data name="NotificationHiddenChatUserName" xml:space="preserve">
+    <value>کاربر</value>
+  </data>
+  <data name="NotificationHiddenMessage" xml:space="preserve">
+    <value>پیام جدید</value>
+  </data>
+  <data name="NotificationHiddenName" xml:space="preserve">
+    <value>تلگرام</value>
   </data>
   <data name="NotificationInvitedToGroup" xml:space="preserve">
     <value>⁨{0}⁩ شما را به گروه ⁨{1}⁩ دعوت کرد</value>
@@ -5522,6 +6311,9 @@
   <data name="NotificationMessageGroupPoll2" xml:space="preserve">
     <value>⁨{0}⁩ یک نظرسنجی ⁨{2}⁩ را به گروه ⁨{1}⁩ ارسال کرد</value>
   </data>
+  <data name="NotificationMessageGroupQuiz2" xml:space="preserve">
+    <value>⁨{0}⁩ آزمون "⁨{2}⁩" را برای گروه ⁨{1}⁩ ارسال کرد</value>
+  </data>
   <data name="NotificationMessageGroupRound" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام ویدیویی به گروه ⁨{1}⁩ ارسال کرد</value>
   </data>
@@ -5560,6 +6352,9 @@
   </data>
   <data name="NotificationMessagePoll2" xml:space="preserve">
     <value>⁨{0}⁩ برای شما یک نظرسنجی ⁨{1}⁩ ارسال کرد</value>
+  </data>
+  <data name="NotificationMessageQuiz2" xml:space="preserve">
+    <value>⁨{0}⁩ برای شما آزمون "⁨{1}⁩" ارسال کرد</value>
   </data>
   <data name="NotificationMessageRound" xml:space="preserve">
     <value>⁨{0}⁩ برای شما یک پیام ویدیویی ارسال کرد</value>
@@ -5602,6 +6397,9 @@
   </data>
   <data name="NotificationsChannels" xml:space="preserve">
     <value>کانال‌ها</value>
+  </data>
+  <data name="NotificationsChartTitle" xml:space="preserve">
+    <value>اعلان‌ها</value>
   </data>
   <data name="NotificationsCustom" xml:space="preserve">
     <value>سفارشی</value>
@@ -5755,6 +6553,9 @@
   <data name="NoVotes" xml:space="preserve">
     <value>بدون رأی</value>
   </data>
+  <data name="NoVotesQuiz" xml:space="preserve">
+    <value>کسی پاسخ نداد</value>
+  </data>
   <data name="NowInContacts" xml:space="preserve">
     <value>⁨{0}⁩ اکنون در فهرست مخاطبین شماست.</value>
   </data>
@@ -5769,6 +6570,9 @@
   </data>
   <data name="OK" xml:space="preserve">
     <value>تأیید</value>
+  </data>
+  <data name="OneResult" xml:space="preserve">
+    <value>1 نتیجه</value>
   </data>
   <data name="Online" xml:space="preserve">
     <value>آنلاین</value>
@@ -5817,6 +6621,9 @@
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>باز کردن در…</value>
+  </data>
+  <data name="OpenInEditor" xml:space="preserve">
+    <value>باز کردن در ویرایشگر</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>باز کردن در...</value>
@@ -5909,7 +6716,7 @@
   </data>
   <data name="Page1Message" xml:space="preserve">
     <value>**سریع‌ترین** برنامه پیام‌رسان دنیا.
-تلگرام **رایگان** و **امن** است.</value>
+**رایگان** و **امن**.</value>
   </data>
   <data name="Page1Title" xml:space="preserve">
     <value>تلگرام</value>
@@ -6567,6 +7374,9 @@
   <data name="PasswordReset" xml:space="preserve">
     <value>گذرواژه غیرفعال شد</value>
   </data>
+  <data name="PasteFromClipboard" xml:space="preserve">
+    <value>چسباندن از حافظه</value>
+  </data>
   <data name="PaymentBillingAddress" xml:space="preserve">
     <value>آدرس صدور قبض</value>
   </data>
@@ -6780,6 +7590,9 @@
   <data name="PeopleNearbyInfo" xml:space="preserve">
     <value>از دوستتان در نزدیکی بخواهید تا جهت تبادل شماره تلفن‌هایتان این صفحه را باز کند.</value>
   </data>
+  <data name="PeopleNearbyInfo2" xml:space="preserve">
+    <value>اطلاعات تماستان را با افراد در نزدیکی خود به اشتراک بگذارید و دوستان جدیدی پیدا کنید.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>برای اینکه شما بتوانید در تمامی دستگاه‌های خود با دوستانتان ارتباط برقرار کنید، مخاطبین شما به طور مداوم با سرورهای اَبری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
   </data>
@@ -6845,7 +7658,7 @@
     <value>متأسفانه شما اخیراً دفعات زیادی حساب کاربری خود را حذف و مجدداً ایجاد کرده‌اید. لطفاً چند روز صبر کنید تا بتوانید مجدداً ثبت نام کنید.</value>
   </data>
   <data name="PhoneNumberHelp" xml:space="preserve">
-    <value>شما می‌توانید شماره تلفن خود را در اینجا تغییر دهید. حساب کاربری شما و تمامی داده‌های اَبری شامل پیام‌ها، رسانه‌ها، مخاطبین و... به شماره جدید انتقال خواهند یافت.</value>
+    <value>شما می‌توانید شماره تلفن خود را در اینجا تغییر دهید. حساب کاربری شما و تمامی داده‌های اَبری از جمله پیام‌ها، رسانه‌ها، مخاطبین و... به شماره جدید انتقال خواهند یافت.</value>
   </data>
   <data name="PhoneNumberSearch" xml:space="preserve">
     <value>شماره تلفن</value>
@@ -6895,8 +7708,14 @@
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinFolderLimitReached" xml:space="preserve">
+    <value>متأسفانه شما نمی‌توانید گفتگوی دیگری را به بالای صفحه سنجاق کنید.</value>
+  </data>
   <data name="Ping" xml:space="preserve">
     <value>پینگ: ⁨{0}⁩ میلی‌ثانیه</value>
+  </data>
+  <data name="PinInTheList" xml:space="preserve">
+    <value>سنجاق کردن در فهرست</value>
   </data>
   <data name="Pink" xml:space="preserve">
     <value>صورتی</value>
@@ -6932,7 +7751,13 @@
     <value>سنجاق کردن به بالا</value>
   </data>
   <data name="PinToTopLimitReached" xml:space="preserve">
-    <value>متأسفانه شما نمی‌توانید بیش از ⁨{0}⁩ را به فهرست اصلی خود سنجاق کنید. در صورتی که قصد دارید مرتب‌سازی بیشتری انجام دهید، می‌توانید برخی از گفتگوها را بایگانی کنید - در پوشه گفتگوهای بایگانی شده امکان سنجاق کردن بی‌نهایت گفتگو وجود دارد.</value>
+    <value>متأسفانه شما فقط می‌توانید ⁨{0}⁩ را در فهرست اصلی خود سنجاق کنید. برای مرتب‌سازی بیشتر، در پوشه گفتگوهای بایگانی شده شما امکان سنجاق کردن بی‌نهایت گفتگو وجود دارد.</value>
+  </data>
+  <data name="PinToTopLimitReached2" xml:space="preserve">
+    <value>متأسفانه شما فقط می‌توانید ⁨{0}⁩ را در فهرست اصلی خود سنجاق کنید. در پوشه‌های گفتگو و پوشه بایگانی شما امکان سنجاق کردن گفتگوهای بیشتری وجود دارد.</value>
+  </data>
+  <data name="PlacesInThisArea" xml:space="preserve">
+    <value>مکان‌ها در این ناحیه</value>
   </data>
   <data name="PleaseDownload" xml:space="preserve">
     <value>لطفاً ابتدا رسانه را دانلود نمایید</value>
@@ -6979,8 +7804,41 @@
   <data name="Poll" xml:space="preserve">
     <value>نظرسنجی</value>
   </data>
+  <data name="PollAnonymous" xml:space="preserve">
+    <value>رأی دادن به صورت ناشناس</value>
+  </data>
+  <data name="PollCantForwardSecretChat" xml:space="preserve">
+    <value>متأسفانه نظرسنجی‌ها نمی‌توانند به گفتگو‌های محرمانه هدایت شوند.</value>
+  </data>
+  <data name="PollCollapse" xml:space="preserve">
+    <value>کوچک کردن</value>
+  </data>
+  <data name="PollExpand" xml:space="preserve">
+    <value>بزرگ کردن</value>
+  </data>
+  <data name="PollMultiple" xml:space="preserve">
+    <value>چندگزینه‌ای</value>
+  </data>
   <data name="PollOptions" xml:space="preserve">
     <value>گزینه‌های نظرسنجی</value>
+  </data>
+  <data name="PollQuiz" xml:space="preserve">
+    <value>حالت آزمون</value>
+  </data>
+  <data name="PollResults" xml:space="preserve">
+    <value>نتایج نظرسنجی</value>
+  </data>
+  <data name="PollSelectOption" xml:space="preserve">
+    <value>ابتدا گزینه‌ای را انتخاب کنید</value>
+  </data>
+  <data name="PollSubmitVotes" xml:space="preserve">
+    <value>رأی دادن</value>
+  </data>
+  <data name="PollTapToSelect" xml:space="preserve">
+    <value>برای انتخاب پاسخ درست ضربه بزنید</value>
+  </data>
+  <data name="PollViewResults" xml:space="preserve">
+    <value>مشاهده نتایج</value>
   </data>
   <data name="PopupDisabled" xml:space="preserve">
     <value>غیرفعال</value>
@@ -6992,7 +7850,10 @@
     <value>اعلان‌های پاپ‌آپ</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
-    <value>درباره این پیش‌نمایش نظر دهید</value>
+    <value>گزارش اشکال برای این پیش‌نمایش</value>
+  </data>
+  <data name="PreviewFeedback2" xml:space="preserve">
+    <value>پیکربندی اشتباه است؟</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>حتی اگر دستگاه شما بر روی حالت مزاحم نشوید باشد اعلان‌های با اولویت بالا کار خواهند کرد.</value>
@@ -7075,6 +7936,12 @@
   <data name="PrivacyPaymentsClearAlert" xml:space="preserve">
     <value>آیا می‌خواهید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های بانکی ذخیره شده شما را حذف کنند؟ توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های بانکی شما را ذخیره نمی کند.</value>
   </data>
+  <data name="PrivacyPaymentsClearAlertText" xml:space="preserve">
+    <value>آیا از پاک کردن اطلاعات پرداخت و ارسال خود اطمینان دارید؟</value>
+  </data>
+  <data name="PrivacyPaymentsClearAlertTitle" xml:space="preserve">
+    <value>پاک کردن اطلاعات پرداخت</value>
+  </data>
   <data name="PrivacyPaymentsClearInfo" xml:space="preserve">
     <value>شما می‌توانید تمامی اطلاعات ارسال خود را حذف کرده و از ارائه‌دهندگان خدمات پرداختی بخواهید کارت‌های بانکی ذخیره شده شما را حذف کنند. توجه داشته باشید که تلگرام به هیچ وجه اطلاعات کارت‌های بانکی شما را ذخیره نمی کند.</value>
   </data>
@@ -7094,7 +7961,7 @@
     <value>چه کسی می‌تواند شماره تلفن مرا ببیند؟</value>
   </data>
   <data name="PrivacyPhoneTitle2" xml:space="preserve">
-    <value>چه کسی می‌تواند مرا از طریق شماره تلفن پیدا کند؟</value>
+    <value>چه کسی می‌تواند مرا از طریق شماره‌ام پیدا کند؟</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>حریم خصوصی</value>
@@ -7153,6 +8020,12 @@
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>متأسفانه کاربر موردنظر در حال حاضر دارای تعداد زیادی گروه یا کانال عمومی است. لطفاً ابتدا از او بخواهید تا یکی از گروه‌ها یا کانال‌های موجود خود را خصوصی کند.</value>
   </data>
+  <data name="PublicPoll" xml:space="preserve">
+    <value>نظرسنجی</value>
+  </data>
+  <data name="PublicPollCantForward" xml:space="preserve">
+    <value>متأسفانه نظرسنجی‌ها با رأی‌های قابل مشاهده نمی‌توانند به کانال‌ها هدایت شوند.</value>
+  </data>
   <data name="Purple" xml:space="preserve">
     <value>بنفش</value>
   </data>
@@ -7176,6 +8049,27 @@
   </data>
   <data name="QuickReplyDefault4" xml:space="preserve">
     <value>الان نمی‌توانم صحبت کنم. بعداً تماس می‌گیری؟</value>
+  </data>
+  <data name="QuizAnswers" xml:space="preserve">
+    <value>پاسخ‌های آزمون</value>
+  </data>
+  <data name="QuizInfo" xml:space="preserve">
+    <value>نظرسنجی‌ها در حالت آزمون یک پاسخ درست دارند. کاربران نمی‌توانند پاسخ خود را باطل کنند.</value>
+  </data>
+  <data name="QuizPoll" xml:space="preserve">
+    <value>آزمون</value>
+  </data>
+  <data name="QuizWellDone" xml:space="preserve">
+    <value>آفرین!</value>
+  </data>
+  <data name="QuizWellDoneInfo" xml:space="preserve">
+    <value>شما پاسخ درست را انتخاب کردید.</value>
+  </data>
+  <data name="QuizWrongAnswer" xml:space="preserve">
+    <value>پاسخ اشتباه!</value>
+  </data>
+  <data name="QuizWrongAnswerInfo" xml:space="preserve">
+    <value>شما گزینه درست را از دست دادید.</value>
   </data>
   <data name="RaiseToSpeak" xml:space="preserve">
     <value>بالا بردن جهت صحبت</value>
@@ -7204,11 +8098,17 @@
   <data name="Recent" xml:space="preserve">
     <value>اخیراً</value>
   </data>
+  <data name="RecentFiles" xml:space="preserve">
+    <value>فایل‌های اخیر</value>
+  </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>اخیراً مشاهده شده</value>
   </data>
   <data name="RecentlyViewedHide" xml:space="preserve">
     <value>پنهان کردن</value>
+  </data>
+  <data name="RecentPosts" xml:space="preserve">
+    <value>پست‌های اخیر</value>
   </data>
   <data name="RecentStickers" xml:space="preserve">
     <value>اخیراً استفاده شده</value>
@@ -7269,6 +8169,9 @@
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>استیکر از علاقه‌مندی‌ها حذف شد</value>
+  </data>
+  <data name="RemovedFromRecent" xml:space="preserve">
+    <value>استیکر از اخیراً حذف شد</value>
   </data>
   <data name="RemovedUserFew" xml:space="preserve">
     <value/>
@@ -7371,6 +8274,9 @@
   <data name="ReportUnrelatedGroupTextNoAddress" xml:space="preserve">
     <value>در صورتی که این گروه به این موقعیت مکانی مربوط نیست، ما را مطلع کنید.</value>
   </data>
+  <data name="ReportUserLocation" xml:space="preserve">
+    <value>گزارش</value>
+  </data>
   <data name="ResendCode" xml:space="preserve">
     <value>ارسال مجدد کد</value>
   </data>
@@ -7440,6 +8346,9 @@
   <data name="ResetNotificationsAlert" xml:space="preserve">
     <value>آیا از بازنشانی تمامی تنظیمات اعلان‌های خود به حالت پیش‌فرض اطمینان دارید؟</value>
   </data>
+  <data name="ResetNotificationsAlertTitle" xml:space="preserve">
+    <value>بازنشانی تمامی اعلان‌ها</value>
+  </data>
   <data name="ResetNotificationsText" xml:space="preserve">
     <value>تمامی تنظیمات اعلان‌ها به حالت‌‌‌ پیش‌فرض بازنشانی شد</value>
   </data>
@@ -7459,6 +8368,9 @@
   </data>
   <data name="RestoreEmailSentInfo" xml:space="preserve">
     <value>لطفاً ایمیل خود را بررسی کرده و کد 6 رقمی که برای شما ارسال کردیم را وارد کنید.</value>
+  </data>
+  <data name="RestoreEmailSentTitle" xml:space="preserve">
+    <value>بازیابی کد</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>در دسترسی به ایمیل خود ⁨{0}⁩ مشکلی دارید؟</value>
@@ -7518,6 +8430,12 @@
   <data name="Save" xml:space="preserve">
     <value>ذخیره</value>
   </data>
+  <data name="SaveChangesAlertText" xml:space="preserve">
+    <value>آیا می‌خواهید رنگ‌های جدیدی که انتخاب کردید را اعمال کنید؟</value>
+  </data>
+  <data name="SaveChangesAlertTitle" xml:space="preserve">
+    <value>تغییرات ذخیره شود؟</value>
+  </data>
   <data name="SavedMessages" xml:space="preserve">
     <value>پیام‌های ذخیره شده</value>
   </data>
@@ -7551,8 +8469,14 @@
   <data name="ScheduledMessages" xml:space="preserve">
     <value>پیام‌های زمان‌بندی شده</value>
   </data>
+  <data name="ScheduledOrNoSoundHint" xml:space="preserve">
+    <value>برای زمان‌بندی پیام خود یا ارسال آن بدون صدا بر روی این دکمه نگه دارید.</value>
+  </data>
   <data name="ScheduleMessage" xml:space="preserve">
     <value>زمان‌بندی پیام</value>
+  </data>
+  <data name="ScheduleWhenOnline" xml:space="preserve">
+    <value>ارسال در هنگام آنلاین شدن ⁨{0}⁩</value>
   </data>
   <data name="ScreenCapture" xml:space="preserve">
     <value>نمایش محتوای برنامه در مدیریت برنامه‌ها</value>
@@ -7602,7 +8526,7 @@
     <value>جستجوی تصاویر</value>
   </data>
   <data name="SearchImagesInfo" xml:space="preserve">
-    <value>جستجوی اینترنت</value>
+    <value>جستجوی وب</value>
   </data>
   <data name="SearchImagesTitle" xml:space="preserve">
     <value>جستجوی وب</value>
@@ -7615,6 +8539,9 @@
   </data>
   <data name="SearchMessages" xml:space="preserve">
     <value>پیام‌ها</value>
+  </data>
+  <data name="SearchRecentFiles" xml:space="preserve">
+    <value>جستجوی فایل‌های اخیر</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>جستجوی بسته‌های استیکر</value>
@@ -7721,17 +8648,32 @@
   <data name="SendContactToGroup" xml:space="preserve">
     <value>اطلاعات تماس به ⁨{0}⁩ ارسال شود؟</value>
   </data>
+  <data name="SendContactToGroupText" xml:space="preserve">
+    <value>آیا می‌خواهید این مخاطب را برای **⁨{0}⁩** ارسال کنید؟</value>
+  </data>
+  <data name="SendContactToText" xml:space="preserve">
+    <value>آیا می‌خواهید این مخاطب را برای **⁨{0}⁩** ارسال کنید؟</value>
+  </data>
   <data name="SendDayAt" xml:space="preserve">
     <value> 'ارسال در تاریخ' MMM d 'در' HH:mm</value>
   </data>
   <data name="SendDayYearAt" xml:space="preserve">
     <value> 'ارسال در تاریخ' MMM d yyy 'در' HH:mm</value>
   </data>
+  <data name="SendDice" xml:space="preserve">
+    <value>ارسال</value>
+  </data>
   <data name="SendGameTo" xml:space="preserve">
     <value>بازی را با ⁨{0}⁩ به اشتراک می‌گذارید؟</value>
   </data>
   <data name="SendGameToGroup" xml:space="preserve">
     <value>بازی را با ⁨{0}⁩ به اشتراک می‌گذارید؟</value>
+  </data>
+  <data name="SendGameToGroupText" xml:space="preserve">
+    <value>آیا می‌خواهید این بازی را با **⁨{0}⁩** به اشتراک بگذارید؟</value>
+  </data>
+  <data name="SendGameToText" xml:space="preserve">
+    <value>آیا می‌خواهید این بازی را با **⁨{0}⁩** به اشتراک بگذارید؟</value>
   </data>
   <data name="SendGifPreview" xml:space="preserve">
     <value>ارسال گیف</value>
@@ -7778,8 +8720,14 @@
   <data name="SendLiveLocationInfo" xml:space="preserve">
     <value>در هنگام حرکت شما در زمان واقعی به‌روزرسانی می‌شود</value>
   </data>
+  <data name="SendLiveLocationMenu" xml:space="preserve">
+    <value>به اشتراک گذاشتن موقعیت مکانی لحظه‌ای من</value>
+  </data>
   <data name="SendLocation" xml:space="preserve">
     <value>ارسال موقعیت مکانی فعلی من</value>
+  </data>
+  <data name="SendMessageLocation" xml:space="preserve">
+    <value>ارسال پیام</value>
   </data>
   <data name="SendMessageRestricted" xml:space="preserve">
     <value>مدیران این گروه شما را از نوشتن در اینجا تا ⁨{0}⁩ محدود کرده‌اند</value>
@@ -7792,6 +8740,15 @@
   </data>
   <data name="SendMessagesToGroup" xml:space="preserve">
     <value>پیام‌ها به ⁨{0}⁩ ارسال شوند؟</value>
+  </data>
+  <data name="SendMessagesToGroupText" xml:space="preserve">
+    <value>آیا می‌خواهید این پیام را برای **⁨{0}⁩** ارسال کنید؟</value>
+  </data>
+  <data name="SendMessagesToText" xml:space="preserve">
+    <value>آیا می‌خواهید این پیام را برای **⁨{0}⁩** ارسال کنید؟</value>
+  </data>
+  <data name="SendMessageTitle" xml:space="preserve">
+    <value>ارسال پیام</value>
   </data>
   <data name="SendMessageTo" xml:space="preserve">
     <value>افزودن افراد...</value>
@@ -7900,11 +8857,14 @@
   <data name="SETTINGS" xml:space="preserve">
     <value>تنظیمات</value>
   </data>
+  <data name="SettingsDebug" xml:space="preserve">
+    <value>رفع اشکال</value>
+  </data>
   <data name="SettingsFaqSearchTitle" xml:space="preserve">
     <value>پرسش‌های متداول</value>
   </data>
   <data name="SettingsHelp" xml:space="preserve">
-    <value>راهنمایی</value>
+    <value>راهنما</value>
   </data>
   <data name="SettingsNoRecent" xml:space="preserve">
     <value>جستجوی اخیری موجود نیست</value>
@@ -7951,6 +8911,9 @@
   <data name="ShareContact" xml:space="preserve">
     <value>به اشتراک گذاشتن مخاطب</value>
   </data>
+  <data name="ShareContactTitle" xml:space="preserve">
+    <value>به اشتراک گذاشتن مخاطب</value>
+  </data>
   <data name="SharedAudioFiles" xml:space="preserve">
     <value>فایل‌های صوتی</value>
   </data>
@@ -7963,10 +8926,22 @@
   <data name="SharedFilesTab" xml:space="preserve">
     <value>فایل‌ها</value>
   </data>
+  <data name="SharedFilesTab2" xml:space="preserve">
+    <value>فایل‌ها</value>
+  </data>
+  <data name="SharedGIFsTab2" xml:space="preserve">
+    <value>گیف‌ها</value>
+  </data>
+  <data name="SharedGroupsTab2" xml:space="preserve">
+    <value>گروه‌ها</value>
+  </data>
   <data name="SharedLinks" xml:space="preserve">
     <value>لینک‌ها</value>
   </data>
   <data name="SharedLinksTab" xml:space="preserve">
+    <value>لینک‌ها</value>
+  </data>
+  <data name="SharedLinksTab2" xml:space="preserve">
     <value>لینک‌ها</value>
   </data>
   <data name="SharedMedia" xml:space="preserve">
@@ -7975,10 +8950,19 @@
   <data name="SharedMediaTab" xml:space="preserve">
     <value>رسانه‌ها</value>
   </data>
+  <data name="SharedMediaTab2" xml:space="preserve">
+    <value>رسانه</value>
+  </data>
+  <data name="SharedMediaTabFull2" xml:space="preserve">
+    <value>رسانه‌های اشتراکی</value>
+  </data>
   <data name="SharedMediaTitle" xml:space="preserve">
     <value>رسانه‌های اشتراکی</value>
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
+    <value>صداها</value>
+  </data>
+  <data name="SharedMusicTab2" xml:space="preserve">
     <value>صداها</value>
   </data>
   <data name="SharedPhotosAndVideos" xml:space="preserve">
@@ -7988,6 +8972,9 @@
     <value>مکان‌</value>
   </data>
   <data name="SharedVoiceTab" xml:space="preserve">
+    <value>پیام‌های صوتی</value>
+  </data>
+  <data name="SharedVoiceTab2" xml:space="preserve">
     <value>پیام‌های صوتی</value>
   </data>
   <data name="ShareFile" xml:space="preserve">
@@ -8011,8 +8998,29 @@
   <data name="ShareSendTo" xml:space="preserve">
     <value>ارسال به... </value>
   </data>
+  <data name="SharesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SharesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SharesOne" xml:space="preserve">
+    <value>⁨{0}⁩ به اشتراک گذاری</value>
+  </data>
+  <data name="SharesOther" xml:space="preserve">
+    <value>⁨{0}⁩ به اشتراک گذاری</value>
+  </data>
+  <data name="SharesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SharesZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="ShareTelegram" xml:space="preserve">
     <value>به اشتراک گذاشتن تلگرام...</value>
+  </data>
+  <data name="ShareTheme" xml:space="preserve">
+    <value>به اشتراک گذاشتن پوسته</value>
   </data>
   <data name="ShareYouLocationInfo" xml:space="preserve">
     <value>این کار موقعیت مکانی فعلی شما را برای ربات ارسال خواهد کرد.</value>
@@ -8050,23 +9058,50 @@
   <data name="ShowAllFiles" xml:space="preserve">
     <value>نمایش تمامی فایل‌ها</value>
   </data>
+  <data name="ShowAllGIFs" xml:space="preserve">
+    <value>نمایش تمامی گیف‌ها</value>
+  </data>
   <data name="ShowAllMedia" xml:space="preserve">
     <value>نمایش تمامی رسانه‌ها</value>
   </data>
   <data name="ShowAllThemes" xml:space="preserve">
     <value>نمایش تمامی پوسته‌ها</value>
   </data>
+  <data name="ShowAsGrid" xml:space="preserve">
+    <value>نمایش به صورت جدول</value>
+  </data>
+  <data name="ShowAsList" xml:space="preserve">
+    <value>نمایش به صورت فهرست</value>
+  </data>
   <data name="ShowInChat" xml:space="preserve">
     <value>نمایش در گفتگو</value>
   </data>
   <data name="ShowNearbyPlaces" xml:space="preserve">
-    <value>جهت مشاهده مکان‌های نزدیک صفحه را به بالا بکشید</value>
+    <value>جهت مشاهده مکان‌های نزدیک صفحه را به سمت بالا بکشید</value>
   </data>
   <data name="ShowNotificationsFor" xml:space="preserve">
     <value>نمایش اعلان‌ها برای</value>
   </data>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
-    <value>در صورتی که تمایل دارید فقط از حساب کاربری فعال خود اعلان‌ دریافت کنید، این گزینه را غیرفعال نمایید.</value>
+    <value>در صورتی که تمایل دارید فقط از حساب کاربری که در حال حاضر از آن استفاده می‌کنید اعلان‌ دریافت کنید، این گزینه را غیرفعال نمایید.</value>
+  </data>
+  <data name="ShowVotesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ShowVotesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ShowVotesOne" xml:space="preserve">
+    <value>نمایش موارد بیشتر (⁨{0}⁩)</value>
+  </data>
+  <data name="ShowVotesOther" xml:space="preserve">
+    <value>نمایش موارد بیشتر (⁨{0}⁩)</value>
+  </data>
+  <data name="ShowVotesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ShowVotesZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>تصادفی</value>
@@ -8079,6 +9114,9 @@
   </data>
   <data name="SlideToCancel" xml:space="preserve">
     <value>برای لغو کردن نوار را بکشید</value>
+  </data>
+  <data name="SlideUpToLock" xml:space="preserve">
+    <value>برای قفل کردن ضبط به سمت بالا بکشید</value>
   </data>
   <data name="Slowmode" xml:space="preserve">
     <value>حالت آرام</value>
@@ -8135,7 +9173,7 @@
     <value>ظرف مدت ⁨{0}⁩:⁨%2$02d⁩ برای شما پیامکی ارسال خواهیم کرد</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
-    <value>پس از ایجاد گروه و ارتقاء آن به یک ابرگروه، شما می‌توانید اعضای بیشتری را اضافه کنید.</value>
+    <value>پس از ایجاد گروه و تبدیل آن به یک ابرگروه، شما می‌توانید اعضای بیشتری را اضافه کنید.</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>مرتب‌سازی بر اساس</value>
@@ -8176,8 +9214,35 @@
   <data name="StickersAndMasks" xml:space="preserve">
     <value>استیکرها و ماسک‌ها</value>
   </data>
+  <data name="StickersArchived" xml:space="preserve">
+    <value>استیکرها بایگانی شدند.</value>
+  </data>
+  <data name="StickersArchivedInfo" xml:space="preserve">
+    <value>⁨{0}⁩ به بایگانی شما منتقل  شد.</value>
+  </data>
+  <data name="StickersBotInfo" xml:space="preserve">
+    <value>هنرمندان می‌توانند بسته‌های استیکر خود را با استفاده از ربات @stickers اضافه کنند.</value>
+  </data>
   <data name="StickersCopy" xml:space="preserve">
     <value>کپی لینک</value>
+  </data>
+  <data name="StickerSetsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsOne" xml:space="preserve">
+    <value>⁨{0}⁩ بسته استیکر</value>
+  </data>
+  <data name="StickerSetsOther" xml:space="preserve">
+    <value>⁨{0}⁩ بسته استیکر</value>
+  </data>
+  <data name="StickerSetsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="StickersFew" xml:space="preserve">
     <value/>
@@ -8203,6 +9268,15 @@
   <data name="StickersRemoved" xml:space="preserve">
     <value>استیکرها حذف شدند</value>
   </data>
+  <data name="StickersRemovedInfo" xml:space="preserve">
+    <value>⁨{0}⁩ دیگر در استیکرهای شما نیست.</value>
+  </data>
+  <data name="StickersReorder" xml:space="preserve">
+    <value>مرتب‌سازی مجدد</value>
+  </data>
+  <data name="StickersReorderHint" xml:space="preserve">
+    <value>برای مرتب‌سازی مجدد، استیکرها را جابجا کنید.</value>
+  </data>
   <data name="StickersShare" xml:space="preserve">
     <value>به اشتراک گذاشتن</value>
   </data>
@@ -8227,11 +9301,23 @@
   <data name="StopLiveLocationAlertAll" xml:space="preserve">
     <value>آیا از متوقف کردن به اشتراک‌ گذاری موقعیت مکانی لحظه‌ای خود اطمینان دارید؟</value>
   </data>
+  <data name="StopLiveLocationAlertAllText" xml:space="preserve">
+    <value>آیا می‌خواهید به اشتراک گذاری موقعیت مکانی لحظه‌ای خود را متوقف کنید؟</value>
+  </data>
   <data name="StopLiveLocationAlertToGroup" xml:space="preserve">
     <value>آیا از متوقف کردن به اشتراک گذاری موقعیت مکانی لحظه‌ای خود با ⁨{0}⁩ اطمینان دارید؟</value>
   </data>
+  <data name="StopLiveLocationAlertToGroupText" xml:space="preserve">
+    <value>آیا می‌خواهید به اشتراک گذاری موقعیت مکانی لحظه‌ای خود را با **⁨{0}⁩** متوقف کنید؟</value>
+  </data>
+  <data name="StopLiveLocationAlertToTitle" xml:space="preserve">
+    <value>متوقف کردن به اشتراک گذاری مکان</value>
+  </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
     <value>آیا از متوقف کردن به اشتراک گذاری موقعیت مکانی لحظه‌ای خود با ⁨{0}⁩ اطمینان دارید؟</value>
+  </data>
+  <data name="StopLiveLocationAlertToUserText" xml:space="preserve">
+    <value>آیا می‌خواهید به اشتراک گذاری موقعیت مکانی لحظه‌ای خود را با **⁨{0}⁩** متوقف کنید؟</value>
   </data>
   <data name="StopLoading" xml:space="preserve">
     <value>بارگذاری متوقف شود؟</value>
@@ -8244,6 +9330,18 @@
   </data>
   <data name="StopPollAlertTitle" xml:space="preserve">
     <value>نظرسنجی متوقف شود؟</value>
+  </data>
+  <data name="StopQuiz" xml:space="preserve">
+    <value>متوقف کردن آزمون</value>
+  </data>
+  <data name="StopQuizAlertText" xml:space="preserve">
+    <value>در صورتی که اکنون این آزمون را متوقف کنید، کسی قادر به پاسخ دادن به آن نخواهد بود. این عمل بازگشت‌ناپذیر است.</value>
+  </data>
+  <data name="StopQuizAlertTitle" xml:space="preserve">
+    <value>آزمون متوقف شود؟</value>
+  </data>
+  <data name="StopShowingMe" xml:space="preserve">
+    <value>به من نشان نده</value>
   </data>
   <data name="StopVerification" xml:space="preserve">
     <value>آیا می‌خواهید فرآیند تأیید را متوقف کنید؟</value>
@@ -8284,6 +9382,9 @@
   <data name="SuggestContactsInfo" xml:space="preserve">
     <value>افرادی که مکرراً برای آن‌ها پیام ارسال می‌کنید در بالای قسمت جستجوی دسترسی سریع نمایش داده می‌شوند.</value>
   </data>
+  <data name="SuggestContactsTitle" xml:space="preserve">
+    <value>غیرفعال کردن پیشنهادها</value>
+  </data>
   <data name="SuggestStickers" xml:space="preserve">
     <value>پیشنهاد استیکر بر اساس اموجی</value>
   </data>
@@ -8314,6 +9415,14 @@
   <data name="SyncContactsDeleteInfo" xml:space="preserve">
     <value>این کار مخاطبین شما را از سرورهای تلگرام حذف می‌کند. در صورتی که «همگام‌سازی مخاطبین» فعال باشد، مخاطبین مجدداً همگام‌سازی می‌شوند.</value>
   </data>
+  <data name="SyncContactsDeleteText" xml:space="preserve">
+    <value>این کار مخاطبین شما را از سرورهای تلگرام حذف می‌کند.
+
+در صورتی که **همگام‌سازی مخاطبین** فعال باشد، مخاطبین مجدداً همگام‌سازی می‌شوند.</value>
+  </data>
+  <data name="SyncContactsDeleteTitle" xml:space="preserve">
+    <value>حذف مخاطبین</value>
+  </data>
   <data name="SyncContactsInfoOff" xml:space="preserve">
     <value>این گزینه را فعال کنید تا مخاطبین این دستگاه به طور مداوم با حساب کاربری شما همگام‌سازی شوند.</value>
   </data>
@@ -8343,6 +9452,12 @@
   </data>
   <data name="TapToDownload" xml:space="preserve">
     <value>برای دانلود ضربه بزنید</value>
+  </data>
+  <data name="TapToSendLocation" xml:space="preserve">
+    <value>برای ارسال این موقعیت مکانی ضربه بزنید</value>
+  </data>
+  <data name="TapToViewAsList" xml:space="preserve">
+    <value>برای مشاهده به صورت فهرست ضربه بزنید.</value>
   </data>
   <data name="Teal" xml:space="preserve">
     <value>سبز دودی</value>
@@ -8388,8 +9503,14 @@
   <data name="TelegramPassportDeleteAlert" xml:space="preserve">
     <value>آیا از حذف پاسپورت تلگرام خود اطمینان دارید؟</value>
   </data>
+  <data name="TelegramPassportDeleteTitle" xml:space="preserve">
+    <value>حذف پاسپورت تلگرام</value>
+  </data>
   <data name="TelegramVersion" xml:space="preserve">
     <value>تلگرام برای اندروید ⁨{0}⁩</value>
+  </data>
+  <data name="Terminate" xml:space="preserve">
+    <value>پایان دادن</value>
   </data>
   <data name="TerminateAllSessions" xml:space="preserve">
     <value>پایان دادن به تمامی نشست‌های دیگر</value>
@@ -8403,14 +9524,26 @@
   <data name="TerminateSessionQuestion" xml:space="preserve">
     <value>آیا به این نشست پایان می‌دهید؟</value>
   </data>
+  <data name="TerminateSessionText" xml:space="preserve">
+    <value>آیا از پایان دادن به این نشست اطمینان دارید؟</value>
+  </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
     <value>برای قطع اتصال حساب کاربری تلگرام خود ضربه بزنید.</value>
   </data>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>اتصال ⁨{0}⁩ قطع شود؟</value>
   </data>
+  <data name="TerminateWebSessionsTitle" xml:space="preserve">
+    <value>قطع اتصال وبسایت‌ها</value>
+  </data>
   <data name="TerminateWebSessionStop" xml:space="preserve">
     <value>مسدود کردن ⁨{0}⁩</value>
+  </data>
+  <data name="TerminateWebSessionText" xml:space="preserve">
+    <value>آیا از قطع اتصال ⁨{0}⁩ اطمینان دارید؟</value>
+  </data>
+  <data name="TerminateWebSessionTitle" xml:space="preserve">
+    <value>قطع اتصال وبسایت</value>
   </data>
   <data name="TermsOfService" xml:space="preserve">
     <value>شرایط و ضوابط خدمات</value>
@@ -8421,6 +9554,9 @@
   </data>
   <data name="TextCopied" xml:space="preserve">
     <value>متن در حافظه کپی شد</value>
+  </data>
+  <data name="TextSelectionHit" xml:space="preserve">
+    <value>بر روی **کلمه** نگه دارید، سپس برای انتخاب متن بیشتری برای کپی اشاره‌گر را حرکت دهید.</value>
   </data>
   <data name="TextSize" xml:space="preserve">
     <value>اندازه متن پیام</value>
@@ -8443,6 +9579,9 @@
   <data name="ThemeBlue" xml:space="preserve">
     <value>تک رنگ</value>
   </data>
+  <data name="ThemeClassic" xml:space="preserve">
+    <value>کلاسیک</value>
+  </data>
   <data name="ThemeCreateHelp" xml:space="preserve">
     <value>هر کسی می‌تواند با استفاده از این لینک پوسته شما را نصب کند. هر بار که شما تغییری در پوسته ایجاد کنید، برای تمامی کاربرانی که آن را نصب کرده باشند به‌روزرسانی خواهد شد. 
 
@@ -8458,6 +9597,9 @@
   </data>
   <data name="ThemeDarkBlue" xml:space="preserve">
     <value>آبی تیره</value>
+  </data>
+  <data name="ThemeDay" xml:space="preserve">
+    <value>روز</value>
   </data>
   <data name="ThemeGraphite" xml:space="preserve">
     <value>گرافیت</value>
@@ -8492,6 +9634,9 @@
   </data>
   <data name="ThemeNamePlaceholder" xml:space="preserve">
     <value>نام</value>
+  </data>
+  <data name="ThemeNight" xml:space="preserve">
+    <value>شب</value>
   </data>
   <data name="ThemeNotFound" xml:space="preserve">
     <value>پوسته یافت نشد</value>
@@ -8574,6 +9719,15 @@
   <data name="ThemePreviewTitle" xml:space="preserve">
     <value>رامین</value>
   </data>
+  <data name="ThemeResetToDefaults" xml:space="preserve">
+    <value>بازنشانی به پیش‌فرض</value>
+  </data>
+  <data name="ThemeResetToDefaultsText" xml:space="preserve">
+    <value>آیا از بازنشانی تنظیمات اندازه و رنگ متن اطمینان دارید؟</value>
+  </data>
+  <data name="ThemeResetToDefaultsTitle" xml:space="preserve">
+    <value>بازنشانی تنظیمات</value>
+  </data>
   <data name="ThemeSetUrl" xml:space="preserve">
     <value>تنظیم لینک</value>
   </data>
@@ -8620,9 +9774,27 @@
   <data name="TodayAtFormatted" xml:space="preserve">
     <value>در ⁨{0}⁩</value>
   </data>
+  <data name="TodayAtFormattedWithToday" xml:space="preserve">
+    <value>امروز در ⁨{0}⁩</value>
+  </data>
+  <data name="TooManyCommunities" xml:space="preserve">
+    <value>در کانال‌ها و گروه‌های بسیار زیادی عضو هستید</value>
+  </data>
+  <data name="TooManyCommunitiesHintCreate" xml:space="preserve">
+    <value>متأسفانه شما عضو گروه‌ها و کانال‌های زیادی هستید. لطفاً پیش از ایجاد گروه یا کانال جدید برخی از آن‌ها را ترک کنید.</value>
+  </data>
+  <data name="TooManyCommunitiesHintEdit" xml:space="preserve">
+    <value>متأسفانه شما عضو گروه‌ها و کانال‌های زیادی هستید. به دلایل فنی، شما باید پیش از تغییر این تنظیمات در گروه‌های خود ابتدا برخی از آن‌ها را ترک کنید.</value>
+  </data>
+  <data name="TooManyCommunitiesHintJoin" xml:space="preserve">
+    <value>متأسفانه شما عضو گروه‌ها و کانال‌های زیادی هستید. لطفاً پیش از عضویت در گروه یا کانال جدید برخی از آن‌ها را ترک کنید.</value>
+  </data>
   <data name="TooManyTries" xml:space="preserve">
     <value>بیش از حد مجاز امتحان کردید.
 لطفاً ⁨{0}⁩ دیگر دوباره تلاش کنید.</value>
+  </data>
+  <data name="TopHoursChartTitle" xml:space="preserve">
+    <value>بازدیدها بر اساس ساعت (UTC)</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
     <value>جهت تأیید این که سن شما ⁨{0}⁩ سال یا بیشتر است بر روی پذیرش بزنید.</value>
@@ -8638,14 +9810,14 @@
 اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود.</value>
   </data>
   <data name="TosDeclineDeleteAccount" xml:space="preserve">
-    <value>هشدار، این کار حساب کاربری تلگرام شما را به همراه تمامی داده‌هایی که در ابر تلگرام ذخیره می‌کنید به صورت بازگشت‌ناپذیری حذف می‌کند.
+    <value>هشدار، این کار حساب کاربری تلگرام شما را به همراه تمامی داده‌هایی که در ابر تلگرام ذخیره کرده‌اید به صورت بازگشت‌ناپذیری حذف می‌کند.
 
-توجه: شما می‌توانید همین الان این عمل را لغو کرده و پیش از حذف حساب کاربری خود و از دست دادن تمامی داده‌هایتان، آن‌ها را ذخیره کنید. (جهت انجام این کار، آخرین نسخه تلگرام دسکتاپ را باز کرده و به قسمت تنظیمات > ذخیره داده‌های تلگرام مراجعه کنید.)</value>
+توجه: شما می‌توانید همین الان این عمل را لغو کرده و پیش از حذف حساب کاربری خود و از دست دادن تمامی داده‌هایتان، آن‌ها را ذخیره کنید. (جهت انجام این کار، آخرین نسخه تلگرام دسکتاپ را باز کرده و به قسمت تنظیمات (Settings) > پیشرفته (Advanced) > ذخیره داده‌های تلگرام (Export Telegram data) مراجعه کنید.)</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
     <value>متأسفانه این یعنی ما مجبوریم در اینجا راهمان را از هم جدا کنیم. برخلاف دیگران، ما از داده‌های شما برای تبلیغات یا سایر اهداف تجاری استفاده نمی‌کنیم. تلگرام فقط اطلاعاتی را ذخیره می‌کند که برای عمل به عنوان یک سرویس ابری با امکانات زیاد به آن‌ها نیاز دارد. شما می‌توانید در تنظیمات حریم خصوصی و امنیت نحوه استفاده ما از داده‌های خود را تنظیم کنید (برای مثال با حذف مخاطبین همگام‌سازی شده).
 
-اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود. شما می‌توانید همین حالا حساب کاربری خود را غیرفعال کنید - یا کمی صبر کرده و بعداً در صورتی که همچنان از نحوه استفاده ما از داده‌های خود راضی نیستید آن را غیرفعال کنید.</value>
+اما اگر در حالت کلی با نیازهای نسبتاً کم تلگرام مشکل دارید، ارائه این سرویس برای ما امکان‌پذیر نخواهد بود. شما می‌توانید همین حالا حساب کاربری خود را غیرفعال کنید — یا کمی صبر کرده و بعداً در صورتی که همچنان از نحوه استفاده ما از داده‌های خود راضی نیستید آن را غیرفعال کنید.</value>
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>مجموع</value>
@@ -8658,6 +9830,9 @@
   </data>
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>آیا از غیرفعال کردن گذرواژه خود اطمینان دارید؟</value>
+  </data>
+  <data name="TurnPasswordOffQuestionTitle" xml:space="preserve">
+    <value>غیرفعال کردن گذرواژه</value>
   </data>
   <data name="TwoStepVerification" xml:space="preserve">
     <value>تأیید دو مرحله‌ای</value>
@@ -8896,6 +10071,9 @@
   <data name="UserBlocked" xml:space="preserve">
     <value>کاربر مسدود شد</value>
   </data>
+  <data name="UserChannelTooMuchJoin" xml:space="preserve">
+    <value>متأسفانه کاربر موردنظر عضو گروه‌ها و کانال‌های زیادی است. لطفاً ابتدا از او بخواهید برخی از آن‌ها را ترک کند.</value>
+  </data>
   <data name="Username" xml:space="preserve">
     <value>نام کاربری</value>
   </data>
@@ -9028,6 +10206,42 @@
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>همیشه</value>
   </data>
+  <data name="UsersCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountOne" xml:space="preserve">
+    <value>⁨{0}⁩ کاربر</value>
+  </data>
+  <data name="UsersCountOther" xml:space="preserve">
+    <value>⁨{0}⁩ کاربر</value>
+  </data>
+  <data name="UsersCountTitleFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleOne" xml:space="preserve">
+    <value>⁨{0}⁩ کاربر</value>
+  </data>
+  <data name="UsersCountTitleOther" xml:space="preserve">
+    <value>⁨{0}⁩ کاربر</value>
+  </data>
+  <data name="UsersCountTitleTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTitleZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="UsersCountZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="UsersFew" xml:space="preserve">
     <value/>
   </data>
@@ -9069,6 +10283,9 @@
   </data>
   <data name="VideoMessagesAutodownload" xml:space="preserve">
     <value>پیام‌های ویدیویی</value>
+  </data>
+  <data name="VideoQualityIsTooLow" xml:space="preserve">
+    <value>کیفیت ویدیو برای تغییر تنظیمات فشرده‌سازی بسیار کم است.</value>
   </data>
   <data name="VideosFew" xml:space="preserve">
     <value/>
@@ -9118,8 +10335,47 @@
   <data name="ViewPackPreview" xml:space="preserve">
     <value>مشاهده بسته</value>
   </data>
+  <data name="ViewsBySourceChartTitle" xml:space="preserve">
+    <value>بازدیدها بر اساس منبع</value>
+  </data>
+  <data name="ViewsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewsOne" xml:space="preserve">
+    <value>⁨{0}⁩ بازدید</value>
+  </data>
+  <data name="ViewsOther" xml:space="preserve">
+    <value>⁨{0}⁩ بازدید</value>
+  </data>
+  <data name="ViewsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewsZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Vignette" xml:space="preserve">
     <value>حاشیه‌</value>
+  </data>
+  <data name="VoiceFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceOne" xml:space="preserve">
+    <value>⁨{0}⁩ پیام صوتی </value>
+  </data>
+  <data name="VoiceOther" xml:space="preserve">
+    <value>⁨{0}⁩ پیام صوتی </value>
+  </data>
+  <data name="VoiceTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VoiceZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>پاسخ</value>
@@ -9189,7 +10445,7 @@
     <value>در حال حاضر حالت هواپیما فعال است. لطفاً جهت برقراری تماس آن را غیرفعال کرده یا به وای فای متصل شوید.</value>
   </data>
   <data name="VoipOfflineAirplaneTitle" xml:space="preserve">
-    <value>حالت هواپیما</value>
+    <value>حالت پرواز</value>
   </data>
   <data name="VoipOfflineOpenSettings" xml:space="preserve">
     <value>تنظیمات</value>
@@ -9413,7 +10669,7 @@
   <data name="YourEmailSkipWarningText" xml:space="preserve">
     <value>توجه داشته باشید،
 
-در صورت فراموش کردن گذرواژه، شما دسترسی به حساب کاربری تلگرام خود را از دست خواهید داد و هیچ راهی برای بازگرداندن حساب کاربری شما وجود نخواهد داشت.</value>
+در صورت فراموش کردن گذرواژه، شما دسترسی به حساب کاربری تلگرام خود را از دست خواهید داد. هیچ راهی برای بازگرداندن حساب کاربری شما وجود نخواهد داشت.</value>
   </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>ایمیل بازیابی شما برای تأیید دو مرحله‌ای هم اکنون فعال است.</value>
@@ -9437,6 +10693,9 @@
     <value>شماره تلفن شما</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
-    <value>شما از گروه حذف شدید</value>
+    <value>شما حذف شدید</value>
+  </data>
+  <data name="ZoomOut" xml:space="preserve">
+    <value>کوچکنمایی</value>
   </data>
 </root>

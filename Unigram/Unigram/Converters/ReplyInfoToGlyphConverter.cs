@@ -56,6 +56,8 @@ namespace Unigram.Converters
         public const string Secret = "\uE1F6";
         public const string Bot = "\uE99A";
 
+        public const string Help = "\uE897";
+
         public const string Reply = "\uE248";
         public const string Edit = "\uE104";
         public const string Timer = "\uE916";
@@ -95,7 +97,7 @@ namespace Unigram.Converters
         public const string OpenIn = "\uE7AC";
         public const string OpenInNewWindow = "\uE8A7";
 
-        public const string Contact = "\uE8D4";
+        public const string Contact = "\uE77B";
         public const string AddUser = "\uE8FA";
 
         public const string Admin = "\uE734";
@@ -109,7 +111,7 @@ namespace Unigram.Converters
         public const string Camera = "\uE722";
         public const string Photo = "\uEB9F";
 
-        public const string Statistics = "\uE9D2";
+        public const string Statistics = "\uE9D9";
 
         public const string Add = "\uE710";
     }

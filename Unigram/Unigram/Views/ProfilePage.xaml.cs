@@ -555,7 +555,7 @@ namespace Unigram.Views
                 {
                     if (supergroup.IsChannel)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
+                        //flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
                     }
                     else
                     {
