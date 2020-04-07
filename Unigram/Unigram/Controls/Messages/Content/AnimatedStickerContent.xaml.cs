@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
@@ -162,7 +163,11 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.GeneratedContent != null)
+            if (_message.Content is MessageDice)
+            {
+                Window.Current.ShowTeachingTip(this, Strings.Resources.DiceInfo, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
+            }
+            else if (_message.Content is MessageText)
             {
                 Player.Play();
             }

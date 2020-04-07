@@ -102,7 +102,7 @@ namespace Unigram.Services
         int GetNotificationSettingsMuteFor(Chat chat);
         ScopeNotificationSettings GetScopeNotificationSettings(Chat chat);
 
-        Task<StickerSet> GetAnimatedEmojiAsync();
+        Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type);
     }
 
     public class ProtoService : IProtoService, ClientResultHandler
@@ -138,8 +138,8 @@ namespace Unigram.Services
         private readonly SimpleFileContext<long> _chatsMap = new SimpleFileContext<long>();
         private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
 
-        private StickerSet _animatedEmoji;
-        private TaskCompletionSource<StickerSet> _animatedEmojiTask;
+        private StickerSet[] _animatedSet = new StickerSet[2] { null, null };
+        private TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
 
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
@@ -424,13 +424,127 @@ namespace Unigram.Services
         //    _client.Send(function, handler);
         //}
 
+        private Dictionary<int, ChatListFilter> _filters = new Dictionary<int, ChatListFilter>
+        {
+            {
+                0, new ChatListFilter
+                {
+                    Id = 0,
+                    Title = Strings.Resources.FilterContacts,
+                    IncludeContacts = true,
+                    IncludeNonContacts = true,
+                    IncludeGroups = false,
+                    IncludeChannels = false,
+                    IncludeBots = false
+                }
+            },
+            {
+                2, new ChatListFilter
+                {
+                    Id = 2,
+                    Title = Strings.Resources.FilterGroups,
+                    IncludeContacts = false,
+                    IncludeNonContacts = false,
+                    IncludeGroups = true,
+                    IncludeChannels = false,
+                    IncludeBots = false
+                }
+            },
+            {
+                4, new ChatListFilter
+                {
+                    Id = 4,
+                    Title = Strings.Resources.FilterChannels,
+                    IncludeContacts = false,
+                    IncludeNonContacts = false,
+                    IncludeGroups = false,
+                    IncludeChannels = true,
+                    IncludeBots = false
+                }
+            },
+            {
+                5, new ChatListFilter
+                {
+                    Id = 5,
+                    Title = Strings.Resources.FilterBots,
+                    IncludeContacts = false,
+                    IncludeNonContacts = false,
+                    IncludeGroups = false,
+                    IncludeChannels = false,
+                    IncludeBots = true
+                }
+            },
+            { 
+                6, new ChatListFilter
+                {
+                    Id = 6,
+                    Title = "Unmuted",
+                    ExcludeMuted = true
+                }
+            },
+            {
+                7, new ChatListFilter
+                {
+                    Id = 7,
+                    Title = Strings.Resources.FilterUnread,
+                    ExcludeRead = true
+                }
+            }
+        };
+
+        private IList<ChatListFilterSuggestion> _suggestions = new List<ChatListFilterSuggestion>
+        {
+            new ChatListFilterSuggestion
+            {
+                Filter = new ChatListFilter
+                {
+                    Title = "Unread",
+                    ExcludeRead = true
+                },
+                Description = "All unread chats"
+            },
+            new ChatListFilterSuggestion
+            {
+                Filter = new ChatListFilter
+                {
+                    Title = "Personal",
+                    IncludeChannels = false
+                },
+                Description = "Exclude large groups and channels"
+            }
+        };
+
         public void Send(Function function, Action<BaseObject> handler = null)
         {
+            if (function is GetChatListFilters)
+            {
+                handler?.Invoke(new ChatListFilters { Filters = _filters.Values.ToList() });
+                return;
+            }
+            else if (function is GetChatListFilterSuggestons)
+            {
+                handler?.Invoke(new ChatListFilterSuggestions { Suggestions = _suggestions });
+                return;
+            }
+
             _client.Send(function, handler);
         }
 
         public Task<BaseObject> SendAsync(Function function)
         {
+            if (function is GetChatListFilters)
+            {
+                return Task.FromResult((BaseObject)new ChatListFilters { Filters = _filters.Values.ToList() });
+            }
+            else if (function is GetChatListFilterSuggestons)
+            {
+                return Task.FromResult((BaseObject)new ChatListFilterSuggestions { Suggestions = _suggestions });
+            }
+            else if (function is SetChatFilter set)
+            {
+                _filters[set.Filter.Id] = set.Filter;
+            }
+
             return _client.SendAsync(function);
         }
 
@@ -1044,23 +1158,23 @@ namespace Unigram.Services
             return false;
         }
 
-        public async Task<StickerSet> GetAnimatedEmojiAsync()
+        public async Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type)
         {
-            var set = _animatedEmoji;
+            var set = _animatedSet[(int)type];
             if (set != null)
             {
                 return set;
             }
 
-            var tsc = _animatedEmojiTask;
+            var tsc = _animatedSetTask[(int)type];
             if (tsc != null)
             {
                 return await tsc.Task;
             }
 
-            tsc = _animatedEmojiTask = new TaskCompletionSource<StickerSet>();
+            tsc = _animatedSetTask[(int)type] = new TaskCompletionSource<StickerSet>();
 
-            var task = GetAnimatedEmojiAsyncInternal();
+            var task = GetAnimatedSetAsyncInternal(type);
             var result = await Task.WhenAny(task, Task.Delay(2000));
 
             set = result == task ? task.Result as StickerSet : null;
@@ -1069,13 +1183,27 @@ namespace Unigram.Services
             return set;
         }
 
-        private async Task<StickerSet> GetAnimatedEmojiAsyncInternal()
+        private async Task<StickerSet> GetAnimatedSetAsyncInternal(AnimatedSetType type)
         {
-            var response = await SendAsync(new SearchStickerSet(Options.AnimatedEmojiStickerSetName ?? "AnimatedEmojies"));
+            string name;
+            if (type == AnimatedSetType.Emoji)
+            {
+                name = Options.AnimatedEmojiStickerSetName ?? "AnimatedEmojies";
+            }
+            else if (type == AnimatedSetType.Dice)
+            {
+                name = Options.AnimatedDiceStickerSetName ?? "AnimatedDice";
+            }
+            else
+            {
+                return null;
+            }
+
+            var response = await SendAsync(new SearchStickerSet(name));
             if (response is StickerSet set)
             {
-                _animatedEmoji = set;
-                _animatedEmojiTask.TrySetResult(set);
+                _animatedSet[(int)type] = set;
+                _animatedSetTask[(int)type].TrySetResult(set);
                 return set;
             }
 
@@ -1489,6 +1617,12 @@ namespace Unigram.Services
 
             _aggregator.Publish(update);
         }
+    }
+
+    public enum AnimatedSetType
+    {
+        Emoji,
+        Dice
     }
 
     public class ChatListUnreadCount
