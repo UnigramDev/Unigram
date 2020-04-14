@@ -31,10 +31,14 @@
                             <Path x:Name="HorizontalTrackRect"
                                   Margin="{TemplateBinding Padding}"
                                   Fill="{TemplateBinding Background}"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
                                   HorizontalAlignment="Stretch" />
                             <Path x:Name="ProgressBarIndicator"
                                   Margin="{TemplateBinding Padding}"
                                   Fill="{TemplateBinding Foreground}"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
                                   HorizontalAlignment="Left" />
                         </Grid>
                     </ControlTemplate>
