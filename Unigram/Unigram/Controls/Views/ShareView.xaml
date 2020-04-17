@@ -471,7 +471,7 @@
     </ContentControl.Resources>
 
     <ContentDialog.Title>
-        <Grid x:Name="Header">
+        <Grid x:Name="Header2">
             <Grid x:Name="MainHeader">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -517,7 +517,7 @@
         </Grid>
     </ContentDialog.Title>
     
-    <Grid MaxWidth="380" MaxHeight="420">
+    <Grid Width="320" MaxHeight="4200">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>

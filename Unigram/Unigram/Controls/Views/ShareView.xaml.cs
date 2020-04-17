@@ -80,6 +80,12 @@ namespace Unigram.Controls.Views
             }
         }
 
+        public object Header
+        {
+            get => ChatsPanel.Header;
+            set => ChatsPanel.Header = value;
+        }
+
         #region Show
 
         private static Dictionary<int, WeakReference<ShareView>> _windowContext = new Dictionary<int, WeakReference<ShareView>>();
@@ -683,7 +689,7 @@ namespace Unigram.Controls.Views
 
         private void List_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Header.Width = e.NewSize.Width;
+            Header2.Width = e.NewSize.Width;
             DialogsSearchListView.Width = e.NewSize.Width;
             DialogsSearchListView.Height = e.NewSize.Height;
         }

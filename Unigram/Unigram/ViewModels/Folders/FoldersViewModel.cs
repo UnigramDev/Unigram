@@ -8,14 +8,14 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Updates;
-using Unigram.Views.Filters;
+using Unigram.Views.Folders;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Filters
+namespace Unigram.ViewModels.Folders
 {
-    public class FiltersViewModel : TLViewModelBase
+    public class FoldersViewModel : TLViewModelBase
     {
-        public FiltersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public FoldersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<ChatListFilter>();
@@ -46,13 +46,13 @@ namespace Unigram.ViewModels.Filters
         public RelayCommand<ChatListFilter> EditCommand { get; }
         private void EditExecute(ChatListFilter filter)
         {
-            NavigationService.Navigate(typeof(FilterPage), filter.Id);
+            NavigationService.Navigate(typeof(FolderPage), filter.Id);
         }
 
         public RelayCommand AddCommand { get; }
         private void AddExecute()
         {
-            NavigationService.Navigate(typeof(FilterPage));
+            NavigationService.Navigate(typeof(FolderPage));
         }
     }
 }

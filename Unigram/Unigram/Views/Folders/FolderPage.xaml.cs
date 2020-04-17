@@ -7,7 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.ViewModels.Filters;
+using Unigram.ViewModels.Folders;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -18,16 +18,16 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Filters
+namespace Unigram.Views.Folders
 {
-    public sealed partial class FilterPage : Page
+    public sealed partial class FolderPage : Page
     {
-        public FilterViewModel ViewModel => DataContext as FilterViewModel;
+        public FolderViewModel ViewModel => DataContext as FolderViewModel;
 
-        public FilterPage()
+        public FolderPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<FilterViewModel>();
+            DataContext = TLContainer.Current.Resolve<FolderViewModel>();
         }
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)

@@ -15,11 +15,11 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels.Filters
+namespace Unigram.ViewModels.Folders
 {
-    public class FilterViewModel : TLViewModelBase
+    public class FolderViewModel : TLViewModelBase
     {
-        public FilterViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public FolderViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Include = new MvxObservableCollection<ChatListFilterElement>();
@@ -113,7 +113,7 @@ namespace Unigram.ViewModels.Filters
             var header = new ListView();
             header.SelectionMode = ListViewSelectionMode.Multiple;
             header.ItemsSource = flags;
-            header.ItemTemplate = App.Current.Resources["FilterPickerTemplate"] as DataTemplate;
+            header.ItemTemplate = App.Current.Resources["FolderPickerTemplate"] as DataTemplate;
             header.ItemContainerStyle = App.Current.Resources["DefaultListViewItemStyle"] as Style;
             header.ContainerContentChanging += Header_ContainerContentChanging;
 
@@ -183,7 +183,7 @@ namespace Unigram.ViewModels.Filters
             var header = new ListView();
             header.SelectionMode = ListViewSelectionMode.Multiple;
             header.ItemsSource = flags;
-            header.ItemTemplate = App.Current.Resources["FilterPickerTemplate"] as DataTemplate;
+            header.ItemTemplate = App.Current.Resources["FolderPickerTemplate"] as DataTemplate;
             header.ItemContainerStyle = App.Current.Resources["DefaultListViewItemStyle"] as Style;
             header.ContainerContentChanging += Header_ContainerContentChanging;
 

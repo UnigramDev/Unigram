@@ -30,6 +30,23 @@
          </Grid>
          </DataTemplate>-->
 
+    <DataTemplate x:Key="FolderPickerTemplate">
+        <Grid Margin="12,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <controls:ProfilePicture IsHitTestVisible="False" Width="36" Height="36" Margin="0,0,12,0"/>
+            <TextBlock
+                VerticalAlignment="Center"
+                TextWrapping="NoWrap"
+                TextTrimming="CharacterEllipsis"
+                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                Style="{StaticResource BodyTextBlockStyle}"
+                Grid.Column="1"/>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="StickerSetItemTemplate" x:DataType="td:StickerSetInfo">
         <Grid Margin="0,6" Background="Transparent">
             <Grid.ColumnDefinitions>

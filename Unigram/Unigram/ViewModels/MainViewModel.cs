@@ -19,8 +19,8 @@ using Unigram.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Unigram.Collections;
-using Unigram.ViewModels.Filters;
-using Unigram.Views.Filters;
+using Unigram.ViewModels.Folders;
+using Unigram.Views.Folders;
 
 namespace Unigram.ViewModels
 {
@@ -100,7 +100,7 @@ namespace Unigram.ViewModels
         public RelayCommand SetupFiltersCommand { get; }
         private void SetupFiltersExecute()
         {
-            NavigationService.Navigate(typeof(FiltersPage));
+            NavigationService.Navigate(typeof(FoldersPage));
         }
 
         public bool CollapseArchivedChats
@@ -281,7 +281,7 @@ namespace Unigram.ViewModels
         public RelayCommand<ChatListFilter> FilterEditCommand { get; }
         private void FilterEditExecute(ChatListFilter filter)
         {
-            NavigationService.Navigate(typeof(FilterPage), filter.Id);
+            NavigationService.Navigate(typeof(FolderPage), filter.Id);
         }
 
         private async void FilterAddExecute(ChatListFilter filter)
