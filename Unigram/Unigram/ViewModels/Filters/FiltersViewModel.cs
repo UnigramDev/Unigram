@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Unigram.Views.Filters;
 using Windows.UI.Xaml.Navigation;
 
@@ -17,25 +18,33 @@ namespace Unigram.ViewModels.Filters
         public FiltersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<ChatFilter>();
+            Items = new MvxObservableCollection<ChatListFilter>();
+            Suggestions = new MvxObservableCollection<ChatListFilterSuggestion>();
 
-            EditCommand = new RelayCommand<ChatFilter>(EditExecute);
+            EditCommand = new RelayCommand<ChatListFilter>(EditExecute);
             AddCommand = new RelayCommand(AddExecute);
         }
 
-        public MvxObservableCollection<ChatFilter> Items { get; private set; }
+        public MvxObservableCollection<ChatListFilter> Items { get; private set; }
+        public MvxObservableCollection<ChatListFilterSuggestion> Suggestions { get; private set; }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var response = await ProtoService.SendAsync(new GetChatFilters());
-            if (response is ChatFilters filters)
+            var response = await ProtoService.SendAsync(new GetChatListFilters());
+            if (response is ChatListFilters filters)
             {
-                Items.ReplaceWith(filters.FiltersValue);
+                Items.ReplaceWith(filters.Filters);
+            }
+
+            response = await ProtoService.SendAsync(new GetChatListFilterSuggestons());
+            if (response is ChatListFilterSuggestions suggestions)
+            {
+                Suggestions.ReplaceWith(suggestions.Suggestions);
             }
         }
 
-        public RelayCommand<ChatFilter> EditCommand { get; }
-        private void EditExecute(ChatFilter filter)
+        public RelayCommand<ChatListFilter> EditCommand { get; }
+        private void EditExecute(ChatListFilter filter)
         {
             NavigationService.Navigate(typeof(FilterPage), filter.Id);
         }

@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="[Filter]"/>
+        <controls:PageHeader Text="{CustomResource FilterNew}"/>
 
         <muxc:ItemsRepeaterScrollHost Grid.Row="1">
             <ScrollViewer

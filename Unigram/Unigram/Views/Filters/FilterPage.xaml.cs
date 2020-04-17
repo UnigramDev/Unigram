@@ -48,7 +48,35 @@ namespace Unigram.Views.Filters
             }
             else if (element is FilterFlag flag)
             {
-                title.Text = Enum.GetName(typeof(ChatListFilterFlags), flag.Flag);
+                switch (flag.Flag)
+                {
+                    case ChatListFilterFlags.IncludeContacts:
+                        title.Text = Strings.Resources.FilterContacts;
+                        break;
+                    case ChatListFilterFlags.IncludeNonContacts:
+                        title.Text = Strings.Resources.FilterNonContacts;
+                        break;
+                    case ChatListFilterFlags.IncludeGroups:
+                        title.Text = Strings.Resources.FilterGroups;
+                        break;
+                    case ChatListFilterFlags.IncludeChannels:
+                        title.Text = Strings.Resources.FilterChannels;
+                        break;
+                    case ChatListFilterFlags.IncludeBots:
+                        title.Text = Strings.Resources.FilterBots;
+                        break;
+
+                    case ChatListFilterFlags.ExcludeMuted:
+                        title.Text = Strings.Resources.FilterMuted;
+                        break;
+                    case ChatListFilterFlags.ExcludeRead:
+                        title.Text = Strings.Resources.FilterRead;
+                        break;
+                    case ChatListFilterFlags.ExcludeArchived:
+                        title.Text = Strings.Resources.FilterArchived;
+                        break;
+                }
+
                 photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFilterIcon(flag.Flag), (int)flag.Flag, 36);
             }
 
