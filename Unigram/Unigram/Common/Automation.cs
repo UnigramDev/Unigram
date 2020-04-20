@@ -119,7 +119,7 @@ namespace Unigram.Common
             }
             else if (message.Content is MessageDice dice)
             {
-                builder.Append("\uD83C\uDFB2");
+                builder.Append(dice.Emoji);
             }
 
             if (builder.Length > 0 && builder[builder.Length - 1] != '.')
@@ -147,7 +147,7 @@ namespace Unigram.Common
             }
             if (message.Content is MessageDice dice)
             {
-                return "\uD83C\uDFB2" + ", ";
+                return dice.Emoji + ", ";
             }
             if (message.Content is MessageGame gameMedia)
             {

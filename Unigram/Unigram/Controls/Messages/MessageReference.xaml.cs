@@ -342,7 +342,7 @@ namespace Unigram.Controls.Messages
 
             TitleLabel.Text = GetFromLabel(message, title);
             ServiceLabel.Text = string.Empty;
-            MessageLabel.Text = "\uD83C\uDFB2";
+            MessageLabel.Text = dice.Emoji;
 
             return true;
         }

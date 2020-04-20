@@ -1300,20 +1300,19 @@ namespace Unigram.ViewModels
 
         private async Task ProcessEmojiAsync(Chat chat, IList<MessageViewModel> messages)
         {
-            var set = new StickerSet[2] { null, null };
-
+            StickerSet set = null;
             foreach (var message in messages)
             {
                 if (message.Content is MessageText text)
                 {
                     if (Emoji.TryCountEmojis(text.Text.Text, out int count, 1))
                     {
-                        if (set[0] == null)
+                        if (set == null)
                         {
-                            set[0] = await ProtoService.GetAnimatedSetAsync(AnimatedSetType.Emoji);
+                            set = await ProtoService.GetAnimatedSetAsync(AnimatedSetType.Emoji);
                         }
 
-                        if (set[0] == null)
+                        if (set == null)
                         {
                             break;
                         }
@@ -1324,7 +1323,7 @@ namespace Unigram.ViewModels
                             emoji = "\uD83D\uDC4D";
                         }
 
-                        foreach (var sticker in set[0].Stickers)
+                        foreach (var sticker in set.Stickers)
                         {
                             if (string.Equals(sticker.Emoji, emoji, StringComparison.OrdinalIgnoreCase))
                             {
@@ -1337,25 +1336,7 @@ namespace Unigram.ViewModels
                 }
                 else if (message.Content is MessageDice dice)
                 {
-                    if (set[1] == null)
-                    {
-                        set[1] = await ProtoService.GetAnimatedSetAsync(AnimatedSetType.Dice);
-                    }
-
-                    if (set[1] == null)
-                    {
-                        break;
-                    }
-
-                    switch (dice.Value)
-                    {
-                        case 0:
-                            message.GeneratedContent = new MessageSticker(new Sticker(0, 512, 512, "\uD83C\uDFB2", true, false, null, null, Common.TdExtensions.GetLocalFile("Assets\\Animations\\DiceLoop.tgs")));
-                            break;
-                        default:
-                            message.GeneratedContent = new MessageSticker(set[1].Stickers.FirstOrDefault(x => x.Emoji == $"{dice.Value}\uFE0F\u20E3"));
-                            break;
-                    }
+                    message.GeneratedContent = new MessageSticker(dice.FinalStateSticker ?? dice.InitialStateSticker);
                 }
             }
         }
@@ -2453,9 +2434,11 @@ namespace Unigram.ViewModels
             {
                 var reply = GetReply(true);
 
-                if (string.Equals(text.Trim(), "\uD83C\uDFB2"))
+                //if (string.Equals(text.Trim(), "\uD83C\uDFB2"))
+                if (CacheService.IsDiceEmoji(text, out string dice))
                 {
-                    await SendMessageAsync(reply, new InputMessageDice(), options);
+                    var input = new InputMessageDice(dice, true);
+                    await SendMessageAsync(reply, input, options);
                 }
                 else
                 {

@@ -537,7 +537,7 @@ namespace Unigram.Controls.Cells
                     return text.Text.Text.Replace('\n', ' ');
 
                 case MessageDice dice:
-                    return "\uD83C\uDFB2";
+                    return dice.Emoji;
             }
 
             return string.Empty;

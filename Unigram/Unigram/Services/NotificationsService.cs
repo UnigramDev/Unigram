@@ -727,7 +727,7 @@ namespace Unigram.Services
                     return text.Text.Text;
 
                 case MessageDice dice:
-                    return "\uD83C\uDFB2";
+                    return dice.Emoji;
             }
 
             return string.Empty;
