@@ -27,7 +27,7 @@ namespace Unigram.Controls
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var root = ItemsPanelRoot;
-            if (root == null || !ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateRoundedRectangleGeometry"))
+            if (root == null || !ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
             {
                 return;
             }
