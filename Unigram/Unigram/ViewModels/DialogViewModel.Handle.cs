@@ -602,7 +602,11 @@ namespace Unigram.ViewModels
                 {
                     message.Replace(update.Message);
                     ProcessFiles(_chat, new[] { message });
-                }, (bubble, message) => bubble.UpdateMessage(message));
+                }, (bubble, message) =>
+                {
+                    bubble.UpdateMessage(message);
+                    Delegate?.ViewVisibleMessages(false);
+                });
 
                 if (Settings.Notifications.InAppSounds)
                 {

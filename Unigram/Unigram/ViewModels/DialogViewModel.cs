@@ -1327,16 +1327,11 @@ namespace Unigram.ViewModels
                         {
                             if (string.Equals(sticker.Emoji, emoji, StringComparison.OrdinalIgnoreCase))
                             {
-                                //message.Content = new MessageSticker(sticker);
                                 message.GeneratedContent = new MessageSticker(sticker);
                                 continue;
                             }
                         }
                     }
-                }
-                else if (message.Content is MessageDice dice)
-                {
-                    message.GeneratedContent = new MessageSticker(dice.FinalStateSticker ?? dice.InitialStateSticker);
                 }
             }
         }
@@ -1345,6 +1340,11 @@ namespace Unigram.ViewModels
         {
             foreach (var message in messages)
             {
+                if (message.Content is MessageDice dice)
+                {
+                    message.GeneratedContent = new MessageSticker(dice.FinalStateSticker ?? dice.InitialStateSticker);
+                }
+
                 var target = parent ?? message;
                 var content = message.GeneratedContent ?? message.Content as object;
                 if (content is MessageAlbum albumMessage)

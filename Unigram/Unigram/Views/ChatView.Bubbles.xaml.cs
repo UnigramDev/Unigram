@@ -83,7 +83,7 @@ namespace Unigram.Views
             UpdateHeaderDate(e.IsIntermediate);
         }
 
-        private void ViewVisibleMessages(bool intermediate)
+        public void ViewVisibleMessages(bool intermediate)
         {
             var chat = ViewModel.Chat;
             if (chat == null)
