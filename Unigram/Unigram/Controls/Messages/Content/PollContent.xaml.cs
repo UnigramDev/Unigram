@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,12 +55,14 @@ namespace Unigram.Controls.Messages.Content
                 Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousPoll : Strings.Resources.PublicPoll;
                 View.Visibility = results && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
                 Submit.Visibility = !results && reg.AllowMultipleAnswers ? Visibility.Visible : Visibility.Collapsed;
+                Explanation.Visibility = Visibility.Collapsed;
             }
-            else if (poll.Poll.Type is PollTypeQuiz)
+            else if (poll.Poll.Type is PollTypeQuiz quiz)
             {
                 Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousQuizPoll : Strings.Resources.QuizPoll;
                 View.Visibility = results && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
                 Submit.Visibility = Visibility.Collapsed;
+                Explanation.Visibility = results && quiz.Explanation != null ? Visibility.Visible : Visibility.Collapsed;
             }
 
             Votes.Visibility = View.Visibility == Visibility.Collapsed && Submit.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
@@ -222,6 +225,23 @@ namespace Unigram.Controls.Messages.Content
         private void View_Click(object sender, RoutedEventArgs e)
         {
             _message.Delegate.OpenMedia(_message, null);
+        }
+
+        private void Explanation_Click(object sender, RoutedEventArgs e)
+        {
+            var poll = _message?.Content as MessagePoll;
+            if (poll == null)
+            {
+                return;
+            }
+
+            var quiz = poll.Poll.Type as PollTypeQuiz;
+            if (quiz == null)
+            {
+                return;
+            }
+
+            Window.Current.ShowTeachingTip(Explanation, quiz.Explanation.Text, TeachingTipPlacementMode.TopLeft);
         }
     }
 }
