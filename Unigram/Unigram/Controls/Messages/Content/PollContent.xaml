@@ -41,6 +41,7 @@
             x:Name="Explanation"
             Click="Explanation_Click"
             Glyph="&#xEA80;"
+            Foreground="{ThemeResource MessageSubtleForegroundBrush}"
             Margin="0,-4,-10,-5"
             Grid.Column="1"
             Grid.RowSpan="2"/>
