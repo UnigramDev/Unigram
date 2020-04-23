@@ -5891,7 +5891,7 @@ De minimale lengte is 5 karakters.</value>
     <value>Nieuwe poll</value>
   </data>
   <data name="NewQuiz" xml:space="preserve">
-    <value>Nieuwe Quiz</value>
+    <value>Nieuwe quiz</value>
   </data>
   <data name="NewSecretChat" xml:space="preserve">
     <value>Nieuwe geheime chat</value>
@@ -7879,7 +7879,7 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
     <value>Pollopties</value>
   </data>
   <data name="PollQuiz" xml:space="preserve">
-    <value>Quizmode</value>
+    <value>Quiz-modus</value>
   </data>
   <data name="PollResults" xml:space="preserve">
     <value>Poll resultaten</value>
@@ -9230,7 +9230,7 @@ Tempolimiet is ingeschakeld, je kunt niet meer dan 1 bericht tegelijkertijd stur
     <value>We sturen je een SMS over {0}:%2$02d</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
-    <value>Nadat je de groep hebt aangemaakt kun je meer gebruikers toevoegen en omzetten naar een supergroep.</value>
+    <value>Je kan meer leden toevoegen nadat je de groep hebt aangemaakt.</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Sorteren op</value>

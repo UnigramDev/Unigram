@@ -550,6 +550,9 @@
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>المعذرة، لا يمكنك إضافة هذا المستخدم كمشرف لأنه ليس عضوًا في هذه المجموعة وغير مسموح لك إضافته.</value>
   </data>
+  <data name="AddAnExplanation" xml:space="preserve">
+    <value>إضافة شرح</value>
+  </data>
   <data name="AddAnOption" xml:space="preserve">
     <value>إضافة خيار...</value>
   </data>
@@ -835,6 +838,9 @@
   <data name="AnswerOne" xml:space="preserve">
     <value>إجابة واحدة</value>
   </data>
+  <data name="AnswerOptions" xml:space="preserve">
+    <value>خيارات الإجابة</value>
+  </data>
   <data name="AnswerOther" xml:space="preserve">
     <value>⁨{0}⁩ إجابة</value>
   </data>
@@ -1037,6 +1043,9 @@
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>هل ترغب حقًا في حذف **الرسائل المحفوظة**؟</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatWithBot" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف المحادثة مع **⁨{0}⁩** وحظره؟</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>هل ترغب حقًا في حذف المحادثة **⁨{0}⁩**؟</value>
@@ -1666,6 +1675,9 @@
   <data name="CacheEmpty" xml:space="preserve">
     <value>فارغة</value>
   </data>
+  <data name="CacheWasCleared" xml:space="preserve">
+    <value>تم تحرير ⁨{0}⁩ من جهازك!</value>
+  </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>يتم الحساب...</value>
   </data>
@@ -1849,6 +1861,9 @@
   </data>
   <data name="ChannelAddMembers" xml:space="preserve">
     <value>إضافة أعضاء</value>
+  </data>
+  <data name="ChannelAddSubscribers" xml:space="preserve">
+    <value>إضافة مشتركين</value>
   </data>
   <data name="ChannelAddTo" xml:space="preserve">
     <value>هل ترغب بإضافة ⁨{0}⁩ للقناة؟</value>
@@ -2470,6 +2485,9 @@
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>مسح المحتوى من عند ⁨{0}⁩ أيضًا</value>
   </data>
+  <data name="ClearLocalDatabase" xml:space="preserve">
+    <value>مسح قاعدة البيانات المحلية</value>
+  </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>مسح الذاكرة المؤقتة</value>
   </data>
@@ -2505,6 +2523,9 @@
   </data>
   <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
     <value>هل أنت متأكد أنك تريد إزالة «⁨{0}⁩» من سجل بحثك؟</value>
+  </data>
+  <data name="ClearTelegramCache" xml:space="preserve">
+    <value>مسح ذاكرة تيليجرام المؤقتة</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>إغلاق</value>
@@ -2838,6 +2859,9 @@
   <data name="CustomThemes" xml:space="preserve">
     <value>الأنماط المخصصة</value>
   </data>
+  <data name="DartInfo" xml:space="preserve">
+    <value>أرسل الرمز التعبيري **🎯** لتجربة حظك.</value>
+  </data>
   <data name="DataSettings" xml:space="preserve">
     <value>البيانات والتخزين</value>
   </data>
@@ -3099,7 +3123,13 @@
   <data name="DeleteTheseChats" xml:space="preserve">
     <value>حذف المحادثات</value>
   </data>
+  <data name="DeleteTheseChatsBothSides" xml:space="preserve">
+    <value>حذف المحادثات</value>
+  </data>
   <data name="DeleteThisChat" xml:space="preserve">
+    <value>حذف هذه المحادثة</value>
+  </data>
+  <data name="DeleteThisChatBothSides" xml:space="preserve">
     <value>حذف هذه المحادثة</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
@@ -3117,11 +3147,17 @@
   <data name="Devices" xml:space="preserve">
     <value>الأجهزة</value>
   </data>
+  <data name="DeviceStorage" xml:space="preserve">
+    <value>ذاكرة الجهاز</value>
+  </data>
   <data name="DialogPin" xml:space="preserve">
     <value>تثبيت</value>
   </data>
   <data name="DialogUnpin" xml:space="preserve">
     <value>إلغاء التثبيت</value>
+  </data>
+  <data name="DiceEmojiInfo" xml:space="preserve">
+    <value>أرسل الرمز ⁨{0}⁩ لتجربة حظك.</value>
   </data>
   <data name="DiceInfo" xml:space="preserve">
     <value>أرسل الرمز 🎲 إلى أية محادثة للحصول على رقم عشوائي من تيليجرام.</value>
@@ -3466,6 +3502,9 @@
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>تفعيل المؤثرات البصرية</value>
+  </data>
+  <data name="EnabledNotifications" xml:space="preserve">
+    <value>مكّنوا الإشعارات</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>لقد قمت بتفعيل التحقق بخطوتين.
@@ -4010,6 +4049,9 @@
   <data name="FilterAddException" xml:space="preserve">
     <value>إضافة استثناء</value>
   </data>
+  <data name="FilterAddingChats" xml:space="preserve">
+    <value>يتم إضافة المحادثات</value>
+  </data>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>يرجى الانتظار بضع لحظات ريثما نقوم بملء هذا المجلد لك...</value>
   </data>
@@ -4201,6 +4243,9 @@
   </data>
   <data name="FiltersSetup" xml:space="preserve">
     <value>إعداد</value>
+  </data>
+  <data name="FiltersSetupPinAlert" xml:space="preserve">
+    <value>قم بإعداد المجلدات</value>
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>غير المقروءة</value>
@@ -5279,6 +5324,9 @@
     <value>مسح قاعدة البيانات المحلية سيؤدي لحذف الرسائل التي تم تنزيلها وضغط قاعدة البيانات لتوفير مساحة على جهازك. يحتاج تيليجرام لبعض البيانات ليعمل، لذا لن يصل حجم قاعدة البيانات إلى الصفر.
 
 قد تستغرق هذه العملية بضع دقائق لإكمالها.</value>
+  </data>
+  <data name="LocalDatabaseSize" xml:space="preserve">
+    <value>⁨{0}⁩ قاعدة بيانات تيليجرام المحلية</value>
   </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>المستندات</value>
@@ -6732,6 +6780,9 @@
   <data name="OtherSessions" xml:space="preserve">
     <value>الجلسات النشطة</value>
   </data>
+  <data name="OtherStickers" xml:space="preserve">
+    <value>المزيد من الملصقات</value>
+  </data>
   <data name="OtherWebSessions" xml:space="preserve">
     <value>المواقع المتصلة</value>
   </data>
@@ -7873,6 +7924,9 @@
   <data name="PollOptions" xml:space="preserve">
     <value>خيارات الاستفتاء</value>
   </data>
+  <data name="PollQuestion" xml:space="preserve">
+    <value>سؤال الاستفتاء</value>
+  </data>
   <data name="PollQuiz" xml:space="preserve">
     <value>وضع الاختبار</value>
   </data>
@@ -8598,6 +8652,9 @@
   <data name="SearchStickersHint" xml:space="preserve">
     <value>بحث عن حزم الملصقات</value>
   </data>
+  <data name="SearchTrendingStickersHint" xml:space="preserve">
+    <value>البحث عن الملصقات الشائعة</value>
+  </data>
   <data name="SecondsBoldFew" xml:space="preserve">
     <value>**⁨{0}⁩** ثانية</value>
   </data>
@@ -9062,6 +9119,9 @@
   <data name="SharesOther" xml:space="preserve">
     <value>⁨{0}⁩ مشاركة</value>
   </data>
+  <data name="SharesPerPost" xml:space="preserve">
+    <value>المشاركات لكل منشور</value>
+  </data>
   <data name="SharesTwo" xml:space="preserve">
     <value>مشاركتان اثنتان</value>
   </data>
@@ -9225,7 +9285,7 @@
     <value>سنرسل لك رسالة SMS قصيرة خلال ⁨{0}⁩:⁨%2$02d⁩</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
-    <value>ستتمكن من إضافة أعضاء أكثر إذا انتهيت من إنشاء المجموعة وقمت بتحويلها إلى مجموعة خارقة.</value>
+    <value>ستتمكن من إضافة المزيد من الأعضاء بعد انتهاءك من إنشاء المجموعة.</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>ترتيب حسب</value>
@@ -9259,6 +9319,9 @@
   </data>
   <data name="StartText" xml:space="preserve">
     <value>يرجى تأكيد رمز بلدك وإدخال رقم هاتفك.</value>
+  </data>
+  <data name="StatisticOverview" xml:space="preserve">
+    <value>نظرة عامة</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>الإحصائيات</value>
@@ -9513,6 +9576,9 @@
   </data>
   <data name="Teal" xml:space="preserve">
     <value>الأخضر الفاتح</value>
+  </data>
+  <data name="TelegramCacheSize" xml:space="preserve">
+    <value>⁨{0}⁩ ذاكرة تيليجرام المؤقتة</value>
   </data>
   <data name="TelegramContactsFew" xml:space="preserve">
     <value>⁨{0}⁩ جهات اتصال على تيليجرام</value>
@@ -9873,6 +9939,12 @@
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>الإجمالي</value>
+  </data>
+  <data name="TotalDeviceFreeSize" xml:space="preserve">
+    <value>⁨{0}⁩ مساحة حرة</value>
+  </data>
+  <data name="TotalDeviceSize" xml:space="preserve">
+    <value>⁨{0}⁩ بيانات أخرى</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>إيقاف كلمة المرور</value>
@@ -10402,6 +10474,9 @@
   </data>
   <data name="ViewsOther" xml:space="preserve">
     <value>⁨{0}⁩ مشاهدة</value>
+  </data>
+  <data name="ViewsPerPost" xml:space="preserve">
+    <value>المشاهدات لكل منشور</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value>مشاهدتان</value>

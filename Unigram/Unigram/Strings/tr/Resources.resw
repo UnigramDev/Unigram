@@ -550,6 +550,12 @@
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>Üzgünüz, bu kullanıcıyı yönetici olarak ekleyemezsiniz. Çünkü bu kullanıcı grup üyesi değil ve kendisini davet etme izniniz bulunmuyor.</value>
   </data>
+  <data name="AddAnExplanation" xml:space="preserve">
+    <value>Açıklama ekle</value>
+  </data>
+  <data name="AddAnExplanationInfo" xml:space="preserve">
+    <value>Kullanıcılar, yanlış cevabı seçtikten sonra bu metni göreceklerdir. Eğitim amaçlı iyidir.</value>
+  </data>
   <data name="AddAnOption" xml:space="preserve">
     <value>Bir seçenek ekle...</value>
   </data>
@@ -611,10 +617,10 @@
     <value>Üye Ekle</value>
   </data>
   <data name="AddMembersAlertCountText" xml:space="preserve">
-    <value>{0} kişisini **{1}** grubuna eklemek istediğinizden emin misiniz?</value>
+    <value>{0} kişisini **{1}** üyesi olarak eklemek istediğinizden emin misiniz?</value>
   </data>
   <data name="AddMembersAlertNamesText" xml:space="preserve">
-    <value>{0} kişisini **{1}** grubuna eklemek istediğinizden emin misiniz?</value>
+    <value>{0} kişisini **{1}** üyesi olarak eklemek istediğinizden emin misiniz?</value>
   </data>
   <data name="AddMembersAlertTitle" xml:space="preserve">
     <value>{0} Ekle</value>
@@ -833,10 +839,13 @@
     <value/>
   </data>
   <data name="AnswerOne" xml:space="preserve">
-    <value>{0} yanıt</value>
+    <value>{0} cevap</value>
+  </data>
+  <data name="AnswerOptions" xml:space="preserve">
+    <value>Cevap seçenekleri</value>
   </data>
   <data name="AnswerOther" xml:space="preserve">
-    <value>{0} yanıt</value>
+    <value>{0} cevap</value>
   </data>
   <data name="AnswerTwo" xml:space="preserve">
     <value/>
@@ -1038,6 +1047,9 @@ Daha fazla eklediğinizde kullanılmayan paketler arşivlenir.</value>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>**Kayıtlı Mesajlar**ı silmek istediğinizden emin misiniz?</value>
   </data>
+  <data name="AreYouSureDeleteThisChatWithBot" xml:space="preserve">
+    <value>**{0}** ile olan sohbeti silmek ve onu engellemek istediğinizden emin misiniz?</value>
+  </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>**{0}** ile olan sohbeti silmek istediğinizden emin misiniz?</value>
   </data>
@@ -1144,7 +1156,7 @@ Birçok sorunun cevabına ve <![CDATA[<a href="https://telegram.org/faq/tr#sorun
     <value>Bu grubun yöneticileri, {0} kadar buraya satır içi içerik göndermenizi kısıtladı</value>
   </data>
   <data name="AttachInlineRestrictedForever" xml:space="preserve">
-    <value>Bu grubun yöneticileri, gruba satır içi bot içeriği göndermenizi kısıtladı</value>
+    <value>Bu grubun yöneticileri, buraya satır içi içerik göndermenizi kısıtladı.</value>
   </data>
   <data name="AttachLiveLocation" xml:space="preserve">
     <value>Canlı Konum</value>
@@ -1664,6 +1676,9 @@ Gün doğumu: {1}</value>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Boş</value>
   </data>
+  <data name="CacheWasCleared" xml:space="preserve">
+    <value>{0} cihazınızda serbest bırakıldı!</value>
+  </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>Hesaplanıyor...</value>
   </data>
@@ -1847,6 +1862,9 @@ Not: Şifreyi unutursanız, uygulamayı silmeniz ve yeniden yüklemeniz gerekir.
   </data>
   <data name="ChannelAddMembers" xml:space="preserve">
     <value>Üye ekle</value>
+  </data>
+  <data name="ChannelAddSubscribers" xml:space="preserve">
+    <value>Abone Ekle</value>
   </data>
   <data name="ChannelAddTo" xml:space="preserve">
     <value>{0} kanala eklensin mi?</value>
@@ -2467,6 +2485,9 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>{0} için de geçmişi temizle</value>
   </data>
+  <data name="ClearLocalDatabase" xml:space="preserve">
+    <value>Yerel Veritabanını Temizle</value>
+  </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Önbelleği Temizle</value>
   </data>
@@ -2502,6 +2523,9 @@ Uzunluk en az 5 karakterdir.</value>
   </data>
   <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
     <value>"{0}" kullanıcısını arama geçmişinizden kaldırmak istediğinizden emin misiniz?</value>
+  </data>
+  <data name="ClearTelegramCache" xml:space="preserve">
+    <value>Telegram Önbelleğini Temizle</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Kapat</value>
@@ -2835,6 +2859,9 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
   <data name="CustomThemes" xml:space="preserve">
     <value>Özel temalar</value>
   </data>
+  <data name="DartInfo" xml:space="preserve">
+    <value>Şansınızı denemek için bir **:dart:** ifadesi gönderin.</value>
+  </data>
   <data name="DataSettings" xml:space="preserve">
     <value>Veri ve Depolama</value>
   </data>
@@ -3096,7 +3123,13 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
   <data name="DeleteTheseChats" xml:space="preserve">
     <value>Sohbetleri sil</value>
   </data>
+  <data name="DeleteTheseChatsBothSides" xml:space="preserve">
+    <value>Sohbetleri sil</value>
+  </data>
   <data name="DeleteThisChat" xml:space="preserve">
+    <value>Bu sohbeti sil</value>
+  </data>
+  <data name="DeleteThisChatBothSides" xml:space="preserve">
     <value>Bu sohbeti sil</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
@@ -3114,17 +3147,23 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
   <data name="Devices" xml:space="preserve">
     <value>Cihazlar</value>
   </data>
+  <data name="DeviceStorage" xml:space="preserve">
+    <value>Cihaz depolama alanı</value>
+  </data>
   <data name="DialogPin" xml:space="preserve">
     <value>Sabitle</value>
   </data>
   <data name="DialogUnpin" xml:space="preserve">
     <value>Sabitlemeyi kaldır</value>
   </data>
+  <data name="DiceEmojiInfo" xml:space="preserve">
+    <value>Şansınızı denemek için {0} ifadesi gönderin.</value>
+  </data>
   <data name="DiceInfo" xml:space="preserve">
     <value>Telegram'dan rastgele bir sayı almak için herhangi bir sohbete 🎲 ifadesini gönderin.</value>
   </data>
   <data name="DiceInfo2" xml:space="preserve">
-    <value>Zar atmak için herhangi bir sohbete **:dice** ifadesi gönderin.</value>
+    <value>Zar atmak için herhangi bir sohbete **:zar:** ifadesi gönderin.</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Kodu almadınız mı?</value>
@@ -3464,6 +3503,9 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>Animasyonları etkinleştir</value>
+  </data>
+  <data name="EnabledNotifications" xml:space="preserve">
+    <value>Etkin Bildirimler</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>İki Adımlı doğrulamayı etkinleştirdiniz.
@@ -5226,6 +5268,9 @@ Bu bağlantı yalnızca bu sohbetin üyeleri için çalışacak.</value>
 
 Bu işlemin tamamlanması birkaç dakika sürebilir.</value>
   </data>
+  <data name="LocalDatabaseSize" xml:space="preserve">
+    <value>{0} Telegram Yerel Veritabanı</value>
+  </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Belgeler</value>
   </data>
@@ -6677,6 +6722,9 @@ Bu kodu kimseyle paylaşmayın.</value>
   <data name="OtherSessions" xml:space="preserve">
     <value>Etkin oturumlar</value>
   </data>
+  <data name="OtherStickers" xml:space="preserve">
+    <value>Diğer Çıkartmalar</value>
+  </data>
   <data name="OtherWebSessions" xml:space="preserve">
     <value>Bağlı web siteleri</value>
   </data>
@@ -6918,10 +6966,10 @@ cihazdan ulaşabilmenizi sağlar.</value>
     <value>Bu taramayı silmek istiyor musunuz?</value>
   </data>
   <data name="PassportDeleteSelfie" xml:space="preserve">
-    <value>Öz çekim silinsin mi?</value>
+    <value>Özçekim silinsin mi?</value>
   </data>
   <data name="PassportDeleteSelfieAlert" xml:space="preserve">
-    <value>Bu öz çekimi silmek istiyor musunuz?</value>
+    <value>Bu özçekimi silmek istiyor musunuz?</value>
   </data>
   <data name="PassportDiscard" xml:space="preserve">
     <value>Sil</value>
@@ -7300,10 +7348,10 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Süresiz</value>
   </data>
   <data name="PassportSelfie" xml:space="preserve">
-    <value>Öz çekim</value>
+    <value>Özçekim</value>
   </data>
   <data name="PassportSelfieInfo" xml:space="preserve">
-    <value>Belgeyi tutarken çekilmiş bir öz çekiminizi yükleyin</value>
+    <value>Belgeyi tutarken çekilmiş bir özçekiminizi yükleyin</value>
   </data>
   <data name="PassportSelfRequest" xml:space="preserve">
     <value>Kişisel verilerinize erişmek için şifrenizi giriniz.</value>
@@ -7818,6 +7866,9 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   <data name="PollOptions" xml:space="preserve">
     <value>Anket seçenekleri</value>
   </data>
+  <data name="PollQuestion" xml:space="preserve">
+    <value>Anket sorusu</value>
+  </data>
   <data name="PollQuiz" xml:space="preserve">
     <value>Test Modu</value>
   </data>
@@ -8096,6 +8147,9 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   </data>
   <data name="RecentFiles" xml:space="preserve">
     <value>Son Dosyalar</value>
+  </data>
+  <data name="RecentFilesAZ" xml:space="preserve">
+    <value>Dosyalar A-Z</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Son görüntülenen</value>
@@ -8537,11 +8591,17 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
   <data name="SearchMessages" xml:space="preserve">
     <value>Mesajlar</value>
   </data>
+  <data name="SearchMusic" xml:space="preserve">
+    <value>Müzik ara</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Son Arama Dosyaları</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Çıkartma paketi bul</value>
+  </data>
+  <data name="SearchTrendingStickersHint" xml:space="preserve">
+    <value>Popüler çıkartmaları arayın</value>
   </data>
   <data name="SecondsBoldFew" xml:space="preserve">
     <value/>
@@ -9007,6 +9067,9 @@ Cevaplamayın, Telegram herşeyi otomatik olarak yapacak.</value>
   <data name="SharesOther" xml:space="preserve">
     <value>{0} paylaşım</value>
   </data>
+  <data name="SharesPerPost" xml:space="preserve">
+    <value>Gönderi Başına Paylaşımlar</value>
+  </data>
   <data name="SharesTwo" xml:space="preserve">
     <value/>
   </data>
@@ -9169,7 +9232,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>{0}:%2$02d içinde size bir kısa mesaj göndereceğiz</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
-    <value>Grubu oluşturup bir süper gruba dönüştürdükten sonra daha fazla kullanıcı ekleyebileceksiniz.</value>
+    <value>Grubu oluşturduktan sonra daha fazla üye ekleyebilirsiniz.</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Sırala</value>
@@ -9203,6 +9266,9 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Ülke kodunuzu onaylayın ve telefon numaranızı giriniz.</value>
+  </data>
+  <data name="StatisticOverview" xml:space="preserve">
+    <value>Genel Bakış</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>İstatistikler</value>
@@ -9457,6 +9523,9 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="Teal" xml:space="preserve">
     <value>Teal</value>
+  </data>
+  <data name="TelegramCacheSize" xml:space="preserve">
+    <value>{0} Telegram Önbelleği</value>
   </data>
   <data name="TelegramContactsFew" xml:space="preserve">
     <value/>
@@ -9820,6 +9889,12 @@ Eğer Telegram'ın makul istekleri size uygun gelmediyse bu servisi sağlamamız
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>Toplam</value>
+  </data>
+  <data name="TotalDeviceFreeSize" xml:space="preserve">
+    <value>{0} Boş</value>
+  </data>
+  <data name="TotalDeviceSize" xml:space="preserve">
+    <value>{0} Diğer Veri</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Şifreyi Kapat</value>
@@ -10264,7 +10339,7 @@ Uzunluk en az **5** karakterdir.</value>
     <value>Kullanıcı engeli kaldırıldı</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
-    <value>aracılığıyla</value>
+    <value>aracılığıyla:</value>
   </data>
   <data name="Vibrate" xml:space="preserve">
     <value>Titreşim</value>
@@ -10349,6 +10424,9 @@ Uzunluk en az **5** karakterdir.</value>
   </data>
   <data name="ViewsOther" xml:space="preserve">
     <value>{0} görüntüleme</value>
+  </data>
+  <data name="ViewsPerPost" xml:space="preserve">
+    <value>Gönderi Başına Görüntülemeler</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>

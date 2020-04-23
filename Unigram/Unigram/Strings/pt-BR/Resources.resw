@@ -2107,10 +2107,10 @@ Se não estiver interessado, sugerimos que crie um canal privado.</value>
     <value/>
   </data>
   <data name="ChannelSignMessages" xml:space="preserve">
-    <value>Assinar Mensagens</value>
+    <value>Assinar as Mensagens</value>
   </data>
   <data name="ChannelSignMessagesInfo" xml:space="preserve">
-    <value>Adiciona o nome dos admins às mensagens postadas.</value>
+    <value>O nome do admin que postou é exibido na mensagem.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Transmitir sem som</value>
@@ -3012,7 +3012,7 @@ Você sempre pode voltar para o tema padrão do Telegram aqui.</value>
     <value>Deseja mesmo apagar os papéis de parede selecionados?</value>
   </data>
   <data name="DeleteChatUser" xml:space="preserve">
-    <value>Apagar conversa</value>
+    <value>Apagar chat</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Apagar Contato</value>
@@ -3286,10 +3286,10 @@ Qualquer pessoa do canal poderá ver mensagens neste grupo.</value>
     <value>Você não tem permissão para editar os direitos desse admin.</value>
   </data>
   <data name="EditAdminChangeChannelInfo" xml:space="preserve">
-    <value>Alterar Info do Canal</value>
+    <value>Alterar Info. do Canal</value>
   </data>
   <data name="EditAdminChangeGroupInfo" xml:space="preserve">
-    <value>Alterar Info do Grupo</value>
+    <value>Alterar Info. do Grupo</value>
   </data>
   <data name="EditAdminChannelTransfer" xml:space="preserve">
     <value>Transferir Posse do Canal</value>
@@ -3696,7 +3696,7 @@ Nenhuma ação recente corresponde à sua busca.</value>
     <value>Todas as ações</value>
   </data>
   <data name="EventLogFilterChannelInfo" xml:space="preserve">
-    <value>Info do canal</value>
+    <value>Info. do canal</value>
   </data>
   <data name="EventLogFilterChannelSettings" xml:space="preserve">
     <value/>
@@ -3708,7 +3708,7 @@ Nenhuma ação recente corresponde à sua busca.</value>
     <value>Mensagens editadas</value>
   </data>
   <data name="EventLogFilterGroupInfo" xml:space="preserve">
-    <value>Info do grupo</value>
+    <value>Info. do grupo</value>
   </data>
   <data name="EventLogFilterLeavingMembers" xml:space="preserve">
     <value>Pessoas que saíram</value>
@@ -3783,10 +3783,10 @@ Nenhuma ação recente corresponde à sua busca.</value>
     <value>Banir usuários</value>
   </data>
   <data name="EventLogPromotedChangeChannelInfo" xml:space="preserve">
-    <value>Alterar Info do Canal</value>
+    <value>Alterar Info. do Canal</value>
   </data>
   <data name="EventLogPromotedChangeGroupInfo" xml:space="preserve">
-    <value>Alterar Info do grupo</value>
+    <value>Alterar Info. do grupo</value>
   </data>
   <data name="EventLogPromotedDeleteMessages" xml:space="preserve">
     <value>Apagar mensagens</value>
@@ -5949,7 +5949,7 @@ O tamanho mínimo é de 5 caracteres.</value>
     <value>Usuários banidos são removidos do grupo e só podem voltar se adicionados por um administrador. Links de convite não funcionam para eles.</value>
   </data>
   <data name="NoBlockedGroup2" xml:space="preserve">
-    <value>Os usuários removidos do grupo por admins não podem entrar novamente usando links de convite.</value>
+    <value>Os usuários removidos por admins do grupo não podem entrar novamente usando links de convite.</value>
   </data>
   <data name="NoBlockedUsers" xml:space="preserve">
     <value>Nenhum usuário removido</value>
@@ -7707,7 +7707,7 @@ Por favor, ative os serviços de localização para ativar este recurso.</value>
     <value>Alterar número</value>
   </data>
   <data name="PhoneNumberFlood" xml:space="preserve">
-    <value>Desculpe, você apagou e recriou sua conta muitas vezes recentemente. Aguarde alguns dias antes de tentar novamente.</value>
+    <value>Desculpe, você apagou e recriou a sua conta muitas vezes recentemente. Aguarde alguns dias antes de tentar novamente.</value>
   </data>
   <data name="PhoneNumberHelp" xml:space="preserve">
     <value>Você pode alterar o seu número do Telegram aqui. Sua conta e todos os seus dados — mensagens, mídia, contatos, etc. serão movidos para o novo número.</value>
@@ -9226,7 +9226,7 @@ O Modo Lento está ativado. Você não pode enviar mais de uma mensagem por vez.
     <value>Vamos te enviar um SMS em {0}:%2$02d</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
-    <value>Você poderá adicionar mais usuários após finalizar a criação do grupo e convertê-lo em supergrupo.</value>
+    <value>Você poderá adicionar mais membros depois de criar o grupo.</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Listar Por</value>
@@ -9841,8 +9841,10 @@ O tamanho mínimo é de 5 caracteres.</value>
 Por motivos técnicos, você precisa sair de alguns antes de alterar essa configuração em seus grupos.</value>
   </data>
   <data name="TooManyCommunitiesHintJoin" xml:space="preserve">
-    <value>Desculpe, você faz parte de muitos grupos e canais.
-Por favor, saia de alguns antes de entrar em um novo.</value>
+    <value>Desculpe, você faz parte de muitos
+grupos e canais.
+Por favor, saia de alguns antes de
+entrar em um novo.</value>
   </data>
   <data name="TooManyTries" xml:space="preserve">
     <value>Muitas tentativas.
