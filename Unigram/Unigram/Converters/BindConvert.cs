@@ -305,7 +305,7 @@ namespace Unigram.Converters
             return Utils.UnixTimestampToDateTime(value);
         }
 
-        public string ShortNumber(int number)
+        public static string ShortNumber(int number)
         {
             var K = string.Empty;
             var lastDec = 0;

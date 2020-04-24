@@ -90,7 +90,7 @@ namespace Unigram.Controls.Messages
             var number = string.Empty;
             if (message.Views > 0)
             {
-                number = BindConvert.Current.ShortNumber(Math.Max(message.Views, 1));
+                number = BindConvert.ShortNumber(Math.Max(message.Views, 1));
                 number += "   ";
             }
 

@@ -334,6 +334,9 @@
     </Compile>
     <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\ChatsListView.cs" />
+    <Compile Include="Controls\ChatStatisticsOverview.xaml.cs">
+      <DependentUpon>ChatStatisticsOverview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Chats\ChatActionIndicator.cs" />
     <Compile Include="Controls\Chats\ChatBackgroundPresenter.cs" />
     <Compile Include="Controls\Chats\ChatBottomButton.cs" />
@@ -1907,6 +1910,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\WebSessionCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ChatStatisticsOverview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

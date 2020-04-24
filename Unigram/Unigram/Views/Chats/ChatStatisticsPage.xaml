@@ -352,6 +352,39 @@
         </controls:ContentPageHeader>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}" ContainerContentChanging="OnContainerContentChanging" SelectionMode="None" Grid.Row="1">
+            <ListView.Header>
+                <controls:HeaderedControl Header="{CustomResource StatisticOverview}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <controls:ChatStatisticsOverview
+                            Title="{CustomResource FollowersChartTitle}"
+                            Value="{x:Bind ViewModel.Statistics.MemberCount}"/>
+                        
+                        <!--<controls:ChatStatisticsOverview
+                            Title="{CustomResource EnabledNotifications}"
+                            Value="{x:Bind ViewModel.Statistics.MemberCount}"
+                            Grid.Column="1"/>-->
+
+                        <controls:ChatStatisticsOverview
+                            Title="{CustomResource ViewsPerPost}"
+                            Value="{x:Bind ViewModel.Statistics.MeanViewCount}"
+                            Grid.Row="1"/>
+                        
+                        <controls:ChatStatisticsOverview
+                            Title="{CustomResource SharesPerPost}"
+                            Value="{x:Bind ViewModel.Statistics.MeanShareCount}"
+                            Grid.Column="1"
+                            Grid.Row="1"/>
+                    </Grid>
+                </controls:HeaderedControl>
+            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <controls:HeaderedControl Header="xxx">
