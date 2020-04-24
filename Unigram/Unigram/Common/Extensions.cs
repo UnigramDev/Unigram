@@ -68,7 +68,31 @@ namespace Unigram.Common
             }
             else
             {
-                target.Resources["TeachinTip"] = tip;
+                target.Resources["TeachingTip"] = tip;
+            }
+            tip.IsOpen = true;
+        }
+
+        public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
+        {
+            var label = new TextBlock();
+            var tip = new Microsoft.UI.Xaml.Controls.TeachingTip
+            {
+                Target = target,
+                PreferredPlacement = placement,
+                IsLightDismissEnabled = true,
+                Content = label
+            };
+
+            TextBlockHelper.SetFormattedText(label, text);
+
+            if (app.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = tip;
+            }
+            else
+            {
+                target.Resources["TeachingTip"] = tip;
             }
             tip.IsOpen = true;
         }

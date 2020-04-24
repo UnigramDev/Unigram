@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -163,9 +164,24 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.Content is MessageDice)
+            if (_message.Content is MessageDice dice)
             {
-                Window.Current.ShowTeachingTip(this, Strings.Resources.DiceInfo, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
+                string text;
+                switch (dice.Emoji)
+                {
+                    case "\uD83C\uDFB2":
+                        text = Strings.Resources.DiceInfo2;
+                        break;
+                    case "\uD83C\uDFAF":
+                        text = Strings.Resources.DartInfo;
+                        break;
+                    default:
+                        text = string.Format(Strings.Resources.DiceEmojiInfo, dice.Emoji);
+                        break;
+                }
+
+                var formatted = Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
+                Window.Current.ShowTeachingTip(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
             }
             else if (_message.Content is MessageText)
             {

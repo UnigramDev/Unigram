@@ -241,7 +241,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Window.Current.ShowTeachingTip(Explanation, quiz.Explanation.Text, TeachingTipPlacementMode.TopLeft);
+            Window.Current.ShowTeachingTip(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
         }
     }
 }

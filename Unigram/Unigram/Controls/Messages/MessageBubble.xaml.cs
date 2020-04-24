@@ -923,7 +923,6 @@ namespace Unigram.Controls.Messages
             }
 
             var runs = TextStyleRun.GetRuns(text, entities);
-
             var previous = 0;
 
             foreach (var entity in runs)
