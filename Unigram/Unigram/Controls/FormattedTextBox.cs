@@ -49,6 +49,8 @@ namespace Unigram.Controls
     {
         public FormattedTextBox()
         {
+            DefaultStyleKey = typeof(FormattedTextBox);
+
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
             ContextFlyout = new MenuFlyout();

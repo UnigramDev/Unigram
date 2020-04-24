@@ -19,6 +19,8 @@ namespace Unigram.Controls
 
         public PhoneTextBox()
         {
+            DefaultStyleKey = typeof(PhoneTextBox);
+
             TextChanging += OnTextChanging;
             TextChanged += OnTextChanged;
         }

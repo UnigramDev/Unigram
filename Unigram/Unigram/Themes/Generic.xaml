@@ -9,6 +9,9 @@
     xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:microsoft="using:Microsoft.UI.Xaml.Controls">
 
+    <Style TargetType="local:PhoneTextBox" BasedOn="{StaticResource DefaultTextBoxStyle}" />
+    <Style TargetType="local:FormattedTextBox" BasedOn="{StaticResource DefaultRichEditBoxStyle}" />
+    
     <Style TargetType="local:NavigationView">
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
