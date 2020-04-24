@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Strings;
 using Windows.UI.Text;
@@ -49,8 +50,9 @@ namespace Unigram.Common
                 markdown = Regex.Replace(markdown, "<a href=\"(.*?)\">(.*?)<\\/a>", "[$2]($1)");
             }
 
-            var entities = Markdown.Parse(ref markdown);
-            var text = markdown;
+            var formatted = Client.Execute(new ParseMarkdown(new FormattedText(markdown, new TextEntity[0]))) as FormattedText;
+            var text = formatted.Text;
+            var entities = formatted.Entities;
             var previous = 0;
 
             foreach (var entity in entities.OrderBy(x => x.Offset))

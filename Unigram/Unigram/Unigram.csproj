@@ -279,7 +279,6 @@
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\Locale.cs" />
-    <Compile Include="Common\Markdown.cs" />
     <Compile Include="Common\MosaicMedia.cs" />
     <Compile Include="Common\GroupedMessages.cs" />
     <Compile Include="Common\MessageDialogExtensions.cs" />

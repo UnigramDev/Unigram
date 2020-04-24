@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -378,7 +379,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task SendVoiceNoteAsync(StorageFile file, int duration, string caption)
+        public async Task SendVoiceNoteAsync(StorageFile file, int duration, FormattedText caption)
         {
             var chat = _chat;
             if (chat == null)
@@ -393,7 +394,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(), duration, new byte[0], GetFormattedText(caption));
+            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(), duration, new byte[0], caption);
 
             await SendMessageAsync(reply, input, options);
         }
@@ -957,16 +958,7 @@ namespace Unigram.ViewModels
             }
 
             text = text.Format();
-
-            var entities = Markdown.Parse(ref text);
-            if (entities == null)
-            {
-                entities = new List<TextEntity>();
-            }
-
-            return new FormattedText(text, entities);
-
-            //return ProtoService.Execute(new ParseTextEntities(text.Format(), new TextParseModeMarkdown())) as FormattedText;
+            return Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
         }
 
         public async Task HandlePackageAsync(DataPackageView package)

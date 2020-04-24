@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Common;
@@ -641,10 +642,10 @@ namespace Unigram.Services
                 if (string.Equals(action, "reply", StringComparison.OrdinalIgnoreCase) && data.TryGetValue("input", out string text))
                 {
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
-                    var entities = Markdown.Parse(ref messageText);
+                    var formatted = Client.Execute(new ParseMarkdown(new FormattedText(messageText, new TextEntity[0]))) as FormattedText;
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
-                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, new SendMessageOptions(false, true, null), null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
+                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, new SendMessageOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
                 {

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Template10.Common;
 using Unigram.Collections;
@@ -433,21 +434,6 @@ namespace Unigram.ViewModels
 
             if (_messages != null)
             {
-                if (_sendAsCopy)
-                {
-                    foreach (var message in _messages)
-                    {
-                        if (!_messageFactory.CanBeCopied(message))
-                        {
-                            var confirm = await TLMessageDialog.ShowAsync("Polls, voice and video notes can't be forwarded as copy. Do you want to proceed anyway?", Strings.Resources.AppName, Strings.Resources.Forward, Strings.Resources.Cancel);
-                            if (confirm != ContentDialogResult.Primary)
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-
                 foreach (var chat in chats)
                 {
                     if (IsWithMyScore)
@@ -555,16 +541,7 @@ namespace Unigram.ViewModels
             }
 
             text = text.Format();
-
-            var entities = Markdown.Parse(ref text);
-            if (entities == null)
-            {
-                entities = new List<TextEntity>();
-            }
-
-            return new FormattedText(text, entities);
-
-            //return ProtoService.Execute(new ParseTextEntities(text.Format(), new TextParseModeMarkdown())) as FormattedText;
+            return Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
         }
 
         #region Search

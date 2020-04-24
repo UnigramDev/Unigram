@@ -41,6 +41,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Controls.Chats;
+using Telegram.Td;
 
 namespace Unigram.Controls
 {
@@ -622,12 +623,9 @@ namespace Unigram.Controls
             Document.ApplyDisplayUpdates();
 
             var entities = TextStyleRun.GetEntities(text, runs);
-            if (entities.Count < 1)
-            {
-                entities = Markdown.Parse(ref text);
-            }
 
-            return new FormattedText(text.Replace('\v', '\n').Replace('\r', '\n'), entities);
+            text = text.Replace('\v', '\n').Replace('\r', '\n');
+            return Client.Execute(new ParseMarkdown(new FormattedText(text, entities))) as FormattedText;
         }
 
         protected virtual void OnGettingFormattedText()
