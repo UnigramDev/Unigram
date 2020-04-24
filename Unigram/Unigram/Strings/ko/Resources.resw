@@ -8946,7 +8946,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="SetTimer" xml:space="preserve">
     <value>자동 삭제 타이머 맞추기</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>설정</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

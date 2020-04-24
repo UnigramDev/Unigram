@@ -434,7 +434,7 @@
     <value>انضممت للمجموعة عبر رابط دعوة</value>
   </data>
   <data name="ActionKickUser" xml:space="preserve">
-    <value>⁨un1⁩ أزال ⁨un2⁩</value>
+    <value>أزال⁨un1⁩ ⁨un2⁩</value>
   </data>
   <data name="ActionKickUserYou" xml:space="preserve">
     <value>⁨un1⁩ أزالك</value>
@@ -552,6 +552,9 @@
   </data>
   <data name="AddAnExplanation" xml:space="preserve">
     <value>إضافة شرح</value>
+  </data>
+  <data name="AddAnExplanationInfo" xml:space="preserve">
+    <value>سيرى المستخدمون هذا النص بعد اختيار الإجابة الخاطئة وهذا جيد للأغراض التعليمية.</value>
   </data>
   <data name="AddAnOption" xml:space="preserve">
     <value>إضافة خيار...</value>
@@ -8963,7 +8966,7 @@
   <data name="SetTimer" xml:space="preserve">
     <value>تعيين عداد التدمير</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>الإعدادات</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

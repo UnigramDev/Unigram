@@ -551,7 +551,7 @@
     <value>Вы не можете назначить этого пользователя администратором, потому что он не состоит в группе и Вы не можете его пригласить.</value>
   </data>
   <data name="AddAnExplanation" xml:space="preserve">
-    <value>Добавить пояснение</value>
+    <value>Добавить объяснение</value>
   </data>
   <data name="AddAnExplanationInfo" xml:space="preserve">
     <value>Участники увидят этот текст, если выберут неправильный ответ (полезно для образовательных тестов).</value>
@@ -8967,7 +8967,7 @@
   <data name="SetTimer" xml:space="preserve">
     <value>Включить удаление по таймеру</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Настройки</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

@@ -8477,7 +8477,7 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   <data name="SetTimer" xml:space="preserve">
     <value>Estableix l'autodestrucció</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Configuració</value>
   </data>
   <data name="SettingsFaqSearchTitle" xml:space="preserve">

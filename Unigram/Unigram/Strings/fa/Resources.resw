@@ -8914,7 +8914,7 @@
   <data name="SetTimer" xml:space="preserve">
     <value>تنظیم زمان‌سنج نابود کننده</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>تنظیمات</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

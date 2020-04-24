@@ -8867,7 +8867,7 @@ Nie odbieraj połączenia, Telegram automatycznie przetworzy wszystko.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Ustaw zegar samozniszczenia</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Ustawienia</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

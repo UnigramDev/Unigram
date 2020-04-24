@@ -550,6 +550,12 @@
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>Sorry, you can't add this user as an admin because they are not a member of this group and you are not allowed to add them.</value>
   </data>
+  <data name="AddAnExplanation" xml:space="preserve">
+    <value>Add an explanation</value>
+  </data>
+  <data name="AddAnExplanationInfo" xml:space="preserve">
+    <value>Users will see this text after choosing the wrong answer, good for educational purposes.</value>
+  </data>
   <data name="AddAnOption" xml:space="preserve">
     <value>Add an Option...</value>
   </data>
@@ -838,6 +844,9 @@
   <data name="AnswerOne" xml:space="preserve">
     <value>{0} answer</value>
   </data>
+  <data name="AnswerOptions" xml:space="preserve">
+    <value>Answer options</value>
+  </data>
   <data name="AnswerOther" xml:space="preserve">
     <value>{0} answers</value>
   </data>
@@ -1041,6 +1050,9 @@ Unused sets are archived when you add more.</value>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>Are you sure you want to delete **Saved Messages**?</value>
   </data>
+  <data name="AreYouSureDeleteThisChatWithBot" xml:space="preserve">
+    <value>Are you sure you want to delete the chat with **{0}** and block them?</value>
+  </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>Are you sure you want to delete the chat **{0}**?</value>
   </data>
@@ -1147,7 +1159,7 @@ Please take a look at the <![CDATA[<a href="https://telegram.org/faq#general-que
     <value>The admins of this group have restricted you from sending inline content here until {0}</value>
   </data>
   <data name="AttachInlineRestrictedForever" xml:space="preserve">
-    <value>The admins of this group have restricted you from sending inline content here</value>
+    <value>The admins of this group have restricted you from sending inline content here.</value>
   </data>
   <data name="AttachLiveLocation" xml:space="preserve">
     <value>Live Location</value>
@@ -1667,6 +1679,9 @@ Sunrise: {1}</value>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Empty</value>
   </data>
+  <data name="CacheWasCleared" xml:space="preserve">
+    <value>{0} freed on your device!</value>
+  </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>Calculating...</value>
   </data>
@@ -1851,6 +1866,9 @@ Note: if you forget the passcode, you'll need to delete and reinstall the app. A
   <data name="ChannelAddMembers" xml:space="preserve">
     <value>Add members</value>
   </data>
+  <data name="ChannelAddSubscribers" xml:space="preserve">
+    <value>Add Subscribers</value>
+  </data>
   <data name="ChannelAddTo" xml:space="preserve">
     <value>Add {0} to the channel?</value>
   </data>
@@ -1921,7 +1939,7 @@ Note: if you forget the passcode, you'll need to delete and reinstall the app. A
     <value>Delete Channel</value>
   </data>
   <data name="ChannelDeleteAlert" xml:space="preserve">
-    <value>Wait! Deleting this channel will remove all members and all messages will be lost. Delete the channel anyway?</value>
+    <value>Wait! Deleting this channel will remove all subscribers and all messages will be lost. Delete the channel anyway?</value>
   </data>
   <data name="ChannelDeletedUndo" xml:space="preserve">
     <value>Channel deleted.</value>
@@ -2044,7 +2062,7 @@ Note: if you forget the passcode, you'll need to delete and reinstall the app. A
     <value>MUTE</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
-    <value>Members will receive a silent notification</value>
+    <value>Subscribers will receive a silent notification</value>
   </data>
   <data name="ChannelNotifyMembersInfoOn" xml:space="preserve">
     <value>Subscribers will be notified when you post</value>
@@ -2473,6 +2491,9 @@ Minimum length is 5 characters.</value>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>Also clear history for {0}</value>
   </data>
+  <data name="ClearLocalDatabase" xml:space="preserve">
+    <value>Clear Local Database</value>
+  </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Clear Cache</value>
   </data>
@@ -2508,6 +2529,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
     <value>Are you sure you want to remove "{0}" from your search history?</value>
+  </data>
+  <data name="ClearTelegramCache" xml:space="preserve">
+    <value>Clear Telegram Cache</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
@@ -2841,6 +2865,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="CustomThemes" xml:space="preserve">
     <value>Custom themes</value>
   </data>
+  <data name="DartInfo" xml:space="preserve">
+    <value>Send a **:darts:** emoji to try your luck.</value>
+  </data>
   <data name="DataSettings" xml:space="preserve">
     <value>Data and Storage</value>
   </data>
@@ -3102,7 +3129,13 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteTheseChats" xml:space="preserve">
     <value>Delete chats</value>
   </data>
+  <data name="DeleteTheseChatsBothSides" xml:space="preserve">
+    <value>Delete chats</value>
+  </data>
   <data name="DeleteThisChat" xml:space="preserve">
+    <value>Delete this chat</value>
+  </data>
+  <data name="DeleteThisChatBothSides" xml:space="preserve">
     <value>Delete this chat</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
@@ -3120,14 +3153,23 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="Devices" xml:space="preserve">
     <value>Devices</value>
   </data>
+  <data name="DeviceStorage" xml:space="preserve">
+    <value>Device storage</value>
+  </data>
   <data name="DialogPin" xml:space="preserve">
     <value>Pin</value>
   </data>
   <data name="DialogUnpin" xml:space="preserve">
     <value>Unpin</value>
   </data>
+  <data name="DiceEmojiInfo" xml:space="preserve">
+    <value>Send a {0} emoji to try your luck.</value>
+  </data>
   <data name="DiceInfo" xml:space="preserve">
     <value>Send a 🎲 emoji to any chat to get a random number from Telegram.</value>
+  </data>
+  <data name="DiceInfo2" xml:space="preserve">
+    <value>Send a **:dice:** emoji to any chat to roll a die.</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Didn't get the code?</value>
@@ -3468,6 +3510,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>Enable Animations</value>
+  </data>
+  <data name="EnabledNotifications" xml:space="preserve">
+    <value>Enabled Notifications</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>You have enabled Two-Step verification.
@@ -5287,6 +5332,9 @@ This link will only work for members of this chat.</value>
 
 This operation can take a few minutes to complete.</value>
   </data>
+  <data name="LocalDatabaseSize" xml:space="preserve">
+    <value>{0} Telegram Local Database</value>
+  </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Documents</value>
   </data>
@@ -6738,6 +6786,9 @@ Do not give this code to anyone.</value>
   <data name="OtherSessions" xml:space="preserve">
     <value>Active sessions</value>
   </data>
+  <data name="OtherStickers" xml:space="preserve">
+    <value>More Stickers</value>
+  </data>
   <data name="OtherWebSessions" xml:space="preserve">
     <value>Connected websites</value>
   </data>
@@ -7879,6 +7930,9 @@ Please turn on location services to enable this feature.</value>
   <data name="PollOptions" xml:space="preserve">
     <value>Poll options</value>
   </data>
+  <data name="PollQuestion" xml:space="preserve">
+    <value>Poll question</value>
+  </data>
   <data name="PollQuiz" xml:space="preserve">
     <value>Quiz Mode</value>
   </data>
@@ -8157,6 +8211,9 @@ Please turn on location services to enable this feature.</value>
   </data>
   <data name="RecentFiles" xml:space="preserve">
     <value>Recent files</value>
+  </data>
+  <data name="RecentFilesAZ" xml:space="preserve">
+    <value>Files A-Z</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Recently viewed</value>
@@ -8598,11 +8655,17 @@ You may need to restart the app for this to take effect.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>Messages</value>
   </data>
+  <data name="SearchMusic" xml:space="preserve">
+    <value>Search music</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Search Recent Files</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Search sticker sets</value>
+  </data>
+  <data name="SearchTrendingStickersHint" xml:space="preserve">
+    <value>Search trending stickers</value>
   </data>
   <data name="SecondsBoldFew" xml:space="preserve">
     <value/>
@@ -8717,6 +8780,9 @@ You may need to restart the app for this to take effect.</value>
   </data>
   <data name="SendDayYearAt" xml:space="preserve">
     <value>'Send on' MMM d yyyy 'at' HH:mm</value>
+  </data>
+  <data name="SendDice" xml:space="preserve">
+    <value>SEND</value>
   </data>
   <data name="SendGameTo" xml:space="preserve">
     <value>Share game to {0}?</value>
@@ -9065,6 +9131,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="SharesOther" xml:space="preserve">
     <value>{0} shares</value>
   </data>
+  <data name="SharesPerPost" xml:space="preserve">
+    <value>Shares Per Post</value>
+  </data>
   <data name="SharesTwo" xml:space="preserve">
     <value/>
   </data>
@@ -9228,7 +9297,7 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
     <value>Sending you an SMS in {0}:%2$02d</value>
   </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
-    <value>You will be able to add more users after you finish creating the group and convert it to a supergroup.</value>
+    <value>You will be able to add more members after you create the group.</value>
   </data>
   <data name="SortBy" xml:space="preserve">
     <value>Sort By</value>
@@ -9262,6 +9331,9 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Please confirm your country code and enter your phone number.</value>
+  </data>
+  <data name="StatisticOverview" xml:space="preserve">
+    <value>Overview</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>Statistics</value>
@@ -9516,6 +9588,9 @@ If '**Sync Contacts**' is enabled, contacts will be re-synced.</value>
   </data>
   <data name="Teal" xml:space="preserve">
     <value>Teal</value>
+  </data>
+  <data name="TelegramCacheSize" xml:space="preserve">
+    <value>{0} Telegram Cache</value>
   </data>
   <data name="TelegramContactsFew" xml:space="preserve">
     <value/>
@@ -9876,6 +9951,12 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>Total</value>
+  </data>
+  <data name="TotalDeviceFreeSize" xml:space="preserve">
+    <value>{0} Free</value>
+  </data>
+  <data name="TotalDeviceSize" xml:space="preserve">
+    <value>{0} Other Data</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Turn Password Off</value>
@@ -10422,6 +10503,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="ViewsOther" xml:space="preserve">
     <value>{0} views</value>
+  </data>
+  <data name="ViewsPerPost" xml:space="preserve">
+    <value>Views Per Post</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>

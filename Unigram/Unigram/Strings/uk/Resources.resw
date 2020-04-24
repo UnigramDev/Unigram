@@ -3148,7 +3148,7 @@
     <value>Пристрої</value>
   </data>
   <data name="DeviceStorage" xml:space="preserve">
-    <value>Пам'ять пристрою</value>
+    <value>Памʼять пристрою</value>
   </data>
   <data name="DialogPin" xml:space="preserve">
     <value>Прикріпити</value>
@@ -3163,7 +3163,7 @@
     <value>Надішліть емодзі 🎲 в будь-який чат, щоб отримати випадкове число від Telegram.</value>
   </data>
   <data name="DiceInfo2" xml:space="preserve">
-    <value>Надішліть емодзі **:dice:** в будь-який чат, щоб кинути кубик.</value>
+    <value>Надішліть емодзі **:dice:**, щоб кинути кубик.</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Не одержали коду?</value>
@@ -5268,7 +5268,7 @@
 Ця операція може зайняти кілька хвилин.</value>
   </data>
   <data name="LocalDatabaseSize" xml:space="preserve">
-    <value>{0} Локальна база даних Telegram</value>
+    <value>{0} локальна база даних Telegram</value>
   </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Документи</value>
@@ -8911,7 +8911,7 @@
   <data name="SetTimer" xml:space="preserve">
     <value>Встановити таймер самознищення</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Налаштування</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">
@@ -9527,7 +9527,7 @@
     <value>Морської хвилі</value>
   </data>
   <data name="TelegramCacheSize" xml:space="preserve">
-    <value>{0} Кеш Telegram</value>
+    <value>{0} кеш Telegram</value>
   </data>
   <data name="TelegramContactsFew" xml:space="preserve">
     <value>{0} контакти у Telegram</value>

@@ -8973,7 +8973,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Timer di autodistruzione</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Impostazioni</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

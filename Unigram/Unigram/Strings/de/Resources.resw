@@ -8991,7 +8991,7 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Selbstzerstörungs-Timer setzen</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

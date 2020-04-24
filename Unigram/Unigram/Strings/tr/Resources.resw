@@ -8911,7 +8911,7 @@ Cevaplamayın, Telegram herşeyi otomatik olarak yapacak.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Yok etme zamanlayıcısı ayarla</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Ayarlar</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

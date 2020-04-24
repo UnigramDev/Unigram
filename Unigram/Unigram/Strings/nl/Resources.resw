@@ -550,6 +550,12 @@
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>Je mag geen leden toevoegen, deze gebruiker is nog geen lid en kan daarom niet worden toegevoegd als beheerder.</value>
   </data>
+  <data name="AddAnExplanation" xml:space="preserve">
+    <value>Uitleg toevoegen</value>
+  </data>
+  <data name="AddAnExplanationInfo" xml:space="preserve">
+    <value>Gebruikers zien deze uitleg nadat ze een verkeerd antwoord hebben gekozen, goed voor educatieve doeleinden.</value>
+  </data>
   <data name="AddAnOption" xml:space="preserve">
     <value>Optie toevoegen...</value>
   </data>
@@ -838,6 +844,9 @@
   <data name="AnswerOne" xml:space="preserve">
     <value>{0} antwoord</value>
   </data>
+  <data name="AnswerOptions" xml:space="preserve">
+    <value>Antwoordopties</value>
+  </data>
   <data name="AnswerOther" xml:space="preserve">
     <value>{0} antwoorden</value>
   </data>
@@ -1038,6 +1047,9 @@
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value> **Bewaarde berichten** echt verwijderen?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatWithBot" xml:space="preserve">
+    <value>Echt **{0}** blokkeren en de chat verwijderen?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>Chat **{0}** echt wissen?</value>
@@ -1665,6 +1677,9 @@ Zonsopkomst: {1}</value>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Leeg</value>
   </data>
+  <data name="CacheWasCleared" xml:space="preserve">
+    <value>{0} vrijgemaakt op je apparaat!</value>
+  </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>Berekenen...</value>
   </data>
@@ -1848,6 +1863,9 @@ Let op: vergeet je de toegangscode dan zul je de app moeten verwijderen en herin
   </data>
   <data name="ChannelAddMembers" xml:space="preserve">
     <value>Leden toevoegen</value>
+  </data>
+  <data name="ChannelAddSubscribers" xml:space="preserve">
+    <value>Abonnees toevoegen</value>
   </data>
   <data name="ChannelAddTo" xml:space="preserve">
     <value>{0} toevoegen aan het kanaal?</value>
@@ -2468,6 +2486,9 @@ De minimale lengte is 5 karakters.</value>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>Geschiedenis ook voor {0} wissen</value>
   </data>
+  <data name="ClearLocalDatabase" xml:space="preserve">
+    <value>Lokale database wissen</value>
+  </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Cache opschonen</value>
   </data>
@@ -2503,6 +2524,9 @@ De minimale lengte is 5 karakters.</value>
   </data>
   <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
     <value>"{0}" echt verwijderen uit je zoekgeschiedenis?</value>
+  </data>
+  <data name="ClearTelegramCache" xml:space="preserve">
+    <value>Telegram-cache wissen</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Sluit</value>
@@ -2836,6 +2860,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="CustomThemes" xml:space="preserve">
     <value>Aangepaste thema's</value>
   </data>
+  <data name="DartInfo" xml:space="preserve">
+    <value>Stuur een **:darts:**-emoji om je geluk te beproeven</value>
+  </data>
   <data name="DataSettings" xml:space="preserve">
     <value>Data en opslag</value>
   </data>
@@ -3097,8 +3124,14 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="DeleteTheseChats" xml:space="preserve">
     <value>Chats verwijderen</value>
   </data>
+  <data name="DeleteTheseChatsBothSides" xml:space="preserve">
+    <value>Chats verwijderen</value>
+  </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>Chat verwijderen</value>
+  </data>
+  <data name="DeleteThisChatBothSides" xml:space="preserve">
+    <value>Deze chat verwijderen</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
     <value>Deze groep verwijderen</value>
@@ -3115,11 +3148,17 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="Devices" xml:space="preserve">
     <value>Apparaten</value>
   </data>
+  <data name="DeviceStorage" xml:space="preserve">
+    <value>Apparaatopslag</value>
+  </data>
   <data name="DialogPin" xml:space="preserve">
     <value>Vastzetten</value>
   </data>
   <data name="DialogUnpin" xml:space="preserve">
     <value>Losmaken</value>
+  </data>
+  <data name="DiceEmojiInfo" xml:space="preserve">
+    <value>Stuur een {0}-emoji om je geluk te beproeven.</value>
   </data>
   <data name="DiceInfo" xml:space="preserve">
     <value>Stuur de emoji 🎲 naar een chat om een willekeurig getal van Telegram te krijgen.</value>
@@ -3466,6 +3505,9 @@ Alle abonnees van het kanaal kunnen de berichten in deze groep zien.</value>
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>Animaties</value>
+  </data>
+  <data name="EnabledNotifications" xml:space="preserve">
+    <value>Meldingen ingeschakeld</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>Je hebt twee-staps-verificatie ingeschakeld.
@@ -5285,6 +5327,9 @@ Deze link werkt alleen voor leden van deze chat.</value>
 
 Dit kan enkele minuten duren.</value>
   </data>
+  <data name="LocalDatabaseSize" xml:space="preserve">
+    <value>{0} Telegram Lokale Database</value>
+  </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Bestanden</value>
   </data>
@@ -6736,6 +6781,9 @@ Geef deze code nooit aan iemand anders.</value>
   <data name="OtherSessions" xml:space="preserve">
     <value>Actieve sessies</value>
   </data>
+  <data name="OtherStickers" xml:space="preserve">
+    <value>Meer stickers</value>
+  </data>
   <data name="OtherWebSessions" xml:space="preserve">
     <value>Verbonden websites</value>
   </data>
@@ -7878,6 +7926,9 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
   <data name="PollOptions" xml:space="preserve">
     <value>Pollopties</value>
   </data>
+  <data name="PollQuestion" xml:space="preserve">
+    <value>Pollvraag</value>
+  </data>
   <data name="PollQuiz" xml:space="preserve">
     <value>Quiz-modus</value>
   </data>
@@ -8156,6 +8207,9 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
   </data>
   <data name="RecentFiles" xml:space="preserve">
     <value>Recente bestanden</value>
+  </data>
+  <data name="RecentFilesAZ" xml:space="preserve">
+    <value>Bestanden A-Z</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Recent bekeken</value>
@@ -8597,11 +8651,17 @@ Het kan zijn dat je de app moet herstarten voordat dit actief is.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>Berichten</value>
   </data>
+  <data name="SearchMusic" xml:space="preserve">
+    <value>Zoek muziek</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Zoek recente bestanden</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Zoek stickerbundels</value>
+  </data>
+  <data name="SearchTrendingStickersHint" xml:space="preserve">
+    <value>Zoek populaire stickers</value>
   </data>
   <data name="SecondsBoldFew" xml:space="preserve">
     <value/>
@@ -8911,7 +8971,7 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Zelfvernietigingstimer instellen</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Instellingen</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">
@@ -9066,6 +9126,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   </data>
   <data name="SharesOther" xml:space="preserve">
     <value>{0} keer gedeeld</value>
+  </data>
+  <data name="SharesPerPost" xml:space="preserve">
+    <value>Aantal keer gedeeld per post</value>
   </data>
   <data name="SharesTwo" xml:space="preserve">
     <value/>
@@ -9264,6 +9327,9 @@ Tempolimiet is ingeschakeld, je kunt niet meer dan 1 bericht tegelijkertijd stur
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Bevestig je landnummer en voer je telefoonnummer in.</value>
+  </data>
+  <data name="StatisticOverview" xml:space="preserve">
+    <value>Overzicht</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>Statistieken</value>
@@ -9519,6 +9585,9 @@ Als '**Contacten synchroniseren**' aan staat worden de contacten opnieuw gesynch
   </data>
   <data name="Teal" xml:space="preserve">
     <value>Groenblauw</value>
+  </data>
+  <data name="TelegramCacheSize" xml:space="preserve">
+    <value>{0} Telegram Cache</value>
   </data>
   <data name="TelegramContactsFew" xml:space="preserve">
     <value/>
@@ -9880,6 +9949,12 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>Totaal</value>
+  </data>
+  <data name="TotalDeviceFreeSize" xml:space="preserve">
+    <value>{0} vrij</value>
+  </data>
+  <data name="TotalDeviceSize" xml:space="preserve">
+    <value>{0} Andere Data</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Wachtwoord uitschakelen</value>
@@ -10408,6 +10483,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   </data>
   <data name="ViewsOther" xml:space="preserve">
     <value>{0} keer bekeken</value>
+  </data>
+  <data name="ViewsPerPost" xml:space="preserve">
+    <value>Aantal keer bekeken per post</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>

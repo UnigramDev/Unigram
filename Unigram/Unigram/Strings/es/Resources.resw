@@ -3252,7 +3252,7 @@ obtener un número aleatorio de Telegram.</value>
     <value>VINCULAR GRUPO</value>
   </data>
   <data name="DiscussionLinkGroupAlertHistory" xml:space="preserve">
-    <value>El “Historial para nuevos miembros” cambiará a Visible.</value>
+    <value>El “historial para nuevos miembros” cambiará a “visible”.</value>
   </data>
   <data name="DiscussionLinkGroupPrivateAlert" xml:space="preserve">
     <value>¿Quieres convertir a **{0}** en el grupo de conversación de **{1}**?
@@ -5425,16 +5425,16 @@ Tu número permanecerá oculto.</value>
     <value>¿Mostrar tu perfil?</value>
   </data>
   <data name="ManageChannel" xml:space="preserve">
-    <value>Administrar canal</value>
+    <value>Gestionar canal</value>
   </data>
   <data name="ManageChannelMenu" xml:space="preserve">
-    <value>Administrar canal</value>
+    <value>Gestionar canal</value>
   </data>
   <data name="ManageGroup" xml:space="preserve">
-    <value>Administrar grupo</value>
+    <value>Gestionar grupo</value>
   </data>
   <data name="ManageGroupMenu" xml:space="preserve">
-    <value>Administrar grupo</value>
+    <value>Gestionar grupo</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Mapa</value>
@@ -8978,7 +8978,7 @@ No contestes. Telegram hará todo el proceso automáticamente.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Configurar autodestrucción</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Ajustes</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">

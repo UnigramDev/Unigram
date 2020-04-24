@@ -550,6 +550,12 @@
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>Kechirasiz, siz bu foydalanuvchini admin qilib belgilay olmaysiz, chunki u ushbu guruhning aʼzosi emas va uni qoʻshishga sizga rusxat berilmaydi.</value>
   </data>
+  <data name="AddAnExplanation" xml:space="preserve">
+    <value>Izoh qoʻshish</value>
+  </data>
+  <data name="AddAnExplanationInfo" xml:space="preserve">
+    <value>Foydalanuvchilar notoʻgʻri javobni tanlaganlaridan keyin ushbu matnni koʻradilar, bu oʻquv maqsadlari uchun yaxshi.</value>
+  </data>
   <data name="AddAnOption" xml:space="preserve">
     <value>Javob variantini qo‘shish...</value>
   </data>
@@ -835,6 +841,9 @@
   <data name="AnswerOne" xml:space="preserve">
     <value>{0} ta javob</value>
   </data>
+  <data name="AnswerOptions" xml:space="preserve">
+    <value>Javob variantlari</value>
+  </data>
   <data name="AnswerOther" xml:space="preserve">
     <value>{0} ta javob</value>
   </data>
@@ -1036,6 +1045,9 @@ Foydalanilmayotgan niqoblar esa arxivga yuboriladi.</value>
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>Haqiqatan **Saqlangan xabarlar** oʻchirib tashlansinmi?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatWithBot" xml:space="preserve">
+    <value>Haqiqatan **{0}** bilan chatni oʻchirib tashlab, uni bloklamoqchimisiz?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>Haqiqatan **{0}** chatini oʻchirib tashlamoqchimisiz?</value>
@@ -1851,6 +1863,9 @@ Eslatma: agar kirish kodini unutsangiz, ilovani oʻchirishingiz va qaytadan oʻr
   <data name="ChannelAddMembers" xml:space="preserve">
     <value>Aʼzolar qoʻshish</value>
   </data>
+  <data name="ChannelAddSubscribers" xml:space="preserve">
+    <value>Obunachilar qoʻshish</value>
+  </data>
   <data name="ChannelAddTo" xml:space="preserve">
     <value>{0} kanalga qoʻshilsinmi?</value>
   </data>
@@ -2470,6 +2485,9 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>{0} uchun ham tarixni tozalash</value>
   </data>
+  <data name="ClearLocalDatabase" xml:space="preserve">
+    <value>Mahalliy maʼlumotlar bazasini tozalash</value>
+  </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Keshni tozalash</value>
   </data>
@@ -2505,6 +2523,9 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   </data>
   <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
     <value>"{0}" qidiruv tarixidan olib tashlansinmi?</value>
+  </data>
+  <data name="ClearTelegramCache" xml:space="preserve">
+    <value>Telegram keshni tozalash</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Yopish</value>
@@ -2837,6 +2858,9 @@ Istalgan vaqtda esa Telegramning odatiy mavzusiga ushbu joydan qaytishingiz mumk
   <data name="CustomThemes" xml:space="preserve">
     <value>Maxsus mavzular</value>
   </data>
+  <data name="DartInfo" xml:space="preserve">
+    <value>Omadingizni sinab koʻrish uchun **:darts:** emojisini yuboring.</value>
+  </data>
   <data name="DataSettings" xml:space="preserve">
     <value>Maʼlumotlar va xotira</value>
   </data>
@@ -3098,8 +3122,14 @@ Istalgan vaqtda esa Telegramning odatiy mavzusiga ushbu joydan qaytishingiz mumk
   <data name="DeleteTheseChats" xml:space="preserve">
     <value>Chatlarni oʻchirib tashlash</value>
   </data>
+  <data name="DeleteTheseChatsBothSides" xml:space="preserve">
+    <value>Chatlarni oʻchirib tashlash</value>
+  </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>Bu chatni oʻchirish</value>
+  </data>
+  <data name="DeleteThisChatBothSides" xml:space="preserve">
+    <value>Bu chatni oʻchirib tashlash</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
     <value>Bu guruhni oʻchirish</value>
@@ -3116,17 +3146,23 @@ Istalgan vaqtda esa Telegramning odatiy mavzusiga ushbu joydan qaytishingiz mumk
   <data name="Devices" xml:space="preserve">
     <value>Qurilmalar</value>
   </data>
+  <data name="DeviceStorage" xml:space="preserve">
+    <value>Qurilma xotirasi</value>
+  </data>
   <data name="DialogPin" xml:space="preserve">
     <value>Qadash</value>
   </data>
   <data name="DialogUnpin" xml:space="preserve">
     <value>Olib tashlash</value>
   </data>
+  <data name="DiceEmojiInfo" xml:space="preserve">
+    <value>Omadingizni sinab koʻrish uchun {0} emojisini yuboring.</value>
+  </data>
   <data name="DiceInfo" xml:space="preserve">
     <value>Istalgan chatga 🎲 kulgichini yuboring va Telegramdan tasodifiy raqam oling.</value>
   </data>
   <data name="DiceInfo2" xml:space="preserve">
-    <value>Toshni tashlash uchun istalgan suhbatga **:zar:** kulgichini yuboring.</value>
+    <value>Toshni tashlash uchun istalgan chatga **:zar:** emojisini yuboring.</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>Kod yetib kelmadimi?</value>
@@ -3466,6 +3502,9 @@ Kanalning barcha aʼzolari ushbu guruh xabarlarini koʻrish imkoniga ega boʻlad
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>Animatsiyalarni ko‘rsatish</value>
+  </data>
+  <data name="EnabledNotifications" xml:space="preserve">
+    <value>Yoqilgan bildirishnomalar</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
     <value>Siz ikki bosqichli tekshiruvni yoqdingiz.
@@ -5226,6 +5265,9 @@ Bu havola faqat ushbu guruh aʼzolari uchun ishlaydi.</value>
 
 Tozalash bir necha daqiqa vaqt talab qilishi mumkin.</value>
   </data>
+  <data name="LocalDatabaseSize" xml:space="preserve">
+    <value>{0} Telegram mahalliy maʼlumotlar bazasi</value>
+  </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Hujjatlar</value>
   </data>
@@ -5441,7 +5483,7 @@ Iltimos, ularni o'chirishni yoki birortasini berishini so'rang.</value>
     <value>Guruhingizni boshqarishda sizga yordam beradigan administratorlarni qo'shishingiz mumkin. Ularni olib tashlash uchun ustiga bosing va tutib turing</value>
   </data>
   <data name="MegaDeleteAlert" xml:space="preserve">
-    <value>Toʻxtang! Bu guruhni oʻchirish tashlash barcha aʼzolarning olib tashlanishiga va barcha xabarlarning yoʻqotilishiga olib keladi. Guruh baribir oʻchirib tashlansinmi?</value>
+    <value>Toʻxtang! Bu guruhni oʻchirib tashlash barcha aʼzolarning olib tashlanishiga va barcha xabarlarning yoʻqotilishiga olib keladi. Guruh baribir oʻchirib tashlansinmi?</value>
   </data>
   <data name="MegaDeleteInfo" xml:space="preserve">
     <value>Siz bu guruhdagi barcha xabarlarni yoʻqotasiz.</value>
@@ -6677,6 +6719,9 @@ Bu kodni hech kimga bermang.</value>
   <data name="OtherSessions" xml:space="preserve">
     <value>Faol seanslar</value>
   </data>
+  <data name="OtherStickers" xml:space="preserve">
+    <value>Boshqa stikerlar</value>
+  </data>
   <data name="OtherWebSessions" xml:space="preserve">
     <value>Ulangan veb-saytlar</value>
   </data>
@@ -7814,6 +7859,9 @@ Bu funksiyani yoqish uchun joylashuvingizdan foydalanishga ruxsat bering.</value
   <data name="PollOptions" xml:space="preserve">
     <value>Javob variantlari</value>
   </data>
+  <data name="PollQuestion" xml:space="preserve">
+    <value>Soʻrovnoma savoli</value>
+  </data>
   <data name="PollQuiz" xml:space="preserve">
     <value>Viktorina rejimi</value>
   </data>
@@ -8092,6 +8140,9 @@ Bu funksiyani yoqish uchun joylashuvingizdan foydalanishga ruxsat bering.</value
   </data>
   <data name="RecentFiles" xml:space="preserve">
     <value>Oxirgi fayllar</value>
+  </data>
+  <data name="RecentFilesAZ" xml:space="preserve">
+    <value>Fayllar A-Z</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Yaqinda koʻrilgan</value>
@@ -8535,11 +8586,17 @@ O'zgarishlar kuchga kirish uchun dasturni qayta ishga tushirishingiz zarur.</val
   <data name="SearchMessages" xml:space="preserve">
     <value>Xabarlar</value>
   </data>
+  <data name="SearchMusic" xml:space="preserve">
+    <value>Musiqa qidirish</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Oxirgi fayllar ichidan qidirish</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Stiker toʻplamlarini qidirish</value>
+  </data>
+  <data name="SearchTrendingStickersHint" xml:space="preserve">
+    <value>Ommabop stikerlarni qidirish</value>
   </data>
   <data name="SecondsBoldFew" xml:space="preserve">
     <value/>
@@ -8849,7 +8906,7 @@ Qoʻngʻiroqqa javob bermang, Telegram barchasini avtomatik amalga oshiradi.</va
   <data name="SetTimer" xml:space="preserve">
     <value>Taymer boʻyicha oʻchirish</value>
   </data>
-  <data name="SETTINGS" xml:space="preserve">
+  <data name="Settings" xml:space="preserve">
     <value>Sozlamalar</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">
@@ -9004,6 +9061,9 @@ Qoʻngʻiroqqa javob bermang, Telegram barchasini avtomatik amalga oshiradi.</va
   </data>
   <data name="SharesOther" xml:space="preserve">
     <value>{0} marta ulashilgan</value>
+  </data>
+  <data name="SharesPerPost" xml:space="preserve">
+    <value>Postning ulashishlar soni</value>
   </data>
   <data name="SharesTwo" xml:space="preserve">
     <value/>
@@ -9201,6 +9261,9 @@ Sekin rejim yoqilgan. Siz birdaniga bittadan ortiq xabar yubora olmaysiz.</value
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Mamlakatingiz kodini tasdiqlang va telefon raqamingizni kiriting.</value>
+  </data>
+  <data name="StatisticOverview" xml:space="preserve">
+    <value>Umumiy</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>Statistika </value>
@@ -9456,6 +9519,9 @@ Agar “**Kontaktlarni sinxronlash**” yoqilsa, kontaktlar qayta sinxronlanadi.
   </data>
   <data name="Teal" xml:space="preserve">
     <value>Och ko‘k</value>
+  </data>
+  <data name="TelegramCacheSize" xml:space="preserve">
+    <value> {0} Telegram kesh</value>
   </data>
   <data name="TelegramContactsFew" xml:space="preserve">
     <value/>
@@ -9815,6 +9881,12 @@ Agar minimal muhim maʼlumotlarni taqdim etishga tayyor boʻlmasangiz, biz Teleg
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>Jami</value>
+  </data>
+  <data name="TotalDeviceFreeSize" xml:space="preserve">
+    <value>{0} boʻsh</value>
+  </data>
+  <data name="TotalDeviceSize" xml:space="preserve">
+    <value>{0} boshqa maʼlumotlar</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Parolni oʻchirib qoʻyish</value>
@@ -10345,6 +10417,9 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   </data>
   <data name="ViewsOther" xml:space="preserve">
     <value>{0}ta ko‘rishlar</value>
+  </data>
+  <data name="ViewsPerPost" xml:space="preserve">
+    <value>Postning koʻrishlar soni</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>
