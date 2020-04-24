@@ -148,5 +148,16 @@
                 Style="{StaticResource CheckButtonStyle}"
                 Toggled="Quiz_Toggled"/>
         </controls:HeaderedControl>
+
+        <controls:HeaderedControl
+            x:Name="QuizSettings"
+            Header="{CustomResource AddAnExplanation}"
+            Footer="{CustomResource AddAnExplanationInfo}"
+            Visibility="Collapsed">
+            <controls:FormattedTextBox
+                x:Name="QuizExplanation"
+                PlaceholderText="{CustomResource AddAnExplanation}"
+                Margin="12,8,12,8"/>
+        </controls:HeaderedControl>
     </StackPanel>
 </controls:TLContentDialog>

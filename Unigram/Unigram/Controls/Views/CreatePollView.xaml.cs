@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Template10.Mvvm;
 using Unigram.Common;
@@ -91,7 +92,7 @@ namespace Unigram.Controls.Views
             {
                 if (Quiz.IsOn)
                 {
-                    return new PollTypeQuiz(Items.IndexOf(Items.FirstOrDefault(x => x.IsChecked)));
+                    return new PollTypeQuiz(Items.IndexOf(Items.FirstOrDefault(x => x.IsChecked)), QuizExplanation.GetFormattedText());
                 }
 
                 return new PollTypeRegular(Multiple.IsOn);
@@ -224,6 +225,7 @@ namespace Unigram.Controls.Views
         private void Quiz_Toggled(object sender, RoutedEventArgs e)
         {
             Multiple.IsEnabled = !Quiz.IsOn;
+            QuizSettings.Visibility = Quiz.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
             if (Quiz.IsOn)
             {
