@@ -864,3 +864,155 @@ namespace Unigram.ViewModels
         }
     }
 }
+
+namespace Telegram.Td.Api
+{
+    public class SetChatFilter : Function
+    {
+        public ChatListFilter Filter { get; }
+
+        public SetChatFilter(ChatListFilter filter)
+        {
+            Filter = filter;
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GetChatListFilters : Function
+    {
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ChatListFilters : BaseObject
+    {
+        public IList<ChatListFilter> Filters { get; set; }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ChatListFilterSuggestion : BaseObject
+    {
+        public ChatListFilter Filter { get; set; }
+
+        public string Description { get; set; } = string.Empty;
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ChatListFilterSuggestions : BaseObject
+    {
+        public IList<ChatListFilterSuggestion> Suggestions { get; set; }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GetChatListFilterSuggestons : Function
+    {
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ChatListFilter
+    {
+        // dialogFilter flags:# id:int title:string pm:flags.0?true secret_chats:flags.1?true private_groups:flags.2?true public_groups:flags.3?true broadcasts:flags.4?true bots:flags.5?true exclude_muted:flags.11?true exclude_read:flags.12?true include_peers:Vector<InputPeer> = DialogFilter;
+
+        public int Id { get; set; }
+        public string Title { get; set; }
+
+        public bool IncludeContacts { get; set; } = true;
+        public bool IncludeNonContacts { get; set; } = true;
+        public bool IncludeGroups { get; set; } = true;
+        public bool IncludeChannels { get; set; } = true;
+        public bool IncludeBots { get; set; } = true;
+
+        public IList<long> IncludeChats { get; set; } = new long[0];
+
+        public bool ExcludeMuted { get; set; }
+        public bool ExcludeRead { get; set; }
+        public bool ExcludeArchived { get; set; }
+
+        public IList<long> ExcludeChats { get; set; } = new long[0];
+
+        //public ChatFilter(int id, string title, bool pm, bool secret, bool privateGroups, bool publicGroups, bool channel, bool bot, bool excludeMuted, bool excludeRead)
+        //{
+
+        //}
+
+        public ChatListFilterFlags ToFlags()
+        {
+            var filter = this;
+            var flags = default(ChatListFilterFlags);
+
+            if (filter.IncludeContacts)
+            {
+                flags |= ChatListFilterFlags.IncludeContacts;
+            }
+            if (filter.IncludeNonContacts)
+            {
+                flags |= ChatListFilterFlags.IncludeNonContacts;
+            }
+            if (filter.IncludeGroups)
+            {
+                flags |= ChatListFilterFlags.IncludeGroups;
+            }
+            if (filter.IncludeChannels)
+            {
+                flags |= ChatListFilterFlags.IncludeChannels;
+            }
+            if (filter.IncludeBots)
+            {
+                flags |= ChatListFilterFlags.IncludeBots;
+            }
+            if (filter.ExcludeMuted)
+            {
+                flags |= ChatListFilterFlags.ExcludeMuted;
+            }
+            if (filter.ExcludeRead)
+            {
+                flags |= ChatListFilterFlags.ExcludeRead;
+            }
+            //if (filter.IncludeChats != null && filter.IncludeChats.Count > 0)
+            //{
+            //    flags |= ChatListFilterFlags.IncludeChats;
+            //}
+
+            return flags;
+        }
+
+        public bool IncludeAll()
+        {
+            return IncludeBots && IncludeChannels && IncludeContacts && IncludeGroups && IncludeNonContacts;
+        }
+    }
+
+    [Flags]
+    public enum ChatListFilterFlags
+    {
+        IncludeContacts,
+        IncludeNonContacts,
+        IncludeGroups,
+        IncludeChannels,
+        IncludeBots,
+        ExcludeMuted,
+        ExcludeRead,
+        ExcludeArchived
+    }
+}
