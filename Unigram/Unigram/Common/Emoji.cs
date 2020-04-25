@@ -212,7 +212,7 @@ namespace Unigram.Common
         {
             var result = new List<EmojiData>();
 
-            var response = await protoService.SendAsync(new SearchEmojis(query, false, inputLanguage));
+            var response = await protoService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
             if (response is Emojis suggestions)
             {
                 foreach (var item in suggestions.EmojisValue)

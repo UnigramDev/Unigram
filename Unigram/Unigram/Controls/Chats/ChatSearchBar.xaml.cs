@@ -64,6 +64,10 @@ namespace Unigram.Controls.Chats
             {
                 _collapsed = false;
             }
+            else
+            {
+                _collapsed = true;
+            }
 
             Visibility = Visibility.Visible;
 

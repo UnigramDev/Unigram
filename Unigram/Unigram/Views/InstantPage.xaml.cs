@@ -1393,10 +1393,6 @@ namespace Unigram.Views
                         Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
                     }
                     break;
-                case RichTextAnchor anchor:
-                    // ???
-                    ProcessRichText(anchor.Text, span, textBlock, effects, ref offset);
-                    break;
                 case RichTextIcon icon:
                     var photo = new Image { Width = icon.Width, Height = icon.Height };
 
@@ -1603,14 +1599,14 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(RichTextUrl urlText)
         {
-            if (_instantView != null && IsCurrentPage(_instantView.Url, urlText.Url, out string fragment))
-            {
-                if (_anchors.TryGetValue(fragment, out Border anchor))
-                {
-                    await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
-                }
-            }
-            else
+            //if (_instantView != null && IsCurrentPage(_instantView.Url, urlText.Url, out string fragment))
+            //{
+            //    if (_anchors.TryGetValue(fragment, out Border anchor))
+            //    {
+            //        await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
+            //    }
+            //}
+            //else
             {
                 ViewModel.IsLoading = true;
 

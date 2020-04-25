@@ -616,7 +616,7 @@ namespace Unigram.Controls.Chats
                     count = 0;
                     _hasMore = false;
 
-                    var response = await _protoService.SendAsync(new SearchEmojis(_query, false, _inputLanguage));
+                    var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
                     if (response is Emojis emojis)
                     {
                         SettingsService.Current.Emoji.LoadRecentEmoji();

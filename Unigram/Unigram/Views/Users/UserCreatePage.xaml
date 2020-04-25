@@ -83,14 +83,15 @@
                              InputScope="TelephoneNumber"
                              PlaceholderText="+"
                              Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                    <controls:PhoneTextBox x:Name="PrimaryInput"
-                                           Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                           PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
-                                           KeyDown="PrimaryInput_KeyDown"
-                                           MinWidth="200"
-                                           InputScope="TelephoneNumber"
-                                           IsTextPredictionEnabled="False"
-                                           Grid.Column="1"/>
+                    <controls:PhoneTextBox
+                        x:Name="PrimaryInput"
+                        Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
+                        KeyDown="PrimaryInput_KeyDown"
+                        MinWidth="200"
+                        InputScope="TelephoneNumber"
+                        IsTextPredictionEnabled="False"
+                        Grid.Column="1"/>
 
                 </Grid>
             </controls:HeaderedControl>

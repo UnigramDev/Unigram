@@ -171,9 +171,9 @@ namespace Unigram.Controls.Views
                 TypeHttpPanel.Visibility = TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            if (Info != null)
+            if (FieldPanel != null)
             {
-                Info.Text = TypeSocks.IsChecked == true
+                FieldPanel.Footer = TypeSocks.IsChecked == true
                     ? Strings.Resources.UseProxyInfo
                     : TypeProto.IsChecked == true
                     ? Strings.Resources.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.Resources.UseProxyTelegramInfo2

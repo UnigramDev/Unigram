@@ -304,7 +304,7 @@ namespace Unigram.ViewModels.Supergroups
                 if (item.Action is ChatEventDescriptionChanged descriptionChanged)
                 {
                     var text = new FormattedText(descriptionChanged.NewDescription, new TextEntity[0]);
-                    var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousGroupDescription, Description = descriptionChanged.OldDescription };
+                    var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
 
                     return new MessageText(text, webPage);
                 }
@@ -313,7 +313,7 @@ namespace Unigram.ViewModels.Supergroups
                     var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(_protoService, usernameChanged.NewUsername);
 
                     var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
-                    var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = MeUrlPrefixConverter.Convert(_protoService, usernameChanged.OldUsername) };
+                    var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(_protoService, usernameChanged.OldUsername) } };
 
                     return new MessageText(text, webPage);
                 }

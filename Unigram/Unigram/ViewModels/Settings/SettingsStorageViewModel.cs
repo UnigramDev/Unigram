@@ -172,7 +172,7 @@ namespace Unigram.ViewModels.Settings
             IsLoading = true;
             TaskCompleted = false;
 
-            var response = await ProtoService.SendAsync(new OptimizeStorage(long.MaxValue, 0, int.MaxValue, 0, types, chatIds, excludedChatIds, 25));
+            var response = await ProtoService.SendAsync(new OptimizeStorage(long.MaxValue, 0, int.MaxValue, 0, types, chatIds, excludedChatIds, false, 25));
             if (response is StorageStatistics statistics)
             {
                 Statistics = statistics;

@@ -66,7 +66,7 @@ namespace Unigram.Controls.Cells
                     title = webPage.SiteName;
                 }
 
-                description = string.IsNullOrEmpty(webPage.Description) ? null : webPage.Description;
+                description = string.IsNullOrEmpty(webPage.Description?.Text) ? null : webPage.Description?.Text;
                 webPageLink = webPage.Url;
                 webPageCached = webPage.InstantViewVersion != 0;
 

@@ -349,6 +349,8 @@ namespace Unigram.Services
                     var message = title + Environment.NewLine + SettingsService.CurrentChangelog;
                     var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
 
+                    formattedText = Client.Execute(new ParseMarkdown(formattedText)) as FormattedText;
+
                     if (SettingsService.CurrentMedia)
                     {
                         Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageAnimation(

@@ -912,7 +912,7 @@ namespace Unigram.ViewModels.Dialogs
                     }
                     else
                     {
-                        var emojis = await _protoService.SendAsync(new SearchEmojis(_query, false, _inputLanguage)) as Emojis;
+                        var emojis = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage })) as Emojis;
                         if (emojis != null)
                         {
                             for (int i = 0; i < Math.Min(10, emojis.EmojisValue.Count); i++)
