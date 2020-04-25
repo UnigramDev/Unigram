@@ -89,7 +89,7 @@ namespace Unigram.Controls
         private static void OnItemsPanelCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var root = ((TableListView)d).ItemsPanelRoot;
-            if (root == null)
+            if (root == null || !ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
             {
                 return;
             }
