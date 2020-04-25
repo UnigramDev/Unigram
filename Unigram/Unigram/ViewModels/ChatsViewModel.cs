@@ -822,13 +822,7 @@ namespace Unigram.ViewModels
                 }
                 else if (chat.Type is ChatTypeBasicGroup)
                 {
-                    var group = _protoService.GetBasicGroup(chat);
-                    if (group.MemberCount > 30)
-                    {
-                        return _filter.IncludeLargeGroups;
-                    }
-
-                    return _filter.IncludeSmallGroups;
+                    return _filter.IncludeGroups;
                 }
                 else if (chat.Type is ChatTypeSupergroup)
                 {
@@ -837,12 +831,8 @@ namespace Unigram.ViewModels
                     {
                         return _filter.IncludeChannels;
                     }
-                    else if (supergroup.MemberCount > 30)
-                    {
-                        return _filter.IncludeLargeGroups;
-                    }
 
-                    return _filter.IncludeSmallGroups;
+                    return _filter.IncludeGroups;
                 }
 
                 return false;
