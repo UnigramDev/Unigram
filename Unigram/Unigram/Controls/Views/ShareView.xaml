@@ -483,6 +483,8 @@
                 </StackPanel>
 
                 <controls:GlyphButton
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"       
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"                        
                         Glyph="&#xF0E3;"
                         Visibility="{x:Bind ViewModel.IsSendAsCopyEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
@@ -496,6 +498,8 @@
                 </controls:GlyphButton>
 
                 <controls:GlyphButton
+                        AutomationProperties.Name="{CustomResource Search}"       
+                        ToolTipService.ToolTip="{CustomResource Search}" 
                         Glyph="&#xE11A;"
                         Click="Search_Click"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
