@@ -517,7 +517,7 @@
         </Grid>
     </ContentDialog.Title>
     
-    <Grid Width="320" MaxHeight="4200">
+    <Grid Width="320" MaxHeight="500">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
