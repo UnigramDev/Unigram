@@ -8,12 +8,12 @@ The [issue tracker](https://github.com/UnigramDev/Unigram/issues) is the preferr
 * Please **do not** write [enhancement]/[bug]/[Feature request] or similar stuff in the title of issues, as there are labels for that purpose that will be added by devs or collaborators.
 
 ## Bug reports
-A bug is a _demonstrable problem_ .Good bug reports are extremely helpful, so thanks!
+A bug is a _demonstrable problem_.Good bug reports are extremely helpful, so thanks!
 
 Guidelines for bug reports:
 
 * Try to reproduce the issue on a [Telegram official client](https://telegram.org/apps) to check it's not a Telegram issue/behaviour;
-* Use the GitHub issue search, check if the issue has already been reported both in the open issues and in the closed ones,  if there are some missing details, add them in issue comments, without creating a new one;
+* Use the GitHub issue search, check if the issue has already been reported both in the open issues and in the closed ones, if there are some missing details, add them in issue comments, without creating a new one;
 * Check if the issue has been fixed — try to reproduce it using the latest available build;
 * Isolate the problem — ideally create a reproducible scenario and a live example;
 * Do not report multiple bugs in a single ticket, otherwise it will be confusing.
