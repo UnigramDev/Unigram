@@ -740,6 +740,7 @@
     <Compile Include="ViewModels\Delegates\ISettingsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISignInDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupEditDelegate.cs" />
+    <Compile Include="ViewModels\DiagnosticsViewModel.cs" />
     <Compile Include="ViewModels\DialogScheduledViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Delegate.cs" />

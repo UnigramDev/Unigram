@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -24,13 +25,13 @@
                     Header="Experimental">
                     <ToggleSwitch
                         x:Name="PlayStickers"
+                        IsOn="{x:Bind ViewModel.PlayStickers, Mode=TwoWay}"
                         Header="Play animated stickers"
-                        Toggled="PlayStickers_Toggled"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
                         x:Name="CacheStickers"
+                        IsOn="{x:Bind ViewModel.CacheStickers, Mode=TwoWay}"
                         Header="Cache animated stickers"
-                        Toggled="CacheStickers_Toggled"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
 
@@ -38,34 +39,37 @@
                     Header="TDLib Logs"
                     Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
                     <controls:BadgeButton
-                        x:Name="Verbosity"
                         Content="Verbosity Level"
-                        Click="Verbosity_Click"
-                        Badge="{CustomResource SoundDefault}"/>
+                        Command="{x:Bind ViewModel.VerbosityCommand}"
+                        Badge="{x:Bind ConvertVerbosity(ViewModel.Verbosity), Mode=OneWay}"/>
                     <controls:BadgeButton
-                        x:Name="Log"
                         Content="log"
                         Click="Log_Click"
-                        Badge="{CustomResource SoundDefault}"/>
+                        Badge="{x:Bind ConvertSize(ViewModel.LogSize), Mode=OneWay}"/>
                     <controls:BadgeButton
-                        x:Name="LogOld"
                         Content="log.old"
                         Click="LogOld_Click"
-                        Badge="{CustomResource SoundDefault}"/>
+                        Badge="{x:Bind ConvertSize(ViewModel.LogOldSize), Mode=OneWay}"/>
                 </controls:HeaderedControl>
                 
                 <controls:HeaderedControl
                     Header="{CustomResource PrivacyAdvanced}">
                     <ToggleSwitch
-                        x:Name="UseTestDC"
+                        IsOn="{x:Bind ViewModel.UseTestDc, Mode=TwoWay}"
                         Header="Use test data centers"
-                        Toggled="UseTestDC_Toggled"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl
-                    x:Name="Options"
-                    Header="Options">
+                    Header="Options"
+                    ItemsSource="{x:Bind ViewModel.Options}">
+                    <controls:HeaderedControl.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:DiagnosticsOption">
+                            <controls:BadgeButton
+                                Content="{x:Bind Name}"
+                                Badge="{x:Bind Value}"/>
+                        </DataTemplate>
+                    </controls:HeaderedControl.ItemTemplate>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
