@@ -84,6 +84,11 @@ namespace Unigram.ViewModels.SignIn
             {
                 Token = waitOtherDeviceConfirmation.Link;
                 Delegate?.UpdateQrCode(waitOtherDeviceConfirmation.Link);
+
+                if (mode != NavigationMode.Refresh)
+                {
+                    Delegate?.UpdateQrCodeMode(QrCodeMode.Primary);
+                }
             }
 
             return Task.CompletedTask;
