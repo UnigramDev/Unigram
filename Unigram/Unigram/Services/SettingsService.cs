@@ -488,7 +488,7 @@ namespace Unigram.Services
             set
             {
                 _isLaunchMinimized = value;
-                AddOrUpdateValue(_local, "IsTrayVisible", value);
+                AddOrUpdateValue(_local, "IsLaunchMinimized", value);
             }
         }
 
