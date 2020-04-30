@@ -10,16 +10,13 @@
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       mc:Ignorable="d">
 
-    <Grid>
-        <controls:ScrollViewerBackground
-            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"/>
-        <ScrollViewer x:Name="ScrollingHost"
-                      VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
-            <StackPanel Padding="0,0,0,24">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <ScrollViewer
+            x:Name="ScrollingHost"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto"
+            Grid.Row="1">
+            <StackPanel Padding="0,16,0,24">
                 <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -35,7 +32,7 @@
                                              AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
                                              Height="64"
                                              Width="64"
-                                             Margin="12,6"
+                                             Margin="12,8"
                                              Grid.RowSpan="2"/>
 
                     <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
@@ -87,7 +84,10 @@
                     </Border>
                 </Grid>
 
-                <StackPanel>
+                <StackPanel
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" />
+                    
                     <controls:BadgeButton
                         x:Name="PhoneNumber"
                         Content="{CustomResource Phone}"
@@ -108,7 +108,9 @@
                         Click="About_Click"/>
                 </StackPanel>
 
-                <StackPanel Margin="0,24,0,0">
+                <StackPanel
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Margin="0,24,0,0">
                     <controls:BadgeButton Content="{CustomResource NotificationsAndSounds}"
                                           Glyph="&#xEC42;"
                                           Click="Notifications_Click"
@@ -152,7 +154,9 @@
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
                 </StackPanel>-->
                 
-                <StackPanel Margin="0,24,0,0">
+                <StackPanel
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Margin="0,24,0,0">
                     <controls:BadgeButton Content="{CustomResource AskAQuestion}"
                                           Glyph="&#xED15;"
                                           Command="{x:Bind ViewModel.AskCommand}"
@@ -161,15 +165,16 @@
                                           Glyph="&#xE783;"
                                           Click="Questions_Click"
                                           Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <Grid>
-                        <TextBlock
-                            x:Name="Diagnostics"
-                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Margin="12,8,12,0"/>
-                        <Button Click="Diagnostics_Click" Opacity="0" Style="{StaticResource EmptyButtonStyle}"/>
-                    </Grid>
                 </StackPanel>
+                
+                <Grid>
+                    <TextBlock
+                        x:Name="Diagnostics"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Margin="12,8,12,0"/>
+                    <Button Click="Diagnostics_Click" Opacity="0" Style="{StaticResource EmptyButtonStyle}"/>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
     </Grid>
