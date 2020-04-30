@@ -89,11 +89,6 @@
         </controls:ContentPageHeader>
 
         <Grid x:Name="ContentPanel" SizeChanged="OnSizeChanged" Grid.Row="1">
-            <controls:ScrollViewerBackground 
-                Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                ScrollingHost="{x:Bind ScrollingHost}"
-                VerticalAlignment="Top"
-                Grid.Row="1"/>
             <ScrollViewer
                 x:Name="ScrollingHost"
                 VerticalScrollBarVisibility="Auto"

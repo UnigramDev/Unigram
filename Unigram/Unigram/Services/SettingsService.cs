@@ -30,11 +30,13 @@ namespace Unigram.Services
         PasscodeLockSettings PasscodeLock { get; }
         PlaybackSettings Playback { get; }
 
+        DiagnosticsSettings Diagnostics { get; }
+
         int UserId { get; set; }
 
         string FilesDirectory { get; set; }
 
-        int VerbosityLevel { get; }
+        int VerbosityLevel { get; set; }
         bool UseTestDC { get; set; }
 
         bool UseThreeLinesLayout { get; set; }
@@ -488,7 +490,7 @@ namespace Unigram.Services
             set
             {
                 _isLaunchMinimized = value;
-                AddOrUpdateValue(_local, "IsTrayVisible", value);
+                AddOrUpdateValue(_local, "IsLaunchMinimized", value);
             }
         }
 

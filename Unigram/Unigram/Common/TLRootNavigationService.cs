@@ -53,7 +53,14 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        Navigate(typeof(IntroPage));
+                        if (Frame.Content is SignInPage page && page.DataContext is SignInViewModel viewModel)
+                        {
+                            await viewModel.OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+                        }
+                        else
+                        {
+                            Navigate(typeof(IntroPage));
+                        }
                     }
                     break;
                 case AuthorizationStateWaitCode waitCode:

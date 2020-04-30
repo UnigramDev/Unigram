@@ -214,6 +214,7 @@ namespace Unigram
                 builder.RegisterType<BasicGroupCreateStep1ViewModel>(); //.SingleInstance();
                 builder.RegisterType<InstantViewModel>(); //.SingleInstance();
                 builder.RegisterType<LogOutViewModel>().SingleInstance();
+                builder.RegisterType<DiagnosticsViewModel>();
                 builder.RegisterType<SettingsViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsAdvancedViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPhoneIntroViewModel>().SingleInstance();
