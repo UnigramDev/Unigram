@@ -280,7 +280,7 @@ namespace Unigram.Views.Chats
             }
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {

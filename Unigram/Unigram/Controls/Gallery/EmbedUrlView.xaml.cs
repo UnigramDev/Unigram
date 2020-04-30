@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -135,7 +136,7 @@ namespace Unigram.Controls.Gallery
             Presenter.Child = _surface = new WebView { Source = new Uri(webPage.EmbedUrl) };
         }
 
-        public void OnBackRequesting(HandledRoutedEventArgs e)
+        public void OnBackRequesting(HandledEventArgs e)
         {
             //Unload();
             //Dispose();
@@ -143,7 +144,7 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             //var container = GetContainer(0);
             //var root = container.Presenter;
@@ -248,7 +249,7 @@ namespace Unigram.Controls.Gallery
         {
             if (_window == null)
             {
-                OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+                OnBackRequestedOverride(this, new HandledEventArgs());
 
                 // Create a new AppWindow
                 _window = await AppWindow.TryCreateAsync();

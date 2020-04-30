@@ -1057,7 +1057,7 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             if (ViewModel.Search != null)
             {

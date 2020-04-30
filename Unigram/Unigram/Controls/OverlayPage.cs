@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Input;
 using Windows.System;
 using Unigram.Common;
 using Windows.ApplicationModel.Core;
+using System.ComponentModel;
 
 namespace Unigram.Controls
 {
@@ -219,7 +220,7 @@ namespace Unigram.Controls
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs e)
+        public void OnBackRequested(HandledEventArgs e)
         {
             if (_closing)
             {
@@ -232,7 +233,7 @@ namespace Unigram.Controls
             OnBackRequestedOverride(this, e);
         }
 
-        protected virtual void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
+        protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             e.Handled = true;
             Hide(ContentDialogResult.None);
@@ -246,7 +247,7 @@ namespace Unigram.Controls
 
         public void TryHide(ContentDialogResult result)
         {
-            var e = new HandledRoutedEventArgs();
+            var e = new HandledEventArgs();
             OnBackRequestedOverride(this, e);
 
             if (e.Handled)

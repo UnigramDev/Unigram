@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Template10.Common;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -20,7 +21,7 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             View.OnBackRequested(args);
         }

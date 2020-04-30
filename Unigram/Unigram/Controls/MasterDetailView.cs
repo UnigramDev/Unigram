@@ -20,6 +20,7 @@ using Windows.UI.Composition;
 using System.Numerics;
 using System.Collections.Generic;
 using Unigram.Common;
+using System.ComponentModel;
 
 namespace Unigram.Controls
 {
@@ -86,7 +87,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnBackRequested(object sender, HandledRoutedEventArgs args)
+        private void OnBackRequested(object sender, HandledEventArgs args)
         {
             //var type = BackStackType.Navigation;
             //if (_backStack.Count > 0)

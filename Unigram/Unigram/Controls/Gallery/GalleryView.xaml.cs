@@ -42,6 +42,7 @@ using Template10.Services.ViewService;
 using Unigram.ViewModels.Gallery;
 using Unigram.Controls.Gallery;
 using Unigram.Native.Streaming;
+using System.ComponentModel;
 
 namespace Unigram.Controls.Gallery
 {
@@ -138,7 +139,7 @@ namespace Unigram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
-                    OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+                    OnBackRequestedOverride(this, new HandledEventArgs());
                 }
             });
         }
@@ -340,7 +341,7 @@ namespace Unigram.Controls.Gallery
             titlebar.ButtonForegroundColor = Colors.White;
         }
 
-        public void OnBackRequesting(HandledRoutedEventArgs e)
+        public void OnBackRequesting(HandledEventArgs e)
         {
             if (!_wasFullScreen)
             {
@@ -353,7 +354,7 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             if (!_wasFullScreen)
             {
@@ -1117,7 +1118,7 @@ namespace Unigram.Controls.Gallery
                 });
             };
 
-            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+            OnBackRequestedOverride(this, new HandledEventArgs());
         }
 
         #endregion
@@ -1258,7 +1259,7 @@ namespace Unigram.Controls.Gallery
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+            OnBackRequestedOverride(this, new HandledEventArgs());
         }
     }
 }

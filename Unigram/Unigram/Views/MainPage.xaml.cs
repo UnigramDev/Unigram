@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -614,7 +615,7 @@ namespace Unigram.Views
             batch.End();
         }
 
-        public void OnBackRequesting(HandledRoutedEventArgs args)
+        public void OnBackRequesting(HandledEventArgs args)
         {
             /*if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
             {
@@ -633,7 +634,7 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             OnBackRequesting(args);
 
