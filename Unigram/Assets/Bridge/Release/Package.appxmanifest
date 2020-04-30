@@ -15,7 +15,7 @@
   <Identity
     Name="38833FF26BA1D.UnigramPreview"
     Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB"
-    Version="3.10.2510.0" />
+    Version="3.15.3084.0" />
 
   <Properties>
     <DisplayName>Unigram - A Telegram universal experience</DisplayName>
@@ -25,7 +25,6 @@
 
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
   </Dependencies>
 
   <Resources>

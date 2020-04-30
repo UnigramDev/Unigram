@@ -67,13 +67,15 @@ namespace Unigram.Services
             foreach (var protoService in TLContainer.Current.ResolveAll<IProtoService>())
             {
 #if DEBUG
-                //var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
-                //if (test is LanguagePackStrings strings)
-                //{
-                //    saveRemoteLocaleStrings(info.Id, strings);
-                //}
+                await protoService.SendAsync(new SynchronizeLanguagePack(info.Id));
 
-                //return new Error();
+                var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
+                if (test is LanguagePackStrings strings)
+                {
+                    saveRemoteLocaleStrings(info.Id, strings);
+                }
+
+                return new Error();
 #endif
 
                 var response = await protoService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));

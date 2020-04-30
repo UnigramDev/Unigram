@@ -52,10 +52,30 @@ namespace Unigram.Controls.Messages.Content
 
             if (small != null /*&& small.Photo.Id != big.Photo.Id*/)
             {
-                UpdateThumbnail(message, small.Photo);
+                //UpdateThumbnail(message, small.Photo);
             }
 
-            UpdateFile(message, big);
+            UpdateFile(message, small.Photo);
+
+            if (message.Content is MessageText text && Uri.TryCreate(text.WebPage?.Url, UriKind.Absolute, out Uri result))
+            {
+                var background = TdBackground.FromUri(result);
+                if (background is BackgroundTypeFill fill)
+                {
+                    Background = fill.ToBrush();
+                    Texture.Opacity = 1;
+                }
+                else if (background is BackgroundTypePattern pattern)
+                {
+                    Background = pattern.ToBrush();
+                    Texture.Opacity = pattern.Intensity / 100d;
+                }
+                else if (background is BackgroundTypeWallpaper wallpaper)
+                {
+                    Background = null;
+                    Texture.Opacity = 1;
+                }
+            }
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -78,15 +98,15 @@ namespace Unigram.Controls.Messages.Content
             var small = photo.Thumbnail;
             var big = photo.DocumentValue;
 
-            if (small != null && small.Photo.Id != big.Id && small.Photo.Id == file.Id)
-            {
-                UpdateThumbnail(message, file);
-                return;
-            }
-            else if (big == null || big.Id != file.Id)
-            {
-                return;
-            }
+            //if (small != null && small.Photo.Id != big.Id && small.Photo.Id == file.Id)
+            //{
+            //    UpdateThumbnail(message, file);
+            //    return;
+            //}
+            //else if (big == null || big.Id != file.Id)
+            //{
+            //    return;
+            //}
 
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)

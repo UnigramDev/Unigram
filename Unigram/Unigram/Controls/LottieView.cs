@@ -23,6 +23,9 @@ namespace Unigram.Controls
         private CanvasAnimatedControl Canvas;
         private string CanvasPartName = "Canvas";
 
+        private int _frameWidth;
+        private int _frameHeight;
+
         private string _source;
         private IAnimation _animation;
 
@@ -380,6 +383,25 @@ namespace Unigram.Controls
         private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d).OnSourceChanged((Uri)e.NewValue, (Uri)e.OldValue);
+        }
+
+        #endregion
+
+        #region FrameSize
+
+        public Size FrameSize
+        {
+            get { return (Size)GetValue(FrameSizeProperty); }
+            set { SetValue(FrameSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty FrameSizeProperty =
+            DependencyProperty.Register("FrameSize", typeof(Size), typeof(LottieView), new PropertyMetadata(new Size(256, 256), OnFrameSizeChanged));
+
+        private static void OnFrameSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._frameWidth = (int)((Size)e.NewValue).Width;
+            ((LottieView)d)._frameHeight = (int)((Size)e.NewValue).Height;
         }
 
         #endregion
