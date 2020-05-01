@@ -2,28 +2,22 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
-using Template10.Services.NavigationService;
-using Template10.Services.ViewService;
+using Unigram.Services.Navigation;
+using Unigram.Services.ViewService;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Settings;
-#if INCLUDE_WALLET
-using Unigram.Views.Wallet;
-#endif
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Metadata;
-using Windows.Security.Credentials;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
+#if INCLUDE_WALLET
+using Unigram.Views.Wallet;
+#endif
 
 namespace Unigram.Common
 {

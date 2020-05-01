@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Telegram.Td;
-using Template10.Services.ViewService;
-using Unigram.Common;
+using Unigram.Services.ViewService;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Dialogs;
 using Unigram.ViewModels.Folders;
 using Unigram.ViewModels.Passport;
 using Unigram.ViewModels.Payments;
@@ -25,7 +22,6 @@ using Unigram.ViewModels.Users;
 using Unigram.ViewModels.Wallet;
 #endif
 using Unigram.Views;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
 
 namespace Unigram

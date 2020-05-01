@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
-using Windows.Devices.Geolocation;
+using Unigram.Navigation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;

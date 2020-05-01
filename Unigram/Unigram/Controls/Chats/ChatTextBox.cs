@@ -34,7 +34,7 @@ using Telegram.Td.Api;
 using Unigram.Services;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Collections;
-using Template10.Common;
+using Unigram.Navigation;
 using System.Windows.Input;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;

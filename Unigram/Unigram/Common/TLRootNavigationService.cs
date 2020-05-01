@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Template10.Services.NavigationService;
+﻿using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Services;
-using Unigram.ViewModels;
+using Unigram.Services.Navigation;
 using Unigram.ViewModels.SignIn;
 using Unigram.Views;
 using Unigram.Views.SignIn;

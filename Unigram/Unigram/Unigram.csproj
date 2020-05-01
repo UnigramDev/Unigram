@@ -270,6 +270,7 @@
     <Compile Include="Common\ConcurrentQueueWorker.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
+    <Compile Include="Common\ExpressionUtils.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
     <Compile Include="Common\SunDate.cs" />
@@ -296,6 +297,7 @@
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
+    <Compile Include="Common\XamlUtils.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
@@ -643,6 +645,14 @@
     <Compile Include="Logs\Logger.cs" />
     <Compile Include="Logs\LogHelper.cs" />
     <Compile Include="Logs\LogLevel.cs" />
+    <Compile Include="Navigation\BindableBase.cs" />
+    <Compile Include="Navigation\BootStrapper.cs" />
+    <Compile Include="Navigation\Deferral.cs" />
+    <Compile Include="Navigation\DispatcherWrapper.cs" />
+    <Compile Include="Navigation\IDispatcherWrapper.cs" />
+    <Compile Include="Navigation\TypedEventHandler.cs" />
+    <Compile Include="Navigation\ViewModelBase.cs" />
+    <Compile Include="Navigation\WindowContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\ConnectionTemplateSelector.cs" />
@@ -656,7 +666,27 @@
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\EmojiSetService.cs" />
     <Compile Include="Services\EncryptionService.cs" />
+    <Compile Include="Services\Keyboard\KeyboardEventArgs.cs" />
+    <Compile Include="Services\Keyboard\KeyboardHelper.cs" />
+    <Compile Include="Services\Keyboard\KeyboardService.cs" />
+    <Compile Include="Services\Logging\LoggingService.cs" />
+    <Compile Include="Services\Navigation\FrameFacade.cs" />
+    <Compile Include="Services\Navigation\INavigable.cs" />
+    <Compile Include="Services\Navigation\INavigationService.cs" />
+    <Compile Include="Services\Navigation\NavigatedEventArgs.cs" />
+    <Compile Include="Services\Navigation\NavigatingEventArgs.cs" />
+    <Compile Include="Services\Navigation\NavigationService.cs" />
+    <Compile Include="Services\Navigation\NavigationServiceList.cs" />
+    <Compile Include="Services\Serialization\ISerializationService.cs" />
+    <Compile Include="Services\Serialization\JsonSerializationService.cs" />
+    <Compile Include="Services\Serialization\SerializationService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
+    <Compile Include="Services\SettingsLegacy\IPropertyMapping.cs" />
+    <Compile Include="Services\SettingsLegacy\ISettingsService.cs" />
+    <Compile Include="Services\SettingsLegacy\IStoreConverter.cs" />
+    <Compile Include="Services\SettingsLegacy\JsonConverter.cs" />
+    <Compile Include="Services\SettingsLegacy\JsonMapping.cs" />
+    <Compile Include="Services\SettingsLegacy\SettingsService.cs" />
     <Compile Include="Services\Settings\AppearanceSettings.cs" />
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
@@ -699,6 +729,10 @@
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
     <Compile Include="Services\VibrationService.cs" />
+    <Compile Include="Services\ViewService\IViewService.cs" />
+    <Compile Include="Services\ViewService\SecondaryViewSynchronizationContextDecorator.cs" />
+    <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />
+    <Compile Include="Services\ViewService\ViewService.cs" />
     <Compile Include="Services\VoIPService.cs" />
     <Compile Include="Strings\en\Additional.cs">
       <AutoGen>True</AutoGen>
@@ -2730,10 +2764,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Unigram.Infrastructure\Unigram.Infrastructure.csproj">
-      <Project>{ac3e4f10-6615-4e16-bb0f-104760c92b95}</Project>
-      <Name>Unigram.Infrastructure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Telegram.Intro\Telegram.Intro.vcxproj">
       <Project>{1cfa1bfa-98d3-4316-8e3b-ac3ea8b3510e}</Project>
       <Name>Telegram.Intro</Name>

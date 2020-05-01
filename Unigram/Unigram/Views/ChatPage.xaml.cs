@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using Template10.Common;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;

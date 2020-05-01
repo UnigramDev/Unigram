@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Template10.Services.NavigationService;
+using Unigram.Services.Navigation;
 using Unigram.Views.Payments;
 using Unigram.Services;
 using Telegram.Td.Api;

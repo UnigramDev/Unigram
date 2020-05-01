@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Template10.Common;
-using Template10.Services.NavigationService;
+using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.Services.Navigation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
