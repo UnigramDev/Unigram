@@ -39,6 +39,7 @@
 
                     <ToggleSwitch
                         x:Name="TraySwitch"
+                        x:Load="False"
                         IsOn="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"
                         Header="Show Tray Icon"
                         Style="{StaticResource CheckButtonStyle}"/>

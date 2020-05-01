@@ -16,6 +16,9 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsAdvancedViewModel>();
 
+#if DESKTOP_BRIDGE
+            FindName(nameof(TraySwitch));
+
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Visible;
@@ -24,6 +27,7 @@ namespace Unigram.Views.Settings
             {
                 TraySwitch.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
+#endif
         }
 
         private void OnSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)

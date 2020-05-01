@@ -446,6 +446,7 @@ namespace Unigram
             });
 #endif
 
+#if DESKTOP_BRIDGE
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 try
@@ -457,6 +458,7 @@ namespace Unigram
                     // The app has been compiled without desktop bridge
                 }
             }
+#endif
 
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {

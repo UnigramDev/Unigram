@@ -16,6 +16,7 @@
                       Style="{StaticResource CheckButtonStyle}"/>
         <ToggleSwitch x:Name="ToggleMinimized"
                       x:Uid="StartupSwitch_Toggle"
+                      x:Load="False"
                       Header="Launch minimized"
                       Style="{StaticResource CheckButtonStyle}"
                       Visibility="{x:Bind Toggle.IsOn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>

@@ -28,6 +28,10 @@ namespace Unigram.Controls
 
             if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.StartupTaskContract", 2))
             {
+#if DESKTOP_BRIDGE
+                FindName(nameof(ToggleMinimized));
+#endif
+
                 OnLoaded();
             }
             else
@@ -96,7 +100,7 @@ namespace Unigram.Controls
             OnLoaded();
         }
 
-        private async void Minimized_Toggled(object sender, RoutedEventArgs e)
+        private void Minimized_Toggled(object sender, RoutedEventArgs e)
         {
             SettingsService.Current.IsLaunchMinimized = ToggleMinimized.IsOn;
         }
