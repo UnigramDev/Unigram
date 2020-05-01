@@ -458,6 +458,11 @@ namespace Unigram.Controls.Cells
 
         private string UpdateBriefLabel(Chat chat)
         {
+            if (chat.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
+            {
+                return psa.Text.Replace('\n', ' ');
+            }
+
             var topMessage = chat.LastMessage;
             if (topMessage != null)
             {
@@ -558,7 +563,11 @@ namespace Unigram.Controls.Cells
 
         private string UpdateFromLabel(Chat chat)
         {
-            if (chat.DraftMessage != null)
+            if (chat.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
+            {
+                return string.Empty;
+            }
+            else if (chat.DraftMessage != null)
             {
                 switch (chat.DraftMessage.InputMessageText)
                 {
@@ -822,9 +831,19 @@ namespace Unigram.Controls.Cells
 
         private string UpdateTimeLabel(Chat chat)
         {
-            if (_protoService != null && _protoService.IsChatSponsored(chat))
+            if (chat.Source is ChatSourceMtprotoProxy)
             {
                 return Strings.Resources.UseProxySponsor;
+            }
+            else if (chat.Source is ChatSourcePublicServiceAnnouncement psa)
+            {
+                var type = LocaleService.Current.GetString("PsaType_" + psa.Type);
+                if (type.Length > 0)
+                {
+                    return type;
+                }
+
+                return Strings.Resources.PsaTypeDefault;
             }
 
             var lastMessage = chat.LastMessage;

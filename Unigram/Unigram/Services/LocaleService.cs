@@ -52,7 +52,7 @@ namespace Unigram.Services
         }
 
         private static ILocaleService _current;
-        public static ILocaleService Current => _current = _current ?? new LocaleService();
+        public static ILocaleService Current => _current ??= new LocaleService();
 
         public async Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh)
         {
@@ -106,6 +106,8 @@ namespace Unigram.Services
         {
             string GetName(string value)
             {
+                return value;
+
                 var split = value.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
                 var result = string.Empty;
 
@@ -127,6 +129,19 @@ namespace Unigram.Services
                 {
                     if (difference.Strings[a].Value is LanguagePackStringValueOrdinary single)
                     {
+                        if (difference.Strings[a].Key == difference.Strings[a].Key.ToLower())
+                        {
+                            continue;
+                        }
+                        //else if (difference.Strings[a].Key == difference.Strings[a].Key.ToUpper())
+                        //{
+                        //    continue;
+                        //}
+                        else if (difference.Strings[a].Key.StartsWith('_'))
+                        {
+                            continue;
+                        }
+
                         if (already.Contains(GetName(difference.Strings[a].Key).ToLower()))
                         {
                             continue;
@@ -318,7 +333,7 @@ namespace Unigram.Services
                 return values[key] = GetValue(ordinary.Value);
             }
 
-#if DEBUG
+#if zDEBUG
             var text = _loader.GetString(key);
             if (text.Length > 0)
             {
@@ -368,7 +383,7 @@ namespace Unigram.Services
                 }
             }
 
-#if DEBUG
+#if zDEBUG
             var text = _loader.GetString(selector);
             if (text.Length > 0)
             {

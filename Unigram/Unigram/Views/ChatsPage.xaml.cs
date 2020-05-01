@@ -95,7 +95,7 @@ namespace Unigram.Views
             //    return count < max ? Visibility.Visible : Visibility.Collapsed;
             //}
 
-            if (ViewModel.CacheService.IsChatSponsored(chat))
+            if (chat.Source != null)
             {
                 return false;
             }
@@ -105,7 +105,7 @@ namespace Unigram.Views
 
         private bool DialogArchive_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsChatSponsored(chat) || ViewModel.CacheService.IsSavedMessages(chat) || chat.Id == 777000)
+            if (ViewModel.CacheService.IsSavedMessages(chat) || chat.Source != null || chat.Id == 777000)
             {
                 return false;
             }
@@ -115,7 +115,7 @@ namespace Unigram.Views
 
         private bool DialogNotify_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsSavedMessages(chat))
+            if (ViewModel.CacheService.IsSavedMessages(chat) || chat.Source is ChatSourcePublicServiceAnnouncement)
             {
                 return false;
             }
@@ -125,7 +125,7 @@ namespace Unigram.Views
 
         public bool DialogClear_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsChatSponsored(chat))
+            if (chat.Source != null)
             {
                 return false;
             }
@@ -144,7 +144,7 @@ namespace Unigram.Views
 
         private bool DialogDelete_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsChatSponsored(chat))
+            if (chat.Source is ChatSourceMtprotoProxy)
             {
                 return false;
             }
@@ -169,7 +169,11 @@ namespace Unigram.Views
 
         private string DialogDelete_Text(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup super)
+            if (chat.Source is ChatSourcePublicServiceAnnouncement)
+            {
+                return Strings.Resources.PsaHide;
+            }
+            else if (chat.Type is ChatTypeSupergroup super)
             {
                 return super.IsChannel ? Strings.Resources.LeaveChannelMenu : Strings.Resources.LeaveMegaMenu;
             }
@@ -218,7 +222,7 @@ namespace Unigram.Views
 
                 var compare = items[index > 0 ? index - 1 : index + 1];
 
-                if (compare.IsSponsored && index > 0)
+                if (compare.Source != null && index > 0)
                 {
                     compare = items[index + 1];
                 }

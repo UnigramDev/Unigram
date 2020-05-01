@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IChatListDelegate, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatIsSponsored>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IChatListDelegate, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatSource>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
     {
         private readonly INotificationsService _notificationsService;
 
@@ -572,7 +572,7 @@ namespace Unigram.ViewModels
             Handle(update.ChatId, update.Order);
         }
 
-        public void Handle(UpdateChatIsSponsored update)
+        public void Handle(UpdateChatSource update)
         {
             Handle(update.ChatId, update.Order);
         }

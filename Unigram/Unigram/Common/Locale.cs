@@ -294,12 +294,12 @@ namespace Unigram.Common
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
-                    var format = string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online)); //getInstance().formatterMonth.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
+                    var format = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online)); //getInstance().formatterMonth.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
                     return string.Format(Strings.Resources.LocationUpdatedFormatted, format);
                 }
                 else
                 {
-                    var format = string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online)); //getInstance().formatterYear.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
+                    var format = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online)); //getInstance().formatterYear.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
                     return string.Format(Strings.Resources.LocationUpdatedFormatted, format);
                 }
             }
@@ -331,11 +331,11 @@ namespace Unigram.Common
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
-                    return string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
+                    return string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
                 }
                 else
                 {
-                    return string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
+                    return string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
                 }
             }
             catch (Exception e)

@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 05/01/2020 12:30:04
+// 	Generated: 05/01/2020 13:19:30
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -7894,11 +7894,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "MMMM d"
         /// </summary>
-        public static string ChatDate
+        public static string chatDate
         {
             get
             {
-                return resourceLoader.GetString("ChatDate");
+                return resourceLoader.GetString("chatDate");
             }
         }
         
@@ -7927,11 +7927,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "MMMM d, yyyy"
         /// </summary>
-        public static string ChatFullDate
+        public static string chatFullDate
         {
             get
             {
-                return resourceLoader.GetString("ChatFullDate");
+                return resourceLoader.GetString("chatFullDate");
             }
         }
         
@@ -11807,17 +11807,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You need Telegram to log in to **{0}**. Would you like to install it now?"
-        /// </summary>
-        public static string DownloadTelegramText
-        {
-            get
-            {
-                return resourceLoader.GetString("DownloadTelegramText");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Draft"
         /// </summary>
         public static string Draft
@@ -15432,209 +15421,209 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "{0} at {1}"
         /// </summary>
-        public static string FormatDateAtTime
+        public static string formatDateAtTime
         {
             get
             {
-                return resourceLoader.GetString("FormatDateAtTime");
+                return resourceLoader.GetString("formatDateAtTime");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM d"
         /// </summary>
-        public static string FormatDateSchedule
+        public static string formatDateSchedule
         {
             get
             {
-                return resourceLoader.GetString("FormatDateSchedule");
+                return resourceLoader.GetString("formatDateSchedule");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "EEE MMM d"
         /// </summary>
-        public static string FormatDateScheduleDay
+        public static string formatDateScheduleDay
         {
             get
             {
-                return resourceLoader.GetString("FormatDateScheduleDay");
+                return resourceLoader.GetString("formatDateScheduleDay");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM d yyyy"
         /// </summary>
-        public static string FormatDateScheduleYear
+        public static string formatDateScheduleYear
         {
             get
             {
-                return resourceLoader.GetString("FormatDateScheduleYear");
+                return resourceLoader.GetString("formatDateScheduleYear");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd yyyy, h:mm a"
         /// </summary>
-        public static string FormatterBannedUntil12H
+        public static string formatterBannedUntil12H
         {
             get
             {
-                return resourceLoader.GetString("FormatterBannedUntil12H");
+                return resourceLoader.GetString("formatterBannedUntil12H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd yyyy, HH:mm"
         /// </summary>
-        public static string FormatterBannedUntil24H
+        public static string formatterBannedUntil24H
         {
             get
             {
-                return resourceLoader.GetString("FormatterBannedUntil24H");
+                return resourceLoader.GetString("formatterBannedUntil24H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd, h:mm a"
         /// </summary>
-        public static string FormatterBannedUntilThisYear12H
+        public static string formatterBannedUntilThisYear12H
         {
             get
             {
-                return resourceLoader.GetString("FormatterBannedUntilThisYear12H");
+                return resourceLoader.GetString("formatterBannedUntilThisYear12H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd, HH:mm"
         /// </summary>
-        public static string FormatterBannedUntilThisYear24H
+        public static string formatterBannedUntilThisYear24H
         {
             get
             {
-                return resourceLoader.GetString("FormatterBannedUntilThisYear24H");
+                return resourceLoader.GetString("formatterBannedUntilThisYear24H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "h:mm a"
         /// </summary>
-        public static string FormatterDay12H
+        public static string formatterDay12H
         {
             get
             {
-                return resourceLoader.GetString("FormatterDay12H");
+                return resourceLoader.GetString("formatterDay12H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "HH:mm"
         /// </summary>
-        public static string FormatterDay24H
+        public static string formatterDay24H
         {
             get
             {
-                return resourceLoader.GetString("FormatterDay24H");
+                return resourceLoader.GetString("formatterDay24H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd"
         /// </summary>
-        public static string FormatterMonth
+        public static string formatterMonth
         {
             get
             {
-                return resourceLoader.GetString("FormatterMonth");
+                return resourceLoader.GetString("formatterMonth");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "LLLL"
         /// </summary>
-        public static string FormatterMonthName
+        public static string formatterMonthName
         {
             get
             {
-                return resourceLoader.GetString("FormatterMonthName");
+                return resourceLoader.GetString("formatterMonthName");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMMM yyyy"
         /// </summary>
-        public static string FormatterMonthYear
+        public static string formatterMonthYear
         {
             get
             {
-                return resourceLoader.GetString("FormatterMonthYear");
+                return resourceLoader.GetString("formatterMonthYear");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "LLLL yyyy"
         /// </summary>
-        public static string FormatterMonthYear2
+        public static string formatterMonthYear2
         {
             get
             {
-                return resourceLoader.GetString("FormatterMonthYear2");
+                return resourceLoader.GetString("formatterMonthYear2");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd yyyy, h:mm a"
         /// </summary>
-        public static string FormatterStats12H
+        public static string formatterStats12H
         {
             get
             {
-                return resourceLoader.GetString("FormatterStats12H");
+                return resourceLoader.GetString("formatterStats12H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd yyyy, HH:mm"
         /// </summary>
-        public static string FormatterStats24H
+        public static string formatterStats24H
         {
             get
             {
-                return resourceLoader.GetString("FormatterStats24H");
+                return resourceLoader.GetString("formatterStats24H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "EEE"
         /// </summary>
-        public static string FormatterWeek
+        public static string formatterWeek
         {
             get
             {
-                return resourceLoader.GetString("FormatterWeek");
+                return resourceLoader.GetString("formatterWeek");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "dd.MM.yy"
         /// </summary>
-        public static string FormatterYear
+        public static string formatterYear
         {
             get
             {
-                return resourceLoader.GetString("FormatterYear");
+                return resourceLoader.GetString("formatterYear");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "dd.MM.yyyy"
         /// </summary>
-        public static string FormatterYearMax
+        public static string formatterYearMax
         {
             get
             {
-                return resourceLoader.GetString("FormatterYearMax");
+                return resourceLoader.GetString("formatterYearMax");
             }
         }
         
@@ -18053,66 +18042,66 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string ItemsFew
+        public static string itemsFew
         {
             get
             {
-                return resourceLoader.GetString("ItemsFew");
+                return resourceLoader.GetString("itemsFew");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string ItemsMany
+        public static string itemsMany
         {
             get
             {
-                return resourceLoader.GetString("ItemsMany");
+                return resourceLoader.GetString("itemsMany");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} item"
         /// </summary>
-        public static string ItemsOne
+        public static string itemsOne
         {
             get
             {
-                return resourceLoader.GetString("ItemsOne");
+                return resourceLoader.GetString("itemsOne");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} items"
         /// </summary>
-        public static string ItemsOther
+        public static string itemsOther
         {
             get
             {
-                return resourceLoader.GetString("ItemsOther");
+                return resourceLoader.GetString("itemsOther");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string ItemsTwo
+        public static string itemsTwo
         {
             get
             {
-                return resourceLoader.GetString("ItemsTwo");
+                return resourceLoader.GetString("itemsTwo");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string ItemsZero
+        public static string itemsZero
         {
             get
             {
-                return resourceLoader.GetString("ItemsZero");
+                return resourceLoader.GetString("itemsZero");
             }
         }
         
@@ -19296,17 +19285,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Log in with Telegram"
-        /// </summary>
-        public static string LoginWithTelegram
-        {
-            get
-            {
-                return resourceLoader.GetString("LoginWithTelegram");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Log out"
         /// </summary>
         public static string LogOut
@@ -20447,44 +20425,44 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string MessagesFew
+        public static string messagesFew
         {
             get
             {
-                return resourceLoader.GetString("MessagesFew");
+                return resourceLoader.GetString("messagesFew");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string MessagesMany
+        public static string messagesMany
         {
             get
             {
-                return resourceLoader.GetString("MessagesMany");
+                return resourceLoader.GetString("messagesMany");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} message"
         /// </summary>
-        public static string MessagesOne
+        public static string messagesOne
         {
             get
             {
-                return resourceLoader.GetString("MessagesOne");
+                return resourceLoader.GetString("messagesOne");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} messages"
         /// </summary>
-        public static string MessagesOther
+        public static string messagesOther
         {
             get
             {
-                return resourceLoader.GetString("MessagesOther");
+                return resourceLoader.GetString("messagesOther");
             }
         }
         
@@ -20502,22 +20480,22 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string MessagesTwo
+        public static string messagesTwo
         {
             get
             {
-                return resourceLoader.GetString("MessagesTwo");
+                return resourceLoader.GetString("messagesTwo");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string MessagesZero
+        public static string messagesZero
         {
             get
             {
-                return resourceLoader.GetString("MessagesZero");
+                return resourceLoader.GetString("messagesZero");
             }
         }
         
@@ -25602,506 +25580,506 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Arabic"
         /// </summary>
-        public static string PassportLanguageAR
+        public static string PassportLanguage_AR
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageAR");
+                return resourceLoader.GetString("PassportLanguage_AR");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Azerbaijani"
         /// </summary>
-        public static string PassportLanguageAZ
+        public static string PassportLanguage_AZ
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageAZ");
+                return resourceLoader.GetString("PassportLanguage_AZ");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Bulgarian"
         /// </summary>
-        public static string PassportLanguageBG
+        public static string PassportLanguage_BG
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageBG");
+                return resourceLoader.GetString("PassportLanguage_BG");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Bangla"
         /// </summary>
-        public static string PassportLanguageBN
+        public static string PassportLanguage_BN
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageBN");
+                return resourceLoader.GetString("PassportLanguage_BN");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Czech"
         /// </summary>
-        public static string PassportLanguageCS
+        public static string PassportLanguage_CS
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageCS");
+                return resourceLoader.GetString("PassportLanguage_CS");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Danish"
         /// </summary>
-        public static string PassportLanguageDA
+        public static string PassportLanguage_DA
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageDA");
+                return resourceLoader.GetString("PassportLanguage_DA");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "German"
         /// </summary>
-        public static string PassportLanguageDE
+        public static string PassportLanguage_DE
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageDE");
+                return resourceLoader.GetString("PassportLanguage_DE");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Divehi"
         /// </summary>
-        public static string PassportLanguageDV
+        public static string PassportLanguage_DV
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageDV");
+                return resourceLoader.GetString("PassportLanguage_DV");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Dzongkha"
         /// </summary>
-        public static string PassportLanguageDZ
+        public static string PassportLanguage_DZ
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageDZ");
+                return resourceLoader.GetString("PassportLanguage_DZ");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Greek"
         /// </summary>
-        public static string PassportLanguageEL
+        public static string PassportLanguage_EL
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageEL");
+                return resourceLoader.GetString("PassportLanguage_EL");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Spanish"
         /// </summary>
-        public static string PassportLanguageES
+        public static string PassportLanguage_ES
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageES");
+                return resourceLoader.GetString("PassportLanguage_ES");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Estonian"
         /// </summary>
-        public static string PassportLanguageET
+        public static string PassportLanguage_ET
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageET");
+                return resourceLoader.GetString("PassportLanguage_ET");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Persian"
         /// </summary>
-        public static string PassportLanguageFA
+        public static string PassportLanguage_FA
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageFA");
+                return resourceLoader.GetString("PassportLanguage_FA");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "French"
         /// </summary>
-        public static string PassportLanguageFR
+        public static string PassportLanguage_FR
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageFR");
+                return resourceLoader.GetString("PassportLanguage_FR");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Hebrew"
         /// </summary>
-        public static string PassportLanguageHE
+        public static string PassportLanguage_HE
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageHE");
+                return resourceLoader.GetString("PassportLanguage_HE");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Croatian"
         /// </summary>
-        public static string PassportLanguageHR
+        public static string PassportLanguage_HR
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageHR");
+                return resourceLoader.GetString("PassportLanguage_HR");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Hungarian"
         /// </summary>
-        public static string PassportLanguageHU
+        public static string PassportLanguage_HU
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageHU");
+                return resourceLoader.GetString("PassportLanguage_HU");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Armenian"
         /// </summary>
-        public static string PassportLanguageHY
+        public static string PassportLanguage_HY
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageHY");
+                return resourceLoader.GetString("PassportLanguage_HY");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Indonesian"
         /// </summary>
-        public static string PassportLanguageID
+        public static string PassportLanguage_ID
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageID");
+                return resourceLoader.GetString("PassportLanguage_ID");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Icelandic"
         /// </summary>
-        public static string PassportLanguageIS
+        public static string PassportLanguage_IS
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageIS");
+                return resourceLoader.GetString("PassportLanguage_IS");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Italian"
         /// </summary>
-        public static string PassportLanguageIT
+        public static string PassportLanguage_IT
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageIT");
+                return resourceLoader.GetString("PassportLanguage_IT");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Japanese"
         /// </summary>
-        public static string PassportLanguageJA
+        public static string PassportLanguage_JA
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageJA");
+                return resourceLoader.GetString("PassportLanguage_JA");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Georgian"
         /// </summary>
-        public static string PassportLanguageKA
+        public static string PassportLanguage_KA
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageKA");
+                return resourceLoader.GetString("PassportLanguage_KA");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Khmer"
         /// </summary>
-        public static string PassportLanguageKM
+        public static string PassportLanguage_KM
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageKM");
+                return resourceLoader.GetString("PassportLanguage_KM");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Korean"
         /// </summary>
-        public static string PassportLanguageKO
+        public static string PassportLanguage_KO
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageKO");
+                return resourceLoader.GetString("PassportLanguage_KO");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Lao"
         /// </summary>
-        public static string PassportLanguageLO
+        public static string PassportLanguage_LO
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageLO");
+                return resourceLoader.GetString("PassportLanguage_LO");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Lithuanian"
         /// </summary>
-        public static string PassportLanguageLT
+        public static string PassportLanguage_LT
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageLT");
+                return resourceLoader.GetString("PassportLanguage_LT");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Latvian"
         /// </summary>
-        public static string PassportLanguageLV
+        public static string PassportLanguage_LV
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageLV");
+                return resourceLoader.GetString("PassportLanguage_LV");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Macedonian"
         /// </summary>
-        public static string PassportLanguageMK
+        public static string PassportLanguage_MK
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageMK");
+                return resourceLoader.GetString("PassportLanguage_MK");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Mongolian"
         /// </summary>
-        public static string PassportLanguageMN
+        public static string PassportLanguage_MN
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageMN");
+                return resourceLoader.GetString("PassportLanguage_MN");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Malay"
         /// </summary>
-        public static string PassportLanguageMS
+        public static string PassportLanguage_MS
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageMS");
+                return resourceLoader.GetString("PassportLanguage_MS");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Burmese"
         /// </summary>
-        public static string PassportLanguageMY
+        public static string PassportLanguage_MY
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageMY");
+                return resourceLoader.GetString("PassportLanguage_MY");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Nepali"
         /// </summary>
-        public static string PassportLanguageNE
+        public static string PassportLanguage_NE
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageNE");
+                return resourceLoader.GetString("PassportLanguage_NE");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Dutch"
         /// </summary>
-        public static string PassportLanguageNL
+        public static string PassportLanguage_NL
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageNL");
+                return resourceLoader.GetString("PassportLanguage_NL");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Polish"
         /// </summary>
-        public static string PassportLanguagePL
+        public static string PassportLanguage_PL
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguagePL");
+                return resourceLoader.GetString("PassportLanguage_PL");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Portuguese"
         /// </summary>
-        public static string PassportLanguagePT
+        public static string PassportLanguage_PT
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguagePT");
+                return resourceLoader.GetString("PassportLanguage_PT");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Romanian"
         /// </summary>
-        public static string PassportLanguageRO
+        public static string PassportLanguage_RO
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageRO");
+                return resourceLoader.GetString("PassportLanguage_RO");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Russian"
         /// </summary>
-        public static string PassportLanguageRU
+        public static string PassportLanguage_RU
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageRU");
+                return resourceLoader.GetString("PassportLanguage_RU");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Slovak"
         /// </summary>
-        public static string PassportLanguageSK
+        public static string PassportLanguage_SK
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageSK");
+                return resourceLoader.GetString("PassportLanguage_SK");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Slovenian"
         /// </summary>
-        public static string PassportLanguageSL
+        public static string PassportLanguage_SL
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageSL");
+                return resourceLoader.GetString("PassportLanguage_SL");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Thai"
         /// </summary>
-        public static string PassportLanguageTH
+        public static string PassportLanguage_TH
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageTH");
+                return resourceLoader.GetString("PassportLanguage_TH");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Turkmen"
         /// </summary>
-        public static string PassportLanguageTK
+        public static string PassportLanguage_TK
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageTK");
+                return resourceLoader.GetString("PassportLanguage_TK");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Turkish"
         /// </summary>
-        public static string PassportLanguageTR
+        public static string PassportLanguage_TR
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageTR");
+                return resourceLoader.GetString("PassportLanguage_TR");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Ukrainian"
         /// </summary>
-        public static string PassportLanguageUK
+        public static string PassportLanguage_UK
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageUK");
+                return resourceLoader.GetString("PassportLanguage_UK");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Uzbek"
         /// </summary>
-        public static string PassportLanguageUZ
+        public static string PassportLanguage_UZ
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageUZ");
+                return resourceLoader.GetString("PassportLanguage_UZ");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Vietnamese"
         /// </summary>
-        public static string PassportLanguageVI
+        public static string PassportLanguage_VI
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageVI");
+                return resourceLoader.GetString("PassportLanguage_VI");
             }
         }
         
@@ -26572,55 +26550,55 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
-        public static string PassportSDKCancel
+        public static string PassportSDK_Cancel
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKCancel");
+                return resourceLoader.GetString("PassportSDK_Cancel");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "You need Telegram to log in to **{0}**. Would you like to install it now?"
         /// </summary>
-        public static string PassportSDKDownloadTelegram
+        public static string PassportSDK_DownloadTelegram
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKDownloadTelegram");
+                return resourceLoader.GetString("PassportSDK_DownloadTelegram");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Log in with Telegram"
         /// </summary>
-        public static string PassportSDKLogInWithTelegram
+        public static string PassportSDK_LogInWithTelegram
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKLogInWithTelegram");
+                return resourceLoader.GetString("PassportSDK_LogInWithTelegram");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Open Google Play"
         /// </summary>
-        public static string PassportSDKOpenGooglePlay
+        public static string PassportSDK_OpenGooglePlay
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKOpenGooglePlay");
+                return resourceLoader.GetString("PassportSDK_OpenGooglePlay");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Telegram Passport"
         /// </summary>
-        public static string PassportSDKTelegramPassport
+        public static string PassportSDK_TelegramPassport
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKTelegramPassport");
+                return resourceLoader.GetString("PassportSDK_TelegramPassport");
             }
         }
         
@@ -29278,6 +29256,116 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ProxySettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide"
+        /// </summary>
+        public static string PsaHide
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaHide");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to hide the selected chat?"
+        /// </summary>
+        public static string PsaHideChatAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaHideChatAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide chat"
+        /// </summary>
+        public static string PsaHideChatAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaHideChatAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. Learn more about this initiative at https://telegram.org/blog/coronavirus"
+        /// </summary>
+        public static string PsaInfo_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaInfo_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "COVID-19 Notification"
+        /// </summary>
+        public static string PsaMessage_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessage_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Important Notification"
+        /// </summary>
+        public static string PsaMessageDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessageDefault");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. Learn more about this initiative at https://telegram.org/blog/coronavirus"
+        /// </summary>
+        public static string PsaMessageInfo_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessageInfo_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This is an important notification."
+        /// </summary>
+        public static string PsaMessageInfoDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessageInfoDefault");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "COVID-19"
+        /// </summary>
+        public static string PsaType_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaType_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "PSA"
+        /// </summary>
+        public static string PsaTypeDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaTypeDefault");
             }
         }
         
@@ -34956,28 +35044,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TextSizeHeader");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Cancel"
-        /// </summary>
-        public static string TgCancel
-        {
-            get
-            {
-                return resourceLoader.GetString("TgCancel");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Open Google Play"
-        /// </summary>
-        public static string TgOpenGooglePlay
-        {
-            get
-            {
-                return resourceLoader.GetString("TgOpenGooglePlay");
             }
         }
         

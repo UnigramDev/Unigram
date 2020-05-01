@@ -103,6 +103,10 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <TextBlock x:Name="HeaderLabel"
                            Margin="0,0,0,2"
                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
@@ -121,7 +125,19 @@
                            Visibility="Collapsed"
                            Margin="0,0,0,2"/>
 
-                <local:MessageReference x:Name="Reply" x:DeferLoadStrategy="Lazy" Click="Reply_Click" Grid.Row="1"/>
+                <controls:GlyphButton
+                    x:Name="PsaInfo"
+                    x:DeferLoadStrategy="Lazy"
+                    Glyph="&#xE946;"
+                    Click="PsaInfo_Click"
+                    Margin="0,-6,-10,-8"
+                    Grid.Column="1"/>
+
+                <local:MessageReference
+                    x:Name="Reply"
+                    x:DeferLoadStrategy="Lazy"
+                    Click="Reply_Click"
+                    Grid.Row="1"/>
             </Grid>
 
             <RichTextBlock

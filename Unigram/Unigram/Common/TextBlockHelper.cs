@@ -175,8 +175,13 @@ namespace Unigram.Common
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
                         var hyperlink = new Hyperlink { NavigateUri = new Uri(textUrl.Url) };
+                        span.Inlines.Add(hyperlink);
+                        local = hyperlink;
+                    }
+                    else if (entity.Type is TextEntityTypeUrl url)
+                    {
                         var data = text.Substring(entity.Offset, entity.Length);
-
+                        var hyperlink = new Hyperlink { NavigateUri = new Uri(data) };
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }

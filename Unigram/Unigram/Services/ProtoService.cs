@@ -57,7 +57,6 @@ namespace Unigram.Services
 
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
-        bool IsChatSponsored(Chat chat);
 
         bool CanPostMessages(Chat chat);
 
@@ -774,20 +773,6 @@ namespace Unigram.Services
             return false;
         }
 
-        public bool IsChatSponsored(Chat chat)
-        {
-            if (chat.IsSponsored && chat.Type is ChatTypeSupergroup type)
-            {
-                var supergroup = GetSupergroup(type.SupergroupId);
-                if (supergroup != null)
-                {
-                    return !supergroup.IsMember();
-                }
-            }
-
-            return false;
-        }
-
         public bool CanPostMessages(Chat chat)
         {
             if (chat.Type is ChatTypeSupergroup super)
@@ -1311,14 +1296,6 @@ namespace Unigram.Services
                     value.IsPinned = updateChatIsPinned.IsPinned;
                 }
             }
-            else if (update is UpdateChatIsSponsored updateChatIsSponsored)
-            {
-                if (_chats.TryGetValue(updateChatIsSponsored.ChatId, out Chat value))
-                {
-                    value.Order = updateChatIsSponsored.Order;
-                    value.IsSponsored = updateChatIsSponsored.IsSponsored;
-                }
-            }
             else if (update is UpdateChatLastMessage updateChatLastMessage)
             {
                 if (_chats.TryGetValue(updateChatLastMessage.ChatId, out Chat value))
@@ -1388,6 +1365,14 @@ namespace Unigram.Services
                 if (_chats.TryGetValue(updateChatReplyMarkup.ChatId, out Chat value))
                 {
                     value.ReplyMarkupMessageId = updateChatReplyMarkup.ReplyMarkupMessageId;
+                }
+            }
+            else if (update is UpdateChatSource updateChatSource)
+            {
+                if (_chats.TryGetValue(updateChatSource.ChatId, out Chat value))
+                {
+                    value.Order = updateChatSource.Order;
+                    value.Source = updateChatSource.Source;
                 }
             }
             else if (update is UpdateChatTitle updateChatTitle)

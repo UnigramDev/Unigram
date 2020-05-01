@@ -73,13 +73,18 @@ namespace Unigram.Common
 
         public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
         {
-            var label = new TextBlock();
+            var label = new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap
+            };
             var tip = new Microsoft.UI.Xaml.Controls.TeachingTip
             {
                 Target = target,
                 PreferredPlacement = placement,
                 IsLightDismissEnabled = true,
-                Content = label
+                Content = label,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch
             };
 
             TextBlockHelper.SetFormattedText(label, text);
