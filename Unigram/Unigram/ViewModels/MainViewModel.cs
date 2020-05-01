@@ -165,6 +165,8 @@ namespace Unigram.ViewModels
             set
             {
                 Chats.SetFilter(value?.Id == Constants.ChatListFilterAll ? null : value);
+                //Chats = new ChatsViewModel(ProtoService, CacheService, base.Settings, Aggregator, _pushService, new ChatListMain(), value?.Id == Constants.ChatListFilterAll ? null : value);
+                //RaisePropertyChanged(() => Chats);
                 RaisePropertyChanged();
             }
         }

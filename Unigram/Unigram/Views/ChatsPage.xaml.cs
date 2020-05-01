@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -35,11 +25,11 @@ namespace Unigram.Views
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new ChatsListViewItem(ChatsList);
+                args.ItemContainer.Style = ChatsList.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
                 args.ItemContainer.ContextRequested += Chat_ContextRequested;
             }
 
-            args.ItemContainer.Style = ChatsList.ItemContainerStyleSelector.SelectStyle(args.Item, null);
             args.IsContainerPrepared = true;
         }
 

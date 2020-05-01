@@ -311,8 +311,6 @@
                     </Grid>
                 </controls:ContentPageHeader>
 
-                <Border x:Name="Separator" BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="1,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="0"/>
-
                 <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
                     <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
                         <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
@@ -788,6 +786,8 @@
                         </Grid>
                     </PivotItem>
                 </Pivot>
+
+                <Border x:Name="Separator" BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="1,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="1"/>
             </Grid>
         </controls:MasterDetailView>
 
