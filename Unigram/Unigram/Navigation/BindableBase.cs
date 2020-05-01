@@ -9,7 +9,7 @@ using Unigram.Navigation;
 namespace Unigram.Navigation
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-MVVM
-    public abstract class BindableBase
+    public abstract class BindableBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
