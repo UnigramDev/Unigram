@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Utils;
-using Unigram.Services;
-using Windows.Devices.Geolocation;
-using Windows.UI.Xaml.Navigation;
 using Unigram.Collections;
+using Unigram.Services;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {

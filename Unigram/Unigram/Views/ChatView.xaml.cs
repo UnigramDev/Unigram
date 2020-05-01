@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
@@ -19,10 +17,9 @@ using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
 using Unigram.Controls.Gallery;
 using Unigram.Controls.Messages;
-using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Entities;
-using Unigram.Native;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
@@ -34,17 +31,12 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -52,7 +44,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -1057,7 +1048,7 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             if (ViewModel.Search != null)
             {
@@ -1892,7 +1883,7 @@ namespace Unigram.Views
                 var fullInfo = ViewModel.ProtoService.GetUserFull(user.Id);
                 if (fullInfo != null)
                 {
-                    if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("settings")))
+                    if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("Settings")))
                     {
                         flyout.CreateFlyoutItem(null, Strings.Resources.BotSettings);
                     }

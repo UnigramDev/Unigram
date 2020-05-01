@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading.Tasks;
+using Unigram.Common;
+using Unigram.Navigation;
+using Unigram.Services.Navigation;
+using Unigram.Services.ViewService;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using LinqToVisualTree;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls.Primitives;
-using Template10.Common;
-using Windows.UI;
-using Windows.Foundation.Metadata;
-using Template10.Services.NavigationService;
-using Template10.Services.ViewService;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Input;
-using Windows.System;
-using Unigram.Common;
-using Windows.ApplicationModel.Core;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Controls
 {
@@ -219,7 +213,7 @@ namespace Unigram.Controls
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs e)
+        public void OnBackRequested(HandledEventArgs e)
         {
             if (_closing)
             {
@@ -232,7 +226,7 @@ namespace Unigram.Controls
             OnBackRequestedOverride(this, e);
         }
 
-        protected virtual void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
+        protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             e.Handled = true;
             Hide(ContentDialogResult.None);
@@ -246,7 +240,7 @@ namespace Unigram.Controls
 
         public void TryHide(ContentDialogResult result)
         {
-            var e = new HandledRoutedEventArgs();
+            var e = new HandledEventArgs();
             OnBackRequestedOverride(this, e);
 
             if (e.Handled)
@@ -377,7 +371,7 @@ namespace Unigram.Controls
 
         public int SessionId => throw new NotImplementedException();
 
-        public event TypedEventHandler<Type> AfterRestoreSavedNavigation;
+        public event TypedEventHandler<INavigationService, Type> AfterRestoreSavedNavigation;
 
         public void ClearCache(bool removeCachedPagesInBackStack = false)
         {

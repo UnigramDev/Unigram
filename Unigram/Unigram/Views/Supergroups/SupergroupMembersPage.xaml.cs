@@ -1,31 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.ComponentModel;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Channels;
+using Unigram.Navigation;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Chats;
-using Unigram.Views.Users;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
@@ -94,7 +80,7 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {

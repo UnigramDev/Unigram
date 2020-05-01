@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
-using Unigram.Common;
 using Unigram.Controls.Chats;
-using Unigram.Controls.Views;
-using Unigram.Native;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.System;
 using Windows.UI.Core;

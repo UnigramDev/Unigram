@@ -1,5 +1,6 @@
 ﻿using System;
-using Template10.Common;
+using System.ComponentModel;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
@@ -20,7 +21,7 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             View.OnBackRequested(args);
         }

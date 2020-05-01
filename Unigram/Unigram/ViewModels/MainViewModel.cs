@@ -1,26 +1,15 @@
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
-using Template10.Common;
+using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Services;
-using Unigram.Views;
-using Windows.Media.Playback;
-using Windows.UI.Xaml.Navigation;
-using Telegram.Td.Api;
-using libtgvoip;
-using Windows.Storage;
-using System.Linq;
-using Unigram.Controls;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Unigram.Collections;
-using Unigram.ViewModels.Folders;
 using Unigram.Views.Folders;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using Telegram.Td.Api;
-using Template10.Mvvm;
+using Unigram.Navigation;
 using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery

@@ -1,47 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Template10.Common;
+using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Converters;
-using Unigram.ViewModels;
+using Unigram.Native.Streaming;
+using Unigram.Navigation;
+using Unigram.Services;
+using Unigram.Services.ViewService;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Gallery;
 using Unigram.Views;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.Graphics.Display;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.System.Display;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
-using LinqToVisualTree;
-using Windows.Foundation.Metadata;
-using Windows.UI;
-using Microsoft.Graphics.Canvas.Effects;
-using Windows.UI.ViewManagement;
-using Windows.System.Display;
-using Unigram.Common;
-using Windows.Graphics.Display;
-using Telegram.Td.Api;
-using System.Windows.Input;
-using Windows.Storage.Streams;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Template10.Services.ViewService;
-using Unigram.ViewModels.Gallery;
-using Unigram.Controls.Gallery;
-using Unigram.Native.Streaming;
 
 namespace Unigram.Controls.Gallery
 {
@@ -138,7 +127,7 @@ namespace Unigram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
-                    OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+                    OnBackRequestedOverride(this, new HandledEventArgs());
                 }
             });
         }
@@ -340,7 +329,7 @@ namespace Unigram.Controls.Gallery
             titlebar.ButtonForegroundColor = Colors.White;
         }
 
-        public void OnBackRequesting(HandledRoutedEventArgs e)
+        public void OnBackRequesting(HandledEventArgs e)
         {
             if (!_wasFullScreen)
             {
@@ -353,7 +342,7 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             if (!_wasFullScreen)
             {
@@ -1117,7 +1106,7 @@ namespace Unigram.Controls.Gallery
                 });
             };
 
-            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+            OnBackRequestedOverride(this, new HandledEventArgs());
         }
 
         #endregion
@@ -1258,7 +1247,7 @@ namespace Unigram.Controls.Gallery
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+            OnBackRequestedOverride(this, new HandledEventArgs());
         }
     }
 }

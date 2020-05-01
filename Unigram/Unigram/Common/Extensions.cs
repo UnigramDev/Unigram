@@ -1,20 +1,19 @@
 ﻿using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Numerics;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Native;
+using Unigram.Navigation;
 using Unigram.Services;
-using Unigram.ViewModels;
+using Unigram.Services.Navigation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
@@ -22,7 +21,6 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.UI;
-using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -625,6 +623,14 @@ namespace Unigram.Common
             return list.Count == 0;
         }
 
+        public static void ForEach<T>(this IEnumerable<T> list, Action<T> action)
+        {
+            foreach (var item in list)
+            {
+                action?.Invoke(item);
+            }
+        }
+
         public static List<Control> AllChildren(this DependencyObject parent)
         {
             var list = new List<Control>();
@@ -875,5 +881,14 @@ namespace Unigram.Common
 
             return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
         }
+    }
+
+    public static class Template10Utils
+    {
+        public static WindowContext GetWindowWrapper(this INavigationService service)
+            => WindowContext.ActiveWrappers.FirstOrDefault(x => x.NavigationServices.Contains(service));
+
+        public static IDispatcherWrapper GetDispatcherWrapper(this INavigationService service)
+            => service.GetWindowWrapper()?.Dispatcher;
     }
 }

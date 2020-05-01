@@ -1,25 +1,14 @@
 ﻿using System;
-using Template10.Services.NavigationService;
-using Windows.System;
-using Windows.UI.Core;
+using System.Collections.Generic;
+using System.ComponentModel;
+using Unigram.Navigation;
+using Unigram.Services;
+using Unigram.Services.Navigation;
+using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Views;
-using Template10.Common;
 using Windows.UI.Xaml.Media;
-using Unigram.Services;
-using Unigram.Views.Users;
-using System.Diagnostics;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml.Input;
-using Windows.Foundation.Metadata;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Composition;
-using System.Numerics;
-using System.Collections.Generic;
-using Unigram.Common;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
@@ -86,7 +75,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnBackRequested(object sender, HandledRoutedEventArgs args)
+        private void OnBackRequested(object sender, HandledEventArgs args)
         {
             //var type = BackStackType.Navigation;
             //if (_backStack.Count > 0)

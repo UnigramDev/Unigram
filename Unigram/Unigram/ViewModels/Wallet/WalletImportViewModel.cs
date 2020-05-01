@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Template10.Mvvm;
+using Unigram.Navigation;
 using Ton.Tonlib.Api;
 using Unigram.Collections;
 using Unigram.Common;

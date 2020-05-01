@@ -1,41 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
-using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using LinqToVisualTree;
-using System.Threading.Tasks;
-using Unigram.Controls;
-using Template10.Common;
 using System.ComponentModel;
-using Unigram.Common;
-using Windows.UI.Core;
-using Windows.System;
-using System.Windows.Input;
-using Unigram.Strings;
-using Unigram.ViewModels.Dialogs;
-using Telegram.Td.Api;
-using Unigram.Controls.Views;
-using Unigram.ViewModels.Delegates;
+using System.Linq;
+using System.Numerics;
 using System.Reactive.Linq;
-using Unigram.ViewModels.Chats;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Cells;
+using Unigram.Controls.Chats;
 using Unigram.Controls.Gallery;
 using Unigram.Converters;
-using Unigram.Controls.Chats;
+using Unigram.Navigation;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using System.Numerics;
+using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Chats
 {
@@ -280,7 +262,7 @@ namespace Unigram.Views.Chats
             }
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {

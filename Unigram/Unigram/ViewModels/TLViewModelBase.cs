@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Template10.Common;
-using Template10.Mvvm;
-using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.Services;
 
 namespace Unigram.ViewModels

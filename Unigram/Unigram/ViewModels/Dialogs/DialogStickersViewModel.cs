@@ -1,28 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
-using Windows.UI.Popups;
-using Template10.Utils;
-using Template10.Mvvm;
-using System.ComponentModel;
-using System.Collections.Specialized;
-using Windows.Storage;
-using System.Runtime.CompilerServices;
-using Telegram.Td.Api;
-using Windows.UI.Xaml.Data;
 using Windows.Foundation;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.ViewManagement;
-using Unigram.Native;
+using Windows.Storage;
 using Windows.UI.Text.Core;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels.Dialogs
 {

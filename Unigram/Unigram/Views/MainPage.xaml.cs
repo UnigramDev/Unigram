@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
@@ -14,6 +14,7 @@ using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
 using Unigram.Controls.Views;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
@@ -614,7 +615,7 @@ namespace Unigram.Views
             batch.End();
         }
 
-        public void OnBackRequesting(HandledRoutedEventArgs args)
+        public void OnBackRequesting(HandledEventArgs args)
         {
             /*if (SearchField.FocusState != FocusState.Unfocused && !string.IsNullOrEmpty(SearchField.Text))
             {
@@ -633,7 +634,7 @@ namespace Unigram.Views
             }
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             OnBackRequesting(args);
 

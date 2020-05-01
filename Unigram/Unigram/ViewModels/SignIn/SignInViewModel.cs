@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
-using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
-using Unigram.Services;
 using Unigram.Entities;
-using Unigram.Views;
+using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views.Settings;
-using Unigram.Views.SignIn;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels.SignIn
 {

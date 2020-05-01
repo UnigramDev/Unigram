@@ -1,25 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Windows.UI.Xaml;
-using Unigram.Services;
-using Unigram.Services.Settings;
-using Windows.Foundation.Metadata;
-using Unigram.Controls;
-using Windows.UI.Xaml.Controls;
-using Unigram.Views.Settings;
-using Unigram.Collections;
-using Windows.UI.Xaml.Navigation;
-using Telegram.Td;
-using Telegram.Td.Api;
-using Windows.Storage;
-using Template10.Services.NavigationService;
-using Unigram.Services.Updates;
 using Unigram.Controls.Views;
-using Template10.Common;
+using Unigram.Services;
+using Unigram.Services.Navigation;
+using Unigram.Services.Updates;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
