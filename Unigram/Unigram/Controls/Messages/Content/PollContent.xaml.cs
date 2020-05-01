@@ -62,7 +62,7 @@ namespace Unigram.Controls.Messages.Content
                 Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousQuizPoll : Strings.Resources.QuizPoll;
                 View.Visibility = results && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
                 Submit.Visibility = Visibility.Collapsed;
-                Explanation.Visibility = results && quiz.Explanation != null ? Visibility.Visible : Visibility.Collapsed;
+                Explanation.Visibility = results && !string.IsNullOrEmpty(quiz.Explanation?.Text) ? Visibility.Visible : Visibility.Collapsed;
             }
 
             Votes.Visibility = View.Visibility == Visibility.Collapsed && Submit.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
