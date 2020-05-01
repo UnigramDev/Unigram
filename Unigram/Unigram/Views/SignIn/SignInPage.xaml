@@ -18,7 +18,7 @@
             <RowDefinition Height="{ThemeResource AppBarThemeCompactHeight}"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"/>
+        <Border Background="{ThemeResource PageTitleBackgroundBrush}"/>
 
         <ProgressRing
             x:Name="Loading"
@@ -136,9 +136,9 @@
             <Grid
                 Width="240"
                 Height="240">
-                <Image
+                <controls:QrCode
                     x:Name="Token"
-                    Source="{x:Bind ConvertToken(ViewModel.Token), Mode=OneWay}"
+                    Text="{x:Bind ViewModel.Token, Mode=OneWay}"
                     Width="240"
                     Height="240"/>
                 <Border

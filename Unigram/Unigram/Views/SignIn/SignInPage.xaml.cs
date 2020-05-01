@@ -117,16 +117,6 @@ namespace Unigram.Views.SignIn
             return builder.ToString();
         }
 
-        private ImageSource ConvertToken(string token)
-        {
-            if (token != null)
-            {
-                return PlaceholderHelper.GetQr(token);
-            }
-
-            return null;
-        }
-
         #endregion
 
         private int _advanced;

@@ -462,14 +462,14 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetQr(string data)
+        public static ImageSource GetQr(string data, Color foreground, Color background)
         {
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawQr(data, stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawQr(data, foreground, background, stream);
 
                     bitmap.SetSource(stream);
                 }

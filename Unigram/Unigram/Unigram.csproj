@@ -490,7 +490,7 @@
       <DependentUpon>ProxyStatusControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\LottieView.cs" />
-    <Compile Include="Controls\QRCodeView.cs" />
+    <Compile Include="Controls\QrCode.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />

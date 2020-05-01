@@ -105,9 +105,9 @@ Windows::Foundation::Size PlaceholderImageHelper::DrawSvg(String^ path, IRandomA
 	return size;
 }
 
-void PlaceholderImageHelper::DrawQr(String^ data, IRandomAccessStream^ randomAccessStream)
+void PlaceholderImageHelper::DrawQr(String^ data, _In_ Color foreground, _In_ Color background, IRandomAccessStream^ randomAccessStream)
 {
-	ThrowIfFailed(InternalDrawQr(data, randomAccessStream));
+	ThrowIfFailed(InternalDrawQr(data, foreground, background, randomAccessStream));
 }
 
 void PlaceholderImageHelper::DrawIdenticon(IVector<uint8>^ hash, int side, IRandomAccessStream^ randomAccessStream)
@@ -324,7 +324,7 @@ inline int ReplaceSize(const QrData& data, int pixel) {
 	return ReplaceElements(data) * pixel;
 }
 
-HRESULT PlaceholderImageHelper::InternalDrawQr(String^ text, IRandomAccessStream^ randomAccessStream)
+HRESULT PlaceholderImageHelper::InternalDrawQr(String^ text, _In_ Color foreground, _In_ Color background, IRandomAccessStream^ randomAccessStream)
 {
 	auto lock = m_criticalSection.Lock();
 
@@ -393,8 +393,15 @@ HRESULT PlaceholderImageHelper::InternalDrawQr(String^ text, IRandomAccessStream
 		//auto p = QPainter(&result);
 		//p.setCompositionMode(QPainter::CompositionMode_Source);
 		auto context = m_d2dContext;
-		auto blackBrush = m_black;
-		auto whiteBrush = m_transparent;
+
+		ComPtr<ID2D1SolidColorBrush> blackBrush;
+		ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
+			D2D1::ColorF(foreground.R / 255.0f, foreground.G / 255.0f, foreground.B / 255.0f, foreground.A / 255.0f), &blackBrush));
+
+		ComPtr<ID2D1SolidColorBrush> whiteBrush;
+		ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
+			D2D1::ColorF(background.R / 255.0f, background.G / 255.0f, background.B / 255.0f, background.A / 255.0f), &whiteBrush));
+
 		const auto skip = pixel - pixel / 2;
 		const auto brect = [&](float x, float y, float width, float height) {
 			context->FillRectangle(D2D1_RECT_F{ x, y, x + width, y + height }, blackBrush.Get());
@@ -509,7 +516,7 @@ HRESULT PlaceholderImageHelper::InternalDrawQr(String^ text, IRandomAccessStream
 	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
-		return InternalDrawQr(text, randomAccessStream);
+		return InternalDrawQr(text, foreground, background, randomAccessStream);
 	}
 
 	return SaveImageToStream(targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);

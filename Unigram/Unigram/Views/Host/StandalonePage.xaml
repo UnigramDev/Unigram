@@ -13,7 +13,7 @@
             <RowDefinition Height="32"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="Navigation" Background="{ThemeResource PageHeaderBackgroundBrush}">
+        <Grid x:Name="Navigation" Background="{ThemeResource PageTitleBackgroundBrush}">
             <TextBlock x:Name="StatusLabel"
                        VerticalAlignment="Center"
                        TextLineBounds="TrimToCapHeight"
