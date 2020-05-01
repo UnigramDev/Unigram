@@ -179,7 +179,7 @@ namespace Unigram.Controls
                 }
 
                 TitleLabel.Text = user.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : user.GetFullName();
-                SubtitleLabel.Text = string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+                SubtitleLabel.Text = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
 
                 PreviousButton.Visibility = Visibility.Collapsed;
                 NextButton.Visibility = Visibility.Collapsed;

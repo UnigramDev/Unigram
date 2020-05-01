@@ -29,6 +29,18 @@ namespace Unigram.Controls.Views
 
             Photo.Source = PlaceholderHelper.GetChat(protoService, chat, 72);
 
+            if (chat.Source is ChatSourcePublicServiceAnnouncement)
+            {
+                Title.Text = Strings.Resources.PsaHideChatAlertTitle;
+                Subtitle.Text = Strings.Resources.PsaHideChatAlertText;
+                CheckBox.Visibility = Visibility.Collapsed;
+
+                PrimaryButtonText = Strings.Resources.PsaHide;
+                SecondaryButtonText = Strings.Resources.Cancel;
+
+                return;
+            }
+
             Title.Text = clear ? Strings.Resources.ClearHistory : Strings.Resources.DeleteChatUser; // protoService.GetTitle(chat);
 
             var user = protoService.GetUser(chat);

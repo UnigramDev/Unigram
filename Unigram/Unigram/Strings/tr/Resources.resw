@@ -2212,7 +2212,7 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="ChatCamera" xml:space="preserve">
     <value>Kamera</value>
   </data>
-  <data name="ChatDate" xml:space="preserve">
+  <data name="chatDate" xml:space="preserve">
     <value>d MMMM</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
@@ -2221,7 +2221,7 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="ChatDocument" xml:space="preserve">
     <value>Dosya</value>
   </data>
-  <data name="ChatFullDate" xml:space="preserve">
+  <data name="chatFullDate" xml:space="preserve">
     <value>d MMMM yyyy</value>
   </data>
   <data name="ChatGallery" xml:space="preserve">
@@ -3295,9 +3295,6 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
   <data name="Done" xml:space="preserve">
     <value>Bitti</value>
   </data>
-  <data name="DownloadTelegramText" xml:space="preserve">
-    <value>**{0}** giriş yapmak için Telegram'a ihtiyacınız var. Şimdi yüklemek ister misiniz?</value>
-  </data>
   <data name="Draft" xml:space="preserve">
     <value>Taslak</value>
   </data>
@@ -4247,61 +4244,61 @@ Süre: {1}</value>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Şifrenizi mi unuttunuz?</value>
   </data>
-  <data name="FormatDateAtTime" xml:space="preserve">
+  <data name="formatDateAtTime" xml:space="preserve">
     <value>{0} {1}</value>
   </data>
-  <data name="FormatDateSchedule" xml:space="preserve">
+  <data name="formatDateSchedule" xml:space="preserve">
     <value>d MMM</value>
   </data>
-  <data name="FormatDateScheduleDay" xml:space="preserve">
+  <data name="formatDateScheduleDay" xml:space="preserve">
     <value>dd MMM EEE</value>
   </data>
-  <data name="FormatDateScheduleYear" xml:space="preserve">
+  <data name="formatDateScheduleYear" xml:space="preserve">
     <value>d MMM yyyy</value>
   </data>
-  <data name="FormatterBannedUntil12H" xml:space="preserve">
+  <data name="formatterBannedUntil12H" xml:space="preserve">
     <value>dd MMM yyyy, h:mm a</value>
   </data>
-  <data name="FormatterBannedUntil24H" xml:space="preserve">
+  <data name="formatterBannedUntil24H" xml:space="preserve">
     <value>dd MMM yyyy, HH:mm</value>
   </data>
-  <data name="FormatterBannedUntilThisYear12H" xml:space="preserve">
+  <data name="formatterBannedUntilThisYear12H" xml:space="preserve">
     <value>dd MMM, h:mm a</value>
   </data>
-  <data name="FormatterBannedUntilThisYear24H" xml:space="preserve">
+  <data name="formatterBannedUntilThisYear24H" xml:space="preserve">
     <value>dd MMM, HH:mm</value>
   </data>
-  <data name="FormatterDay12H" xml:space="preserve">
+  <data name="formatterDay12H" xml:space="preserve">
     <value>h:mm a</value>
   </data>
-  <data name="FormatterDay24H" xml:space="preserve">
+  <data name="formatterDay24H" xml:space="preserve">
     <value>HH:mm</value>
   </data>
-  <data name="FormatterMonth" xml:space="preserve">
+  <data name="formatterMonth" xml:space="preserve">
     <value>dd MMM</value>
   </data>
-  <data name="FormatterMonthName" xml:space="preserve">
+  <data name="formatterMonthName" xml:space="preserve">
     <value>LLLL</value>
   </data>
-  <data name="FormatterMonthYear" xml:space="preserve">
+  <data name="formatterMonthYear" xml:space="preserve">
     <value>MMMM yyyy</value>
   </data>
-  <data name="FormatterMonthYear2" xml:space="preserve">
+  <data name="formatterMonthYear2" xml:space="preserve">
     <value>LLLL yyyy</value>
   </data>
-  <data name="FormatterStats12H" xml:space="preserve">
+  <data name="formatterStats12H" xml:space="preserve">
     <value>dd MMM yyyy, h:mm a</value>
   </data>
-  <data name="FormatterStats24H" xml:space="preserve">
+  <data name="formatterStats24H" xml:space="preserve">
     <value>dd MMM yyyy, HH:mm</value>
   </data>
-  <data name="FormatterWeek" xml:space="preserve">
+  <data name="formatterWeek" xml:space="preserve">
     <value>EEE</value>
   </data>
-  <data name="FormatterYear" xml:space="preserve">
+  <data name="formatterYear" xml:space="preserve">
     <value>dd/MM/yy</value>
   </data>
-  <data name="FormatterYearMax" xml:space="preserve">
+  <data name="formatterYearMax" xml:space="preserve">
     <value>dd/MM/yyyy</value>
   </data>
   <data name="Forward" xml:space="preserve">
@@ -4964,22 +4961,22 @@ Not: Çıkarılan Kullanıcılar listesinde bulunmadıkları sürece grubun dave
   <data name="Italic" xml:space="preserve">
     <value>Eğik</value>
   </data>
-  <data name="ItemsFew" xml:space="preserve">
+  <data name="itemsFew" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsMany" xml:space="preserve">
+  <data name="itemsMany" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsOne" xml:space="preserve">
+  <data name="itemsOne" xml:space="preserve">
     <value>{0} öğe</value>
   </data>
-  <data name="ItemsOther" xml:space="preserve">
+  <data name="itemsOther" xml:space="preserve">
     <value>{0} öğe</value>
   </data>
-  <data name="ItemsTwo" xml:space="preserve">
+  <data name="itemsTwo" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsZero" xml:space="preserve">
+  <data name="itemsZero" xml:space="preserve">
     <value/>
   </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
@@ -5249,7 +5246,7 @@ Bu bağlantı yalnızca bu sohbetin üyeleri için çalışacak.</value>
     <value>Sesli/Görüntülü Mesajlar</value>
   </data>
   <data name="LocalCache" xml:space="preserve">
-    <value>Diğer dosyalar</value>
+    <value>Diğer Dosyalar</value>
   </data>
   <data name="LocalDatabase" xml:space="preserve">
     <value>Yerel Veritabanı</value>
@@ -5264,7 +5261,7 @@ Bu bağlantı yalnızca bu sohbetin üyeleri için çalışacak.</value>
     <value>Yerel veritabanını temizle</value>
   </data>
   <data name="LocalDatabaseInfo" xml:space="preserve">
-    <value>Yerel veritabanının temizlenmesi, önbelleğe alınmış mesaj metinlerini siler ve dahili disk alanı kazanmak için veritabanını sıkıştırır. Telegram'ın çalışması için bazı verilere ihtiyacı vardır, bu nedenle veritabanı boyutu sıfıra ulaşmaz.
+    <value>Yerel veritabanının temizlenmesi, önbelleğe alınmış mesaj metinlerini siler ve dahili depolama alanını temizlemek için veritabanını sıkıştırır. Telegram'ın çalışması için bazı verilere ihtiyacı vardır, bu nedenle veritabanı boyutu sıfıra ulaşmaz.
 
 Bu işlemin tamamlanması birkaç dakika sürebilir.</value>
   </data>
@@ -5309,9 +5306,6 @@ Bu işlemin tamamlanması birkaç dakika sürebilir.</value>
   </data>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>İki Adımlı Doğrulama etkinleştirilmiş olduğundan hesabınız ek bir şifre ile korunur.</value>
-  </data>
-  <data name="LoginWithTelegram" xml:space="preserve">
-    <value>Telegram ile giriş yap</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Oturumu kapat</value>
@@ -5627,25 +5621,25 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>Mesajlar ve diğer veriler</value>
   </data>
-  <data name="MessagesFew" xml:space="preserve">
+  <data name="messagesFew" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesMany" xml:space="preserve">
+  <data name="messagesMany" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesOne" xml:space="preserve">
+  <data name="messagesOne" xml:space="preserve">
     <value>{0} mesajı</value>
   </data>
-  <data name="MessagesOther" xml:space="preserve">
+  <data name="messagesOther" xml:space="preserve">
     <value>{0} mesajı</value>
   </data>
   <data name="MessagesSettings" xml:space="preserve">
     <value>Mesajlar</value>
   </data>
-  <data name="MessagesTwo" xml:space="preserve">
+  <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesZero" xml:space="preserve">
+  <data name="messagesZero" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersAway" xml:space="preserve">
@@ -5811,7 +5805,7 @@ Uzunluk en az 5 karakterdir.</value>
     <value>Dolaşım</value>
   </data>
   <data name="NetworkUsageSince" xml:space="preserve">
-    <value>{0} beri ağ kullanımı</value>
+    <value>{0} tarihinden beri ağ kullanımı</value>
   </data>
   <data name="NetworkUsageWiFi" xml:space="preserve">
     <value>KABLOSUZ</value>
@@ -7054,142 +7048,142 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
   <data name="PassportInfoUrl" xml:space="preserve">
     <value>https://telegram.org/faq/tr#passport</value>
   </data>
-  <data name="PassportLanguageAR" xml:space="preserve">
+  <data name="PassportLanguage_AR" xml:space="preserve">
     <value>Arapça</value>
   </data>
-  <data name="PassportLanguageAZ" xml:space="preserve">
+  <data name="PassportLanguage_AZ" xml:space="preserve">
     <value>Azerice</value>
   </data>
-  <data name="PassportLanguageBG" xml:space="preserve">
+  <data name="PassportLanguage_BG" xml:space="preserve">
     <value>Bulgarca</value>
   </data>
-  <data name="PassportLanguageBN" xml:space="preserve">
+  <data name="PassportLanguage_BN" xml:space="preserve">
     <value>Bengalce</value>
   </data>
-  <data name="PassportLanguageCS" xml:space="preserve">
+  <data name="PassportLanguage_CS" xml:space="preserve">
     <value>Çekçe</value>
   </data>
-  <data name="PassportLanguageDA" xml:space="preserve">
+  <data name="PassportLanguage_DA" xml:space="preserve">
     <value>Danca</value>
   </data>
-  <data name="PassportLanguageDE" xml:space="preserve">
+  <data name="PassportLanguage_DE" xml:space="preserve">
     <value>Almanca</value>
   </data>
-  <data name="PassportLanguageDV" xml:space="preserve">
+  <data name="PassportLanguage_DV" xml:space="preserve">
     <value>Maldivce</value>
   </data>
-  <data name="PassportLanguageDZ" xml:space="preserve">
+  <data name="PassportLanguage_DZ" xml:space="preserve">
     <value>Dzongkaca</value>
   </data>
-  <data name="PassportLanguageEL" xml:space="preserve">
+  <data name="PassportLanguage_EL" xml:space="preserve">
     <value>Yunanca</value>
   </data>
-  <data name="PassportLanguageES" xml:space="preserve">
+  <data name="PassportLanguage_ES" xml:space="preserve">
     <value>İspanyolca</value>
   </data>
-  <data name="PassportLanguageET" xml:space="preserve">
+  <data name="PassportLanguage_ET" xml:space="preserve">
     <value>Estonca</value>
   </data>
-  <data name="PassportLanguageFA" xml:space="preserve">
+  <data name="PassportLanguage_FA" xml:space="preserve">
     <value>Farsça</value>
   </data>
-  <data name="PassportLanguageFR" xml:space="preserve">
+  <data name="PassportLanguage_FR" xml:space="preserve">
     <value>Fransızca</value>
   </data>
-  <data name="PassportLanguageHE" xml:space="preserve">
+  <data name="PassportLanguage_HE" xml:space="preserve">
     <value>İbranice</value>
   </data>
-  <data name="PassportLanguageHR" xml:space="preserve">
+  <data name="PassportLanguage_HR" xml:space="preserve">
     <value>Hırvatça</value>
   </data>
-  <data name="PassportLanguageHU" xml:space="preserve">
+  <data name="PassportLanguage_HU" xml:space="preserve">
     <value>Macarca</value>
   </data>
-  <data name="PassportLanguageHY" xml:space="preserve">
+  <data name="PassportLanguage_HY" xml:space="preserve">
     <value>Ermenice</value>
   </data>
-  <data name="PassportLanguageID" xml:space="preserve">
+  <data name="PassportLanguage_ID" xml:space="preserve">
     <value>Endonezce</value>
   </data>
-  <data name="PassportLanguageIS" xml:space="preserve">
+  <data name="PassportLanguage_IS" xml:space="preserve">
     <value>İzlandaca</value>
   </data>
-  <data name="PassportLanguageIT" xml:space="preserve">
+  <data name="PassportLanguage_IT" xml:space="preserve">
     <value>İtalyanca</value>
   </data>
-  <data name="PassportLanguageJA" xml:space="preserve">
+  <data name="PassportLanguage_JA" xml:space="preserve">
     <value>Japonca</value>
   </data>
-  <data name="PassportLanguageKA" xml:space="preserve">
+  <data name="PassportLanguage_KA" xml:space="preserve">
     <value>Gürcüce</value>
   </data>
-  <data name="PassportLanguageKM" xml:space="preserve">
+  <data name="PassportLanguage_KM" xml:space="preserve">
     <value>Khmerce</value>
   </data>
-  <data name="PassportLanguageKO" xml:space="preserve">
+  <data name="PassportLanguage_KO" xml:space="preserve">
     <value>Korece</value>
   </data>
-  <data name="PassportLanguageLO" xml:space="preserve">
+  <data name="PassportLanguage_LO" xml:space="preserve">
     <value>Laosça</value>
   </data>
-  <data name="PassportLanguageLT" xml:space="preserve">
+  <data name="PassportLanguage_LT" xml:space="preserve">
     <value>Litvanca</value>
   </data>
-  <data name="PassportLanguageLV" xml:space="preserve">
+  <data name="PassportLanguage_LV" xml:space="preserve">
     <value>Letonca</value>
   </data>
-  <data name="PassportLanguageMK" xml:space="preserve">
+  <data name="PassportLanguage_MK" xml:space="preserve">
     <value>Makedonca</value>
   </data>
-  <data name="PassportLanguageMN" xml:space="preserve">
+  <data name="PassportLanguage_MN" xml:space="preserve">
     <value>Moğolca</value>
   </data>
-  <data name="PassportLanguageMS" xml:space="preserve">
+  <data name="PassportLanguage_MS" xml:space="preserve">
     <value>Malayca</value>
   </data>
-  <data name="PassportLanguageMY" xml:space="preserve">
+  <data name="PassportLanguage_MY" xml:space="preserve">
     <value>Birmanca</value>
   </data>
-  <data name="PassportLanguageNE" xml:space="preserve">
+  <data name="PassportLanguage_NE" xml:space="preserve">
     <value>Nepalce</value>
   </data>
-  <data name="PassportLanguageNL" xml:space="preserve">
+  <data name="PassportLanguage_NL" xml:space="preserve">
     <value>Felemenkçe</value>
   </data>
-  <data name="PassportLanguagePL" xml:space="preserve">
+  <data name="PassportLanguage_PL" xml:space="preserve">
     <value>Lehçe</value>
   </data>
-  <data name="PassportLanguagePT" xml:space="preserve">
+  <data name="PassportLanguage_PT" xml:space="preserve">
     <value>Portekizce</value>
   </data>
-  <data name="PassportLanguageRO" xml:space="preserve">
+  <data name="PassportLanguage_RO" xml:space="preserve">
     <value>Rumence</value>
   </data>
-  <data name="PassportLanguageRU" xml:space="preserve">
+  <data name="PassportLanguage_RU" xml:space="preserve">
     <value>Rusça</value>
   </data>
-  <data name="PassportLanguageSK" xml:space="preserve">
+  <data name="PassportLanguage_SK" xml:space="preserve">
     <value>Slovakça</value>
   </data>
-  <data name="PassportLanguageSL" xml:space="preserve">
+  <data name="PassportLanguage_SL" xml:space="preserve">
     <value>Slovence</value>
   </data>
-  <data name="PassportLanguageTH" xml:space="preserve">
+  <data name="PassportLanguage_TH" xml:space="preserve">
     <value>Tayca</value>
   </data>
-  <data name="PassportLanguageTK" xml:space="preserve">
+  <data name="PassportLanguage_TK" xml:space="preserve">
     <value>Türkmence</value>
   </data>
-  <data name="PassportLanguageTR" xml:space="preserve">
+  <data name="PassportLanguage_TR" xml:space="preserve">
     <value>Türkçe</value>
   </data>
-  <data name="PassportLanguageUK" xml:space="preserve">
+  <data name="PassportLanguage_UK" xml:space="preserve">
     <value>Ukraynaca</value>
   </data>
-  <data name="PassportLanguageUZ" xml:space="preserve">
+  <data name="PassportLanguage_UZ" xml:space="preserve">
     <value>Özbekçe</value>
   </data>
-  <data name="PassportLanguageVI" xml:space="preserve">
+  <data name="PassportLanguage_VI" xml:space="preserve">
     <value>Vietnamca</value>
   </data>
   <data name="PassportMainPage" xml:space="preserve">
@@ -7320,19 +7314,19 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
   <data name="PassportScanPassportInfo" xml:space="preserve">
     <value>Bilgilerinizi otomatik olarak doldurmak için pasaportunuzun veya kimlik kartınızın makine tarafından okunabilen bölgesini tarayın.</value>
   </data>
-  <data name="PassportSDKCancel" xml:space="preserve">
+  <data name="PassportSDK_Cancel" xml:space="preserve">
     <value>Vazgeç</value>
   </data>
-  <data name="PassportSDKDownloadTelegram" xml:space="preserve">
+  <data name="PassportSDK_DownloadTelegram" xml:space="preserve">
     <value> **{0}** giriş yapmak için Telegram'a ihtiyacınız var. Şimdi yüklemek ister misiniz?</value>
   </data>
-  <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
+  <data name="PassportSDK_LogInWithTelegram" xml:space="preserve">
     <value>Telegram ile giriş yap</value>
   </data>
-  <data name="PassportSDKOpenGooglePlay" xml:space="preserve">
+  <data name="PassportSDK_OpenGooglePlay" xml:space="preserve">
     <value>Google Play'i Aç</value>
   </data>
-  <data name="PassportSDKTelegramPassport" xml:space="preserve">
+  <data name="PassportSDK_TelegramPassport" xml:space="preserve">
     <value>Telegram Passport</value>
   </data>
   <data name="PassportSelectBithdayDate" xml:space="preserve">
@@ -7984,7 +7978,7 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
     <value>Teslimat bilgilerinizi ve tüm ödeme sağlayıcılarına kayıtlı kredi kartlarınızı kaldırabilirsiniz. Telegram'ın kredi kartı verilerinizi asla depolamadığını unutmayın.</value>
   </data>
   <data name="PrivacyPaymentsClearAlertText" xml:space="preserve">
-    <value>Ödeme ve gönderim bilgilerinizi silmek istediğinizden emin misiniz?</value>
+    <value>Ödeme ve teslimat bilgilerinizi silmek istediğinizden emin misiniz?</value>
   </data>
   <data name="PrivacyPaymentsClearAlertTitle" xml:space="preserve">
     <value>Ödeme bilgisini temizle</value>
@@ -8063,6 +8057,39 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Vekil Sunucu Ayarları</value>
+  </data>
+  <data name="PsaHide" xml:space="preserve">
+    <value>Gizle</value>
+  </data>
+  <data name="PsaHideChatAlertText" xml:space="preserve">
+    <value>Seçili sohbetleri gizlemek istediğinizden emin misiniz?</value>
+  </data>
+  <data name="PsaHideChatAlertTitle" xml:space="preserve">
+    <value>Sohbeti gizle</value>
+  </data>
+  <data name="PsaInfo_covid" xml:space="preserve">
+    <value>Bu mesaj, size devam eden COVID-19 salgını ile ilgili olarak bir kamu hizmeti duyurusu sağlar. Bu girişim hakkında daha fazla bilgi için: https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfoDefault" xml:space="preserve">
+    <value>KHD bilgi testi</value>
+  </data>
+  <data name="PsaMessage_covid" xml:space="preserve">
+    <value>COVID-19 Bildirimi</value>
+  </data>
+  <data name="PsaMessageDefault" xml:space="preserve">
+    <value>Önemli Bildirim</value>
+  </data>
+  <data name="PsaMessageInfo_covid" xml:space="preserve">
+    <value>Bu mesaj, size devam eden COVID-19 salgını ile ilgili olarak bir kamu hizmeti duyurusu sağlar. Bu girişim hakkında daha fazla bilgi için: https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaMessageInfoDefault" xml:space="preserve">
+    <value>Bu önemli bir bildirimdir.</value>
+  </data>
+  <data name="PsaType_covid" xml:space="preserve">
+    <value>KHD</value>
+  </data>
+  <data name="PsaTypeDefault" xml:space="preserve">
+    <value>KHD</value>
   </data>
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>Üzgünüz, hedef kullanıcı birden çok herkese açık grup ve kanala sahip. Lütfen öncelikle var olan grup ve kanallardan birini gizli yapmasını isteyin.</value>
@@ -8911,7 +8938,7 @@ Cevaplamayın, Telegram herşeyi otomatik olarak yapacak.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Yok etme zamanlayıcısı ayarla</value>
   </data>
-  <data name="Settings" xml:space="preserve">
+  <data name="SETTINGS" xml:space="preserve">
     <value>Ayarlar</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">
@@ -9068,7 +9095,7 @@ Cevaplamayın, Telegram herşeyi otomatik olarak yapacak.</value>
     <value>{0} paylaşım</value>
   </data>
   <data name="SharesPerPost" xml:space="preserve">
-    <value>Gönderi Başına Paylaşımlar</value>
+    <value>Gönderi Başına Paylaşım</value>
   </data>
   <data name="SharesTwo" xml:space="preserve">
     <value/>
@@ -9265,7 +9292,7 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>Mesajlaşmaya Başlayın</value>
   </data>
   <data name="StartText" xml:space="preserve">
-    <value>Ülke kodunuzu onaylayın ve telefon numaranızı giriniz.</value>
+    <value>Lütfen ülke kodunuzu onaylayın ve telefon numaranızı girin.</value>
   </data>
   <data name="StatisticOverview" xml:space="preserve">
     <value>Genel Bakış</value>
@@ -9628,12 +9655,6 @@ Bu şifre, Telegram'a yeni bir cihazdan her giriş yaptığınızda gerekli olac
   </data>
   <data name="TextSizeHeader" xml:space="preserve">
     <value>Mesaj metni boyutu</value>
-  </data>
-  <data name="TgCancel" xml:space="preserve">
-    <value>Vazgeç</value>
-  </data>
-  <data name="TgOpenGooglePlay" xml:space="preserve">
-    <value>Google Play ile Aç</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Tema</value>
@@ -10426,7 +10447,7 @@ Uzunluk en az **5** karakterdir.</value>
     <value>{0} görüntüleme</value>
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
-    <value>Gönderi Başına Görüntülemeler</value>
+    <value>Gönderi Başına Görüntüleme</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>
@@ -10633,7 +10654,7 @@ Uzunluk en az **5** karakterdir.</value>
     <value>Beyaz</value>
   </data>
   <data name="WhoCanAddMe" xml:space="preserve">
-    <value>Beni grup sohbetlerine kim ekleyebilir?</value>
+    <value>Beni grup sohbetlerine kimler ekleyebilir?</value>
   </data>
   <data name="WhoCanAddMeInfo" xml:space="preserve">
     <value>Sizi kimlerin kanallara ve gruplara ekleyebileceğini ayrıntılı bir şekilde kısıtlayabilirsiniz.</value>

@@ -2213,7 +2213,7 @@ De minimale lengte is 5 karakters.</value>
   <data name="ChatCamera" xml:space="preserve">
     <value>Camera</value>
   </data>
-  <data name="ChatDate" xml:space="preserve">
+  <data name="chatDate" xml:space="preserve">
     <value>d MMMM</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
@@ -2222,7 +2222,7 @@ De minimale lengte is 5 karakters.</value>
   <data name="ChatDocument" xml:space="preserve">
     <value>Bestand</value>
   </data>
-  <data name="ChatFullDate" xml:space="preserve">
+  <data name="chatFullDate" xml:space="preserve">
     <value>d MMMM yyyy</value>
   </data>
   <data name="ChatGallery" xml:space="preserve">
@@ -3296,9 +3296,6 @@ Alle abonnees van het kanaal kunnen de berichten in deze groep zien.</value>
   <data name="Done" xml:space="preserve">
     <value>Gereed</value>
   </data>
-  <data name="DownloadTelegramText" xml:space="preserve">
-    <value>Je hebt Telegram nodig om in te loggen op **{0}**, nu installeren?</value>
-  </data>
   <data name="Draft" xml:space="preserve">
     <value>Concept</value>
   </data>
@@ -4303,61 +4300,61 @@ voor je zoekopdracht.</value>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Wachtwoord vergeten?</value>
   </data>
-  <data name="FormatDateAtTime" xml:space="preserve">
+  <data name="formatDateAtTime" xml:space="preserve">
     <value>{0} om {1}</value>
   </data>
-  <data name="FormatDateSchedule" xml:space="preserve">
+  <data name="formatDateSchedule" xml:space="preserve">
     <value>d MMM</value>
   </data>
-  <data name="FormatDateScheduleDay" xml:space="preserve">
+  <data name="formatDateScheduleDay" xml:space="preserve">
     <value>EEE MMM d</value>
   </data>
-  <data name="FormatDateScheduleYear" xml:space="preserve">
+  <data name="formatDateScheduleYear" xml:space="preserve">
     <value>d MMM yyyy</value>
   </data>
-  <data name="FormatterBannedUntil12H" xml:space="preserve">
+  <data name="formatterBannedUntil12H" xml:space="preserve">
     <value>dd MMM yyyy, h:mm a</value>
   </data>
-  <data name="FormatterBannedUntil24H" xml:space="preserve">
+  <data name="formatterBannedUntil24H" xml:space="preserve">
     <value>dd MMM yyyy, HH:mm</value>
   </data>
-  <data name="FormatterBannedUntilThisYear12H" xml:space="preserve">
+  <data name="formatterBannedUntilThisYear12H" xml:space="preserve">
     <value>dd MMM, h:mm a</value>
   </data>
-  <data name="FormatterBannedUntilThisYear24H" xml:space="preserve">
+  <data name="formatterBannedUntilThisYear24H" xml:space="preserve">
     <value>dd MMM, HH:mm</value>
   </data>
-  <data name="FormatterDay12H" xml:space="preserve">
+  <data name="formatterDay12H" xml:space="preserve">
     <value>h:mm a</value>
   </data>
-  <data name="FormatterDay24H" xml:space="preserve">
+  <data name="formatterDay24H" xml:space="preserve">
     <value>HH:mm</value>
   </data>
-  <data name="FormatterMonth" xml:space="preserve">
+  <data name="formatterMonth" xml:space="preserve">
     <value>dd MMM</value>
   </data>
-  <data name="FormatterMonthName" xml:space="preserve">
+  <data name="formatterMonthName" xml:space="preserve">
     <value>LLLL</value>
   </data>
-  <data name="FormatterMonthYear" xml:space="preserve">
+  <data name="formatterMonthYear" xml:space="preserve">
     <value>MMMM yyyy</value>
   </data>
-  <data name="FormatterMonthYear2" xml:space="preserve">
+  <data name="formatterMonthYear2" xml:space="preserve">
     <value>LLLL yyyy</value>
   </data>
-  <data name="FormatterStats12H" xml:space="preserve">
+  <data name="formatterStats12H" xml:space="preserve">
     <value>dd MMM yyyy, h:mm a</value>
   </data>
-  <data name="FormatterStats24H" xml:space="preserve">
+  <data name="formatterStats24H" xml:space="preserve">
     <value>dd MMM yyyy, HH:mm</value>
   </data>
-  <data name="FormatterWeek" xml:space="preserve">
+  <data name="formatterWeek" xml:space="preserve">
     <value>EEE</value>
   </data>
-  <data name="FormatterYear" xml:space="preserve">
+  <data name="formatterYear" xml:space="preserve">
     <value>dd-MM-yy</value>
   </data>
-  <data name="FormatterYearMax" xml:space="preserve">
+  <data name="formatterYearMax" xml:space="preserve">
     <value>dd-MM-yyyy</value>
   </data>
   <data name="Forward" xml:space="preserve">
@@ -5020,22 +5017,22 @@ Zolang deze gebruiker niet in de lijst met verwijderde gebruikers staat kan hij/
   <data name="Italic" xml:space="preserve">
     <value>Cursief</value>
   </data>
-  <data name="ItemsFew" xml:space="preserve">
+  <data name="itemsFew" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsMany" xml:space="preserve">
+  <data name="itemsMany" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsOne" xml:space="preserve">
+  <data name="itemsOne" xml:space="preserve">
     <value>{0} item</value>
   </data>
-  <data name="ItemsOther" xml:space="preserve">
+  <data name="itemsOther" xml:space="preserve">
     <value>{0} items</value>
   </data>
-  <data name="ItemsTwo" xml:space="preserve">
+  <data name="itemsTwo" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsZero" xml:space="preserve">
+  <data name="itemsZero" xml:space="preserve">
     <value/>
   </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
@@ -5369,9 +5366,6 @@ Dit kan enkele minuten duren.</value>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>Twee-staps-verificatie ingeschakeld. Je account is met een extra wachtwoord beveiligd.</value>
   </data>
-  <data name="LoginWithTelegram" xml:space="preserve">
-    <value>Inloggen met Telegram</value>
-  </data>
   <data name="LogOut" xml:space="preserve">
     <value>Uitloggen</value>
   </data>
@@ -5686,25 +5680,25 @@ De minimale lengte is 5 karakters.</value>
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>Berichten en andere gegevens</value>
   </data>
-  <data name="MessagesFew" xml:space="preserve">
+  <data name="messagesFew" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesMany" xml:space="preserve">
+  <data name="messagesMany" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesOne" xml:space="preserve">
+  <data name="messagesOne" xml:space="preserve">
     <value>{0} bericht</value>
   </data>
-  <data name="MessagesOther" xml:space="preserve">
+  <data name="messagesOther" xml:space="preserve">
     <value>{0} berichten</value>
   </data>
   <data name="MessagesSettings" xml:space="preserve">
     <value>Berichten</value>
   </data>
-  <data name="MessagesTwo" xml:space="preserve">
+  <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesZero" xml:space="preserve">
+  <data name="messagesZero" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersAway" xml:space="preserve">
@@ -7113,142 +7107,142 @@ Je kunt onze *Veelgestelde vragen* bekijken voor meer informatie.</value>
   <data name="PassportInfoUrl" xml:space="preserve">
     <value>https://telegram.org/faq#passport</value>
   </data>
-  <data name="PassportLanguageAR" xml:space="preserve">
+  <data name="PassportLanguage_AR" xml:space="preserve">
     <value>Arabisch</value>
   </data>
-  <data name="PassportLanguageAZ" xml:space="preserve">
+  <data name="PassportLanguage_AZ" xml:space="preserve">
     <value>Azerbeidzjaans</value>
   </data>
-  <data name="PassportLanguageBG" xml:space="preserve">
+  <data name="PassportLanguage_BG" xml:space="preserve">
     <value>Bulgaars</value>
   </data>
-  <data name="PassportLanguageBN" xml:space="preserve">
+  <data name="PassportLanguage_BN" xml:space="preserve">
     <value>Bangla</value>
   </data>
-  <data name="PassportLanguageCS" xml:space="preserve">
+  <data name="PassportLanguage_CS" xml:space="preserve">
     <value>Tsjechisch</value>
   </data>
-  <data name="PassportLanguageDA" xml:space="preserve">
+  <data name="PassportLanguage_DA" xml:space="preserve">
     <value>Deens</value>
   </data>
-  <data name="PassportLanguageDE" xml:space="preserve">
+  <data name="PassportLanguage_DE" xml:space="preserve">
     <value>Duits</value>
   </data>
-  <data name="PassportLanguageDV" xml:space="preserve">
+  <data name="PassportLanguage_DV" xml:space="preserve">
     <value>Divehi</value>
   </data>
-  <data name="PassportLanguageDZ" xml:space="preserve">
+  <data name="PassportLanguage_DZ" xml:space="preserve">
     <value>Dzongkha</value>
   </data>
-  <data name="PassportLanguageEL" xml:space="preserve">
+  <data name="PassportLanguage_EL" xml:space="preserve">
     <value>Grieks</value>
   </data>
-  <data name="PassportLanguageES" xml:space="preserve">
+  <data name="PassportLanguage_ES" xml:space="preserve">
     <value>Spaans</value>
   </data>
-  <data name="PassportLanguageET" xml:space="preserve">
+  <data name="PassportLanguage_ET" xml:space="preserve">
     <value>Estisch</value>
   </data>
-  <data name="PassportLanguageFA" xml:space="preserve">
+  <data name="PassportLanguage_FA" xml:space="preserve">
     <value>Perzisch</value>
   </data>
-  <data name="PassportLanguageFR" xml:space="preserve">
+  <data name="PassportLanguage_FR" xml:space="preserve">
     <value>Frans</value>
   </data>
-  <data name="PassportLanguageHE" xml:space="preserve">
+  <data name="PassportLanguage_HE" xml:space="preserve">
     <value>Hebreeuws</value>
   </data>
-  <data name="PassportLanguageHR" xml:space="preserve">
+  <data name="PassportLanguage_HR" xml:space="preserve">
     <value>Kroatisch</value>
   </data>
-  <data name="PassportLanguageHU" xml:space="preserve">
+  <data name="PassportLanguage_HU" xml:space="preserve">
     <value>Hongaars</value>
   </data>
-  <data name="PassportLanguageHY" xml:space="preserve">
+  <data name="PassportLanguage_HY" xml:space="preserve">
     <value>Armeens</value>
   </data>
-  <data name="PassportLanguageID" xml:space="preserve">
+  <data name="PassportLanguage_ID" xml:space="preserve">
     <value>Indonesisch</value>
   </data>
-  <data name="PassportLanguageIS" xml:space="preserve">
+  <data name="PassportLanguage_IS" xml:space="preserve">
     <value>IJslands</value>
   </data>
-  <data name="PassportLanguageIT" xml:space="preserve">
+  <data name="PassportLanguage_IT" xml:space="preserve">
     <value>Italiaans</value>
   </data>
-  <data name="PassportLanguageJA" xml:space="preserve">
+  <data name="PassportLanguage_JA" xml:space="preserve">
     <value>Japans</value>
   </data>
-  <data name="PassportLanguageKA" xml:space="preserve">
+  <data name="PassportLanguage_KA" xml:space="preserve">
     <value>Georgisch</value>
   </data>
-  <data name="PassportLanguageKM" xml:space="preserve">
+  <data name="PassportLanguage_KM" xml:space="preserve">
     <value>Khmer</value>
   </data>
-  <data name="PassportLanguageKO" xml:space="preserve">
+  <data name="PassportLanguage_KO" xml:space="preserve">
     <value>Koreaans</value>
   </data>
-  <data name="PassportLanguageLO" xml:space="preserve">
+  <data name="PassportLanguage_LO" xml:space="preserve">
     <value>Laotiaans</value>
   </data>
-  <data name="PassportLanguageLT" xml:space="preserve">
+  <data name="PassportLanguage_LT" xml:space="preserve">
     <value>Litouws</value>
   </data>
-  <data name="PassportLanguageLV" xml:space="preserve">
+  <data name="PassportLanguage_LV" xml:space="preserve">
     <value>Lets</value>
   </data>
-  <data name="PassportLanguageMK" xml:space="preserve">
+  <data name="PassportLanguage_MK" xml:space="preserve">
     <value>Macedonisch</value>
   </data>
-  <data name="PassportLanguageMN" xml:space="preserve">
+  <data name="PassportLanguage_MN" xml:space="preserve">
     <value>Mongools</value>
   </data>
-  <data name="PassportLanguageMS" xml:space="preserve">
+  <data name="PassportLanguage_MS" xml:space="preserve">
     <value>Maleis</value>
   </data>
-  <data name="PassportLanguageMY" xml:space="preserve">
+  <data name="PassportLanguage_MY" xml:space="preserve">
     <value>Birmaans</value>
   </data>
-  <data name="PassportLanguageNE" xml:space="preserve">
+  <data name="PassportLanguage_NE" xml:space="preserve">
     <value>Nepalees</value>
   </data>
-  <data name="PassportLanguageNL" xml:space="preserve">
+  <data name="PassportLanguage_NL" xml:space="preserve">
     <value>Nederlands</value>
   </data>
-  <data name="PassportLanguagePL" xml:space="preserve">
+  <data name="PassportLanguage_PL" xml:space="preserve">
     <value>Pools</value>
   </data>
-  <data name="PassportLanguagePT" xml:space="preserve">
+  <data name="PassportLanguage_PT" xml:space="preserve">
     <value>Portugees</value>
   </data>
-  <data name="PassportLanguageRO" xml:space="preserve">
+  <data name="PassportLanguage_RO" xml:space="preserve">
     <value>Roemeens</value>
   </data>
-  <data name="PassportLanguageRU" xml:space="preserve">
+  <data name="PassportLanguage_RU" xml:space="preserve">
     <value>Russisch</value>
   </data>
-  <data name="PassportLanguageSK" xml:space="preserve">
+  <data name="PassportLanguage_SK" xml:space="preserve">
     <value>Slowaaks</value>
   </data>
-  <data name="PassportLanguageSL" xml:space="preserve">
+  <data name="PassportLanguage_SL" xml:space="preserve">
     <value>Sloveens</value>
   </data>
-  <data name="PassportLanguageTH" xml:space="preserve">
+  <data name="PassportLanguage_TH" xml:space="preserve">
     <value>Thai</value>
   </data>
-  <data name="PassportLanguageTK" xml:space="preserve">
+  <data name="PassportLanguage_TK" xml:space="preserve">
     <value>Turkmeens</value>
   </data>
-  <data name="PassportLanguageTR" xml:space="preserve">
+  <data name="PassportLanguage_TR" xml:space="preserve">
     <value>Turks</value>
   </data>
-  <data name="PassportLanguageUK" xml:space="preserve">
+  <data name="PassportLanguage_UK" xml:space="preserve">
     <value>Oekraïens</value>
   </data>
-  <data name="PassportLanguageUZ" xml:space="preserve">
+  <data name="PassportLanguage_UZ" xml:space="preserve">
     <value>Oezbeeks</value>
   </data>
-  <data name="PassportLanguageVI" xml:space="preserve">
+  <data name="PassportLanguage_VI" xml:space="preserve">
     <value>Vietnamees</value>
   </data>
   <data name="PassportMainPage" xml:space="preserve">
@@ -7380,19 +7374,19 @@ Je kunt onze *Veelgestelde vragen* bekijken voor meer informatie.</value>
   <data name="PassportScanPassportInfo" xml:space="preserve">
     <value>Scan je paspoort of identiteitskaart met de machine-leesbare-zone om je gegevens automatisch in te vullen.</value>
   </data>
-  <data name="PassportSDKCancel" xml:space="preserve">
+  <data name="PassportSDK_Cancel" xml:space="preserve">
     <value>Annuleren</value>
   </data>
-  <data name="PassportSDKDownloadTelegram" xml:space="preserve">
+  <data name="PassportSDK_DownloadTelegram" xml:space="preserve">
     <value>Je hebt Telegram nodig om in te loggen op **{0}**. Telegram nu installeren?</value>
   </data>
-  <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
+  <data name="PassportSDK_LogInWithTelegram" xml:space="preserve">
     <value>Inloggen met Telegram</value>
   </data>
-  <data name="PassportSDKOpenGooglePlay" xml:space="preserve">
+  <data name="PassportSDK_OpenGooglePlay" xml:space="preserve">
     <value>Google Play openen</value>
   </data>
-  <data name="PassportSDKTelegramPassport" xml:space="preserve">
+  <data name="PassportSDK_TelegramPassport" xml:space="preserve">
     <value>Telegram Passport</value>
   </data>
   <data name="PassportSelectBithdayDate" xml:space="preserve">
@@ -8123,6 +8117,39 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
   </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Proxy-instellingen</value>
+  </data>
+  <data name="PsaHide" xml:space="preserve">
+    <value>Verbergen</value>
+  </data>
+  <data name="PsaHideChatAlertText" xml:space="preserve">
+    <value>Weet je zeker dat je de geselecteerde chat wilt verbergen?</value>
+  </data>
+  <data name="PsaHideChatAlertTitle" xml:space="preserve">
+    <value>Chat verbergen</value>
+  </data>
+  <data name="PsaInfo_covid" xml:space="preserve">
+    <value>Dit bericht geeft je een publieke dienstaankondiging betreft de huidige COVID-19-pandemie. Lees meer over dit initiatief op https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfoDefault" xml:space="preserve">
+    <value>PSA info test</value>
+  </data>
+  <data name="PsaMessage_covid" xml:space="preserve">
+    <value>Melding betreft COVID-19</value>
+  </data>
+  <data name="PsaMessageDefault" xml:space="preserve">
+    <value>Belangrijke melding</value>
+  </data>
+  <data name="PsaMessageInfo_covid" xml:space="preserve">
+    <value>Dit bericht geeft je een publieke dienstaankondiging betreft de huidige COVID-19-pandemie. Lees meer over dit initiatief op https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaMessageInfoDefault" xml:space="preserve">
+    <value>Dit is een belangrijke melding.</value>
+  </data>
+  <data name="PsaType_covid" xml:space="preserve">
+    <value>PSA</value>
+  </data>
+  <data name="PsaTypeDefault" xml:space="preserve">
+    <value>PSA</value>
   </data>
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>Sorry, de gebruiker heeft al teveel locatiegebonden groepen of kanalen. Vraag of ze er eerst 1 willen overdragen of verwijderen.</value>
@@ -8971,7 +8998,7 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="SetTimer" xml:space="preserve">
     <value>Zelfvernietigingstimer instellen</value>
   </data>
-  <data name="Settings" xml:space="preserve">
+  <data name="SETTINGS" xml:space="preserve">
     <value>Instellingen</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">
@@ -9690,12 +9717,6 @@ met onze *Gebruiksvoorwaarden*.</value>
   </data>
   <data name="TextSizeHeader" xml:space="preserve">
     <value>Tekstgrootte berichten</value>
-  </data>
-  <data name="TgCancel" xml:space="preserve">
-    <value>Annuleren</value>
-  </data>
-  <data name="TgOpenGooglePlay" xml:space="preserve">
-    <value>Google Play openen</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Thema</value>

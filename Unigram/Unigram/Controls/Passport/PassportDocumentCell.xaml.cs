@@ -29,7 +29,7 @@ namespace Unigram.Controls.Passport
         public void UpdateFile(IProtoService protoService, DatedFile file)
         {
             var date = Utils.UnixTimestampToDateTime(file.Date);
-            var format = string.Format(Strings.Resources.FormatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+            var format = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
             Date.Text = format;
             Texture.Source = null;
 

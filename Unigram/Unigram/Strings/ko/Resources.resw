@@ -553,6 +553,9 @@
   <data name="AddAnExplanation" xml:space="preserve">
     <value>설명 추가</value>
   </data>
+  <data name="AddAnExplanationInfo" xml:space="preserve">
+    <value>사용자가 틀린 답을 선택하면 이 설명이 나타납니다. 교육용으로 활용하기 좋습니다.</value>
+  </data>
   <data name="AddAnOption" xml:space="preserve">
     <value>선택지를 추가합니다...</value>
   </data>
@@ -841,6 +844,9 @@
   <data name="AnswerOne" xml:space="preserve">
     <value/>
   </data>
+  <data name="AnswerOptions" xml:space="preserve">
+    <value>답변 선택지</value>
+  </data>
   <data name="AnswerOther" xml:space="preserve">
     <value>답변자 {0}명</value>
   </data>
@@ -1041,6 +1047,9 @@
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>정말 **저장한 메시지**를 삭제하시겠습니까?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatWithBot" xml:space="preserve">
+    <value>정말 **{0}** 대화방을 삭제하고 차단하시겠습니까?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>정말 **{0}** 대화방을 삭제하시겠습니까?</value>
@@ -1856,6 +1865,9 @@
   <data name="ChannelAddMembers" xml:space="preserve">
     <value>참가자 추가</value>
   </data>
+  <data name="ChannelAddSubscribers" xml:space="preserve">
+    <value>구독자 추가</value>
+  </data>
   <data name="ChannelAddTo" xml:space="preserve">
     <value>{0} 님을 채널에 추가할까요?</value>
   </data>
@@ -2202,7 +2214,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="ChatCamera" xml:space="preserve">
     <value>카메라</value>
   </data>
-  <data name="ChatDate" xml:space="preserve">
+  <data name="chatDate" xml:space="preserve">
     <value>M'월' d'일'</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
@@ -2211,7 +2223,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="ChatDocument" xml:space="preserve">
     <value>파일</value>
   </data>
-  <data name="ChatFullDate" xml:space="preserve">
+  <data name="chatFullDate" xml:space="preserve">
     <value>yyyy년 MMMM d일</value>
   </data>
   <data name="ChatGallery" xml:space="preserve">
@@ -3112,8 +3124,14 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DeleteTheseChats" xml:space="preserve">
     <value>대화방 삭제</value>
   </data>
+  <data name="DeleteTheseChatsBothSides" xml:space="preserve">
+    <value>대화방 삭제</value>
+  </data>
   <data name="DeleteThisChat" xml:space="preserve">
     <value>대화방 삭제</value>
+  </data>
+  <data name="DeleteThisChatBothSides" xml:space="preserve">
+    <value>이 대화방 삭제</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
     <value>이 그룹 삭제</value>
@@ -3278,9 +3296,6 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="Done" xml:space="preserve">
     <value>완료</value>
-  </data>
-  <data name="DownloadTelegramText" xml:space="preserve">
-    <value>{0}에 로그인하려면 텔레그램이 필요합니다. 지금 설치하시겠습니까?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>임시 저장</value>
@@ -4285,61 +4300,61 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="ForgotPassword" xml:space="preserve">
     <value>비밀번호를 잊어버리셨나요?</value>
   </data>
-  <data name="FormatDateAtTime" xml:space="preserve">
+  <data name="formatDateAtTime" xml:space="preserve">
     <value>{0} {1}</value>
   </data>
-  <data name="FormatDateSchedule" xml:space="preserve">
+  <data name="formatDateSchedule" xml:space="preserve">
     <value>M'월' d'일'</value>
   </data>
-  <data name="FormatDateScheduleDay" xml:space="preserve">
+  <data name="formatDateScheduleDay" xml:space="preserve">
     <value>M'월' d'일' EEE</value>
   </data>
-  <data name="FormatDateScheduleYear" xml:space="preserve">
+  <data name="formatDateScheduleYear" xml:space="preserve">
     <value>yyyy MMM d</value>
   </data>
-  <data name="FormatterBannedUntil12H" xml:space="preserve">
+  <data name="formatterBannedUntil12H" xml:space="preserve">
     <value>yyyy.MM.dd, a h:mm</value>
   </data>
-  <data name="FormatterBannedUntil24H" xml:space="preserve">
+  <data name="formatterBannedUntil24H" xml:space="preserve">
     <value>yyyy.MMM.dd, HH:mm</value>
   </data>
-  <data name="FormatterBannedUntilThisYear12H" xml:space="preserve">
+  <data name="formatterBannedUntilThisYear12H" xml:space="preserve">
     <value>MMM dd, a h:mm</value>
   </data>
-  <data name="FormatterBannedUntilThisYear24H" xml:space="preserve">
+  <data name="formatterBannedUntilThisYear24H" xml:space="preserve">
     <value>MMM dd일 HH:mm</value>
   </data>
-  <data name="FormatterDay12H" xml:space="preserve">
+  <data name="formatterDay12H" xml:space="preserve">
     <value>a h:mm</value>
   </data>
-  <data name="FormatterDay24H" xml:space="preserve">
+  <data name="formatterDay24H" xml:space="preserve">
     <value>HH:mm</value>
   </data>
-  <data name="FormatterMonth" xml:space="preserve">
+  <data name="formatterMonth" xml:space="preserve">
     <value>M'월' d'일'</value>
   </data>
-  <data name="FormatterMonthName" xml:space="preserve">
+  <data name="formatterMonthName" xml:space="preserve">
     <value>LLLL</value>
   </data>
-  <data name="FormatterMonthYear" xml:space="preserve">
+  <data name="formatterMonthYear" xml:space="preserve">
     <value>yyyy년 MMMM</value>
   </data>
-  <data name="FormatterMonthYear2" xml:space="preserve">
+  <data name="formatterMonthYear2" xml:space="preserve">
     <value>yyyy년 LLLL</value>
   </data>
-  <data name="FormatterStats12H" xml:space="preserve">
+  <data name="formatterStats12H" xml:space="preserve">
     <value>yyyy년 MMM dd일 h:mm a</value>
   </data>
-  <data name="FormatterStats24H" xml:space="preserve">
+  <data name="formatterStats24H" xml:space="preserve">
     <value>yyyy년 MMM dd일 HH:mm</value>
   </data>
-  <data name="FormatterWeek" xml:space="preserve">
+  <data name="formatterWeek" xml:space="preserve">
     <value>EEE</value>
   </data>
-  <data name="FormatterYear" xml:space="preserve">
+  <data name="formatterYear" xml:space="preserve">
     <value>yy.MM.dd.</value>
   </data>
-  <data name="FormatterYearMax" xml:space="preserve">
+  <data name="formatterYearMax" xml:space="preserve">
     <value>yyyy.MM.dd.</value>
   </data>
   <data name="Forward" xml:space="preserve">
@@ -5002,22 +5017,22 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="Italic" xml:space="preserve">
     <value>기울임꼴</value>
   </data>
-  <data name="ItemsFew" xml:space="preserve">
+  <data name="itemsFew" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsMany" xml:space="preserve">
+  <data name="itemsMany" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsOne" xml:space="preserve">
+  <data name="itemsOne" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsOther" xml:space="preserve">
+  <data name="itemsOther" xml:space="preserve">
     <value>{0}개 아이템</value>
   </data>
-  <data name="ItemsTwo" xml:space="preserve">
+  <data name="itemsTwo" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsZero" xml:space="preserve">
+  <data name="itemsZero" xml:space="preserve">
     <value/>
   </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
@@ -5351,9 +5366,6 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>2단계 인증이 켜져 있으므로, 계정이 추가 비밀번호로 보호됩니다.</value>
   </data>
-  <data name="LoginWithTelegram" xml:space="preserve">
-    <value>텔레그램으로 로그인</value>
-  </data>
   <data name="LogOut" xml:space="preserve">
     <value>로그아웃</value>
   </data>
@@ -5615,13 +5627,13 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>자동 삭제 타이머를 {0}(으)로 맞추셨습니다</value>
   </data>
   <data name="MessageLifetimePhoto" xml:space="preserve">
-    <value>타이머를 맞추시면, 사진이 열람된 뒤 자동으로 삭제됩니다.</value>
+    <value>타이머를 맞추시면, 사진이 열람된 뒤에 자동으로 삭제됩니다.</value>
   </data>
   <data name="MessageLifetimeRemoved" xml:space="preserve">
     <value>{0} 님이 자동 삭제 타이머를 껐습니다</value>
   </data>
   <data name="MessageLifetimeVideo" xml:space="preserve">
-    <value>타이머를 맞추시면, 동영상이 열람된 뒤 자동으로 삭제됩니다.</value>
+    <value>타이머를 맞추시면, 동영상이 열람된 뒤에 자동으로 삭제됩니다.</value>
   </data>
   <data name="MessageLifetimeYouRemoved" xml:space="preserve">
     <value>자동 삭제 타이머를 끄셨습니다</value>
@@ -5654,7 +5666,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>투표는 메시지가 공개된 뒤에 이용할 수 있습니다.</value>
   </data>
   <data name="MessageScheduledVoteResults" xml:space="preserve">
-    <value>설문 결과는 메시지가 게시된 뒤 열람하실 수 있습니다.</value>
+    <value>설문 결과는 메시지가 게시된 뒤에 열람하실 수 있습니다.</value>
   </data>
   <data name="MessageScheduleEditTime" xml:space="preserve">
     <value>시간 조정하기</value>
@@ -5668,25 +5680,25 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>메시지 및 기타 데이터</value>
   </data>
-  <data name="MessagesFew" xml:space="preserve">
+  <data name="messagesFew" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesMany" xml:space="preserve">
+  <data name="messagesMany" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesOne" xml:space="preserve">
+  <data name="messagesOne" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesOther" xml:space="preserve">
+  <data name="messagesOther" xml:space="preserve">
     <value>메시지 {0}개</value>
   </data>
   <data name="MessagesSettings" xml:space="preserve">
     <value>메시지</value>
   </data>
-  <data name="MessagesTwo" xml:space="preserve">
+  <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesZero" xml:space="preserve">
+  <data name="messagesZero" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersAway" xml:space="preserve">
@@ -7097,142 +7109,142 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="PassportInfoUrl" xml:space="preserve">
     <value>https://telegram.org/faq#passport</value>
   </data>
-  <data name="PassportLanguageAR" xml:space="preserve">
+  <data name="PassportLanguage_AR" xml:space="preserve">
     <value>아랍어</value>
   </data>
-  <data name="PassportLanguageAZ" xml:space="preserve">
+  <data name="PassportLanguage_AZ" xml:space="preserve">
     <value>아제르바이잔어</value>
   </data>
-  <data name="PassportLanguageBG" xml:space="preserve">
+  <data name="PassportLanguage_BG" xml:space="preserve">
     <value>불가리아어</value>
   </data>
-  <data name="PassportLanguageBN" xml:space="preserve">
+  <data name="PassportLanguage_BN" xml:space="preserve">
     <value>벵골어</value>
   </data>
-  <data name="PassportLanguageCS" xml:space="preserve">
+  <data name="PassportLanguage_CS" xml:space="preserve">
     <value>체코어</value>
   </data>
-  <data name="PassportLanguageDA" xml:space="preserve">
+  <data name="PassportLanguage_DA" xml:space="preserve">
     <value>덴마크어</value>
   </data>
-  <data name="PassportLanguageDE" xml:space="preserve">
+  <data name="PassportLanguage_DE" xml:space="preserve">
     <value>독일어</value>
   </data>
-  <data name="PassportLanguageDV" xml:space="preserve">
+  <data name="PassportLanguage_DV" xml:space="preserve">
     <value>디베히어</value>
   </data>
-  <data name="PassportLanguageDZ" xml:space="preserve">
+  <data name="PassportLanguage_DZ" xml:space="preserve">
     <value>종카어</value>
   </data>
-  <data name="PassportLanguageEL" xml:space="preserve">
+  <data name="PassportLanguage_EL" xml:space="preserve">
     <value>그리스어</value>
   </data>
-  <data name="PassportLanguageES" xml:space="preserve">
+  <data name="PassportLanguage_ES" xml:space="preserve">
     <value>스페인어</value>
   </data>
-  <data name="PassportLanguageET" xml:space="preserve">
+  <data name="PassportLanguage_ET" xml:space="preserve">
     <value>에스토니아어</value>
   </data>
-  <data name="PassportLanguageFA" xml:space="preserve">
+  <data name="PassportLanguage_FA" xml:space="preserve">
     <value>페르시아어</value>
   </data>
-  <data name="PassportLanguageFR" xml:space="preserve">
+  <data name="PassportLanguage_FR" xml:space="preserve">
     <value>프랑스어</value>
   </data>
-  <data name="PassportLanguageHE" xml:space="preserve">
+  <data name="PassportLanguage_HE" xml:space="preserve">
     <value>히브리어</value>
   </data>
-  <data name="PassportLanguageHR" xml:space="preserve">
+  <data name="PassportLanguage_HR" xml:space="preserve">
     <value>크로아티아어</value>
   </data>
-  <data name="PassportLanguageHU" xml:space="preserve">
+  <data name="PassportLanguage_HU" xml:space="preserve">
     <value>헝가리어</value>
   </data>
-  <data name="PassportLanguageHY" xml:space="preserve">
+  <data name="PassportLanguage_HY" xml:space="preserve">
     <value>아르메니아어</value>
   </data>
-  <data name="PassportLanguageID" xml:space="preserve">
+  <data name="PassportLanguage_ID" xml:space="preserve">
     <value>인도네시아어</value>
   </data>
-  <data name="PassportLanguageIS" xml:space="preserve">
+  <data name="PassportLanguage_IS" xml:space="preserve">
     <value>아이슬란드어</value>
   </data>
-  <data name="PassportLanguageIT" xml:space="preserve">
+  <data name="PassportLanguage_IT" xml:space="preserve">
     <value>이탈리아어</value>
   </data>
-  <data name="PassportLanguageJA" xml:space="preserve">
+  <data name="PassportLanguage_JA" xml:space="preserve">
     <value>일본어</value>
   </data>
-  <data name="PassportLanguageKA" xml:space="preserve">
+  <data name="PassportLanguage_KA" xml:space="preserve">
     <value>조지아어</value>
   </data>
-  <data name="PassportLanguageKM" xml:space="preserve">
+  <data name="PassportLanguage_KM" xml:space="preserve">
     <value>캄보디아어</value>
   </data>
-  <data name="PassportLanguageKO" xml:space="preserve">
+  <data name="PassportLanguage_KO" xml:space="preserve">
     <value>한국어</value>
   </data>
-  <data name="PassportLanguageLO" xml:space="preserve">
+  <data name="PassportLanguage_LO" xml:space="preserve">
     <value>라오어</value>
   </data>
-  <data name="PassportLanguageLT" xml:space="preserve">
+  <data name="PassportLanguage_LT" xml:space="preserve">
     <value>리투아니아어</value>
   </data>
-  <data name="PassportLanguageLV" xml:space="preserve">
+  <data name="PassportLanguage_LV" xml:space="preserve">
     <value>라트비아어</value>
   </data>
-  <data name="PassportLanguageMK" xml:space="preserve">
+  <data name="PassportLanguage_MK" xml:space="preserve">
     <value>마케도니아어</value>
   </data>
-  <data name="PassportLanguageMN" xml:space="preserve">
+  <data name="PassportLanguage_MN" xml:space="preserve">
     <value>몽골어</value>
   </data>
-  <data name="PassportLanguageMS" xml:space="preserve">
+  <data name="PassportLanguage_MS" xml:space="preserve">
     <value>말레이시아어</value>
   </data>
-  <data name="PassportLanguageMY" xml:space="preserve">
+  <data name="PassportLanguage_MY" xml:space="preserve">
     <value>버마어</value>
   </data>
-  <data name="PassportLanguageNE" xml:space="preserve">
+  <data name="PassportLanguage_NE" xml:space="preserve">
     <value>네팔어</value>
   </data>
-  <data name="PassportLanguageNL" xml:space="preserve">
+  <data name="PassportLanguage_NL" xml:space="preserve">
     <value>네덜란드어</value>
   </data>
-  <data name="PassportLanguagePL" xml:space="preserve">
+  <data name="PassportLanguage_PL" xml:space="preserve">
     <value>폴란드어</value>
   </data>
-  <data name="PassportLanguagePT" xml:space="preserve">
+  <data name="PassportLanguage_PT" xml:space="preserve">
     <value>포르투갈어</value>
   </data>
-  <data name="PassportLanguageRO" xml:space="preserve">
+  <data name="PassportLanguage_RO" xml:space="preserve">
     <value>루마니아어</value>
   </data>
-  <data name="PassportLanguageRU" xml:space="preserve">
+  <data name="PassportLanguage_RU" xml:space="preserve">
     <value>러시아어</value>
   </data>
-  <data name="PassportLanguageSK" xml:space="preserve">
+  <data name="PassportLanguage_SK" xml:space="preserve">
     <value>슬로바키아어</value>
   </data>
-  <data name="PassportLanguageSL" xml:space="preserve">
+  <data name="PassportLanguage_SL" xml:space="preserve">
     <value>슬로베니아어</value>
   </data>
-  <data name="PassportLanguageTH" xml:space="preserve">
+  <data name="PassportLanguage_TH" xml:space="preserve">
     <value>타이어</value>
   </data>
-  <data name="PassportLanguageTK" xml:space="preserve">
+  <data name="PassportLanguage_TK" xml:space="preserve">
     <value>투르크멘어</value>
   </data>
-  <data name="PassportLanguageTR" xml:space="preserve">
+  <data name="PassportLanguage_TR" xml:space="preserve">
     <value>터키어</value>
   </data>
-  <data name="PassportLanguageUK" xml:space="preserve">
+  <data name="PassportLanguage_UK" xml:space="preserve">
     <value>우크라이나어</value>
   </data>
-  <data name="PassportLanguageUZ" xml:space="preserve">
+  <data name="PassportLanguage_UZ" xml:space="preserve">
     <value>우즈베크어</value>
   </data>
-  <data name="PassportLanguageVI" xml:space="preserve">
+  <data name="PassportLanguage_VI" xml:space="preserve">
     <value>베트남어</value>
   </data>
   <data name="PassportMainPage" xml:space="preserve">
@@ -7363,19 +7375,19 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="PassportScanPassportInfo" xml:space="preserve">
     <value>개인 신상 명세를 자동으로 채우려면 회원님의 여권이나 신분증의 기계 판독 가능 구역을 스캔하세요.</value>
   </data>
-  <data name="PassportSDKCancel" xml:space="preserve">
+  <data name="PassportSDK_Cancel" xml:space="preserve">
     <value>취소</value>
   </data>
-  <data name="PassportSDKDownloadTelegram" xml:space="preserve">
+  <data name="PassportSDK_DownloadTelegram" xml:space="preserve">
     <value>**{0}**에 로그인하려면 텔레그램이 있어야 합니다. 지금 설치하시겠습니까?</value>
   </data>
-  <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
+  <data name="PassportSDK_LogInWithTelegram" xml:space="preserve">
     <value>텔레그램으로 로그인</value>
   </data>
-  <data name="PassportSDKOpenGooglePlay" xml:space="preserve">
+  <data name="PassportSDK_OpenGooglePlay" xml:space="preserve">
     <value>Google Play 열기</value>
   </data>
-  <data name="PassportSDKTelegramPassport" xml:space="preserve">
+  <data name="PassportSDK_TelegramPassport" xml:space="preserve">
     <value>텔레그램 패스포트</value>
   </data>
   <data name="PassportSelectBithdayDate" xml:space="preserve">
@@ -7910,6 +7922,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="PollOptions" xml:space="preserve">
     <value>설문 선택지</value>
   </data>
+  <data name="PollQuestion" xml:space="preserve">
+    <value>설문지 질문</value>
+  </data>
   <data name="PollQuiz" xml:space="preserve">
     <value>퀴즈 모드</value>
   </data>
@@ -8105,6 +8120,41 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="ProxySettings" xml:space="preserve">
     <value>프록시 설정</value>
   </data>
+  <data name="PsaHide" xml:space="preserve">
+    <value>가리기</value>
+  </data>
+  <data name="PsaHideChatAlertText" xml:space="preserve">
+    <value>정말 선택한 대화방을 가리시겠습니까?</value>
+  </data>
+  <data name="PsaHideChatAlertTitle" xml:space="preserve">
+    <value>대화방 가리기</value>
+  </data>
+  <data name="PsaInfo_covid" xml:space="preserve">
+    <value>이 메시지는 세계적 유행 중인 코로나19 감염 질환에 관한 공공 서비스 발표를 제공드립니다. 아래 링크에서 이 계획에 대해 더 알아보세요.
+https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfoDefault" xml:space="preserve">
+    <value>공공서비스발표 정보 테스트</value>
+  </data>
+  <data name="PsaMessage_covid" xml:space="preserve">
+    <value>코로나바이러스감염증-19 알림</value>
+  </data>
+  <data name="PsaMessageDefault" xml:space="preserve">
+    <value>중요 알림</value>
+  </data>
+  <data name="PsaMessageInfo_covid" xml:space="preserve">
+    <value>이 메시지는 세계적 유행 중인 코로나19 감염 질환에 관한 공공 서비스 발표를 제공드립니다. 아래 링크에서 이 계획에 대해 더 알아보세요.
+https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaMessageInfoDefault" xml:space="preserve">
+    <value>중요한 알림입니다.</value>
+  </data>
+  <data name="PsaType_covid" xml:space="preserve">
+    <value>공공발표</value>
+  </data>
+  <data name="PsaTypeDefault" xml:space="preserve">
+    <value>공공발표</value>
+  </data>
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>죄송합니다. 해당 사용자에게 너무 많은 공개 그룹과 채널이 있습니다. 먼저 기존 그룹이나 채널을 비공개로 돌리도록 요청해 주세요.</value>
   </data>
@@ -8188,6 +8238,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="RecentFiles" xml:space="preserve">
     <value>최근 파일</value>
+  </data>
+  <data name="RecentFilesAZ" xml:space="preserve">
+    <value>파일 A-Z</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>최근 방문</value>
@@ -8629,6 +8682,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="SearchMessages" xml:space="preserve">
     <value>메시지</value>
   </data>
+  <data name="SearchMusic" xml:space="preserve">
+    <value>음악 검색</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>최근 파일 검색</value>
   </data>
@@ -8946,7 +9002,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="SetTimer" xml:space="preserve">
     <value>자동 삭제 타이머 맞추기</value>
   </data>
-  <data name="Settings" xml:space="preserve">
+  <data name="SETTINGS" xml:space="preserve">
     <value>설정</value>
   </data>
   <data name="SettingsDebug" xml:space="preserve">
@@ -9190,7 +9246,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value/>
   </data>
   <data name="ShowVotesOther" xml:space="preserve">
-    <value>더 보기 ({0})</value>
+    <value>더 보기 ({0}명)</value>
   </data>
   <data name="ShowVotesTwo" xml:space="preserve">
     <value/>
@@ -9663,12 +9719,6 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="TextSizeHeader" xml:space="preserve">
     <value>메시지 글자 크기</value>
   </data>
-  <data name="TgCancel" xml:space="preserve">
-    <value>취소</value>
-  </data>
-  <data name="TgOpenGooglePlay" xml:space="preserve">
-    <value>구글 플레이 열기</value>
-  </data>
   <data name="Theme" xml:space="preserve">
     <value>테마</value>
   </data>
@@ -9911,9 +9961,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
 하지만 텔레그램의 간소한 요구 사항에 두루 동의하실 수 없다면 저희로서 이 서비스를 제공해 드리기가 어렵습니다.</value>
   </data>
   <data name="TosDeclineDeleteAccount" xml:space="preserve">
-    <value>주의! 텔레그램 클라우드에 저장하신 모든 데이터와 함께 회원님의 텔레그램 계정이 삭제되며, 돌이킬 수 없습니다.
+    <value>주의! 텔레그램 클라우드에 저장하신 모든 데이터와 함께 회원님의 텔레그램 계정이 삭제되며, 되돌릴 수 없습니다.
 
-중요: 지금 취소하거나 계정을 삭제하기 전에 데이터를 내보내실 수 있습니다. (최신 텔레그램 데스크탑을 열고 '설정' > '텔레그램 데이터 내보내기'로 가서 이를 진행하실 수 있습니다.)</value>
+중요: 지금 취소하여 계정을 삭제하기 전에 데이터를 내보내실 수 있습니다. (최신 텔레그램 데스크톱을 열고 설정 > 고급 설정 > 텔레그램 데이터 내보내기에서 진행하실 수 있습니다.)</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
     <value>매우 유감스럽지만, 이는 곧 우리가 여기서 헤어져야 한다는 뜻입니다. 다른 서비스와 달리, 저희는 회원님의 정보를 광고 타게팅이나 다른 상업적 목적으로 이용하지 않습니다. 텔레그램은 다양한 기능을 가진 클라우드 서비스로서 작동하는 데 필요한 정보만을 저장합니다. 개인 정보 및 보안 설정에서 정보가 사용되는 방식을 조정(동기화된 연락처를 삭제하는 등)하실 수 있습니다.
@@ -10576,7 +10626,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>**{0}** 님의 앱은 호환되지 않는 프로토콜을 사용하고 있습니다. 상대가 앱을 업데이트한 뒤에서야 전화하실 수 있습니다.</value>
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
-    <value>**{0}** 님의 텔레그램은 전화를 지원하지 않습니다. 앱을 업데이트한 뒤 전화할 수 있습니다.</value>
+    <value>**{0}** 님의 텔레그램은 전화를 지원하지 않습니다. 이 사용자의 앱을 업데이트한 뒤에 전화할 수 있습니다.</value>
   </data>
   <data name="VoipQuickReplies" xml:space="preserve">
     <value>문자로 응답</value>

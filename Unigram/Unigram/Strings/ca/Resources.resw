@@ -551,6 +551,12 @@
   <data name="AddAdminErrorNotAMember" xml:space="preserve">
     <value>No podeu afegir l'usuari com a administrador perquè no és membre del grup i no teniu permisos per a afegir-lo.</value>
   </data>
+  <data name="AddAnExplanation" xml:space="preserve">
+    <value>Afegiu-hi una explicació</value>
+  </data>
+  <data name="AddAnExplanationInfo" xml:space="preserve">
+    <value>Els usuaris veuran aquest text en triar una resposta incorrecta. Útil en àmbits educatius.</value>
+  </data>
   <data name="AddAnOption" xml:space="preserve">
     <value>Afegiu una opció...</value>
   </data>
@@ -601,6 +607,9 @@
   </data>
   <data name="AddMasksInstalled" xml:space="preserve">
     <value>S'han afegit màscares noves</value>
+  </data>
+  <data name="AddMasksInstalledInfo" xml:space="preserve">
+    <value>S'ha afegit {0} a les màscares.</value>
   </data>
   <data name="AddMember" xml:space="preserve">
     <value>Afegeix un membre</value>
@@ -821,6 +830,9 @@
   <data name="AnswerOne" xml:space="preserve">
     <value>{0} resposta</value>
   </data>
+  <data name="AnswerOptions" xml:space="preserve">
+    <value>Opcions de resposta</value>
+  </data>
   <data name="AnswerOther" xml:space="preserve">
     <value>{0} respostes</value>
   </data>
@@ -924,6 +936,12 @@ Els que no useu s'arxivaran quan n'afegiu més.</value>
   <data name="ArchivePinnedInfo" xml:space="preserve">
     <value>Llisqueu l'arxiu cap a l'esquerra per a amagar-lo.</value>
   </data>
+  <data name="ArchiveStickersAlertMessage" xml:space="preserve">
+    <value>Segur que voleu arxivar els paquets d'adhesius seleccionats?</value>
+  </data>
+  <data name="ArchiveStickerSetsAlertTitle" xml:space="preserve">
+    <value>Arxiva {0}</value>
+  </data>
   <data name="AreTyping" xml:space="preserve">
     <value>estan escrivint...</value>
   </data>
@@ -1016,6 +1034,9 @@ Els que no useu s'arxivaran quan n'afegiu més.</value>
   </data>
   <data name="AreYouSureDeleteThisChatSavedMessages" xml:space="preserve">
     <value>Segur que voleu eliminar els **Missatges desats**?</value>
+  </data>
+  <data name="AreYouSureDeleteThisChatWithBot" xml:space="preserve">
+    <value>Segur que voleu eliminar el xat amb **{0}** i blocar-lo?</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithGroup" xml:space="preserve">
     <value>Segur que voleu eliminar el xat **{0}**?</value>
@@ -1628,6 +1649,9 @@ Ocàs: {1}</value>
   <data name="CacheEmpty" xml:space="preserve">
     <value>Buit</value>
   </data>
+  <data name="CacheWasCleared" xml:space="preserve">
+    <value>S'han alliberat  {0} en l'aparell!</value>
+  </data>
   <data name="CalculatingSize" xml:space="preserve">
     <value>Calculant...</value>
   </data>
@@ -1686,7 +1710,7 @@ Ocàs: {1}</value>
     <value>Trucades</value>
   </data>
   <data name="CallsDataUsage" xml:space="preserve">
-    <value>Trucades</value>
+    <value>Configuració de trucades</value>
   </data>
   <data name="CallsTotalTime" xml:space="preserve">
     <value>Temps total</value>
@@ -2155,7 +2179,7 @@ Longitud mínima: 5 caràcters.</value>
   <data name="ChatCamera" xml:space="preserve">
     <value>Càmera</value>
   </data>
-  <data name="ChatDate" xml:space="preserve">
+  <data name="chatDate" xml:space="preserve">
     <value>d MMMM</value>
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
@@ -2164,7 +2188,7 @@ Longitud mínima: 5 caràcters.</value>
   <data name="ChatDocument" xml:space="preserve">
     <value>Fitxer</value>
   </data>
-  <data name="ChatFullDate" xml:space="preserve">
+  <data name="chatFullDate" xml:space="preserve">
     <value>d MMMM 'del' yyyy</value>
   </data>
   <data name="ChatGallery" xml:space="preserve">
@@ -2452,6 +2476,15 @@ Longitud mínima: 5 caràcters.</value>
   <data name="ClearSearchAlertTitle" xml:space="preserve">
     <value>Esborra l’historial de cerca</value>
   </data>
+  <data name="ClearSearchSingleAlertTitle" xml:space="preserve">
+    <value>Historial de cerca</value>
+  </data>
+  <data name="ClearSearchSingleChatAlertText" xml:space="preserve">
+    <value>Segur que voleu eliminar «{0}» de l'historial de cerques?</value>
+  </data>
+  <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
+    <value>Segur que voleu eliminar «{0}» de l'historial de cerques?</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Tanca</value>
   </data>
@@ -2589,6 +2622,9 @@ Quan {1} actualitzi el Telegram, les fotos amb autodestrucció d'1 minut o menys
   <data name="ContactNotRegistered" xml:space="preserve">
     <value>{0} encara no és al Telegram, voleu enviar-li una invitació?</value>
   </data>
+  <data name="ContactNotRegisteredTitle" xml:space="preserve">
+    <value>Invitació al Telegram</value>
+  </data>
   <data name="Contacts" xml:space="preserve">
     <value>Contactes</value>
   </data>
@@ -2701,6 +2737,13 @@ Per a superar el límit i obtenir més característiques, actualitzeu a un super
   <data name="CreateNewContact" xml:space="preserve">
     <value>Crea un contacte nou</value>
   </data>
+  <data name="CreateNewFilter" xml:space="preserve">
+    <value>Crea una carpeta</value>
+  </data>
+  <data name="CreateNewFilterInfo" xml:space="preserve">
+    <value>Creeu carpetes per a diferents grups de xats i
+canvieu ràpidament entre elles.</value>
+  </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>Crea un tema</value>
   </data>
@@ -2774,6 +2817,9 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
     <value>Temes propis</value>
+  </data>
+  <data name="DartInfo" xml:space="preserve">
+    <value>Envieu l’emoji d’un **:dard:** i proveu sort.</value>
   </data>
   <data name="DataSettings" xml:space="preserve">
     <value>Dades i emmagatzematge</value>
@@ -3015,6 +3061,12 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Elimina el missatge</value>
   </data>
+  <data name="DeleteStickersAlertMessage" xml:space="preserve">
+    <value>Segur que voleu eliminar els paquets d'adhesius seleccionats?</value>
+  </data>
+  <data name="DeleteStickerSetsAlertTitle" xml:space="preserve">
+    <value>Elimina {0}</value>
+  </data>
   <data name="DeleteTheme" xml:space="preserve">
     <value>Elimina el tema</value>
   </data>
@@ -3044,6 +3096,15 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Dispositius</value>
+  </data>
+  <data name="DeviceStorage" xml:space="preserve">
+    <value>Emmagatzematge de l'aparell</value>
+  </data>
+  <data name="DiceEmojiInfo" xml:space="preserve">
+    <value>Envieu un emoji {0} i proveu sort.</value>
+  </data>
+  <data name="DiceInfo2" xml:space="preserve">
+    <value>Envieu l'emoji d’un **:dau:** per a llançar-ne un.</value>
   </data>
   <data name="DidNotGetTheCode" xml:space="preserve">
     <value>No heu rebut el codi?</value>
@@ -3174,9 +3235,6 @@ Qualsevol subscriptor podrà veure els missatges d'aquest grup.</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>Fet</value>
-  </data>
-  <data name="DownloadTelegramText" xml:space="preserve">
-    <value>Necessiteu el Telegram per iniciar la sessió a **{0}**. Voleu instal·lar-lo ara?</value>
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Esborrany</value>
@@ -3862,6 +3920,99 @@ Durada: {1}</value>
   <data name="FileUploadLimit" xml:space="preserve">
     <value>La mida del fitxer no hauria de superar els {0}</value>
   </data>
+  <data name="FilterAddChats" xml:space="preserve">
+    <value>Afegeix-hi xats</value>
+  </data>
+  <data name="FilterAddingChats" xml:space="preserve">
+    <value>S'estan afegint</value>
+  </data>
+  <data name="FilterAddingChatsInfo" xml:space="preserve">
+    <value>Espereu un moment mentre omplim aquesta carpeta...</value>
+  </data>
+  <data name="FilterAllChats" xml:space="preserve">
+    <value>Tots els xats</value>
+  </data>
+  <data name="FilterAlwaysShow" xml:space="preserve">
+    <value>Xats a incloure</value>
+  </data>
+  <data name="FilterBots" xml:space="preserve">
+    <value>Bots</value>
+  </data>
+  <data name="FilterChannels" xml:space="preserve">
+    <value>Canals</value>
+  </data>
+  <data name="FilterChatTypes" xml:space="preserve">
+    <value>Tipus de xats</value>
+  </data>
+  <data name="FilterContacts" xml:space="preserve">
+    <value>Contactes</value>
+  </data>
+  <data name="FilterDelete" xml:space="preserve">
+    <value>Elimina la carpeta</value>
+  </data>
+  <data name="FilterDeleteItem" xml:space="preserve">
+    <value>Elimina</value>
+  </data>
+  <data name="FilterDiscardAlert" xml:space="preserve">
+    <value>Heu editat la carpeta. Voleu aplicar els canvis?</value>
+  </data>
+  <data name="FilterDiscardTitle" xml:space="preserve">
+    <value>Voleu aplicar els canvis?</value>
+  </data>
+  <data name="FilterEdit" xml:space="preserve">
+    <value>Edita la carpeta</value>
+  </data>
+  <data name="FilterExclude" xml:space="preserve">
+    <value>Xats exclosos</value>
+  </data>
+  <data name="FilterExcludeInfo" xml:space="preserve">
+    <value>Trieu els xats i tipus de xats que no apareixeran a la carpeta.</value>
+  </data>
+  <data name="FilterGroups" xml:space="preserve">
+    <value>Grups</value>
+  </data>
+  <data name="FilterInclude" xml:space="preserve">
+    <value>Xats inclosos</value>
+  </data>
+  <data name="FilterIncludeInfo" xml:space="preserve">
+    <value>Trieu els xats i tipus de xats que apareixeran a la carpeta.</value>
+  </data>
+  <data name="FilterNameHint" xml:space="preserve">
+    <value>Nom de la carpeta</value>
+  </data>
+  <data name="FilterNameNonMuted" xml:space="preserve">
+    <value>No silenciat</value>
+  </data>
+  <data name="FilterNew" xml:space="preserve">
+    <value>Carpeta nova</value>
+  </data>
+  <data name="FilterNoChatsToDisplay" xml:space="preserve">
+    <value>La carpeta és buida.</value>
+  </data>
+  <data name="FilterNoChatsToDisplayInfo" xml:space="preserve">
+    <value>No hi ha cap xat que pertanyi a aquesta carpeta.</value>
+  </data>
+  <data name="FilterNonContacts" xml:space="preserve">
+    <value>Usuaris</value>
+  </data>
+  <data name="FilterRecommended" xml:space="preserve">
+    <value>Carpetes recomanades</value>
+  </data>
+  <data name="FilterRemoveChats" xml:space="preserve">
+    <value>Elimina-hi xats</value>
+  </data>
+  <data name="FilterRemoveInclusionChatText" xml:space="preserve">
+    <value>Segur que voleu eliminar «{0}» de la llista d'inclosos sempre?</value>
+  </data>
+  <data name="FilterRemoveInclusionTitle" xml:space="preserve">
+    <value>Elimina l'excepció</value>
+  </data>
+  <data name="FilterReorder" xml:space="preserve">
+    <value>Reordena-les</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Carpetes</value>
+  </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Resultats finals</value>
   </data>
@@ -3913,61 +4064,61 @@ Durada: {1}</value>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Heu oblidat la contrasenya?</value>
   </data>
-  <data name="FormatDateAtTime" xml:space="preserve">
+  <data name="formatDateAtTime" xml:space="preserve">
     <value>{0} a les {1}</value>
   </data>
-  <data name="FormatDateSchedule" xml:space="preserve">
+  <data name="formatDateSchedule" xml:space="preserve">
     <value>d MMM</value>
   </data>
-  <data name="FormatDateScheduleDay" xml:space="preserve">
+  <data name="formatDateScheduleDay" xml:space="preserve">
     <value>EEE, d MMM</value>
   </data>
-  <data name="FormatDateScheduleYear" xml:space="preserve">
+  <data name="formatDateScheduleYear" xml:space="preserve">
     <value>d MMM yyyy</value>
   </data>
-  <data name="FormatterBannedUntil12H" xml:space="preserve">
+  <data name="formatterBannedUntil12H" xml:space="preserve">
     <value>dd MMM del yyyy a les h:mm a</value>
   </data>
-  <data name="FormatterBannedUntil24H" xml:space="preserve">
+  <data name="formatterBannedUntil24H" xml:space="preserve">
     <value>dd MMM del yyyy a les HH:mm</value>
   </data>
-  <data name="FormatterBannedUntilThisYear12H" xml:space="preserve">
+  <data name="formatterBannedUntilThisYear12H" xml:space="preserve">
     <value>dd MMM a les h:mm a</value>
   </data>
-  <data name="FormatterBannedUntilThisYear24H" xml:space="preserve">
+  <data name="formatterBannedUntilThisYear24H" xml:space="preserve">
     <value>dd MMM a les HH:mm</value>
   </data>
-  <data name="FormatterDay12H" xml:space="preserve">
+  <data name="formatterDay12H" xml:space="preserve">
     <value>h:mm a</value>
   </data>
-  <data name="FormatterDay24H" xml:space="preserve">
+  <data name="formatterDay24H" xml:space="preserve">
     <value>HH:mm</value>
   </data>
-  <data name="FormatterMonth" xml:space="preserve">
+  <data name="formatterMonth" xml:space="preserve">
     <value>d MMM</value>
   </data>
-  <data name="FormatterMonthName" xml:space="preserve">
+  <data name="formatterMonthName" xml:space="preserve">
     <value>LLLL</value>
   </data>
-  <data name="FormatterMonthYear" xml:space="preserve">
+  <data name="formatterMonthYear" xml:space="preserve">
     <value>MMMM 'del' yyyy</value>
   </data>
-  <data name="FormatterMonthYear2" xml:space="preserve">
+  <data name="formatterMonthYear2" xml:space="preserve">
     <value>LLLL yyyy</value>
   </data>
-  <data name="FormatterStats12H" xml:space="preserve">
+  <data name="formatterStats12H" xml:space="preserve">
     <value>dd MMMM 'del' yyyy, h:mm a</value>
   </data>
-  <data name="FormatterStats24H" xml:space="preserve">
+  <data name="formatterStats24H" xml:space="preserve">
     <value>d MMMM 'de' yyyy 'a les' HH:mm</value>
   </data>
-  <data name="FormatterWeek" xml:space="preserve">
+  <data name="formatterWeek" xml:space="preserve">
     <value>EEE</value>
   </data>
-  <data name="FormatterYear" xml:space="preserve">
+  <data name="formatterYear" xml:space="preserve">
     <value>dd-MM-yy</value>
   </data>
-  <data name="FormatterYearMax" xml:space="preserve">
+  <data name="formatterYearMax" xml:space="preserve">
     <value>dd-MM-yyyy</value>
   </data>
   <data name="Forward" xml:space="preserve">
@@ -4231,11 +4382,29 @@ Durada: {1}</value>
   <data name="GifCaption" xml:space="preserve">
     <value>Llegenda del GIF</value>
   </data>
+  <data name="GIFsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsOne" xml:space="preserve">
+    <value>{0} GIF</value>
+  </data>
+  <data name="GIFsOther" xml:space="preserve">
+    <value>{0} GIF</value>
+  </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIF</value>
   </data>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF</value>
+  </data>
+  <data name="GIFsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="GIFsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="GlobalAttachGifRestricted" xml:space="preserve">
     <value>No es permeten GIF en aquest grup.</value>
@@ -4510,6 +4679,9 @@ Teniu present que encara s'hi pot unir amb l'enllaç d'invitació, sempre que no
   <data name="InstantViewReference" xml:space="preserve">
     <value>Referència</value>
   </data>
+  <data name="InteractionsChartTitle" xml:space="preserve">
+    <value>Interaccions</value>
+  </data>
   <data name="InternalFolderInfo" xml:space="preserve">
     <value>Navega pel sistema de fitxers</value>
   </data>
@@ -4609,22 +4781,22 @@ Teniu present que encara s'hi pot unir amb l'enllaç d'invitació, sempre que no
   <data name="Italic" xml:space="preserve">
     <value>Cursiva</value>
   </data>
-  <data name="ItemsFew" xml:space="preserve">
+  <data name="itemsFew" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsMany" xml:space="preserve">
+  <data name="itemsMany" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsOne" xml:space="preserve">
+  <data name="itemsOne" xml:space="preserve">
     <value>{0} element</value>
   </data>
-  <data name="ItemsOther" xml:space="preserve">
+  <data name="itemsOther" xml:space="preserve">
     <value>{0} elements</value>
   </data>
-  <data name="ItemsTwo" xml:space="preserve">
+  <data name="itemsTwo" xml:space="preserve">
     <value/>
   </data>
-  <data name="ItemsZero" xml:space="preserve">
+  <data name="itemsZero" xml:space="preserve">
     <value/>
   </data>
   <data name="January" xml:space="preserve">
@@ -4705,6 +4877,9 @@ Podeu tornar a canviar la llengua en qualsevol moment a la Configuració.</value
   </data>
   <data name="LanguageSame" xml:space="preserve">
     <value>Ja esteu usant aquest paquet de llengua (**{0}**). Podeu canviar la llengua en qualsevol moment a la Configuració.</value>
+  </data>
+  <data name="LanguagesChartTitle" xml:space="preserve">
+    <value>Llengües</value>
   </data>
   <data name="LanguageTitle" xml:space="preserve">
     <value>Voleu canviar la llengua?</value>
@@ -4878,6 +5053,12 @@ Aquest enllaç només funcionarà per als membres del xat.</value>
   <data name="LoadingFullImage" xml:space="preserve">
     <value>s'està carregant la imatge...</value>
   </data>
+  <data name="LoadingStats" xml:space="preserve">
+    <value>S'estan carregant...</value>
+  </data>
+  <data name="LoadingStatsDescription" xml:space="preserve">
+    <value>Espereu uns moments mentre generem els diagrames.</value>
+  </data>
   <data name="LocalAudioCache" xml:space="preserve">
     <value>Missatges de veu i vídeo</value>
   </data>
@@ -4939,9 +5120,6 @@ Això pot trigar uns minuts.</value>
   </data>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>Heu activat la verificació en dos passos. El compte s'ha protegit amb una contrasenya addicional.</value>
-  </data>
-  <data name="LoginWithTelegram" xml:space="preserve">
-    <value>Inicia la sessió amb el Telegram</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Tanca la sessió</value>
@@ -5028,6 +5206,12 @@ Ningú no veurà el vostre telèfon.</value>
   </data>
   <data name="Masks" xml:space="preserve">
     <value>Màscares</value>
+  </data>
+  <data name="MasksArchived" xml:space="preserve">
+    <value>Màscares arxivades.</value>
+  </data>
+  <data name="MasksArchivedInfo" xml:space="preserve">
+    <value>S'ha mogut {0} a l'arxiu.</value>
   </data>
   <data name="MasksCountFew" xml:space="preserve">
     <value/>
@@ -5242,25 +5426,25 @@ Longitud mínima: 5 caràcters.</value>
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>Missatges i altres dades</value>
   </data>
-  <data name="MessagesFew" xml:space="preserve">
+  <data name="messagesFew" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesMany" xml:space="preserve">
+  <data name="messagesMany" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesOne" xml:space="preserve">
+  <data name="messagesOne" xml:space="preserve">
     <value>{0} missatge</value>
   </data>
-  <data name="MessagesOther" xml:space="preserve">
+  <data name="messagesOther" xml:space="preserve">
     <value>{0} missatges</value>
   </data>
   <data name="MessagesSettings" xml:space="preserve">
     <value>Missatges</value>
   </data>
-  <data name="MessagesTwo" xml:space="preserve">
+  <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
-  <data name="MessagesZero" xml:space="preserve">
+  <data name="messagesZero" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersAway" xml:space="preserve">
@@ -6328,6 +6512,9 @@ No el doneu a ningú.</value>
   <data name="OtherSessions" xml:space="preserve">
     <value>Sessions actives</value>
   </data>
+  <data name="OtherStickers" xml:space="preserve">
+    <value>Més adhesius</value>
+  </data>
   <data name="OtherWebSessions" xml:space="preserve">
     <value>Llocs web connectats</value>
   </data>
@@ -6653,142 +6840,142 @@ Podeu visitar les *PMF* per a més informació.</value>
   <data name="PassportInfoUrl" xml:space="preserve">
     <value>https://telegram.org/faq#passport</value>
   </data>
-  <data name="PassportLanguageAR" xml:space="preserve">
+  <data name="PassportLanguage_AR" xml:space="preserve">
     <value>Àrab</value>
   </data>
-  <data name="PassportLanguageAZ" xml:space="preserve">
+  <data name="PassportLanguage_AZ" xml:space="preserve">
     <value>Àzeri</value>
   </data>
-  <data name="PassportLanguageBG" xml:space="preserve">
+  <data name="PassportLanguage_BG" xml:space="preserve">
     <value>Búlgar</value>
   </data>
-  <data name="PassportLanguageBN" xml:space="preserve">
+  <data name="PassportLanguage_BN" xml:space="preserve">
     <value>Bengalí</value>
   </data>
-  <data name="PassportLanguageCS" xml:space="preserve">
+  <data name="PassportLanguage_CS" xml:space="preserve">
     <value>Txec</value>
   </data>
-  <data name="PassportLanguageDA" xml:space="preserve">
+  <data name="PassportLanguage_DA" xml:space="preserve">
     <value>Danès</value>
   </data>
-  <data name="PassportLanguageDE" xml:space="preserve">
+  <data name="PassportLanguage_DE" xml:space="preserve">
     <value>Alemany</value>
   </data>
-  <data name="PassportLanguageDV" xml:space="preserve">
+  <data name="PassportLanguage_DV" xml:space="preserve">
     <value>Divehi</value>
   </data>
-  <data name="PassportLanguageDZ" xml:space="preserve">
+  <data name="PassportLanguage_DZ" xml:space="preserve">
     <value>Dzongkha</value>
   </data>
-  <data name="PassportLanguageEL" xml:space="preserve">
+  <data name="PassportLanguage_EL" xml:space="preserve">
     <value>Grec</value>
   </data>
-  <data name="PassportLanguageES" xml:space="preserve">
+  <data name="PassportLanguage_ES" xml:space="preserve">
     <value>Espanyol</value>
   </data>
-  <data name="PassportLanguageET" xml:space="preserve">
+  <data name="PassportLanguage_ET" xml:space="preserve">
     <value>Estonià</value>
   </data>
-  <data name="PassportLanguageFA" xml:space="preserve">
+  <data name="PassportLanguage_FA" xml:space="preserve">
     <value>Persa</value>
   </data>
-  <data name="PassportLanguageFR" xml:space="preserve">
+  <data name="PassportLanguage_FR" xml:space="preserve">
     <value>Francès</value>
   </data>
-  <data name="PassportLanguageHE" xml:space="preserve">
+  <data name="PassportLanguage_HE" xml:space="preserve">
     <value>Hebreu</value>
   </data>
-  <data name="PassportLanguageHR" xml:space="preserve">
+  <data name="PassportLanguage_HR" xml:space="preserve">
     <value>Croat</value>
   </data>
-  <data name="PassportLanguageHU" xml:space="preserve">
+  <data name="PassportLanguage_HU" xml:space="preserve">
     <value>Hongarès</value>
   </data>
-  <data name="PassportLanguageHY" xml:space="preserve">
+  <data name="PassportLanguage_HY" xml:space="preserve">
     <value>Armeni</value>
   </data>
-  <data name="PassportLanguageID" xml:space="preserve">
+  <data name="PassportLanguage_ID" xml:space="preserve">
     <value>Indonesi</value>
   </data>
-  <data name="PassportLanguageIS" xml:space="preserve">
+  <data name="PassportLanguage_IS" xml:space="preserve">
     <value>Islandès</value>
   </data>
-  <data name="PassportLanguageIT" xml:space="preserve">
+  <data name="PassportLanguage_IT" xml:space="preserve">
     <value>Italià</value>
   </data>
-  <data name="PassportLanguageJA" xml:space="preserve">
+  <data name="PassportLanguage_JA" xml:space="preserve">
     <value>Japonès</value>
   </data>
-  <data name="PassportLanguageKA" xml:space="preserve">
+  <data name="PassportLanguage_KA" xml:space="preserve">
     <value>Georgià</value>
   </data>
-  <data name="PassportLanguageKM" xml:space="preserve">
+  <data name="PassportLanguage_KM" xml:space="preserve">
     <value>Khmer</value>
   </data>
-  <data name="PassportLanguageKO" xml:space="preserve">
+  <data name="PassportLanguage_KO" xml:space="preserve">
     <value>Coreà</value>
   </data>
-  <data name="PassportLanguageLO" xml:space="preserve">
+  <data name="PassportLanguage_LO" xml:space="preserve">
     <value>Laosià</value>
   </data>
-  <data name="PassportLanguageLT" xml:space="preserve">
+  <data name="PassportLanguage_LT" xml:space="preserve">
     <value>Lituà</value>
   </data>
-  <data name="PassportLanguageLV" xml:space="preserve">
+  <data name="PassportLanguage_LV" xml:space="preserve">
     <value>Letó</value>
   </data>
-  <data name="PassportLanguageMK" xml:space="preserve">
+  <data name="PassportLanguage_MK" xml:space="preserve">
     <value>Macedònic</value>
   </data>
-  <data name="PassportLanguageMN" xml:space="preserve">
+  <data name="PassportLanguage_MN" xml:space="preserve">
     <value>Mongol</value>
   </data>
-  <data name="PassportLanguageMS" xml:space="preserve">
+  <data name="PassportLanguage_MS" xml:space="preserve">
     <value>Malai</value>
   </data>
-  <data name="PassportLanguageMY" xml:space="preserve">
+  <data name="PassportLanguage_MY" xml:space="preserve">
     <value>Birmà</value>
   </data>
-  <data name="PassportLanguageNE" xml:space="preserve">
+  <data name="PassportLanguage_NE" xml:space="preserve">
     <value>Nepalès</value>
   </data>
-  <data name="PassportLanguageNL" xml:space="preserve">
+  <data name="PassportLanguage_NL" xml:space="preserve">
     <value>Neerlandès</value>
   </data>
-  <data name="PassportLanguagePL" xml:space="preserve">
+  <data name="PassportLanguage_PL" xml:space="preserve">
     <value>Polonès</value>
   </data>
-  <data name="PassportLanguagePT" xml:space="preserve">
+  <data name="PassportLanguage_PT" xml:space="preserve">
     <value>Portuguès</value>
   </data>
-  <data name="PassportLanguageRO" xml:space="preserve">
+  <data name="PassportLanguage_RO" xml:space="preserve">
     <value>Romanès</value>
   </data>
-  <data name="PassportLanguageRU" xml:space="preserve">
+  <data name="PassportLanguage_RU" xml:space="preserve">
     <value>Rus</value>
   </data>
-  <data name="PassportLanguageSK" xml:space="preserve">
+  <data name="PassportLanguage_SK" xml:space="preserve">
     <value>Eslovac</value>
   </data>
-  <data name="PassportLanguageSL" xml:space="preserve">
+  <data name="PassportLanguage_SL" xml:space="preserve">
     <value>Eslovè</value>
   </data>
-  <data name="PassportLanguageTH" xml:space="preserve">
+  <data name="PassportLanguage_TH" xml:space="preserve">
     <value>Tailandès</value>
   </data>
-  <data name="PassportLanguageTK" xml:space="preserve">
+  <data name="PassportLanguage_TK" xml:space="preserve">
     <value>Turcman</value>
   </data>
-  <data name="PassportLanguageTR" xml:space="preserve">
+  <data name="PassportLanguage_TR" xml:space="preserve">
     <value>Turc</value>
   </data>
-  <data name="PassportLanguageUK" xml:space="preserve">
+  <data name="PassportLanguage_UK" xml:space="preserve">
     <value>Ucraïnès</value>
   </data>
-  <data name="PassportLanguageUZ" xml:space="preserve">
+  <data name="PassportLanguage_UZ" xml:space="preserve">
     <value>Uzbek</value>
   </data>
-  <data name="PassportLanguageVI" xml:space="preserve">
+  <data name="PassportLanguage_VI" xml:space="preserve">
     <value>Vietnamita</value>
   </data>
   <data name="PassportMainPage" xml:space="preserve">
@@ -6919,19 +7106,19 @@ Podeu visitar les *PMF* per a més informació.</value>
   <data name="PassportScanPassportInfo" xml:space="preserve">
     <value>Escanegeu la zona de lectura mecànica del passaport o carnet d'identitat per a omplir les dades automàticament.</value>
   </data>
-  <data name="PassportSDKCancel" xml:space="preserve">
+  <data name="PassportSDK_Cancel" xml:space="preserve">
     <value>Cancel·la</value>
   </data>
-  <data name="PassportSDKDownloadTelegram" xml:space="preserve">
+  <data name="PassportSDK_DownloadTelegram" xml:space="preserve">
     <value>Necessiteu el Telegram per a iniciar la sessió a **{0}**. Voleu instal·lar-lo ara?</value>
   </data>
-  <data name="PassportSDKLogInWithTelegram" xml:space="preserve">
+  <data name="PassportSDK_LogInWithTelegram" xml:space="preserve">
     <value>Inicia la sessió amb el Telegram</value>
   </data>
-  <data name="PassportSDKOpenGooglePlay" xml:space="preserve">
+  <data name="PassportSDK_OpenGooglePlay" xml:space="preserve">
     <value>Obre el Google Play</value>
   </data>
-  <data name="PassportSDKTelegramPassport" xml:space="preserve">
+  <data name="PassportSDK_TelegramPassport" xml:space="preserve">
     <value>Telegram Passport</value>
   </data>
   <data name="PassportSelectBithdayDate" xml:space="preserve">
@@ -7459,6 +7646,9 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
   <data name="PollOptions" xml:space="preserve">
     <value>Opcions de l'enquesta</value>
   </data>
+  <data name="PollQuestion" xml:space="preserve">
+    <value>Pregunta de l'enquesta</value>
+  </data>
   <data name="PollQuiz" xml:space="preserve">
     <value>Mode concurs</value>
   </data>
@@ -7488,6 +7678,9 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
   </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Informeu d'un error a la pàgina</value>
+  </data>
+  <data name="PreviewFeedback2" xml:space="preserve">
+    <value>Disposició errònia?</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Les notificacions d'alta prioritat funcionaran fins i tot si el telèfon és en mode de no molestar.</value>
@@ -7651,6 +7844,39 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
   <data name="ProxySettings" xml:space="preserve">
     <value>Configuració del servidor intermediari</value>
   </data>
+  <data name="PsaHide" xml:space="preserve">
+    <value>Amaga</value>
+  </data>
+  <data name="PsaHideChatAlertText" xml:space="preserve">
+    <value>Segur que voleu amagar el xat seleccionat?</value>
+  </data>
+  <data name="PsaHideChatAlertTitle" xml:space="preserve">
+    <value>Amaga el xat</value>
+  </data>
+  <data name="PsaInfo_covid" xml:space="preserve">
+    <value>Aquest missatge us proporciona un anunci de servei públic en relació amb la pandèmia COVID-19. Vegeu més informació sobre aquesta iniciativa en https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfoDefault" xml:space="preserve">
+    <value>Prova d'informació ASP</value>
+  </data>
+  <data name="PsaMessage_covid" xml:space="preserve">
+    <value>Notificació COVID-19</value>
+  </data>
+  <data name="PsaMessageDefault" xml:space="preserve">
+    <value>Notificació important</value>
+  </data>
+  <data name="PsaMessageInfo_covid" xml:space="preserve">
+    <value>Aquest missatge us proporciona un anunci de servei públic en relació amb la pandèmia COVID-19. Vegeu més informació sobre aquesta iniciativa en https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaMessageInfoDefault" xml:space="preserve">
+    <value>Això és una notificació important.</value>
+  </data>
+  <data name="PsaType_covid" xml:space="preserve">
+    <value>ASP</value>
+  </data>
+  <data name="PsaTypeDefault" xml:space="preserve">
+    <value>ASP</value>
+  </data>
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>L'usuari ja té massa grups o canals públics. Demaneu-li que primer en faci algun privat.</value>
   </data>
@@ -7734,6 +7960,9 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
   </data>
   <data name="RecentFiles" xml:space="preserve">
     <value>Fitxers recents</value>
+  </data>
+  <data name="RecentFilesAZ" xml:space="preserve">
+    <value>Fitxers A-Z</value>
   </data>
   <data name="RecentlyViewed" xml:space="preserve">
     <value>Vistos fa poc</value>
@@ -8169,11 +8398,17 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>Missatges</value>
   </data>
+  <data name="SearchMusic" xml:space="preserve">
+    <value>Cerca música</value>
+  </data>
   <data name="SearchRecentFiles" xml:space="preserve">
     <value>Cerca fitxers recents</value>
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Cerca paquets d'adhesius</value>
+  </data>
+  <data name="SearchTrendingStickersHint" xml:space="preserve">
+    <value>Cerca adhesius populars</value>
   </data>
   <data name="SecondsBoldFew" xml:space="preserve">
     <value/>
@@ -8289,6 +8524,9 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
   <data name="SendDayYearAt" xml:space="preserve">
     <value>'Envia-ho el dia' d MMM 'de' yyyy 'a les' HH:mm</value>
   </data>
+  <data name="SendDice" xml:space="preserve">
+    <value>ENVIA</value>
+  </data>
   <data name="SendGameTo" xml:space="preserve">
     <value>Voleu compartir el joc amb {0}?</value>
   </data>
@@ -8347,7 +8585,7 @@ Potse calgui reiniciar l'aplicació per a aplicar-ho.</value>
     <value>Actualitzada en temps real seguint el moviment</value>
   </data>
   <data name="SendLiveLocationMenu" xml:space="preserve">
-    <value>Comparteix la ubicació en directe</value>
+    <value>Envia la ubicació en directe</value>
   </data>
   <data name="SendLocation" xml:space="preserve">
     <value>Envia la meva ubicació actual</value>
@@ -8477,8 +8715,11 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   <data name="SetTimer" xml:space="preserve">
     <value>Estableix l'autodestrucció</value>
   </data>
-  <data name="Settings" xml:space="preserve">
+  <data name="SETTINGS" xml:space="preserve">
     <value>Configuració</value>
+  </data>
+  <data name="SettingsDebug" xml:space="preserve">
+    <value>Depuració</value>
   </data>
   <data name="SettingsFaqSearchTitle" xml:space="preserve">
     <value>Preguntes més freqüents</value>
@@ -8545,6 +8786,9 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
   </data>
   <data name="SharedFilesTab2" xml:space="preserve">
     <value>Fitxers</value>
+  </data>
+  <data name="SharedGIFsTab2" xml:space="preserve">
+    <value>GIF</value>
   </data>
   <data name="SharedGroupsTab2" xml:space="preserve">
     <value>Grups</value>
@@ -8798,14 +9042,44 @@ El mode lent està activat. No podeu enviar més d'un missatge alhora.</value>
   <data name="StartText" xml:space="preserve">
     <value>Confirmeu el codi de país i escriviu el vostre número de telèfon.</value>
   </data>
+  <data name="StatisticOverview" xml:space="preserve">
+    <value>Resum</value>
+  </data>
   <data name="Statistics" xml:space="preserve">
     <value>Estadístiques</value>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Adhesius i màscares</value>
   </data>
+  <data name="StickersArchived" xml:space="preserve">
+    <value>Adhesius arxivats.</value>
+  </data>
+  <data name="StickersArchivedInfo" xml:space="preserve">
+    <value>S'ha mogut {0} a l'arxiu.</value>
+  </data>
+  <data name="StickersBotInfo" xml:space="preserve">
+    <value>Animem els artistes a afegir els seus propis paquets usant el nostre bot @stickers.</value>
+  </data>
   <data name="StickersCopy" xml:space="preserve">
     <value>Copia l'enllaç</value>
+  </data>
+  <data name="StickerSetsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsOne" xml:space="preserve">
+    <value>{0} paquet d'adhesiu</value>
+  </data>
+  <data name="StickerSetsOther" xml:space="preserve">
+    <value>{0} paquets d'adhesius</value>
+  </data>
+  <data name="StickerSetsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="StickerSetsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="StickersFew" xml:space="preserve">
     <value/>
@@ -8830,6 +9104,15 @@ El mode lent està activat. No podeu enviar més d'un missatge alhora.</value>
   </data>
   <data name="StickersRemoved" xml:space="preserve">
     <value>S'han eliminat els adhesius</value>
+  </data>
+  <data name="StickersRemovedInfo" xml:space="preserve">
+    <value>{0} ja no és als vostres adhesius.</value>
+  </data>
+  <data name="StickersReorder" xml:space="preserve">
+    <value>Reordena</value>
+  </data>
+  <data name="StickersReorderHint" xml:space="preserve">
+    <value>Ordeneu els adhesius movent-los.</value>
   </data>
   <data name="StickersShare" xml:space="preserve">
     <value>Comparteix</value>
@@ -9004,6 +9287,9 @@ Si «**Sincronitza els contactes**» està activat, es tornaran a sincronitzar.<
   <data name="TapToDownload" xml:space="preserve">
     <value>Toqueu per a baixar</value>
   </data>
+  <data name="TapToSendLocation" xml:space="preserve">
+    <value>Toqueu per a enviar la ubicació</value>
+  </data>
   <data name="TapToViewAsList" xml:space="preserve">
     <value>Toqueu per a mostrar una llista</value>
   </data>
@@ -9111,12 +9397,6 @@ accepteu les *Condicions del servei*.</value>
   </data>
   <data name="TextSizeHeader" xml:space="preserve">
     <value>Mida del text dels missatges</value>
-  </data>
-  <data name="TgCancel" xml:space="preserve">
-    <value>Cancel·la</value>
-  </data>
-  <data name="TgOpenGooglePlay" xml:space="preserve">
-    <value>Obre el Google Play</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Tema</value>
@@ -9363,6 +9643,12 @@ Però si no esteu a gust amb les modestes necessitats de Telegram, no ens serà 
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>Total</value>
+  </data>
+  <data name="TotalDeviceFreeSize" xml:space="preserve">
+    <value>{0} lliure</value>
+  </data>
+  <data name="TotalDeviceSize" xml:space="preserve">
+    <value>{0} altres dades</value>
   </data>
   <data name="TurnPasswordOff" xml:space="preserve">
     <value>Desactiva la contrasenya</value>
@@ -10214,5 +10500,8 @@ Si oblideu la contrasenya, perdreu l'accés al vostre compte de Telegram. No hi 
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>us n'han expulsat</value>
+  </data>
+  <data name="ZoomOut" xml:space="preserve">
+    <value>Allunya't</value>
   </data>
 </root>

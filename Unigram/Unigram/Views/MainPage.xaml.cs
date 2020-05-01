@@ -859,7 +859,7 @@ namespace Unigram.Views
                             return;
                         }
 
-                        if (chat.IsSponsored)
+                        if (chat.Source != null)
                         {
                             index++;
                         }

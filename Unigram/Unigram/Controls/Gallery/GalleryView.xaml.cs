@@ -517,7 +517,7 @@ namespace Unigram.Controls.Gallery
         private string ConvertDate(int value)
         {
             var date = Convert.DateTime(value);
-            return string.Format(Strings.Resources.FormatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+            return string.Format(Strings.Resources.formatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
         }
 
         private string ConvertOf(int index, int count)

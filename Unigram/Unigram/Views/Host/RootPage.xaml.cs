@@ -429,10 +429,12 @@ namespace Unigram.Views.Host
                         content.Glyph = "\uE115";
                         break;
 
+#if INCLUDE_WALLET
                     case RootDestination.Wallet:
                         content.Text = Strings.Resources.Wallet;
                         content.Glyph = "\uD83D\uDC8E";
                         break;
+#endif
 
                     case RootDestination.SavedMessages:
                         content.Text = Strings.Resources.SavedMessages;
@@ -447,7 +449,7 @@ namespace Unigram.Views.Host
             }
         }
 
-        #endregion
+#endregion
 
         private void Expand_Click(object sender, RoutedEventArgs e)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -355,7 +356,7 @@ namespace Unigram.Controls.Messages
                     shown = true;
                 }
             }
-            else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup)
+            else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup && string.IsNullOrEmpty(message.ForwardInfo?.PublicServiceAnnouncementType))
             {
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(new Run { Text = message.ProtoService.GetTitle(chat) });
@@ -408,7 +409,26 @@ namespace Unigram.Controls.Messages
                 if (paragraph.Inlines.Count > 0)
                     paragraph.Inlines.Add(new LineBreak());
 
-                paragraph.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
+                if (message.ForwardInfo.PublicServiceAnnouncementType.Length > 0)
+                {
+                    var type = LocaleService.Current.GetString("PsaMessage_" + message.ForwardInfo.PublicServiceAnnouncementType);
+                    if (type.Length > 0)
+                    {
+                        paragraph.Inlines.Add(new Run { Text = type, FontWeight = FontWeights.Normal });
+                    }
+                    else
+                    {
+                        paragraph.Inlines.Add(new Run { Text = Strings.Resources.PsaMessageDefault, FontWeight = FontWeights.Normal });
+                    }
+
+                    FindName(nameof(PsaInfo));
+                    PsaInfo.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    paragraph.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
+                }
+
                 paragraph.Inlines.Add(new LineBreak());
                 paragraph.Inlines.Add(new Run { Text = Strings.Resources.From + " ", FontWeight = FontWeights.Normal });
 
@@ -1280,6 +1300,24 @@ namespace Unigram.Controls.Messages
         }
 
         #region Actions
+
+        private void PsaInfo_Click(object sender, RoutedEventArgs e)
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            var type = LocaleService.Current.GetString("PsaMessageInfo_" + message.ForwardInfo.PublicServiceAnnouncementType);
+            if (string.IsNullOrEmpty(type))
+            {
+                type = Strings.Resources.PsaMessageInfoDefault;
+            }
+
+            var entities = message.ProtoService.Execute(new GetTextEntities(type)) as TextEntities;
+            Window.Current.ShowTeachingTip(PsaInfo, new FormattedText(type, entities.Entities), TeachingTipPlacementMode.TopLeft);
+        }
 
         private void Reply_Click(object sender, RoutedEventArgs e)
         {
