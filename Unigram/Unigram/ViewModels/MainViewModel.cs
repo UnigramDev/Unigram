@@ -40,7 +40,7 @@ namespace Unigram.ViewModels
             _emojiSetService = emojiSetService;
             _playbackService = playbackService;
 
-            Filters = new MvxObservableCollection<ChatListFilter>();
+            Filters = new MvxObservableCollection<ChatListFolder>();
 
             Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
             ArchivedChats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListArchive());
@@ -68,9 +68,9 @@ namespace Unigram.ViewModels
 
             SetupFiltersCommand = new RelayCommand(SetupFiltersExecute);
 
-            FilterEditCommand = new RelayCommand<ChatListFilter>(FilterEditExecute);
-            FilterAddCommand = new RelayCommand<ChatListFilter>(FilterAddExecute);
-            FilterDeleteCommand = new RelayCommand<ChatListFilter>(FilterDeleteExecute);
+            FilterEditCommand = new RelayCommand<ChatListFolder>(FilterEditExecute);
+            FilterAddCommand = new RelayCommand<ChatListFolder>(FilterAddExecute);
+            FilterDeleteCommand = new RelayCommand<ChatListFolder>(FilterDeleteExecute);
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
@@ -152,14 +152,14 @@ namespace Unigram.ViewModels
             });
         }
 
-        private IList<ChatListFilter> _filters;
-        public IList<ChatListFilter> Filters
+        private IList<ChatListFolder> _filters;
+        public IList<ChatListFolder> Filters
         {
             get => _filters;
             set => Set(ref _filters, value);
         }
 
-        public ChatListFilter SelectedFilter
+        public ChatListFolder SelectedFilter
         {
             get => Chats.Items.Filter ?? _filters[0];
             set
@@ -179,13 +179,13 @@ namespace Unigram.ViewModels
                 Task.Run(() => _contactsService.JumpListAsync());
                 Task.Run(() => _emojiSetService.UpdateAsync());
 
-                ProtoService.Send(new GetChatListFilters(), result =>
+                ProtoService.Send(new GetChatListFolders(), result =>
                 {
-                    if (result is ChatListFilters filters)
+                    if (result is ChatListFolders filters)
                     {
                         BeginOnUIThread(() =>
                         {
-                            Filters = new[] { new ChatListFilter { Id = Constants.ChatListFilterAll, Title = Strings.Resources.FilterAllChats } }.Union(filters.Filters).ToList();
+                            Filters = new[] { new ChatListFolder { Id = Constants.ChatListFilterAll, Title = Strings.Resources.FilterAllChats } }.Union(filters.Filters).ToList();
                             SelectedFilter = Filters[0];
                         });
                     }
@@ -268,20 +268,20 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<ChatListFilter> FilterAddCommand { get; }
-        public RelayCommand<ChatListFilter> FilterEditCommand { get; }
-        private void FilterEditExecute(ChatListFilter filter)
+        public RelayCommand<ChatListFolder> FilterAddCommand { get; }
+        public RelayCommand<ChatListFolder> FilterEditCommand { get; }
+        private void FilterEditExecute(ChatListFolder filter)
         {
             NavigationService.Navigate(typeof(FolderPage), filter.Id);
         }
 
-        private async void FilterAddExecute(ChatListFilter filter)
+        private async void FilterAddExecute(ChatListFolder filter)
         {
             // Meh I'm lazy
         }
 
-        public RelayCommand<ChatListFilter> FilterDeleteCommand { get; }
-        private async void FilterDeleteExecute(ChatListFilter filter)
+        public RelayCommand<ChatListFolder> FilterDeleteCommand { get; }
+        private async void FilterDeleteExecute(ChatListFolder filter)
         {
             var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)

@@ -428,10 +428,10 @@ namespace Unigram.Services
         //    _client.Send(function, handler);
         //}
 
-        private Dictionary<int, ChatListFilter> _filters = new Dictionary<int, ChatListFilter>
+        private Dictionary<int, ChatListFolder> _filters = new Dictionary<int, ChatListFolder>
         {
             {
-                0, new ChatListFilter
+                0, new ChatListFolder
                 {
                     Id = 0,
                     Title = Strings.Resources.FilterContacts,
@@ -443,7 +443,7 @@ namespace Unigram.Services
                 }
             },
             {
-                2, new ChatListFilter
+                2, new ChatListFolder
                 {
                     Id = 2,
                     Title = Strings.Resources.FilterGroups,
@@ -455,7 +455,7 @@ namespace Unigram.Services
                 }
             },
             {
-                4, new ChatListFilter
+                4, new ChatListFolder
                 {
                     Id = 4,
                     Title = Strings.Resources.FilterChannels,
@@ -467,7 +467,7 @@ namespace Unigram.Services
                 }
             },
             {
-                5, new ChatListFilter
+                5, new ChatListFolder
                 {
                     Id = 5,
                     Title = Strings.Resources.FilterBots,
@@ -479,7 +479,7 @@ namespace Unigram.Services
                 }
             },
             { 
-                6, new ChatListFilter
+                6, new ChatListFolder
                 {
                     Id = 6,
                     Title = "Unmuted",
@@ -487,7 +487,7 @@ namespace Unigram.Services
                 }
             },
             {
-                7, new ChatListFilter
+                7, new ChatListFolder
                 {
                     Id = 7,
                     Title = Strings.Resources.FilterUnread,
@@ -496,20 +496,20 @@ namespace Unigram.Services
             }
         };
 
-        private IList<ChatListFilterSuggestion> _suggestions = new List<ChatListFilterSuggestion>
+        private IList<ChatListFolderSuggestion> _suggestions = new List<ChatListFolderSuggestion>
         {
-            new ChatListFilterSuggestion
+            new ChatListFolderSuggestion
             {
-                Filter = new ChatListFilter
+                Filter = new ChatListFolder
                 {
                     Title = "Unread",
                     ExcludeRead = true
                 },
                 Description = "All unread chats"
             },
-            new ChatListFilterSuggestion
+            new ChatListFolderSuggestion
             {
-                Filter = new ChatListFilter
+                Filter = new ChatListFolder
                 {
                     Title = "Personal",
                     IncludeChannels = false
@@ -520,14 +520,14 @@ namespace Unigram.Services
 
         public void Send(Function function, Action<BaseObject> handler = null)
         {
-            if (function is GetChatListFilters)
+            if (function is GetChatListFolders)
             {
-                handler?.Invoke(new ChatListFilters { Filters = _filters.Values.ToList() });
+                handler?.Invoke(new ChatListFolders { Filters = _filters.Values.ToList() });
                 return;
             }
-            else if (function is GetChatListFilterSuggestons)
+            else if (function is GetChatListFolderSuggestions)
             {
-                handler?.Invoke(new ChatListFilterSuggestions { Suggestions = _suggestions });
+                handler?.Invoke(new ChatListFolderSuggestions { Suggestions = _suggestions });
                 return;
             }
 
@@ -536,15 +536,15 @@ namespace Unigram.Services
 
         public Task<BaseObject> SendAsync(Function function)
         {
-            if (function is GetChatListFilters)
+            if (function is GetChatListFolders)
             {
-                return Task.FromResult((BaseObject)new ChatListFilters { Filters = _filters.Values.ToList() });
+                return Task.FromResult((BaseObject)new ChatListFolders { Filters = _filters.Values.ToList() });
             }
-            else if (function is GetChatListFilterSuggestons)
+            else if (function is GetChatListFolderSuggestions)
             {
-                return Task.FromResult((BaseObject)new ChatListFilterSuggestions { Suggestions = _suggestions });
+                return Task.FromResult((BaseObject)new ChatListFolderSuggestions { Suggestions = _suggestions });
             }
-            else if (function is SetChatFilter set)
+            else if (function is SetChatFolder set)
             {
                 _filters[set.Filter.Id] = set.Filter;
             }

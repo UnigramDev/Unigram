@@ -34,19 +34,19 @@ namespace Unigram.ViewModels.Folders
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            ChatListFilter filter = null;
+            ChatListFolder filter = null;
 
             if (parameter is int id)
             {
-                var response = await ProtoService.SendAsync(new GetChatListFilters());
-                if (response is ChatListFilters filters)
+                var response = await ProtoService.SendAsync(new GetChatListFolders());
+                if (response is ChatListFolders filters)
                 {
                     filter = filters.Filters.FirstOrDefault(x => x.Id == id);
                 }
             }
             else
             {
-                filter = new ChatListFilter();
+                filter = new ChatListFolder();
             }
 
             if (filter == null)

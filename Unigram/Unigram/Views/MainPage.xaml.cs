@@ -2177,7 +2177,7 @@ namespace Unigram.Views
             SettingsView.EditName_Click(sender, e);
         }
 
-        private void SetFilter(ChatListFilter filter)
+        private void SetFilter(ChatListFolder filter)
         {
             ViewModel.SelectedFilter = filter;
 
@@ -2268,7 +2268,7 @@ namespace Unigram.Views
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var filter = element.Tag as ChatListFilter;
+            var filter = element.Tag as ChatListFolder;
 
             if (filter.Id == Constants.ChatListFilterAll)
             {
@@ -2677,7 +2677,7 @@ namespace Unigram.Views
 //            flyout.ShowAt(ChatsFilters);
 //        }
 
-        public static string GetFilterIcon(ChatListFilter filter)
+        public static string GetFilterIcon(ChatListFolder filter)
         {
             if (filter.ExcludeMuted && filter.IncludeAll())
             {
@@ -2748,7 +2748,7 @@ namespace Unigram.Views
 
         private void NavigationView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
         {
-            if (args.InvokedItemContainer.DataContext is ChatListFilter filter)
+            if (args.InvokedItemContainer.DataContext is ChatListFolder filter)
             {
                 SetFilter(filter.Id == Constants.ChatListFilterAll ? null : filter);
             }

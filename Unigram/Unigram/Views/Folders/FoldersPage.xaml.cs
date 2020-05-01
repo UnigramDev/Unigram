@@ -31,7 +31,7 @@ namespace Unigram.Views.Folders
         private void Items_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
             var button = args.Element as Button;
-            var filter = sender.ItemsSourceView.GetAt(args.Index) as ChatListFilter;
+            var filter = sender.ItemsSourceView.GetAt(args.Index) as ChatListFolder;
 
             button.Content = filter.Title;
             button.Command = ViewModel.EditCommand;
@@ -41,7 +41,7 @@ namespace Unigram.Views.Folders
         private void Suggestions_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
             var button = args.Element as BadgeButton;
-            var suggestion = sender.ItemsSourceView.GetAt(args.Index) as ChatListFilterSuggestion;
+            var suggestion = sender.ItemsSourceView.GetAt(args.Index) as ChatListFolderSuggestion;
 
             button.Content = suggestion.Filter.Title;
             button.Badge = suggestion.Description;

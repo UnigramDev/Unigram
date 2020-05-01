@@ -27,14 +27,14 @@ namespace Unigram.ViewModels
 
         public IChatsDelegate Delegate { get; set; }
 
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList, ChatListFilter filter = null)
+        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _notificationsService = notificationsService;
 
             _chatList = chatList;
 
-            Items = new ItemsCollection(protoService, aggregator, this, chatList, filter);
+            Items = new ItemsCollection(protoService, aggregator, this, chatList, chatList as ChatListFolder);
 
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
             ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
@@ -669,7 +669,7 @@ namespace Unigram.ViewModels
             return ProtoService.GetChat(chatId);
         }
 
-        public void SetFilter(ChatListFilter filter)
+        public void SetFilter(ChatListFolder filter)
         {
             Items = new ItemsCollection(ProtoService, Aggregator, this, _chatList, filter);
             RaisePropertyChanged(() => Items);
@@ -691,7 +691,7 @@ namespace Unigram.ViewModels
             private readonly ChatsViewModel _viewModel;
 
             private readonly ChatList _chatList;
-            private readonly ChatListFilter _filter;
+            private readonly ChatListFolder _filter;
 
             private bool _hasMoreItems = true;
 
@@ -706,9 +706,9 @@ namespace Unigram.ViewModels
             public long LastChatId => _lastChatId;
             public long LastOrder => _lastOrder;
 
-            public ChatListFilter Filter => _filter;
+            public ChatListFolder Filter => _filter;
 
-            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList, ChatListFilter filter = null)
+            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList, ChatListFolder filter = null)
                 : base(new ChatComparer(), true)
             {
                 _protoService = protoService;
@@ -861,11 +861,11 @@ namespace Unigram.ViewModels
 
 namespace Telegram.Td.Api
 {
-    public class SetChatFilter : Function
+    public class SetChatFolder : Function
     {
-        public ChatListFilter Filter { get; }
+        public ChatListFolder Filter { get; }
 
-        public SetChatFilter(ChatListFilter filter)
+        public SetChatFolder(ChatListFolder filter)
         {
             Filter = filter;
         }
@@ -876,7 +876,7 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class GetChatListFilters : Function
+    public class GetChatListFolders : Function
     {
         public NativeObject ToUnmanaged()
         {
@@ -884,9 +884,9 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class ChatListFilters : BaseObject
+    public class ChatListFolders : BaseObject
     {
-        public IList<ChatListFilter> Filters { get; set; }
+        public IList<ChatListFolder> Filters { get; set; }
 
         public NativeObject ToUnmanaged()
         {
@@ -894,9 +894,9 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class ChatListFilterSuggestion : BaseObject
+    public class ChatListFolderSuggestion : BaseObject
     {
-        public ChatListFilter Filter { get; set; }
+        public ChatListFolder Filter { get; set; }
 
         public string Description { get; set; } = string.Empty;
 
@@ -906,9 +906,9 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class ChatListFilterSuggestions : BaseObject
+    public class ChatListFolderSuggestions : BaseObject
     {
-        public IList<ChatListFilterSuggestion> Suggestions { get; set; }
+        public IList<ChatListFolderSuggestion> Suggestions { get; set; }
 
         public NativeObject ToUnmanaged()
         {
@@ -916,7 +916,7 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class GetChatListFilterSuggestons : Function
+    public class GetChatListFolderSuggestions : Function
     {
         public NativeObject ToUnmanaged()
         {
@@ -924,7 +924,7 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class ChatListFilter
+    public class ChatListFolder : ChatList
     {
         // dialogFilter flags:# id:int title:string pm:flags.0?true secret_chats:flags.1?true private_groups:flags.2?true public_groups:flags.3?true broadcasts:flags.4?true bots:flags.5?true exclude_muted:flags.11?true exclude_read:flags.12?true include_peers:Vector<InputPeer> = DialogFilter;
 
@@ -994,6 +994,11 @@ namespace Telegram.Td.Api
         public bool IncludeAll()
         {
             return IncludeBots && IncludeChannels && IncludeContacts && IncludeGroups && IncludeNonContacts;
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
         }
     }
 
