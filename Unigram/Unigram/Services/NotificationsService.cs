@@ -67,6 +67,8 @@ namespace Unigram.Services
 
         private bool _suppress;
 
+        private int _tickCount;
+
         public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
             _protoService = protoService;
@@ -82,6 +84,18 @@ namespace Unigram.Services
             var unreadCount = _cacheService.GetUnreadCount(new ChatListMain());
             Handle(unreadCount.UnreadChatCount);
             Handle(unreadCount.UnreadMessageCount);
+        }
+
+        private void UpdateBadge(int count)
+        {
+            var tick = Environment.TickCount;
+            if (tick < _tickCount + 500)
+            {
+                return;
+            }
+
+            _tickCount = tick;
+            NotificationTask.UpdatePrimaryBadge(count);
         }
 
         public async void Handle(UpdateTermsOfService update)
@@ -203,11 +217,11 @@ namespace Unigram.Services
 
             if (_settings.Notifications.IncludeMutedChats)
             {
-                NotificationTask.UpdatePrimaryBadge(update.UnreadCount);
+                UpdateBadge(update.UnreadCount);
             }
             else
             {
-                NotificationTask.UpdatePrimaryBadge(update.UnreadUnmutedCount);
+                UpdateBadge(update.UnreadUnmutedCount);
             }
 
             if (App.Connection is AppServiceConnection connection)
@@ -230,11 +244,11 @@ namespace Unigram.Services
 
             if (_settings.Notifications.IncludeMutedChats)
             {
-                NotificationTask.UpdatePrimaryBadge(update.UnreadCount);
+                UpdateBadge(update.UnreadCount);
             }
             else
             {
-                NotificationTask.UpdatePrimaryBadge(update.UnreadUnmutedCount);
+                UpdateBadge(update.UnreadUnmutedCount);
             }
 
             if (App.Connection is AppServiceConnection connection)
