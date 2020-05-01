@@ -201,6 +201,11 @@ namespace Unigram.Common
 
     public static class TdExtensions
     {
+        public static File InvalidFile()
+        {
+            return new File(0, 0, 0, new LocalFile(string.Empty, false, false, false, false, 0, 0, 0), new RemoteFile(string.Empty, string.Empty, false, false, 0));
+        }
+
         #region Passport
 
         public static PersonalDocument GetPersonalDocument(this PassportElement element)

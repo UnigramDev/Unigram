@@ -1328,7 +1328,10 @@ namespace Unigram.ViewModels
             {
                 if (message.Content is MessageDice dice)
                 {
-                    message.GeneratedContent = new MessageSticker(dice.FinalStateSticker ?? dice.InitialStateSticker);
+                    message.GeneratedContent = new MessageSticker(
+                        dice.FinalStateSticker
+                        ?? dice.InitialStateSticker
+                        ?? new Sticker(0, 512, 512, dice.Emoji, true, false, null, null, Common.TdExtensions.InvalidFile()));
                 }
 
                 var target = parent ?? message;

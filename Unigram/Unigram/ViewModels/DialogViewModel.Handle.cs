@@ -511,6 +511,7 @@ namespace Unigram.ViewModels
                     else
                     {
                         bubble.UpdateMessageContent(message);
+                        Delegate?.ViewVisibleMessages(false);
 
                         if (_chat?.PinnedMessageId == message.Id)
                         {
