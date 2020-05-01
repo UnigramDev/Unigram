@@ -117,6 +117,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup Condition="$(DefineConstants.Contains('INCLUDE_WALLET'))">
+    <PRIResource Include="Strings\en\Wallet.resw" />
     <Compile Include="Common\TonExtensions.cs" />
     <Compile Include="Services\TonService.cs" />
     <Compile Include="Services\Settings\WalletSettings.cs" />
