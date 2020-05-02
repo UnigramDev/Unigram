@@ -28,8 +28,6 @@ namespace Unigram.Services.Factories
         Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
         Task<InputMessageFactory> CreateDocumentAsync(StorageFile file);
 
-        Task ForwardMessagesAsync(long chatId, long fromChatId, IList<Message> messageIds, bool copy, bool captions);
-        bool CanBeCopied(Message message);
         InputMessageContent ToInput(Message message, bool caption);
     }
 
@@ -71,12 +69,20 @@ namespace Unigram.Services.Factories
 
             if (asFile)
             {
-                return new InputMessageFactory { InputFile = generated, Type = new FileTypeDocument(), Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption) };
+                return new InputMessageFactory
+                {
+                    InputFile = generated,
+                    Type = new FileTypeDocument(),
+                    Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption)
+                };
             }
-            else
+
+            return new InputMessageFactory
             {
-                return new InputMessageFactory { InputFile = generated, Type = new FileTypePhoto(), Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, new int[0], size.Width, size.Height, caption, ttl) };
-            }
+                InputFile = generated,
+                Type = new FileTypePhoto(),
+                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, new int[0], size.Width, size.Height, caption, ttl)
+            };
         }
 
         public async Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
@@ -120,14 +126,29 @@ namespace Unigram.Services.Factories
 
             if (asFile && ttl == 0)
             {
-                return new InputMessageFactory { InputFile = generated, Type = new FileTypeDocument(), Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption) };
+                return new InputMessageFactory
+                {
+                    InputFile = generated,
+                    Type = new FileTypeDocument(),
+                    Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption)
+                };
             }
             else if (animated && ttl == 0)
             {
-                return new InputMessageFactory { InputFile = generated, Type = new FileTypeAnimation(), Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, duration, videoWidth, videoHeight, caption) };
+                return new InputMessageFactory
+                {
+                    InputFile = generated,
+                    Type = new FileTypeAnimation(),
+                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, duration, videoWidth, videoHeight, caption)
+                };
             }
 
-            return new InputMessageFactory { InputFile = generated, Type = new FileTypeVideo(), Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, new int[0], duration, videoWidth, videoHeight, true, caption, ttl) };
+            return new InputMessageFactory
+            {
+                InputFile = generated,
+                Type = new FileTypeVideo(),
+                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, new int[0], duration, videoWidth, videoHeight, true, caption, ttl)
+            };
         }
 
         public async Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
@@ -168,7 +189,12 @@ namespace Unigram.Services.Factories
             var generated = await file.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
             var thumbnail = await file.ToThumbnailAsync(conversion, ConversionType.TranscodeThumbnail, JsonConvert.SerializeObject(conversion));
 
-            return new InputMessageFactory { InputFile = generated, Type = new FileTypeVideoNote(), Delegate = (inputFile, caption) => new InputMessageVideoNote(inputFile, thumbnail, duration, Math.Min(videoWidth, videoHeight)) };
+            return new InputMessageFactory
+            {
+                InputFile = generated,
+                Type = new FileTypeVideoNote(),
+                Delegate = (inputFile, caption) => new InputMessageVideoNote(inputFile, thumbnail, duration, Math.Min(videoWidth, videoHeight))
+            };
         }
 
         public async Task<InputMessageFactory> CreateDocumentAsync(StorageFile file)
@@ -186,20 +212,37 @@ namespace Unigram.Services.Factories
                     var width = webp.PixelWidth;
                     var height = webp.PixelHeight;
 
-                    return new InputMessageFactory { InputFile = generated, Type = new FileTypeSticker(), Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height) };
+                    return new InputMessageFactory
+                    {
+                        InputFile = generated,
+                        Type = new FileTypeSticker(),
+                        Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height)
+                    };
                 }
                 catch
                 {
                     // Not really a sticker, go on sending as a file
                 }
             }
-            else if (file.FileType.Equals(".mp3", StringComparison.OrdinalIgnoreCase))
+            else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
             {
                 var props = await file.Properties.GetMusicPropertiesAsync();
-                return new InputMessageFactory { InputFile = generated, Type = new FileTypeAudio(), Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, (int)props.Duration.TotalSeconds, props.Title, props.AlbumArtist, caption) };
+                var duration = (int)props.Duration.TotalSeconds;
+
+                return new InputMessageFactory
+                {
+                    InputFile = generated,
+                    Type = new FileTypeAudio(),
+                    Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, duration, props.Title, props.AlbumArtist, caption)
+                };
             }
 
-            return new InputMessageFactory { InputFile = generated, Type = new FileTypeDocument(), Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption) };
+            return new InputMessageFactory
+            {
+                InputFile = generated,
+                Type = new FileTypeDocument(),
+                Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption)
+            };
         }
 
 
@@ -243,106 +286,6 @@ namespace Unigram.Services.Factories
                 default:
                     return null;
             }
-        }
-
-        public bool CanBeCopied(Message message)
-        {
-            var content = message.Content;
-            switch (content)
-            {
-                case MessageAnimation animation:
-                case MessageAudio audio:
-                case MessageContact contact:
-                case MessageDocument document:
-                case MessageGame game:
-                case MessageLocation location:
-                case MessagePhoto photo:
-                case MessageSticker sticker:
-                case MessageText text:
-                case MessageVenue venue:
-                case MessageVideo video:
-                    return true;
-                //case MessageVideoNote videoNote:
-                //    return new InputMessageVideoNote(new InputFileId(videoNote.VideoNote.Video.Id), videoNote.VideoNote.Thumbnail.ToInputThumbnail(), videoNote.VideoNote.Duration, videoNote.VideoNote.Length);
-                //case MessageVoiceNote voiceNote:
-                //    return new InputMessageVoiceNote(new InputFileId(voiceNote.VoiceNote.Voice.Id), voiceNote.VoiceNote.Duration, voiceNote.VoiceNote.Waveform, voiceNote.Caption);
-
-                default:
-                    return false;
-            }
-        }
-
-        public async Task ForwardMessagesAsync(long chatId, long fromChatId, IList<Message> messageIds, bool copy, bool captions)
-        {
-            var albumId = 0L;
-            var chunk = new List<long>();
-
-            var copyAlbumId = 0L;
-            var copyChunk = new List<InputMessageContent>();
-
-            async Task SendCopy()
-            {
-                if (copyChunk.Count > 1 && copyAlbumId != 0)
-                {
-                    await _protoService.SendAsync(new SendMessageAlbum(chatId, 0, new SendMessageOptions(false, false, null), copyChunk));
-                }
-                else if (copyChunk.Count > 0)
-                {
-                    foreach (var input in copyChunk)
-                    {
-                        await _protoService.SendAsync(new SendMessage(chatId, 0, new SendMessageOptions(false, false, null), null, input));
-                    }
-                }
-
-                copyAlbumId = 0L;
-                copyChunk.Clear();
-            }
-
-            async Task SendForward()
-            {
-                if (chunk.Count > 0)
-                {
-                    await _protoService.SendAsync(new ForwardMessages(chatId, fromChatId, chunk, new SendMessageOptions(false, false, null), albumId != 0, false, false));
-                }
-
-                albumId = 0L;
-                chunk.Clear();
-            }
-
-            foreach (var message in messageIds.OrderBy(x => x.Id))
-            {
-                if (copy && CanBeCopied(message))
-                {
-                    if (message.MediaAlbumId != copyAlbumId)
-                    {
-                        await SendCopy();
-                    }
-                    if (chunk.Count > 0)
-                    {
-                        await SendForward();
-                    }
-
-                    copyAlbumId = message.MediaAlbumId;
-                    copyChunk.Add(ToInput(message, captions));
-                }
-                else
-                {
-                    if (message.MediaAlbumId != albumId || chunk.Count == _protoService.Options.ForwardedMessageCountMax)
-                    {
-                        await SendForward();
-                    }
-                    if (copyChunk.Count > 0)
-                    {
-                        await SendCopy();
-                    }
-
-                    albumId = message.MediaAlbumId;
-                    chunk.Add(message.Id);
-                }
-            }
-
-            await SendCopy();
-            await SendForward();
         }
     }
 
