@@ -359,6 +359,9 @@
     <Compile Include="Controls\ColorTextBox.cs" />
     <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\DialogListView.cs" />
+    <Compile Include="Controls\EmojiDrawer.xaml.cs">
+      <DependentUpon>EmojiDrawer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
@@ -501,6 +504,9 @@
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\StickerDrawer.xaml.cs">
+      <DependentUpon>StickerDrawer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
@@ -537,9 +543,6 @@
     </Compile>
     <Compile Include="Controls\Views\EditYourAboutView.xaml.cs">
       <DependentUpon>EditYourAboutView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\EmojiView.xaml.cs">
-      <DependentUpon>EmojiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\LoginUrlInfoView.xaml.cs">
       <DependentUpon>LoginUrlInfoView.xaml</DependentUpon>
@@ -1499,9 +1502,6 @@
     <Compile Include="Controls\GlyphToggleButton.cs" />
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
-    <Compile Include="Controls\Views\StickersView.xaml.cs">
-      <DependentUpon>StickersView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Converters\LastSeenConverter.cs" />
     <Compile Include="ViewModels\InstantViewModel.cs" />
   </ItemGroup>
@@ -1961,6 +1961,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\EmojiDrawer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Gallery\EmbedUrlView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2097,6 +2101,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\StickerDrawer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\UndoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2136,10 +2144,6 @@
     <Page Include="Controls\Views\EditYourAboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\EmojiView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\InlineBotResultsView.xaml">
       <SubType>Designer</SubType>
@@ -2242,10 +2246,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\StickerSetView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\StickersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
