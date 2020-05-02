@@ -216,8 +216,8 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    TitleLabel.Text = Strings.Resources.AudioUnknownTitle;
-                    SubtitleLabel.Text = Strings.Resources.AudioUnknownArtist;
+                    TitleLabel.Text = audio.FileName;
+                    SubtitleLabel.Text = string.Empty;
                 }
 
                 PreviousButton.Visibility = Visibility.Visible;
@@ -236,7 +236,7 @@ namespace Unigram.Controls
 
         private void UpdateRepeat()
         {
-            RepeatButton.IsChecked = _playbackService.IsRepeatEnabled == null;
+            RepeatButton.IsChecked = _playbackService.IsRepeatEnabled;
             Automation.SetToolTip(RepeatButton, _playbackService.IsRepeatEnabled == null
                 ? Strings.Resources.AccDescrRepeatOne
                 : _playbackService.IsRepeatEnabled == true
