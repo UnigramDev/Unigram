@@ -387,7 +387,7 @@
         
         <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" Grid.RowSpan="5"/>
 
-        <Grid Padding="0,0,0,4" VerticalAlignment="Bottom" Grid.RowSpan="4">
+        <Grid Padding="0,0,0,8" VerticalAlignment="Bottom" Grid.RowSpan="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="Show"/>
                 <ColumnDefinition x:Name="Hide" Width="0"/>
@@ -979,24 +979,18 @@
                         HideFormatting="TextField_Formatting"/>
                 </Border>
                 <Border x:Name="btnAttach" Grid.Row="1">
-                    <controls:GlyphButton x:Name="ButtonAttach"
-                                          Click="Attach_Click"
-                                          Glyph="&#xE917;"
-                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                          AllowFocusOnInteraction="False"
-                                          VerticalAlignment="Bottom"
-                                          AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
-                                          ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}"
-                                          Grid.Row="1">
+                    <controls:GlyphButton
+                        x:Name="ButtonAttach"
+                        Click="Attach_Click"
+                        Glyph="&#xE917;"
+                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                        AllowFocusOnInteraction="False"
+                        VerticalAlignment="Bottom"
+                        AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}"
+                        Grid.Row="1">
                         <FlyoutBase.AttachedFlyout>
                             <MenuFlyout Placement="Top">
-                                <MenuFlyoutSeparator x:Name="AttachRecent">
-                                    <MenuFlyoutSeparator.Template>
-                                        <ControlTemplate TargetType="MenuFlyoutSeparator">
-                                            <controls:AttachPickerFlyout ItemClick="AttachPickerFlyout_ItemClick"/>
-                                        </ControlTemplate>
-                                    </MenuFlyoutSeparator.Template>
-                                </MenuFlyoutSeparator>
                                 <MenuFlyoutSeparator x:Name="AttachRestriction">
                                     <MenuFlyoutSeparator.Template>
                                         <ControlTemplate TargetType="MenuFlyoutSeparator">
@@ -1010,7 +1004,7 @@
                                 </MenuFlyoutSeparator>
                                 <MenuFlyoutItem
                                     x:Name="AttachMedia"
-                                    Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:True), Mode=OneWay}"
+                                    Text="{CustomResource ChatGallery}"
                                     Command="{x:Bind ViewModel.SendMediaCommand}">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xEB9F;"/>
@@ -1018,7 +1012,7 @@
                                 </MenuFlyoutItem>
                                 <MenuFlyoutItem
                                     x:Name="AttachDocument"
-                                    Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:False), Mode=OneWay}"
+                                    Text="{CustomResource ChatDocument}"
                                     Command="{x:Bind ViewModel.SendDocumentCommand}">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE160;"/>
@@ -1027,7 +1021,6 @@
                                 <MenuFlyoutItem
                                     x:Name="AttachLocation"
                                     Text="{CustomResource ChatLocation}"
-                                    IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                     Command="{x:Bind ViewModel.SendLocationCommand}">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE1C4;"/>
@@ -1036,7 +1029,6 @@
                                 <MenuFlyoutItem
                                     x:Name="AttachPoll"
                                     Text="{CustomResource Poll}"
-                                    IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                     Command="{x:Bind ViewModel.SendPollCommand}">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE91F;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
@@ -1045,7 +1037,6 @@
                                 <MenuFlyoutItem
                                     x:Name="AttachContact"
                                     Text="{CustomResource AttachContact}"
-                                    IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                     Command="{x:Bind ViewModel.SendContactCommand}">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE77B;"/>

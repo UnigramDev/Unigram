@@ -70,14 +70,6 @@ namespace Unigram.ViewModels
             SelectedItems = messages;
         }
 
-        public MediaLibraryCollection MediaLibrary
-        {
-            get
-            {
-                return MediaLibraryCollection.GetForCurrentView();
-            }
-        }
-
         private readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
         private static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();

@@ -799,12 +799,9 @@ namespace Unigram.Views
 
             Window.Current.Activated += Window_Activated;
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
-            Window.Current.SizeChanged += Window_SizeChanged;
 
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-
-            OnSizeChanged(Window.Current.Bounds.Width);
 
             UnloadVisibleMessages();
             ViewVisibleMessages(false);
@@ -825,7 +822,6 @@ namespace Unigram.Views
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
-            Window.Current.SizeChanged -= Window_SizeChanged;
 
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
@@ -879,17 +875,6 @@ namespace Unigram.Views
 
                 TextField.Focus(FocusState.Programmatic);
             }
-        }
-
-        private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs e)
-        {
-            OnSizeChanged(e.Size.Width);
-        }
-
-        private void OnSizeChanged(double width)
-        {
-            AttachRecent.MaxWidth = AttachRestriction.MaxWidth = width < 500 ? width - 16 - 2 : 360;
-            AttachRecent.MinWidth = AttachRestriction.MinWidth = width < 500 ? width - 16 - 2 : 360;
         }
 
         public void Search()
@@ -1456,43 +1441,17 @@ namespace Unigram.Views
                 await Task.Delay(200);
             }
 
-            foreach (var item in ViewModel.MediaLibrary)
-            {
-                item.Reset();
-            }
-
-            if (FlyoutBase.GetAttachedFlyout(ButtonAttach) is MenuFlyout flyout)
-            {
-                //var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
-                //if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
-                //{
-                //    flyout.LightDismissOverlayMode = LightDismissOverlayMode.On;
-                //}
-                //else
-                //{
-                //    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
-                //}
-
-                //flyout.ShowAt(ButtonAttach, new Point(4, -4));
-                flyout.ShowAt(FlyoutArea);
-            }
-        }
-
-        private void AttachPickerFlyout_ItemClick(object sender, MediaSelectedEventArgs e)
-        {
             var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
             if (flyout != null)
             {
-                flyout.Hide();
-            }
-
-            if (e.IsLocal)
-            {
-                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
-            }
-            else
-            {
-                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
+                if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+                {
+                    flyout.ShowAt(ButtonAttach, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
+                }
+                else
+                {
+                    flyout.ShowAt(ButtonAttach);
+                }
             }
         }
 
@@ -1572,10 +1531,10 @@ namespace Unigram.Views
         {
             get
             {
-#if DEBUG
+#if !DEBUG
                 return StickersPanelMode.Overlay;
 #endif
-                return /*ActualWidth >= 900 ? StickersPanelMode.Sidebar :*/ StickersPanelMode.Overlay;
+                return ActualWidth >= 380 + 320 ? StickersPanelMode.Sidebar : StickersPanelMode.Overlay;
             }
         }
 
@@ -2793,19 +2752,6 @@ namespace Unigram.Views
             return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? Strings.Resources.GotAQuestion : Strings.Resources.NoMessages;
         }
 
-        public string ConvertSelectedCount(int count, bool items)
-        {
-            if (items)
-            {
-                // TODO: Send 1 Photo/Video
-                return count > 0 ? string.Format(Strings.Resources.SendItems, count) : Strings.Resources.ChatGallery;
-            }
-            else
-            {
-                return count > 0 ? count > 1 ? Strings.Resources.SendAsFiles : Strings.Resources.SendAsFile : Strings.Resources.ChatDocument;
-            }
-        }
-
         private bool ConvertClickEnabled(ListViewSelectionMode mode)
         {
             return mode == ListViewSelectionMode.Multiple;
@@ -3346,7 +3292,6 @@ namespace Unigram.Views
                 var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
                 var pollsRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
 
-                AttachRecent.Height = rights ? 0 : double.NaN;
                 AttachRestriction.Tag = label ?? string.Empty;
                 AttachRestriction.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
                 AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
@@ -3400,7 +3345,6 @@ namespace Unigram.Views
                     AttachMedia.Command = ViewModel.EditMediaCommand;
                     AttachDocument.Command = ViewModel.EditDocumentCommand;
 
-                    AttachRecent.Height = 0;
                     AttachRestriction.Visibility = Visibility.Collapsed;
                     AttachMedia.Visibility = Visibility.Visible;
                     AttachDocument.Visibility = Visibility.Visible;
@@ -3426,7 +3370,6 @@ namespace Unigram.Views
                     var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
                     var pollsRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
 
-                    AttachRecent.Height = rights ? 0 : double.NaN;
                     AttachRestriction.Tag = label ?? string.Empty;
                     AttachRestriction.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
                     AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;

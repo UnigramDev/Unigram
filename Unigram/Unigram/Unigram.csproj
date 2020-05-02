@@ -945,7 +945,6 @@
     <Compile Include="Views\InvitePage.xaml.cs">
       <DependentUpon>InvitePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Collections\MediaLibraryCollection.cs" />
     <Compile Include="Views\LiveLocationPage.xaml.cs">
       <DependentUpon>LiveLocationPage.xaml</DependentUpon>
     </Compile>
@@ -1513,9 +1512,6 @@
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\NavigationService.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Controls\AttachPickerFlyout.xaml.cs">
-      <DependentUpon>AttachPickerFlyout.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\Views\InlineBotResultsView.xaml.cs">
       <DependentUpon>InlineBotResultsView.xaml</DependentUpon>
@@ -1905,10 +1901,6 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Page Include="Controls\AttachPickerFlyout.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Cells\CallCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

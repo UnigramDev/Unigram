@@ -208,16 +208,6 @@ namespace Unigram.ViewModels
             var header = _composerHeader;
             if (header?.EditingMessage == null)
             {
-                if (MediaLibrary.SelectedCount > 0)
-                {
-                    foreach (var storage in MediaLibrary.Where(x => x.IsSelected))
-                    {
-                        await SendDocumentAsync(storage.File, storage.Caption);
-                    }
-
-                    return;
-                }
-
                 var picker = new FileOpenPicker();
                 picker.ViewMode = PickerViewMode.Thumbnail;
                 picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
@@ -402,59 +392,6 @@ namespace Unigram.ViewModels
         public RelayCommand SendMediaCommand { get; }
         private async void SendMediaExecute()
         {
-            if (MediaLibrary.SelectedCount > 0)
-            {
-                if (Settings.IsSendGrouped && MediaLibrary.SelectedCount > 1)
-                {
-                    var options = await PickSendMessageOptionsAsync();
-                    if (options == null)
-                    {
-                        return;
-                    }
-
-                    var items = MediaLibrary.Where(x => x.IsSelected).ToList();
-                    var group = new List<StorageMedia>(Math.Min(items.Count, 10));
-
-                    foreach (var item in items)
-                    {
-                        group.Add(item);
-
-                        if (group.Count == 10)
-                        {
-                            await SendGroupedAsync(group, options);
-                            group = new List<StorageMedia>(Math.Min(items.Count, 10));
-                        }
-                    }
-
-                    if (group.Count > 0)
-                    {
-                        await SendGroupedAsync(group, options);
-                    }
-                }
-                else if (MediaLibrary.SelectedCount > 0)
-                {
-                    var options = await PickSendMessageOptionsAsync();
-                    if (options == null)
-                    {
-                        return;
-                    }
-
-                    foreach (var storage in MediaLibrary.Where(x => x.IsSelected))
-                    {
-                        if (storage is StoragePhoto photo)
-                        {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.IsForceFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null, options);
-                        }
-                        else if (storage is StorageVideo video)
-                        {
-                            await SendVideoAsync(storage.File, storage.Caption, video.IsMuted, storage.IsForceFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
-                        }
-                    }
-                }
-
-                return;
-            }
-
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
