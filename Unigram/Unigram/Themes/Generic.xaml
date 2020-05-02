@@ -1996,10 +1996,15 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2055,7 +2060,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ButtonPageHeader">
-                    <Border Background="{TemplateBinding Background}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
                         <contract7Present:Border.BackgroundTransition>
                             <BrushTransition/>
                         </contract7Present:Border.BackgroundTransition>
@@ -2065,19 +2073,32 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="3"/>
-
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
-                            <local:GlyphButton Glyph="{TemplateBinding Glyph}"
-                                               Command="{TemplateBinding Command}"
-                                               CommandParameter="{TemplateBinding CommandParameter}"
-                                               Visibility="{TemplateBinding CommandVisibility}"
-                                               Style="{StaticResource HeaderGlyphButtonStyle}"
-                                               AutomationProperties.Name="{TemplateBinding CommandToolTip}"
-                                               ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
-                                               Grid.Column="2"/>
-                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
+                            <local:BackButton
+                                Width="40"
+                                Margin="0,0,-12,0"
+                                Visibility="{TemplateBinding BackVisibility}"/>
+                            <TextBlock
+                                Text="{TemplateBinding Text}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Style="{StaticResource BaseTextBlockStyle}"
+                                VerticalAlignment="Center"
+                                Margin="12,0"
+                                Grid.Column="1"/>
+                            <local:GlyphButton
+                                Glyph="{TemplateBinding Glyph}"
+                                Command="{TemplateBinding Command}"
+                                CommandParameter="{TemplateBinding CommandParameter}"
+                                Visibility="{TemplateBinding CommandVisibility}"
+                                Style="{StaticResource HeaderGlyphButtonStyle}"
+                                AutomationProperties.Name="{TemplateBinding CommandToolTip}"
+                                ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
+                                Grid.Column="2"/>
+                            <microsoft:ProgressBar
+                                IsIndeterminate="{TemplateBinding IsLoading}"
+                                Background="Transparent"
+                                VerticalAlignment="Bottom"
+                                IsHitTestVisible="False"
+                                Grid.ColumnSpan="3"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -2101,7 +2122,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
-                    <Border Background="{TemplateBinding Background}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
                         <contract7Present:Border.BackgroundTransition>
                             <BrushTransition/>
                         </contract7Present:Border.BackgroundTransition>
@@ -2110,11 +2134,21 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="2"/>
-
-                            <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                            <ContentPresenter
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch"
+                                Grid.Column="1"/>
+                            <local:BackButton
+                                Width="40"
+                                Margin="0,0,-12,0"
+                                Visibility="{TemplateBinding BackVisibility}"/>
+                            <microsoft:ProgressBar
+                                IsIndeterminate="{TemplateBinding IsLoading}"
+                                Background="Transparent"
+                                VerticalAlignment="Bottom"
+                                IsHitTestVisible="False"
+                                Grid.ColumnSpan="2"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -2138,7 +2172,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageHeader">
-                    <Border Background="{TemplateBinding Background}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
                         <contract7Present:Border.BackgroundTransition>
                             <BrushTransition/>
                         </contract7Present:Border.BackgroundTransition>
@@ -2147,11 +2184,23 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="2"/>
-
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
-                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                            <local:BackButton
+                                Width="40"
+                                Margin="0,0,-12,0"
+                                Visibility="{TemplateBinding BackVisibility}"/>
+                            <TextBlock
+                                Text="{TemplateBinding Text}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Style="{StaticResource BaseTextBlockStyle}"
+                                VerticalAlignment="Center"
+                                Margin="12,0"
+                                Grid.Column="1"/>
+                            <microsoft:ProgressBar
+                                IsIndeterminate="{TemplateBinding IsLoading}"
+                                Background="Transparent"
+                                VerticalAlignment="Bottom"
+                                IsHitTestVisible="False"
+                                Grid.ColumnSpan="2"/>
                         </Grid>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
@@ -2918,10 +2967,15 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="chats:ChatSendButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3003,10 +3057,15 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="chats:ChatRecordButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal"/>
@@ -3129,7 +3188,7 @@
                                 Text="{TemplateBinding UncheckedGlyph}"
                                 Width="20"
                                 Height="20"
-                                Margin="14"/>
+                                Margin="10"/>
                         </Grid>
 
                         <TextBlock
@@ -3166,10 +3225,14 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphToggleButton">
-                    <Grid Background="{TemplateBinding Background}">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal"/>
@@ -3285,10 +3348,15 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphHyperlinkButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3351,10 +3419,15 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphRadioButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3430,10 +3503,15 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3498,10 +3576,14 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimatedGlyphButton">
-                    <Grid Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3582,10 +3664,14 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimatedGlyphToggleButton">
-                    <Grid Background="{TemplateBinding Background}">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />

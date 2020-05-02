@@ -509,7 +509,7 @@ namespace Unigram.Views
                 TextArea.Margin = ChatFooter.Margin = new Thickness();
             }
 
-            TextRoot.CornerRadius = ChatFooter.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
+            UpdateTextAreaRadius();
             TextField.Focus(FocusState.Programmatic);
         }
 
@@ -3541,6 +3541,8 @@ namespace Unigram.Views
                 {
                     ComposerHeader.Visibility = Visibility.Collapsed;
                 }
+
+                UpdateTextAreaRadius();
             };
 
             var animClip = textArea.Compositor.CreateScalarKeyFrameAnimation();
@@ -3666,6 +3668,8 @@ namespace Unigram.Views
                     Grid.SetRow(ButtonsPanel, show ? 2 : 1);
                     Grid.SetColumnSpan(TextArea, show ? 4 : 2);
                 }
+
+                UpdateTextAreaRadius();
             };
 
             var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
@@ -3706,6 +3710,22 @@ namespace Unigram.Views
             {
                 _textFormattingCollapsed = true;
             }
+        }
+
+        private void UpdateTextAreaRadius()
+        {
+            var radius = SettingsService.Current.Appearance.BubbleRadius;
+            var min = Math.Max(4, radius - 2);
+            var max = ComposerHeader.Visibility == Visibility.Visible
+                || TextFormatting.Visibility == Visibility.Visible ? 4 : min;
+
+            ButtonAttach.Radius = new CornerRadius(max, 4, 4, min);
+            btnVoiceMessage.Radius = new CornerRadius(4, max, min, 4);
+            btnSendMessage.Radius = new CornerRadius(4, max, min, 4);
+            btnEdit.Radius = new CornerRadius(4, max, min, 4);
+
+            ComposerHeaderCancel.Radius = new CornerRadius(4, min, 4, 4);
+            TextRoot.CornerRadius = ChatFooter.CornerRadius = new CornerRadius(radius);
         }
 
         public void UpdateSearchMask(Chat chat, ChatSearchViewModel search)

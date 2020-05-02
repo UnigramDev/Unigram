@@ -21,7 +21,7 @@ namespace Unigram.Themes
             //}
             //else
             {
-                this["EllipsisButtonPadding"] = new Thickness(16, 23, 16, 0);
+                this["EllipsisButtonPadding"] = new Thickness(12, 19, 12, 0);
                 //this["GlyphButtonFontSize"] = 20d;
                 this["ChatPhotoSize"] = 36d;
 

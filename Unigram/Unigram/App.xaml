@@ -142,6 +142,9 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
+            <Thickness x:Key="GlyphButtonPadding">4</Thickness>
+            <CornerRadius x:Key="GlyphButtonCornerRadius">4</CornerRadius>
+            
             <Style x:Key="DefaultListViewItemStyle" TargetType="ListViewItem">
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="Padding" Value="0"/>

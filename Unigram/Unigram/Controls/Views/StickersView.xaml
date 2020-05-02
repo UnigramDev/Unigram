@@ -43,10 +43,15 @@
             <Setter Property="MinWidth" Value="{ThemeResource AppBarThemeCompactHeight}" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="FontSize" Value="20" />
+            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:PivotRadioButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                        <Grid
+                            x:Name="RootGrid"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding Radius}"
+                            Margin="{StaticResource GlyphButtonPadding}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />

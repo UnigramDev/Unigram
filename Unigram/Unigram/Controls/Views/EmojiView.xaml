@@ -42,7 +42,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ButtonBase">
-                        <Grid x:Name="RootGrid" Background="Transparent">
+                        <Border>
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -63,18 +63,25 @@
                                     <VisualState x:Name="Disabled" />
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Border Background="White"
-                                    CornerRadius="10"
-                                    Width="20"
-                                    Height="20">
-                                <Border Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="8"
-                                        Width="16"
-                                        Height="16"/>
-                            </Border>
-                        </Grid>
+                            
+                            <Grid
+                                x:Name="RootGrid"
+                                Background="Transparent"
+                                CornerRadius="{StaticResource GlyphButtonCornerRadius}"
+                                Margin="{StaticResource GlyphButtonPadding}">
+                                <Border Background="White"
+                                        CornerRadius="10"
+                                        Width="20"
+                                        Height="20">
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="8"
+                                            Width="16"
+                                            Height="16"/>
+                                </Border>
+                            </Grid>
+                        </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
