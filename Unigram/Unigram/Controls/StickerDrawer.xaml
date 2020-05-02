@@ -471,7 +471,11 @@
                                                         <Setter Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="ListViewItem">
-                                                                    <Grid x:Name="RootGrid" ToolTipService.ToolTip="{CustomResource RecentStickers}">
+                                                                    <Grid
+                                                                        x:Name="RootGrid"
+                                                                        CornerRadius="{StaticResource GlyphButtonCornerRadius}"
+                                                                        Margin="{StaticResource GlyphButtonPadding}"
+                                                                        ToolTipService.ToolTip="{CustomResource RecentStickers}">
                                                                         <VisualStateManager.VisualStateGroups>
                                                                             <VisualStateGroup>
                                                                                 <VisualState x:Name="Normal"/>
@@ -540,7 +544,11 @@
                                                         <Setter Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="ListViewItem">
-                                                                    <Grid x:Name="RootGrid" ToolTipService.ToolTip="{CustomResource FavoriteStickers}">
+                                                                    <Grid
+                                                                        x:Name="RootGrid"
+                                                                        CornerRadius="{StaticResource GlyphButtonCornerRadius}"
+                                                                        Margin="{StaticResource GlyphButtonPadding}"
+                                                                        ToolTipService.ToolTip="{CustomResource FavoriteStickers}">
                                                                         <VisualStateManager.VisualStateGroups>
                                                                             <VisualStateGroup>
                                                                                 <VisualState x:Name="Normal"/>
