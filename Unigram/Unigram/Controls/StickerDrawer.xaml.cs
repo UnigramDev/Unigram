@@ -1,40 +1,28 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Numerics;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Converters;
+using Unigram.Services;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Unigram.ViewModels.Delegates;
+using Unigram.Views;
+using Unigram.Views.Settings;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using LinqToVisualTree;
-using Unigram.Common;
-using System.Threading.Tasks;
-using Unigram.Views.Settings;
-using Telegram.Td.Api;
-using System.Diagnostics;
-using Windows.Storage;
-using Unigram.Native;
-using System.Collections.Concurrent;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI;
-using System.Numerics;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using System.Reactive.Linq;
-using Windows.Foundation.Metadata;
-using Unigram.Converters;
-using Unigram.Views;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Controls
 {
-    public sealed partial class StickersView : UserControl, IFileDelegate
+    public sealed partial class StickerDrawer : UserControl, IFileDelegate
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -49,7 +37,7 @@ namespace Unigram.Controls.Views
 
         private StickersPanelMode _widget;
 
-        public StickersView()
+        public StickerDrawer()
         {
             InitializeComponent();
 

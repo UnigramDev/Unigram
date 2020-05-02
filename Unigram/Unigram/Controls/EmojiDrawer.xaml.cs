@@ -24,9 +24,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Controls
 {
-    public sealed partial class EmojisView : UserControl
+    public sealed partial class EmojiDrawer : UserControl
     {
         public TLViewModelBase ViewModel => DataContext as TLViewModelBase;
 
@@ -37,7 +37,7 @@ namespace Unigram.Controls.Views
         private EmojiSkinTone _selected;
         private bool _expanded;
 
-        public EmojisView()
+        public EmojiDrawer()
         {
             this.InitializeComponent();
 
