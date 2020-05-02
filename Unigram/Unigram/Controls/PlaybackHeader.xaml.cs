@@ -189,7 +189,7 @@ namespace Unigram.Controls
 
                 UpdateRate();
 
-                ViewButton.Padding = new Thickness(48 + 6, 0, 96, 0);
+                ViewButton.Padding = new Thickness(48 + 6, 0, 40 * 2 + 48 + 12, 0);
             }
             else if (message.Content is MessageAudio || webPage?.Audio != null)
             {
@@ -230,7 +230,7 @@ namespace Unigram.Controls
 
                 UpdateRepeat();
 
-                ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 96, 0);
+                ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
             }
         }
 
