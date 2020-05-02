@@ -1304,7 +1304,9 @@ namespace Unigram.ViewModels
 
                         foreach (var sticker in set.Stickers)
                         {
-                            if (string.Equals(sticker.Emoji, emoji, StringComparison.OrdinalIgnoreCase))
+                            var stickerEmoji = sticker.Emoji.TrimEnd('\uFE0F');
+
+                            if (string.Equals(stickerEmoji, emoji, StringComparison.OrdinalIgnoreCase))
                             {
                                 message.GeneratedContent = new MessageSticker(sticker);
                                 continue;
