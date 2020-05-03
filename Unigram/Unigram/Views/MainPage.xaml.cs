@@ -2275,13 +2275,13 @@ namespace Unigram.Views
                 return;
             }
 
-            flyout.CreateFlyoutItem(ViewModel.FilterEditCommand, filter, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
-            flyout.CreateFlyoutItem(ViewModel.FilterAddCommand, filter, Strings.Resources.FilterAddChats, new FontIcon { Glyph = Icons.Add });
-            flyout.CreateFlyoutSeparator();
-            flyout.CreateFlyoutItem(ViewModel.FilterDeleteCommand, filter, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            //flyout.CreateFlyoutItem(ViewModel.FilterEditCommand, filter, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+            //flyout.CreateFlyoutItem(ViewModel.FilterAddCommand, filter, Strings.Resources.FilterAddChats, new FontIcon { Glyph = Icons.Add });
+            //flyout.CreateFlyoutSeparator();
+            //flyout.CreateFlyoutItem(ViewModel.FilterDeleteCommand, filter, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
             //args.ShowAt(flyout, element);
-            flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            //flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
         }
 
         private void ArchivedChats_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
