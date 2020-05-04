@@ -2744,14 +2744,5 @@ namespace Unigram.Views
 
             return null;
         }
-
-
-        private void NavigationView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
-        {
-            if (args.InvokedItemContainer.DataContext is ChatListFolder filter)
-            {
-                SetFilter(filter.Id == Constants.ChatListFilterAll ? null : filter);
-            }
-        }
     }
 }

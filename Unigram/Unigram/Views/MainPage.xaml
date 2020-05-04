@@ -501,7 +501,7 @@
                                             <x:Double x:Key="NavigationViewTopPaneHeight">40</x:Double>
                                         </ScrollViewer.Resources>
                                         <Grid x:Name="ChatTabsView">
-                                            <microsoft:NavigationView PaneDisplayMode="Top" MenuItemsSource="{x:Bind ViewModel.Filters}" SelectedItem="{x:Bind ViewModel.SelectedFilter, Mode=OneWay}" ItemInvoked="NavigationView_ItemInvoked" IsBackButtonVisible="Collapsed" IsBackEnabled="False" IsSettingsVisible="False">
+                                            <microsoft:NavigationView PaneDisplayMode="Top" MenuItemsSource="{x:Bind ViewModel.Filters}" SelectedItem="{x:Bind ViewModel.SelectedFilter, Mode=TwoWay}" IsBackButtonVisible="Collapsed" IsBackEnabled="False" IsSettingsVisible="False">
                                                 <microsoft:NavigationView.MenuItemTemplate>
                                                     <DataTemplate x:DataType="td:ChatListFilter">
                                                         <microsoft:NavigationViewItem
