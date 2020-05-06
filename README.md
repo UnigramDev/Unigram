@@ -36,7 +36,7 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 - Multi-account
 - Filter chats (users, bots, groups, channels, unread chats and unmuted chats)
 - Calls
-- Videos and photos editor (easily crop photos, set video resultion or remove some parts of the videos before sending them)
+- Videos and photos editor (easily crop photos, set video resolution or remove some parts of the videos before sending them)
 - Drag&drop files to chats to send them quickly
 - Open chats in separated windows (Shift+click)
 - Replace sent media content
