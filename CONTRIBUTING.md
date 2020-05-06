@@ -8,7 +8,7 @@ The [issue tracker](https://github.com/UnigramDev/Unigram/issues) is the preferr
 * Please **do not** write [enhancement]/[bug]/[Feature request] or similar stuff in the title of issues, as there are labels for that purpose that will be added by devs or collaborators.
 
 ## Bug reports
-A bug is a _demonstrable problem_.Good bug reports are extremely helpful, so thanks!
+A bug is a _demonstrable problem_. Good bug reports are extremely helpful, so thanks!
 
 Guidelines for bug reports:
 
