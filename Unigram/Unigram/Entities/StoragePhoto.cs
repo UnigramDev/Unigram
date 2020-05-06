@@ -86,7 +86,7 @@ namespace Unigram.Entities
             var item = new StoragePhoto(File, _basic, Properties);
             item._thumbnail = _thumbnail;
             item._preview = _preview;
-            item._cropRectangle = _cropRectangle;
+            item._editState = _editState;
 
             return item;
         }

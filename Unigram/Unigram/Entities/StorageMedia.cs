@@ -7,6 +7,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media;
@@ -20,6 +21,8 @@ namespace Unigram.Entities
         {
             File = file;
             Basic = basic;
+
+            EditState = new BitmapEditState();
         }
 
         public StorageFile File { get; private set; }
@@ -120,35 +123,17 @@ namespace Unigram.Entities
         public virtual bool IsAnimatable { get; }
 
         protected Rect? _fullRectangle;
-        protected Rect? _cropRectangle;
-        public Rect? CropRectangle
-        {
-            get
-            {
-                return _cropRectangle;
-            }
-            set
-            {
-                Set(ref _cropRectangle, value == _fullRectangle ? null : value);
-            }
-        }
 
-        protected ImageCroppingProportions _cropProportions = ImageCroppingProportions.Custom;
-        public ImageCroppingProportions CropProportions
+        protected BitmapEditState _editState;
+        public BitmapEditState EditState
         {
-            get
-            {
-                return _cropProportions;
-            }
-            set
-            {
-                Set(ref _cropProportions, value);
-            }
+            get => _editState;
+            set => Set(ref _editState, value);
         }
 
         public bool IsPhoto => this is StoragePhoto;
         public bool IsVideo => this is StorageVideo;
-        public bool IsCropped => CropRectangle.HasValue;
+        public bool IsEdited => !_editState?.IsEmpty ?? false;
 
         private async void LoadThumbnail()
         {
@@ -185,9 +170,9 @@ namespace Unigram.Entities
                 _bitmap = new BitmapImage();
             }
 
-            if (CropRectangle.HasValue)
+            if (_editState is BitmapEditState editState && !editState.IsEmpty)
             {
-                _preview = await ImageHelper.CropAndPreviewAsync(File, CropRectangle.Value);
+                _preview = await ImageHelper.CropAndPreviewAsync(File, editState.Rectangle ?? Rect.Empty, editState.Rotation, editState.Flip, editState.Strokes);
             }
             else
             {
@@ -204,7 +189,7 @@ namespace Unigram.Entities
             IsSelected = false;
             IsForceFile = false;
             Caption = null;
-            CropRectangle = null;
+            EditState = null;
             Ttl = 0;
 
             //_thumbnail = null;

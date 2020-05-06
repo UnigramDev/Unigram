@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Unigram.Common;
 using Unigram.Services;
@@ -57,6 +58,8 @@ namespace Unigram.Services
         bool IsSendGrouped { get; set; }
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
+
+        Vector2 Pencil { get; set; }
 
         DistanceUnits DistanceUnits { get; set; }
 
@@ -797,6 +800,29 @@ namespace Unigram.Services
             {
                 _volumeLevel = value;
                 AddOrUpdateValue("VolumeLevel", value);
+            }
+        }
+
+        private static Vector2? _pencil;
+        public Vector2 Pencil
+        {
+            get
+            {
+                if (_pencil == null)
+                {
+                    var offset = GetValueOrDefault(_local, "PencilOffset", 1f);
+                    var thickness = GetValueOrDefault(_local, "PencilThickness", 0.22f);
+
+                    _pencil = new Vector2(offset, thickness);
+                }
+
+                return _pencil ?? new Vector2(1f, 0.22f);
+            }
+            set
+            {
+                _pencil = value;
+                AddOrUpdateValue(_local, "PencilOffset", value.X);
+                AddOrUpdateValue(_local, "PencilThickness", value.Y);
             }
         }
 

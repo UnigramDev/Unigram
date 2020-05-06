@@ -12,9 +12,7 @@
     PrimaryButtonText="Button1"
     SecondaryButtonText="Button2"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    MaxWidth="360"
-    MinWidth="360">
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <ContentControl.Resources>
         <Style x:Key="ModernGlyphToggleButtonStyle" TargetType="controls:GlyphToggleButton">
@@ -352,24 +350,26 @@
                     </Grid.ColumnDefinitions>
                     <controls:GlyphButton
                         Click="Crop_Click" 
-                                      Glyph="&#xE7A8;"
+                        Glyph="&#xE7A8;"
+                        Tag="{x:Bind}"
                         Width="{ThemeResource AppBarThemeCompactHeight}"
                         Height="{ThemeResource AppBarThemeCompactHeight}"
                         FontSize="{StaticResource GlyphButtonFontSize}"
-                                      Visibility="{x:Bind IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                      AutomationProperties.Name="{CustomResource CropImage}"
-                                      ToolTipService.ToolTip="{CustomResource CropImage}"
+                        Visibility="{x:Bind IsEdited, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                        AutomationProperties.Name="{CustomResource CropImage}"
+                        ToolTipService.ToolTip="{CustomResource CropImage}"
                         Radius="12,0,0,12"/>
                     <controls:GlyphButton
                         Click="Crop_Click" 
-                                      Glyph="&#xE7A8;"
+                        Glyph="&#xE7A8;"
+                        Tag="{x:Bind}"
                         Width="{ThemeResource AppBarThemeCompactHeight}"
                         Height="{ThemeResource AppBarThemeCompactHeight}"
                         FontSize="{StaticResource GlyphButtonFontSize}"
-                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                      Visibility="{x:Bind IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                      AutomationProperties.Name="{CustomResource CropImage}"
-                                      ToolTipService.ToolTip="{CustomResource CropImage}"
+                        Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                        Visibility="{x:Bind IsEdited, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        AutomationProperties.Name="{CustomResource CropImage}"
+                        ToolTipService.ToolTip="{CustomResource CropImage}"
                         Radius="12,0,0,12"/>
 
                     <local:GlyphTtlButton
@@ -407,20 +407,6 @@
         <ItemsPanelTemplate x:Key="AlbumPanelTemplate">
             <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading" MaxWidth="322" MaxHeight="422"/>
         </ItemsPanelTemplate>
-
-        <Style x:Key="FilesContainerStyle" TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="MinWidth" Value="0"/>
-            <Setter Property="MinHeight" Value="0"/>
-            <Setter Property="Padding" Value="12,6"/>
-        </Style>
-
-        <Style x:Key="AlbumContainerStyle" TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="MinWidth" Value="0"/>
-            <Setter Property="MinHeight" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-        </Style>
 
     </ContentControl.Resources>
 
@@ -477,6 +463,7 @@
         </Grid.RowDefinitions>
         <ListView x:Name="List"
                   ItemsSource="{x:Bind Items}"
+                  ItemsPanel="{StaticResource FilesPanelTemplate}"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   DragEnter="ListView_DragEnter"
@@ -488,9 +475,33 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                     <Setter Property="MinWidth" Value="0"/>
                     <Setter Property="MinHeight" Value="0"/>
                     <Setter Property="Padding" Value="12,6"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <ListView x:Name="Album"
+                  x:Load="False"
+                  ItemsSource="{x:Bind Items}"
+                  ItemTemplate="{StaticResource MediaItemTemplate}"
+                  ItemsPanel="{StaticResource AlbumPanelTemplate}"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  SelectionMode="None"
+                  DragEnter="ListView_DragEnter"
+                  Drop="ListView_Drop"
+                  CanReorderItems="True"
+                  CanDragItems="True"
+                  AllowDrop="True"
+                  Margin="12">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MinWidth" Value="0"/>
+                    <Setter Property="MinHeight" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>

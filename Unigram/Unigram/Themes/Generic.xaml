@@ -373,6 +373,22 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:PencilCanvas">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PencilCanvas">
+                    <xaml:CanvasControl
+                        x:Name="Canvas"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:ColorPicker">
         <Setter Property="Template">
             <Setter.Value>
@@ -409,6 +425,53 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:ColorSlider">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ColorSlider">
+                    <Grid x:Name="LayoutRoot" Height="20">
+                        <Grid
+                            x:Name="Container"
+                            Background="Transparent"
+                            VerticalAlignment="Top"
+                            Height="20">
+                            
+                            <Border
+                                VerticalAlignment="Bottom"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Height="20"/>
+                            <Border
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Left">
+                                <Border 
+                                    Margin="-24,-14"
+                                    Width="48"
+                                    Height="48">
+                                    <Border
+                                        x:Name="Thumb"
+                                        Background="{ThemeResource SystemControlBackgroundChromeWhiteBrush}"
+                                        BorderBrush="{ThemeResource SystemControlForegroundChromeHighBrush}"
+                                        BorderThickness="2"
+                                        CornerRadius="24">
+                                        <Ellipse
+                                            x:Name="ThumbDrop"
+                                            Stroke="White"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            Margin="1.5,1.5,0,0"
+                                            Width="40"
+                                            Height="40"/>
+                                    </Border>
+                                </Border>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:ConfettiView">
         <Setter Property="Template">
             <Setter.Value>
@@ -431,8 +494,8 @@
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MaxHeight" Value="{ThemeResource ContentDialogMaxHeight}" />
         <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />
-        <Setter Property="MaxWidth" Value="{ThemeResource ContentDialogMaxWidth}" />
-        <Setter Property="MinWidth" Value="{ThemeResource ContentDialogMinWidth}" />
+        <Setter Property="MaxWidth" Value="320" />
+        <Setter Property="MinWidth" Value="320" />
         <Setter Property="TitleTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -1772,21 +1835,21 @@
     <Style TargetType="local:ImageCropper">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-        <Setter Property="Background" Value="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}" />
+        <Setter Property="Background" Value="Black" />
         <Setter Property="Padding" Value="48" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ImageCropper">
-                    <Grid x:Name="LayoutRoot" Margin="{TemplateBinding Padding}">
+                    <Grid Padding="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualStateGroup.Transitions>
-                                    <VisualTransition GeneratedDuration="0:0:0.3" To="Disabled">
+                                    <VisualTransition GeneratedDuration="0:0:0.150" From="Disabled">
                                         <VisualTransition.GeneratedEasingFunction>
                                             <CubicEase EasingMode="EaseInOut"/>
                                         </VisualTransition.GeneratedEasingFunction>
                                     </VisualTransition>
-                                    <VisualTransition GeneratedDuration="0:0:0.3" From="Disabled" >
+                                    <VisualTransition GeneratedDuration="0:0:0.150" From="Normal" To="Disabled">
                                         <VisualTransition.GeneratedEasingFunction>
                                             <CubicEase EasingMode="EaseInOut"/>
                                         </VisualTransition.GeneratedEasingFunction>
@@ -1800,7 +1863,7 @@
                                         <Setter Target="Clip.IsHitTestVisible" Value="False"/>
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <DoubleAnimation From="0.6" To="1" Storyboard.TargetName="Clip" Storyboard.TargetProperty="Opacity"/>
+                                        <DoubleAnimation From="0.6" To="0" Storyboard.TargetName="Clip" Storyboard.TargetProperty="Opacity"/>
                                         <DoubleAnimation From="1.0" To="0" Storyboard.TargetName="ThumbsContainer" Storyboard.TargetProperty="Opacity"/>
                                     </Storyboard>
                                 </VisualState>
@@ -1809,15 +1872,19 @@
 
                         <Grid.Resources>
                             <Style x:Key="CircularThumbStyle" TargetType="local:ImageCropperThumb">
-                                <Setter Property="Background" Value="White" />
-                                <Setter Property="BorderBrush" Value="Black" />
+                                <Setter Property="Width" Value="20" />
+                                <Setter Property="Height" Value="20" />
+                                <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeWhiteBrush}" />
+                                <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundChromeHighBrush}" />
                                 <Setter Property="BorderThickness" Value="1" />
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="local:ImageCropperThumb">
-                                            <Grid Background="Transparent">
-                                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="{TemplateBinding BorderThickness}" />
-                                            </Grid>
+                                            <Border
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="10" />
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
@@ -1842,27 +1909,23 @@
                             </Style>
                         </Grid.Resources>
 
-                        <Canvas>
+                        <Grid x:Name="LayoutRoot" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Grid x:Name="ImageThumb" RenderTransformOrigin="0.5,0.5" ManipulationMode="Rotate,Scale,TranslateX,TranslateY">
                                 <Grid.RenderTransform>
                                     <CompositeTransform x:Name="ImageThumbTransform" />
                                 </Grid.RenderTransform>
-                                <Image x:Name="ImageViewer" Stretch="None"/>
-                                <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <Image x:Name="ImageViewer" Stretch="Uniform"/>
+                                <ContentPresenter x:Name="ImagePresenter"
+                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
                             </Grid>
 
-                            <Path x:Name="Clip" Opacity="0.6" Fill="{TemplateBinding Background}" Stroke="Transparent" StrokeThickness="1">
-                                <Path.Data>
-                                    <GeometryGroup>
-                                        <RectangleGeometry x:Name="OuterClip"/>
-                                        <RectangleGeometry x:Name="InnerClip"/>
-                                    </GeometryGroup>
-                                </Path.Data>
-                            </Path>
+                            <Path x:Name="Clip" Opacity="0.6" Fill="{TemplateBinding Background}" Stroke="Transparent" StrokeThickness="1"/>
 
                             <Grid x:Name="ThumbsContainer">
-                                <Rectangle Stroke="White" StrokeThickness="2" Margin="-2" />
+                                <Rectangle x:Name="MiddleThumb" Fill="Transparent" />
 
                                 <local:ImageCropperThumb x:Name="LeftThumb" Style="{StaticResource VerticalSideThumbStyle}" Margin="-11,-11,-10,-11" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
                                 <local:ImageCropperThumb x:Name="TopThumb" Style="{StaticResource HorizontalSideThumbStyle}" Margin="-11,-11,-11,-10" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
@@ -1874,7 +1937,7 @@
                                 <local:ImageCropperThumb x:Name="BottomLeftThumb" Style="{StaticResource CircularThumbStyle}" Margin="-11,-10,-10,-11" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
                                 <local:ImageCropperThumb x:Name="BottomRightThumb" Style="{StaticResource CircularThumbStyle}" Margin="-10,-10,-11,-11" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
                             </Grid>
-                        </Canvas>
+                        </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

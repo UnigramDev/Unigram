@@ -89,7 +89,22 @@ namespace Unigram.Charts
         public static double ToDegrees(double radians)
         {
             double degrees = (180 / Math.PI) * radians;
-            return (degrees);
+            return degrees;
+        }
+    }
+
+    public static class MathFEx
+    {
+        public static float ToRadians(float degrees)
+        {
+            float radians = (MathF.PI / 180) * degrees;
+            return radians;
+        }
+
+        public static float ToDegrees(float radians)
+        {
+            float degrees = (180 / MathF.PI) * radians;
+            return degrees;
         }
     }
 

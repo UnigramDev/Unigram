@@ -307,7 +307,7 @@ namespace Unigram.ViewModels
             }
             else if (storage is StoragePhoto photo)
             {
-                await SendPhotoAsync(storage.File, storage.Caption, asFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null, options);
+                await SendPhotoAsync(storage.File, storage.Caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null, options);
             }
             else if (storage is StorageVideo video)
             {
@@ -435,14 +435,9 @@ namespace Unigram.ViewModels
                 selectedItem.Caption = formattedText
                     .Substring(0, CacheService.Options.MessageCaptionLengthMax);
             }
-#if zDEBUG
+
             var dialog = new SendFilesView(media, true);
             dialog.ViewModel = this;
-#else
-            var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = chat.Type is ChatTypePrivate };
-            dialog.SetItems(media);
-            dialog.SelectedItem = selectedItem;
-#endif
 
             var dialogResult = await dialog.ShowAsync();
 
@@ -454,13 +449,8 @@ namespace Unigram.ViewModels
                 return;
             }
 
-#if zDEBUG
             var items = dialog.Items.ToList();
-            if (items.Count > 1 /*&& dialog.IsGrouped*/)
-#else
-            var items = dialog.SelectedItems.ToList();
-            if (items.Count > 1 && dialog.IsGrouped)
-#endif
+            if (items.Count > 1 && dialog.IsAlbum)
             {
                 var options = await PickSendMessageOptionsAsync();
                 if (options == null)
@@ -498,7 +488,7 @@ namespace Unigram.ViewModels
                 {
                     if (storage is StoragePhoto photo)
                     {
-                        await SendPhotoAsync(storage.File, storage.Caption, storage.IsForceFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null, options);
+                        await SendPhotoAsync(storage.File, storage.Caption, storage.IsForceFile, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null, options);
                     }
                     else if (storage is StorageVideo video)
                     {
@@ -809,7 +799,7 @@ namespace Unigram.ViewModels
                 if (item is StoragePhoto photo)
                 {
                     var file = photo.File;
-                    var crop = photo.IsCropped ? photo.CropRectangle : null;
+                    var crop = photo.IsEdited ? photo.EditState.Rectangle : null;
 
                     var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
                     var props = await file.GetBasicPropertiesAsync();
@@ -1125,9 +1115,7 @@ namespace Unigram.ViewModels
             storage.Caption = formattedText
                 .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 
-            var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = false, IsMultipleSelection = false };
-            dialog.SetItems(new ObservableCollection<StorageMedia> { storage });
-            dialog.SelectedItem = storage;
+            var dialog = new SendFilesView(new ObservableCollection<StorageMedia> { storage }, true);
 
             var confirm = await dialog.ShowAsync();
 
@@ -1143,7 +1131,7 @@ namespace Unigram.ViewModels
             Task<InputMessageFactory> request = null;
             if (storage is StoragePhoto photo)
             {
-                request = _messageFactory.CreatePhotoAsync(storage.File, storage.IsForceFile, storage.Ttl, storage.IsCropped ? storage.CropRectangle : null);
+                request = _messageFactory.CreatePhotoAsync(storage.File, storage.IsForceFile, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null);
             }
             else if (storage is StorageVideo video)
             {

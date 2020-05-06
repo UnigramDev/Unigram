@@ -356,6 +356,7 @@
       <DependentUpon>ChatTextFormatting.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ColorPicker.cs" />
+    <Compile Include="Controls\ColorSlider.cs" />
     <Compile Include="Controls\ColorTextBox.cs" />
     <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\DialogListView.cs" />
@@ -478,6 +479,7 @@
     </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
+    <Compile Include="Controls\PencilCanvas.cs" />
     <Compile Include="Controls\PhoneTextBox.cs" />
     <Compile Include="Controls\PeriodTimer.cs" />
     <Compile Include="Controls\PlaybackHeader.xaml.cs">
@@ -544,11 +546,11 @@
     <Compile Include="Controls\Views\EditYourAboutView.xaml.cs">
       <DependentUpon>EditYourAboutView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\EditMediaView.xaml.cs">
+      <DependentUpon>EditMediaView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\LoginUrlInfoView.xaml.cs">
       <DependentUpon>LoginUrlInfoView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\MessageTtlView.xaml.cs">
-      <DependentUpon>MessageTtlView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\RatingBar.cs" />
     <Compile Include="Controls\ScrollViewerBackground.cs" />
@@ -556,9 +558,6 @@
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
       <DependentUpon>AttachedStickersView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\EditYourPhotoView.xaml.cs">
-      <DependentUpon>EditYourPhotoView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
@@ -595,9 +594,6 @@
     </Compile>
     <Compile Include="Controls\Views\SendFilesView.xaml.cs">
       <DependentUpon>SendFilesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\SendMediaView.xaml.cs">
-      <DependentUpon>SendMediaView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\SettingsPasscodeConfirmView.xaml.cs">
       <DependentUpon>SettingsPasscodeConfirmView.xaml</DependentUpon>
@@ -642,6 +638,7 @@
     <Compile Include="Entities\ErrorType.cs" />
     <Compile Include="Entities\StorageDocument.cs" />
     <Compile Include="Entities\StorageMedia.cs" />
+    <Compile Include="Entities\BitmapEditState.cs" />
     <Compile Include="Entities\StoragePhoto.cs" />
     <Compile Include="Entities\StorageVideo.cs" />
     <Compile Include="Logs\ILogListener.cs" />
@@ -2137,6 +2134,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\EditMediaView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Views\InlineBotResultsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2153,19 +2154,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\MessageTtlView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\TLMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\AttachedStickersView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\EditYourPhotoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2220,10 +2213,6 @@
     <Page Include="Controls\Views\SendFilesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Views\SendMediaView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\SettingsPasscodeConfirmView.xaml">
       <Generator>MSBuild:Compile</Generator>

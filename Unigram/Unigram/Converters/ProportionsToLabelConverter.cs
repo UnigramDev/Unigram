@@ -12,44 +12,44 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return Convert((ImageCroppingProportions)value);
+            return Convert((BitmapProportions)value);
         }
 
-        public static string Convert(ImageCroppingProportions proportions)
+        public static string Convert(BitmapProportions proportions)
         {
             switch (proportions)
             {
-                case ImageCroppingProportions.Custom:
+                case BitmapProportions.Custom:
                     return "Custom";
-                case ImageCroppingProportions.Original:
+                case BitmapProportions.Original:
                     return Strings.Resources.CropOriginal;
-                case ImageCroppingProportions.Square:
+                case BitmapProportions.Square:
                     return Strings.Resources.CropSquare;
                 // Portrait
-                case ImageCroppingProportions.TwoOverThree:
+                case BitmapProportions.TwoOverThree:
                     return "2:3";
-                case ImageCroppingProportions.ThreeOverFive:
+                case BitmapProportions.ThreeOverFive:
                     return "3:5";
-                case ImageCroppingProportions.ThreeOverFour:
+                case BitmapProportions.ThreeOverFour:
                     return "3:4";
-                case ImageCroppingProportions.FourOverFive:
+                case BitmapProportions.FourOverFive:
                     return "4:5";
-                case ImageCroppingProportions.FiveOverSeven:
+                case BitmapProportions.FiveOverSeven:
                     return "5:7";
-                case ImageCroppingProportions.NineOverSixteen:
+                case BitmapProportions.NineOverSixteen:
                     return "9:16";
                 // Landscape
-                case ImageCroppingProportions.ThreeOverTwo:
+                case BitmapProportions.ThreeOverTwo:
                     return "3:2";
-                case ImageCroppingProportions.FiveOverThree:
+                case BitmapProportions.FiveOverThree:
                     return "5:3";
-                case ImageCroppingProportions.FourOverThree:
+                case BitmapProportions.FourOverThree:
                     return "4:3";
-                case ImageCroppingProportions.FiveOverFour:
+                case BitmapProportions.FiveOverFour:
                     return "5:4";
-                case ImageCroppingProportions.SevenOverFive:
+                case BitmapProportions.SevenOverFive:
                     return "7:5";
-                case ImageCroppingProportions.SixteenOverNine:
+                case BitmapProportions.SixteenOverNine:
                     return "16:9";
                 default:
                     return proportions.ToString();

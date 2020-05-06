@@ -57,13 +57,8 @@ namespace Unigram.Controls.Views
             }
         }
 
-#if DEBUG
         public bool IsMediaOnly => Items.All(x => x is StoragePhoto || x is StorageVideo);
         public bool IsAlbumAvailable => IsMediaSelected && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == 0);
-#else
-        public bool IsMediaOnly => false;
-        public bool IsAlbumAvailable => false;
-#endif
 
         private bool _isMediaSelected;
         public bool IsMediaSelected
@@ -346,7 +341,6 @@ namespace Unigram.Controls.Views
 
         private void UpdatePanel()
         {
-#if DEBUG
             if (IsAlbum && !IsAlbumAvailable)
             {
                 IsAlbum = false;
@@ -355,13 +349,26 @@ namespace Unigram.Controls.Views
             var state = IsAlbum && IsAlbumAvailable && IsMediaSelected ? 1 : 0;
             if (state != _panelState)
             {
-                List.ItemsPanel = Resources[state == 1 ? "AlbumPanelTemplate" : "FilesPanelTemplate"] as ItemsPanelTemplate;
-                //List.ItemContainerStyle = Resources[state == 1 ? "AlbumContainerStyle" : "FilesContainerStyle"] as Style;
+                if (state == 1)
+                {
+                    FindName(nameof(Album));
+                    Album.Visibility = Visibility.Visible;
+                    List.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    if (Album != null)
+                    {
+                        Album.Visibility = Visibility.Collapsed;
+                    }
+
+                    List.Visibility = Visibility.Visible;
+                }
             }
 
             _panelState = state;
 
-            if (List.ItemsPanelRoot is SendFilesAlbumPanel panel)
+            if (Album?.ItemsPanelRoot is SendFilesAlbumPanel panel)
             {
                 var layout = new GroupedMedia();
 
@@ -376,7 +383,6 @@ namespace Unigram.Controls.Views
                 panel.InvalidateMeasure();
                 panel.InvalidateArrange();
             }
-#endif
         }
 
         private void PivotRadioButton_Click(object sender, RoutedEventArgs e)
@@ -390,35 +396,58 @@ namespace Unigram.Controls.Views
             UpdatePanel();
         }
 
-        private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
+        private void TTLSeconds_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             if (button.Tag is StorageMedia media)
             {
-                Hide();
-
-                var dialog = new MessageTtlView(media.IsPhoto);
-                dialog.Value = media.Ttl > 0 ? media.Ttl : ViewModel.Settings.LastMessageTtl;
-
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary)
+                var slider = new Slider();
+                slider.IsThumbToolTipEnabled = false;
+                slider.Header = MessageTtlConverter.Convert(MessageTtlConverter.ConvertBack(media.Ttl));
+                slider.Minimum = 0;
+                slider.Maximum = 28;
+                slider.Value = MessageTtlConverter.ConvertBack(media.Ttl);
+                slider.ValueChanged += (s, args) =>
                 {
-                    if (dialog.Value > 0)
-                    {
-                        ViewModel.Settings.LastMessageTtl = dialog.Value;
-                    }
+                    var index = (int)args.NewValue;
+                    var label = MessageTtlConverter.Convert(index);
 
-                    media.Ttl = dialog.Value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsGroupingEnabled"));
-                }
+                    slider.Header = label;
+                    media.Ttl = MessageTtlConverter.ConvertSeconds(index);
+                };
 
-                await ShowAsync();
+                var text = new TextBlock();
+                text.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
+                text.TextWrapping = TextWrapping.Wrap;
+                text.Text = media.IsPhoto
+                    ? Strings.Resources.MessageLifetimePhoto
+                    : Strings.Resources.MessageLifetimeVideo;
+
+                var stack = new StackPanel();
+                stack.Width = 260;
+                stack.Children.Add(slider);
+                stack.Children.Add(text);
+
+                var flyout = new Flyout();
+                flyout.Content = stack;
+
+                flyout.ShowAt(button.Parent as UIElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
             }
         }
 
-        private void Crop_Click(object sender, RoutedEventArgs e)
+        private async void Crop_Click(object sender, RoutedEventArgs e)
         {
+            var button = sender as Button;
+            if (button.Tag is StorageMedia media)
+            {
+                var dialog = new EditMediaView(media.File);
 
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    media.Refresh();
+                }
+            }
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)

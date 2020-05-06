@@ -27,10 +27,42 @@ namespace Unigram.Converters
             }
         }
 
-        private string GetString(int seconds, object parameter)
+        public static string Convert(int index)
+        {
+            if (index == 0)
+            {
+                return Strings.Resources.ShortMessageLifetimeForever;
+            }
+            else if (index >= 1 && index < 21)
+            {
+                return GetString(index, null);
+            }
+            else
+            {
+                return GetString(index, null);
+            }
+        }
+
+        public static int ConvertSeconds(int seconds)
+        {
+            if (seconds == 0)
+            {
+                return 0;
+            }
+            else if (seconds >= 1 && seconds < 21)
+            {
+                return seconds;
+            }
+            else
+            {
+                return (seconds / 5) + 16;
+            }
+        }
+
+        private static string GetString(int seconds, object parameter)
         {
             var param = parameter as string;
-            if (param.Equals("short"))
+            if (param != null && param.Equals("short"))
             {
                 //if (seconds >= 1 && seconds < 21)
                 //{
@@ -48,6 +80,23 @@ namespace Unigram.Converters
             }
 
             return Locale.FormatTtl((seconds - 16) * 5);
+        }
+
+        public static int ConvertBack(int seconds)
+        {
+            if (seconds == 0)
+            {
+                return 0;
+            }
+            else if (seconds >= 1 && seconds < 21)
+            {
+                return seconds;
+            }
+            else
+            {
+                //return (seconds / 5) + 16;
+                return (seconds - 16) * 5;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

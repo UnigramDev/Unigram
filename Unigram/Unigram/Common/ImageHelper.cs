@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Charts;
 using Unigram.Common;
+using Unigram.Controls;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
@@ -247,7 +251,7 @@ namespace Unigram.Common
             return result;
         }
 
-        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77)
+        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None)
         {
             if (file == null)
             {
@@ -284,6 +288,8 @@ namespace Unigram.Common
                 transform.ScaledHeight = (uint)scaledSize.Height;
                 transform.Bounds = bounds;
                 transform.InterpolationMode = BitmapInterpolationMode.Linear;
+                transform.Rotation = rotation;
+                transform.Flip = flip;
 
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
@@ -335,7 +341,7 @@ namespace Unigram.Common
             return (new Rect(x, y, w, h), new Size(ratioW, ratioH));
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, Rect cropRectangle)
+        public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, Rect cropRectangle, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None, IReadOnlyList<SmoothPathBuilder> strokes = null)
         {
             if (sourceFile.ContentType.Equals("video/mp4"))
             {
@@ -347,17 +353,17 @@ namespace Unigram.Common
 
                 using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame))
                 {
-                    return await CropAndPreviewAsync(imageStream, cropRectangle);
+                    return await CropAndPreviewAsync(imageStream, cropRectangle, rotation, flip, strokes);
                 }
             }
 
             using (var imageStream = await sourceFile.OpenReadAsync())
             {
-                return await CropAndPreviewAsync(imageStream, cropRectangle);
+                return await CropAndPreviewAsync(imageStream, cropRectangle, rotation, flip, strokes);
             }
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, Rect cropRectangle)
+        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, Rect cropRectangle, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None, IReadOnlyList<SmoothPathBuilder> strokes = null)
         {
             var decoder = await BitmapDecoder.CreateAsync(imageStream);
             var bounds = new BitmapBounds();
@@ -368,14 +374,22 @@ namespace Unigram.Common
 
             var transform = ComputeScalingTransformForSourceImage(decoder);
             transform.Bounds = bounds;
+            transform.Rotation = rotation;
+            transform.Flip = flip;
 
-            var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+            //var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
             var propertySet = new BitmapPropertySet();
             var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
             propertySet.Add("ImageQuality", qualityValue);
 
             var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+            
+            if (strokes != null)
+            {
+                var stream = await DrawStrokesAsync(bitmap, strokes, cropRectangle, rotation, flip);
+            }
+            
             var bitmapImage = new SoftwareBitmapSource();
             await bitmapImage.SetBitmapAsync(bitmap);
 
@@ -414,6 +428,197 @@ namespace Unigram.Common
             }
 
             return transform;
+        }
+
+        public static async Task<IRandomAccessStream> DrawStrokesAsync(SoftwareBitmap file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, BitmapRotation rotation, BitmapFlip flip)
+        {
+            var device = CanvasDevice.GetSharedDevice();
+            var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, file);
+            var canvas = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
+
+            var size = canvas.Size.ToVector2();
+            var canvasSize = canvas.Size.ToVector2();
+
+            var scaleX = 1 / (float)rectangle.Width;
+            var scaleY = 1 / (float)rectangle.Height;
+
+            var offsetX = (float)rectangle.X * scaleX;
+            var offsetY = (float)rectangle.Y * scaleY;
+
+            if (rotation == BitmapRotation.Clockwise270Degrees ||
+                rotation == BitmapRotation.Clockwise90Degrees)
+            {
+                size = new Vector2(size.Y, size.X);
+
+                scaleX = scaleY;
+                scaleY = 1 * 1 / (float)rectangle.Width;
+            }
+
+            using (var session = canvas.CreateDrawingSession())
+            {
+                session.DrawImage(bitmap);
+
+                switch (rotation)
+                {
+                    case BitmapRotation.Clockwise90Degrees:
+                        var transform1 = Matrix3x2.CreateRotation(MathFEx.ToRadians(90));
+                        transform1.Translation = new Vector2(size.Y, 0);
+                        session.Transform = transform1;
+                        break;
+                    case BitmapRotation.Clockwise180Degrees:
+                        var transform2 = Matrix3x2.CreateRotation(MathFEx.ToRadians(180));
+                        transform2.Translation = new Vector2(size.X, size.Y);
+                        session.Transform = transform2;
+                        break;
+                    case BitmapRotation.Clockwise270Degrees:
+                        var transform3 = Matrix3x2.CreateRotation(MathFEx.ToRadians(270));
+                        transform3.Translation = new Vector2(0, size.X);
+                        session.Transform = transform3;
+                        break;
+                }
+
+                switch (flip)
+                {
+                    case BitmapFlip.Horizontal:
+                        switch (rotation)
+                        {
+                            case BitmapRotation.Clockwise90Degrees:
+                            case BitmapRotation.Clockwise270Degrees:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(1, -1, canvasSize / 2));
+                                break;
+                            default:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(-1, 1, canvasSize / 2));
+                                break;
+                        }
+                        break;
+                    case BitmapFlip.Vertical:
+                        switch (rotation)
+                        {
+                            case BitmapRotation.None:
+                            case BitmapRotation.Clockwise180Degrees:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(1, -1, canvasSize / 2));
+                                break;
+                            default:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(-1, 1, canvasSize / 2));
+                                break;
+                        }
+                        break;
+                }
+
+                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(scaleX, scaleY));
+                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateTranslation(-(offsetX * size.X), -(offsetY * size.Y)));
+
+                foreach (var builder in strokes)
+                {
+                    PencilCanvas.DrawPath(session, builder, size);
+                }
+            }
+
+            bitmap.Dispose();
+
+            var stream = new InMemoryRandomAccessStream();
+            await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg, 0.77f);
+
+            canvas.Dispose();
+
+            stream.Seek(0);
+            return stream;
+        }
+
+        public static async Task<StorageFile> DrawStrokesAsync(StorageFile file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, BitmapRotation rotation, BitmapFlip flip)
+        {
+            var device = CanvasDevice.GetSharedDevice();
+            var bitmap = await CanvasBitmap.LoadAsync(device, file.Path);
+            var canvas = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
+
+            var size = canvas.Size.ToVector2();
+            var canvasSize = canvas.Size.ToVector2();
+
+            var scaleX = 1 / (float)rectangle.Width;
+            var scaleY = 1 / (float)rectangle.Height;
+
+            var offsetX = (float)rectangle.X * scaleX;
+            var offsetY = (float)rectangle.Y * scaleY;
+
+            if (rotation == BitmapRotation.Clockwise270Degrees ||
+                rotation == BitmapRotation.Clockwise90Degrees)
+            {
+                size = new Vector2(size.Y, size.X);
+
+                scaleX = scaleY;
+                scaleY = 1 * 1 / (float)rectangle.Width;
+            }
+
+            using (var session = canvas.CreateDrawingSession())
+            {
+                session.DrawImage(bitmap);
+
+                switch (rotation)
+                {
+                    case BitmapRotation.Clockwise90Degrees:
+                        var transform1 = Matrix3x2.CreateRotation(MathFEx.ToRadians(90));
+                        transform1.Translation = new Vector2(size.Y, 0);
+                        session.Transform = transform1;
+                        break;
+                    case BitmapRotation.Clockwise180Degrees:
+                        var transform2 = Matrix3x2.CreateRotation(MathFEx.ToRadians(180));
+                        transform2.Translation = new Vector2(size.X, size.Y);
+                        session.Transform = transform2;
+                        break;
+                    case BitmapRotation.Clockwise270Degrees:
+                        var transform3 = Matrix3x2.CreateRotation(MathFEx.ToRadians(270));
+                        transform3.Translation = new Vector2(0, size.X);
+                        session.Transform = transform3;
+                        break;
+                }
+
+                switch (flip)
+                {
+                    case BitmapFlip.Horizontal:
+                        switch (rotation)
+                        {
+                            case BitmapRotation.Clockwise90Degrees:
+                            case BitmapRotation.Clockwise270Degrees:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(1, -1, canvasSize / 2));
+                                break;
+                            default:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(-1, 1, canvasSize / 2));
+                                break;
+                        }
+                        break;
+                    case BitmapFlip.Vertical:
+                        switch (rotation)
+                        {
+                            case BitmapRotation.None:
+                            case BitmapRotation.Clockwise180Degrees:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(1, -1, canvasSize / 2));
+                                break;
+                            default:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(-1, 1, canvasSize / 2));
+                                break;
+                        }
+                        break;
+                }
+
+                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(scaleX, scaleY));
+                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateTranslation(-(offsetX * size.X), -(offsetY * size.Y)));
+
+                foreach (var builder in strokes)
+                {
+                    PencilCanvas.DrawPath(session, builder, size);
+                }
+            }
+
+            bitmap.Dispose();
+
+            using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg, 0.77f);
+            }
+
+            canvas.Dispose();
+
+            return file;
         }
 
         //public static async Task<TLPhotoSizeBase> GetVideoThumbnailAsync(StorageFile file, VideoProperties props, VideoTransformEffectDefinition effect)

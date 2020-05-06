@@ -166,10 +166,10 @@ namespace Unigram.Entities
             int originalWidth = this.originalWidth;
             int originalHeight = this.originalHeight;
 
-            if (CropRectangle.HasValue)
+            if (_editState is BitmapEditState state && state.Rectangle is Rect rectangle)
             {
-                originalWidth = (int)CropRectangle.Value.Width;
-                originalHeight = (int)CropRectangle.Value.Height;
+                originalWidth = (int)rectangle.Width;
+                originalHeight = (int)rectangle.Height;
             }
 
             Compression = 6;
@@ -248,10 +248,10 @@ namespace Unigram.Entities
             int originalWidth = (int)Properties.Width;
             int originalHeight = (int)Properties.Height;
 
-            if (CropRectangle.HasValue)
+            if (_editState is BitmapEditState state && state.Rectangle is Rect rectangle)
             {
-                originalWidth = (int)CropRectangle.Value.Width;
-                originalHeight = (int)CropRectangle.Value.Height;
+                originalWidth = (int)rectangle.Width;
+                originalHeight = (int)rectangle.Height;
             }
 
             int resultWidth = originalWidth;
@@ -407,7 +407,7 @@ namespace Unigram.Entities
 
         public VideoTransformEffectDefinition GetTransform()
         {
-            var crop = CropRectangle;
+            var crop = _editState?.Rectangle;
             if (crop.HasValue)
             {
                 var transform = new VideoTransformEffectDefinition();
