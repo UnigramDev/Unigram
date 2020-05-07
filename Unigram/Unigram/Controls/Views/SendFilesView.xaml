@@ -391,8 +391,8 @@
                         Width="{ThemeResource AppBarThemeCompactHeight}"
                         Height="{ThemeResource AppBarThemeCompactHeight}"
                         FontSize="{StaticResource GlyphButtonFontSize}"
-                        AutomationProperties.Name="{CustomResource CropImage}"
-                        ToolTipService.ToolTip="{CustomResource CropImage}"
+                        AutomationProperties.Name="{CustomResource DeletePhoto}"
+                        ToolTipService.ToolTip="{CustomResource DeletePhoto}"
                         Radius="0,12,12,0"
                         Grid.Column="2"/>
                 </Grid>
