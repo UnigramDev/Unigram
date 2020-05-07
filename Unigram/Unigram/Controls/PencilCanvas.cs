@@ -77,7 +77,7 @@ namespace Unigram.Controls
 
         public IReadOnlyList<SmoothPathBuilder> Strokes
         {
-            get => _drawing.ToList();
+            get => _drawing?.ToList();
             set
             {
                 _drawing = value.ToList();
