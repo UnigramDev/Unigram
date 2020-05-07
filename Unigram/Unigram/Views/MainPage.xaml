@@ -503,7 +503,7 @@
                                         <Grid x:Name="ChatTabsView">
                                             <microsoft:NavigationView PaneDisplayMode="Top" MenuItemsSource="{x:Bind ViewModel.Filters}" SelectedItem="{x:Bind ViewModel.SelectedFilter, Mode=OneWay}" ItemInvoked="NavigationView_ItemInvoked" IsBackButtonVisible="Collapsed" IsBackEnabled="False" IsSettingsVisible="False">
                                                 <microsoft:NavigationView.MenuItemTemplate>
-                                                    <DataTemplate x:DataType="td:ChatListFilter">
+                                                    <DataTemplate x:DataType="td:ChatListFolder">
                                                         <microsoft:NavigationViewItem
                                                             Tag="{x:Bind}"
                                                             Content="{x:Bind Title}"
