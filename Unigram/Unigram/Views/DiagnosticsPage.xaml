@@ -51,14 +51,27 @@
                         Click="LogOld_Click"
                         Badge="{x:Bind ConvertSize(ViewModel.LogOldSize), Mode=OneWay}"/>
                 </controls:HeaderedControl>
-                
+
                 <controls:HeaderedControl
+                    Header="TDLib Modules"
+                    ItemsSource="{x:Bind ViewModel.Tags}">
+                    <controls:HeaderedControl.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:DiagnosticsTag">
+                            <controls:BadgeButton
+                                Click="{x:Bind Change}"
+                                Content="{x:Bind Name}"
+                                Badge="{x:Bind Text, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </controls:HeaderedControl.ItemTemplate>
+                </controls:HeaderedControl>
+
+                <!--<controls:HeaderedControl
                     Header="{CustomResource PrivacyAdvanced}">
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.UseTestDc, Mode=TwoWay}"
                         Header="Use test data centers"
                         Style="{StaticResource CheckButtonStyle}"/>
-                </controls:HeaderedControl>
+                </controls:HeaderedControl>-->
 
                 <controls:HeaderedControl
                     Header="Options"

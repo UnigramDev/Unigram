@@ -296,8 +296,7 @@ namespace Unigram.Services
 
             Task.Run(() =>
             {
-                _client.Send(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"), 10 * 1024 * 1024)));
-                _client.Send(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
+                InitializeDiagnostics();
 
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
@@ -310,6 +309,29 @@ namespace Unigram.Services
                 _client.Send(new GetApplicationConfig(), result => UpdateConfig(result));
                 _client.Run();
             });
+        }
+
+        private void InitializeDiagnostics()
+        {
+            Client.Execute(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"), 10 * 1024 * 1024)));
+            Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
+
+            var tags = Client.Execute(new GetLogTags()) as LogTags;
+            if (tags == null)
+            {
+                return;
+            }
+
+            foreach (var tag in tags.Tags)
+            {
+                var level = Client.Execute(new GetLogTagVerbosityLevel(tag)) as LogVerbosityLevel;
+                
+                var saved = _settings.Diagnostics.GetValueOrDefault(tag, -1);
+                if (saved != level.VerbosityLevel && saved > -1)
+                {
+                    Client.Execute(new SetLogTagVerbosityLevel(tag, saved));
+                }
+            }
         }
 
         private void InitializeReady()
@@ -590,7 +612,7 @@ namespace Unigram.Services
             }
         }
 
-        #region Cache
+#region Cache
         
         public ChatListUnreadCount GetUnreadCount(ChatList chatList)
         {
@@ -1210,7 +1232,7 @@ namespace Unigram.Services
             return _diceEmojis.Contains(text);
         }
 
-        #endregion
+#endregion
 
 
 

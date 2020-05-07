@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls.Views;
+using Unigram.Navigation;
 using Unigram.Services;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
@@ -20,6 +21,7 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Options = new MvxObservableCollection<DiagnosticsOption>();
+            Tags = new MvxObservableCollection<DiagnosticsTag>();
 
             VerbosityCommand = new RelayCommand(VerbosityExecute);
         }
@@ -85,10 +87,22 @@ namespace Unigram.ViewModels
                 Options.Add(new DiagnosticsOption { Name = item.Key, Value = value });
             }
 
+            var tags = Client.Execute(new GetLogTags()) as LogTags;
+            if (tags != null)
+            {
+                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag
+                {
+                    Name = x,
+                    Default = ((LogVerbosityLevel)Client.Execute(new GetLogTagVerbosityLevel(x))).VerbosityLevel,
+                    Value = (VerbosityLevel)Settings.Diagnostics.GetValueOrDefault(x, -1)
+                }));
+            }
+
             return Task.CompletedTask;
         }
 
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
+        public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
 
         public bool PlayStickers
         {
@@ -154,7 +168,7 @@ namespace Unigram.ViewModels
             }).ToArray();
 
             var dialog = new SelectRadioView(items);
-            dialog.Title = Strings.Resources.VoipUseLessData;
+            dialog.Title = "Verbosity Level";
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -162,8 +176,8 @@ namespace Unigram.ViewModels
             if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VerbosityLevel index)
             {
                 Verbosity = index;
+                Client.Execute(new SetLogVerbosityLevel((int)index));
             }
-
         }
     }
 
@@ -181,5 +195,52 @@ namespace Unigram.ViewModels
     {
         public string Name { get; set; }
         public object Value { get; set; }
+    }
+
+    public class DiagnosticsTag : BindableBase
+    {
+        public string Name { get; set; }
+        public int Default { get; set; }
+
+        private VerbosityLevel _value;
+        public VerbosityLevel Value
+        {
+            get => _value;
+            set => Set(ref _value, value);
+        }
+
+        public string Text
+        {
+            get
+            {
+                if ((int)Value == -1 || (int)Value == Default)
+                {
+                    return "Default";
+                }
+
+                return Enum.GetName(typeof(VerbosityLevel), Value);
+            }
+        }
+
+        public async void Change()
+        {
+            var items = Enum.GetValues(typeof(VerbosityLevel)).Cast<VerbosityLevel>().Select(x =>
+            {
+                return new SelectRadioItem(x, Enum.GetName(typeof(VerbosityLevel), x), x == _value);
+            }).ToArray();
+
+            var dialog = new SelectRadioView(items);
+            dialog.Title = Name;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VerbosityLevel index)
+            {
+                Value = index;
+                RaisePropertyChanged(() => Text);
+                Client.Execute(new SetLogTagVerbosityLevel(Name, (int)index));
+            }
+        }
     }
 }

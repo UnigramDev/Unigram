@@ -96,6 +96,12 @@ namespace Unigram.Services
     {
         protected readonly ApplicationDataContainer _container;
 
+        public SettingsServiceBase(string key)
+            : this(ApplicationData.Current.LocalSettings.CreateContainer(key, ApplicationDataCreateDisposition.Always))
+        {
+
+        }
+
         public SettingsServiceBase(ApplicationDataContainer container = null)
         {
             _container = container ?? ApplicationData.Current.LocalSettings;

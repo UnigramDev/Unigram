@@ -10,7 +10,7 @@ namespace Unigram.Services.Settings
     public class DiagnosticsSettings : SettingsServiceBase
     {
         public DiagnosticsSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("Diagnostics", ApplicationDataCreateDisposition.Always))
+            : base("Diagnostics")
         {
         }
 
