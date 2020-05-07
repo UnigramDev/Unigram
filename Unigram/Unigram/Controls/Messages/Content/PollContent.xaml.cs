@@ -53,14 +53,14 @@ namespace Unigram.Controls.Messages.Content
             if (poll.Poll.Type is PollTypeRegular reg)
             {
                 Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousPoll : Strings.Resources.PublicPoll;
-                View.Visibility = results && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
+                View.Visibility = results && poll.Poll.TotalVoterCount > 0 && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
                 Submit.Visibility = !results && reg.AllowMultipleAnswers ? Visibility.Visible : Visibility.Collapsed;
                 Explanation.Visibility = Visibility.Collapsed;
             }
             else if (poll.Poll.Type is PollTypeQuiz quiz)
             {
                 Type.Text = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousQuizPoll : Strings.Resources.QuizPoll;
-                View.Visibility = results && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
+                View.Visibility = results && poll.Poll.TotalVoterCount > 0 && !poll.Poll.IsAnonymous ? Visibility.Visible : Visibility.Collapsed;
                 Submit.Visibility = Visibility.Collapsed;
                 Explanation.Visibility = results && !string.IsNullOrEmpty(quiz.Explanation?.Text) ? Visibility.Visible : Visibility.Collapsed;
             }

@@ -49,7 +49,7 @@ namespace Unigram.Controls
 
             Zero.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
 
-            Votes.Maximum = results ? poll.Options.Max(x => x.VoterCount) : 1;
+            Votes.Maximum = results ? Math.Max(poll.Options.Max(x => x.VoterCount), 1) : 1;
             Votes.Value = results ? option.VoterCount : 0;
             
             Loading.IsActive = option.IsBeingChosen;
