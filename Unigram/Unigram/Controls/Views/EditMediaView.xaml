@@ -89,8 +89,6 @@
                     CheckedGlyph="&#xE908;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
-                    AutomationProperties.Name="Flip"
-                    ToolTipService.ToolTip="Flip"
                     Grid.Column="1"/>
                 
                 <controls:GlyphButton
