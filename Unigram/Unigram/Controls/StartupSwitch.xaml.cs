@@ -43,15 +43,24 @@ namespace Unigram.Controls
         private async void OnLoaded()
         {
             Toggle.Toggled -= OnToggled;
-            ToggleMinimized.Toggled -= Minimized_Toggled;
+
+            if (ToggleMinimized != null)
+            {
+                ToggleMinimized.Toggled -= Minimized_Toggled;
+            }
 
             var task = await StartupTask.GetAsync("Telegram");
             if (task.State == StartupTaskState.Enabled)
             {
                 Toggle.IsOn = true;
                 Toggle.IsEnabled = true;
-                ToggleMinimized.IsOn = SettingsService.Current.IsLaunchMinimized;
-                ToggleMinimized.Visibility = Visibility.Visible;
+
+                if (ToggleMinimized != null)
+                {
+                    ToggleMinimized.IsOn = SettingsService.Current.IsLaunchMinimized;
+                    ToggleMinimized.Visibility = Visibility.Visible;
+                }
+
                 Label.Visibility = Visibility.Collapsed;
 
                 Visibility = Visibility.Visible;
@@ -60,8 +69,13 @@ namespace Unigram.Controls
             {
                 Toggle.IsOn = false;
                 Toggle.IsEnabled = true;
-                ToggleMinimized.IsOn = false;
-                ToggleMinimized.Visibility = Visibility.Collapsed;
+
+                if (ToggleMinimized != null)
+                {
+                    ToggleMinimized.IsOn = false;
+                    ToggleMinimized.Visibility = Visibility.Collapsed;
+                }
+
                 Label.Visibility = Visibility.Collapsed;
 
                 Visibility = Visibility.Visible;
@@ -70,8 +84,13 @@ namespace Unigram.Controls
             {
                 Toggle.IsOn = false;
                 Toggle.IsEnabled = false;
-                ToggleMinimized.IsOn = false;
-                ToggleMinimized.Visibility = Visibility.Collapsed;
+
+                if (ToggleMinimized != null)
+                {
+                    ToggleMinimized.IsOn = false;
+                    ToggleMinimized.Visibility = Visibility.Collapsed;
+                }
+
                 Label.Visibility = Visibility.Visible;
 
                 Visibility = Visibility.Visible;
@@ -82,7 +101,11 @@ namespace Unigram.Controls
             }
 
             Toggle.Toggled += OnToggled;
-            ToggleMinimized.Toggled += Minimized_Toggled;
+
+            if (ToggleMinimized != null)
+            {
+                ToggleMinimized.Toggled += Minimized_Toggled;
+            }
         }
 
         private async void OnToggled(object sender, RoutedEventArgs e)
