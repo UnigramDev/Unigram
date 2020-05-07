@@ -373,8 +373,8 @@
                         Radius="12,0,0,12"/>
 
                     <local:GlyphTtlButton
-                        x:Name="TTLSeconds"
-                        Click="TTLSeconds_Click"
+                        x:Name="Ttl"
+                        Click="Ttl_Click"
                         Tag="{x:Bind}"
                         Glyph="{x:Bind Ttl, Mode=OneWay}"
                         Ttl="{x:Bind Ttl,Mode=OneWay}"
@@ -398,7 +398,6 @@
                 </Grid>
             </Grid>
         </DataTemplate>
-                        <!--Visibility="{x:Bind IsTTLEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"-->
 
         <ItemsPanelTemplate x:Key="FilesPanelTemplate">
             <ItemsStackPanel/>

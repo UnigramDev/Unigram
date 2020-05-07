@@ -396,24 +396,27 @@ namespace Unigram.Controls.Views
             UpdatePanel();
         }
 
-        private void TTLSeconds_Click(object sender, RoutedEventArgs e)
+        private void Ttl_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             if (button.Tag is StorageMedia media)
             {
                 var slider = new Slider();
                 slider.IsThumbToolTipEnabled = false;
-                slider.Header = MessageTtlConverter.Convert(MessageTtlConverter.ConvertBack(media.Ttl));
+                slider.Header = MessageTtlConverter.Convert(MessageTtlConverter.ConvertSeconds(media.Ttl));
                 slider.Minimum = 0;
                 slider.Maximum = 28;
-                slider.Value = MessageTtlConverter.ConvertBack(media.Ttl);
+                slider.StepFrequency = 1;
+                slider.SmallChange = 1;
+                slider.LargeChange = 1;
+                slider.Value = MessageTtlConverter.ConvertSeconds(media.Ttl);
                 slider.ValueChanged += (s, args) =>
                 {
                     var index = (int)args.NewValue;
                     var label = MessageTtlConverter.Convert(index);
 
                     slider.Header = label;
-                    media.Ttl = MessageTtlConverter.ConvertSeconds(index);
+                    media.Ttl = MessageTtlConverter.ConvertBack(index);
                 };
 
                 var text = new TextBlock();
