@@ -45,9 +45,7 @@
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
                 
-                <controls:HeaderedControl>
-                    <controls:StartupSwitch/>
-                </controls:HeaderedControl>
+                <controls:StartupSwitch/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

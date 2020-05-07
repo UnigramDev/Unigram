@@ -16,8 +16,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Controls
 {
     public sealed partial class StartupSwitch : UserControl
@@ -61,7 +59,7 @@ namespace Unigram.Controls
                     ToggleMinimized.Visibility = Visibility.Visible;
                 }
 
-                Label.Visibility = Visibility.Collapsed;
+                Headered.Footer = string.Empty;
 
                 Visibility = Visibility.Visible;
             }
@@ -76,7 +74,7 @@ namespace Unigram.Controls
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
-                Label.Visibility = Visibility.Collapsed;
+                Headered.Footer = string.Empty;
 
                 Visibility = Visibility.Visible;
             }
@@ -91,7 +89,7 @@ namespace Unigram.Controls
                     ToggleMinimized.Visibility = Visibility.Collapsed;
                 }
 
-                Label.Visibility = Visibility.Visible;
+                Headered.Footer = "You can enable this in the Startup tab in Task Manager.";
 
                 Visibility = Visibility.Visible;
             }
