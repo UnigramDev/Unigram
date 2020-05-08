@@ -360,8 +360,14 @@
     <Compile Include="Controls\ColorTextBox.cs" />
     <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\DialogListView.cs" />
-    <Compile Include="Controls\EmojiDrawer.xaml.cs">
+    <Compile Include="Controls\Drawers\AnimationDrawer.xaml.cs">
+      <DependentUpon>AnimationDrawer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Drawers\EmojiDrawer.xaml.cs">
       <DependentUpon>EmojiDrawer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Drawers\StickerDrawer.xaml.cs">
+      <DependentUpon>StickerDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
@@ -505,9 +511,6 @@
     </Compile>
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\StickerDrawer.xaml.cs">
-      <DependentUpon>StickerDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TablePanel.cs" />
@@ -1947,7 +1950,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\EmojiDrawer.xaml">
+    <Page Include="Controls\Drawers\AnimationDrawer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Drawers\EmojiDrawer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Drawers\StickerDrawer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2086,10 +2097,6 @@
     <Page Include="Controls\StartupSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\StickerDrawer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\UndoView.xaml">
       <SubType>Designer</SubType>
