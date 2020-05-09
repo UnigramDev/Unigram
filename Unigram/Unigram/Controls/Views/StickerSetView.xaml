@@ -11,6 +11,7 @@
     TitleTemplate="{x:Null}"
     PrimaryButtonText="{x:Bind ConvertIsInstalled(ViewModel.StickerSet.IsInstalled, ViewModel.StickerSet.IsArchived, ViewModel.StickerSet.IsOfficial, ViewModel.StickerSet.IsMasks), Mode=OneWay}"
     PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
+    Closing="OnClosing"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
 
@@ -39,7 +40,6 @@
             ItemClick="List_ItemClick"
             IsItemClickEnabled="True"
             SelectionMode="None"
-            Padding="12,0"
             ContainerContentChanging="OnContainerContentChanging"
             common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
@@ -49,7 +49,11 @@
                 <DataTemplate>
                     <Grid Margin="2">
                         <Image/>
-                        <TextBlock FontSize="20" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                        <TextBlock
+                            FontSize="20"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Right"/>
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>

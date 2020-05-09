@@ -84,6 +84,8 @@ namespace Unigram.Views
 
         private Compositor _compositor;
 
+        private AnimatedListHandler<Sticker> _autocompleteHandler;
+
         public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
         {
             InitializeComponent();
@@ -93,6 +95,12 @@ namespace Unigram.Views
             };
             DataContext = getViewModel(this);
             ViewModel.Sticker_Click = Stickers_ItemClick;
+
+            _autocompleteHandler = new AnimatedListHandler<Sticker>(ListAutocomplete);
+            _autocompleteHandler.DownloadFile = (id, sticker) =>
+            {
+                _viewModel?.ProtoService.DownloadFile(id, 1);
+            };
 
             TextField.IsFormattingVisible = ViewModel.Settings.IsTextFormattingVisible;
 
@@ -499,15 +507,6 @@ namespace Unigram.Views
             ViewModel.Items.AttachChanged = OnAttachChanged;
 
             //Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
-
-            if (SettingsService.Current.Appearance.BubbleRadius > 0)
-            {
-                TextArea.Margin = ChatFooter.Margin = new Thickness(12, 0, 12, 8);
-            }
-            else
-            {
-                TextArea.Margin = ChatFooter.Margin = new Thickness();
-            }
 
             UpdateTextAreaRadius();
             TextField.Focus(FocusState.Programmatic);
@@ -1042,15 +1041,7 @@ namespace Unigram.Views
 
             if (StickersPanel.Visibility == Visibility.Visible)
             {
-                if (StickersPanel.ToggleActiveView())
-                {
-
-                }
-                else
-                {
-                    Collapse_Click(null, null);
-                }
-
+                Collapse_Click(null, null);
                 args.Handled = true;
             }
 
@@ -1287,11 +1278,6 @@ namespace Unigram.Views
 
         private void CheckMessageBoxEmpty()
         {
-            if (StickersPanel.Visibility == Visibility.Visible)
-            {
-                Collapse_Click(StickersPanel, null);
-            }
-
             if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
             {
                 CollapseMarkup(false);
@@ -2372,8 +2358,6 @@ namespace Unigram.Views
         public async void Stickers_ItemClick(Sticker sticker)
         {
             ViewModel.StickerSendCommand.Execute(sticker);
-            ViewModel.Autocomplete = null;
-            TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
             await Task.Delay(100);
@@ -2383,8 +2367,6 @@ namespace Unigram.Views
         public async void Animations_ItemClick(Animation animation)
         {
             ViewModel.AnimationSendCommand.Execute(animation);
-            ViewModel.Autocomplete = null;
-            TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
 
             await Task.Delay(100);
@@ -2718,7 +2700,10 @@ namespace Unigram.Views
             }
             else if (e.ClickedItem is Sticker sticker)
             {
-                Stickers_ItemClick(sticker);
+                TextField.SetText(null, null);
+                ViewModel.StickerSendCommand.Execute(sticker);
+
+                Collapse_Click(null, new RoutedEventArgs());
             }
 
             ViewModel.Autocomplete = null;
@@ -2801,6 +2786,7 @@ namespace Unigram.Views
                 batch.Completed += (s, args) =>
                 {
                     StickersPanel.Visibility = Visibility.Collapsed;
+                    StickersPanel.UnloadVisibleItems();
                 };
 
                 var opacity = _compositor.CreateScalarKeyFrameAnimation();
@@ -2832,34 +2818,26 @@ namespace Unigram.Views
             }
             else
             {
-                if (sender == null || e != null)
+                _stickersMode = StickersPanelMode.Collapsed;
+
+                StickersPanel.MinHeight = 260;
+                StickersPanel.MaxHeight = 360;
+                StickersPanel.Height = _lastKnownKeyboardHeight;
+
+                StickersPanel.UnloadVisibleItems();
+                StickersPanel.Visibility = Visibility.Collapsed;
+
+                switch (ViewModel.Settings.Stickers.SelectedTab)
                 {
-                    StickersPanel.MinHeight = 260;
-                    StickersPanel.MaxHeight = 360;
-                    StickersPanel.Height = _lastKnownKeyboardHeight;
-                }
-                else
-                {
-                    _stickersMode = StickersPanelMode.Collapsed;
-
-                    StickersPanel.MinHeight = 260;
-                    StickersPanel.MaxHeight = 360;
-                    StickersPanel.Height = _lastKnownKeyboardHeight;
-
-                    StickersPanel.Visibility = Visibility.Collapsed;
-
-                    switch (ViewModel.Settings.Stickers.SelectedTab)
-                    {
-                        case Services.Settings.StickersTab.Emoji:
-                            ButtonStickers.Glyph = "\uE76E";
-                            break;
-                        case Services.Settings.StickersTab.Animations:
-                            ButtonStickers.Glyph = "\uF4A9";
-                            break;
-                        case Services.Settings.StickersTab.Stickers:
-                            ButtonStickers.Glyph = "\uF4AA";
-                            break;
-                    }
+                    case Services.Settings.StickersTab.Emoji:
+                        ButtonStickers.Glyph = "\uE76E";
+                        break;
+                    case Services.Settings.StickersTab.Animations:
+                        ButtonStickers.Glyph = "\uF4A9";
+                        break;
+                    case Services.Settings.StickersTab.Stickers:
+                        ButtonStickers.Glyph = "\uF4AA";
+                        break;
                 }
             }
         }
@@ -2955,11 +2933,19 @@ namespace Unigram.Views
             }
             else if (args.Item is Sticker sticker)
             {
-                var content = args.ItemContainer.ContentTemplateRoot as Image;
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                var photo = content.Children[0] as Image;
+                
+                while (content.Children.Count > 1)
+                {
+                    content.Children.RemoveAt(1);
+                }
+
+                photo.Opacity = 1;
 
                 if (sticker == null || sticker.Thumbnail == null)
                 {
-                    content.Source = null;
+                    photo.Source = null;
                     return;
                 }
 
@@ -2968,19 +2954,12 @@ namespace Unigram.Views
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    if (sticker.IsAnimated)
-                    {
-                        content.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
-                    }
-                    else
-                    {
-                        content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                    }
+                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
                     //DownloadFile(file.Id, sticker);
-                    content.Source = null;
+                    photo.Source = null;
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
@@ -3035,13 +3014,13 @@ namespace Unigram.Views
             CallPlaceholder.Visibility = Visibility.Collapsed;
 
             StickersPanel.UpdateChatPermissions(chat);
-            InlinePanel.UpdateChatPermissions(chat);
+            ListInline.UpdateChatPermissions(chat);
         }
 
         public void UpdateChatPermissions(Chat chat)
         {
             StickersPanel.UpdateChatPermissions(chat);
-            InlinePanel.UpdateChatPermissions(chat);
+            ListInline.UpdateChatPermissions(chat);
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -3669,6 +3648,44 @@ namespace Unigram.Views
 
             ComposerHeaderCancel.Radius = new CornerRadius(4, min, 4, 4);
             TextRoot.CornerRadius = ChatFooter.CornerRadius = new CornerRadius(radius);
+
+            InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
+            ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
+
+            if (radius > 0)
+            {
+                TextArea.Margin = ChatFooter.Margin = new Thickness(12, 0, 12, 8);
+                InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
+            }
+            else
+            {
+                TextArea.Margin = ChatFooter.Margin = new Thickness();
+                InlinePanel.Margin = new Thickness();
+            }
+        }
+
+        public void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection)
+        {
+            if (collection != null)
+            {
+                ListAutocomplete.ItemsSource = collection;
+                ListAutocomplete.Orientation = collection.Orientation;
+                ListAutocomplete.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ListAutocomplete.Visibility = Visibility.Collapsed;
+                ListAutocomplete.ItemsSource = null;
+
+                //var diff = (float)ListAutocomplete.ActualHeight;
+                //var visual = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
+
+                //var anim = Window.Current.Compositor.CreateSpringVector3Animation();
+                //anim.InitialValue = new Vector3();
+                //anim.FinalValue = new Vector3(0, diff, 0);
+
+                //visual.StartAnimation("Offset", anim);
+            }
         }
 
         public void UpdateSearchMask(Chat chat, ChatSearchViewModel search)
@@ -3963,30 +3980,6 @@ namespace Unigram.Views
 
         public void UpdateFile(Telegram.Td.Api.File file)
         {
-            //for (int i = 0; i < Messages.Items.Count; i++)
-            //{
-            //    var message = Messages.Items[i] as MessageViewModel;
-            //    if (message.UpdateFile(file))
-            //    {
-            //        var container = Messages.ContainerFromItem(message) as ListViewItem;
-            //        if (container == null)
-            //        {
-            //            continue;
-            //        }
-
-            //        var content = container.ContentTemplateRoot as FrameworkElement;
-            //        if (content is Grid grid)
-            //        {
-            //            content = grid.FindName("Bubble") as FrameworkElement;
-            //        }
-
-            //        if (content is MessageBubble bubble)
-            //        {
-            //            bubble.UpdateFile(message, file);
-            //        }
-            //    }
-            //}
-
             if (_viewModel.TryGetMessagesForFileId(file.Id, out IList<MessageViewModel> messages))
             {
                 foreach (var message in messages)
@@ -4105,7 +4098,7 @@ namespace Unigram.Views
                 }
             }
 
-            InlinePanel.UpdateFile(file);
+            ListInline.UpdateFile(file);
             StickersPanel.UpdateFile(file);
 
             foreach (var item in ListAutocomplete.Items.ToArray())
@@ -4153,21 +4146,28 @@ namespace Unigram.Views
                 }
                 else if (item is Sticker sticker)
                 {
-                    if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id && file.Local.IsDownloadingCompleted)
+                    if (sticker.UpdateFile(file) && file.Local.IsDownloadingCompleted)
                     {
-                        var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
-                        if (container == null)
+                        if (file.Id == sticker.Thumbnail?.Photo.Id)
                         {
-                            continue;
-                        }
+                            var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
+                            if (container == null)
+                            {
+                                continue;
+                            }
 
-                        var photo = container.ContentTemplateRoot as Image;
-                        if (photo == null)
+                            var photo = container.ContentTemplateRoot as Image;
+                            if (photo == null)
+                            {
+                                continue;
+                            }
+
+                            photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                        }
+                        else if (file.Id == sticker.StickerValue.Id)
                         {
-                            continue;
+                            _autocompleteHandler.LoadVisibleItems(false);
                         }
-
-                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
             }
@@ -4186,6 +4186,26 @@ namespace Unigram.Views
         {
             ViewModel.Settings.IsTextFormattingVisible = sender.IsFormattingVisible;
             ShowHideTextFormatting(sender.IsFormattingVisible);
+        }
+
+        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Height > e.PreviousSize.Height)
+            {
+                var diff = (float)e.NewSize.Height - (float)e.PreviousSize.Height;
+                var visual = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
+
+                var anim = Window.Current.Compositor.CreateSpringVector3Animation();
+                anim.InitialValue = new Vector3(0, diff, 0);
+                anim.FinalValue = new Vector3();
+
+                visual.StartAnimation("Offset", anim);
+            }
+        }
+
+        private void TextField_Sending(object sender, EventArgs e)
+        {
+            Collapse_Click(StickersPanel, null);
         }
     }
 

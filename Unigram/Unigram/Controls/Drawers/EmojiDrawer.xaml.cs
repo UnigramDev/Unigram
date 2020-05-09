@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls.Chats;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.Foundation;
@@ -24,9 +25,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls
+namespace Unigram.Controls.Drawers
 {
-    public sealed partial class EmojiDrawer : UserControl
+    public sealed partial class EmojiDrawer : UserControl, IDrawer
     {
         public TLViewModelBase ViewModel => DataContext as TLViewModelBase;
 
@@ -50,6 +51,18 @@ namespace Unigram.Controls
 
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();
+        }
+
+        public StickersTab Tab => StickersTab.Emoji;
+
+        public void Activate()
+        {
+
+        }
+
+        public void Deactivate()
+        {
+
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

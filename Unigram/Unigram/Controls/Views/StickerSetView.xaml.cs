@@ -19,10 +19,26 @@ namespace Unigram.Controls.Views
     {
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 
+        private AnimatedListHandler<Sticker> _handler;
+        private DispatcherTimer _throttler;
+
         private StickerSetView()
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<StickerSetViewModel>();
+
+            _handler = new AnimatedListHandler<Sticker>(List);
+            _handler.DownloadFile = (id, sticker) =>
+            {
+                ViewModel.ProtoService.DownloadFile(id, 1);
+            };
+
+            _throttler = new DispatcherTimer();
+            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _throttler.Tick += (s, args) =>
+            {
+                _handler.LoadVisibleItems(false);
+            };
 
             SecondaryButtonText = Strings.Resources.Close;
         }
@@ -35,6 +51,11 @@ namespace Unigram.Controls.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Unsubscribe(this);
+        }
+
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            _handler.UnloadVisibleItems();
         }
 
         #region Show
@@ -208,22 +229,30 @@ namespace Unigram.Controls.Views
         {
             foreach (Sticker sticker in List.Items)
             {
-                if (sticker.UpdateFile(file) && file.Id == sticker.Thumbnail?.Photo.Id)
+                if (sticker.UpdateFile(file) && file.Local.IsDownloadingCompleted)
                 {
-                    var container = List.ContainerFromItem(sticker) as SelectorItem;
-                    if (container == null)
+                    if (file.Id == sticker.Thumbnail?.Photo.Id)
                     {
-                        continue;
-                    }
+                        var container = List.ContainerFromItem(sticker) as SelectorItem;
+                        if (container == null)
+                        {
+                            continue;
+                        }
 
-                    var content = container.ContentTemplateRoot as Grid;
-                    if (content == null)
+                        var content = container.ContentTemplateRoot as Grid;
+                        if (content == null)
+                        {
+                            continue;
+                        }
+
+                        var photo = content.Children[0] as Image;
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                    }
+                    else if (file.Id == sticker.StickerValue.Id)
                     {
-                        continue;
+                        _throttler.Stop();
+                        _throttler.Start();
                     }
-
-                    var photo = content.Children[0] as Image;
-                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                 }
             }
         }

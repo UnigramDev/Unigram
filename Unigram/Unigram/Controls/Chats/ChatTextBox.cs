@@ -64,6 +64,8 @@ namespace Unigram.Controls.Chats
             base.OnApplyTemplate();
         }
 
+        public event EventHandler Sending;
+
         public void InsertText(string text, bool allowPreceding = true, bool allowTrailing = true)
         {
             var start = Document.Selection.StartPosition;
@@ -748,6 +750,8 @@ namespace Unigram.Controls.Chats
 
         public async Task SendAsync(bool disableNotification = false)
         {
+            Sending?.Invoke(this, EventArgs.Empty);
+
             var options = new SendMessageOptions(disableNotification, false, null);
 
             var text = GetFormattedText(true);
@@ -756,6 +760,8 @@ namespace Unigram.Controls.Chats
 
         public async Task ScheduleAsync()
         {
+            Sending?.Invoke(this, EventArgs.Empty);
+
             var options = await ViewModel.PickSendMessageOptionsAsync(true);
             if (options == null)
             {

@@ -1,0 +1,253 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.StickerPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:drawers="using:Unigram.Controls.Drawers"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:viewModels="using:Unigram.ViewModels.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    DataContextChanged="OnDataContextChanged"
+    Unloaded="OnUnloaded">
+
+    <UserControl.Resources>
+        <Style x:Name="ModernPivotRadioButtonStyle" TargetType="controls:PivotRadioButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+            <Setter Property="Glyph" Value="&#xE700;" />
+            <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}" />
+            <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}" />
+            <Setter Property="MinHeight" Value="{ThemeResource AppBarThemeCompactHeight}" />
+            <Setter Property="MinWidth" Value="{ThemeResource AppBarThemeCompactHeight}" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:PivotRadioButton">
+                        <Grid
+                            x:Name="RootGrid"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding Radius}"
+                            Margin="{StaticResource GlyphButtonPadding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.Visibility" Value="Collapsed"/>
+                                            <Setter Target="CheckedContentPresenter.Visibility" Value="Visible"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="BackgroundElement"/>
+                            <TextBlock
+                                x:Name="ContentPresenter"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding Glyph}"/>
+                            <TextBlock
+                                x:Name="CheckedContentPresenter"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding CheckedGlyph}"
+                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                Visibility="Collapsed"/>
+
+                            <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Padding="{TemplateBinding Padding}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NarrowState"/>
+                <VisualState x:Name="SidebarState">
+                    <VisualState.Setters>
+                        <Setter Target="Header.(Grid.Row)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FilledState">
+                    <VisualState.Setters>
+                        <Setter Target="Show.Width" Value="362*"/>
+                        <Setter Target="Show.MaxWidth" Value="362"/>
+                        <Setter Target="Hide.Width" Value="*"/>
+                        <Setter Target="BackgroundElement.BorderThickness" Value="1"/>
+                        <Setter Target="BackgroundElement.Margin" Value="8"/>
+                        <Setter Target="BackgroundElement.CornerRadius" Value="4"/>
+
+                        <Setter Target="ShowRow.Height" Value="736*"/>
+                        <Setter Target="ShowRow.MaxHeight" Value="736"/>
+                        <Setter Target="HideRow.Height" Value="*"/>
+
+                        <Setter Target="Header.(Grid.Row)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="Hide" Width="0"/>
+            <ColumnDefinition x:Name="Show"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="HideRow" Height="0"/>
+            <RowDefinition x:Name="ShowRow"/>
+        </Grid.RowDefinitions>
+
+        <Border x:Name="ShadowElement" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+
+        <Border Background="Transparent" Grid.Column="1" Grid.Row="1">
+            <Grid x:Name="BackgroundElement"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                  BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
+                  BorderThickness="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Pivot x:Name="Pivot" Style="{StaticResource HeaderlessPivotStyle}" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
+                    <PivotItem>
+                        <drawers:EmojiDrawer x:Name="Emojis" x:DeferLoadStrategy="Lazy" ItemClick="Emojis_ItemClick" Grid.RowSpan="3" d:IsHidden="True"/>
+                    </PivotItem>
+                    <PivotItem>
+                        <Grid>
+                            <drawers:AnimationDrawer x:Name="AnimationsRoot"/>
+                            <TextBlock
+                                x:Name="AnimationsPermission"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center"
+                                Margin="12"
+                                Foreground="{ThemeResource ButtonForegroundDisabled}"
+                                Style="{StaticResource BodyTextBlockStyle}"/>
+                        </Grid>
+                    </PivotItem>
+                    <PivotItem>
+                        <Grid>
+                            <drawers:StickerDrawer x:Name="StickersRoot"/>
+                            <TextBlock
+                                x:Name="StickersPermission"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center"
+                                Margin="12"
+                                Foreground="{ThemeResource ButtonForegroundDisabled}"
+                                Style="{StaticResource BodyTextBlockStyle}"/>
+                        </Grid>
+                    </PivotItem>
+                </Pivot>
+
+                <Grid x:Name="Header" Grid.Row="2">
+                    <Border x:Name="HeaderSeparator"/>
+                    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{ThemeResource AppBarThemeCompactHeight}"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="{ThemeResource AppBarThemeCompactHeight}"/>
+                        </Grid.ColumnDefinitions>
+                        <!--<controls:GlyphButton Glyph="&#xE721;"
+                                              FontSize="{StaticResource GlyphButtonFontSize}"
+                                              Width="{ThemeResource AppBarThemeCompactHeight}"
+                                              Height="{ThemeResource AppBarThemeCompactHeight}"/>-->
+
+                        <controls:PivotRadioButton
+                            SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
+                            Index="0"
+                            Glyph="&#xE76E;"
+                            CheckedGlyph="&#xE76E;"
+                            FontSize="{StaticResource GlyphButtonFontSize}"
+                            Style="{StaticResource ModernPivotRadioButtonStyle}"
+                            AutomationProperties.Name="{CustomResource Emoji}"
+                            ToolTipService.ToolTip="{CustomResource Emoji}"
+                            GroupName="StickersView"
+                            Grid.Column="2"/>
+
+                        <controls:PivotRadioButton
+                            Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
+                            Index="1"
+                            Glyph="&#xF4A9;"
+                            CheckedGlyph="&#xF4A9;"
+                            FontSize="{StaticResource GlyphButtonFontSize}"
+                            Style="{StaticResource ModernPivotRadioButtonStyle}"
+                            AutomationProperties.Name="{CustomResource AccDescrGIFs}"
+                            ToolTipService.ToolTip="{CustomResource AccDescrGIFs}"
+                            GroupName="StickersView"
+                            Grid.Column="3"/>
+
+                        <controls:PivotRadioButton
+                            SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
+                            Index="2"
+                            Glyph="&#xF4AA;"
+                            CheckedGlyph="&#xF4AA;"
+                            FontSize="{StaticResource GlyphButtonFontSize}"
+                            Style="{StaticResource ModernPivotRadioButtonStyle}"
+                            AutomationProperties.Name="{CustomResource AccDescrStickers}"
+                            ToolTipService.ToolTip="{CustomResource AccDescrStickers}"
+                            GroupName="StickersView"
+                            Grid.Column="4"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

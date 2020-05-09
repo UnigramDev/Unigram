@@ -853,22 +853,20 @@
                 </StackPanel>
             </StackPanel>
 
-            <Grid SizeChanged="InlinePanel_SizeChanged"
+            <Grid x:Name="InlinePanel"
+                  SizeChanged="InlinePanel_SizeChanged"
                   VerticalAlignment="Bottom"
                   Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
                   Margin="12,0,12,-12"
                   CornerRadius="8,8,0,0">
                 <views:InlineBotResultsView
-                    x:Name="InlinePanel"
+                    x:Name="ListInline"
                     Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
                     ItemClick="InlineBotResults_ItemClick"
                     VerticalAlignment="Bottom"/>
                 <controls:OrientableListView
                     x:Name="ListAutocomplete"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
-                    Orientation="{x:Bind ViewModel.Autocomplete.Orientation, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                     ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
                     ContainerContentChanging="Autocomplete_ContainerContentChanging"
                     AllowFocusOnInteraction="False"
@@ -903,7 +901,7 @@
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
-            <controls:StickerDrawer x:Name="StickersPanel" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
+            <controls:StickerPanel x:Name="StickersPanel" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
         </Grid>
 
         <!-- Input pane -->
@@ -975,6 +973,7 @@
                         TextChanged="TextField_TextChanged"
                         LostFocus="TextField_LostFocus"
                         Capture="TextField_Tapped"
+                        Sending="TextField_Sending"
                         ShowFormatting="TextField_Formatting"
                         HideFormatting="TextField_Formatting"/>
                 </Border>

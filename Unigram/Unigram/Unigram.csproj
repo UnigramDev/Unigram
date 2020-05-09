@@ -263,6 +263,7 @@
     <Compile Include="Collections\SearchStickersCollection.cs" />
     <Compile Include="Collections\SearchUsersCollection.cs" />
     <Compile Include="Collections\TopChatsCollection.cs" />
+    <Compile Include="Common\AnimatedListHandler.cs" />
     <Compile Include="Common\ApiInfo.cs" />
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Common\Chats\InputChatActionManager.cs" />
@@ -511,6 +512,9 @@
     </Compile>
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StickerPanel.xaml.cs">
+      <DependentUpon>StickerPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TablePanel.cs" />
@@ -2095,6 +2099,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\StartupSwitch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\StickerPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

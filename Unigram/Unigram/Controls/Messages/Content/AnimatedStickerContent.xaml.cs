@@ -97,7 +97,6 @@ namespace Unigram.Controls.Messages.Content
                 {
                     LayoutRoot.Background = null;
 
-                    Player.IsCachingEnabled = SettingsService.Current.Diagnostics.CacheStickers;
                     Player.IsLoopingEnabled = (message.Content is MessageDice dice && dice.Value == 0) || (message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled);
                     Player.Source = new Uri("file:///" + file.Local.Path);
                 }

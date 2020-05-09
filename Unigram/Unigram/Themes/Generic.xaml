@@ -199,7 +199,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:LottieView">
-                    <xaml:CanvasAnimatedControl x:Name="Canvas"/>
+                    <Grid>
+                        <Image x:Name="Thumbnail" Source="{TemplateBinding Thumbnail}"/>
+                        <xaml:CanvasAnimatedControl x:Name="Canvas"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
