@@ -190,7 +190,7 @@ namespace Unigram.Common
             var recent = new EmojiGroup
             {
                 Title = Strings.Resources.RecentStickers,
-                Glyph = "🕒",
+                Glyph = "\uD83D\uDD52",
                 Items = SettingsService.Current.Emoji.RecentEmoji.Select(x =>
                 {
                     if (EmojiGroupInternal._skinEmojis.Contains(x))
@@ -257,33 +257,8 @@ namespace Unigram.Common
                 return false;
             }
 
-            return _rawEmojis.Contains(text);
-
-
-
-            var result = false;
-            var processed = false;
-
-            foreach (var last in EnumerateByComposedCharacterSequence(text))
-            {
-                if (processed)
-                {
-                    result = false;
-                    break;
-                }
-                else if (IsEmoji(last))
-                {
-                    result = true;
-                    processed = true;
-                }
-                else
-                {
-                    result = false;
-                    break;
-                }
-            }
-
-            return result;
+            var last = RemoveModifiers(text);
+            return _rawEmojis.Contains(last);
         }
 
         public static bool TryCountEmojis(string text, out int count, int max = int.MaxValue)
@@ -300,7 +275,9 @@ namespace Unigram.Common
 
             foreach (var last in EnumerateByComposedCharacterSequence(text))
             {
-                if (_rawEmojis.Contains(last))
+                var clean = RemoveModifiers(last);
+
+                if (_rawEmojis.Contains(clean))
                 {
                     count++;
                     result = count <= max;

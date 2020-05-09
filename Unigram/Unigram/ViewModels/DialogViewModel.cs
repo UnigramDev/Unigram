@@ -1296,15 +1296,11 @@ namespace Unigram.ViewModels
                             break;
                         }
 
-                        var emoji = text.Text.Text.TrimEnd('\uFE0F');
-                        if (emoji.StartsWith("\uD83D\uDC4D"))
-                        {
-                            emoji = "\uD83D\uDC4D";
-                        }
+                        var emoji = Emoji.RemoveModifiers(text.Text.Text);
 
                         foreach (var sticker in set.Stickers)
                         {
-                            var stickerEmoji = sticker.Emoji.TrimEnd('\uFE0F');
+                            var stickerEmoji = Emoji.RemoveModifiers(sticker.Emoji);
 
                             if (string.Equals(stickerEmoji, emoji, StringComparison.OrdinalIgnoreCase))
                             {
