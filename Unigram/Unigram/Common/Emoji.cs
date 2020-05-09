@@ -191,7 +191,16 @@ namespace Unigram.Common
             {
                 Title = Strings.Resources.RecentStickers,
                 Glyph = "🕒",
-                Items = SettingsService.Current.Emoji.GetRecentEmoji()
+                Items = SettingsService.Current.Emoji.RecentEmoji.Select(x =>
+                {
+                    if (EmojiGroupInternal._skinEmojis.Contains(x))
+                    {
+                        return new EmojiSkinData(x, skin);
+                    }
+
+                    return new EmojiData(x);
+
+                }).ToArray()
             };
 
             results.Add(recent);
