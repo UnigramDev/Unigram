@@ -17,7 +17,7 @@
 
 <br>
 
-Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience. 
+Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience. 
 
 ## Table of contents
 - [Features](#features)
