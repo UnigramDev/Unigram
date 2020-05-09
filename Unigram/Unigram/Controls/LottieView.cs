@@ -1,5 +1,4 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI;
+﻿using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using RLottie;
 using System;
@@ -7,10 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Windows.Foundation;
-using Windows.Graphics.DirectX;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,7 +24,13 @@ namespace Unigram.Controls
         private int _frameHeight;
 
         private string _source;
-        private IAnimation _animation;
+        private CachedAnimation _animation;
+
+        private bool _animationIsCached;
+        private bool _animationIsCaching;
+
+        private double _animationFrameRate;
+        private int _animationTotalFrame;
 
         private bool _shouldPlay;
 
@@ -43,6 +46,11 @@ namespace Unigram.Controls
         public LottieView()
         {
             DefaultStyleKey = typeof(LottieView);
+        }
+
+        ~LottieView()
+        {
+            Dispose();
         }
 
         protected override void OnApplyTemplate()
@@ -96,22 +104,33 @@ namespace Unigram.Controls
 
         private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
-            if (_animation == null)
+            var animation = _animation;
+            if (animation == null || _animationIsCaching)
             {
                 return;
             }
 
             var index = _index;
-            var framesPerUpdate = _limitFps ? _animation.FrameRate < 60 ? 1 : 2 : 1;
+            var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
 
             using (var bitmap = _animation.RenderSync(sender, index, 256, 256))
             {
                 args.DrawingSession.DrawImage(bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
             }
 
-            if (_animation is CachedAnimation animation && !animation.IsCached)
+            if (!animation.IsCached)
             {
-                animation.CreateCache(256, 256);
+                _animationIsCached = true;
+                _animationIsCaching = true;
+
+                ThreadPool.QueueUserWorkItem(state =>
+                {
+                    if (state is CachedAnimation cached)
+                    {
+                        cached.CreateCache(256, 256);
+                        _animationIsCaching = false;
+                    }
+                }, animation);
             }
 
             IndexChanged?.Invoke(this, index);
@@ -137,9 +156,9 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (index + framesPerUpdate < _animation.TotalFrame)
+            if (index + framesPerUpdate < _animationTotalFrame)
             {
-                PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animation.TotalFrame)));
+                PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animationTotalFrame)));
 
                 _index += framesPerUpdate;
             }
@@ -194,7 +213,6 @@ namespace Unigram.Controls
                 canvas.Paused = true;
                 canvas.ResetElapsedTime();
 
-                _animation = null;
                 Dispose();
                 return;
             }
@@ -205,7 +223,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var animation = LoadFromFile(newValue, /*_isLoopingEnabled &&*/ _isCachingEnabled);
+            var animation = CachedAnimation.LoadFromFile(newValue, true, _limitFps, ColorReplacements);
             if (animation == null)
             {
                 // The app can't access the specified file
@@ -214,6 +232,11 @@ namespace Unigram.Controls
 
             _source = newValue;
             _animation = animation;
+
+            _animationIsCached = animation.IsCached;
+            _animationFrameRate = animation.FrameRate;
+            _animationTotalFrame = animation.TotalFrame;
+
             _index = 0;
 
             var update = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
@@ -281,16 +304,6 @@ namespace Unigram.Controls
             }
 
             canvas.Invalidate();
-        }
-
-        private IAnimation LoadFromFile(string path, bool cache)
-        {
-            if (cache)
-            {
-                return CachedAnimation.LoadFromFile(path, true, _limitFps, ColorReplacements);
-            }
-
-            return Animation.LoadFromFile(path);
         }
 
         private string UriToPath(Uri uri)
