@@ -84,6 +84,10 @@ namespace Unigram.ViewModels.SignIn
                     Delegate?.UpdateQrCodeMode(QrCodeMode.Primary);
                 }
             }
+            else if (authState is AuthorizationStateWaitCode && mode != NavigationMode.Refresh)
+            {
+                Delegate?.UpdateQrCodeMode(QrCodeMode.Disabled);
+            }
 
             return Task.CompletedTask;
         }
