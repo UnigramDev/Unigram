@@ -65,7 +65,7 @@
             AllowFocusOnInteraction="False"
             CheckedGlyph="&#xE943;"
             UncheckedGlyph="&#xE943;"
-            CheckedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+            CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
             IsOneWay="False"
             FontSize="16"/>
 
