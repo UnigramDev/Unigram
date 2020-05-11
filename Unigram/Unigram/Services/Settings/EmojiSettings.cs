@@ -10,11 +10,20 @@ namespace Unigram.Services.Settings
 {
     public class EmojiSettings : SettingsServiceBase
     {
+        private readonly string[] _modifiers = new string[]
+        {
+            "\uD83C\uDFFB" /* emoji modifier fitzpatrick type-1-2 */,
+            "\uD83C\uDFFC" /* emoji modifier fitzpatrick type-3 */,
+            "\uD83C\uDFFD" /* emoji modifier fitzpatrick type-4 */,
+            "\uD83C\uDFFE" /* emoji modifier fitzpatrick type-5 */,
+            "\uD83C\uDFFF" /* emoji modifier fitzpatrick type-6 */
+        };
+
         private Dictionary<string, int> _emojiUseHistory = new Dictionary<string, int>();
         private List<string> _recentEmoji = new List<string>();
         private bool _recentEmojiLoaded;
 
-        private const int MAX_RECENT_EMOJI_COUNT = 48;
+        private const int MAX_RECENT_EMOJI_COUNT = 35;
 
         public EmojiSettings()
             : base(ApplicationData.Current.LocalSettings.CreateContainer("Emoji", ApplicationDataCreateDisposition.Always))
@@ -39,6 +48,11 @@ namespace Unigram.Services.Settings
 
         public void AddRecentEmoji(string code)
         {
+            foreach (var modifier in _modifiers)
+            {
+                code = code.Replace(modifier, string.Empty);
+            }
+
             _emojiUseHistory.TryGetValue(code, out int count);
 
             if (count == 0 && _emojiUseHistory.Count >= MAX_RECENT_EMOJI_COUNT)

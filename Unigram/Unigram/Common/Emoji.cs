@@ -351,7 +351,8 @@ namespace Unigram.Common
                         last += text[i + 1];
                     }
 
-                    joiner = IsRegionalIndicator(text, i);
+                    joiner = IsRegionalIndicator(text, i) && last.Length == 2;
+                    joiner = joiner || (IsTagIndicator(text, i + 2) || IsTagIndicator(text, i));
                     i++;
                 }
                 else if (text[i] == 0x200D) // zero width joiner
@@ -372,11 +373,16 @@ namespace Unigram.Common
                 {
                     last += text[i];
                 }
+                else if (i > 0 && text[i - 1] == 0x200D)
+                {
+                    last += text[i];
+                }
                 else
                 {
                     if (last.Length > 0)
                     {
                         yield return last;
+                        last = string.Empty;
                     }
 
                     if (i + 2 < text.Length && IsSkinModifierCharacter(text, i + 1))
@@ -419,6 +425,32 @@ namespace Unigram.Common
         public static bool IsModifierCharacter(string s, int index)
         {
             return index + 1 < s.Length && s[index + 1] == '\uFE0F';
+        }
+
+        public static bool IsTagIndicator(string s, int index)
+        {
+            if (index + 2 > s.Length)
+            {
+                return false;
+            }
+
+            if (IsTagIndicator(s[index], s[index + 1]))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsTagIndicator(char highSurrogate, char lowSurrogate)
+        {
+            if (char.IsHighSurrogate(highSurrogate) && char.IsLowSurrogate(lowSurrogate))
+            {
+                var utf32 = char.ConvertToUtf32(highSurrogate, lowSurrogate);
+                return utf32 >= 0xE0061 && utf32 <= 0xE007A;
+            }
+
+            return false;
         }
 
         public static bool IsRegionalIndicator(string s, int index)
