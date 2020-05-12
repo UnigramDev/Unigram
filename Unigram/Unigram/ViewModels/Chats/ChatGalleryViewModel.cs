@@ -81,6 +81,7 @@ namespace Unigram.ViewModels.Chats
                         }
                     }
 
+                    RaisePropertyChanged(() => Position);
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
@@ -118,6 +119,7 @@ namespace Unigram.ViewModels.Chats
                         }
                     }
 
+                    RaisePropertyChanged(() => Position);
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
@@ -155,6 +157,7 @@ namespace Unigram.ViewModels.Chats
                         }
                     }
 
+                    RaisePropertyChanged(() => Position);
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
