@@ -611,7 +611,7 @@ namespace Unigram.Controls.Views
 
             CommentPanel.Visibility = ViewModel.SelectedItems.Count > 0 && ViewModel.IsCommentEnabled ? Visibility.Visible : Visibility.Collapsed;
 
-            IsPrimaryButtonEnabled = ViewModel.SelectedItems.Count > 0;
+            IsPrimaryButtonEnabled = ViewModel.AllowEmptySelection || ViewModel.SelectedItems.Count > 0;
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)

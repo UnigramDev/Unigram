@@ -262,14 +262,15 @@ namespace Unigram.ViewModels.Settings
             }
 
             var dialog = ShareView.GetForCurrentView();
+            dialog.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
             {
                 case UserPrivacySettingAllowCalls allowCalls:
                 case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
                 case UserPrivacySettingAllowChatInvites allowChatInvites:
-                //case UserPrivacySettingShowProfilePhoto showProfilePhoto:
-                //case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
+                case UserPrivacySettingShowProfilePhoto showProfilePhoto:
+                case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
                 default:
                     dialog.ViewModel.Title = Strings.Resources.AlwaysAllow;
                     break;
@@ -332,8 +333,8 @@ namespace Unigram.ViewModels.Settings
                 case UserPrivacySettingAllowCalls allowCalls:
                 case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
                 case UserPrivacySettingAllowChatInvites allowChatInvites:
-                //case UserPrivacySettingShowProfilePhoto showProfilePhoto:
-                //case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
+                case UserPrivacySettingShowProfilePhoto showProfilePhoto:
+                case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
                 default:
                     dialog.ViewModel.Title = Strings.Resources.NeverAllow;
                     break;
