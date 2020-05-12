@@ -131,8 +131,22 @@ namespace Unigram.Controls.Drawers
             var animation = position.Item as Animation;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.AnimationSendCommand, animation, Strings.Resources.SendGifPreview, new FontIcon { Glyph = Icons.Send, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
             flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+
+            if (!ViewModel.IsSchedule)
+            {
+                var chat = ViewModel.Chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var self = ViewModel.CacheService.IsSavedMessages(chat);
+
+                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, null, true)), animation, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
+                //flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, true, null)), animation, self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
+            }
 
             args.ShowAt(flyout, element);
         }

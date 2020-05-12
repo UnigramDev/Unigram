@@ -459,7 +459,6 @@ namespace Unigram.Controls.Drawers
             var sticker = element.Tag as StickerViewModel;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.StickerSendCommand, sticker.Get(), Strings.Resources.SendStickerPreview, new FontIcon { Glyph = Icons.Send, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
             flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, sticker.Get(), Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Stickers });
 
             if (ViewModel.ProtoService.IsStickerFavorite(sticker.StickerValue.Id))
@@ -469,6 +468,21 @@ namespace Unigram.Controls.Drawers
             else
             {
                 flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker.Get(), Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Favorite });
+            }
+
+            if (!ViewModel.IsSchedule)
+            {
+                var chat = ViewModel.Chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var self = ViewModel.CacheService.IsSavedMessages(chat);
+
+                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), sticker.Get(), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
+                //flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, true, null)), sticker.Get(), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
             }
 
             args.ShowAt(flyout, element);
