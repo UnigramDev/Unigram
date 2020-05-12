@@ -203,6 +203,13 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _allowEmptySelection = false;
+        public bool AllowEmptySelection
+        {
+            get => _allowEmptySelection;
+            set => Set(ref _allowEmptySelection, value);
+        }
+
         private string _title = Strings.Resources.ShareSendTo;
         public string Title
         {

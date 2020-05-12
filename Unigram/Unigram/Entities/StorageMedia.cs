@@ -198,7 +198,11 @@ namespace Unigram.Entities
 
         public static async Task<StorageMedia> CreateAsync(StorageFile file, bool selected)
         {
-            if (file.ContentType.Equals("video/mp4"))
+            if (file == null)
+            {
+                return null;
+            }
+            else if (file.ContentType.Equals("video/mp4"))
             {
                 return await StorageVideo.CreateAsync(file, selected);
             }
