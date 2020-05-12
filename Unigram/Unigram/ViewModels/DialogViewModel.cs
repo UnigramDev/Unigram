@@ -1273,9 +1273,9 @@ namespace Unigram.ViewModels
                 await ProcessEmojiAsync(chat, messages);
             }
 
+            ProcessReplies(chat, messages);
             ProcessAlbums(chat, messages);
             ProcessFiles(chat, messages);
-            ProcessReplies(chat, messages);
         }
 
         private async Task ProcessEmojiAsync(Chat chat, IList<MessageViewModel> messages)
@@ -1591,8 +1591,6 @@ namespace Unigram.ViewModels
 
             foreach (var message in slice)
             {
-                message.ReplyToMessageState = ReplyToMessageState.Loading;
-
                 var replyId = 0L;
 
                 if (message.Content is MessagePinMessage pinMessage)
@@ -1629,6 +1627,7 @@ namespace Unigram.ViewModels
 
                     if (enqueue && !replies.Contains(replyId))
                     {
+                        message.ReplyToMessageState = ReplyToMessageState.Loading;
                         replies.Add(replyId);
                     }
                 }
