@@ -81,7 +81,6 @@ namespace Unigram.ViewModels.Chats
                         }
                     }
 
-                    RaisePropertyChanged(() => Position);
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
@@ -119,7 +118,6 @@ namespace Unigram.ViewModels.Chats
                         }
                     }
 
-                    RaisePropertyChanged(() => Position);
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
@@ -157,7 +155,6 @@ namespace Unigram.ViewModels.Chats
                         }
                     }
 
-                    RaisePropertyChanged(() => Position);
                     OnSelectedItemChanged(_selectedItem);
                 }
             }
@@ -166,38 +163,5 @@ namespace Unigram.ViewModels.Chats
         public override int Position => _isMirrored ? base.Position : TotalItems - (Items.Count - base.Position);
 
         public override MvxObservableCollection<GalleryContent> Group => _group;
-
-        protected override void OnSelectedItemChanged(GalleryContent item)
-        {
-            //var messageItem = item as GalleryLegacyMessageItem;
-            //if (messageItem == null)
-            //{
-            //    return;
-            //}
-
-            //var message = messageItem.Message as TLMessage;
-            //if (message == null)
-            //{
-            //    return;
-            //}
-
-            //if (message.GroupedId is long group)
-            //{
-            //    var all = Items.Where(x => x is GalleryLegacyMessageItem msg && msg.Message.GroupedId == group).ToList();
-            //    if (all.Count == _group.Count && group == _current)
-            //    {
-            //        return;
-            //    }
-
-            //    _current = group;
-            //    _group.ReplaceWith(all);
-
-            //    RaisePropertyChanged(() => SelectedItem);
-            //}
-            //else
-            //{
-            //    _group.Clear();
-            //}
-        }
     }
 }

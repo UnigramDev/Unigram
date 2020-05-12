@@ -90,7 +90,6 @@ namespace Unigram.ViewModels.Gallery
                 Set(ref _selectedItem, value);
                 OnSelectedItemChanged(value);
                 //RaisePropertyChanged(() => SelectedIndex);
-                RaisePropertyChanged(() => Position);
             }
         }
 
@@ -143,7 +142,10 @@ namespace Unigram.ViewModels.Gallery
         protected virtual void LoadPrevious() { }
         protected virtual void LoadNext() { }
 
-        protected virtual void OnSelectedItemChanged(GalleryContent item) { }
+        protected virtual void OnSelectedItemChanged(GalleryContent item)
+        {
+            RaisePropertyChanged(() => Position);
+        }
 
         public virtual bool CanDelete
         {
