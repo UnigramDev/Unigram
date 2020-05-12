@@ -42,6 +42,8 @@ namespace Unigram.Controls.Drawers
         {
             this.InitializeComponent();
 
+            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
 
             Separator.SizeChanged += (s, args) =>

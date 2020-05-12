@@ -25,7 +25,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Border Grid.Row="1">
             <TextBox x:Name="FieldStickers" PlaceholderText="{CustomResource SearchStickersHint}" TextChanged="FieldStickers_TextChanged" Margin="12,8"/>
@@ -120,7 +119,7 @@
             </GridView.ItemsPanel>
         </controls:ZoomableGridView>
                                 
-        <Grid x:Name="ToolbarContainer" Grid.Row="3">
+        <Grid x:Name="ToolbarContainer">
             <Border x:Name="Separator"/>
             <!--
                     Background="{ThemeResource PageSubHeaderBackgroundBrush}"-->

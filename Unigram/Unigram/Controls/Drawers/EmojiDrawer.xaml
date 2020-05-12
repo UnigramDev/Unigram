@@ -17,7 +17,7 @@
         <CollectionViewSource x:Name="EmojiCollection" IsSourceGrouped="True" ItemsPath="Items"/>
 
         <DataTemplate x:Key="EmojiTemplate" x:DataType="common:EmojiData">
-            <TextBlock x:Phase="0" Text="{x:Bind Value, Mode=OneWay}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+            <TextBlock x:Phase="0" Text="{x:Bind Value, Mode=OneTime}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
         </DataTemplate>
         
         <DataTemplate x:Key="EmojiSkinTemplate" x:DataType="common:EmojiSkinData">
@@ -90,26 +90,10 @@
     </UserControl.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="NarrowState"/>
-                <VisualState x:Name="SidebarState">
-                    <VisualState.Setters>
-                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="3"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="FilledState">
-                    <VisualState.Setters>
-                        <Setter Target="ToolbarContainer.(Grid.Row)" Value="3"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Border Grid.Row="1">
             <TextBox x:Name="FieldEmoji" PlaceholderText="{CustomResource SearchEmojiHint}" TextChanged="FieldEmoji_TextChanged" Margin="12,8"/>
@@ -192,7 +176,8 @@
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </GridView>
-        <Grid x:Name="ToolbarContainer" Grid.Row="0">
+        
+        <Grid x:Name="ToolbarContainer">
             <Border x:Name="Separator"/>
             <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                           VerticalScrollBarVisibility="Disabled"

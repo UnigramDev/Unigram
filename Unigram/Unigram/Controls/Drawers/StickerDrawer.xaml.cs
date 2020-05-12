@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using StickerViewModel = Unigram.ViewModels.Dialogs.StickerViewModel;
 using StickerSetViewModel = Unigram.ViewModels.Dialogs.StickerSetViewModel;
+using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Drawers
 {
@@ -41,6 +42,8 @@ namespace Unigram.Controls.Drawers
         public StickerDrawer()
         {
             InitializeComponent();
+
+            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             _handler = new AnimatedListHandler<StickerViewModel>(Stickers);
             _handler.DownloadFile = DownloadFile;
