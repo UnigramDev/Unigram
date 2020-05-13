@@ -194,16 +194,16 @@ namespace Unigram.Common
 
         public static bool IsTelegramUrl(Uri uri)
         {
-            if (Constants.TelegramHosts.Contains(uri.Host))
+            var host = uri.Host;
+            if (host.StartsWith("www."))
+            {
+                host = host.Substring("www.".Length);
+            }
+
+            if (Constants.TelegramHosts.Contains(host))
             {
                 return true;
             }
-
-            //var config = InMemoryCacheService.Current.GetConfig();
-            //if (config != null && Uri.TryCreate(config.MeUrlPrefix, UriKind.Absolute, out Uri meUri))
-            //{
-            //    return uri.Host.Equals(meUri.Host, StringComparison.OrdinalIgnoreCase);
-            //}
 
             return IsTelegramScheme(uri);
         }
