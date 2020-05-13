@@ -114,5 +114,15 @@ namespace Unigram.Converters
         public const string Statistics = "\uE9D9";
 
         public const string Add = "\uE710";
+
+        public const string EmojiRecents = "\uE911";
+        public const string Emoji1 = "\uE920";
+        public const string Emoji2 = "\uE921";
+        public const string Emoji3 = "\uE922";
+        public const string Emoji4 = "\uE923";
+        public const string Emoji5 = "\uE924";
+        public const string Emoji6 = "\uE925";
+        public const string Emoji7 = "\uE926";
+        public const string Emoji8 = "\uE927";
     }
 }

@@ -322,10 +322,11 @@
                                     Background="Transparent">
                                     <TextBlock
                                         Text="{x:Bind Glyph}"
+                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                        FontSize="16"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        IsColorFontEnabled="False"
-                                        TextLineBounds="TrimToBaseline,TrimToCapHeight"/>
+                                        IsColorFontEnabled="False"/>
                                 </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -190,7 +191,7 @@ namespace Unigram.Common
             var recent = new EmojiGroup
             {
                 Title = Strings.Resources.RecentStickers,
-                Glyph = "\uD83D\uDD52",
+                Glyph = Icons.EmojiRecents,
                 Items = SettingsService.Current.Emoji.RecentEmoji.Select(x =>
                 {
                     if (EmojiGroupInternal._skinEmojis.Contains(x))
