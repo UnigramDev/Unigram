@@ -121,14 +121,6 @@ namespace Unigram.Common
             }
         }
 
-        public static void NavigateToWallet(this INavigationService service, string address = null)
-        {
-            if (service is TLNavigationService serviceEx)
-            {
-                serviceEx.NavigateToWallet(address);
-            }
-        }
-
         public static void NavigateToInstant(this INavigationService service, string url)
         {
             if (service is TLNavigationService serviceEx)

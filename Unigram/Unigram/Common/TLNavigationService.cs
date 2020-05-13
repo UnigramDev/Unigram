@@ -15,9 +15,6 @@ using Windows.UI.Core;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-#if INCLUDE_WALLET
-using Unigram.Views.Wallet;
-#endif
 
 namespace Unigram.Common
 {
@@ -73,98 +70,6 @@ namespace Unigram.Common
             {
                 Navigate(typeof(InstantPage), url);
             }
-        }
-
-        public async void NavigateToWallet(string address = null)
-        {
-#if INCLUDE_WALLET
-            Type page;
-            if (_protoService.Options.WalletPublicKey != null)
-            {
-                try
-                {
-                    var vault = new PasswordVault();
-                    var credential = vault.Retrieve($"{_protoService.SessionId}", _protoService.Options.WalletPublicKey);
-                }
-                catch
-                {
-                    // Credentials for this account wallet don't exist anymore.
-                    _protoService.Options.WalletPublicKey = null;
-                }
-            }
-
-            if (_protoService.Options.WalletPublicKey != null)
-            {
-                if (address == null)
-                {
-                    page = typeof(WalletPage);
-                }
-                else
-                {
-                    page = typeof(WalletSendPage);
-                }
-            }
-            else
-            {
-                page = typeof(WalletCreatePage);
-            }
-
-            //page = typeof(WalletCreatePage);
-
-            //if (ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow"))
-            //{
-            //    var window = _walletWindow;
-            //    if (window == null)
-            //    {
-            //        var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, 0, "0", false);
-            //        var frame = BootStrapper.Current.CreateRootElement(nav);
-            //        nav.Navigate(page, address);
-
-            //        window = await AppWindow.TryCreateAsync();
-            //        window.PersistedStateId = "Wallet";
-            //        window.TitleBar.ExtendsContentIntoTitleBar = true;
-            //        window.Closed += (s, args) =>
-            //        {
-            //            _walletWindow = null;
-            //            frame = null;
-            //            window = null;
-            //        };
-
-            //        _walletWindow = window;
-            //        ElementCompositionPreview.SetAppWindowContent(window, frame);
-            //    }
-
-            //    window.RequestSize(new Windows.Foundation.Size(360, 640));
-            //    await window.TryShowAsync();
-            //    window.RequestSize(new Windows.Foundation.Size(360, 640));
-            //    window.RequestMoveAdjacentToCurrentView();
-            //}
-
-            //return;
-
-            if (_walletLifetime == null)
-            {
-                _walletLifetime = await OpenAsync(page, address);
-                _walletLifetime.Released += (s, args) =>
-                {
-                    _walletLifetime = null;
-                };
-
-                if (_walletLifetime.NavigationService is NavigationService service)
-                {
-                    service.SerializationService = TLSerializationService.Current;
-                }
-            }
-            else
-            {
-                await _walletLifetime.CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    _walletLifetime.NavigationService.Navigate(page, address);
-                });
-
-                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(_walletLifetime.Id, ViewSizePreference.Default, ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), ViewSizePreference.UseHalf);
-            }
-#endif
         }
 
         public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)

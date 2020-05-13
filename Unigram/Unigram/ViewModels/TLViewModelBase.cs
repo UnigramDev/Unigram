@@ -84,19 +84,4 @@ namespace Unigram.ViewModels
             }
         }
     }
-
-#if INCLUDE_WALLET
-    public class TonViewModelBase : TLViewModelBase
-    {
-        private readonly ITonService _tonService;
-
-        public TonViewModelBase(ITonService tonService, IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
-        {
-            _tonService = tonService;
-        }
-
-        public ITonService TonService => _tonService;
-    }
-#endif
 }

@@ -382,10 +382,6 @@ namespace Unigram.Views.Host
                     {
                         content.FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
                     }
-                    else if (destination == RootDestination.Wallet)
-                    {
-                        content.FontFamily = new FontFamily("Segoe UI Emoji");
-                    }
                     else
                     {
                         content.FontFamily = new FontFamily("Segoe MDL2 Assets");
@@ -428,13 +424,6 @@ namespace Unigram.Views.Host
                         content.Text = Strings.Resources.Settings;
                         content.Glyph = "\uE115";
                         break;
-
-#if INCLUDE_WALLET
-                    case RootDestination.Wallet:
-                        content.Text = Strings.Resources.Wallet;
-                        content.Glyph = "\uD83D\uDC8E";
-                        break;
-#endif
 
                     case RootDestination.SavedMessages:
                         content.Text = Strings.Resources.SavedMessages;
@@ -595,8 +584,6 @@ namespace Unigram.Views.Host
         Settings,
 
         InviteFriends,
-
-        Wallet,
 
         SavedMessages,
         News,

@@ -18,9 +18,6 @@ using Unigram.ViewModels.Settings.Privacy;
 using Unigram.ViewModels.SignIn;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
-#if INCLUDE_WALLET
-using Unigram.ViewModels.Wallet;
-#endif
 using Unigram.Views;
 using Windows.Storage;
 
@@ -95,12 +92,6 @@ namespace Unigram
                     .WithParameter("online", session == SettingsService.Current.ActiveSession)
                     .As<IProtoService, ICacheService>()
                     .SingleInstance();
-#if INCLUDE_WALLET
-                builder.RegisterType<TonService>()
-                    .WithParameter("session", session)
-                    .As<ITonService>()
-                    .SingleInstance();
-#endif
                 builder.RegisterType<EncryptionService>()
                     .WithParameter("session", session)
                     .As<IEncryptionService>()
@@ -258,7 +249,7 @@ namespace Unigram
                 builder.RegisterType<SettingsVoIPViewModel>();
                 builder.RegisterType<BackgroundViewModel>();
                 builder.RegisterType<AttachedStickersViewModel>();
-                builder.RegisterType<ViewModels.StickerSetViewModel>();
+                builder.RegisterType<StickerSetViewModel>();
                 builder.RegisterType<PaymentFormStep1ViewModel>();
                 builder.RegisterType<PaymentFormStep2ViewModel>();
                 builder.RegisterType<PaymentFormStep3ViewModel>();
@@ -272,21 +263,6 @@ namespace Unigram
                 builder.RegisterType<ChatsNearbyViewModel>();
                 builder.RegisterType<FoldersViewModel>();
                 builder.RegisterType<FolderViewModel>();
-
-#if INCLUDE_WALLET
-                builder.RegisterType<WalletViewModel>();
-                builder.RegisterType<WalletSettingsViewModel>();
-                builder.RegisterType<WalletCreateViewModel>();
-                builder.RegisterType<WalletTestViewModel>();
-                builder.RegisterType<WalletImportViewModel>();
-                builder.RegisterType<WalletExportViewModel>();
-                builder.RegisterType<WalletReceiveViewModel>();
-                builder.RegisterType<WalletInvoiceViewModel>();
-                builder.RegisterType<WalletSendViewModel>();
-                builder.RegisterType<WalletSendingViewModel>();
-                builder.RegisterType<WalletTransactionViewModel>();
-                builder.RegisterType<WalletInfoViewModel>();
-#endif
 
                 return builder.Build();
             });
