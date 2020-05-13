@@ -20,23 +20,18 @@ namespace Unigram.Common
 {
     public class TLNavigationService : NavigationService
     {
-        private readonly IProtoService _protoService;
         private readonly IPasscodeService _passcodeService;
 
-        private ViewLifetimeControl _walletLifetime;
-
         private Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
-        private AppWindow _walletWindow;
-
         public TLNavigationService(IProtoService protoService, Frame frame, int session, string id)
             : base(frame, session, id)
         {
-            _protoService = protoService;
+            ProtoService = protoService;
             _passcodeService = TLContainer.Current.Passcode;
         }
 
-        public int SessionId => _protoService.SessionId;
-        public IProtoService ProtoService => _protoService;
+        public new int SessionId => ProtoService.SessionId;
+        public IProtoService ProtoService { get; }
 
         public async void NavigateToInstant(string url)
         {
@@ -81,7 +76,7 @@ namespace Unigram.Common
 
             if (chat.Type is ChatTypePrivate privata)
             {
-                var user = _protoService.GetUser(privata.UserId);
+                var user = ProtoService.GetUser(privata.UserId);
                 if (user == null)
                 {
                     return;
@@ -96,7 +91,7 @@ namespace Unigram.Common
             }
             else if (chat.Type is ChatTypeSupergroup super)
             {
-                var supergroup = _protoService.GetSupergroup(super.SupergroupId);
+                var supergroup = ProtoService.GetSupergroup(super.SupergroupId);
                 if (supergroup == null)
                 {
                     return;
@@ -182,10 +177,10 @@ namespace Unigram.Common
 
         public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
         {
-            var chat = _protoService.GetChat(chatId);
+            var chat = ProtoService.GetChat(chatId);
             if (chat == null)
             {
-                var response = await _protoService.SendAsync(new GetChat(chatId));
+                var response = await ProtoService.SendAsync(new GetChat(chatId));
                 if (response is Chat result)
                 {
                     chat = result;
