@@ -116,11 +116,7 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="NarrowState"/>
-                <VisualState x:Name="SidebarState">
-                    <VisualState.Setters>
-                        <Setter Target="Header.(Grid.Row)" Value="0"/>
-                    </VisualState.Setters>
-                </VisualState>
+                <VisualState x:Name="SidebarState"/>
                 <VisualState x:Name="FilledState">
                     <VisualState.Setters>
                         <Setter Target="Show.Width" Value="362*"/>
@@ -133,8 +129,6 @@
                         <Setter Target="ShowRow.Height" Value="736*"/>
                         <Setter Target="ShowRow.MaxHeight" Value="736"/>
                         <Setter Target="HideRow.Height" Value="*"/>
-
-                        <Setter Target="Header.(Grid.Row)" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
