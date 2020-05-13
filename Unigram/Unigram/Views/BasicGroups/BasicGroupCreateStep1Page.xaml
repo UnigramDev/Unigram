@@ -59,7 +59,7 @@
                     <controls:HeaderedControl
                         Header="{CustomResource ChannelMembers}">
                         <controls:BadgeButton
-                            Content="{CustomResource AddSubscriber}"
+                            Content="{CustomResource ChannelAddMembers}"
                             Command="{x:Bind ViewModel.AddCommand}"
                             Style="{StaticResource TextGlyphButtonStyle}"
                             Glyph="&#xE8FA;"/>
