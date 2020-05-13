@@ -103,7 +103,7 @@ namespace Unigram.Controls
             }
 
             StickersRoot.UpdateFile(file);
-            //AnimationsRoot.UpdateFile(file);
+            AnimationsRoot.UpdateFile(file);
         }
 
         private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
