@@ -54,7 +54,9 @@
             <controls:GlyphButton
                 Click="Cancel_Click"
                 Glyph="&#xE10A;"
-                Radius="13,4,4,13"/>
+                Radius="13,4,4,13"
+                AutomationProperties.Name="{CustomResource Close}"
+                ToolTipService.ToolTip="{CustomResource Close}"/>
 
             <Rectangle
                 Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
@@ -157,6 +159,8 @@
                 Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                 HorizontalAlignment="Right"
                 Radius="4,13,13,4"
+                AutomationProperties.Name="{CustomResource Done}"
+                ToolTipService.ToolTip="{CustomResource Done}"                
                 Grid.Column="4"/>
 
         </Grid>
