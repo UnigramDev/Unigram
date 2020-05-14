@@ -72,3 +72,33 @@ Only major updates will be posted here. If you care about minor updates you shou
 <a name="wiki"></a>
 ## Wiki
 For additional information (keyboard shortcuts, other contact information, FAQ, missing features, build instructions and other stuff) you can check [Unigram wiki](https://github.com/UnigramDev/Unigram/wiki).
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/UnigramDev/Unigram/graphs/contributors"><img src="https://opencollective.com/Unigram/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/Unigram/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/Unigram"><img src="https://opencollective.com/Unigram/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/Unigram/contribute)]
+
+<a href="https://opencollective.com/Unigram/organization/0/website"><img src="https://opencollective.com/Unigram/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/1/website"><img src="https://opencollective.com/Unigram/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/2/website"><img src="https://opencollective.com/Unigram/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/3/website"><img src="https://opencollective.com/Unigram/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/4/website"><img src="https://opencollective.com/Unigram/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/5/website"><img src="https://opencollective.com/Unigram/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/6/website"><img src="https://opencollective.com/Unigram/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/7/website"><img src="https://opencollective.com/Unigram/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/8/website"><img src="https://opencollective.com/Unigram/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/Unigram/organization/9/website"><img src="https://opencollective.com/Unigram/organization/9/avatar.svg"></a>
