@@ -26,26 +26,22 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="{CustomResource NetworkUsage}"/>
+        <controls:PageHeader 
+            Text="{CustomResource NetworkUsage}"
+            Grid.Row="0"/>
 
         <microsoft:NavigationView
             x:Name="Header"
+            PaneDisplayMode="Top"
             MenuItemsSource="{x:Bind ViewModel.Items}"
             SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-            IsBackEnabled="True"
-            OverflowLabelMode="NoLabel"
-            PaneDisplayMode="Top"
-            IsSettingsVisible="False"
-            IsBackButtonVisible="Visible"
-            BackRequested="Header_BackRequested"
-            Grid.RowSpan="2">
-            
+            IsBackButtonVisible="Collapsed" IsBackEnabled="False" IsSettingsVisible="False"
+            Grid.Row="1">
             <ScrollViewer
                 x:Name="ScrollingHost"
                 Background="{ThemeResource PageBackgroundDarkBrush}"
                 VerticalScrollBarVisibility="Auto"
-                VerticalScrollMode="Auto"
-                Grid.Row="1">
+                VerticalScrollMode="Auto">
                 <StackPanel>
                     <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
                         <ItemsControl.ItemTemplateSelector>
@@ -57,7 +53,7 @@
                                             <controls:BadgeButton
                                                 Content="{CustomResource BytesSent}"
                                                 Badge="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}"/>
-                                            
+
                                             <controls:BadgeButton
                                                 Content="{CustomResource BytesReceived}"
                                                 Badge="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}"/>
@@ -71,11 +67,11 @@
                                             <controls:BadgeButton
                                                 Content="{CustomResource BytesSent}"
                                                 Badge="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}"/>
-                                        
+
                                             <controls:BadgeButton
                                                 Content="{CustomResource BytesReceived}"
                                                 Badge="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}"/>
-                                        
+
                                             <controls:BadgeButton
                                                 Content="{CustomResource CallsTotalTime}"
                                                 Badge="{x:Bind Duration}"/>
