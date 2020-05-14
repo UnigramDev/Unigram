@@ -41,8 +41,6 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            Title.Text = clear ? Strings.Resources.ClearHistory : Strings.Resources.DeleteChatUser; // protoService.GetTitle(chat);
-
             var user = protoService.GetUser(chat);
             var basicGroup = protoService.GetBasicGroup(chat);
             var supergroup = protoService.GetSupergroup(chat);
@@ -162,6 +160,7 @@ namespace Unigram.Controls.Views
                 }
             }
 
+            Title.Text = PrimaryButtonText;
             SecondaryButtonText = Strings.Resources.Cancel;
         }
 
