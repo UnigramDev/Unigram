@@ -3784,6 +3784,10 @@ namespace Unigram.Views
 
                 ViewModel.LastSeen = Strings.Resources.YouLeft;
             }
+            else if (group.Status is ChatMemberStatusCreator creator && !creator.IsMember)
+            {
+                ShowAction(Strings.Resources.ChannelJoin, true);
+            }
             else
             {
                 ShowArea();

@@ -3170,6 +3170,24 @@ namespace Unigram.ViewModels
                     StartExecute();
                 }
             }
+            else if (chat.Type is ChatTypeBasicGroup basic)
+            {
+                var group = ProtoService.GetBasicGroup(basic.BasicGroupId);
+                if (group == null)
+                {
+                    return;
+                }
+
+                if (group.Status is ChatMemberStatusLeft)
+                {
+                    // Delete and exit
+                    ChatDeleteExecute();
+                }
+                else if (group.Status is ChatMemberStatusCreator creator && !creator.IsMember)
+                {
+                    JoinChannelExecute();
+                }
+            }
             else if (chat.Type is ChatTypeSupergroup super)
             {
                 var group = ProtoService.GetSupergroup(super.SupergroupId);
