@@ -99,11 +99,12 @@ namespace Unigram.Common
 
                     var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
-                    var propertySet = new BitmapPropertySet();
-                    var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
-                    propertySet.Add("ImageQuality", qualityValue);
+                    // Not using ATM, quality is too low
+                    //var propertySet = new BitmapPropertySet();
+                    //var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
+                    //propertySet.Add("ImageQuality", qualityValue);
 
-                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, resizedStream);
+                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, resizedStream/*, propertySet*/);
                     encoder.SetSoftwareBitmap(pixelData);
                     await encoder.FlushAsync();
                 }

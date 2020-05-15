@@ -889,6 +889,11 @@ namespace Unigram.Common
 
             return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
         }
+
+        public static ScrollViewer GetScrollViewer(this Pivot listViewBase)
+        {
+            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+        }
     }
 
     public static class Template10Utils

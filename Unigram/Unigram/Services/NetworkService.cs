@@ -22,12 +22,21 @@ namespace Unigram.Services
             _protoService = protoService;
 
             NetworkInformation.NetworkStatusChanged += OnNetworkStatusChanged;
-            Update(NetworkInformation.GetInternetConnectionProfile());
+
+            try
+            {
+                Update(NetworkInformation.GetInternetConnectionProfile());
+            }
+            catch { }
         }
 
         private void OnNetworkStatusChanged(object sender)
         {
-            Update(NetworkInformation.GetInternetConnectionProfile());
+            try
+            {
+                Update(NetworkInformation.GetInternetConnectionProfile());
+            }
+            catch { }
         }
 
         private void Update(ConnectionProfile profile)

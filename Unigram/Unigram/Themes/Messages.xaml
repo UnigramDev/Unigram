@@ -103,7 +103,9 @@
         </selectors:AutocompleteTemplateSelector.ItemTemplate>
         <selectors:AutocompleteTemplateSelector.StickerTemplate>
             <DataTemplate>
-                <Image Margin="4,8" Width="60" Height="60"/>
+                <Grid Padding="4,8" Width="68" Height="76">
+                    <Image/>
+                </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.StickerTemplate>
         <selectors:AutocompleteTemplateSelector.EmojiTemplate>

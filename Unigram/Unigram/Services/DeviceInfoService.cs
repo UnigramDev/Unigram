@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Windows.ApplicationModel;
-using Windows.Networking.Connectivity;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System;
 using Windows.System.Profile;
@@ -18,43 +13,28 @@ namespace Unigram.Services
         string ApplicationVersion { get; }
         string SystemVersion { get; }
         string SystemLanguageCode { get; }
-        bool IsBackground { get; }
-        string BackgroundTaskName { get; }
-        int BackgroundTaskId { get; }
     }
 
     public class DeviceInfoService : IDeviceInfoService
     {
-        public bool IsBackground
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public string BackgroundTaskName
-        {
-            get
-            {
-                return string.Empty;
-            }
-        }
-
-        public int BackgroundTaskId
-        {
-            get
-            {
-                return default(int);
-            }
-        }
+        public static string DefaultSystemManufacturer = "System manufacturer";
+        public static string DefaultSystemProductName = "System Product Name";
+        public static string DefaultSystemSku = "SKU";
 
         public string DeviceModel
         {
             get
             {
-                var info = new EasClientDeviceInformation();
-                return string.IsNullOrWhiteSpace(info.SystemProductName) ? info.FriendlyName : info.SystemProductName;
+                var deviceInfo = new EasClientDeviceInformation();
+                var systemSku = string.IsNullOrEmpty(deviceInfo.SystemSku)
+                    || DefaultSystemSku == deviceInfo.SystemSku
+                    ? null
+                    : deviceInfo.SystemSku;
+                var systemProductName = string.IsNullOrEmpty(deviceInfo.SystemProductName)
+                    || DefaultSystemProductName == deviceInfo.SystemProductName
+                    ? null
+                    : deviceInfo.SystemProductName;
+                return systemProductName ?? systemSku;
             }
         }
 
@@ -68,6 +48,13 @@ namespace Unigram.Services
                 ulong minor = (version & 0x0000FFFF00000000L) >> 32;
                 ulong build = (version & 0x00000000FFFF0000L) >> 16;
                 ulong revision = version & 0x000000000000FFFFL;
+
+                if (minor > 0)
+                {
+                    return $"Windows {major}.{minor}";
+                }
+
+                return $"Windows {major}";
                 return $"Windows {major}.{minor}.{build}.{revision}";
             }
         }
