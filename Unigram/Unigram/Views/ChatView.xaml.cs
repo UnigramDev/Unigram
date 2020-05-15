@@ -68,6 +68,9 @@ namespace Unigram.Views
         private DispatcherTimer _stickersTimer;
         private Visual _stickersPanel;
         private StickersPanelMode _stickersMode = StickersPanelMode.Collapsed;
+        private StickersPanelMode _stickersModeWide = StickersPanelMode.Sidebar;
+
+        private const double SIDEBAR_MIN_WIDTH = 380 + 320;
 
         private DispatcherTimer _elapsedTimer;
         private Visual _messageVisual;
@@ -314,6 +317,10 @@ namespace Unigram.Views
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.AnimationClick = Animations_ItemClick;
 
+            _stickersModeWide = SettingsService.Current.IsSidebarOpen
+                ? StickersPanelMode.Sidebar
+                : StickersPanelMode.Collapsed;
+
             _stickersPanel = ElementCompositionPreview.GetElementVisual(StickersPanel.Presenter);
 
             _stickersTimer = new DispatcherTimer();
@@ -432,12 +439,13 @@ namespace Unigram.Views
                 _stickersTimer.Stop();
             }
 
-            if (CurrentPanelMode == StickersPanelMode.Sidebar || StickersPanel.Visibility == Visibility.Visible)
+            if (_stickersMode == StickersPanelMode.Sidebar || StickersPanel.Visibility == Visibility.Visible)
             {
                 return;
             }
 
             _stickersMode = StickersPanelMode.Overlay;
+            SettingsService.Current.IsSidebarOpen = false;
 
             VisualStateManager.GoToState(this, "FilledState", false);
             StickersPanel.SetView(StickersPanelMode.Overlay);
@@ -1520,7 +1528,9 @@ namespace Unigram.Views
 #if !DEBUG
                 return StickersPanelMode.Overlay;
 #endif
-                return ActualWidth >= 380 + 320 ? StickersPanelMode.Sidebar : StickersPanelMode.Overlay;
+                return ActualWidth >= SIDEBAR_MIN_WIDTH
+                    ? StickersPanelMode.Sidebar
+                    : StickersPanelMode.Overlay;
             }
         }
 
@@ -1537,7 +1547,7 @@ namespace Unigram.Views
             }
         }
 
-        private async void ShowHideDockedStickersPanel()
+        private void ShowHideDockedStickersPanel(bool? show = null)
         {
             VisualStateManager.GoToState(this, "SidebarState", false);
             StickersPanel.SetView(StickersPanelMode.Sidebar);
@@ -1548,15 +1558,15 @@ namespace Unigram.Views
                 return;
             }
 
-            var restricted = await ViewModel.VerifyRightsAsync(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted);
-            if (restricted)
-            {
-                return;
-            }
-
             if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Overlay)
             {
+                if (show == false)
+                {
+                    return;
+                }
+
                 _stickersMode = StickersPanelMode.Sidebar;
+                SettingsService.Current.IsSidebarOpen = true;
 
                 Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Programmatic);
@@ -1567,6 +1577,13 @@ namespace Unigram.Views
                 StickersPanel.Refresh();
 
                 ViewModel.OpenStickersCommand.Execute(null);
+
+                _stickersPanel.StopAnimation("Opacity");
+                _stickersPanel.Clip?.StopAnimation("LeftInset");
+                _stickersPanel.Clip?.StopAnimation("TopInset");
+
+                _stickersPanel.Opacity = 1;
+                _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip();
 
                 //await StickersPanel.UpdateLayoutAsync();
 
@@ -1594,6 +1611,11 @@ namespace Unigram.Views
             }
             else
             {
+                if (show == true)
+                {
+                    return;
+                }
+
                 Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Keyboard);
 
@@ -2781,6 +2803,7 @@ namespace Unigram.Views
                 }
 
                 _stickersMode = StickersPanelMode.Collapsed;
+                SettingsService.Current.IsSidebarOpen = false;
 
                 var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 batch.Completed += (s, args) =>
@@ -2819,6 +2842,7 @@ namespace Unigram.Views
             else
             {
                 _stickersMode = StickersPanelMode.Collapsed;
+                SettingsService.Current.IsSidebarOpen = false;
 
                 StickersPanel.MinHeight = 260;
                 StickersPanel.MaxHeight = 360;
@@ -2838,6 +2862,33 @@ namespace Unigram.Views
                     case Services.Settings.StickersTab.Stickers:
                         ButtonStickers.Glyph = "\uF4AA";
                         break;
+                }
+            }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width > e.PreviousSize.Width && e.NewSize.Width >= SIDEBAR_MIN_WIDTH && e.PreviousSize.Width < SIDEBAR_MIN_WIDTH)
+            {
+                if (_stickersModeWide == StickersPanelMode.Sidebar)
+                {
+                    ShowHideDockedStickersPanel(true);
+                }
+                else
+                {
+                    Collapse_Click(null, null);
+                }
+            }
+            else if (e.NewSize.Width < e.PreviousSize.Width && e.NewSize.Width < SIDEBAR_MIN_WIDTH && e.PreviousSize.Width >= SIDEBAR_MIN_WIDTH)
+            {
+                if (_stickersMode == StickersPanelMode.Sidebar)
+                {
+                    _stickersModeWide = StickersPanelMode.Sidebar;
+                    Collapse_Click(null, null);
+                }
+                else
+                {
+                    _stickersModeWide = StickersPanelMode.Collapsed;
                 }
             }
         }

@@ -13,7 +13,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Loaded="OnLoaded"
-    Unloaded="OnUnloaded">
+    Unloaded="OnUnloaded"
+    SizeChanged="OnSizeChanged">
 
     <!--<Page.Transitions>
         <TransitionCollection>
@@ -1162,8 +1163,8 @@
                         Glyph="&#xF4AA;"
                         VerticalAlignment="Bottom"
                         AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
-                        ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"
                         Grid.Column="1"/>
+                        <!--ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"-->
 
                     <Grid x:Name="ButtonRecord" VerticalAlignment="Bottom" Grid.Column="2" Canvas.ZIndex="1000">
                         <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>

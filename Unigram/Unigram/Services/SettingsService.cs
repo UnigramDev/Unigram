@@ -438,6 +438,23 @@ namespace Unigram.Services
             }
         }
 
+        private bool? _isSidebarOpen;
+        public bool IsSidebarOpen
+        {
+            get
+            {
+                if (_isSidebarOpen == null)
+                    _isSidebarOpen = GetValueOrDefault(_local, "IsSidebarOpen", true);
+
+                return _isSidebarOpen ?? true;
+            }
+            set
+            {
+                _isSidebarOpen = value;
+                AddOrUpdateValue(_local, "IsSidebarOpen", value);
+            }
+        }
+
         private static bool? _isAdaptiveWideEnabled;
         public bool IsAdaptiveWideEnabled
         {
