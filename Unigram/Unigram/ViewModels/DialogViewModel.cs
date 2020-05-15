@@ -3055,11 +3055,11 @@ namespace Unigram.ViewModels
 
             var items = new[]
             {
-                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, false),
+                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, true),
                 new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
                 new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
                 new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
-                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, true)
+                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
             };
 
             var dialog = new SelectRadioView(items);
