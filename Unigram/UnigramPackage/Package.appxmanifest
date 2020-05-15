@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  IgnorableNamespaces="uap uap3 uap4 uap5 mp rescap desktop desktop4">
+
+  <Identity
+    Name="38833FF26BA1D.UnigramPreview"
+    Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB"
+    Version="4.0.3091.0" />
+
+  <Properties>
+    <DisplayName>Unigram - A Telegram universal experience</DisplayName>
+    <PublisherDisplayName>Unigram, Inc.</PublisherDisplayName>
+    <Logo>Assets\Logos\StoreLogo\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$">
+      <uap:VisualElements DisplayName="Unigram" Square150x150Logo="Assets\Logos\Square150x150Logo\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo\Square44x44Logo.png" Description="Unigram" BackgroundColor="transparent">
+        <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="Assets\Logos\LockScreenLogo\LockScreenLogo.png" />
+        <uap:DefaultTile Wide310x150Logo="Assets\Logos\Wide310x150Logo\Wide310x150Logo.png" Square71x71Logo="Assets\Logos\Square71x71Logo\Square71x71Logo.png" Square310x310Logo="Assets\Logos\Square310x310Logo\Square310x310Logo.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen uap5:Optional="true" Image="Assets\Logos\SplashScreen\SplashScreen.png" BackgroundColor="transparent" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.voipCall" />
+        <uap3:Extension Category="windows.appUriHandler">
+          <uap3:AppUriHandler>
+            <uap3:Host Name="t.me" />
+            <uap3:Host Name="telegram.me" />
+            <uap3:Host Name="telegram.dog" />
+          </uap3:AppUriHandler>
+        </uap3:Extension>
+        <uap4:Extension Category="windows.contactPanel" />
+        <uap5:Extension Category="windows.startupTask" Executable="UnigramBridge\UnigramBridge.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap5:StartupTask TaskId="Telegram" Enabled="false" DisplayName="Unigram" />
+        </uap5:Extension>
+        <uap5:Extension Category="windows.appExecutionAlias" Executable="Unigram.exe" EntryPoint="Unigram.App">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="Unigram.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
+          <BackgroundTasks>
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="tg">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ton">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-voip-call">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-ipmessaging">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-contact-profile">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.shareTarget">
+          <uap:ShareTarget>
+            <uap:SupportedFileTypes>
+              <uap:SupportsAnyFileType />
+            </uap:SupportedFileTypes>
+            <uap:DataFormat>Text</uap:DataFormat>
+            <uap:DataFormat>URI</uap:DataFormat>
+            <uap:DataFormat>StorageItems</uap:DataFormat>
+            <uap:DataFormat>Bitmap</uap:DataFormat>
+          </uap:ShareTarget>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="theme">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.unigram-theme</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Unigram Theme</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="org.unigram.bridge"/>
+        </uap:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="UnigramBridge\UnigramBridge.exe" />
+      </Extensions>
+    </Application>
+  </Applications>
+  <Extensions>
+	<Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>Unigram.Native.dll</Path>
+        <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both"/>
+      </InProcessServer>
+    </Extension>
+  </Extensions>
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <Capability Name="privateNetworkClientServer" />
+    <uap:Capability Name="removableStorage" />
+    <uap:Capability Name="picturesLibrary" />
+    <uap:Capability Name="voipCall" />
+    <uap:Capability Name="contacts" />
+	<!--<uap3:Capability Name="backgroundMediaPlayback" />-->
+    <rescap:Capability Name="runFullTrust" />
+    <DeviceCapability Name="location" />
+    <DeviceCapability Name="microphone" />
+    <DeviceCapability Name="webcam" />
+  </Capabilities>
+</Package>

@@ -1529,9 +1529,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="..\Assets\$(ConfigurationName)\Package.appxmanifest">
+    <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
-      <Link>Package.appxmanifest</Link>
     </AppxManifest>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
@@ -1657,11 +1656,51 @@
     <Content Include="Assets\Images\Reply.scale-200.png" />
     <Content Include="Assets\Images\Reply.scale-400.png" />
     <Content Include="Assets\Images\WalletGem.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16_altform-lightunplated.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24_altform-lightunplated.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256_altform-lightunplated.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-32_altform-lightunplated.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-48_altform-lightunplated.png" />
+    <Content Include="Assets\Logos\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Logos\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Logos\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Logos\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Logos\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Logos\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square310x310Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square310x310Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square310x310Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square310x310Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Logos\Square71x71Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square71x71Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square71x71Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square71x71Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square71x71Logo.scale-400.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Mockup\sticker0.webp" />
     <Content Include="Assets\Mockup\sticker1.webp" />
     <PRIResource Include="Strings\zh-CN\Resources.resw">
@@ -1689,76 +1728,21 @@
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-256.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-32.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-48.png" />
-    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
-    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
-    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
-    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-400.png" />
-    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-100.png" />
-    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-125.png" />
-    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-150.png" />
-    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-400.png" />
-    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-100.png" />
-    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-125.png" />
-    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-150.png" />
-    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Logos\Square150x150Logo\Square150x150Logo.scale-400.png" />
-    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-100.png" />
-    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-125.png" />
-    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-150.png" />
-    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-200.png" />
-    <Content Include="Assets\Logos\Square310x310Logo\Square310x310Logo.scale-400.png" />
-    <Content Include="..\Assets\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-100.png">
-      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="..\Assets\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-125.png">
-      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-125.png</Link>
-    </Content>
-    <Content Include="..\Assets\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-150.png">
-      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-150.png</Link>
-    </Content>
-    <Content Include="..\Assets\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-200.png">
-      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Assets\Square44x44Logo\$(ConfigurationName)\Square44x44Logo.scale-400.png">
-      <Link>Assets\Logos\Square44x44Logo\Square44x44Logo.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-16_altform-unplated.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-32.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-32_altform-unplated.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-256_altform-unplated.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-48.png" />
-    <Content Include="Assets\Logos\Square44x44Logo\Square44x44Logo.targetsize-48_altform-unplated.png" />
-    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-100.png" />
-    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-125.png" />
-    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-150.png" />
-    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-200.png" />
-    <Content Include="Assets\Logos\Square71x71Logo\Square71x71Logo.scale-400.png" />
-    <Content Include="..\Assets\StoreLogo\$(ConfigurationName)\StoreLogo.scale-100.png">
-      <Link>Assets\Logos\StoreLogo\StoreLogo.scale-100.png</Link>
-    </Content>
-    <Content Include="..\Assets\StoreLogo\$(ConfigurationName)\StoreLogo.scale-125.png">
-      <Link>Assets\Logos\StoreLogo\StoreLogo.scale-125.png</Link>
-    </Content>
-    <Content Include="..\Assets\StoreLogo\$(ConfigurationName)\StoreLogo.scale-150.png">
-      <Link>Assets\Logos\StoreLogo\StoreLogo.scale-150.png</Link>
-    </Content>
-    <Content Include="..\Assets\StoreLogo\$(ConfigurationName)\StoreLogo.scale-200.png">
-      <Link>Assets\Logos\StoreLogo\StoreLogo.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Assets\StoreLogo\$(ConfigurationName)\StoreLogo.scale-400.png">
-      <Link>Assets\Logos\StoreLogo\StoreLogo.scale-400.png</Link>
-    </Content>
-    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-100.png" />
-    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-125.png" />
-    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-150.png" />
-    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-200.png" />
-    <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Logos\LockScreenLogo.scale-100.png" />
+    <Content Include="Assets\Logos\LockScreenLogo.scale-125.png" />
+    <Content Include="Assets\Logos\LockScreenLogo.scale-150.png" />
+    <Content Include="Assets\Logos\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\Logos\LockScreenLogo.scale-400.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Logos\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Logos\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Logos\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Logos\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Logos\StoreLogo.scale-400.png" />
     <Content Include="Assets\Mockup\a0.png" />
     <Content Include="Assets\Mockup\a1.png" />
     <Content Include="Assets\Mockup\a10.png" />
@@ -2694,8 +2678,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\UpdateManifest.ps1" -path $(ProjectDir) -config $(ConfigurationName)</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
