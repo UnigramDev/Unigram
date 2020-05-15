@@ -206,7 +206,7 @@ namespace Unigram.ViewModels
             set => Set(ref _isColor1Checked, value);
         }
 
-        private bool _isColor2Checked = true;
+        private bool _isColor2Checked;
         public bool IsColor2Checked
         {
             get => _isColor2Checked;
@@ -231,7 +231,15 @@ namespace Unigram.ViewModels
         public Background SelectedPattern
         {
             get => _selectedPattern;
-            set { Set(ref _selectedPattern, value); if (_item?.Type is BackgroundTypeFill || _item?.Type is BackgroundTypePattern) Set(() => Item, ref _item, value); }
+            set
+            {
+                Set(ref _selectedPattern, value);
+
+                if (value != null && _item?.Type is BackgroundTypeFill || _item?.Type is BackgroundTypePattern)
+                {
+                    Set(() => Item, ref _item, value);
+                }
+            }
         }
 
         public RelayCommand RemoveColor1Command { get; }
