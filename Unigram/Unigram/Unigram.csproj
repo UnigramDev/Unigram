@@ -2632,10 +2632,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Telegram.Intro\Telegram.Intro.vcxproj">
-      <Project>{1cfa1bfa-98d3-4316-8e3b-ac3ea8b3510e}</Project>
-      <Name>Telegram.Intro</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Unigram.Native.Tasks\Unigram.Native.Tasks.vcxproj">
       <Project>{ca0c2cc0-3d83-4556-a9a3-0923ece8c1d3}</Project>
       <Name>Unigram.Native.Tasks</Name>

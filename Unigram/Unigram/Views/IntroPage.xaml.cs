@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Telegram.Intro;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -13,12 +12,17 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+#if INCLUDE_INTRO
+using Telegram.Intro;
+#endif
 
 namespace Unigram.Views
 {
     public sealed partial class IntroPage : Page
     {
+#if INCLUDE_INTRO
         private TLIntroRenderer _renderer;
+#endif
 
         private Visual _layoutVisual;
         private int _selectedIndex;
@@ -52,19 +56,22 @@ namespace Unigram.Views
 
         private void SwapChain_Loaded(object sender, RoutedEventArgs e)
         {
-            //if (_renderer == null)
-            //{
-            //    try
-            //    {
-            //        _renderer = new TLIntroRenderer(SwapChain, ApplicationSettings.Current.CurrentTheme);
-            //        _renderer.Loaded();
-            //    }
-            //    catch { }
-            //}
+#if INCLUDE_INTRO
+            if (_renderer == null)
+            {
+                try
+                {
+                    _renderer = new TLIntroRenderer(SwapChain, ApplicationSettings.Current.CurrentTheme);
+                    _renderer.Loaded();
+                }
+                catch { }
+            }
+#endif
         }
 
         private void SwapChain_Unloaded(object sender, RoutedEventArgs e)
         {
+#if INCLUDE_INTRO
             if (_renderer != null)
             {
                 try
@@ -74,6 +81,7 @@ namespace Unigram.Views
                 }
                 catch { }
             }
+#endif
         }
 
         private void Interact_Tick(object sender, object e)
@@ -183,14 +191,18 @@ namespace Unigram.Views
             {
                 // previous
                 _selectedIndex--;
+#if INCLUDE_INTRO
                 _renderer?.SetPage(_selectedIndex);
+#endif
                 animation.InsertKeyFrame(1, minimum);
             }
             else if (delta > 0)
             {
                 // next
                 _selectedIndex++;
+#if INCLUDE_INTRO
                 _renderer?.SetPage(_selectedIndex);
+#endif
                 animation.InsertKeyFrame(1, maximum);
             }
             else
@@ -249,7 +261,9 @@ namespace Unigram.Views
             position += _selectedIndex;
 
             _layoutVisual.Offset = offset;
+#if INCLUDE_INTRO
             _renderer?.SetScroll(-position);
+#endif
         }
 
         private void LayoutRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
@@ -266,7 +280,9 @@ namespace Unigram.Views
 
             position += _selectedIndex;
 
+#if INCLUDE_INTRO
             _renderer?.SetScroll(0);
+#endif
 
             var batch = _layoutVisual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
@@ -280,7 +296,9 @@ namespace Unigram.Views
                 {
                     // previous
                     _selectedIndex--;
+#if INCLUDE_INTRO
                     _renderer?.SetPage(_selectedIndex);
+#endif
                     animation.InsertKeyFrame(1, minimum);
                 }
                 else
@@ -294,7 +312,9 @@ namespace Unigram.Views
                 {
                     // next
                     _selectedIndex++;
+#if INCLUDE_INTRO
                     _renderer?.SetPage(_selectedIndex);
+#endif
                     animation.InsertKeyFrame(1, maximum);
                 }
                 else
