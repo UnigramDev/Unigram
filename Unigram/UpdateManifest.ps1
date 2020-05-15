@@ -34,7 +34,7 @@ $identity = $document.GetElementsByTagName("Identity")[0]
 $identity.Attributes["Name"].Value = $h[$config]
 
 $version = $identity.Attributes["Version"].Value;
-$regex = [regex]'(?:(\d+)\.)(?:(\d+)\.)(?:(.?)\.\d+)'
+$regex = [regex]'(?:(\d+)\.)(?:(\d+)\.)(?:(\d*?)\.\d+)'
 
 $identity.Attributes["Version"].Value = $regex.Replace($version, '$1.$2.{0}.0' -f $out)
 
