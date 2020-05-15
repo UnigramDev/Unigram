@@ -1239,6 +1239,14 @@ namespace Unigram.ViewModels
             {
                 await LoadMessageSliceAsync(null, message.Id);
             }
+            else
+            {
+                response = await ProtoService.SendAsync(new GetChatHistory(chat.Id, 1, -1, 1, false));
+                if (response is Messages messages && messages.MessagesValue.Count > 0)
+                {
+                    await LoadMessageSliceAsync(null, messages.MessagesValue[0].Id);
+                }
+            }
         }
 
         public void ScrollToBottom(object item)
@@ -1528,45 +1536,47 @@ namespace Unigram.ViewModels
             for (int i = 0; i < slice.Count; i++)
             {
                 var message = slice[i];
-                if (message.MediaAlbumId != 0)
+                if (message.MediaAlbumId == 0)
                 {
-                    var groupedId = message.MediaAlbumId;
+                    continue;
+                }
 
-                    _groupedMessages.TryGetValue(groupedId, out MessageViewModel group);
+                var groupedId = message.MediaAlbumId;
 
-                    if (group == null)
+                _groupedMessages.TryGetValue(groupedId, out MessageViewModel group);
+
+                if (group == null)
+                {
+                    var media = new MessageAlbum();
+
+                    var groupBase = new Message();
+                    groupBase.Content = media;
+                    groupBase.Date = message.Date;
+
+                    group = _messageFactory.Create(this, groupBase);
+
+                    slice[i] = group;
+                    newGroups[groupedId] = groupedId;
+                    _groupedMessages[groupedId] = group;
+                }
+                else
+                {
+
+                    slice.RemoveAt(i);
+                    i--;
+                }
+
+                if (group.Content is MessageAlbum album)
+                {
+                    groups[groupedId] = Tuple.Create(group, album.Layout);
+
+                    album.Layout.GroupedId = groupedId;
+                    album.Layout.Messages.Add(message);
+
+                    var first = album.Layout.Messages.FirstOrDefault();
+                    if (first != null)
                     {
-                        var media = new MessageAlbum();
-
-                        var groupBase = new Message();
-                        groupBase.Content = media;
-                        groupBase.Date = message.Date;
-
-                        group = _messageFactory.Create(this, groupBase);
-
-                        slice[i] = group;
-                        newGroups[groupedId] = groupedId;
-                        _groupedMessages[groupedId] = group;
-                    }
-                    else
-                    {
-
-                        slice.RemoveAt(i);
-                        i--;
-                    }
-
-                    if (group.Content is MessageAlbum album)
-                    {
-                        groups[groupedId] = Tuple.Create(group, album.Layout);
-
-                        album.Layout.GroupedId = groupedId;
-                        album.Layout.Messages.Add(message);
-
-                        var first = album.Layout.Messages.FirstOrDefault();
-                        if (first != null)
-                        {
-                            group.UpdateWith(first);
-                        }
+                        group.UpdateWith(first);
                     }
                 }
             }
