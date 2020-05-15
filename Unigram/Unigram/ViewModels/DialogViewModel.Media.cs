@@ -227,7 +227,7 @@ namespace Unigram.ViewModels
                 var files = await picker.PickMultipleFilesAsync();
                 if (files != null && files.Count > 0)
                 {
-                    SendFileExecute(files);
+                    SendFileExecute(files, media: false);
                 }
             }
             else
@@ -236,21 +236,33 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void SendFileExecute(IReadOnlyList<StorageFile> files)
+        public async void SendFileExecute(IReadOnlyList<StorageFile> files, FormattedText caption = null, bool media = true)
         {
-            var formattedText = GetFormattedText(true);
-            var caption = formattedText.Substring(0, CacheService.Options.MessageCaptionLengthMax);
+            var items = await StorageMedia.CreateAsync(files);
+            if (items.IsEmpty())
+            {
+                return;
+            }
 
-            var media = await StorageMedia.CreateAsync(files);
+            FormattedText formattedText = null;
+            if (caption == null)
+            {
+                formattedText = GetFormattedText(true);
+                caption = formattedText.Substring(0, CacheService.Options.MessageCaptionLengthMax);
+            }
 
-            var dialog = new SendFilesView(media, false);
+            var dialog = new SendFilesView(items, media);
             dialog.ViewModel = this;
             dialog.Caption = caption;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
             {
-                TextField?.SetText(formattedText);
+                if (formattedText != null)
+                {
+                    TextField?.SetText(formattedText);
+                }
+
                 return;
             }
 
@@ -280,14 +292,14 @@ namespace Unigram.ViewModels
 
                     if (group.Count == 10)
                     {
-                        await SendGroupedAsync(group, options);
+                        await SendGroupedAsync(group, dialog.Caption, options);
                         group = new List<StorageMedia>(Math.Min(dialog.Items.Count, 10));
                     }
                 }
 
                 if (group.Count > 0)
                 {
-                    await SendGroupedAsync(group, options);
+                    await SendGroupedAsync(group, dialog.Caption, options);
                 }
             }
             else if (files.Count > 0)
@@ -318,17 +330,29 @@ namespace Unigram.ViewModels
             }
             else if (storage is StoragePhoto photo)
             {
-                await SendPhotoAsync(storage.File, storage.Caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null, options);
+                await SendPhotoAsync(storage.File, caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null, options);
             }
             else if (storage is StorageVideo video)
             {
-                await SendVideoAsync(storage.File, storage.Caption, video.IsMuted, asFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
+                await SendVideoAsync(storage.File, caption, video.IsMuted, asFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
             }
         }
 
         private async Task SendDocumentAsync(StorageFile file, FormattedText caption = null, SendMessageOptions options = null)
         {
             var factory = await _messageFactory.CreateDocumentAsync(file);
+            if (factory != null)
+            {
+                var reply = GetReply(true);
+                var input = factory.Delegate(factory.InputFile, caption);
+
+                await SendMessageAsync(reply, input, options);
+            }
+        }
+
+        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int ttl = 0, Rect? crop = null, SendMessageOptions options = null)
+        {
+            var factory = await _messageFactory.CreatePhotoAsync(file, asFile, ttl, crop);
             if (factory != null)
             {
                 var reply = GetReply(true);
@@ -368,18 +392,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int ttl = 0, Rect? crop = null, SendMessageOptions options = null)
-        {
-            var factory = await _messageFactory.CreatePhotoAsync(file, asFile, ttl, crop);
-            if (factory != null)
-            {
-                var reply = GetReply(true);
-                var input = factory.Delegate(factory.InputFile, caption);
-
-                await SendMessageAsync(reply, input, options);
-            }
-        }
-
         public async Task SendVoiceNoteAsync(StorageFile file, int duration, FormattedText caption)
         {
             var chat = _chat;
@@ -410,16 +422,11 @@ namespace Unigram.ViewModels
             capture.VideoSettings.Format = CameraCaptureUIVideoFormat.Mp4;
             capture.VideoSettings.MaxResolution = CameraCaptureUIMaxVideoResolution.HighestAvailable;
 
-            var storages = new ObservableCollection<StorageMedia>();
-
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.PhotoOrVideo);
-            var storage = await StorageMedia.CreateAsync(file, true);
-            if (storage != null)
+            if (file != null)
             {
-                storages.Add(storage);
+                SendFileExecute(new[] { file });
             }
-
-            SendMediaExecute(storages);
         }
 
         public RelayCommand SendMediaCommand { get; }
@@ -433,101 +440,7 @@ namespace Unigram.ViewModels
             var files = await picker.PickMultipleFilesAsync();
             if (files != null && files.Count > 0)
             {
-                var storages = new ObservableCollection<StorageMedia>();
-
-                foreach (var file in files)
-                {
-                    var storage = await StorageMedia.CreateAsync(file, true);
-                    if (storage != null)
-                    {
-                        storages.Add(storage);
-                    }
-                }
-
-                SendMediaExecute(storages);
-            }
-        }
-
-        public async void SendMediaExecute(ObservableCollection<StorageMedia> media)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (media == null || media.IsEmpty())
-            {
-                return;
-            }
-
-            var formattedText = GetFormattedText(true);
-
-            //if (selectedItem != null && selectedItem.Caption is null)
-            //{
-            //    selectedItem.Caption = formattedText
-            //        .Substring(0, CacheService.Options.MessageCaptionLengthMax);
-            //}
-
-            var dialog = new SendFilesView(media, true);
-            dialog.ViewModel = this;
-
-            var dialogResult = await dialog.ShowAsync();
-
-            TextField?.Focus(FocusState.Programmatic);
-
-            if (dialogResult != ContentDialogResult.Primary)
-            {
-                TextField?.SetText(formattedText.Text, formattedText.Entities);
-                return;
-            }
-
-            var items = dialog.Items.ToList();
-            if (items.Count > 1 && dialog.IsAlbum)
-            {
-                var options = await PickSendMessageOptionsAsync();
-                if (options == null)
-                {
-                    return;
-                }
-
-                var group = new List<StorageMedia>(Math.Min(items.Count, 10));
-
-                foreach (var item in items)
-                {
-                    group.Add(item);
-
-                    if (group.Count == 10)
-                    {
-                        await SendGroupedAsync(group, options);
-                        group = new List<StorageMedia>(Math.Min(items.Count, 10));
-                    }
-                }
-
-                if (group.Count > 0)
-                {
-                    await SendGroupedAsync(group, options);
-                }
-            }
-            else if (items.Count > 0)
-            {
-                var options = await PickSendMessageOptionsAsync();
-                if (options == null)
-                {
-                    return;
-                }
-
-                foreach (var storage in items)
-                {
-                    if (storage is StoragePhoto photo)
-                    {
-                        await SendPhotoAsync(storage.File, storage.Caption, storage.IsForceFile, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null, options);
-                    }
-                    else if (storage is StorageVideo video)
-                    {
-                        await SendVideoAsync(storage.File, storage.Caption, video.IsMuted, storage.IsForceFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
-                    }
-                }
+                SendFileExecute(files);
             }
         }
 
@@ -816,7 +729,7 @@ namespace Unigram.ViewModels
         //    return tsc.Task;
         //}
 
-        private async Task<BaseObject> SendGroupedAsync(ICollection<StorageMedia> items, SendMessageOptions options)
+        private async Task<BaseObject> SendGroupedAsync(ICollection<StorageMedia> items, FormattedText caption, SendMessageOptions options)
         {
             var chat = _chat;
             if (chat == null)
@@ -826,6 +739,8 @@ namespace Unigram.ViewModels
 
             var reply = GetReply(true);
             var operations = new List<InputMessageContent>();
+
+            var firstCaption = caption;
 
             foreach (var item in items)
             {
@@ -840,9 +755,10 @@ namespace Unigram.ViewModels
 
                     var generated = await file.ToGeneratedAsync(ConversionType.Compress, crop.HasValue ? JsonConvert.SerializeObject(crop) : null);
 
-                    var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, photo.Caption, photo.Ttl);
+                    var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, firstCaption, photo.Ttl);
 
                     operations.Add(input);
+                    firstCaption = null;
                 }
                 else if (item is StorageVideo video)
                 {
@@ -894,15 +810,17 @@ namespace Unigram.ViewModels
 
                     if (profile != null && profile.Audio == null)
                     {
-                        var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, video.Caption);
+                        var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, firstCaption);
 
                         operations.Add(input);
+                        firstCaption = null;
                     }
                     else
                     {
-                        var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, video.Caption, video.Ttl);
+                        var input = new InputMessageVideo(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, true, firstCaption, video.Ttl);
 
                         operations.Add(input);
+                        firstCaption = null;
                     }
                 }
             }
@@ -928,7 +846,7 @@ namespace Unigram.ViewModels
             if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
             {
                 var bitmap = await package.GetBitmapAsync();
-                var media = new ObservableCollection<StorageMedia>();
+                var media = new List<StorageFile>();
 
                 var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
                 var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
@@ -936,13 +854,7 @@ namespace Unigram.ViewModels
                 using (var stream = await bitmap.OpenReadAsync())
                 {
                     var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                    var photo = await StoragePhoto.CreateAsync(result, true);
-                    if (photo == null)
-                    {
-                        return;
-                    }
-
-                    media.Add(photo);
+                    media.Add(result);
                 }
 
                 var captionElements = new List<string>();
@@ -957,55 +869,27 @@ namespace Unigram.ViewModels
                     captionElements.Add(webLink.AbsoluteUri);
                 }
 
+                FormattedText caption = null;
                 if (captionElements.Count > 0)
                 {
                     var resultCaption = string.Join(Environment.NewLine, captionElements);
-                    media[0].Caption = new FormattedText(resultCaption, new TextEntity[0])
+                    caption = new FormattedText(resultCaption, new TextEntity[0])
                         .Substring(0, CacheService.Options.MessageCaptionLengthMax);
                 }
 
-                SendMediaExecute(media);
+                SendFileExecute(media, caption);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await package.GetStorageItemsAsync();
-                var media = new ObservableCollection<StorageMedia>();
                 var files = new List<StorageFile>(items.Count);
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
-                    if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var photo = await StoragePhoto.CreateAsync(file, true);
-                        if (photo != null)
-                        {
-                            media.Add(photo);
-                        }
-                    }
-                    else if (file.ContentType == "video/mp4")
-                    {
-                        var video = await StorageVideo.CreateAsync(file, true);
-                        if (video != null)
-                        {
-                            media.Add(video);
-                        }
-                    }
-
                     files.Add(file);
                 }
 
-                // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count > 0 && media.Count == files.Count)
-                {
-                    SendMediaExecute(media);
-                }
-                else if (files.Count > 0)
-                {
-                    SendFileExecute(files);
-                }
+                SendFileExecute(files);
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{
@@ -1145,10 +1029,10 @@ namespace Unigram.ViewModels
             }
 
             var formattedText = GetFormattedText(true);
-            storage.Caption = formattedText
-                .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 
-            var dialog = new SendFilesView(new ObservableCollection<StorageMedia> { storage }, true);
+            var dialog = new SendFilesView(new List<StorageMedia> { storage }, true);
+            dialog.Caption = formattedText
+                .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 
             var confirm = await dialog.ShowAsync();
 
@@ -1159,16 +1043,16 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            TextField?.SetText(storage.Caption);
+            TextField?.SetText(dialog.Caption);
 
             Task<InputMessageFactory> request = null;
             if (storage is StoragePhoto photo)
             {
-                request = _messageFactory.CreatePhotoAsync(storage.File, storage.IsForceFile, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null);
+                request = _messageFactory.CreatePhotoAsync(storage.File, dialog.IsFilesSelected, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null);
             }
             else if (storage is StorageVideo video)
             {
-                request = _messageFactory.CreateVideoAsync(storage.File, video.IsMuted, storage.IsForceFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
+                request = _messageFactory.CreateVideoAsync(storage.File, video.IsMuted, dialog.IsFilesSelected, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
             }
 
             if (request == null)

@@ -453,7 +453,7 @@
         </Grid>
     </ContentDialog.Title>
 
-    <Grid  MinHeight="320">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
@@ -468,7 +468,7 @@
                   CanReorderItems="True"
                   CanDragItems="True"
                   AllowDrop="True"
-                  Padding="0,6,0,0">
+                  Padding="0,6">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

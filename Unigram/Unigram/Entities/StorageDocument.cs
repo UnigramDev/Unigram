@@ -13,10 +13,5 @@ namespace Unigram.Entities
             : base(file, null)
         {
         }
-
-        public override StorageMedia Clone()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

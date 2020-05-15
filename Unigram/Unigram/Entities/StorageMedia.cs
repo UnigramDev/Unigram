@@ -65,19 +65,6 @@ namespace Unigram.Entities
             }
         }
 
-        protected FormattedText _caption;
-        public FormattedText Caption
-        {
-            get
-            {
-                return _caption;
-            }
-            set
-            {
-                Set(ref _caption, value);
-            }
-        }
-
         protected int _ttl;
         public int Ttl
         {
@@ -91,36 +78,8 @@ namespace Unigram.Entities
             }
         }
 
-        protected bool _isSelected;
-        public bool IsSelected
-        {
-            get
-            {
-                return _isSelected;
-            }
-            set
-            {
-                Set(ref _isSelected, value);
-            }
-        }
-
-        protected bool _isForceFile;
-        public bool IsForceFile
-        {
-            get
-            {
-                return _isForceFile;
-            }
-            set
-            {
-                Set(ref _isForceFile, value);
-            }
-        }
-
         public virtual uint Width { get; }
         public virtual uint Height { get; }
-
-        public virtual bool IsAnimatable { get; }
 
         protected Rect? _fullRectangle;
 
@@ -182,20 +141,6 @@ namespace Unigram.Entities
             RaisePropertyChanged(() => Preview);
         }
 
-        public abstract StorageMedia Clone();
-
-        public virtual void Reset()
-        {
-            IsSelected = false;
-            IsForceFile = false;
-            Caption = null;
-            EditState = null;
-            Ttl = 0;
-
-            //_thumbnail = null;
-            _preview = null;
-        }
-
         public static async Task<StorageMedia> CreateAsync(StorageFile file, bool selected)
         {
             if (file == null)
@@ -212,7 +157,7 @@ namespace Unigram.Entities
             }
         }
 
-        public static async Task<IEnumerable<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
+        public static async Task<IList<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
         {
             var results = new List<StorageMedia>();
 

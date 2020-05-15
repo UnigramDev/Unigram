@@ -108,30 +108,7 @@ namespace Unigram.Controls.Chats
                     e.Handled = true;
                 }
 
-                var bitmap = await package.GetBitmapAsync();
-                var media = new ObservableCollection<StorageMedia>();
-
-                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
-                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
-
-                using (var stream = await bitmap.OpenReadAsync())
-                {
-                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                    var photo = await StoragePhoto.CreateAsync(result, true);
-                    if (photo == null)
-                    {
-                        return;
-                    }
-
-                    media.Add(photo);
-                }
-
-                if (package.AvailableFormats.Contains(StandardDataFormats.Text))
-                {
-                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
-                }
-
-                ViewModel.SendMediaExecute(media);
+                await ViewModel.HandlePackageAsync(package);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
             {
@@ -144,44 +121,7 @@ namespace Unigram.Controls.Chats
                     e.Handled = true;
                 }
 
-                var items = await package.GetStorageItemsAsync();
-                var media = new ObservableCollection<StorageMedia>();
-                var files = new List<StorageFile>(items.Count);
-
-                foreach (var file in items.OfType<StorageFile>())
-                {
-                    if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var photo = await StoragePhoto.CreateAsync(file, true);
-                        if (photo != null)
-                        {
-                            media.Add(photo);
-                        }
-                    }
-                    else if (file.ContentType == "video/mp4")
-                    {
-                        var video = await StorageVideo.CreateAsync(file, true);
-                        if (video != null)
-                        {
-                            media.Add(video);
-                        }
-                    }
-
-                    files.Add(file);
-                }
-
-                // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count > 0 && media.Count == files.Count)
-                {
-                    ViewModel.SendMediaExecute(media);
-                }
-                else if (files.Count > 0)
-                {
-                    ViewModel.SendFileExecute(files);
-                }
+                await ViewModel.HandlePackageAsync(package);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
             {

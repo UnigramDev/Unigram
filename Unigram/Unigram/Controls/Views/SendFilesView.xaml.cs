@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -15,23 +11,17 @@ using Unigram.Common;
 using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Entities;
-using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
@@ -102,15 +92,10 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private FormattedText _caption;
         public FormattedText Caption
         {
-            get { return _caption; }
-            set
-            {
-                _caption = value;
-                CaptionInput.SetText(value);
-            }
+            get => CaptionInput.GetFormattedText(false);
+            set => CaptionInput.SetText(value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

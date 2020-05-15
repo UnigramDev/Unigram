@@ -47,8 +47,6 @@ namespace Unigram.Entities
         public override uint Width => Properties.GetWidth();
         public override uint Height => Properties.GetHeight();
 
-        public override bool IsAnimatable => true;
-
         public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
         {
             try
@@ -69,7 +67,7 @@ namespace Unigram.Entities
 
                 if (video.Width > 0 && video.Height > 0)
                 {
-                    return new StorageVideo(file, basic, video, profile) { IsSelected = selected };
+                    return new StorageVideo(file, basic, video, profile);
                 }
 
                 return null;
@@ -199,21 +197,6 @@ namespace Unigram.Entities
             {
                 Compression = MaxCompression - 1;
             }
-        }
-
-        public override StorageMedia Clone()
-        {
-            var item = new StorageVideo(File, _basic, Properties, Profile);
-            item._thumbnail = _thumbnail;
-            item._preview = _preview;
-
-            return item;
-        }
-
-        public override void Reset()
-        {
-            base.Reset();
-            Refresh();
         }
 
         private int originalWidth;
