@@ -59,8 +59,8 @@ namespace Unigram.Views
                 return;
             }
 
-            //Arrow.Visibility = Visibility.Collapsed;
-            VisualUtilities.SetIsVisible(Arrow, false);
+            Arrow.Visibility = Visibility.Collapsed;
+            //VisualUtilities.SetIsVisible(Arrow, false);
 
             ViewVisibleMessages(false);
             UpdateHeaderDate(false);
@@ -70,13 +70,13 @@ namespace Unigram.Views
         {
             if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120 && ViewModel.IsFirstSliceLoaded != false)
             {
-                //Arrow.Visibility = Visibility.Collapsed;
-                VisualUtilities.SetIsVisible(Arrow, false);
+                Arrow.Visibility = Visibility.Collapsed;
+                //VisualUtilities.SetIsVisible(Arrow, false);
             }
             else
             {
-                //Arrow.Visibility = Visibility.Visible;
-                VisualUtilities.SetIsVisible(Arrow, true);
+                Arrow.Visibility = Visibility.Visible;
+                //VisualUtilities.SetIsVisible(Arrow, true);
             }
 
             ViewVisibleMessages(e.IsIntermediate);
@@ -531,6 +531,18 @@ namespace Unigram.Views
 
             foreach (var message in items)
             {
+                if (message.Content is MessageDice dice)
+                {
+                    if (message.GeneratedUnread)
+                    {
+                        message.GeneratedUnread = dice.FinalStateSticker == null;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
                 var container = Messages.ContainerFromItem(message) as ListViewItem;
                 if (container == null)
                 {
