@@ -43,7 +43,7 @@ namespace Unigram.Controls.Views
             //SecondaryButtonText = Strings.Resources.UserRestrictionsUntilForever;
             CloseButtonText = Strings.Resources.Cancel;
 
-            if (user != null && !reminder)
+            if (user != null && !(user.Status is UserStatusRecently) && !reminder)
             {
                 Online.Content = string.Format(Strings.Resources.MessageScheduledUntilOnline, user.FirstName);
             }
