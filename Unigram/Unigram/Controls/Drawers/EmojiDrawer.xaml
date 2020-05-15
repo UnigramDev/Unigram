@@ -62,6 +62,15 @@
                                     </VisualState>
                                     <VisualState x:Name="Disabled" />
                                 </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="OuterEllipse.BorderThickness" Value="0"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             
                             <Grid
@@ -69,17 +78,12 @@
                                 Background="Transparent"
                                 CornerRadius="{StaticResource GlyphButtonCornerRadius}"
                                 Margin="{StaticResource GlyphButtonPadding}">
-                                <Border Background="White"
-                                        CornerRadius="10"
-                                        Width="20"
-                                        Height="20">
-                                    <Border Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="8"
-                                            Width="16"
-                                            Height="16"/>
-                                </Border>
+                                <Border x:Name="OuterEllipse"
+                                        Background="{TemplateBinding Background}"
+                                        BorderThickness="2"
+                                        CornerRadius="8"
+                                        Width="16"
+                                        Height="16"/>
                             </Grid>
                         </Border>
                     </ControlTemplate>
