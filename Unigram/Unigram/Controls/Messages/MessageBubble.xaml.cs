@@ -395,10 +395,17 @@ namespace Unigram.Controls.Messages
 
             if (shown)
             {
-                var title = message.Delegate.GetAdminTitle(message.SenderUserId);
-                if (admin != null && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
+                if (message.SenderUserId != 0)
                 {
-                    paragraph.Inlines.Add(new Run { Text = " " + title, Foreground = null });
+                    var title = message.Delegate.GetAdminTitle(message.SenderUserId);
+                    if (admin != null && !message.IsOutgoing && message.Delegate != null && !string.IsNullOrEmpty(title))
+                    {
+                        paragraph.Inlines.Add(new Run { Text = " " + title, Foreground = null });
+                    }
+                }
+                else if (message.ForwardInfo != null && !message.IsChannelPost)
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " + Strings.Resources.DiscussChannel, Foreground = null });
                 }
             }
 
@@ -427,6 +434,11 @@ namespace Unigram.Controls.Messages
                 else
                 {
                     paragraph.Inlines.Add(new Run { Text = Strings.Resources.ForwardedMessage, FontWeight = FontWeights.Normal });
+
+                    if (PsaInfo != null)
+                    {
+                        PsaInfo.Visibility = Visibility.Collapsed;
+                    }
                 }
 
                 paragraph.Inlines.Add(new LineBreak());
@@ -458,6 +470,10 @@ namespace Unigram.Controls.Messages
                 paragraph.Inlines.Add(hyperlink);
                 forward = true;
             }
+            else if (PsaInfo != null)
+            {
+                PsaInfo.Visibility = Visibility.Collapsed;
+            }
 
             //if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
             var viaBot = message.ProtoService.GetUser(message.ViaBotUserId);
@@ -487,6 +503,11 @@ namespace Unigram.Controls.Messages
                 {
                     admin.Visibility = Visibility.Visible;
                     admin.Text = title;
+                }
+                else if (admin != null && shown && !message.IsChannelPost && message.SenderUserId == 0 && message.ForwardInfo != null)
+                {
+                    admin.Visibility = Visibility.Visible;
+                    admin.Text = Strings.Resources.DiscussChannel;
                 }
                 else if (admin != null)
                 {
@@ -995,7 +1016,14 @@ namespace Unigram.Controls.Messages
                         else
                         {
                             var hyperlink = new Hyperlink();
+                            var original = entities.FirstOrDefault(x => x.Offset <= entity.Offset && x.Offset + x.Length >= entity.End);
+
                             var data = text.Substring(entity.Offset, entity.Length);
+
+                            if (original != null)
+                            {
+                                data = text.Substring(original.Offset, original.Length);
+                            }
 
                             hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
                             hyperlink.Foreground = GetBrush("MessageForegroundLinkBrush");

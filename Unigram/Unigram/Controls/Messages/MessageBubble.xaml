@@ -137,6 +137,7 @@
                     x:Name="Reply"
                     x:DeferLoadStrategy="Lazy"
                     Click="Reply_Click"
+                    Grid.ColumnSpan="2"
                     Grid.Row="1"/>
             </Grid>
 
