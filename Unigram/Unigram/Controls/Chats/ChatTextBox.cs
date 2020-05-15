@@ -131,7 +131,7 @@ namespace Unigram.Controls.Chats
                     media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
                 }
 
-                ViewModel.SendMediaExecute(media, media[0]);
+                ViewModel.SendMediaExecute(media);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
             {
@@ -176,7 +176,7 @@ namespace Unigram.Controls.Chats
                 // Send compressed __only__ if user is dropping photos and videos only
                 if (media.Count > 0 && media.Count == files.Count)
                 {
-                    ViewModel.SendMediaExecute(media, media[0]);
+                    ViewModel.SendMediaExecute(media);
                 }
                 else if (files.Count > 0)
                 {

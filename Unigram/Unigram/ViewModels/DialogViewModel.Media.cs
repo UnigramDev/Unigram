@@ -419,7 +419,7 @@ namespace Unigram.ViewModels
                 storages.Add(storage);
             }
 
-            SendMediaExecute(storages, storage);
+            SendMediaExecute(storages);
         }
 
         public RelayCommand SendMediaCommand { get; }
@@ -444,11 +444,11 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                SendMediaExecute(storages, storages.Count > 0 ? storages[0] : null);
+                SendMediaExecute(storages);
             }
         }
 
-        public async void SendMediaExecute(ObservableCollection<StorageMedia> media, StorageMedia selectedItem)
+        public async void SendMediaExecute(ObservableCollection<StorageMedia> media)
         {
             var chat = _chat;
             if (chat == null)
@@ -463,11 +463,11 @@ namespace Unigram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            if (selectedItem != null && selectedItem.Caption is null)
-            {
-                selectedItem.Caption = formattedText
-                    .Substring(0, CacheService.Options.MessageCaptionLengthMax);
-            }
+            //if (selectedItem != null && selectedItem.Caption is null)
+            //{
+            //    selectedItem.Caption = formattedText
+            //        .Substring(0, CacheService.Options.MessageCaptionLengthMax);
+            //}
 
             var dialog = new SendFilesView(media, true);
             dialog.ViewModel = this;
@@ -964,7 +964,7 @@ namespace Unigram.ViewModels
                         .Substring(0, CacheService.Options.MessageCaptionLengthMax);
                 }
 
-                SendMediaExecute(media, media[0]);
+                SendMediaExecute(media);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
@@ -1000,7 +1000,7 @@ namespace Unigram.ViewModels
                 // Send compressed __only__ if user is dropping photos and videos only
                 if (media.Count > 0 && media.Count == files.Count)
                 {
-                    SendMediaExecute(media, media[0]);
+                    SendMediaExecute(media);
                 }
                 else if (files.Count > 0)
                 {
