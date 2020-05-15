@@ -3,28 +3,26 @@ param (
   [string]$config = "DEBUG"
 )
 
-Write-Output $config
-Write-Output $path
+Write-Output "Config: $config"
+Write-Output "Path: $path"
 
 $path = Resolve-Path $path
 $path_manifest = "${path}\Package.appxmanifest"
 
 $config = $config.ToUpper()
 
-$pinfo = New-Object System.Diagnostics.ProcessStartInfo
-$pinfo.FileName = "git"
-$pinfo.Arguments = "rev-list --count HEAD"
-$pinfo.WorkingDirectory = $path
-$pinfo.RedirectStandardOutput = $true
-$pinfo.UseShellExecute = $false
-$pinfo.CreateNoWindow = $true
-$p = New-Object System.Diagnostics.Process
-$p.StartInfo = $pinfo
-$p.Start() | Out-Null
-$p.WaitForExit()
-$stdout = $p.StandardOutput.ReadLine()
-Write-Host "stdout: '$stdout'"
-Write-Host "exit code: " + $p.ExitCode
+try {
+    $out = Invoke-Command -ScriptBlock {git -C $path rev-list --count HEAD}
+} catch {
+    exit
+}
+
+Write-Host "Git rev-list: $out"
+
+$rtn = 0
+if ([double]::TryParse($out, [ref]$rtn) -ne $true) {
+    exit
+}
 
 [xml]$document = Get-Content $path_manifest
 
@@ -36,9 +34,9 @@ $identity = $document.GetElementsByTagName("Identity")[0]
 $identity.Attributes["Name"].Value = $h[$config]
 
 $version = $identity.Attributes["Version"].Value;
-$regex = [regex]'(?:(\d+)\.)(?:(\d+)\.)(?:(\d+)\.\d+)'
+$regex = [regex]'(?:(\d+)\.)(?:(\d+)\.)(?:(.?)\.\d+)'
 
-$identity.Attributes["Version"].Value = $regex.Replace($version, '$1.$2.' + $stdout + '.0')
+$identity.Attributes["Version"].Value = $regex.Replace($version, '$1.$2.{0}.0' -f $out)
 
 $h = @{}
 $h["DEBUG"] = "Unigram Experimental"
