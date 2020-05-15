@@ -55,7 +55,7 @@ namespace Unigram.Views.Settings
             else if (args.Phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = FileSizeConverter.Convert(statistics.Size);
+                subtitle.Text = FileSizeConverter.Convert(statistics.Size, true);
             }
             else if (args.Phase == 2)
             {

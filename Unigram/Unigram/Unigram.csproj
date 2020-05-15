@@ -411,6 +411,7 @@
     <Compile Include="Controls\StickerPanel.xaml.cs">
       <DependentUpon>StickerPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\StorageChart.cs" />
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
