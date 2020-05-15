@@ -710,19 +710,7 @@ namespace Unigram.ViewModels
 
             if (chat.Type is ChatTypePrivate privata)
             {
-                Function request;
-
-                var existing = ProtoService.GetSecretChatForUser(privata.UserId);
-                if (existing != null)
-                {
-                    request = new CreateSecretChat(existing.Id);
-                }
-                else
-                {
-                    request = new CreateNewSecretChat(privata.UserId);
-                }
-
-                var response = await ProtoService.SendAsync(request);
+                var response = await ProtoService.SendAsync(new CreateNewSecretChat(privata.UserId));
                 if (response is Chat result)
                 {
                     NavigationService.NavigateToChat(result);

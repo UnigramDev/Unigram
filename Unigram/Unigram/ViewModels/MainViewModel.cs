@@ -249,18 +249,6 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            //Function request;
-
-            //var existing = ProtoService.GetSecretChatForUser(user.Id);
-            //if (existing != null)
-            //{
-            //    request = new CreateSecretChat(existing.Id);
-            //}
-            //else
-            //{
-            //    request = new CreateNewSecretChat(user.Id);
-            //}
-
             var response = await ProtoService.SendAsync(new CreateNewSecretChat(user.Id));
             if (response is Chat chat)
             {
