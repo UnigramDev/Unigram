@@ -868,6 +868,10 @@ namespace Unigram.Views
 
                 TextField.Focus(FocusState.Programmatic);
             }
+            else
+            {
+                UnloadVisibleMessages();
+            }
         }
 
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
