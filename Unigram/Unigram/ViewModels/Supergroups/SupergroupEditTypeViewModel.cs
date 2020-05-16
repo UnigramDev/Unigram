@@ -26,12 +26,13 @@ namespace Unigram.ViewModels.Supergroups
             var username = _isPublic ? (_username?.Trim() ?? string.Empty) : string.Empty;
 
             // If we're editing a basic group and the user wants to set an username to it,
-            // then we need to upgrade it first to a supergroup.
+            // then we need to upgrade it to a supergroup first.
             if (chat.Type is ChatTypeBasicGroup && !string.IsNullOrEmpty(username))
             {
                 var response = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
                 if (response is Chat result && result.Type is ChatTypeSupergroup supergroup)
                 {
+                    chat = result;
                     await ProtoService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId));
                 }
             }

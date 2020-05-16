@@ -157,7 +157,7 @@ namespace Unigram.ViewModels.Supergroups
                     Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
                 }
 
-                LoadUsername(chat.Id);
+                LoadUsername(0);
             }
 
             return Task.CompletedTask;
@@ -380,7 +380,9 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CheckChatUsername(chat.Id, text));
+            var chatId = chat.Type is ChatTypeSupergroup ? chat.Id : 0;
+
+            var response = await ProtoService.SendAsync(new CheckChatUsername(chatId, text));
             if (response is CheckChatUsernameResultOk)
             {
                 IsLoading = false;
@@ -403,6 +405,12 @@ namespace Unigram.ViewModels.Supergroups
             {
                 HasTooMuchUsernames = true;
                 LoadAdminedPublicChannels();
+            }
+            else if (response is Error error)
+            {
+                IsLoading = false;
+                IsAvailable = false;
+                ErrorMessage = error.Message;
             }
         }
 
