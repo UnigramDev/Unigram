@@ -69,6 +69,11 @@ Changelogs are provided both in [Releases section of our GitHub project](https:/
 If you don't want Microsoft Store you can install Unigram from [here](https://unigramdev.github.io/).
 Only major updates will be posted here. If you care about minor updates you should use Microsoft Store.
 
+<a name="alternativedownload"></a>
+## Windows 10 N
+To work with Windows 10 N you will need Media Feature pack. To install it properly go to ```Settings > Apps and Features > Add a feature.``` At this point, select Media Feature pack, install it and reboot. 
+
+
 <a name="wiki"></a>
 ## Wiki
 For additional information (keyboard shortcuts, other contact information, FAQ, missing features, build instructions and other stuff) you can check [Unigram wiki](https://github.com/UnigramDev/Unigram/wiki).
