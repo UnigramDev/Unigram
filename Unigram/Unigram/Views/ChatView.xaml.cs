@@ -3938,6 +3938,10 @@ namespace Unigram.Views
                             ShowAction(string.Format(Strings.Resources.SendMessageRestricted, BindConvert.Current.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
                         }
                     }
+                    else
+                    {
+                        ShowArea();
+                    }
                 }
                 else if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
                 {
