@@ -283,9 +283,9 @@ namespace Unigram.Entities
             }
 
             var profile = await MediaEncodingProfile.CreateFromFileAsync(File);
-            profile.Video.Width = (uint)resultWidth;
-            profile.Video.Height = (uint)resultHeight;
-            profile.Video.Bitrate = (uint)bitrate;
+            //profile.Video.Width = (uint)resultWidth;
+            //profile.Video.Height = (uint)resultHeight;
+            //profile.Video.Bitrate = (uint)bitrate;
 
             if (_isMuted)
             {
