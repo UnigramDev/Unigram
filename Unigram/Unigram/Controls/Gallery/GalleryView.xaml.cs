@@ -273,10 +273,7 @@ namespace Unigram.Controls.Gallery
             {
                 _closing = closing;
 
-                if (SettingsService.Current.AreAnimationsEnabled)
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
-                }
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
 
                 if (_compactLifetime != null)
                 {
@@ -358,28 +355,21 @@ namespace Unigram.Controls.Gallery
 
                 var root = Preview.Presenter;
 
-                if (SettingsService.Current.AreAnimationsEnabled)
+                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                if (animation != null)
                 {
-                    var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                    if (animation != null)
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                     {
-                        if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                        {
-                            animation.Configuration = new BasicConnectedAnimationConfiguration();
-                        }
+                        animation.Configuration = new BasicConnectedAnimationConfiguration();
+                    }
 
-                        var element = _closing();
-                        if (element.ActualWidth > 0 && animation.TryStart(element))
-                        {
-                            animation.Completed += (s, args) =>
-                            {
-                                Hide();
-                            };
-                        }
-                        else
+                    var element = _closing();
+                    if (element.ActualWidth > 0 && animation.TryStart(element))
+                    {
+                        animation.Completed += (s, args) =>
                         {
                             Hide();
-                        }
+                        };
                     }
                     else
                     {
@@ -445,34 +435,31 @@ namespace Unigram.Controls.Gallery
 
             var container = GetContainer(0);
 
-            if (SettingsService.Current.AreAnimationsEnabled)
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+            if (animation != null)
             {
-                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                if (animation != null)
+                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                 {
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                    {
-                        animation.Configuration = new BasicConnectedAnimationConfiguration();
-                    }
+                    animation.Configuration = new BasicConnectedAnimationConfiguration();
+                }
 
-                    _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
+                _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
 
-                    if (animation.TryStart(image.Presenter))
+                if (animation.TryStart(image.Presenter))
+                {
+                    animation.Completed += (s, args) =>
                     {
-                        animation.Completed += (s, args) =>
+                        Transport.Show();
+                        ScrollingHost.Opacity = 1;
+                        Preview.Opacity = 0;
+
+                        if (item.IsVideo && container != null)
                         {
-                            Transport.Show();
-                            ScrollingHost.Opacity = 1;
-                            Preview.Opacity = 0;
+                            Play(container.Presenter, item, item.GetFile());
+                        }
+                    };
 
-                            if (item.IsVideo && container != null)
-                            {
-                                Play(container.Presenter, item, item.GetFile());
-                            }
-                        };
-
-                        return;
-                    }
+                    return;
                 }
             }
 

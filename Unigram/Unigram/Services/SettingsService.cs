@@ -60,7 +60,8 @@ namespace Unigram.Services
 
         DistanceUnits DistanceUnits { get; set; }
 
-        bool AreAnimationsEnabled { get; set; }
+        bool AutocorrectWords { get; set; }
+        bool HighlightWords { get; set; }
 
         bool IsStreamingEnabled { get; set; }
         double VolumeLevel { get; set; }
@@ -574,20 +575,37 @@ namespace Unigram.Services
             }
         }
 
-        private static bool? _areAnimationsEnabled;
-        public bool AreAnimationsEnabled
+        private static bool? _autocorrectWords;
+        public bool AutocorrectWords
         {
             get
             {
-                if (_areAnimationsEnabled == null)
-                    _areAnimationsEnabled = GetValueOrDefault(_local, "AreAnimationsEnabled", ApiInfo.IsFullExperience);
+                if (_autocorrectWords == null)
+                    _autocorrectWords = GetValueOrDefault(_local, "AutocorrectWords", true);
 
-                return _areAnimationsEnabled ?? ApiInfo.IsFullExperience;
+                return _autocorrectWords ?? true;
             }
             set
             {
-                _areAnimationsEnabled = value;
-                AddOrUpdateValue(_local, "AreAnimationsEnabled", value);
+                _autocorrectWords = value;
+                AddOrUpdateValue(_local, "AutocorrectWords", value);
+            }
+        }
+
+        private static bool? _highlightWords;
+        public bool HighlightWords
+        {
+            get
+            {
+                if (_highlightWords == null)
+                    _highlightWords = GetValueOrDefault(_local, "HighlightWords", true);
+
+                return _highlightWords ?? true;
+            }
+            set
+            {
+                _highlightWords = value;
+                AddOrUpdateValue(_local, "HighlightWords", value);
             }
         }
 

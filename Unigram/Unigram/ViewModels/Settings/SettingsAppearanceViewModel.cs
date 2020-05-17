@@ -128,16 +128,29 @@ namespace Unigram.ViewModels.Settings
 
 
 
-        public bool AreAnimationsEnabled
+        public bool AutocorrectWords
         {
             get
             {
-                return Settings.AreAnimationsEnabled;
+                return Settings.AutocorrectWords;
             }
             set
             {
-                Settings.AreAnimationsEnabled = value;
-                RaisePropertyChanged(() => AreAnimationsEnabled);
+                Settings.AutocorrectWords = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool HighlightWords
+        {
+            get
+            {
+                return Settings.HighlightWords;
+            }
+            set
+            {
+                Settings.HighlightWords = value;
+                RaisePropertyChanged();
             }
         }
 

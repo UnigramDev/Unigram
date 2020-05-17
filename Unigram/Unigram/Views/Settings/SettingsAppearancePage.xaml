@@ -273,10 +273,14 @@
                 <controls:HeaderedControl
                     Header="{CustomResource Settings}">
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.AreAnimationsEnabled, Mode=TwoWay}"
-                        Header="{CustomResource EnableAnimations}"
+                        IsOn="{x:Bind ViewModel.AutocorrectWords, Mode=TwoWay}"
+                        Header="Autocorrect mispelled words"
                         Style="{StaticResource CheckButtonStyle}"/>
-                    
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.HighlightWords, Mode=TwoWay}"
+                        Header="Highlight mispelled words"
+                        Style="{StaticResource CheckButtonStyle}"/>
+
                     <ToggleSwitch
                         IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                         Header="{CustomResource SendByEnter}"

@@ -68,11 +68,7 @@ namespace Unigram.Controls.Gallery
             {
                 _closing = closing;
 
-                if (SettingsService.Current.AreAnimationsEnabled)
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
-                }
-
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
                 Load(message, parameter);
 
                 //if (_compactLifetime != null)
@@ -146,28 +142,21 @@ namespace Unigram.Controls.Gallery
 
                 var root = Preview.Presenter;
 
-                if (SettingsService.Current.AreAnimationsEnabled)
+                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                if (animation != null)
                 {
-                    var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                    if (animation != null)
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                     {
-                        if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                        {
-                            animation.Configuration = new BasicConnectedAnimationConfiguration();
-                        }
+                        animation.Configuration = new BasicConnectedAnimationConfiguration();
+                    }
 
-                        var element = _closing();
-                        if (element.ActualWidth > 0 && animation.TryStart(element))
-                        {
-                            animation.Completed += (s, args) =>
-                            {
-                                Hide();
-                            };
-                        }
-                        else
+                    var element = _closing();
+                    if (element.ActualWidth > 0 && animation.TryStart(element))
+                    {
+                        animation.Completed += (s, args) =>
                         {
                             Hide();
-                        }
+                        };
                     }
                     else
                     {
@@ -210,28 +199,25 @@ namespace Unigram.Controls.Gallery
 
         private void Preview_ImageOpened(object sender, RoutedEventArgs e)
         {
-            if (SettingsService.Current.AreAnimationsEnabled)
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+            if (animation != null)
             {
-                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                if (animation != null)
+                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                 {
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                    animation.Configuration = new BasicConnectedAnimationConfiguration();
+                }
+
+                //_layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
+
+                if (animation.TryStart(Preview.Presenter))
+                {
+                    animation.Completed += (s, args) =>
                     {
-                        animation.Configuration = new BasicConnectedAnimationConfiguration();
-                    }
+                        Presenter.Opacity = 1;
+                        Preview.Opacity = 0;
+                    };
 
-                    //_layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
-
-                    if (animation.TryStart(Preview.Presenter))
-                    {
-                        animation.Completed += (s, args) =>
-                        {
-                            Presenter.Opacity = 1;
-                            Preview.Opacity = 0;
-                        };
-
-                        return;
-                    }
+                    return;
                 }
             }
         }
