@@ -788,7 +788,7 @@ namespace Unigram.ViewModels
                     var conversion = new VideoConversion();
                     if (profile != null)
                     {
-                        conversion.Transcode = true;
+                        conversion.Transcode = video.IsMuted;
                         conversion.Mute = video.IsMuted;
                         conversion.Width = profile.Video.Width;
                         conversion.Height = profile.Video.Height;
@@ -807,7 +807,7 @@ namespace Unigram.ViewModels
                     var generated = await file.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
                     var thumbnail = await file.ToThumbnailAsync(conversion, ConversionType.TranscodeThumbnail, JsonConvert.SerializeObject(conversion));
 
-                    if (profile != null && profile.Audio == null)
+                    if (video.IsMuted)
                     {
                         var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, firstCaption);
 

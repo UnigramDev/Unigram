@@ -267,10 +267,21 @@ namespace Unigram.Controls.Views
 
             var overlay = root.FindName("Overlay") as Border;
 
+            var mute = root.FindName("Mute") as ToggleButton;
             var crop = root.FindName("Crop") as ToggleButton;
             var ttl = root.FindName("Ttl") as ToggleButton;
 
             overlay.Visibility = storage is StorageVideo ? Visibility.Visible : Visibility.Collapsed;
+
+            if (storage is StorageVideo video)
+            {
+                mute.IsChecked = video.IsMuted;
+                mute.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                mute.Visibility = Visibility.Collapsed;
+            }
 
             crop.Visibility = storage is StoragePhoto ? Visibility.Visible : Visibility.Collapsed;
             ttl.Visibility = IsTtlAvailable ? Visibility.Visible : Visibility.Collapsed;
@@ -456,6 +467,16 @@ namespace Unigram.Controls.Views
             flyout.Content = stack;
 
             flyout.ShowAt(button.Parent as UIElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
+        }
+
+        private void Mute_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as ToggleButton;
+            if (button.Tag is StorageVideo video)
+            {
+                button.IsChecked = !button.IsChecked == true;
+                video.IsMuted = button.IsChecked == true;
+            }
         }
 
         private async void Crop_Click(object sender, RoutedEventArgs e)

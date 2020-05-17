@@ -160,6 +160,19 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <controls:GlyphToggleButton
+                        x:Name="Mute"
+                        Click="Mute_Click"
+                        UncheckedGlyph="&#xE906;"
+                        CheckedGlyph="&#xE906;"
+                        CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                        Tag="{x:Bind}"
+                        Width="40"
+                        Height="40"
+                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                        FontSize="18"
+                        Radius="12,4,4,12"/>
+                    
+                    <controls:GlyphToggleButton
                         x:Name="Crop"
                         Click="Crop_Click" 
                         UncheckedGlyph="&#xE7A8;"
