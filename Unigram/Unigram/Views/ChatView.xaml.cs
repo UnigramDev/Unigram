@@ -517,6 +517,9 @@ namespace Unigram.Views
             //Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
 
             UpdateTextAreaRadius();
+
+            TextField.IsTextPredictionEnabled = SettingsService.Current.AutocorrectWords;
+            TextField.IsSpellCheckEnabled = SettingsService.Current.HighlightWords;
             TextField.Focus(FocusState.Programmatic);
         }
 
