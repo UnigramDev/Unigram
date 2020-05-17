@@ -48,13 +48,15 @@ namespace Unigram.Services
         {
             if (profile == null)
             {
-                return new NetworkTypeNone();
+                //return new NetworkTypeNone();
+                return new NetworkTypeWiFi();
             }
 
             var level = profile.GetNetworkConnectivityLevel();
             if (level == NetworkConnectivityLevel.LocalAccess || level == NetworkConnectivityLevel.None)
             {
-                return new NetworkTypeNone();
+                //return new NetworkTypeNone();
+                return new NetworkTypeWiFi();
             }
 
             var cost = profile.GetConnectionCost();
