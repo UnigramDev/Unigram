@@ -1,25 +1,14 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -93,21 +82,37 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                if (SettingsService.Current.Diagnostics.PlayStickers)
-                {
-                    LayoutRoot.Background = null;
+                LayoutRoot.Background = null;
 
-                    Player.IsLoopingEnabled = (message.Content is MessageDice dice && dice.Value == 0) || (message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled);
-                    Player.Source = new Uri("file:///" + file.Local.Path);
+                Player.IsLoopingEnabled = (message.Content is MessageDice dice && dice.Value == 0) || (message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled);
+                Player.IsCachingEnabled = !(message.Content is MessageDice dies && !message.GeneratedContentUnread);
+                Player.Source = new Uri("file:///" + file.Local.Path);
+
+                if (message.IsOutgoing &&
+                    message.GeneratedContentUnread &&
+                    message.Content is MessageDice dais &&
+                    dais.FinalStateSticker != null &&
+                    dais.SuccessAnimationFrameNumber != 0)
+                {
+                    Player.IndexChanged += OnIndexChanged;
                 }
                 else
                 {
-                    Player.Source = null;
+                    Player.IndexChanged -= OnIndexChanged;
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
+            }
+        }
+
+        private void OnIndexChanged(object sender, int e)
+        {
+            if (_message?.Content is MessageDice dice && dice.SuccessAnimationFrameNumber == e)
+            {
+                _message.Delegate.Aggregator.Publish(new UpdateConfetti());
+                Player.IndexChanged -= OnIndexChanged;
             }
         }
 

@@ -122,7 +122,6 @@ namespace Unigram.Views
                 if (message.Content is MessageAlbum album)
                 {
                     messages.AddRange(album.Layout.Messages.Keys);
-                    animations.Add(message);
                 }
                 else
                 {
@@ -368,89 +367,86 @@ namespace Unigram.Views
 
             foreach (var message in items)
             {
+                var animation = message.GetAnimation();
+                if (animation == null || !animation.Local.IsDownloadingCompleted)
+                {
+                    continue;
+                }
+
                 var container = Messages.ContainerFromItem(message) as ListViewItem;
                 if (container == null)
                 {
                     continue;
                 }
 
-                var animation = message.GetAnimation();
-                if (animation == null)
+                var root = container.ContentTemplateRoot as FrameworkElement;
+                if (root is MessageBubble == false)
                 {
-                    continue;
+                    root = root.FindName("Bubble") as FrameworkElement;
                 }
 
-                if (animation.Local.IsDownloadingCompleted)
+                var target = message.Content as object;
+                var media = root.FindName("Media") as Border;
+                var panel = media.Child as Panel;
+
+                if (target is MessageText messageText && messageText.WebPage != null)
                 {
-                    var root = container.ContentTemplateRoot as FrameworkElement;
-                    if (root is MessageBubble == false)
+                    if (messageText.WebPage.Animation != null)
                     {
-                        root = root.FindName("Bubble") as FrameworkElement;
+                        target = messageText.WebPage.Animation;
+                    }
+                    else if (messageText.WebPage.Audio != null)
+                    {
+                        target = messageText.WebPage.Audio;
+                    }
+                    else if (messageText.WebPage.Document != null)
+                    {
+                        target = messageText.WebPage.Document;
+                    }
+                    else if (messageText.WebPage.Sticker != null)
+                    {
+                        target = messageText.WebPage.Sticker;
+                    }
+                    else if (messageText.WebPage.Video != null)
+                    {
+                        target = messageText.WebPage.Video;
+                    }
+                    else if (messageText.WebPage.VideoNote != null)
+                    {
+                        target = messageText.WebPage.VideoNote;
+                    }
+                    else if (messageText.WebPage.VoiceNote != null)
+                    {
+                        target = messageText.WebPage.VoiceNote;
+                    }
+                    else if (messageText.WebPage.Photo != null)
+                    {
+                        // Photo at last: web page preview might have both a file and a thumbnail
+                        target = messageText.WebPage.Photo;
                     }
 
-                    var target = message.Content as object;
-                    var media = root.FindName("Media") as Border;
-                    var panel = media.Child as Panel;
+                    media = panel?.FindName("Media") as Border;
+                    panel = media?.Child as Panel;
+                }
+                else if (target is MessageGame)
+                {
+                    media = panel?.FindName("Media") as Border;
+                    panel = media?.Child as Panel;
+                }
+                else if (target is MessageVideoNote messageVideoNote)
+                {
+                    target = messageVideoNote.VideoNote;
+                }
 
-                    if (target is MessageText messageText && messageText.WebPage != null)
-                    {
-                        if (messageText.WebPage.Animation != null)
-                        {
-                            target = messageText.WebPage.Animation;
-                        }
-                        else if (messageText.WebPage.Audio != null)
-                        {
-                            target = messageText.WebPage.Audio;
-                        }
-                        else if (messageText.WebPage.Document != null)
-                        {
-                            target = messageText.WebPage.Document;
-                        }
-                        else if (messageText.WebPage.Sticker != null)
-                        {
-                            target = messageText.WebPage.Sticker;
-                        }
-                        else if (messageText.WebPage.Video != null)
-                        {
-                            target = messageText.WebPage.Video;
-                        }
-                        else if (messageText.WebPage.VideoNote != null)
-                        {
-                            target = messageText.WebPage.VideoNote;
-                        }
-                        else if (messageText.WebPage.VoiceNote != null)
-                        {
-                            target = messageText.WebPage.VoiceNote;
-                        }
-                        else if (messageText.WebPage.Photo != null)
-                        {
-                            // Photo at last: web page preview might have both a file and a thumbnail
-                            target = messageText.WebPage.Photo;
-                        }
+                if (target is VideoNote)
+                {
+                    panel = panel?.FindName("Presenter") as Panel;
+                }
 
-                        media = panel?.FindName("Media") as Border;
-                        panel = media?.Child as Panel;
-                    }
-                    else if (target is MessageGame)
-                    {
-                        media = panel?.FindName("Media") as Border;
-                        panel = media?.Child as Panel;
-                    }
-                    else if (target is MessageVideoNote messageVideoNote)
-                    {
-                        target = messageVideoNote.VideoNote;
-                    }
-
-                    if (target is VideoNote)
-                    {
-                        panel = panel?.FindName("Presenter") as Panel;
-                    }
-
-                    if (panel is Grid final)
-                    {
-                        final.Tag = message;
-                        news[message.Id] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame, Clip = target is VideoNote };
-                    }
+                if (panel is Grid final)
+                {
+                    final.Tag = message;
+                    news[message.Id] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame, Clip = target is VideoNote };
                 }
             }
 
@@ -531,11 +527,17 @@ namespace Unigram.Views
 
             foreach (var message in items)
             {
-                if (message.Content is MessageDice dice)
+                var animation = message.GetAnimatedSticker();
+                if (animation == null || !animation.Local.IsDownloadingCompleted)
                 {
-                    if (message.GeneratedUnread)
+                    continue;
+                }
+
+                if (message.Content is MessageDice)
+                {
+                    if (message.GeneratedContentUnread)
                     {
-                        message.GeneratedUnread = dice.FinalStateSticker == null;
+                        message.GeneratedContentUnread = message.SendingState is MessageSendingStatePending;
                     }
                     else
                     {
@@ -549,36 +551,27 @@ namespace Unigram.Views
                     continue;
                 }
 
-                var animation = message.GetAnimatedSticker();
-                if (animation == null)
+                var root = container.ContentTemplateRoot as FrameworkElement;
+                if (root is MessageBubble == false)
                 {
-                    continue;
+                    root = root.FindName("Bubble") as FrameworkElement;
                 }
 
-                if (animation.Local.IsDownloadingCompleted)
+                var target = message.Content as object;
+                var media = root.FindName("Media") as Border;
+                var panel = media.Child as FrameworkElement;
+
+                if (target is MessageText messageText && messageText.WebPage != null)
                 {
-                    var root = container.ContentTemplateRoot as FrameworkElement;
-                    if (root is MessageBubble == false)
-                    {
-                        root = root.FindName("Bubble") as FrameworkElement;
-                    }
+                    media = panel?.FindName("Media") as Border;
+                    panel = media?.Child as FrameworkElement;
+                }
 
-                    var target = message.Content as object;
-                    var media = root.FindName("Media") as Border;
-                    var panel = media.Child as FrameworkElement;
-
-                    if (target is MessageText messageText && messageText.WebPage != null)
-                    {
-                        media = panel?.FindName("Media") as Border;
-                        panel = media?.Child as FrameworkElement;
-                    }
-
-                    var lottie = panel?.FindName("Player") as LottieView;
-                    if (lottie != null)
-                    {
-                        lottie.Tag = message;
-                        news[message.Id] = new LottieViewItem { File = animation, Player = lottie };
-                    }
+                var lottie = panel?.FindName("Player") as LottieView;
+                if (lottie != null)
+                {
+                    lottie.Tag = message;
+                    news[message.Id] = new LottieViewItem { File = animation, Player = lottie };
                 }
             }
 

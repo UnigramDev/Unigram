@@ -34,6 +34,8 @@ namespace Unigram.Views
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
+        public IEventAggregator Aggregator => throw new NotImplementedException();
+
         private readonly string _injectedJs;
         private ScrollViewer _scrollingHost;
 

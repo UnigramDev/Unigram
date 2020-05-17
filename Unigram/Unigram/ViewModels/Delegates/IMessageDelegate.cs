@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using Telegram.Td.Api;
+using Unigram.Services;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Delegates
 {
     public interface IMessageDelegate : IViewModelDelegate
     {
+        IEventAggregator Aggregator { get; }
+
         bool CanBeDownloaded(MessageViewModel message);
         void DownloadFile(MessageViewModel message, File file);
 

@@ -1332,6 +1332,11 @@ namespace Unigram.ViewModels
                         dice.FinalStateSticker
                         ?? dice.InitialStateSticker
                         ?? new Sticker(0, 512, 512, dice.Emoji, true, false, null, null, Common.TdExtensions.InvalidFile()));
+
+                    if (message.Id > chat.LastReadInboxMessageId)
+                    {
+                        message.GeneratedContentUnread = true;
+                    }
                 }
 
                 var target = parent ?? message;

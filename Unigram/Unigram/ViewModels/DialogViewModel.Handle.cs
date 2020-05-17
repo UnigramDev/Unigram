@@ -602,6 +602,7 @@ namespace Unigram.ViewModels
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
+                    message.GeneratedContentUnread = true;
                     ProcessFiles(_chat, new[] { message });
                 }, (bubble, message) =>
                 {
@@ -869,6 +870,8 @@ namespace Unigram.ViewModels
                 if (IsFirstSliceLoaded == true || IsSchedule)
                 {
                     var messageCommon = _messageFactory.Create(this, message);
+                    messageCommon.GeneratedContentUnread = true;
+
                     var result = new List<MessageViewModel> { messageCommon };
                     await ProcessMessagesAsync(_chat, result);
 
