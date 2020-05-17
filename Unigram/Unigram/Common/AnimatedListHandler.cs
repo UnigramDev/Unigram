@@ -28,7 +28,7 @@ namespace Unigram.Common
         public Action<FrameworkElement, LottieView> LoadView { get; set; }
         public Action<FrameworkElement, LottieView> UnloadView { get; set; }
 
-        private void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var scrollViewer = _listView.GetScrollViewer();
             if (scrollViewer != null)

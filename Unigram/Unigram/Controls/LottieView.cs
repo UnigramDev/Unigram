@@ -1,4 +1,4 @@
-﻿using Microsoft.Graphics.Canvas.UI;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using RLottie;
 using System;
@@ -6,10 +6,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using Unigram.Common;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -20,8 +23,10 @@ namespace Unigram.Controls
     [TemplatePart(Name = "Thumbnail", Type = typeof(Image))]
     public class LottieView : Control
     {
-        private CanvasAnimatedControl _canvas;
+        private CanvasSwapChainPanel _canvas;
         private string CanvasPartName = "Canvas";
+
+        private CanvasSwapChain _swapChain;
 
         private Image _thumbnail;
 
@@ -47,91 +52,148 @@ namespace Unigram.Controls
 
         private bool _hideThumbnail = true;
 
+        private LottieLoopThread _thread = LottieLoopThread.Current;
+        private bool _subscribed;
+
+        private CanvasDevice _device;
+
+        private Vector2 _logicalSize;
+        private float _logicalDpi;
+
         public LottieView()
         {
             DefaultStyleKey = typeof(LottieView);
         }
 
-        ~LottieView()
-        {
-            Dispose();
-        }
+        //~LottieView()
+        //{
+        //    Dispose();
+        //}
 
         protected override void OnApplyTemplate()
         {
-            var canvas = GetTemplateChild(CanvasPartName) as CanvasAnimatedControl;
+            var canvas = GetTemplateChild(CanvasPartName) as CanvasSwapChainPanel;
             if (canvas == null)
             {
                 return;
             }
 
             _canvas = canvas;
-            _canvas.Paused = true;
             _canvas.Unloaded += OnUnloaded;
-            _canvas.CreateResources += OnCreateResources;
-            _canvas.Draw += OnDraw;
+            //_canvas.SwapChain = _swapChain;
+            //_canvas.CreateResources += OnCreateResources;
+            //_canvas.RegionsInvalidated += OnRegionsInvalidated;
 
             _thumbnail = (Image)GetTemplateChild("Thumbnail");
+
+            OnSourceChanged(UriToPath(Source), _source);
 
             base.OnApplyTemplate();
         }
 
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            _logicalSize = finalSize.ToVector2();
+
+            _swapChain?.ResizeBuffers(_logicalSize.X, _logicalSize.Y, _logicalDpi);
+
+            Invalidate();
+
+            return base.ArrangeOverride(finalSize);
+        }
+
         public void Dispose()
         {
-            if (_animation is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
+            //if (_animation is IDisposable disposable)
+            //{
+            //    Debug.WriteLine("Disposing animation for: " + Path.GetFileName(_source));
+            //    disposable.Dispose();
+            //}
 
-            _animation = null;
+            //_animation = null;
             _source = null;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Subscribe(false);
+
             _canvas.Unloaded -= OnUnloaded;
-            _canvas.CreateResources -= OnCreateResources;
-            _canvas.Draw -= OnDraw;
             _canvas.RemoveFromVisualTree();
             _canvas = null;
 
             Dispose();
         }
 
-        private void OnCreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
+        private void OnTick(object sender, EventArgs args)
         {
-            Dispose();
-
-            if (args.Reason == CanvasCreateResourcesReason.FirstTime)
+            try
             {
-                OnSourceChanged(UriToPath(Source), _source);
+                Invalidate();
+            }
+            catch
+            {
+                Subscribe(false);
             }
         }
 
-        private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
+        public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _animationIsCaching)
+            if (animation == null || _animationIsCaching || _canvas == null || _logicalSize == Vector2.Zero)
             {
                 return;
+            }
+
+            if (_swapChain == null)
+            {
+                if (_thread.Cooldown > 0 && _subscribed)
+                {
+                    return;
+                }
+
+                _thread.Cooldown = 2;
+                _device = new CanvasDevice();
+
+                _swapChain = new CanvasSwapChain(_device, _logicalSize.X, _logicalSize.Y, _logicalDpi);
+
+                _ = Dispatcher.RunIdleAsync(idle =>
+                {
+                    var canvas = _canvas;
+                    if (canvas != null)
+                    {
+                        canvas.SwapChain = _swapChain;
+                    }
+                });
             }
 
             var index = _index;
             var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
 
-            using (var bitmap = _animation.RenderSync(sender, index, 256, 256))
+            if (!_animationIsCached)
             {
-                args.DrawingSession.DrawImage(bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+                Debug.WriteLine("Rendering first frame for: " + Path.GetFileName(_source));
             }
+
+            using (var session = _swapChain.CreateDrawingSession(Colors.Transparent))
+            using (var bitmap = animation.RenderSync(session, index, 256, 256))
+            {
+                session.DrawImage(bitmap, new Rect(0, 0, _swapChain.Size.Width, _swapChain.Size.Height));
+            }
+
+            _swapChain.Present();
 
             if (!_animationIsCached)
             {
                 _animationIsCached = true;
                 _animationIsCaching = true;
 
+                Debug.WriteLine("Creating cache for: " + Path.GetFileName(_source));
+
                 ThreadPool.QueueUserWorkItem(state =>
                 {
-                    if (state is CachedAnimation cached)
+                    if (animation is CachedAnimation cached)
                     {
                         cached.CreateCache(256, 256);
                         _animationIsCaching = false;
@@ -139,7 +201,7 @@ namespace Unigram.Controls
                 }, animation);
             }
 
-            if (_hideThumbnail)
+            if (_hideThumbnail && _thumbnail != null)
             {
                 _hideThumbnail = false;
                 this.BeginOnUIThread(() =>
@@ -163,8 +225,9 @@ namespace Unigram.Controls
 
                     if (!_isLoopingEnabled)
                     {
-                        sender.Paused = true;
-                        sender.ResetElapsedTime();
+                        //sender.Paused = true;
+                        //sender.ResetElapsedTime();
+                        Subscribe(false);
                     }
                 }
 
@@ -183,8 +246,9 @@ namespace Unigram.Controls
 
                 if (!_isLoopingEnabled)
                 {
-                    sender.Paused = true;
-                    sender.ResetElapsedTime();
+                    //sender.Paused = true;
+                    //sender.ResetElapsedTime();
+                    Subscribe(false);
                 }
 
                 PositionChanged?.Invoke(this, 1);
@@ -204,7 +268,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            _index = (int)Math.Ceiling(_animation.TotalFrame * position);
+            _index = (int)Math.Min(_animation.TotalFrame - 1, Math.Ceiling(_animation.TotalFrame * position));
         }
 
         public int Ciccio => _animation.TotalFrame;
@@ -225,8 +289,9 @@ namespace Unigram.Controls
 
             if (newValue == null)
             {
-                canvas.Paused = true;
-                canvas.ResetElapsedTime();
+                //canvas.Paused = true;
+                //canvas.ResetElapsedTime();
+                Subscribe(false);
 
                 Dispose();
                 return;
@@ -238,10 +303,10 @@ namespace Unigram.Controls
                 return;
             }
 
-            var animation = CachedAnimation.LoadFromFile(newValue, true, _limitFps, ColorReplacements);
+            var animation = CachedAnimation.LoadFromFile(newValue, _isCachingEnabled, _limitFps, ColorReplacements);
             if (animation == null)
             {
-                // The app can't access the specified file
+                // The app can't access the file specified
                 return;
             }
 
@@ -252,7 +317,7 @@ namespace Unigram.Controls
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
 
-            _index = 0;
+            _index = _isCachingEnabled ? 0 : _animationTotalFrame - 1;
 
             var update = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
             if (_limitFps && _animation.FrameRate >= 60)
@@ -260,18 +325,23 @@ namespace Unigram.Controls
                 update = TimeSpan.FromSeconds(update.TotalSeconds * 2);
             }
 
-            canvas.Paused = true;
-            canvas.ResetElapsedTime();
-            canvas.TargetElapsedTime = update > TimeSpan.Zero ? update : TimeSpan.MaxValue;
+            //canvas.Paused = true;
+            //canvas.ResetElapsedTime();
+            //canvas.TargetElapsedTime = update > TimeSpan.Zero ? update : TimeSpan.MaxValue;
 
             if (AutoPlay || _shouldPlay)
             {
                 _shouldPlay = false;
-                canvas.Paused = false;
+                Subscribe(true);
+                //canvas.Paused = false;
             }
+            else
+            {
+                Subscribe(false);
 
-            // Invalidate to render the first frame
-            canvas.Invalidate();
+                // Invalidate to render the first frame
+                Invalidate();
+            }
         }
 
         public void Play(bool backward = false)
@@ -293,8 +363,9 @@ namespace Unigram.Controls
             _shouldPlay = false;
             _backward = backward;
 
-            canvas.Paused = false;
-            canvas.Invalidate();
+            //canvas.Paused = false;
+            Subscribe(true);
+            //OnInvalidate();
         }
 
         public void Pause()
@@ -306,19 +377,20 @@ namespace Unigram.Controls
                 return;
             }
 
-            canvas.Paused = true;
-            canvas.ResetElapsedTime();
+            //canvas.Paused = true;
+            //canvas.ResetElapsedTime();
+            Subscribe(false);
         }
 
-        public void Invalidate()
+        private void Subscribe(bool subscribe)
         {
-            var canvas = _canvas;
-            if (canvas == null)
-            {
-                return;
-            }
+            _subscribed = subscribe;
+            _thread.Tick -= OnTick;
 
-            canvas.Invalidate();
+            if (subscribe)
+            {
+                _thread.Tick += OnTick;
+            }
         }
 
         private string UriToPath(Uri uri)
@@ -432,5 +504,53 @@ namespace Unigram.Controls
         public event EventHandler<int> IndexChanged;
 
         public IReadOnlyDictionary<uint, uint> ColorReplacements { get; set; }
+    }
+
+    public class LottieLoopThread
+    {
+        private readonly Timer _timer;
+
+        private bool _drop;
+        public int Cooldown;
+
+        public LottieLoopThread()
+        {
+            _timer = new Timer(OnTick, null, Timeout.Infinite, Timeout.Infinite);
+        }
+
+        private static LottieLoopThread _current;
+        public static LottieLoopThread Current => _current ??= new LottieLoopThread();
+
+        private void OnTick(object state)
+        {
+            if (_drop)
+            {
+                return;
+            }
+
+            _drop = true;
+            _tick?.Invoke(this, EventArgs.Empty);
+            _drop = false;
+
+            if (Cooldown > 0)
+            {
+                Cooldown--;
+            }
+        }
+
+        private event EventHandler _tick;
+        public event EventHandler Tick
+        {
+            add
+            {
+                if (_tick == null) _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(1000 / 30));
+                _tick += value;
+            }
+            remove
+            {
+                _tick -= value;
+                if (_tick == null) _timer.Change(Timeout.Infinite, Timeout.Infinite);
+            }
+        }
     }
 }
