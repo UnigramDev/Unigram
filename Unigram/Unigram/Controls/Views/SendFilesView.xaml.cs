@@ -48,7 +48,8 @@ namespace Unigram.Controls.Views
         }
 
         public bool IsMediaOnly => Items.All(x => x is StoragePhoto || x is StorageVideo);
-        public bool IsAlbumAvailable => IsMediaSelected && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == 0);
+        public bool IsAlbumAvailable => IsMediaSelected && Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == 0);
+        public bool IsTtlAvailable { get; }
 
         private bool _isMediaSelected;
         public bool IsMediaSelected
@@ -100,17 +101,27 @@ namespace Unigram.Controls.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SendFilesView(IEnumerable<StorageMedia> items, bool media)
+        public SendFilesView(IEnumerable<StorageMedia> items, bool media, bool ttl)
         {
             InitializeComponent();
 
             PrimaryButtonText = Strings.Resources.Send;
             SecondaryButtonText = Strings.Resources.Cancel;
 
+            IsTtlAvailable = ttl;
+
             Items = new MvxObservableCollection<StorageMedia>(items);
+            Items.CollectionChanged += OnCollectionChanged;
             IsMediaSelected = media && IsMediaOnly;
             IsFilesSelected = !IsMediaSelected;
+            IsAlbum = IsAlbumAvailable;
 
+            UpdateView();
+            UpdatePanel();
+        }
+
+        private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
             UpdateView();
             UpdatePanel();
         }
@@ -240,6 +251,31 @@ namespace Unigram.Controls.Views
             subtitle.Text = FileSizeConverter.Convert((int)props.Size);
         }
 
+        private void Grid_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            var storage = args.NewValue as StorageMedia;
+            if (storage == null)
+            {
+                return;
+            }
+
+            var root = sender.Parent as Grid;
+            if (root == null)
+            {
+                return;
+            }
+
+            var overlay = root.FindName("Overlay") as Border;
+
+            var crop = root.FindName("Crop") as ToggleButton;
+            var ttl = root.FindName("Ttl") as ToggleButton;
+
+            overlay.Visibility = storage is StorageVideo ? Visibility.Visible : Visibility.Collapsed;
+
+            crop.Visibility = storage is StoragePhoto ? Visibility.Visible : Visibility.Collapsed;
+            ttl.Visibility = IsTtlAvailable ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         public void Accept()
         {
             throw new NotImplementedException();
@@ -353,7 +389,7 @@ namespace Unigram.Controls.Views
 
             _panelState = state;
 
-            if (Album?.ItemsPanelRoot is SendFilesAlbumPanel panel)
+            if (Album?.ItemsPanelRoot is SendFilesAlbumPanel panel && IsAlbum)
             {
                 var layout = new GroupedMedia();
 
@@ -383,49 +419,48 @@ namespace Unigram.Controls.Views
 
         private void Ttl_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            if (button.Tag is StorageMedia media)
+            var button = sender as ToggleButton;
+            var media = button.Tag as StorageMedia;
+
+            var slider = new Slider();
+            slider.IsThumbToolTipEnabled = false;
+            slider.Header = MessageTtlConverter.Convert(MessageTtlConverter.ConvertSeconds(media.Ttl));
+            slider.Minimum = 0;
+            slider.Maximum = 28;
+            slider.StepFrequency = 1;
+            slider.SmallChange = 1;
+            slider.LargeChange = 1;
+            slider.Value = MessageTtlConverter.ConvertSeconds(media.Ttl);
+            slider.ValueChanged += (s, args) =>
             {
-                var slider = new Slider();
-                slider.IsThumbToolTipEnabled = false;
-                slider.Header = MessageTtlConverter.Convert(MessageTtlConverter.ConvertSeconds(media.Ttl));
-                slider.Minimum = 0;
-                slider.Maximum = 28;
-                slider.StepFrequency = 1;
-                slider.SmallChange = 1;
-                slider.LargeChange = 1;
-                slider.Value = MessageTtlConverter.ConvertSeconds(media.Ttl);
-                slider.ValueChanged += (s, args) =>
-                {
-                    var index = (int)args.NewValue;
-                    var label = MessageTtlConverter.Convert(index);
+                var index = (int)args.NewValue;
+                var label = MessageTtlConverter.Convert(index);
 
-                    slider.Header = label;
-                    media.Ttl = MessageTtlConverter.ConvertBack(index);
-                };
+                slider.Header = label;
+                media.Ttl = MessageTtlConverter.ConvertBack(index);
+            };
 
-                var text = new TextBlock();
-                text.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
-                text.TextWrapping = TextWrapping.Wrap;
-                text.Text = media.IsPhoto
-                    ? Strings.Resources.MessageLifetimePhoto
-                    : Strings.Resources.MessageLifetimeVideo;
+            var text = new TextBlock();
+            text.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
+            text.TextWrapping = TextWrapping.Wrap;
+            text.Text = media is StoragePhoto
+                ? Strings.Resources.MessageLifetimePhoto
+                : Strings.Resources.MessageLifetimeVideo;
 
-                var stack = new StackPanel();
-                stack.Width = 260;
-                stack.Children.Add(slider);
-                stack.Children.Add(text);
+            var stack = new StackPanel();
+            stack.Width = 260;
+            stack.Children.Add(slider);
+            stack.Children.Add(text);
 
-                var flyout = new Flyout();
-                flyout.Content = stack;
+            var flyout = new Flyout();
+            flyout.Content = stack;
 
-                flyout.ShowAt(button.Parent as UIElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
-            }
+            flyout.ShowAt(button.Parent as UIElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
         }
 
         private async void Crop_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as ToggleButton;
             if (button.Tag is StorageMedia media)
             {
                 var dialog = new EditMediaView(media.File);
@@ -570,7 +605,7 @@ namespace Unigram.Controls.Views
         public float Height { get; private set; }
         public int Width { get; private set; }
 
-        public UniqueList<string, StorageMedia> Messages { get; } = new UniqueList<string, StorageMedia>(x => x.File.Path);
+        public List<StorageMedia> Messages { get; } = new List<StorageMedia>();
         public Dictionary<StorageMedia, GroupedMessagePosition> Positions { get; } = new Dictionary<StorageMedia, GroupedMessagePosition>();
 
         private class MessageGroupedLayoutAttempt
@@ -1021,39 +1056,6 @@ namespace Unigram.Controls.Views
 
             Width = totalWidth;
             Height = totalHeight;
-        }
-    }
-
-    public class GlyphTtlButton : GlyphButton
-    {
-        public int Ttl
-        {
-            get { return (int)GetValue(TtlProperty); }
-            set { SetValue(TtlProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Ttl.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TtlProperty =
-            DependencyProperty.Register("Ttl", typeof(int), typeof(GlyphTtlButton), new PropertyMetadata(0, OnTtlChanged));
-
-        private static void OnTtlChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((GlyphTtlButton)d).OnTtlChanged((int)e.NewValue, (int)e.OldValue);
-        }
-
-        private void OnTtlChanged(int newValue, int oldValue)
-        {
-            VisualStateManager.GoToState(this, newValue == 0 ? "Unselected" : "Selected", false);
-
-            // TODO: WRONG!!!
-            if (newValue == 0)
-            {
-                ClearValue(Button.ForegroundProperty);
-            }
-            else
-            {
-                Foreground = App.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
-            }
         }
     }
 }

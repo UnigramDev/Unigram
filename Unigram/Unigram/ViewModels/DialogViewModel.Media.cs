@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -251,7 +250,7 @@ namespace Unigram.ViewModels
                 caption = formattedText.Substring(0, CacheService.Options.MessageCaptionLengthMax);
             }
 
-            var dialog = new SendFilesView(items, media);
+            var dialog = new SendFilesView(items, media, _chat.Type is ChatTypePrivate);
             dialog.ViewModel = this;
             dialog.Caption = caption;
 
@@ -841,8 +840,6 @@ namespace Unigram.ViewModels
 
         public async Task HandlePackageAsync(DataPackageView package)
         {
-            var boh = string.Join(", ", package.AvailableFormats);
-
             if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
             {
                 var bitmap = await package.GetBitmapAsync();
@@ -1030,7 +1027,7 @@ namespace Unigram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            var dialog = new SendFilesView(new List<StorageMedia> { storage }, true);
+            var dialog = new SendFilesView(new[] { storage }, true, false);
             dialog.Caption = formattedText
                 .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 

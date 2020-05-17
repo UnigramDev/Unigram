@@ -75,8 +75,11 @@ namespace Unigram.Entities
             set
             {
                 Set(ref _ttl, value);
+                RaisePropertyChanged(() => IsSecret);
             }
         }
+
+        public bool IsSecret => _ttl > 0;
 
         public virtual uint Width { get; }
         public virtual uint Height { get; }
@@ -87,11 +90,13 @@ namespace Unigram.Entities
         public BitmapEditState EditState
         {
             get => _editState;
-            set => Set(ref _editState, value);
+            set
+            {
+                Set(ref _editState, value);
+                RaisePropertyChanged(() => IsEdited);
+            }
         }
 
-        public bool IsPhoto => this is StoragePhoto;
-        public bool IsVideo => this is StorageVideo;
         public bool IsEdited => !_editState?.IsEmpty ?? false;
 
         private async void LoadThumbnail()
