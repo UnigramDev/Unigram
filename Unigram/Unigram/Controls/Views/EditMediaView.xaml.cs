@@ -1,32 +1,18 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Charts;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Services;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Core;
-using Windows.UI.Input.Inking;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
@@ -402,6 +388,8 @@ namespace Unigram.Controls.Views
         {
             Canvas.Stroke = DrawSlider.Stroke;
             Canvas.StrokeThickness = DrawSlider.StrokeThickness;
+
+            Brush_Click(null, null);
         }
 
         private void Canvas_StrokesChanged(object sender, EventArgs e)
