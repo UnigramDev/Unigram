@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    [TemplatePart(Name = "Canvas", Type = typeof(CanvasAnimatedControl))]
+    [TemplatePart(Name = "Canvas", Type = typeof(CanvasSwapChainPanel))]
     [TemplatePart(Name = "Thumbnail", Type = typeof(Image))]
     public class LottieView : Control
     {
@@ -177,8 +177,8 @@ namespace Unigram.Controls
             }
 
             using (var session = _swapChain.CreateDrawingSession(Colors.Transparent))
-            using (var bitmap = animation.RenderSync(session, index, 256, 256))
             {
+                var bitmap = animation.RenderSync(session, index, 256, 256);
                 session.DrawImage(bitmap, new Rect(0, 0, _swapChain.Size.Width, _swapChain.Size.Height));
             }
 
