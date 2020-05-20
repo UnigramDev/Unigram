@@ -1,0 +1,49 @@
+# Universal Windows Platform
+# Build a Universal Windows Platform project using Visual Studio.
+# Add steps that test and distribute an app, save build artifacts, and more:
+# https://aka.ms/yaml
+
+trigger:
+- develop
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'x64'
+  buildConfiguration: 'Release'
+  appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
+
+steps:
+- task: file-creator@5
+  inputs:
+    filepath: 'Unigram\Unigram\Constants.Secret.cs'
+    filecontent: |
+      using System;
+      
+      namespace Unigram
+      {
+          public static partial class Constants
+          {
+              static Constants()
+              {
+                  ApiId = $(API_ID);
+                  ApiHash = "$(API_HASH)";
+                  AppCenterId = "$(APPCENTER_ID)";
+              }
+          }
+      }
+    endWithNewLine: true
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  inputs:
+    platform: 'x86'
+    solution: '$(solution)'
+    configuration: '$(buildConfiguration)'
+    msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=SideloadOnly'
