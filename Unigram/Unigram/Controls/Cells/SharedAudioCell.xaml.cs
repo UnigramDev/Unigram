@@ -34,6 +34,17 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            UpdateMessage(_playbackService, _protoService, message);
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             var message = _message;
