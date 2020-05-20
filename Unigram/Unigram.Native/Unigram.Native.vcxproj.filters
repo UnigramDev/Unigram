@@ -7,12 +7,6 @@
     <Filter Include="Helpers">
       <UniqueIdentifier>{903ec3d1-7f79-41e7-a41d-2ef61411b312}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AnimatedImageSource">
-      <UniqueIdentifier>{2c18282a-db77-41b3-a6f0-5f3e734da98e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GIF">
-      <UniqueIdentifier>{0ec7378e-5825-462d-b0c1-434e00766d95}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Opus">
       <UniqueIdentifier>{4a92e60d-48ac-43aa-994e-c533a78a1707}</UniqueIdentifier>
     </Filter>
@@ -43,24 +37,6 @@
     <ClCompile Include="WebP\WebPImage.cpp">
       <Filter>WebP</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRenderer.cpp">
-      <Filter>AnimatedImageSource</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.cpp">
-      <Filter>AnimatedImageSource</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedImageSource\VirtualImageSourceRendererCallback.cpp">
-      <Filter>AnimatedImageSource</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp">
-      <Filter>AnimatedImageSource</Filter>
-    </ClCompile>
-    <ClCompile Include="GIF\GIFByteStreamHandler.cpp">
-      <Filter>GIF</Filter>
-    </ClCompile>
-    <ClCompile Include="GIF\GIFMediaSource.cpp">
-      <Filter>GIF</Filter>
-    </ClCompile>
     <ClCompile Include="Opus\OpusByteStreamHandler.cpp">
       <Filter>Opus</Filter>
     </ClCompile>
@@ -78,9 +54,6 @@
     </ClCompile>
     <ClCompile Include="Opus\OpusOutputByteStream.cpp">
       <Filter>Opus</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedImageSource\ReadFramesAsyncOperation.cpp">
-      <Filter>AnimatedImageSource</Filter>
     </ClCompile>
     <ClCompile Include="BufferLock.cpp">
       <Filter>MediaFoundation</Filter>
@@ -182,26 +155,8 @@
     <ClInclude Include="Helpers\MathHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRenderer.h">
-      <Filter>AnimatedImageSource</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.h">
-      <Filter>AnimatedImageSource</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedImageSource\VirtualImageSourceRendererCallback.h">
-      <Filter>AnimatedImageSource</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedImageSource\FramesCacheStore.h">
-      <Filter>AnimatedImageSource</Filter>
-    </ClInclude>
     <ClInclude Include="WebP\DemuxerWrapper.h">
       <Filter>WebP</Filter>
-    </ClInclude>
-    <ClInclude Include="GIF\GIFByteStreamHandler.h">
-      <Filter>GIF</Filter>
-    </ClInclude>
-    <ClInclude Include="GIF\GIFMediaSource.h">
-      <Filter>GIF</Filter>
     </ClInclude>
     <ClInclude Include="Opus\OpusByteStreamHandler.h">
       <Filter>Opus</Filter>
@@ -223,9 +178,6 @@
     </ClInclude>
     <ClInclude Include="Opus\OpusOutputByteStream.h">
       <Filter>Opus</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedImageSource\ReadFramesAsyncOperation.h">
-      <Filter>AnimatedImageSource</Filter>
     </ClInclude>
     <ClInclude Include="MediaSource.h">
       <Filter>MediaFoundation</Filter>

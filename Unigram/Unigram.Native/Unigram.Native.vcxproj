@@ -238,8 +238,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AnimatedImageSource\ReadFramesAsyncOperation.h" />
-    <ClInclude Include="AnimatedImageSource\VirtualImageSourceRendererCallback.h" />
     <ClInclude Include="AsyncCallbackState.h" />
     <ClInclude Include="BufferLock.h" />
     <ClInclude Include="ByteStreamHandler.h" />
@@ -296,26 +294,17 @@
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="SVG\nanosvg.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
-    <ClInclude Include="GIF\GIFByteStreamHandler.h" />
-    <ClInclude Include="GIF\GIFMediaSource.h" />
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="Helpers\MediaFoundationHelper.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRenderer.h" />
-    <ClInclude Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.h" />
-    <ClInclude Include="AnimatedImageSource\FramesCacheStore.h" />
     <ClInclude Include="WebP\WebPFrame.h" />
     <ClInclude Include="WebP\WebPImage.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnimatedImageSource\ReadFramesAsyncOperation.cpp" />
-    <ClCompile Include="AnimatedImageSource\VirtualImageSourceRendererCallback.cpp" />
     <ClCompile Include="BufferLock.cpp" />
     <ClCompile Include="ByteStreamHandler.cpp" />
     <ClCompile Include="DeviceLostHelper.cpp" />
     <ClCompile Include="FinalizeAsyncOperation.cpp" />
-    <ClCompile Include="GIF\GIFByteStreamHandler.cpp" />
-    <ClCompile Include="GIF\GIFMediaSource.cpp" />
     <ClCompile Include="MediaFoundationExtensions.cpp" />
     <ClCompile Include="MediaSink.cpp" />
     <ClCompile Include="MediaSource.cpp" />
@@ -340,9 +329,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRenderer.cpp" />
-    <ClCompile Include="AnimatedImageSource\AnimatedImageSourceRendererFactory.cpp" />
-    <ClCompile Include="AnimatedImageSource\FramesCacheStore.cpp" />
     <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="Proxies\TelegramGameProxy.cpp" />
