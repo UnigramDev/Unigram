@@ -15,12 +15,21 @@ namespace Unigram.Common
     public class AnimatedListHandler<T>
     {
         private ListViewBase _listView;
+        private DispatcherTimer _throttler;
 
         public AnimatedListHandler(ListViewBase listView)
         {
             _listView = listView;
             _listView.Loaded += OnLoaded;
             _listView.Unloaded += OnUnloaded;
+
+            _throttler = new DispatcherTimer();
+            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _throttler.Tick += (s, args) =>
+            {
+                _throttler.Stop();
+                LoadVisibleItems(/*e.IsIntermediate*/ false);
+            };
         }
 
         public Action<int, T> DownloadFile { get; set; }
@@ -59,7 +68,18 @@ namespace Unigram.Common
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            LoadVisibleItems(/*e.IsIntermediate*/ false);
+            _throttler.Stop();
+
+            if (e.IsIntermediate)
+            {
+                _throttler.Start();
+            }
+            else
+            {
+                LoadVisibleItems(false);
+            }
+
+            //LoadVisibleItems(/*e.IsIntermediate*/ false);
         }
 
         public void LoadVisibleItems(bool intermediate)

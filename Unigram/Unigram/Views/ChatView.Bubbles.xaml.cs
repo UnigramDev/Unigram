@@ -578,7 +578,7 @@ namespace Unigram.Views
             foreach (var item in _oldStickers.Keys.Except(news.Keys).ToList())
             {
                 var presenter = _oldStickers[item].Player;
-                if (presenter != null)
+                if (presenter != null && presenter.IsLoopingEnabled)
                 {
                     presenter.Pause();
                 }

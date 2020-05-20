@@ -1532,9 +1532,6 @@ namespace Unigram.Views
         {
             get
             {
-#if !DEBUG
-                return StickersPanelMode.Overlay;
-#endif
                 return ActualWidth >= SIDEBAR_MIN_WIDTH
                     ? StickersPanelMode.Sidebar
                     : StickersPanelMode.Overlay;

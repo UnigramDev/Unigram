@@ -55,6 +55,7 @@ namespace Unigram.Controls.Drawers
             _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
             _throttler.Tick += (s, args) =>
             {
+                _throttler.Stop();
                 _handler.LoadVisibleItems(false);
             };
 
