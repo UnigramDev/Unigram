@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.ViewModels.Folders;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Folders
 {
@@ -31,20 +22,49 @@ namespace Unigram.Views.Folders
         private void Items_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
             var button = args.Element as Button;
-            var filter = sender.ItemsSourceView.GetAt(args.Index) as ChatListFolder;
+            var filter = sender.ItemsSourceView.GetAt(args.Index) as ChatFilterInfo;
 
             button.Content = filter.Title;
             button.Command = ViewModel.EditCommand;
             button.CommandParameter = filter;
+            button.Tag = filter;
         }
 
-        private void Suggestions_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        private void Recommended_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
-            var button = args.Element as BadgeButton;
-            var suggestion = sender.ItemsSourceView.GetAt(args.Index) as ChatListFolderSuggestion;
+            var content = args.Element as Grid;
+            var filter = sender.ItemsSourceView.GetAt(args.Index) as RecommendedChatFilter;
 
-            button.Content = suggestion.Filter.Title;
-            button.Badge = suggestion.Description;
+            var button = content.Children[0] as BadgeButton;
+            var add = content.Children[1] as Button;
+
+            button.Content = filter.Filter.Title;
+            button.Badge = filter.Description;
+
+            add.Command = ViewModel.RecommendCommand;
+            add.CommandParameter = filter;
         }
+
+        private void Item_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var chat = element.Tag as ChatFilterInfo;
+
+            flyout.CreateFlyoutItem(ViewModel.DeleteCommand, chat, Strings.Resources.FilterDeleteItem, new FontIcon { Glyph = Icons.Delete });
+
+            args.ShowAt(flyout, element);
+        }
+
+        #region Binding
+
+        private Visibility ConvertCreate(int count)
+        {
+            return count < 10 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
+
     }
 }

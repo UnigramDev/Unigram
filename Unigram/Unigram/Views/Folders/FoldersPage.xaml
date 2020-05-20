@@ -24,7 +24,8 @@
                 <StackPanel>
                     <StackPanel MaxWidth="640">
                         <controls:LottieView
-                        Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
+                            IsLoopingEnabled="False"
+                            Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
                             Width="140"
                             Height="140"
                             Margin="0,24,0,0"/>
@@ -36,27 +37,42 @@
                     </StackPanel>
 
                     <controls:HeaderedControl
-                        Header="{CustomResource Filters}"
-                        Footer="[Stronzate varie.]">
+                        Header="{CustomResource Filters}">
                         <muxc:ItemsRepeater
                             ItemsSource="{x:Bind ViewModel.Items}"
                             ElementPrepared="Items_ElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <controls:BadgeButton/>
+                                    <controls:BadgeButton
+                                        ContextRequested="Item_ContextRequested"/>
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
+                        <controls:BadgeButton
+                            Content="{CustomResource CreateNewFilter}"
+                            Command="{x:Bind ViewModel.CreateCommand}"
+                            Visibility="{x:Bind ConvertCreate(ViewModel.Items.Count), Mode=OneWay}"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl
-                        Header="[Recommended Filters]">
+                        Header="{CustomResource FilterRecommended}"
+                        Visibility="{x:Bind ViewModel.Recommended.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <muxc:ItemsRepeater
-                            ItemsSource="{x:Bind ViewModel.Suggestions}"
-                            ElementPrepared="Suggestions_ElementPrepared">
+                            ItemsSource="{x:Bind ViewModel.Recommended}"
+                            ElementPrepared="Recommended_ElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <controls:BadgeButton Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+                                    <Grid>
+                                        <controls:BadgeButton Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+                                        
+                                        <Button 
+                                            Content="{CustomResource Add}"
+                                            Style="{StaticResource StartButtonStyle}"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,12,0"/>
+                                    </Grid>
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>

@@ -416,6 +416,7 @@
     <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
     <Compile Include="Controls\TLContentDialog.cs" />
+    <Compile Include="Controls\TopNavView.cs" />
     <Compile Include="Controls\UndoView.xaml.cs">
       <DependentUpon>UndoView.xaml</DependentUpon>
     </Compile>
@@ -1717,6 +1718,7 @@
     <Content Include="Assets\Themes\DarkBlue.unigram-theme" />
     <PRIResource Include="Strings\pl\Resources.resw" />
     <PRIResource Include="Strings\uz\Resources.resw" />
+    <Content Include="Assets\Animations\ChatListNewFolder.tgs" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -35,7 +36,7 @@ namespace Unigram.Views.Folders
             var button = args.Element as Button;
             var content = button.Content as Grid;
 
-            var element = sender.ItemsSourceView.GetAt(args.Index) as ChatListFilterElement;
+            var element = sender.ItemsSourceView.GetAt(args.Index) as ChatFilterElement;
             button.Tag = element;
 
             var title = content.Children[1] as TextBlock;
@@ -95,7 +96,7 @@ namespace Unigram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.Tag as ChatListFilterElement;
+            var chat = element.Tag as ChatFilterElement;
 
             flyout.CreateFlyoutItem(viewModel.RemoveIncludeCommand, chat, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
@@ -113,11 +114,38 @@ namespace Unigram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.Tag as ChatListFilterElement;
+            var chat = element.Tag as ChatFilterElement;
 
             flyout.CreateFlyoutItem(viewModel.RemoveExcludeCommand, chat, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
         }
+
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            EmojiList.ItemsSource = ChatFilterIcon.Items;
+
+            var flyout = FlyoutBase.GetAttachedFlyout(EmojiButton);
+            flyout.ShowAt(EmojiButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+        }
+
+        private void EmojiList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            FlyoutBase.GetAttachedFlyout(EmojiButton).Hide();
+
+            if (e.ClickedItem is ChatFilterIcon icon)
+            {
+                ViewModel.Emoji = icon.Emoji;
+            }
+        }
+
+        #region Binding
+
+        private string ConvertEmoji(string emoji)
+        {
+            return ChatFilterIcon.FromEmoji(emoji);
+        }
+
+        #endregion
     }
 }

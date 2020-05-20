@@ -15,15 +15,11 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IChatListDelegate, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatSource>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
+    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IChatListDelegate
     {
         private readonly INotificationsService _notificationsService;
 
-        private readonly Dictionary<long, ChatViewModel> _viewModels = new Dictionary<long, ChatViewModel>();
         private readonly Dictionary<long, bool> _deletedChats = new Dictionary<long, bool>();
-
-        private ChatList _chatList;
-        public ChatList ChatList => _chatList;
 
         public IChatsDelegate Delegate { get; set; }
 
@@ -32,9 +28,7 @@ namespace Unigram.ViewModels
         {
             _notificationsService = notificationsService;
 
-            _chatList = chatList;
-
-            Items = new ItemsCollection(protoService, aggregator, this, chatList, chatList as ChatListFolder);
+            Items = new ItemsCollection(protoService, aggregator, this, chatList);
 
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
             ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
@@ -341,7 +335,7 @@ namespace Unigram.ViewModels
                 var check = dialog.IsChecked == true;
 
                 _deletedChats[chat.Id] = true;
-                Handle(chat.Id, 0);
+                Items.Handle(chat.Id, 0);
 
                 Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Delete, items =>
                 {
@@ -352,7 +346,7 @@ namespace Unigram.ViewModels
                     }
 
                     _deletedChats.Remove(undo.Id);
-                    Handle(undo.Id, undo.Order);
+                    Items.Handle(undo.Id, undo.Order);
                 }, async items =>
                 {
                     var delete = items.FirstOrDefault();
@@ -403,7 +397,7 @@ namespace Unigram.ViewModels
                 foreach (var chat in chats)
                 {
                     _deletedChats[chat.Id] = true;
-                    Handle(chat.Id, 0);
+                    Items.Handle(chat.Id, 0);
                 }
 
                 Delegate?.ShowChatsUndo(chats, UndoType.Delete, items =>
@@ -411,7 +405,7 @@ namespace Unigram.ViewModels
                     foreach (var undo in items)
                     {
                         _deletedChats.Remove(undo.Id);
-                        Handle(undo.Id, undo.Order);
+                        Items.Handle(undo.Id, undo.Order);
                     }
                 }, async items =>
                 {
@@ -456,7 +450,7 @@ namespace Unigram.ViewModels
                     }
 
                     _deletedChats.Remove(undo.Id);
-                    Handle(undo.Id, undo.Order);
+                    Items.Handle(undo.Id, undo.Order);
                 }, items =>
                 {
                     foreach (var delete in items)
@@ -484,7 +478,7 @@ namespace Unigram.ViewModels
                     foreach (var undo in items)
                     {
                         _deletedChats.Remove(undo.Id);
-                        Handle(undo.Id, undo.Order);
+                        Items.Handle(undo.Id, undo.Order);
                     }
                 }, items =>
                 {
@@ -557,125 +551,14 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public void Handle(UpdateChatOrder update)
+        public void SetFilter(ChatList chatList)
         {
-            Handle(update.ChatId, update.Order);
-        }
-
-        public void Handle(UpdateChatLastMessage update)
-        {
-            Handle(update.ChatId, update.Order);
-        }
-
-        public void Handle(UpdateChatIsPinned update)
-        {
-            Handle(update.ChatId, update.Order);
-        }
-
-        public void Handle(UpdateChatSource update)
-        {
-            Handle(update.ChatId, update.Order);
-        }
-
-        public void Handle(UpdateChatDraftMessage update)
-        {
-            Handle(update.ChatId, update.Order);
-        }
-
-        private void Handle(long chatId, long order)
-        {
-            if (_deletedChats.ContainsKey(chatId))
-            {
-                if (order == 0)
-                {
-                    _deletedChats.Remove(chatId);
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            var items = Items;
-
-            var chat = GetChat(chatId);
-            if (chat != null && _chatList.ListEquals(chat.ChatList))
-            {
-                if (items.Filter != null && !items.CanAdd(chat))
-                {
-                    BeginOnUIThread(() => items.Remove(chat));
-                    return;
-                }
-
-                BeginOnUIThread(async () =>
-                {
-                    if (order > items.LastOrder || (order == items.LastOrder && chatId >= items.LastChatId))
-                    {
-                        var index = items.IndexOf(chat);
-                        var next = items.NextIndexOf(chat);
-
-                        if (next >= 0 && index != next)
-                        {
-                            items.Remove(chat);
-                            items.Insert(next, chat);
-
-                            if (chat.Id == _selectedItem)
-                            {
-                                Delegate?.SetSelectedItem(chat);
-                            }
-                            if (SelectedItems.Contains(chat))
-                            {
-                                Delegate?.SetSelectedItems(_selectedItems);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        items.Remove(chat);
-
-                        if (chat.Id == _selectedItem)
-                        {
-                            Delegate?.SetSelectedItem(chat);
-                        }
-                        if (SelectedItems.Contains(chat))
-                        {
-                            SelectedItems.Remove(chat);
-                            Delegate?.SetSelectedItems(_selectedItems);
-                        }
-
-                        if (!items.HasMoreItems)
-                        {
-                            await items.LoadMoreItemsAsync(0);
-                        }
-                    }
-                });
-            }
-        }
-
-        private Chat GetChat(long chatId)
-        {
-            //if (_viewModels.ContainsKey(chatId))
-            //{
-            //    return _viewModels[chatId];
-            //}
-            //else
-            //{
-            //    var chat = ProtoService.GetChat(chatId);
-            //    var item = _viewModels[chatId] = new ChatViewModel(ProtoService, chat);
-
-            //    return item;
-            //}
-
-            return ProtoService.GetChat(chatId);
-        }
-
-        public void SetFilter(ChatListFolder filter)
-        {
-            Items = new ItemsCollection(ProtoService, Aggregator, this, _chatList, filter);
+            Aggregator.Unsubscribe(Items);
+            Items = new ItemsCollection(ProtoService, Aggregator, this, chatList);
             RaisePropertyChanged(() => Items);
         }
 
-        public class ItemsCollection : SortedObservableCollection<Chat>, IGroupSupportIncrementalLoading
+        public class ItemsCollection : SortedObservableCollection<Chat>, IGroupSupportIncrementalLoading, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatIsPinned>, IHandle<UpdateChatSource>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatOrder>
         {
             class ChatComparer : IComparer<Chat>
             {
@@ -688,14 +571,13 @@ namespace Unigram.ViewModels
             private readonly IProtoService _protoService;
             private readonly IEventAggregator _aggregator;
 
+            private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+
             private readonly ChatsViewModel _viewModel;
 
             private readonly ChatList _chatList;
-            private readonly ChatListFolder _filter;
 
             private bool _hasMoreItems = true;
-
-            private DisposableMutex _loadMoreLock = new DisposableMutex();
 
             private long _internalChatId = 0;
             private long _internalOrder = long.MaxValue;
@@ -703,12 +585,9 @@ namespace Unigram.ViewModels
             private long _lastChatId;
             private long _lastOrder;
 
-            public long LastChatId => _lastChatId;
-            public long LastOrder => _lastOrder;
+            public ChatList ChatList => _chatList;
 
-            public ChatListFolder Filter => _filter;
-
-            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList, ChatListFolder filter = null)
+            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList)
                 : base(new ChatComparer(), true)
             {
                 _protoService = protoService;
@@ -717,7 +596,6 @@ namespace Unigram.ViewModels
                 _viewModel = viewModel;
 
                 _chatList = chatList;
-                _filter = filter;
 
 #if MOCKUP
                 _hasMoreItems = false;
@@ -743,11 +621,6 @@ namespace Unigram.ViewModels
                                     _internalChatId = chat.Id;
                                     _internalOrder = chat.Order;
 
-                                    if (_filter != null && !CanAdd(chat))
-                                    {
-                                        continue;
-                                    }
-
                                     Add(chat);
 
                                     _lastChatId = chat.Id;
@@ -756,7 +629,7 @@ namespace Unigram.ViewModels
                             }
 
                             _hasMoreItems = chats.ChatIds.Count > 0;
-                            _aggregator.Subscribe(_viewModel);
+                            _aggregator.Subscribe(this);
 
                             _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
 
@@ -770,67 +643,113 @@ namespace Unigram.ViewModels
 
             public bool HasMoreItems => _hasMoreItems;
 
-            public bool CanAdd(Chat chat)
+            #region Handle
+
+            public void Handle(UpdateChatOrder update)
             {
-                if (_filter == null)
-                {
-                    return true;
-                }
-
-                if (_filter.IncludeChats != null && _filter.IncludeChats.Contains(chat.Id))
-                {
-                    return true;
-                }
-                else if (_filter.ExcludeChats != null && _filter.ExcludeChats.Contains(chat.Id))
-                {
-                    return false;
-                }
-
-                if (_filter.ExcludeMuted && _protoService.GetNotificationSettingsMuteFor(chat) > 0)
-                {
-                    return false;
-                }
-                if (_filter.ExcludeRead && !(chat.UnreadCount > 0 || chat.UnreadMentionCount > 0 || chat.IsMarkedAsUnread))
-                {
-                    return false;
-                }
-
-                if (_filter.IncludeAll())
-                {
-                    return true;
-                }
-
-                if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret /* ? */)
-                {
-                    var user = _protoService.GetUser(chat);
-                    if (user.Type is UserTypeBot)
-                    {
-                        return _filter.IncludeBots;
-                    }
-                    else if (user.IsContact)
-                    {
-                        return _filter.IncludeContacts;
-                    }
-                    
-                    return _filter.IncludeNonContacts;
-                }
-                else if (chat.Type is ChatTypeBasicGroup)
-                {
-                    return _filter.IncludeGroups;
-                }
-                else if (chat.Type is ChatTypeSupergroup)
-                {
-                    var supergroup = _protoService.GetSupergroup(chat);
-                    if (supergroup.IsChannel)
-                    {
-                        return _filter.IncludeChannels;
-                    }
-
-                    return _filter.IncludeGroups;
-                }
-
-                return false;
+                Handle(update.ChatId, update.Order);
             }
+
+            public void Handle(UpdateChatLastMessage update)
+            {
+                Handle(update.ChatId, update.Order);
+            }
+
+            public void Handle(UpdateChatIsPinned update)
+            {
+                Handle(update.ChatId, update.Order);
+            }
+
+            public void Handle(UpdateChatSource update)
+            {
+                Handle(update.ChatId, update.Order);
+            }
+
+            public void Handle(UpdateChatDraftMessage update)
+            {
+                Handle(update.ChatId, update.Order);
+            }
+
+            public void Handle(long chatId, long order)
+            {
+                if (_viewModel._deletedChats.ContainsKey(chatId))
+                {
+                    if (order == 0)
+                    {
+                        _viewModel._deletedChats.Remove(chatId);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                var chat = GetChat(chatId);
+                if (chat != null && _chatList.ListEquals(chat.ChatList))
+                {
+                    _viewModel.BeginOnUIThread(async () =>
+                    {
+                        if (order > _lastOrder || (order == _lastOrder && chatId >= _lastChatId))
+                        {
+                            var index = IndexOf(chat);
+                            var next = NextIndexOf(chat);
+
+                            if (next >= 0 && index != next)
+                            {
+                                Remove(chat);
+                                Insert(next, chat);
+
+                                if (chat.Id == _viewModel._selectedItem)
+                                {
+                                    _viewModel.Delegate?.SetSelectedItem(chat);
+                                }
+                                if (_viewModel.SelectedItems.Contains(chat))
+                                {
+                                    _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Remove(chat);
+
+                            if (chat.Id == _viewModel._selectedItem)
+                            {
+                                _viewModel.Delegate?.SetSelectedItem(chat);
+                            }
+                            if (_viewModel.SelectedItems.Contains(chat))
+                            {
+                                _viewModel.SelectedItems.Remove(chat);
+                                _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                            }
+
+                            if (!_hasMoreItems)
+                            {
+                                await LoadMoreItemsAsync(0);
+                            }
+                        }
+                    });
+                }
+            }
+
+            private Chat GetChat(long chatId)
+            {
+                //if (_viewModels.ContainsKey(chatId))
+                //{
+                //    return _viewModels[chatId];
+                //}
+                //else
+                //{
+                //    var chat = ProtoService.GetChat(chatId);
+                //    var item = _viewModels[chatId] = new ChatViewModel(ProtoService, chat);
+
+                //    return item;
+                //}
+
+                return _protoService.GetChat(chatId);
+            }
+
+            #endregion
         }
     }
 
@@ -861,11 +780,58 @@ namespace Unigram.ViewModels
 
 namespace Telegram.Td.Api
 {
-    public class SetChatFolder : Function
+    public class UpdateChatFilters : Update
     {
-        public ChatListFolder Filter { get; }
+        public IList<ChatFilterInfo> ChatFilters { get; set; }
 
-        public SetChatFolder(ChatListFolder filter)
+        public UpdateChatFilters(IList<ChatFilterInfo> chatFilters)
+        {
+            ChatFilters = chatFilters;
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class DeleteChatFilter : Function
+    {
+        public int ChatFilterId { get; }
+
+        public DeleteChatFilter(int chatFilterId)
+        {
+            ChatFilterId = chatFilterId;
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class EditChatFilter : Function
+    {
+        public int ChatFilterId { get; }
+        public ChatFilter Filter { get; }
+
+        public EditChatFilter(int chatFilterId, ChatFilter filter)
+        {
+            ChatFilterId = chatFilterId;
+            Filter = filter;
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class CreateChatFilter : Function
+    {
+        public ChatFilter Filter { get; }
+
+        public CreateChatFilter(ChatFilter filter)
         {
             Filter = filter;
         }
@@ -876,8 +842,15 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class GetChatListFolders : Function
+    public class GetChatFilter : Function
     {
+        public int ChatFilterId { get; set; }
+
+        public GetChatFilter(int chatFilterId)
+        {
+            ChatFilterId = chatFilterId;
+        }
+
         public NativeObject ToUnmanaged()
         {
             throw new NotImplementedException();
@@ -886,7 +859,7 @@ namespace Telegram.Td.Api
 
     public class ChatListFolders : BaseObject
     {
-        public IList<ChatListFolder> Filters { get; set; }
+        public IList<ChatFilter> Filters { get; set; }
 
         public NativeObject ToUnmanaged()
         {
@@ -894,9 +867,9 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class ChatListFolderSuggestion : BaseObject
+    public class RecommendedChatFilter : BaseObject
     {
-        public ChatListFolder Filter { get; set; }
+        public ChatFilter Filter { get; set; }
 
         public string Description { get; set; } = string.Empty;
 
@@ -906,9 +879,9 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class ChatListFolderSuggestions : BaseObject
+    public class RecommendedChatFilters : BaseObject
     {
-        public IList<ChatListFolderSuggestion> Suggestions { get; set; }
+        public IList<RecommendedChatFilter> ChatFilters { get; set; }
 
         public NativeObject ToUnmanaged()
         {
@@ -916,7 +889,7 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class GetChatListFolderSuggestions : Function
+    public class GetRecommendedChatFilters : Function
     {
         public NativeObject ToUnmanaged()
         {
@@ -924,12 +897,40 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class ChatListFolder : ChatList
+    public class ChatListFilter : ChatList
+    {
+        public int ChatFilterId { get; set; }
+
+        public ChatListFilter(int chatFilterId)
+        {
+            ChatFilterId = chatFilterId;
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ChatFilterInfo : BaseObject
+    {
+        public int ChatFilterId { get; set; }
+
+        public string Title { get; set; }
+        public string Emoji { get; set; }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ChatFilter : BaseObject
     {
         // dialogFilter flags:# id:int title:string pm:flags.0?true secret_chats:flags.1?true private_groups:flags.2?true public_groups:flags.3?true broadcasts:flags.4?true bots:flags.5?true exclude_muted:flags.11?true exclude_read:flags.12?true include_peers:Vector<InputPeer> = DialogFilter;
 
-        public int Id { get; set; }
         public string Title { get; set; }
+        public string Emoji { get; set; }
 
         public bool IncludeContacts { get; set; } = true;
         public bool IncludeNonContacts { get; set; } = true;
@@ -937,59 +938,13 @@ namespace Telegram.Td.Api
         public bool IncludeChannels { get; set; } = true;
         public bool IncludeBots { get; set; } = true;
 
-        public IList<long> IncludeChats { get; set; } = new long[0];
+        public IList<long> IncludeChatIds { get; set; } = new long[0];
 
         public bool ExcludeMuted { get; set; }
         public bool ExcludeRead { get; set; }
         public bool ExcludeArchived { get; set; }
 
-        public IList<long> ExcludeChats { get; set; } = new long[0];
-
-        //public ChatFilter(int id, string title, bool pm, bool secret, bool privateGroups, bool publicGroups, bool channel, bool bot, bool excludeMuted, bool excludeRead)
-        //{
-
-        //}
-
-        public ChatListFilterFlags ToFlags()
-        {
-            var filter = this;
-            var flags = default(ChatListFilterFlags);
-
-            if (filter.IncludeContacts)
-            {
-                flags |= ChatListFilterFlags.IncludeContacts;
-            }
-            if (filter.IncludeNonContacts)
-            {
-                flags |= ChatListFilterFlags.IncludeNonContacts;
-            }
-            if (filter.IncludeGroups)
-            {
-                flags |= ChatListFilterFlags.IncludeGroups;
-            }
-            if (filter.IncludeChannels)
-            {
-                flags |= ChatListFilterFlags.IncludeChannels;
-            }
-            if (filter.IncludeBots)
-            {
-                flags |= ChatListFilterFlags.IncludeBots;
-            }
-            if (filter.ExcludeMuted)
-            {
-                flags |= ChatListFilterFlags.ExcludeMuted;
-            }
-            if (filter.ExcludeRead)
-            {
-                flags |= ChatListFilterFlags.ExcludeRead;
-            }
-            //if (filter.IncludeChats != null && filter.IncludeChats.Count > 0)
-            //{
-            //    flags |= ChatListFilterFlags.IncludeChats;
-            //}
-
-            return flags;
-        }
+        public IList<long> ExcludeChatIds { get; set; } = new long[0];
 
         public bool IncludeAll()
         {

@@ -132,7 +132,7 @@
                             <ColumnDefinition Width="40"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Grid x:Name="MainHeader" Grid.Column="1">
+                        <Grid x:Name="MainHeader" Padding="40,0,0,0" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto" MinWidth="12"/>
@@ -496,30 +496,46 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <ScrollViewer x:Name="ChatTabs" x:Load="False" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Hidden">
-                                        <ScrollViewer.Resources>
-                                            <x:Double x:Key="NavigationViewTopPaneHeight">40</x:Double>
-                                        </ScrollViewer.Resources>
+                                    <Border x:Name="ChatTabs" x:Load="False">
                                         <Grid x:Name="ChatTabsView">
-                                            <microsoft:NavigationView PaneDisplayMode="Top" MenuItemsSource="{x:Bind ViewModel.Filters}" SelectedItem="{x:Bind ViewModel.SelectedFilter, Mode=OneWay}" ItemInvoked="NavigationView_ItemInvoked" IsBackButtonVisible="Collapsed" IsBackEnabled="False" IsSettingsVisible="False">
-                                                <microsoft:NavigationView.MenuItemTemplate>
-                                                    <DataTemplate x:DataType="td:ChatListFolder">
-                                                        <microsoft:NavigationViewItem
-                                                            Tag="{x:Bind}"
-                                                            Content="{x:Bind Title}"
-                                                            ContextRequested="ChatListFilter_ContextRequested"/>
+                                            <controls:TopNavView
+                                                x:Name="ChatFilters"
+                                                ItemsSource="{x:Bind ViewModel.Filters}"
+                                                SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
+                                                ItemContextRequested="ChatFilter_ContextRequested"
+                                                Height="40">
+                                                <controls:TopNavView.ItemTemplate>
+                                                    <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" VerticalAlignment="Top"/>
+                                                            <Border
+                                                                Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                                Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                                MinWidth="20"
+                                                                Height="20"
+                                                                CornerRadius="10"
+                                                                Margin="8,0,0,0">
+                                                                <TextBlock
+                                                                    Text="{x:Bind UnreadCount, Mode=OneWay}"
+                                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                                    Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                                    TextAlignment="Center"
+                                                                    Margin="6,2,6,0"/>
+                                                            </Border>
+                                                        </StackPanel>
                                                     </DataTemplate>
-                                                </microsoft:NavigationView.MenuItemTemplate>
-                                            </microsoft:NavigationView>
-                                        
+                                                </controls:TopNavView.ItemTemplate>
+                                            </controls:TopNavView>
+
                                             <Border BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="0,0,0,1" VerticalAlignment="Bottom"/>
                                         </Grid>
-                                    </ScrollViewer>
+                                    </Border>
 
                                     <!--IsItemClickEnabled="True"
                                                             SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
                                     <local:ChatsPage x:Name="ChatsList"
                                                      AutomationProperties.LandmarkType="Main"
+                                                     Main="{x:Bind ViewModel}"
                                                      DataContext="{x:Bind ViewModel.Chats}"
                                                      ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                                      SelectionMode2="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
@@ -558,6 +574,7 @@
                                         x:Name="FolderList"
                                         AutomationProperties.LandmarkType="Main"
                                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                        Main="{x:Bind ViewModel}"
                                         DataContext="{x:Bind ViewModel.Folder, Mode=OneWay}"
                                         ItemsSource="{x:Bind ViewModel.Folder.Items, Mode=OneWay}"
                                         SelectionMode2="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"/>
