@@ -2286,37 +2286,36 @@
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
-                    <Border
+                    <Grid
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                        <contract7Present:Border.BackgroundTransition>
+                        <contract7Present:Grid.BackgroundTransition>
                             <BrushTransition/>
-                        </contract7Present:Border.BackgroundTransition>
-                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <ContentPresenter
-                                Foreground="{TemplateBinding Foreground}"
-                                HorizontalContentAlignment="Stretch"
-                                VerticalContentAlignment="Stretch"
-                                Grid.Column="1"/>
-                            <local:BackButton
-                                Width="40"
-                                Margin="0,0,-12,0"
-                                Visibility="{TemplateBinding BackVisibility}"/>
-                            <microsoft:ProgressBar
-                                IsIndeterminate="{TemplateBinding IsLoading}"
-                                Background="Transparent"
-                                VerticalAlignment="Bottom"
-                                IsHitTestVisible="False"
-                                Grid.ColumnSpan="2"/>
-                        </Grid>
+                        </contract7Present:Grid.BackgroundTransition>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter
+                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Grid.Column="1"/>
+                        <local:BackButton
+                            Width="40"
+                            Margin="0,0,-12,0"
+                            Visibility="{TemplateBinding BackVisibility}"/>
+                        <microsoft:ProgressBar
+                            IsIndeterminate="{TemplateBinding IsLoading}"
+                            Background="Transparent"
+                            VerticalAlignment="Bottom"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="2"/>
 
                         <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
                              <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
@@ -2324,7 +2323,7 @@
                              </Button>
                              <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                              </Grid>-->
-                    </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
