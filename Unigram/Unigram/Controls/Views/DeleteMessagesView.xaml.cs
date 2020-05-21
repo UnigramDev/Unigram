@@ -57,9 +57,9 @@ namespace Unigram.Controls.Views
                 DeleteAllCheck.Visibility = Visibility.Visible;
                 DeleteAllCheck.Content = string.Format(Strings.Resources.DeleteAllFrom, sender.GetFullName());
 
-                Message.Text = messages.Count == 1
+                TextBlockHelper.SetMarkdown(Message, messages.Count == 1
                     ? Strings.Resources.AreYouSureDeleteSingleMessage
-                    : Strings.Resources.AreYouSureDeleteFewMessages;
+                    : Strings.Resources.AreYouSureDeleteFewMessages);
             }
             else
             {
@@ -76,9 +76,9 @@ namespace Unigram.Controls.Views
                 {
                     if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                     {
-                        Message.Text = chat.Type is ChatTypePrivate && user != null
+                        TextBlockHelper.SetMarkdown(Message, chat.Type is ChatTypePrivate && user != null
                             ? string.Format(Strings.Resources.DeleteMessagesText, Locale.Declension("messages", messages.Count), user.FirstName)
-                            : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("messages", messages.Count));
+                            : string.Format(Strings.Resources.DeleteMessagesTextGroup, Locale.Declension("messages", messages.Count)));
 
                         RevokeCheck.IsChecked = true;
                         RevokeCheck.Visibility = Visibility.Visible;
@@ -86,9 +86,9 @@ namespace Unigram.Controls.Views
                     }
                     else
                     {
-                        Message.Text = messages.Count == 1
+                        TextBlockHelper.SetMarkdown(Message, messages.Count == 1
                             ? Strings.Resources.AreYouSureDeleteSingleMessage
-                            : Strings.Resources.AreYouSureDeleteFewMessages;
+                            : Strings.Resources.AreYouSureDeleteFewMessages);
 
                         if (canBeDeletedForAllUsers)
                         {
@@ -102,15 +102,15 @@ namespace Unigram.Controls.Views
                 }
                 else if (chat.Type is ChatTypeSupergroup super && !super.IsChannel)
                 {
-                    Message.Text = messages.Count == 1
+                    TextBlockHelper.SetMarkdown(Message, messages.Count == 1
                         ? Strings.Resources.AreYouSureDeleteSingleMessageMega
-                        : Strings.Resources.AreYouSureDeleteFewMessagesMega;
+                        : Strings.Resources.AreYouSureDeleteFewMessagesMega);
                 }
                 else
                 {
-                    Message.Text = messages.Count == 1
+                    TextBlockHelper.SetMarkdown(Message, messages.Count == 1
                         ? Strings.Resources.AreYouSureDeleteSingleMessage
-                        : Strings.Resources.AreYouSureDeleteFewMessages;
+                        : Strings.Resources.AreYouSureDeleteFewMessages);
                 }
             }
         }
