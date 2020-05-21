@@ -329,7 +329,7 @@ namespace Unigram.ViewModels
             }
             else if (storage is StoragePhoto photo)
             {
-                await SendPhotoAsync(storage.File, caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null, options);
+                await SendPhotoAsync(storage.File, caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
             }
             else if (storage is StorageVideo video)
             {
@@ -349,9 +349,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int ttl = 0, Rect? crop = null, SendMessageOptions options = null)
+        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int ttl = 0, BitmapEditState editState = null, SendMessageOptions options = null)
         {
-            var factory = await _messageFactory.CreatePhotoAsync(file, asFile, ttl, crop);
+            var factory = await _messageFactory.CreatePhotoAsync(file, asFile, ttl, editState);
             if (factory != null)
             {
                 var reply = GetReply(true);
@@ -746,13 +746,13 @@ namespace Unigram.ViewModels
                 if (item is StoragePhoto photo)
                 {
                     var file = photo.File;
-                    var crop = photo.IsEdited ? photo.EditState.Rectangle : null;
+                    var crop = photo.IsEdited ? photo.EditState : null;
 
                     var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
                     var props = await file.GetBasicPropertiesAsync();
-                    var size = await ImageHelper.GetScaleAsync(file, crop: crop);
+                    var size = await ImageHelper.GetScaleAsync(file, editState: crop);
 
-                    var generated = await file.ToGeneratedAsync(ConversionType.Compress, crop.HasValue ? JsonConvert.SerializeObject(crop) : null);
+                    var generated = await file.ToGeneratedAsync(ConversionType.Compress, crop != null ? JsonConvert.SerializeObject(crop) : null);
 
                     var input = new InputMessagePhoto(generated, null, new int[0], size.Width, size.Height, firstCaption, photo.Ttl);
 
@@ -788,11 +788,11 @@ namespace Unigram.ViewModels
                     var conversion = new VideoConversion();
                     if (profile != null)
                     {
-                        conversion.Transcode = video.IsMuted;
+                        //conversion.Transcode = true;
                         conversion.Mute = video.IsMuted;
-                        conversion.Width = profile.Video.Width;
-                        conversion.Height = profile.Video.Height;
-                        conversion.Bitrate = profile.Video.Bitrate;
+                        //conversion.Width = profile.Video.Width;
+                        //conversion.Height = profile.Video.Height;
+                        //conversion.Bitrate = profile.Video.Bitrate;
 
                         if (transform != null)
                         {
@@ -1050,7 +1050,7 @@ namespace Unigram.ViewModels
             Task<InputMessageFactory> request = null;
             if (storage is StoragePhoto photo)
             {
-                request = _messageFactory.CreatePhotoAsync(storage.File, dialog.IsFilesSelected, storage.Ttl, storage.IsEdited ? storage.EditState.Rectangle : null);
+                request = _messageFactory.CreatePhotoAsync(storage.File, dialog.IsFilesSelected, storage.Ttl, storage.IsEdited ? storage.EditState : null);
             }
             else if (storage is StorageVideo video)
             {
