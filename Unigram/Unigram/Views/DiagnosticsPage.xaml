@@ -43,11 +43,11 @@
                         Command="{x:Bind ViewModel.VerbosityCommand}"
                         Badge="{x:Bind ConvertVerbosity(ViewModel.Verbosity), Mode=OneWay}"/>
                     <controls:BadgeButton
-                        Content="log"
+                        Content="tdlib_log.txt"
                         Click="Log_Click"
                         Badge="{x:Bind ConvertSize(ViewModel.LogSize), Mode=OneWay}"/>
                     <controls:BadgeButton
-                        Content="log.old"
+                        Content="tdlib_log.txt.old"
                         Click="LogOld_Click"
                         Badge="{x:Bind ConvertSize(ViewModel.LogOldSize), Mode=OneWay}"/>
                 </controls:HeaderedControl>

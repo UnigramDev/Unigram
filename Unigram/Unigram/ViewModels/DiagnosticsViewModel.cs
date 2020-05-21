@@ -26,21 +26,21 @@ namespace Unigram.ViewModels
             VerbosityCommand = new RelayCommand(VerbosityExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            try
+            var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
+            if (log != null)
             {
-                var log = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"));
-                LogSize = log.Length;
+                var basic = await log.GetBasicPropertiesAsync();
+                LogSize = basic.Size;
             }
-            catch { }
 
-            try
+            var logOld = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt.old") as StorageFile;
+            if (logOld != null)
             {
-                var logOld = new System.IO.FileInfo(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old"));
-                LogOldSize = logOld.Length;
+                var basic = await logOld.GetBasicPropertiesAsync();
+                LogOldSize = basic.Size;
             }
-            catch { }
 
             var properties = typeof(IOptionsService).GetProperties();
 
@@ -97,8 +97,6 @@ namespace Unigram.ViewModels
                     Value = (VerbosityLevel)Settings.Diagnostics.GetValueOrDefault(x, -1)
                 }));
             }
-
-            return Task.CompletedTask;
         }
 
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
@@ -145,15 +143,15 @@ namespace Unigram.ViewModels
         }
 
 
-        private long _logSize;
-        public long LogSize
+        private ulong _logSize;
+        public ulong LogSize
         {
             get => _logSize;
             set => Set(ref _logSize, value);
         }
 
-        private long _logOldSize;
-        public long LogOldSize
+        private ulong _logOldSize;
+        public ulong LogOldSize
         {
             get => _logOldSize;
             set => Set(ref _logOldSize, value);

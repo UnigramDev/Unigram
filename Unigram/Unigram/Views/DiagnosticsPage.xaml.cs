@@ -26,23 +26,28 @@ namespace Unigram.Views
             return Enum.GetName(typeof(VerbosityLevel), level);
         }
 
-        private string ConvertSize(long size)
+        private string ConvertSize(ulong size)
         {
-            return FileSizeConverter.Convert(size);
+            return FileSizeConverter.Convert((long)size);
         }
 
         #endregion
 
         private async void Log_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log")), null, null));
+            var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
+            if (log != null)
+            {
+                await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, null));
+            }
         }
 
         private async void LogOld_Click(object sender, RoutedEventArgs e)
         {
-            if (System.IO.File.Exists(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")))
+            var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt.old") as StorageFile;
+            if (log != null)
             {
-                await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "log.old")), null, null));
+                await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, null));
             }
         }
     }
