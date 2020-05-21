@@ -3788,8 +3788,8 @@ namespace Unigram.Views
                 ViewModel.HasBotCommands = fullInfo.BotInfo.Commands.Count > 0;
             }
 
-            Call.Visibility = !secret && fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
-            CallPlaceholder.Visibility = !secret && fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
+            Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
+            CallPlaceholder.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateUserStatus(Chat chat, User user)
