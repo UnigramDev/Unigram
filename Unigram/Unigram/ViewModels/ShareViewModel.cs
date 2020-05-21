@@ -445,7 +445,15 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new SendMessageOptions(false, false, null), true, _sendAsCopy, _removeCaptions));
+                        var album = false;
+
+                        var first = _messages.FirstOrDefault();
+                        if (first != null)
+                        {
+                            album = first.MediaAlbumId != 0 && _messages.All(x => x.MediaAlbumId == first.MediaAlbumId);
+                        }
+
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new SendMessageOptions(false, false, null), album, _sendAsCopy, _removeCaptions));
                     }
                 }
 
