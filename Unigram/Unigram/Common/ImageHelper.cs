@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Unigram.Charts;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
@@ -25,16 +26,16 @@ namespace Unigram.Common
 {
     public static class ImageHelper
     {
-        public static async Task<(int Width, int Height)> GetScaleAsync(StorageFile file, int requestedMinSide = 1280, Rect? crop = null)
+        public static async Task<(int Width, int Height)> GetScaleAsync(StorageFile file, int requestedMinSide = 1280, BitmapEditState editState = null)
         {
             var props = await file.Properties.GetImagePropertiesAsync();
             var width = props.Width;
             var height = props.Height;
 
-            if (crop.HasValue)
+            if (editState?.Rectangle is Rect crop)
             {
-                width = (uint)crop.Value.Width;
-                height = (uint)crop.Value.Height;
+                width = (uint)(crop.Width * props.Width);
+                height = (uint)(crop.Height * props.Height);
             }
 
             if (width > requestedMinSide || height > requestedMinSide)
@@ -43,7 +44,19 @@ namespace Unigram.Common
                 double ratioY = (double)requestedMinSide / height;
                 double ratio = Math.Min(ratioX, ratioY);
 
+                if (editState?.Rotation == BitmapRotation.Clockwise90Degrees ||
+                    editState?.Rotation == BitmapRotation.Clockwise270Degrees)
+                {
+                    return ((int)(height * ratio), (int)(width * ratio));
+                }
+
                 return ((int)(width * ratio), (int)(height * ratio));
+            }
+
+            if (editState?.Rotation == BitmapRotation.Clockwise90Degrees ||
+                editState?.Rotation == BitmapRotation.Clockwise270Degrees)
+            {
+                return ((int)height, (int)width);
             }
 
             return ((int)width, (int)height);
@@ -276,6 +289,12 @@ namespace Unigram.Common
                     cropHeight = cropHeight * ratio;
                 }
 
+                cropRectangle = new Rect(
+                    cropRectangle.X * decoder.PixelWidth,
+                    cropRectangle.Y * decoder.PixelHeight,
+                    cropRectangle.Width * decoder.PixelWidth,
+                    cropRectangle.Height * decoder.PixelHeight);
+
                 var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(cropWidth, cropHeight), new Size(decoder.PixelWidth, decoder.PixelHeight), min, max);
 
                 var bounds = new BitmapBounds();
@@ -342,7 +361,7 @@ namespace Unigram.Common
             return (new Rect(x, y, w, h), new Size(ratioW, ratioH));
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, Rect cropRectangle, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None, IReadOnlyList<SmoothPathBuilder> strokes = null)
+        public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, BitmapEditState editState)
         {
             if (sourceFile.ContentType.Equals("video/mp4"))
             {
@@ -354,29 +373,29 @@ namespace Unigram.Common
 
                 using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame))
                 {
-                    return await CropAndPreviewAsync(imageStream, cropRectangle, rotation, flip, strokes);
+                    return await CropAndPreviewAsync(imageStream, editState);
                 }
             }
 
             using (var imageStream = await sourceFile.OpenReadAsync())
             {
-                return await CropAndPreviewAsync(imageStream, cropRectangle, rotation, flip, strokes);
+                return await CropAndPreviewAsync(imageStream, editState);
             }
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, Rect cropRectangle, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None, IReadOnlyList<SmoothPathBuilder> strokes = null)
+        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, BitmapEditState editState)
         {
             var decoder = await BitmapDecoder.CreateAsync(imageStream);
             var bounds = new BitmapBounds();
-            bounds.X = (uint)cropRectangle.X;
-            bounds.Y = (uint)cropRectangle.Y;
-            bounds.Width = (uint)cropRectangle.Width;
-            bounds.Height = (uint)cropRectangle.Height;
+            bounds.X = (uint)(editState.Rectangle.X * decoder.PixelWidth);
+            bounds.Y = (uint)(editState.Rectangle.Y * decoder.PixelHeight);
+            bounds.Width = (uint)(editState.Rectangle.Width * decoder.PixelWidth);
+            bounds.Height = (uint)(editState.Rectangle.Height * decoder.PixelHeight);
 
             var transform = ComputeScalingTransformForSourceImage(decoder);
             transform.Bounds = bounds;
-            transform.Rotation = rotation;
-            transform.Flip = flip;
+            transform.Rotation = editState.Rotation;
+            transform.Flip = editState.Flip;
 
             //var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
@@ -386,9 +405,9 @@ namespace Unigram.Common
 
             var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
             
-            if (strokes != null)
+            if (editState.Strokes != null)
             {
-                var stream = await DrawStrokesAsync(bitmap, strokes, cropRectangle, rotation, flip);
+                var stream = await DrawStrokesAsync(bitmap, editState.Strokes, editState.Rectangle, editState.Rotation, editState.Flip);
             }
             
             var bitmapImage = new SoftwareBitmapSource();

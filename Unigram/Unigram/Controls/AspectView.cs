@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
+using Unigram.Entities;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -72,6 +73,11 @@ namespace Unigram.Controls
             {
                 width = 640;
                 height = 520;
+            }
+            else if (Constraint is StorageMedia media)
+            {
+                width = media.Width;
+                height = media.Height;
             }
 
             #region MessageContent

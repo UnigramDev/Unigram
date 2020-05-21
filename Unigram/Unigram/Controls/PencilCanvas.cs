@@ -280,6 +280,18 @@ namespace Unigram.Controls
         public Color? Stroke { get; set; }
         public float StrokeThickness { get; set; }
 
+        public Vector2 BeginPoint
+        {
+            get => _beginPoint;
+            set => _beginPoint = value;
+        }
+
+        public List<Vector2> Path
+        {
+            get => _path;
+            set => _path = value;
+        }
+
         public void MoveTo(Vector2 point)
         {
             if (_controlPoints.Count < 4)

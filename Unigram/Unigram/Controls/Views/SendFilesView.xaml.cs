@@ -484,7 +484,7 @@ namespace Unigram.Controls.Views
             var button = sender as ToggleButton;
             if (button.Tag is StorageMedia media)
             {
-                var dialog = new EditMediaView(media.File);
+                var dialog = new EditMediaView(media);
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary)

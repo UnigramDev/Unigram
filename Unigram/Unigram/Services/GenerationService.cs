@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Entities;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
@@ -192,8 +193,16 @@ namespace Unigram.Services
 
                 if (args.Length > 3)
                 {
-                    var rect = JsonConvert.DeserializeObject<Rect>(args[2]);
-                    await ImageHelper.CropAsync(file, temp, rect);
+                    var editState = JsonConvert.DeserializeObject<BitmapEditState>(args[2]);
+                    var rectangle = editState.Rectangle;
+
+                    await ImageHelper.CropAsync(file, temp, rectangle, rotation: editState.Rotation, flip: editState.Flip);
+
+                    var drawing = editState.Strokes;
+                    if (drawing != null && drawing.Count > 0)
+                    {
+                        await ImageHelper.DrawStrokesAsync(temp, drawing, rectangle, editState.Rotation, editState.Flip);
+                    }
                 }
                 else
                 {
@@ -243,7 +252,7 @@ namespace Unigram.Services
             try
             {
                 var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
-                if (conversion.Transcode)
+                if (conversion.Mute)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
@@ -251,9 +260,9 @@ namespace Unigram.Services
                     var transcoder = new MediaTranscoder();
 
                     var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
-                    profile.Video.Width = conversion.Width;
-                    profile.Video.Height = conversion.Height;
-                    profile.Video.Bitrate = conversion.Bitrate;
+                    //profile.Video.Width = conversion.Width;
+                    //profile.Video.Height = conversion.Height;
+                    //profile.Video.Bitrate = conversion.Bitrate;
 
                     if (conversion.Mute)
                     {
@@ -305,7 +314,7 @@ namespace Unigram.Services
             try
             {
                 var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
-                if (conversion.Transcode)
+                //if (conversion.Transcode)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
@@ -315,12 +324,12 @@ namespace Unigram.Services
                     double originalWidth = props.GetWidth();
                     double originalHeight = props.GetHeight();
 
-                    if (!conversion.CropRectangle.IsEmpty())
-                    {
-                        file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle);
-                        originalWidth = conversion.CropRectangle.Width;
-                        originalHeight = conversion.CropRectangle.Height;
-                    }
+                    //if (!conversion.CropRectangle.IsEmpty())
+                    //{
+                    //    file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle);
+                    //    originalWidth = conversion.CropRectangle.Width;
+                    //    originalHeight = conversion.CropRectangle.Height;
+                    //}
 
                     using (var fileStream = await ImageHelper.OpenReadAsync(file))
                     using (var outputStream = await temp.OpenAsync(FileAccessMode.ReadWrite))

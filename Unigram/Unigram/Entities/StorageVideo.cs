@@ -390,11 +390,11 @@ namespace Unigram.Entities
 
         public VideoTransformEffectDefinition GetTransform()
         {
-            var crop = _editState?.Rectangle;
-            if (crop.HasValue)
+            var crop = _editState?.Rectangle ?? Rect.Empty;
+            if (!(crop.IsEmpty || (crop.X == 0 && crop.Y == 0 && crop.Width == 1 && crop.Height == 1)))
             {
                 var transform = new VideoTransformEffectDefinition();
-                transform.CropRectangle = crop.Value;
+                transform.CropRectangle = crop;
 
                 return transform;
             }

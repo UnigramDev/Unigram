@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Entities;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -23,7 +24,7 @@ namespace Unigram.Services.Factories
     {
         MessageViewModel Create(IMessageDelegate delegato, Message message);
 
-        Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, int ttl = 0, Rect? crop = null);
+        Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, int ttl = 0, BitmapEditState editState = null);
         Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
         Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
         Task<InputMessageFactory> CreateDocumentAsync(StorageFile file);
@@ -51,7 +52,7 @@ namespace Unigram.Services.Factories
 
 
 
-        public async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, int ttl = 0, Rect? crop = null)
+        public async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, int ttl = 0, BitmapEditState editState = null)
         {
             using (var stream = await file.OpenReadAsync())
             {
@@ -62,9 +63,9 @@ namespace Unigram.Services.Factories
                 }
             }
 
-            var size = await ImageHelper.GetScaleAsync(file, crop: crop);
+            var size = await ImageHelper.GetScaleAsync(file, editState: editState);
 
-            var generated = await file.ToGeneratedAsync(asFile ? ConversionType.Copy : ConversionType.Compress, crop.HasValue ? JsonConvert.SerializeObject(crop) : null);
+            var generated = await file.ToGeneratedAsync(asFile ? ConversionType.Copy : ConversionType.Compress, editState != null ? JsonConvert.SerializeObject(editState) : null);
             var thumbnail = default(InputThumbnail);
 
             if (asFile)
@@ -105,14 +106,15 @@ namespace Unigram.Services.Factories
             var conversion = new VideoConversion();
             if (profile != null)
             {
-                conversion.Transcode = true;
+                //conversion.Transcode = true;
                 conversion.Mute = animated;
-                conversion.Width = profile.Video.Width;
-                conversion.Height = profile.Video.Height;
-                conversion.Bitrate = profile.Video.Bitrate;
+                //conversion.Width = profile.Video.Width;
+                //conversion.Height = profile.Video.Height;
+                //conversion.Bitrate = profile.Video.Bitrate;
 
                 if (transform != null)
                 {
+                    conversion.Transcode = true;
                     conversion.Transform = true;
                     conversion.Rotation = transform.Rotation;
                     conversion.OutputSize = transform.OutputSize;

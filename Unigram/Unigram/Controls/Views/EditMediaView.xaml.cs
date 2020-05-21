@@ -93,7 +93,8 @@ namespace Unigram.Controls.Views
 
                     _media.EditState = new BitmapEditState
                     {
-                        Rectangle = new Rect(rect.X * w, rect.Y * h, rect.Width * w, rect.Height * h),
+                        //Rectangle = new Rect(rect.X * w, rect.Y * h, rect.Width * w, rect.Height * h),
+                        Rectangle = rect,
                         Proportions = Cropper.Proportions,
                         Strokes = Canvas.Strokes,
                         Flip = _flip,

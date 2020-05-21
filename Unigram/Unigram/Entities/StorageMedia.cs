@@ -136,7 +136,7 @@ namespace Unigram.Entities
 
             if (_editState is BitmapEditState editState && !editState.IsEmpty)
             {
-                _preview = await ImageHelper.CropAndPreviewAsync(File, editState.Rectangle ?? Rect.Empty, editState.Rotation, editState.Flip, editState.Strokes);
+                _preview = await ImageHelper.CropAndPreviewAsync(File, editState);
             }
             else
             {
