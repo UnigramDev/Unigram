@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -36,7 +37,24 @@ namespace Unigram.Views.Chats
             InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
             InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
             InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
+
+            _tabs = new ObservableCollection<ChatSharedMediaTab>();
+            _tabs.Add(_mediaHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedMediaTab2 });
+            _tabs.Add(_filesHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedFilesTab2 });
+            _tabs.Add(_linksHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedLinksTab2 });
+            _tabs.Add(_musicHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedMusicTab2 });
+            _tabs.Add(_voiceHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedVoiceTab2 });
+
+            Header.ItemsSource = _tabs;
+            Header.SelectedIndex = 0;
         }
+
+        private readonly ObservableCollection<ChatSharedMediaTab> _tabs;
+        private ChatSharedMediaTab _mediaHeader;
+        private ChatSharedMediaTab _filesHeader;
+        private ChatSharedMediaTab _linksHeader;
+        private ChatSharedMediaTab _musicHeader;
+        private ChatSharedMediaTab _voiceHeader;
 
         private bool _isLocked = false;
 
@@ -61,7 +79,7 @@ namespace Unigram.Views.Chats
                     old.Loaded -= Tab_Loaded;
 
                     ScrollingHost.Items.RemoveAt(_tab.Index);
-                    Header.MenuItems.RemoveAt(_tab.Index);
+                    _tabs.RemoveAt(_tab.Index);
                 }
 
                 _tab = value;
@@ -78,13 +96,7 @@ namespace Unigram.Views.Chats
 
                     ScrollingHost.Items.Insert(value.Index, pivotItem);
 
-                    var header = new Microsoft.UI.Xaml.Controls.NavigationViewItem
-                    {
-                        Content = value.Text,
-                        IsSelected = value.Index == 0
-                    };
-
-                    Header.MenuItems.Insert(value.Index, header);
+                    _tabs.Insert(value.Index, new ChatSharedMediaTab { Text = value.Text });
                 }
             }
         }
@@ -96,11 +108,14 @@ namespace Unigram.Views.Chats
             _isEmbedded = embedded;
             _isLocked = locked;
 
-            var previous = (float)Header.ActualWidth;
+            var previous = (float)HeaderPage.ActualWidth;
             var size = embedded && !locked ? 640 : (float)ActualWidth;
 
-            Header.IsBackEnabled = !embedded;
-            Header.IsBackButtonVisible = embedded ? Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Collapsed : Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Visible;
+            //Header.IsBackEnabled = !embedded;
+            //Header.IsBackButtonVisible = embedded ? Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Collapsed : Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Visible;
+            Header.Height = embedded ? 40 : 48;
+            HeaderPage.Height = embedded ? 40 : 48;
+            HeaderPage.BackVisibility = embedded ? Visibility.Collapsed : Visibility.Visible;
             HeaderPanel.CornerRadius = new CornerRadius(embedded && !locked ? 8 : 0, embedded && !locked ? 8 : 0, 0, 0);
             HeaderPanel.MaxWidth = embedded && !locked ? 640 : double.PositiveInfinity;
             HeaderPanel.Margin = new Thickness(embedded && !locked ? 12 : 0, 0, embedded && !locked ? 12 : 0, 0);
@@ -109,7 +124,7 @@ namespace Unigram.Views.Chats
             HeaderFiles.Padding = HeaderLinks.Padding = HeaderMusic.Padding = HeaderVoice.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 16 : 16, 0, 8);
             HeaderFiles.Radius = HeaderLinks.Radius = HeaderMusic.Radius = HeaderVoice.Radius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
 
-            var header = ElementCompositionPreview.GetElementVisual(Header);
+            var header = ElementCompositionPreview.GetElementVisual(HeaderPage);
             var animator = ElementCompositionPreview.GetElementVisual(HeaderAnimator);
 
             var offset = header.Compositor.CreateVector3KeyFrameAnimation();
@@ -583,7 +598,7 @@ namespace Unigram.Views.Chats
             }
         }
 
-        private void NavigationView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
+        private void Header_ItemClick(object sender, ItemClickEventArgs e)
         {
             var tab = _tab;
             var shift = 0;
@@ -593,27 +608,27 @@ namespace Unigram.Views.Chats
                 shift += 1;
             }
 
-            if (args.InvokedItemContainer == MediaHeader)
+            if (e.ClickedItem == _mediaHeader)
             {
                 ScrollingHost.SelectedIndex = 0 + shift;
             }
-            else if (args.InvokedItemContainer == FilesHeader)
+            else if (e.ClickedItem == _filesHeader)
             {
                 ScrollingHost.SelectedIndex = 1 + shift;
             }
-            else if (args.InvokedItemContainer == LinksHeader)
+            else if (e.ClickedItem == _linksHeader)
             {
                 ScrollingHost.SelectedIndex = 2 + shift;
             }
-            else if (args.InvokedItemContainer == MusicHeader)
+            else if (e.ClickedItem == _musicHeader)
             {
                 ScrollingHost.SelectedIndex = 3 + shift;
             }
-            else if (args.InvokedItemContainer == VoiceHeader)
+            else if (e.ClickedItem == _voiceHeader)
             {
                 ScrollingHost.SelectedIndex = 4 + shift;
             }
-            else if (args.InvokedItemContainer == Header.MenuItems[tab.Index])
+            else if (e.ClickedItem == _tabs[tab.Index])
             {
                 ScrollingHost.SelectedIndex = tab.Index;
             }
@@ -632,26 +647,21 @@ namespace Unigram.Views.Chats
             switch (ScrollingHost.SelectedIndex + shift)
             {
                 case 0:
-                    Header.SelectedItem = MediaHeader;
+                    Header.SelectedItem = _mediaHeader;
                     break;
                 case 1:
-                    Header.SelectedItem = FilesHeader;
+                    Header.SelectedItem = _filesHeader;
                     break;
                 case 2:
-                    Header.SelectedItem = LinksHeader;
+                    Header.SelectedItem = _linksHeader;
                     break;
                 case 3:
-                    Header.SelectedItem = MusicHeader;
+                    Header.SelectedItem = _musicHeader;
                     break;
                 case 4:
-                    Header.SelectedItem = VoiceHeader;
+                    Header.SelectedItem = _voiceHeader;
                     break;
             }
-        }
-
-        private void Header_BackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
-        {
-            //Frame.GoBack();
         }
 
         private void Scrolling_Loaded(object sender, RoutedEventArgs e)
@@ -805,6 +815,11 @@ namespace Unigram.Views.Chats
                 ScrollingVoice.GetScrollViewer().ChangeView(null, 12, null, true);
             }
         }
+    }
+
+    public class ChatSharedMediaTab
+    {
+        public string Text { get; set; }
     }
 
     public interface IProfileTab

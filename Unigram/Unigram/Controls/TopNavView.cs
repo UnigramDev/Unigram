@@ -50,6 +50,19 @@ namespace Unigram.Controls
 
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
+        #region Orientation
+
+        public Orientation Orientation
+        {
+            get { return (Orientation)GetValue(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
+        public static readonly DependencyProperty OrientationProperty =
+            DependencyProperty.Register("Orientation", typeof(Orientation), typeof(TopNavView), new PropertyMetadata(Orientation.Horizontal));
+
+        #endregion
+
         private void AnimateSelectionChanged(object nextItem)
         {
             var prevIndicator = _activeIndicator;
@@ -88,10 +101,24 @@ namespace Unigram.Controls
                     ResetElementAnimationProperties(nextIndicator, 1.0f);
 
                     // get the item positions in the pane
-                    var prevPos = prevIndicator.TransformToVisual(this).TransformPoint(new Point()).X;
-                    var nextPos = nextIndicator.TransformToVisual(this).TransformPoint(new Point()).X;
+                    float prevPos;
+                    float nextPos;
+
+                    var prevPosPoint = prevIndicator.TransformToVisual(this).TransformPoint(new Point()).ToVector2();
+                    var nextPosPoint = nextIndicator.TransformToVisual(this).TransformPoint(new Point()).ToVector2();
                     var prevSize = prevIndicator.RenderSize.ToVector2();
                     var nextSize = nextIndicator.RenderSize.ToVector2();
+
+                    if (Orientation == Orientation.Horizontal)
+                    {
+                        prevPos = prevPosPoint.X;
+                        nextPos = nextPosPoint.X;
+                    }
+                    else
+                    {
+                        prevPos = prevPosPoint.Y;
+                        nextPos = nextPosPoint.Y;
+                    }
 
                     float outgoingEndPosition = (float)(nextPos - prevPos);
                     float incomingStartPosition = (float)(prevPos - nextPos);
@@ -146,11 +173,11 @@ namespace Unigram.Controls
             Compositor comp = visual.Compositor;
 
             Vector2 size = indicator.RenderSize.ToVector2();
-            float dimension = size.X;
+            float dimension = Orientation == Orientation.Horizontal ? size.X : size.Y;
 
             float beginScale = 1.0f;
             float endScale = 1.0f;
-            if (MathF.Abs(size.X) > 0.001f)
+            if (Orientation == Orientation.Horizontal && MathF.Abs(size.X) > 0.001f)
             {
                 beginScale = beginSize.X / size.X;
                 endScale = endSize.X / size.X;
@@ -191,9 +218,18 @@ namespace Unigram.Controls
             centerAnim.InsertKeyFrame(1.0f, from < to ? dimension : 0.0f, singleStep);
             centerAnim.Duration = TimeSpan.FromMilliseconds(200);
 
-            visual.StartAnimation("Offset.X", posAnim);
-            visual.StartAnimation("Scale.X", scaleAnim);
-            visual.StartAnimation("CenterPoint.X", centerAnim);
+            if (Orientation == Orientation.Horizontal)
+            {
+                visual.StartAnimation("Offset.X", posAnim);
+                visual.StartAnimation("Scale.X", scaleAnim);
+                visual.StartAnimation("CenterPoint.X", centerAnim);
+            }
+            else
+            {
+                visual.StartAnimation("Offset.Y", posAnim);
+                visual.StartAnimation("Scale.Y", scaleAnim);
+                visual.StartAnimation("CenterPoint.Y", centerAnim);
+            }
         }
 
         private void OnAnimationCompleted(object sender, CompositionBatchCompletedEventArgs args)
