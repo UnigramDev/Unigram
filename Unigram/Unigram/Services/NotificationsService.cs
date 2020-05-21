@@ -272,17 +272,10 @@ namespace Unigram.Services
                 return;
             }
 
-            TypedEventHandler<MediaPlayer, object> handler = null;
-            handler = (s, args) =>
+            Task.Run(() =>
             {
-                s.MediaEnded -= handler;
-                s.Dispose();
-            };
-
-            var player = new MediaPlayer();
-            player.MediaEnded += handler;
-            player.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/sent.mp3"));
-            player.Play();
+                SoundEffects.Play(SoundEffect.Sent);
+            });
         }
 
         public void Handle(UpdateActiveNotifications update)

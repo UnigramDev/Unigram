@@ -206,6 +206,7 @@
     <Compile Include="Common\ExpressionUtils.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
+    <Compile Include="Common\SoundEffects.cs" />
     <Compile Include="Common\SunDate.cs" />
     <Compile Include="Common\TextStyleRun.cs" />
     <Compile Include="Common\TitleBar.cs" />
