@@ -128,7 +128,7 @@
                 <controls:GlyphButton
                     x:Name="PsaInfo"
                     x:DeferLoadStrategy="Lazy"
-                    Glyph="&#xE946;"
+                    Glyph="&#xE9CE;"
                     Click="PsaInfo_Click"
                     Margin="0,-6,-10,-8"
                     Grid.Column="1"/>
