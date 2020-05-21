@@ -41,7 +41,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBox
-                                Text="{x:Bind ViewModel.Title, Mode=TwoWay}"
+                                Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 Margin="12,8,0,8"/>
 
                             <controls:AnimatedGlyphButton
