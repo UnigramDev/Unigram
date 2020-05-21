@@ -15,12 +15,12 @@
     AutomationProperties.LandmarkType="Main"
     IsItemClickEnabled="False"
     SelectionMode="None"
-    CanDragItems="True"
-    CanReorderItems="False"
     AllowDrop="True"
     DragItemsStarting="Chats_DragItemsStarting"
     DragItemsCompleted="Chats_DragItemsCompleted"
     ChoosingItemContainer="ChatsList_ChoosingItemContainer">
+    <!--CanDragItems="True"
+    CanReorderItems="False"-->
 
     <ListView.ItemContainerStyle>
         <Style TargetType="ListViewItem">

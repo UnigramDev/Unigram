@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -13,6 +14,8 @@ namespace Unigram.Views
 {
     public sealed partial class ChatsPage : ChatsListView
     {
+        public MainViewModel Main { get; set; }
+
         public ChatsPage()
         {
             InitializeComponent();
@@ -50,6 +53,33 @@ namespace Unigram.Views
 
             var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.ChatList is ChatListArchive ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
+            
+            var folders = ViewModel.CacheService.ChatFilters;
+            var item = new MenuFlyoutSubItem();
+            item.Text = "Add to folder...";
+            item.Icon = new FontIcon { Glyph = "\uE8DE" };
+
+            if (folders.Count < 10)
+            {
+                item.Items.Add(new MenuFlyoutItem { Text = "New folder" });
+            }
+            if (folders.Count > 0 && item.Items.Count > 0)
+            {
+                item.Items.Add(new MenuFlyoutSeparator());
+            }
+
+            foreach (var folder in folders)
+            {
+                if (chat.ChatList.ListEquals(new ChatListFilter(folder.ChatFilterId)))
+                {
+                    continue;
+                }
+
+                item.Items.Add(new MenuFlyoutItem { Text = folder.Title });
+            }
+
+            flyout.Items.Add(item);
+
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = chat.IsPinned ? Icons.Unpin : Icons.Pin });
             flyout.CreateFlyoutItem(DialogNotify_Loaded, viewModel.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
             flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
@@ -199,7 +229,7 @@ namespace Unigram.Views
         {
             ChatsList.CanReorderItems = false;
 
-            var chatList = ViewModel?.ChatList;
+            var chatList = ViewModel?.Items.ChatList;
             if (chatList == null)
             {
                 return;
@@ -223,7 +253,7 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    ViewModel.Handle(new UpdateChatOrder(chat.Id, chat.Order));
+                    ViewModel.Items.Handle(chat.Id, chat.Order);
                 }
             }
         }
