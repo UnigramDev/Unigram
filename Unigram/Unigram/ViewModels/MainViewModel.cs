@@ -171,7 +171,7 @@ namespace Unigram.ViewModels
                 var selected = SelectedFilter?.ChatFilterId ?? Constants.ChatListMain;
                 //var origin = chatFilters.Select(x => Filters.FirstOrDefault(y => y.ChatFilterId == x.ChatFilterId));
 
-                Merge(Filters, new[] { new ChatFilterInfo { ChatFilterId = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats } }.Union(chatFilters).ToArray());
+                Merge(Filters, new[] { new ChatFilterInfo { ChatFilterId = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, Emoji = "\U0001F4BC" } }.Union(chatFilters).ToArray());
 
                 if (Chats.Items.ChatList is ChatListFilter already && already.ChatFilterId != selected)
                 {
@@ -227,15 +227,14 @@ namespace Unigram.ViewModels
 
                 for (int i = 0; i < origin.Count; i++)
                 {
-                    var user = origin[i];
+                    var filter = origin[i];
                     var index = -1;
 
                     for (int j = 0; j < destination.Count; j++)
                     {
-                        if (destination[j].ChatFilterId == user.ChatFilterId)
+                        if (destination[j].ChatFilterId == filter.ChatFilterId)
                         {
-                            destination[j].Title = user.Title;
-                            destination[j].Emoji = user.Emoji;
+                            destination[j].Update(filter);
 
                             index = j;
                             break;
@@ -245,11 +244,11 @@ namespace Unigram.ViewModels
                     if (index > -1 && index != i)
                     {
                         destination.RemoveAt(index);
-                        destination.Insert(Math.Min(i, destination.Count), new ChatFilterViewModel(user));
+                        destination.Insert(Math.Min(i, destination.Count), new ChatFilterViewModel(filter));
                     }
                     else if (index == -1)
                     {
-                        destination.Insert(Math.Min(i, destination.Count), new ChatFilterViewModel(user));
+                        destination.Insert(Math.Min(i, destination.Count), new ChatFilterViewModel(filter));
                     }
                 }
             }
@@ -422,13 +421,22 @@ namespace Unigram.ViewModels
             }
 
             ChatFilterId = info.ChatFilterId;
-            Title = info.Title;
-            Emoji = info.Emoji;
+
+            _title = info.Title;
+            _emoji = info.Emoji;
+            _glyph = ChatFilterIcon.FromEmoji(info.Emoji);
         }
 
         private ChatFilterViewModel()
         {
             ChatList = new ChatListMain();
+        }
+
+        public void Update(ChatFilterInfo info)
+        {
+            Title = info.Title;
+            Emoji = info.Emoji;
+            Glyph = ChatFilterIcon.FromEmoji(info.Emoji);
         }
 
         public ChatList ChatList { get; }
@@ -447,6 +455,13 @@ namespace Unigram.ViewModels
         {
             get => _emoji;
             set => Set(ref _emoji, value);
+        }
+
+        private string _glyph;
+        public string Glyph
+        {
+            get => _glyph;
+            set => Set(ref _glyph, value);
         }
 
         private int _unreadCount;
