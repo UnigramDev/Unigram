@@ -201,7 +201,7 @@
                 <ControlTemplate TargetType="local:LottieView">
                     <Grid>
                         <Image x:Name="Thumbnail" Source="{TemplateBinding Thumbnail}"/>
-                        <xaml:CanvasSwapChainPanel x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        <xaml:CanvasControl x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

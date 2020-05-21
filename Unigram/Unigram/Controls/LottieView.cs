@@ -29,8 +29,9 @@ namespace Unigram.Controls
         private string _source;
         private CachedAnimation _animation;
 
-        private bool _animationIsCached;
+        private bool _animationShouldCache;
         private bool _animationIsCaching;
+        private static SemaphoreSlim _cachingSemaphone = new SemaphoreSlim(1, 1);
 
         private double _animationFrameRate;
         private int _animationTotalFrame;
@@ -111,8 +112,11 @@ namespace Unigram.Controls
 
             Dispose();
 
-            _animation?.Dispose();
-            _bitmap?.Dispose();
+            //_animation?.Dispose();
+            _animation = null;
+
+            //_bitmap?.Dispose();
+            _bitmap = null;
         }
 
         private void OnTick(object sender, EventArgs args)
@@ -172,17 +176,21 @@ namespace Unigram.Controls
 
             _bitmap = animation.RenderSync(_device, index, 256, 256);
 
-            if (!_animationIsCached)
+            if (_animationShouldCache)
             {
-                _animationIsCached = true;
+                _animationShouldCache = false;
                 _animationIsCaching = true;
 
                 ThreadPool.QueueUserWorkItem(state =>
                 {
                     if (animation is CachedAnimation cached)
                     {
+                        _cachingSemaphone.Wait();
+
                         cached.CreateCache(256, 256);
+
                         _animationIsCaching = false;
+                        _cachingSemaphone.Release();
                     }
                 }, animation);
             }
@@ -290,7 +298,7 @@ namespace Unigram.Controls
             _source = newValue;
             _animation = animation;
 
-            _animationIsCached = animation.IsCached;
+            _animationShouldCache = !animation.IsCached;
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
 
