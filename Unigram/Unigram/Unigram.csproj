@@ -619,6 +619,7 @@
     <Compile Include="Services\Settings\PlaybackSettings.cs" />
     <Compile Include="Services\Settings\StickersSettings.cs" />
     <Compile Include="Services\Settings\VoIPSettings.cs" />
+    <Compile Include="Services\ShortcutsService.cs" />
     <Compile Include="Services\Stripe\Card.cs" />
     <Compile Include="Services\Stripe\CardUtils.cs" />
     <Compile Include="Services\Stripe\DateUtils.cs" />
