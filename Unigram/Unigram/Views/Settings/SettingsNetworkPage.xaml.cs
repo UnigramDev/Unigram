@@ -27,14 +27,6 @@ namespace Unigram.Views.Settings
             DataContext = TLContainer.Current.Resolve<SettingsNetworkViewModel>();
         }
 
-        private void Header_BackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
-        {
-            if (Frame.CanGoBack)
-            {
-                Frame.GoBack();
-            }
-        }
-
         #region Binding
 
         private string ConvertSinceDate(DateTime sinceDate)
