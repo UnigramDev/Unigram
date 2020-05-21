@@ -40,6 +40,8 @@ namespace Unigram.Services
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
+        IList<ChatFilterInfo> ChatFilters { get; }
+
         Background GetSelectedBackground(bool darkTheme);
         Background SelectedBackground { get; }
 
@@ -146,6 +148,8 @@ namespace Unigram.Services
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
         private IList<long> _installedMaskSets;
+
+        private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
 
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
@@ -297,6 +301,7 @@ namespace Unigram.Services
             Task.Run(() =>
             {
                 InitializeDiagnostics();
+                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
 
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
@@ -313,7 +318,7 @@ namespace Unigram.Services
 
         private void InitializeDiagnostics()
         {
-            Client.Execute(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "log"), 10 * 1024 * 1024)));
+            Client.Execute(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024)));
             Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
 
             var tags = Client.Execute(new GetLogTags()) as LogTags;
@@ -450,88 +455,31 @@ namespace Unigram.Services
         //    _client.Send(function, handler);
         //}
 
-        private Dictionary<int, ChatListFolder> _filters = new Dictionary<int, ChatListFolder>
+        private Dictionary<int, ChatFilter> _filters = new Dictionary<int, ChatFilter>
         {
             {
-                0, new ChatListFolder
+                2, new ChatFilter
                 {
-                    Id = 0,
-                    Title = Strings.Resources.FilterContacts,
-                    IncludeContacts = true,
-                    IncludeNonContacts = true,
-                    IncludeGroups = false,
-                    IncludeChannels = false,
-                    IncludeBots = false
-                }
-            },
-            {
-                2, new ChatListFolder
-                {
-                    Id = 2,
-                    Title = Strings.Resources.FilterGroups,
-                    IncludeContacts = false,
-                    IncludeNonContacts = false,
-                    IncludeGroups = true,
-                    IncludeChannels = false,
-                    IncludeBots = false
-                }
-            },
-            {
-                4, new ChatListFolder
-                {
-                    Id = 4,
-                    Title = Strings.Resources.FilterChannels,
-                    IncludeContacts = false,
-                    IncludeNonContacts = false,
-                    IncludeGroups = false,
-                    IncludeChannels = true,
-                    IncludeBots = false
-                }
-            },
-            {
-                5, new ChatListFolder
-                {
-                    Id = 5,
-                    Title = Strings.Resources.FilterBots,
-                    IncludeContacts = false,
-                    IncludeNonContacts = false,
-                    IncludeGroups = false,
-                    IncludeChannels = false,
-                    IncludeBots = true
-                }
-            },
-            { 
-                6, new ChatListFolder
-                {
-                    Id = 6,
-                    Title = "Unmuted",
-                    ExcludeMuted = true
-                }
-            },
-            {
-                7, new ChatListFolder
-                {
-                    Id = 7,
-                    Title = Strings.Resources.FilterUnread,
-                    ExcludeRead = true
+                    Title = "WWWWWWWWWWWW",
+                    Emoji = "\U0001F3AE"
                 }
             }
         };
 
-        private IList<ChatListFolderSuggestion> _suggestions = new List<ChatListFolderSuggestion>
+        private IList<RecommendedChatFilter> _suggestions = new List<RecommendedChatFilter>
         {
-            new ChatListFolderSuggestion
+            new RecommendedChatFilter
             {
-                Filter = new ChatListFolder
+                Filter = new ChatFilter
                 {
                     Title = "Unread",
                     ExcludeRead = true
                 },
                 Description = "All unread chats"
             },
-            new ChatListFolderSuggestion
+            new RecommendedChatFilter
             {
-                Filter = new ChatListFolder
+                Filter = new ChatFilter
                 {
                     Title = "Personal",
                     IncludeChannels = false
@@ -542,14 +490,40 @@ namespace Unigram.Services
 
         public void Send(Function function, Action<BaseObject> handler = null)
         {
-            if (function is GetChatListFolders)
+            if (function is GetChatFilter getChatFilter)
             {
-                handler?.Invoke(new ChatListFolders { Filters = _filters.Values.ToList() });
+                handler?.Invoke(_filters[getChatFilter.ChatFilterId]);
                 return;
             }
-            else if (function is GetChatListFolderSuggestions)
+            else if (function is EditChatFilter editChatFilter)
             {
-                handler?.Invoke(new ChatListFolderSuggestions { Suggestions = _suggestions });
+                _filters[editChatFilter.ChatFilterId] = editChatFilter.Filter;
+                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
+                handler?.Invoke(new Ok());
+                return;
+            }
+            else if (function is CreateChatFilter createChatFilter)
+            {
+                if (_suggestions.Count > 0)
+                {
+                    _suggestions.RemoveAt(0);
+                }
+
+                _filters[_filters.Max(x => x.Key) + 1] = createChatFilter.Filter;
+                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
+                handler?.Invoke(new Ok());
+                return;
+            }
+            else if (function is DeleteChatFilter deleteChatFilter)
+            {
+                _filters.Remove(deleteChatFilter.ChatFilterId);
+                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
+                handler?.Invoke(new Ok());
+                return;
+            }
+            else if (function is GetRecommendedChatFilters)
+            {
+                handler?.Invoke(new RecommendedChatFilters { ChatFilters = _suggestions });
                 return;
             }
 
@@ -558,18 +532,30 @@ namespace Unigram.Services
 
         public Task<BaseObject> SendAsync(Function function)
         {
-            if (function is GetChatListFolders)
+            if (function is GetChatFilter getChatFilter)
             {
-                return Task.FromResult((BaseObject)new ChatListFolders { Filters = _filters.Values.ToList() });
+                return Task.FromResult((BaseObject)_filters[getChatFilter.ChatFilterId]);
             }
-            else if (function is GetChatListFolderSuggestions)
+            else if (function is EditChatFilter editChatFilter)
             {
-                return Task.FromResult((BaseObject)new ChatListFolderSuggestions { Suggestions = _suggestions });
+                _filters[editChatFilter.ChatFilterId] = editChatFilter.Filter;
+                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
+                return Task.FromResult((BaseObject)new Ok());
             }
-            else if (function is SetChatFolder set)
+            else if (function is CreateChatFilter createChatFilter)
             {
-                _filters[set.Filter.Id] = set.Filter;
+                _filters[_filters.Max(x => x.Key) + 1] = createChatFilter.Filter;
+                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
+                return Task.FromResult((BaseObject)new Ok());
             }
+            else if (function is GetRecommendedChatFilters)
+            {
+                return Task.FromResult((BaseObject)new RecommendedChatFilters { ChatFilters = _suggestions });
+            }
+            //else if (function is SetChatFolder set)
+            //{
+            //    _filters[set.Filter.Id] = set.Filter;
+            //}
 
             return _client.SendAsync(function);
         }
@@ -653,10 +639,13 @@ namespace Unigram.Services
             {
                 return 0;
             }
-
-            if (chatList is ChatListArchive)
+            else if (chatList is ChatListArchive)
             {
                 return 1;
+            }
+            else if (chatList is ChatListFilter filter)
+            {
+                return filter.ChatFilterId;
             }
 
             return -1;
@@ -708,6 +697,11 @@ namespace Unigram.Services
         public JsonValueObject Config
         {
             get { return _config; }
+        }
+
+        public IList<ChatFilterInfo> ChatFilters
+        {
+            get { return _chatFilters; }
         }
 
         public Background SelectedBackground
@@ -1295,6 +1289,10 @@ namespace Unigram.Services
                     value.Order = updateChatDraftMessage.Order;
                     value.DraftMessage = updateChatDraftMessage.DraftMessage;
                 }
+            }
+            else if (update is UpdateChatFilters updateChatFilters)
+            {
+                _chatFilters = updateChatFilters.ChatFilters.ToList();
             }
             else if (update is UpdateChatHasScheduledMessages updateChatHasScheduledMessages)
             {
