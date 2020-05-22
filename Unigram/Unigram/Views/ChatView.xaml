@@ -972,7 +972,6 @@
                         MinHeight="{StaticResource TelegramToolBarHeight}"
                         MaxHeight="192"
                         TextChanged="TextField_TextChanged"
-                        LostFocus="TextField_LostFocus"
                         Capture="TextField_Tapped"
                         Sending="TextField_Sending"
                         ShowFormatting="TextField_Formatting"
