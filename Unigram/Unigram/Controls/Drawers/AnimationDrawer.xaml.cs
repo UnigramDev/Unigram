@@ -1,8 +1,13 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
@@ -18,6 +23,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Drawers
@@ -61,16 +67,12 @@ namespace Unigram.Controls.Drawers
 
         }
 
-        private void Mosaic_Click(object item)
+        private void Animation_Click(object sender, RoutedEventArgs e)
         {
-            if (item is Animation animation)
-            {
-                Animation_Click(null, animation);
-            }
-            else if (item is InlineQueryResultAnimation inlineAnimation)
-            {
-                Animation_Click(null, inlineAnimation.Animation);
-            }
+            var button = sender as Button;
+            var animation = button.Tag as Animation;
+
+            Animation_Click(sender, animation);
         }
 
         private void Animation_Click(object sender, Animation animation)
@@ -83,52 +85,36 @@ namespace Unigram.Controls.Drawers
             }
         }
 
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
-            if (args.InRecycleQueue)
+            var content = args.Element as Button;
+            var animation = content.DataContext as Animation;
+
+            content.Tag = animation;
+
+            var image = content.Content as Image;
+
+            var file = animation.Thumbnail?.Photo;
+            if (file == null)
             {
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as MosaicRow;
-            var position = args.Item as MosaicMediaRow;
-
-            content.UpdateLine(ViewModel.ProtoService, position, Mosaic_Click);
-
-            //var content = args.ItemContainer.ContentTemplateRoot as Border;
-            //var position = args.Item as MosaicMediaPosition;
-
-            //var animation = position.Item as Animation;
-            //if (animation == null)
-            //{
-            //    return;
-            //}
-
-            //if (args.Phase < 2)
-            //{
-            //    args.RegisterUpdateCallback(Animations_ContainerContentChanging);
-            //}
-            //else
-            //{
-            //    var file = animation.Thumbnail.Photo;
-            //    if (file.Local.IsDownloadingCompleted)
-            //    {
-            //        content.Background = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
-            //    }
-            //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            //    {
-            //        DownloadFile(file.Id, animation);
-            //    }
-            //}
-
-            args.Handled = true;
+            if (file.Local.IsDownloadingCompleted)
+            {
+                image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                image.Source = null;
+                DownloadFile(file.Id, animation);
+            }
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var position = element.Tag as MosaicMediaPosition;
-            var animation = position.Item as Animation;
+            var animation = element.DataContext as Animation;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
@@ -158,45 +144,37 @@ namespace Unigram.Controls.Drawers
 
         private void DownloadFile(int id, Animation animation)
         {
-            _animations[id][animation.AnimationValue.Id] = animation;
+            _animations[id].Add(animation);
             ViewModel.ProtoService.DownloadFile(id, 1);
         }
 
         public void UpdateFile(File file)
         {
-            foreach (MosaicMediaRow line in GifsView.Items)
+            if (_animations.TryGetValue(file.Id, out List<Animation> items) && items.Count > 0)
             {
-                var any = false;
-                foreach (var item in line)
+                foreach (var item in items)
                 {
-                    if (item.Item is Animation animation && animation.UpdateFile(file))
+                    item.UpdateFile(file);
+
+                    var index = Repeater.ItemsSourceView.IndexOf(item);
+                    if (index < 0)
                     {
-                        any = true;
+                        continue;
                     }
-                    else if (item.Item is InlineQueryResultAnimation inlineAnimation && inlineAnimation.Animation.UpdateFile(file))
+
+                    if (item.Thumbnail?.Photo.Id == file.Id)
                     {
-                        any = true;
+                        var content = Repeater.TryGetElement(index) as Button;
+                        var image = content.Content as Image;
+
+                        image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                    }
+                    else if (item.AnimationValue.Id == file.Id)
+                    {
+                        //_throttler.Stop();
+                        //_throttler.Start();
                     }
                 }
-
-                if (!any)
-                {
-                    continue;
-                }
-
-                var container = GifsView.ContainerFromItem(line) as SelectorItem;
-                if (container == null)
-                {
-                    continue;
-                }
-
-                var content = container.ContentTemplateRoot as MosaicRow;
-                if (content == null)
-                {
-                    continue;
-                }
-
-                content.UpdateFile(line, file);
             }
         }
     }

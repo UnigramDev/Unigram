@@ -216,7 +216,7 @@
                             Grid.Column="2"/>
 
                         <controls:PivotRadioButton
-                            Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Visibility="{x:Bind ViewModel.Stickers.SavedAnimations.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                             SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
                             Index="1"
                             Glyph="&#xF4A9;"

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace Unigram.ViewModels.Dialogs
 
             Aggregator.Subscribe(this);
 
-            SavedGifs = new MvxObservableCollection<MosaicMediaRow>();
+            SavedAnimations = new AnimationsCollection();
             FeaturedStickers = new MvxObservableCollection<TLFeaturedStickerSet>();
             SavedStickers = new StickerSetCollection();
 
@@ -159,7 +160,7 @@ namespace Unigram.ViewModels.Dialogs
             {
                 if (result is Animations animation)
                 {
-                    BeginOnUIThread(() => SavedGifs.ReplaceWith(MosaicMedia.Calculate(animation.AnimationsValue.ToList())));
+                    BeginOnUIThread(() => SavedAnimations.ReplaceWith(animation.AnimationsValue));
                 }
             });
         }
@@ -288,7 +289,7 @@ namespace Unigram.ViewModels.Dialogs
             //}
         }
 
-        public MvxObservableCollection<MosaicMediaRow> SavedGifs { get; private set; }
+        public AnimationsCollection SavedAnimations { get; private set; }
 
         public MvxObservableCollection<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
@@ -323,7 +324,7 @@ namespace Unigram.ViewModels.Dialogs
         }
 
         public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
-        public MvxObservableCollection<MosaicMediaRow> Animations => SearchAnimations ?? SavedGifs;
+        public AnimationsCollection Animations => SearchAnimations ?? SavedAnimations;
 
         public async void FindStickers(string query)
         {
@@ -347,13 +348,15 @@ namespace Unigram.ViewModels.Dialogs
             else
             {
                 var items = SearchAnimations = new SearchAnimationsCollection(ProtoService, Aggregator, query);
-                //await items.LoadMoreItemsAsync(0);
+                await items.LoadMoreItemsAsync(0);
 
                 //if (items.Count > 0)
                 //{
                 //    SearchAnimations = items;
                 //}
             }
+
+            Animations.Reset();
         }
 
         public async void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -490,7 +493,7 @@ namespace Unigram.ViewModels.Dialogs
             {
                 if (result is Animations animation)
                 {
-                    BeginOnUIThread(() => SavedGifs.ReplaceWith(MosaicMedia.Calculate(animation.AnimationsValue.ToList())));
+                    BeginOnUIThread(() => SavedAnimations.ReplaceWith(animation.AnimationsValue));
                 }
             });
 
@@ -939,7 +942,20 @@ namespace Unigram.ViewModels.Dialogs
         public bool HasMoreItems => false;
     }
 
-    public class SearchAnimationsCollection : MvxObservableCollection<MosaicMediaRow>, ISupportIncrementalLoading
+    public class AnimationsCollection : MvxObservableCollection<Animation>, IKeyIndexMapping
+    {
+        public string KeyFromIndex(int index)
+        {
+            return this[index].AnimationValue.Id.ToString();
+        }
+
+        public int IndexFromKey(string key)
+        {
+            return IndexOf(this.FirstOrDefault(x => key == x.AnimationValue.Id.ToString()));
+        }
+    }
+
+    public class SearchAnimationsCollection : AnimationsCollection, ISupportIncrementalLoading
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
@@ -979,11 +995,12 @@ namespace Unigram.ViewModels.Dialogs
                         _offset = results.NextOffset;
                         _hasMoreItems = _offset.Length > 0;
 
-                        var mosaic = MosaicMedia.Calculate(results.Results.ToList());
-
-                        foreach (var item in mosaic)
+                        foreach (var item in results.Results)
                         {
-                            Add(item);
+                            if (item is InlineQueryResultAnimation animation)
+                            {
+                                Add(animation.Animation);
+                            }
                         }
                     }
                     else

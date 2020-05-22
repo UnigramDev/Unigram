@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Drawers"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -24,30 +25,30 @@
                 Grid.Row="1"/>
         </Border>
 
-        <ListView
-            x:Name="GifsView"
-            ItemsSource="{x:Bind ViewModel.Stickers.Animations, Mode=OneWay}"
-            SelectionMode="None"
-            ContainerContentChanging="OnContainerContentChanging"
-            Padding="2"
-            Grid.Row="1">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <controls:MosaicRow
-                        HorizontalAlignment="Stretch"
-                        ItemContextRequested="OnContextRequested"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection/>
-            </ListView.ItemContainerTransitions>
-        </ListView>
+        <muxc:ItemsRepeaterScrollHost Grid.Row="1">
+            <ScrollViewer>
+                <muxc:ItemsRepeater
+                    x:Name="Repeater"
+                    ItemsSource="{x:Bind ViewModel.Stickers.Animations, Mode=OneWay}"
+                    ElementPrepared="OnElementPrepared">
+                    <muxc:ItemsRepeater.Layout>
+                        <controls:MosaicLayout />
+                    </muxc:ItemsRepeater.Layout>
+                    <muxc:ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Click="Animation_Click"
+                                ContextRequested="OnContextRequested"
+                                Style="{StaticResource GridViewButtonStyle}">
+                                <Image
+                                    Stretch="UniformToFill"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+                            </Button>
+                        </DataTemplate>
+                    </muxc:ItemsRepeater.ItemTemplate>
+                </muxc:ItemsRepeater>
+            </ScrollViewer>
+        </muxc:ItemsRepeaterScrollHost>
     </Grid>
 </UserControl>

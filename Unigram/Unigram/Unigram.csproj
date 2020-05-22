@@ -404,6 +404,7 @@
       <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MosaicRow.cs" />
+    <Compile Include="Controls\MosaicLayout.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
@@ -2651,7 +2652,7 @@
       <Version>6.2.10</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.4.0</Version>
+      <Version>2.4.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml.Core.Direct">
       <Version>2.0.180924001-prerelease</Version>
