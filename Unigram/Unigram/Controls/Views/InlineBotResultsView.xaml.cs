@@ -266,8 +266,7 @@ namespace Unigram.Controls.Views
 
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
-                        //image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                        image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
