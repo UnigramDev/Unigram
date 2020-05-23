@@ -48,16 +48,16 @@ namespace Unigram.ViewModels.Folders
             return base.OnNavigatedFromAsync(pageState, suspending);
         }
 
-        public void Handle(UpdateChatFilters filters)
+        public void Handle(UpdateChatFilters update)
         {
             BeginOnUIThread(async () =>
             {
-                Items.ReplaceWith(CacheService.ChatFilters);
+                Items.ReplaceWith(update.ChatFilters);
 
                 var response = await ProtoService.SendAsync(new GetRecommendedChatFilters());
-                if (response is RecommendedChatFilters filters)
+                if (response is RecommendedChatFilters recommended)
                 {
-                    Recommended.ReplaceWith(filters.ChatFilters);
+                    Recommended.ReplaceWith(recommended.ChatFilters);
                 }
             });
         }
