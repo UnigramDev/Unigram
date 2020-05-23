@@ -611,6 +611,11 @@ namespace Unigram.Controls
 
         }
 
+        protected virtual void OnSettingText()
+        {
+
+        }
+
         public virtual bool IsEmpty
         {
             get
@@ -635,12 +640,15 @@ namespace Unigram.Controls
             }
             else
             {
+                OnSettingText();
                 Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
             }
         }
 
         public void SetText(string text, IList<TextEntity> entities)
         {
+            OnSettingText();
+
             Document.BatchDisplayUpdates();
             Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
 

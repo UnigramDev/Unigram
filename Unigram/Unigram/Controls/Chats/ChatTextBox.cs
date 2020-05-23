@@ -25,14 +25,14 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Chats
 {
     public class ChatTextBox : FormattedTextBox
     {
-        private ContentControl InlinePlaceholderTextContentPresenter;
+        private TextBlock InlinePlaceholderTextContentPresenter;
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -56,7 +56,7 @@ namespace Unigram.Controls.Chats
 
         protected override void OnApplyTemplate()
         {
-            InlinePlaceholderTextContentPresenter = (ContentControl)GetTemplateChild("InlinePlaceholderTextContentPresenter");
+            InlinePlaceholderTextContentPresenter = (TextBlock)GetTemplateChild("InlinePlaceholderTextContentPresenter");
 
             base.OnApplyTemplate();
         }
@@ -363,7 +363,7 @@ namespace Unigram.Controls.Chats
 
             ViewModel.CurrentInlineBot = null;
             ViewModel.InlineBotResults = null;
-            InlinePlaceholderText = string.Empty;
+            UpdateInlinePlaceholder(null, null);
         }
 
         private async void OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -755,6 +755,11 @@ namespace Unigram.Controls.Chats
             FormatText();
         }
 
+        protected override void OnSettingText()
+        {
+            UpdateInlinePlaceholder(null, null);
+        }
+
         public override bool IsEmpty
         {
             get
@@ -1038,7 +1043,7 @@ namespace Unigram.Controls.Chats
                             var user = ViewModel.CurrentInlineBot;
                             if (user != null && user.Type is UserTypeBot bot)
                             {
-                                InlinePlaceholderText = bot.InlineQueryPlaceholder;
+                                UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
                             }
                         }
                     }
@@ -1047,12 +1052,12 @@ namespace Unigram.Controls.Chats
                         var user = ViewModel.CurrentInlineBot;
                         if (user != null && user.Type is UserTypeBot bot)
                         {
-                            InlinePlaceholderText = bot.InlineQueryPlaceholder;
+                            UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
                         }
                     }
                     else
                     {
-                        InlinePlaceholderText = string.Empty;
+                        UpdateInlinePlaceholder(null, null);
                     }
                 }
                 else
@@ -1075,46 +1080,23 @@ namespace Unigram.Controls.Chats
             return text.Substring(0, index) + replace + text.Substring(index + search.Length);
         }
 
-        private void UpdateInlinePlaceholder()
+        private void UpdateInlinePlaceholder(string username, string placeholder)
         {
             if (InlinePlaceholderTextContentPresenter != null)
             {
-                var placeholder = Text;
-                if (placeholder == null)
+                InlinePlaceholderTextContentPresenter.Inlines.Clear();
+
+                if (username != null && placeholder != null)
                 {
-                    return;
+                    InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = "@" + username + " ", Foreground = null });
+                    InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = placeholder });
                 }
-
-                var range = Document.GetRange(Text.Length, Text.Length);
-                range.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
-
-                var translateTransform = new TranslateTransform();
-                translateTransform.X = rect.X;
-                InlinePlaceholderTextContentPresenter.RenderTransform = translateTransform;
             }
         }
 
         #endregion
 
         public string Text { get; private set; }
-
-        #region InlinePlaceholderText
-
-        public string InlinePlaceholderText
-        {
-            get { return (string)GetValue(InlinePlaceholderTextProperty); }
-            set { SetValue(InlinePlaceholderTextProperty, value); }
-        }
-
-        public static readonly DependencyProperty InlinePlaceholderTextProperty =
-            DependencyProperty.Register("InlinePlaceholderText", typeof(string), typeof(ChatTextBox), new PropertyMetadata(null, OnInlinePlaceholderTextChanged));
-
-        private static void OnInlinePlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ChatTextBox)d).UpdateInlinePlaceholder();
-        }
-
-        #endregion
 
         #region Reply
 

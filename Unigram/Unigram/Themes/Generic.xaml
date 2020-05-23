@@ -2664,16 +2664,15 @@
                                         Content="{TemplateBinding PlaceholderText}"
                                         IsHitTestVisible="False" 
                                         VerticalAlignment="Center"/>
-                        <ContentControl x:Name="InlinePlaceholderTextContentPresenter"
-                                        Grid.Row="1"
-                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                        Margin="{TemplateBinding BorderThickness}"
-                                        Padding="{TemplateBinding Padding}"
-                                        IsTabStop="False"
-                                        Grid.ColumnSpan="2"
-                                        Content="{TemplateBinding InlinePlaceholderText}"
-                                        IsHitTestVisible="False" 
-                                        VerticalAlignment="Center"/>
+                        <TextBlock
+                            x:Name="InlinePlaceholderTextContentPresenter"
+                            Grid.Row="1"
+                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                            Margin="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            Grid.ColumnSpan="2"
+                            IsHitTestVisible="False" 
+                            VerticalAlignment="Center"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
