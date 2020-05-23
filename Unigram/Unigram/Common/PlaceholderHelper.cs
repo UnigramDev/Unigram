@@ -125,7 +125,7 @@ namespace Unigram.Common
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert(firstName, lastName), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert(firstName, lastName), stream);
 
                     bitmap.SetSource(stream);
                 }
@@ -142,7 +142,7 @@ namespace Unigram.Common
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert((object)name), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert((object)name), stream);
 
                     bitmap.SetSource(stream);
                 }
@@ -159,7 +159,7 @@ namespace Unigram.Common
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert(title), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert(title), stream);
 
                     bitmap.SetSource(stream);
                 }

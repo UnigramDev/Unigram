@@ -58,7 +58,7 @@ namespace Unigram.Controls
 
         protected override Size MeasureOverride(VirtualizingLayoutContext context, Size availableSize)
         {
-            if (context.ItemCount < 1 || (context.RealizationRect.Width == 0 && context.RealizationRect.Height == 0))
+            if (context.ItemCount < 1)
             {
                 return new Size(0, 0);
             }

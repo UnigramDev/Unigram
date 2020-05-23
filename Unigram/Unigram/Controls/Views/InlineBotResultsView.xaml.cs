@@ -93,25 +93,6 @@ namespace Unigram.Controls.Views
             PermissionsLabel.Text = label ?? string.Empty;
         }
 
-        #region Gifs
-
-        private ItemsStackPanel _panel;
-
-        private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
-
-        class MediaPlayerItem
-        {
-            public Grid Container { get; set; }
-            public MediaPlayerView Presenter { get; set; }
-            public bool Watermark { get; set; }
-        }
-
-        //public void Play(IEnumerable<TLBotInlineResultBase> items, bool auto)
-        //{
-        //}
-
-        #endregion
-
         public void UpdateFile(File file)
         {
             if (!file.Local.IsDownloadingCompleted)
@@ -363,14 +344,6 @@ namespace Unigram.Controls.Views
                     description.Text = voiceNote.VoiceNote.GetDuration();
                 }
 
-                //if (file == null && uri == null)
-                //{
-                //    presenter.Visibility = Visibility.Collapsed;
-                //    return;
-                //}
-
-                //presenter.Visibility = Visibility.Visible;
-
                 if (file != null)
                 {
                     if (file.Local.IsDownloadingCompleted)
@@ -386,6 +359,10 @@ namespace Unigram.Controls.Views
                 else if (uri != null)
                 {
                     thumb.Source = new BitmapImage(uri);
+                }
+                else
+                {
+                    thumb.Source = PlaceholderHelper.GetNameForChat(title.Text, 64, title.Text.GetHashCode());
                 }
             }
         }
