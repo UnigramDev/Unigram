@@ -857,8 +857,10 @@
             <Grid x:Name="InlinePanel"
                   SizeChanged="InlinePanel_SizeChanged"
                   VerticalAlignment="Bottom"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                   Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
                   Margin="12,0,12,-12"
+                  Padding="0,0,0,12"
                   CornerRadius="8,8,0,0">
                 <views:InlineBotResultsView
                     x:Name="ListInline"
@@ -867,15 +869,13 @@
                     VerticalAlignment="Bottom"/>
                 <controls:OrientableListView
                     x:Name="ListAutocomplete"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
                     ContainerContentChanging="Autocomplete_ContainerContentChanging"
                     AllowFocusOnInteraction="False"
                     IsItemClickEnabled="True"
                     ItemClick="Autocomplete_ItemClick"
                     VerticalAlignment="Bottom"
-                    Style="{StaticResource ZoomableListViewStyle}"
-                    Padding="0,0,0,12">
+                    Style="{StaticResource ZoomableListViewStyle}">
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
                             <Setter Property="MinWidth" Value="0"/>

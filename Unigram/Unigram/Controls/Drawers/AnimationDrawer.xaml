@@ -26,7 +26,10 @@
         </Border>
 
         <muxc:ItemsRepeaterScrollHost Grid.Row="1">
-            <ScrollViewer>
+            <ScrollViewer
+                x:Name="ScrollingHost"
+                VerticalScrollBarVisibility="Auto"
+                VerticalScrollMode="Auto">
                 <muxc:ItemsRepeater
                     x:Name="Repeater"
                     ItemsSource="{x:Bind ViewModel.Stickers.Animations, Mode=OneWay}"

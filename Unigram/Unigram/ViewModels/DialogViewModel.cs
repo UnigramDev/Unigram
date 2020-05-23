@@ -2837,19 +2837,19 @@ namespace Unigram.ViewModels
         #region Switch
 
         public RelayCommand<string> SwitchCommand { get; }
-        private void SwitchExecute(string start)
+        private async void SwitchExecute(string start)
         {
             if (_currentInlineBot == null)
             {
                 return;
             }
-            else
+
+            var response = await ProtoService.SendAsync(new CreatePrivateChat(_currentInlineBot.Id, false));
+            if (response is Chat chat)
             {
-
+                ProtoService.Send(new SendBotStartMessage(_currentInlineBot.Id, chat.Id, start ?? string.Empty));
+                NavigationService.NavigateToChat(chat);
             }
-
-            // TODO: edit to send it automatically
-            //NavigationService.NavigateToDialog(_currentInlineBot, accessToken: switchPM.StartParam);
         }
 
         #endregion
@@ -2914,7 +2914,7 @@ namespace Unigram.ViewModels
         #region Start
 
         public RelayCommand StartCommand { get; }
-        private async void StartExecute()
+        private void StartExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -2928,17 +2928,10 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (_accessToken == null)
-            {
-                await SendMessageAsync(chat.Type is ChatTypePrivate ? "/start" : "/start@" + bot.Username);
-            }
-            else
-            {
-                var token = _accessToken;
+            var token = _accessToken;
 
-                AccessToken = null;
-                ProtoService.Send(new SendBotStartMessage(bot.Id, chat.Id, token));
-            }
+            AccessToken = null;
+            ProtoService.Send(new SendBotStartMessage(bot.Id, chat.Id, token ?? string.Empty));
         }
 
         private User GetStartingBot()

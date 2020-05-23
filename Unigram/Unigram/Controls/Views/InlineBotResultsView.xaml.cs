@@ -1,29 +1,24 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Media.Core;
-using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Views
 {
     public sealed partial class InlineBotResultsView : UserControl
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
+        private FileContext<InlineQueryResult> _animations = new FileContext<InlineQueryResult>();
 
         public InlineBotResultsView()
         {
@@ -32,12 +27,20 @@ namespace Unigram.Controls.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _panel = Items.ItemsPanelRoot as ItemsStackPanel;
+            //_panel = Items.ItemsPanelRoot as ItemsStackPanel;
 
-            var scroll = Items.ScrollingHost;
-            if (scroll != null)
+            //var scroll = Items.ScrollingHost;
+            //if (scroll != null)
+            //{
+            //    scroll.ViewChanged += OnViewChanged;
+            //}
+        }
+
+        public CornerRadius Radius
+        {
+            set
             {
-                scroll.ViewChanged += OnViewChanged;
+                SwitchPm.Radius = new CornerRadius(value.TopLeft, value.TopRight, 4, 4);
             }
         }
 
@@ -45,6 +48,28 @@ namespace Unigram.Controls.Views
         {
             if (ViewModel != null) Bindings.Update();
             if (ViewModel == null) Bindings.StopTracking();
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var layout = Resources["GridLayout"] as UniformGridLayout;
+            if (layout == null)
+            {
+                return;
+            }
+
+            if (e.NewSize.Width <= 400)
+            {
+                layout.MaximumRowsOrColumns = 4;
+            }
+            else if (e.NewSize.Width <= 500)
+            {
+                layout.MaximumRowsOrColumns = 5;
+            }
+            else
+            {
+                layout.MaximumRowsOrColumns = (int)Math.Ceiling(e.NewSize.Width / 96);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -72,36 +97,6 @@ namespace Unigram.Controls.Views
 
         private ItemsStackPanel _panel;
 
-        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            //var index0 = _panel.FirstVisibleIndex;
-            //var index1 = _panel.LastVisibleIndex;
-
-            //if (index0 > -1 && index1 > -1 /*&& (index0 != _lastIndex0 || index1 != _lastIndex1)*/ && !e.IsIntermediate)
-            //{
-            //    var messages = new List<TLBotInlineResultBase>(index1 - index0);
-            //    var auto = true;
-            //    var news = new Dictionary<string, MediaPlayerItem>();
-
-            //    for (int i = index0; i <= index1; i++)
-            //    {
-            //        var container = Items.ContainerFromIndex(i) as GridViewItem;
-            //        if (container != null)
-            //        {
-            //            var item = Items.ItemFromContainer(container) as TLBotInlineResultBase;
-            //            if (item == null)
-            //            {
-            //                continue;
-            //            }
-
-            //            messages.Add(item);
-            //        }
-            //    }
-
-            //    Play(messages, auto);
-            //}
-        }
-
         private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
 
         class MediaPlayerItem
@@ -117,11 +112,6 @@ namespace Unigram.Controls.Views
 
         #endregion
 
-        private Orientation ConvertOrientation(bool horizontal)
-        {
-            return horizontal ? Orientation.Horizontal : Orientation.Vertical;
-        }
-
         public void UpdateFile(File file)
         {
             if (!file.Local.IsDownloadingCompleted)
@@ -129,174 +119,53 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            foreach (MosaicMediaRow line in Items.Items)
+            if (_animations.TryGetValue(file.Id, out List<InlineQueryResult> items) && items.Count > 0)
             {
-                var any = false;
-                foreach (var item in line)
+                foreach (var result in items)
                 {
-                    if (item.Item is InlineQueryResultAnimation animation && animation.Animation.UpdateFile(file))
+                    result.UpdateFile(file);
+
+                    var index = Repeater.ItemsSourceView.IndexOf(result);
+                    if (index < 0)
                     {
-                        any = true;
-                        break;
-                    }
-                    else if (item.Item is InlineQueryResultPhoto photo && photo.Photo.UpdateFile(file))
-                    {
-                        any = true;
-                        break;
-                    }
-                }
-
-                if (!any)
-                {
-                    continue;
-                }
-
-                var container = Items.ContainerFromItem(line) as SelectorItem;
-                if (container == null)
-                {
-                    continue;
-                }
-
-                var content = container.ContentTemplateRoot as MosaicRow;
-                if (content == null)
-                {
-                    continue;
-                }
-
-                content.UpdateFile(line, file);
-            }
-        }
-
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var position = args.Item as MosaicMediaRow;
-
-            if (args.ItemContainer.ContentTemplateRoot is MosaicRow row)
-            {
-                row.UpdateLine(ViewModel.ProtoService, position, Item_Click);
-            }
-            else if (args.ItemContainer.ContentTemplateRoot is Button button)
-            {
-                var content = button.Content as Grid;
-                var result = position[0].Item;
-
-                button.Tag = result;
-
-                var presenter = content.Children[0] as Grid;
-
-                var title = content.Children[1] as TextBlock;
-                var subtitle = content.Children[2] as TextBlock;
-
-                if (result is InlineQueryResultArticle article)
-                {
-                    if (article.Thumbnail != null)
-                    {
-                        presenter.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        presenter.Visibility = Visibility.Collapsed;
+                        continue;
                     }
 
-                    title.Text = article.Title;
-                    subtitle.Text = article.Description;
-                }
-                else if (result is InlineQueryResultContact contact)
-                {
-                    var user = ViewModel.ProtoService.GetUser(contact.Contact.UserId);
-                    if (user != null)
+                    var button = Repeater.TryGetElement(index) as Button;
+                    if (button == null)
                     {
-                        title.Text = user.GetFullName();
-                    }
-                    else
-                    {
-                        title.Text = string.IsNullOrEmpty(contact.Contact.LastName) ? contact.Contact.FirstName : $"{contact.Contact.FirstName} {contact.Contact.LastName}";
+                        continue;
                     }
 
-                    subtitle.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
-                }
-                else if (result is InlineQueryResultGame game)
-                {
-                    presenter.Visibility = Visibility.Visible;
-
-                    title.Text = game.Game.Title;
-                    subtitle.Text = game.Game.Description;
-                }
-                else if (result is InlineQueryResultPhoto photo)
-                {
-                    presenter.Visibility = Visibility.Visible;
-
-                    title.Text = photo.Title;
-                    subtitle.Text = photo.Description;
-                }
-                else if (result is InlineQueryResultVideo video)
-                {
-                    presenter.Visibility = Visibility.Visible;
-
-                    title.Text = video.Title;
-                    subtitle.Text = video.Description;
-                }
-                else if (result is InlineQueryResultAudio audio)
-                {
-                    title.Text = audio.Audio.GetTitle();
-                    subtitle.Text = "???";
-                }
-                else if (result is InlineQueryResultDocument document)
-                {
-                    if (document.Document.Thumbnail != null)
+                    if (button.Content is Image image)
                     {
-                        presenter.Visibility = Visibility.Visible;
+                        if (result is InlineQueryResultAnimation || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
+                        {
+                            if (file.Local.IsDownloadingCompleted)
+                            {
+                                image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                            }
+                        }
+                        else if (result is InlineQueryResultSticker sticker)
+                        {
+                            if (file.Local.IsDownloadingCompleted)
+                            {
+                                image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                            }
+                        }
                     }
-                    else
+                    else if (button.Content is Grid content)
                     {
-                        presenter.Visibility = Visibility.Collapsed;
+                        var presenter = content.Children[0] as Grid;
+                        var thumb = presenter.Children[0] as Image;
+
+                        if (file.Local.IsDownloadingCompleted)
+                        {
+                            thumb.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        }
                     }
-
-                    title.Text = document.Title;
-                    subtitle.Text = document.Description;
-                }
-                else if (result is InlineQueryResultVoiceNote voiceNote)
-                {
-
-                }
-
-                if (result is InlineQueryResultArticle || result is InlineQueryResultContact || result is InlineQueryResultGame || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
-                {
-                    //var photo = content.Children[0] as ProfilePicture;
-
-                    //var file = user.ProfilePhoto?.Small;
-                    //if (file != null)
-                    //{
-                    //    if (file.Local.IsDownloadingCompleted)
-                    //    {
-                    //        photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = 36, DecodePixelHeight = 36, DecodePixelType = DecodePixelType.Logical };
-                    //    }
-                    //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    //    {
-                    //        ViewModel.ProtoService.DownloadFile(file.Id, 1));
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    photo.Source = null;
-                    //}
-                }
-                else if (result is InlineQueryResultAudio || result is InlineQueryResultDocument)
-                {
-                    Debugger.Break();
-                }
-                else
-                {
-                    Debugger.Break();
                 }
             }
-
-            args.Handled = true;
         }
 
         private void Item_Click(object item)
@@ -316,151 +185,253 @@ namespace Unigram.Controls.Views
             ViewModel.SendBotInlineResult(result, collection.GetQueryId(result));
         }
 
-        private void OnContainerContentChanging2(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var result = args.Item as InlineQueryResult;
-
-            if (result.IsMedia())
-            {
-                var texture = content.Children[0] as Image;
-
-                var panel = content as AspectView;
-                if (panel == null)
-                {
-                    return;
-                }
-
-                panel.Constraint = result;
-
-                if (result is InlineQueryResultAnimation animation && animation.Animation.Thumbnail != null)
-                {
-                    var file = animation.Animation.Thumbnail.Photo;
-                    if (file.Local.IsDownloadingCompleted)
-                    {
-                        texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
-                    }
-                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        ViewModel.ProtoService.DownloadFile(file.Id, 1);
-                    }
-                }
-                else if (result is InlineQueryResultLocation locationResult)
-                {
-
-                }
-                else if (result is InlineQueryResultPhoto photoResult)
-                {
-
-                }
-                else if (result is InlineQueryResultSticker stickerResult)
-                {
-
-                }
-                else if (result is InlineQueryResultVideo videoResult)
-                {
-
-                }
-            }
-            else
-            {
-                var title = content.Children[1] as TextBlock;
-                var subtitle = content.Children[2] as TextBlock;
-
-                if (result is InlineQueryResultArticle article)
-                {
-                    title.Text = article.Title;
-                    subtitle.Text = article.Description;
-                }
-                else if (result is InlineQueryResultContact contact)
-                {
-                    var user = ViewModel.ProtoService.GetUser(contact.Contact.UserId);
-                    if (user != null)
-                    {
-                        title.Text = user.GetFullName();
-                    }
-                    else
-                    {
-                        title.Text = string.IsNullOrEmpty(contact.Contact.LastName) ? contact.Contact.FirstName : $"{contact.Contact.FirstName} {contact.Contact.LastName}";
-                    }
-
-                    subtitle.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
-                }
-                else if (result is InlineQueryResultGame game)
-                {
-                    title.Text = game.Game.Title;
-                    subtitle.Text = game.Game.Description;
-                }
-                else if (result is InlineQueryResultPhoto photo)
-                {
-                    title.Text = photo.Title;
-                    subtitle.Text = photo.Description;
-                }
-                else if (result is InlineQueryResultVideo video)
-                {
-                    title.Text = video.Title;
-                    subtitle.Text = video.Description;
-                }
-                else if (result is InlineQueryResultAudio audio)
-                {
-                    title.Text = audio.Audio.GetTitle();
-                    subtitle.Text = "???";
-                }
-                else if (result is InlineQueryResultDocument document)
-                {
-                    title.Text = document.Title;
-                    subtitle.Text = document.Description;
-                }
-                else if (result is InlineQueryResultVoiceNote voiceNote)
-                {
-
-                }
-
-                if (result is InlineQueryResultArticle || result is InlineQueryResultContact || result is InlineQueryResultGame || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
-                {
-                    //var photo = content.Children[0] as ProfilePicture;
-
-                    //var file = user.ProfilePhoto?.Small;
-                    //if (file != null)
-                    //{
-                    //    if (file.Local.IsDownloadingCompleted)
-                    //    {
-                    //        photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = 36, DecodePixelHeight = 36, DecodePixelType = DecodePixelType.Logical };
-                    //    }
-                    //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    //    {
-                    //        ViewModel.ProtoService.DownloadFile(file.Id, 1));
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    photo.Source = null;
-                    //}
-                }
-                else if (result is InlineQueryResultAudio || result is InlineQueryResultDocument)
-                {
-                    Debugger.Break();
-                }
-                else
-                {
-                    Debugger.Break();
-                }
-            }
-
-            //if (args.Phase < 2)
-            //{
-            //    args.RegisterUpdateCallback(OnContainerContentChanging);
-            //}
-
-            args.Handled = true;
-        }
-
         private void Result_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var result = button.Tag as InlineQueryResult;
+            var result = button.DataContext as InlineQueryResult;
 
             Item_Click(result);
+        }
+
+        private object ConvertSource(BotResultsCollection collection)
+        {
+            if (collection == null)
+            {
+                return null;
+            }
+            else if (collection.All(x => x.IsMedia()) /* animation, photo, video without title */)
+            {
+                Repeater.Layout = Resources["MosaicLayout"] as Layout;
+                Repeater.ItemTemplate = Resources["MediaTemplate"];
+            }
+            else if (collection.All(x => x is InlineQueryResultSticker))
+            {
+                Repeater.Layout = Resources["GridLayout"] as Layout;
+                Repeater.ItemTemplate = Resources["StickerTemplate"];
+            }
+            else
+            {
+                Repeater.Layout = Resources["StackLayout"] as Layout;
+                Repeater.ItemTemplate = Resources["ResultTemplate"];
+            }
+
+            return new object();
+        }
+
+        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+        {
+            var button = args.Element as Button;
+            var result = button.DataContext as InlineQueryResult;
+
+            if (button.Content is Image image)
+            {
+                if (result is InlineQueryResultAnimation || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
+                {
+                    File file = null;
+                    if (result is InlineQueryResultAnimation animation)
+                    {
+                        file = animation.Animation.Thumbnail.Photo;
+                    }
+                    else if (result is InlineQueryResultPhoto photo)
+                    {
+                        file = photo.Photo.GetSmall().Photo;
+                    }
+                    else if (result is InlineQueryResultVideo video)
+                    {
+                        file = video.Video.Thumbnail.Photo;
+                    }
+
+                    if (file == null)
+                    {
+                        return;
+                    }
+
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                    }
+                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        image.Source = null;
+                        DownloadFile(file.Id, result);
+                    }
+                }
+                else if (result is InlineQueryResultSticker sticker)
+                {
+                    var file = sticker.Sticker.Thumbnail.Photo;
+                    if (file == null)
+                    {
+                        return;
+                    }
+
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        //image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                    }
+                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        image.Source = null;
+                        DownloadFile(file.Id, result);
+                    }
+                }
+            }
+            else if (button.Content is Grid content)
+            {
+                var presenter = content.Children[0] as Grid;
+                var thumb = presenter.Children[0] as Image;
+
+                var title = content.Children[1] as TextBlock;
+                var description = content.Children[2] as TextBlock;
+
+                File file = null;
+                Uri uri = null;
+
+                if (result is InlineQueryResultArticle article)
+                {
+                    file = article.Thumbnail?.Photo;
+                    title.Text = article.Title;
+                    description.Text = article.Description;
+                }
+                else if (result is InlineQueryResultAudio audio)
+                {
+                    file = audio.Audio.AlbumCoverThumbnail?.Photo;
+                    title.Text = audio.Audio.GetTitle();
+                    description.Text = audio.Audio.GetDuration();
+                }
+                else if (result is InlineQueryResultContact contact)
+                {
+                    file = contact.Thumbnail?.Photo;
+                    title.Text = contact.Contact.GetFullName();
+                    description.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
+                }
+                else if (result is InlineQueryResultDocument document)
+                {
+                    file = document.Document.Thumbnail?.Photo;
+                    title.Text = document.Title;
+
+                    if (string.IsNullOrEmpty(document.Description))
+                    {
+                        description.Text = FileSizeConverter.Convert(document.Document.DocumentValue.Size);
+                    }
+                    else
+                    {
+                        description.Text = document.Description;
+                    }
+                }
+                else if (result is InlineQueryResultGame game)
+                {
+                    file = game.Game.Animation?.Thumbnail?.Photo ?? game.Game.Photo.GetSmall().Photo;
+                    title.Text = game.Game.Title;
+                    description.Text = game.Game.Description;
+                }
+                else if (result is InlineQueryResultLocation location)
+                {
+                    var latitude = location.Location.Latitude.ToString(CultureInfo.InvariantCulture);
+                    var longitude = location.Location.Longitude.ToString(CultureInfo.InvariantCulture);
+
+                    uri = new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "96,96"));
+                    file = location.Thumbnail?.Photo;
+                    title.Text = location.Title;
+                    description.Text = $"{location.Location.Latitude};{location.Location.Longitude}";
+                }
+                else if (result is InlineQueryResultPhoto photo)
+                {
+                    file = photo.Photo.GetSmall().Photo;
+                    title.Text = photo.Title;
+                    description.Text = photo.Description;
+                }
+                else if (result is InlineQueryResultVenue venue)
+                {
+                    var latitude = venue.Venue.Location.Latitude.ToString(CultureInfo.InvariantCulture);
+                    var longitude = venue.Venue.Location.Longitude.ToString(CultureInfo.InvariantCulture);
+
+                    uri = new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "96,96"));
+                    file = venue.Thumbnail?.Photo;
+
+                    title.Text = venue.Venue.Title;
+                    description.Text = venue.Venue.Address;
+                }
+                else if (result is InlineQueryResultVideo video)
+                {
+                    file = video.Video.Thumbnail?.Photo;
+                    title.Text = video.Title;
+                    description.Text = video.Description;
+                }
+                else if (result is InlineQueryResultVoiceNote voiceNote)
+                {
+                    title.Text = voiceNote.Title;
+                    description.Text = voiceNote.VoiceNote.GetDuration();
+                }
+
+                //if (file == null && uri == null)
+                //{
+                //    presenter.Visibility = Visibility.Collapsed;
+                //    return;
+                //}
+
+                //presenter.Visibility = Visibility.Visible;
+
+                if (file != null)
+                {
+                    if (file.Local.IsDownloadingCompleted)
+                    {
+                        thumb.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                    }
+                    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        thumb.Source = null;
+                        DownloadFile(file.Id, result);
+                    }
+                }
+                else if (uri != null)
+                {
+                    thumb.Source = new BitmapImage(uri);
+                }
+            }
+        }
+
+        private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
+        {
+            if (args.Element is Button button && button.Content is Image image)
+            {
+                image.Source = null;
+            }
+        }
+
+        private void DownloadFile(int id, InlineQueryResult result)
+        {
+            _animations[id].Add(result);
+            ViewModel.ProtoService.DownloadFile(id, 1);
+        }
+
+        private DisposableMutex _loadMoreLock = new DisposableMutex();
+        private bool _loadMoreDrop;
+
+        private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            var results = ViewModel.InlineBotResults;
+            if (results == null || !results.HasMoreItems)
+            {
+                return;
+            }
+
+            if (_loadMoreDrop)
+            {
+                return;
+            }
+
+            using (await _loadMoreLock.WaitAsync())
+            {
+                _loadMoreDrop = true;
+
+                if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
+                {
+                    await results.LoadMoreItemsAsync(0);
+                }
+
+                _loadMoreDrop = false;
+            }
         }
     }
 }

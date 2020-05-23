@@ -41,6 +41,8 @@ namespace Unigram.ViewModels
             {
                 Set(ref _inlineBotResults, value);
                 RaisePropertyChanged(() => InlineBotResultsVisibility);
+
+                _inlineBotResults?.Reset();
             }
         }
 
@@ -221,7 +223,7 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class BotResultsCollection : IncrementalCollection<MosaicMediaRow>
+    public class BotResultsCollection : IncrementalCollection<InlineQueryResult>
     {
         private readonly IProtoService _protoService;
 
@@ -261,14 +263,13 @@ namespace Unigram.ViewModels
 
         public InlineQueryResults Results => _results;
 
-        public bool IsGallery => false;
+        public long InlineQueryId => _results.InlineQueryId;
+        public string NextOffset => _results.NextOffset;
 
-        public Int64 InlineQueryId => _results.InlineQueryId;
-        public String NextOffset => _results.NextOffset;
         public string SwitchPmParameter => _results.SwitchPmParameter;
         public string SwitchPmText => _results.SwitchPmText;
 
-        public override async Task<IList<MosaicMediaRow>> LoadDataAsync()
+        public override async Task<IList<InlineQueryResult>> LoadDataAsync()
         {
             if (_nextOffset != null)
             {
@@ -283,11 +284,11 @@ namespace Unigram.ViewModels
                         _queryIds[item] = results.InlineQueryId;
                     }
 
-                    return MosaicMedia.Calculate(results.Results.ToList());
+                    return results.Results;
                 }
             }
 
-            return new MosaicMediaRow[0];
+            return new InlineQueryResult[0];
         }
     }
 }

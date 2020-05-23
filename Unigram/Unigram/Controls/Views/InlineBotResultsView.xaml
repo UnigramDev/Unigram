@@ -5,19 +5,21 @@
     xmlns:local="using:Unigram.Controls"
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
     DataContextChanged="OnDataContextChanged"
+    SizeChanged="OnSizeChanged"
     Unloaded="OnUnloaded">
 
     <UserControl.Resources>
 
         <DataTemplate x:Key="ResultTemplate">
             <Button Click="Result_Click" Style="{StaticResource EmptyButtonStyle}">
-                <Grid Margin="8,4">
+                <Grid Margin="12,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -27,11 +29,13 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                          Width="48" Height="48"
+                          Width="48"
+                          Height="48"
                           VerticalAlignment="Top"
                           Margin="0,0,12,0"
+                          CornerRadius="2"
                           Grid.RowSpan="2">
-                        <Image Stretch="UniformToFill"/>
+                        <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
                     <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
@@ -39,125 +43,54 @@
             </Button>
         </DataTemplate>
 
-        <DataTemplate x:Key="PhotoMediaTemplate">
-            <controls:AspectView Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="8,4">
-                <Image/>
-            </controls:AspectView>
+        <DataTemplate x:Key="MediaTemplate">
+            <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
+                <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Button>
         </DataTemplate>
 
-        <DataTemplate x:Key="PhotoTemplate">
-            <controls:MosaicRow HorizontalAlignment="Stretch" Margin="2,0"/>
+        <DataTemplate x:Key="StickerTemplate">
+            <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
+                <Image Stretch="Uniform"/>
+            </Button>
         </DataTemplate>
 
-        <selectors:InlineBotResultTemplateSelector
-            x:Key="InlineBotResultTemplateSelector"
-            ResultTemplate="{StaticResource ResultTemplate}"
-            PhotoTemplate="{StaticResource PhotoTemplate}"
-            PhotoMediaTemplate="{StaticResource PhotoMediaTemplate}"/>
+        <controls:MosaicLayout x:Key="MosaicLayout"/>
+        
+        <muxc:StackLayout x:Key="StackLayout"/>
+        <muxc:UniformGridLayout x:Key="GridLayout" MinItemWidth="40" MinItemHeight="40" ItemsStretch="Uniform" />
     </UserControl.Resources>
 
-    <Grid>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0"/>
-                    </VisualState.StateTriggers>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="500"/>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="Show.Width" Value="376*"/>
-                        <Setter Target="Show.MaxWidth" Value="376"/>
-                        <Setter Target="Hide.Width" Value="*"/>
-                        <Setter Target="BackgroundElement.BorderThickness" Value="1"/>
-                        <Setter Target="BackgroundElement.Margin" Value="8"/>
-
-                        <Setter Target="ShowRow.Height" Value="736*"/>
-                        <Setter Target="ShowRow.MaxHeight" Value="736"/>
-                        <Setter Target="HideRow.Height" Value="*"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="Show"/>
-            <ColumnDefinition x:Name="Hide" Width="0"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="HideRow" Height="0"/>
-            <RowDefinition x:Name="ShowRow"/>
-        </Grid.RowDefinitions>
-        <Grid x:Name="BackgroundElement"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-              MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-              BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
-              BorderThickness="0,1,0,0"
-              Margin="0,0,0,20"
-              CornerRadius="8"
-              Grid.Row="1">
-            <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
-            <!--<Grid.Visibility>
-                 <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
-                 <Binding.TargetNullValue>
-                 <Visibility>Collapsed</Visibility>
-                 </Binding.TargetNullValue>
-                 <Binding.FallbackValue>
-                 <Visibility>Collapsed</Visibility>
-                 </Binding.FallbackValue>
-                 </Binding>
-                 </Grid.Visibility>-->
-            <Grid x:Name="LayoutRoot">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Button Command="{x:Bind ViewModel.SwitchCommand}"
-                        CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPmParameter, Mode=OneWay}"
-                        Content="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                        HorizontalAlignment="Stretch"/>
-                <controls:OrientableListView x:Name="Items"
-                                             ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
-                                             Orientation="{x:Bind ConvertOrientation(ViewModel.InlineBotResults.IsGallery), Mode=OneWay}"
-                                             ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
-                                             ContainerContentChanging="OnContainerContentChanging"
-                                             ItemClick="ListView_ItemClick"
-                                             IsItemClickEnabled="False"
-                                             SelectionMode="None"
-                                             Grid.Row="1">
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel Loaded="OnLoaded"/>
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                    <GridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Margin" Value="0"/>
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="MinWidth" Value="0"/>
-                            <Setter Property="MinHeight" Value="0"/>
-                        </Style>
-                    </GridView.ItemContainerStyle>
-                    <GridView.ItemContainerTransitions>
-                        <TransitionCollection/>
-                    </GridView.ItemContainerTransitions>
-                    <GridView.Header>
-                        <Border Width="4" Height="2"/>
-                    </GridView.Header>
-                    <GridView.Footer>
-                        <Border Width="4" Height="2"/>
-                    </GridView.Footer>
-                </controls:OrientableListView>
-            </Grid>
-
-            <Border x:Name="PermissionsPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <TextBlock x:Name="PermissionsLabel" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
-            </Border>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid x:Name="LayoutRoot">
+            <muxc:ItemsRepeaterScrollHost>
+                <ScrollViewer
+                    x:Name="ScrollingHost"
+                    ViewChanged="OnViewChanged"
+                    VerticalScrollBarVisibility="Auto"
+                    VerticalScrollMode="Auto">
+                    <StackPanel>
+                        <controls:BadgeButton
+                            x:Name="SwitchPm"
+                            Command="{x:Bind ViewModel.SwitchCommand}"
+                            CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPmParameter, Mode=OneWay}"
+                            Content="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                            Style="{StaticResource SwitchPmButtonStyle}"/>
+                        
+                        <muxc:ItemsRepeater
+                            x:Name="Repeater"
+                            ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
+                            Tag="{x:Bind ConvertSource(ViewModel.InlineBotResults), Mode=OneWay}"
+                            ElementPrepared="OnElementPrepared"
+                            ElementClearing="OnElementClearing"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </muxc:ItemsRepeaterScrollHost>
         </Grid>
+
+        <Border x:Name="PermissionsPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <TextBlock x:Name="PermissionsLabel" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
+        </Border>
     </Grid>
 </UserControl>

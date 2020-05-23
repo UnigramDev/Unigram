@@ -403,7 +403,6 @@
     <Compile Include="Controls\Messages\InvoiceFooter.xaml.cs">
       <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\MosaicLayout.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
@@ -1461,8 +1460,6 @@
       <DependentUpon>TLMessageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\EditToVisibilityConverter.cs" />
-    <Compile Include="Selectors\DialogStyleSelector.cs" />
-    <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
     <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />

@@ -2878,6 +2878,7 @@ namespace Unigram.Views
 
         private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            ListInline.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
             ListAutocomplete.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
         }
 
@@ -3684,7 +3685,9 @@ namespace Unigram.Views
             TextRoot.CornerRadius = ChatFooter.CornerRadius = new CornerRadius(radius);
 
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
-            ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
+            InlinePanel.Padding = new Thickness(0, 0, 0, radius);
+
+            ListInline.Radius = new CornerRadius(radius - 2, radius - 2, 0, 0);
 
             if (radius > 0)
             {
