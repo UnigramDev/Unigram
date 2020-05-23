@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -336,6 +337,35 @@ namespace Unigram.Controls.Chats
             }
         }
 
+        private CancellationTokenSource _inlineBotToken;
+
+        private void CancelInlineBotToken()
+        {
+            if (_inlineBotToken != null)
+            {
+                _inlineBotToken.Cancel();
+                _inlineBotToken.Dispose();
+                _inlineBotToken = null;
+            }
+        }
+
+        private void GetInlineBotResults(string inlineQuery)
+        {
+            CancelInlineBotToken();
+
+            _inlineBotToken = new CancellationTokenSource();
+            ViewModel.GetInlineBotResults(inlineQuery, _inlineBotToken.Token);
+        }
+
+        private void ClearInlineBotResults()
+        {
+            CancelInlineBotToken();
+
+            ViewModel.CurrentInlineBot = null;
+            ViewModel.InlineBotResults = null;
+            InlinePlaceholderText = string.Empty;
+        }
+
         private async void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             Document.GetText(TextGetOptions.NoHidden, out string text);
@@ -346,7 +376,7 @@ namespace Unigram.Controls.Chats
             {
                 ViewModel.Autocomplete = null;
 
-                ViewModel.GetInlineBotResults(inlineQuery);
+                GetInlineBotResults(inlineQuery);
                 return;
             }
 
@@ -360,30 +390,33 @@ namespace Unigram.Controls.Chats
 
             if (TryGetAutocomplete(text, query, out var autocomplete))
             {
-                ViewModel.CurrentInlineBot = null;
-                ViewModel.InlineBotResults = null;
-                InlinePlaceholderText = string.Empty;
-
+                ClearInlineBotResults();
                 ViewModel.Autocomplete = autocomplete;
             }
             else
             {
                 ViewModel.Autocomplete = null;
 
-                if (SearchByInlineBot(query, out string username, out int index) && await ViewModel.ResolveInlineBotAsync(username))
+                CancelInlineBotToken();
+
+                var token = (_inlineBotToken = new CancellationTokenSource()).Token;
+                if (SearchByInlineBot(query, out string username, out int index) && await ViewModel.ResolveInlineBotAsync(username, token))
                 {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
                     if (SearchInlineBotResults(text, out query))
                     {
                         ViewModel.Autocomplete = null;
 
-                        ViewModel.GetInlineBotResults(query);
+                        GetInlineBotResults(query);
                         return;
                     }
                 }
 
-                ViewModel.CurrentInlineBot = null;
-                ViewModel.InlineBotResults = null;
-                InlinePlaceholderText = string.Empty;
+                ClearInlineBotResults();
             }
         }
 
@@ -540,27 +573,36 @@ namespace Unigram.Controls.Chats
                     count = 0;
                     _hasMore = false;
 
-                    var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
-                    if (response is Emojis emojis)
+                    if (string.IsNullOrWhiteSpace(_query))
                     {
-                        SettingsService.Current.Emoji.LoadRecentEmoji();
-
-                        var results = emojis.EmojisValue.Reverse();
-                        results = results.OrderBy(x =>
+                        foreach (var emoji in SettingsService.Current.Emoji.GetRecentEmoji())
                         {
-                            var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
-                            if (index < 0)
-                            {
-                                return int.MaxValue;
-                            }
-
-                            return index;
-                        });
-
-                        foreach (var emoji in results)
-                        {
-                            Add(new EmojiData(emoji));
+                            Add(emoji);
                             count++;
+                        }
+                    }
+                    else
+                    {
+                        var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
+                        if (response is Emojis emojis)
+                        {
+                            var results = emojis.EmojisValue.Reverse();
+                            results = results.OrderBy(x =>
+                            {
+                                var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
+                                if (index < 0)
+                                {
+                                    return int.MaxValue;
+                                }
+
+                                return index;
+                            });
+
+                            foreach (var emoji in results)
+                            {
+                                Add(new EmojiData(emoji));
+                                count++;
+                            }
                         }
                     }
 
@@ -989,9 +1031,7 @@ namespace Unigram.Controls.Chats
                     {
                         if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
                         {
-                            ViewModel.CurrentInlineBot = null;
-                            ViewModel.InlineBotResults = null;
-                            InlinePlaceholderText = string.Empty;
+                            ClearInlineBotResults();
                         }
                         else
                         {
@@ -1017,9 +1057,7 @@ namespace Unigram.Controls.Chats
                 }
                 else
                 {
-                    ViewModel.CurrentInlineBot = null;
-                    ViewModel.InlineBotResults = null;
-                    InlinePlaceholderText = string.Empty;
+                    ClearInlineBotResults();
                 }
             }
 

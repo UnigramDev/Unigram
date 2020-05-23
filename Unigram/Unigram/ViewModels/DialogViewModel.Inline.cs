@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
 using Unigram.Services;
 using Windows.UI.Xaml;
 
@@ -54,7 +49,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task<bool> ResolveInlineBotAsync(string text)
+        public async Task<bool> ResolveInlineBotAsync(string text, CancellationToken token)
         {
             var username = text.TrimStart('@').TrimEnd(' ');
             if (string.IsNullOrEmpty(username))
@@ -75,6 +70,11 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new SearchPublicChat(username));
             if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
+                if (token.IsCancellationRequested)
+                {
+                    return true;
+                }
+
                 var user = ProtoService.GetUser(privata.UserId);
                 if (user.Type is UserTypeBot bot && bot.IsInline)
                 {
@@ -87,7 +87,7 @@ namespace Unigram.ViewModels
         }
 
 
-        public async void ResolveInlineBot(string text, string command = null)
+        public async void ResolveInlineBot(string text, string command = null, CancellationToken token = default)
         {
             var username = text.TrimStart('@').TrimEnd(' ');
 
@@ -104,12 +104,17 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new SearchPublicChat(username));
             if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 CurrentInlineBot = ProtoService.GetUser(privata.UserId);
-                GetInlineBotResults(command ?? string.Empty);
+                GetInlineBotResults(command ?? string.Empty, token);
             }
         }
 
-        public async void GetInlineBotResults(string query)
+        public async void GetInlineBotResults(string query, CancellationToken token)
         {
             if (CurrentInlineBot == null)
             {
@@ -141,7 +146,7 @@ namespace Unigram.ViewModels
                 var collection = new BotResultsCollection(ProtoService, _currentInlineBot.Id, chat.Id, null, query);
                 var result = await collection.LoadMoreItemsAsync(0);
 
-                if (collection.Results != null)
+                if (collection.Results != null && !token.IsCancellationRequested)
                 {
                     InlineBotResults = collection;
                 }
