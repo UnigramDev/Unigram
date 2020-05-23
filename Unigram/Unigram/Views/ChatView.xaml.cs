@@ -3685,9 +3685,8 @@ namespace Unigram.Views
             TextRoot.CornerRadius = ChatFooter.CornerRadius = new CornerRadius(radius);
 
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
-            InlinePanel.Padding = new Thickness(0, 0, 0, radius);
-
-            ListInline.Radius = new CornerRadius(radius - 2, radius - 2, 0, 0);
+            ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
+            ListInline.UpdateCornerRadius(radius);
 
             if (radius > 0)
             {

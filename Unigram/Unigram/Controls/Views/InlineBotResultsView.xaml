@@ -61,7 +61,7 @@
         <muxc:UniformGridLayout x:Key="GridLayout" MinItemWidth="40" MinItemHeight="40" ItemsStretch="Uniform" />
     </UserControl.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="Root" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid x:Name="LayoutRoot">
             <muxc:ItemsRepeaterScrollHost>
                 <ScrollViewer

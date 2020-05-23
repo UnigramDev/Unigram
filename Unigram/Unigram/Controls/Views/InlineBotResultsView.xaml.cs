@@ -36,12 +36,10 @@ namespace Unigram.Controls.Views
             //}
         }
 
-        public CornerRadius Radius
+        public void UpdateCornerRadius(double radius)
         {
-            set
-            {
-                SwitchPm.Radius = new CornerRadius(value.TopLeft, value.TopRight, 4, 4);
-            }
+            Root.Padding = new Thickness(0, 0, 0, radius);
+            SwitchPm.Radius = new CornerRadius(radius - 2, radius - 2, 4, 4);
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
