@@ -628,7 +628,7 @@ namespace Unigram.Views.Chats
             {
                 ScrollingHost.SelectedIndex = 4 + shift;
             }
-            else if (e.ClickedItem == _tabs[tab.Index])
+            else if (tab != null && e.ClickedItem == _tabs[tab.Index])
             {
                 ScrollingHost.SelectedIndex = tab.Index;
             }
@@ -646,6 +646,9 @@ namespace Unigram.Views.Chats
 
             switch (ScrollingHost.SelectedIndex + shift)
             {
+                case -1:
+                    Header.SelectedItem = _tabs[ScrollingHost.SelectedIndex];
+                    break;
                 case 0:
                     Header.SelectedItem = _mediaHeader;
                     break;
