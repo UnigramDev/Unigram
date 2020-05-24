@@ -268,6 +268,8 @@ namespace Unigram.ViewModels
 
         public InlineQueryResults Results => _results;
 
+        public string Query => _query;
+
         public long InlineQueryId => _results.InlineQueryId;
         public string NextOffset => _results.NextOffset;
 

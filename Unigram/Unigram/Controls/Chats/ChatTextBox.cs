@@ -351,6 +351,11 @@ namespace Unigram.Controls.Chats
 
         private void GetInlineBotResults(string inlineQuery)
         {
+            if (string.Equals(inlineQuery, ViewModel.InlineBotResults?.Query, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
             CancelInlineBotToken();
 
             _inlineBotToken = new CancellationTokenSource();
