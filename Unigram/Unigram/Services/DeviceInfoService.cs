@@ -34,7 +34,11 @@ namespace Unigram.Services
                     || DefaultSystemProductName == deviceInfo.SystemProductName
                     ? null
                     : deviceInfo.SystemProductName;
-                return systemProductName ?? systemSku;
+                var systemManufacturer = string.IsNullOrEmpty(deviceInfo.SystemManufacturer)
+                    || DefaultSystemManufacturer == deviceInfo.SystemManufacturer
+                    ? null
+                    : deviceInfo.SystemManufacturer;
+                return systemProductName ?? systemSku ?? deviceInfo.FriendlyName ?? "Desktop";
             }
         }
 
