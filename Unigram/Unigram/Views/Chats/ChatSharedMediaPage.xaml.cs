@@ -600,71 +600,15 @@ namespace Unigram.Views.Chats
 
         private void Header_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var tab = _tab;
-            var shift = 0;
-
-            if (tab?.Index < 1)
+            if (e.ClickedItem is ChatSharedMediaTab tab)
             {
-                shift += 1;
-            }
-
-            if (e.ClickedItem == _mediaHeader)
-            {
-                ScrollingHost.SelectedIndex = 0 + shift;
-            }
-            else if (e.ClickedItem == _filesHeader)
-            {
-                ScrollingHost.SelectedIndex = 1 + shift;
-            }
-            else if (e.ClickedItem == _linksHeader)
-            {
-                ScrollingHost.SelectedIndex = 2 + shift;
-            }
-            else if (e.ClickedItem == _musicHeader)
-            {
-                ScrollingHost.SelectedIndex = 3 + shift;
-            }
-            else if (e.ClickedItem == _voiceHeader)
-            {
-                ScrollingHost.SelectedIndex = 4 + shift;
-            }
-            else if (tab != null && e.ClickedItem == _tabs[tab.Index])
-            {
-                ScrollingHost.SelectedIndex = tab.Index;
+                ScrollingHost.SelectedIndex = _tabs.IndexOf(tab);
             }
         }
 
         private void ScrollingHost_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var tab = _tab;
-            var shift = 0;
-
-            if (tab?.Index < 1)
-            {
-                shift -= 1;
-            }
-
-            switch (ScrollingHost.SelectedIndex + shift)
-            {
-                case -1:
-                    Header.SelectedItem = _tabs[ScrollingHost.SelectedIndex];
-                    break;
-                case 0:
-                    Header.SelectedItem = _mediaHeader;
-                    break;
-                case 1:
-                    Header.SelectedItem = _filesHeader;
-                    break;
-                case 2:
-                    Header.SelectedItem = _linksHeader;
-                    break;
-                case 3:
-                    Header.SelectedItem = _musicHeader;
-                    break;
-                case 4:
-                    Header.SelectedItem = _voiceHeader;
-                    break;
-            }
+            Header.SelectedItem = _tabs[ScrollingHost.SelectedIndex];
         }
 
         private void Scrolling_Loaded(object sender, RoutedEventArgs e)
