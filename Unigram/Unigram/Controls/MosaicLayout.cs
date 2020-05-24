@@ -98,8 +98,8 @@ namespace Unigram.Controls
                 return new Size(0, 0);
             }
 
-            var firstRowIndex = Math.Max((int)(context.RealizationRect.Y / 98) - 1, 0);
-            var lastRowIndex = Math.Min((int)(context.RealizationRect.Bottom / 98) + 1, state.Rows.Count - 1);
+            var firstRowIndex = Math.Min(Math.Max((int)(context.RealizationRect.Y / 98) - 1, 0), state.Rows.Count - 1);
+            var lastRowIndex = Math.Max(Math.Min((int)(context.RealizationRect.Bottom / 98) + 1, state.Rows.Count - 1), 0);
 
             var firstItemIndex = state.Rows[firstRowIndex][0].Index;
             var lastItemIndex = state.Rows[lastRowIndex].Last().Index;
