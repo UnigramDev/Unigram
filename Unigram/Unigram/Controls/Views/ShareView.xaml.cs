@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Folders;
 using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Metadata;
@@ -314,6 +315,141 @@ namespace Unigram.Controls.Views
 
             Loaded += handler;
             return this.ShowQueuedAsync();
+        }
+
+        #endregion
+
+        #region PickFiltersAsync
+
+        public static async Task<IList<ChatFilterElement>> AddExecute(bool include, IList<ChatFilterElement> target)
+        {
+            //var target = new List<ChatFilterElement>();
+
+            var flags = new List<FilterFlag>();
+            if (include)
+            {
+                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeContacts });
+                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeNonContacts });
+                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeGroups });
+                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeChannels });
+                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeBots });
+            }
+            else
+            {
+                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeMuted });
+                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeRead });
+                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeArchived });
+            }
+
+            var header = new ListView();
+            header.SelectionMode = ListViewSelectionMode.Multiple;
+            header.ItemsSource = flags;
+            header.ItemTemplate = App.Current.Resources["FolderPickerTemplate"] as DataTemplate;
+            header.ItemContainerStyle = App.Current.Resources["DefaultListViewItemStyle"] as Style;
+            header.ContainerContentChanging += Header_ContainerContentChanging;
+
+            foreach (var filter in target.OfType<FilterFlag>())
+            {
+                var already = flags.FirstOrDefault(x => x.Flag == filter.Flag);
+                if (already != null)
+                {
+                    header.SelectedItems.Add(already);
+                }
+            }
+
+            var panel = new StackPanel();
+            panel.Children.Add(new Border
+            {
+                Background = App.Current.Resources["PageBackgroundDarkBrush"] as Brush,
+                Child = new TextBlock
+                {
+                    Text = Strings.Resources.FilterChatTypes,
+                    Padding = new Thickness(12, 0, 0, 0),
+                    Style = App.Current.Resources["SettingsGroupTextBlockStyle"] as Style
+                }
+            });
+            panel.Children.Add(header);
+            panel.Children.Add(new Border
+            {
+                Background = App.Current.Resources["PageBackgroundDarkBrush"] as Brush,
+                Child = new TextBlock
+                {
+                    Text = Strings.Resources.FilterChats,
+                    Padding = new Thickness(12, 0, 0, 0),
+                    Style = App.Current.Resources["SettingsGroupTextBlockStyle"] as Style
+                }
+            });
+
+            var dialog = ShareView.GetForCurrentView();
+            dialog.ViewModel.Title = include ? Strings.Resources.FilterAlwaysShow : Strings.Resources.FilterNeverShow;
+            dialog.ViewModel.AllowEmptySelection = true;
+            dialog.Header = panel;
+
+            var confirm = await dialog.PickAsync(target.OfType<FilterChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return null;
+            }
+
+            target.Clear();
+
+            foreach (var filter in header.SelectedItems.OfType<FilterFlag>())
+            {
+                target.Add(filter);
+            }
+
+            foreach (var chat in dialog.ViewModel.SelectedItems)
+            {
+                target.Add(new FilterChat { Chat = chat });
+            }
+
+            return target;
+        }
+
+        private static void Header_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var filter = args.Item as FilterFlag;
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+            var title = content.Children[1] as TextBlock;
+            //title.Text = Enum.GetName(typeof(ChatListFilterFlags), filter.Flag);
+
+            switch (filter.Flag)
+            {
+                case ChatListFilterFlags.IncludeContacts:
+                    title.Text = Strings.Resources.FilterContacts;
+                    break;
+                case ChatListFilterFlags.IncludeNonContacts:
+                    title.Text = Strings.Resources.FilterNonContacts;
+                    break;
+                case ChatListFilterFlags.IncludeGroups:
+                    title.Text = Strings.Resources.FilterGroups;
+                    break;
+                case ChatListFilterFlags.IncludeChannels:
+                    title.Text = Strings.Resources.FilterChannels;
+                    break;
+                case ChatListFilterFlags.IncludeBots:
+                    title.Text = Strings.Resources.FilterBots;
+                    break;
+
+                case ChatListFilterFlags.ExcludeMuted:
+                    title.Text = Strings.Resources.FilterMuted;
+                    break;
+                case ChatListFilterFlags.ExcludeRead:
+                    title.Text = Strings.Resources.FilterRead;
+                    break;
+                case ChatListFilterFlags.ExcludeArchived:
+                    title.Text = Strings.Resources.FilterArchived;
+                    break;
+            }
+
+            var photo = content.Children[0] as ProfilePicture;
+            photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFilterIcon(filter.Flag), (int)filter.Flag, 36);
         }
 
         #endregion

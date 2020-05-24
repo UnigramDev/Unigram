@@ -932,11 +932,11 @@ namespace Telegram.Td.Api
         public string Title { get; set; }
         public string Emoji { get; set; }
 
-        public bool IncludeContacts { get; set; } = true;
-        public bool IncludeNonContacts { get; set; } = true;
-        public bool IncludeGroups { get; set; } = true;
-        public bool IncludeChannels { get; set; } = true;
-        public bool IncludeBots { get; set; } = true;
+        public bool IncludeContacts { get; set; }
+        public bool IncludeNonContacts { get; set; }
+        public bool IncludeGroups { get; set; }
+        public bool IncludeChannels { get; set; }
+        public bool IncludeBots { get; set; }
 
         public IList<long> IncludeChatIds { get; set; } = new long[0];
 
