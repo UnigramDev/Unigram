@@ -13,7 +13,7 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <Grid>
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <microsoft:ItemsRepeaterScrollHost>
             <ScrollViewer>
                 <microsoft:ItemsRepeater x:Name="Repeater" ElementPrepared="OnElementPrepared">

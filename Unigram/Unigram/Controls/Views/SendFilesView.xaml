@@ -225,7 +225,7 @@
         </ItemsPanelTemplate>
 
         <ItemsPanelTemplate x:Key="AlbumPanelTemplate">
-            <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading" MaxWidth="322" MaxHeight="422"/>
+            <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading"/>
         </ItemsPanelTemplate>
 
     </ContentControl.Resources>

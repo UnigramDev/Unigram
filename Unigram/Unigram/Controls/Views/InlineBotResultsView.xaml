@@ -25,8 +25,8 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
                           Width="48"
@@ -37,8 +37,8 @@
                           Grid.RowSpan="2">
                         <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                    <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Margin="0,0,0,2" VerticalAlignment="Bottom" Grid.Column="1"/>
+                    <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,-2,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1"/>
                 </Grid>
             </Button>
         </DataTemplate>
